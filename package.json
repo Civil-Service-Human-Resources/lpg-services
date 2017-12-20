@@ -1,0 +1,31 @@
+{
+  "name": "lpg-ui-ssr",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "parcel src/client/index.html",
+    "svelte": "svelte compile -f umd -i components -o dist/server/components",
+    "build": "npm run build-client && npm run build-server",
+    "build-client": "npm run svelte && parcel build src/client/index.html -d dist/client --public-url /dist",
+    "build-server": "cross-env BABEL_ENV=node babel src -d dist"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-require-ignore": "^0.1.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "cross-env": "^5.1.1",
+    "parcel-bundler": "^1.2.0"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "govuk-elements-sass": "^3.1.2",
+    "govuk_frontend_toolkit": "^7.2.0",
+    "node-fetch": "^1.7.3",
+    "node-sass": "^4.7.2",
+    "object-assign": "^4.1.1",
+    "promise": "^8.0.1",
+    "roadtrip": "^0.6.0",
+    "svelte": "^1.49.1",
+    "svelte-cli": "^1.4.0"
+  }
+}
