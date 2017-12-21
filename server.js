@@ -3,7 +3,7 @@ const executeSsr = require('./dist/server/server').default;
 
 const app = express();
 
-app.use('/dist', express.static('dist/client'));
+app.use('/dist', express.static('dist/server'));
 app.get('/*', executeSsr);
 
 app.get('/search', executeSsr);
