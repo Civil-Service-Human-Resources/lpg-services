@@ -3,7 +3,9 @@ const express = require('express');
 require('svelte');
 require('svelte/ssr/register');
 
-function writePageWith(component){
+
+
+function writePageWith(component) {
     const Template = require('./dist/index.html');
 
     let temphtml = Template.render({
@@ -12,12 +14,12 @@ function writePageWith(component){
 
     return temphtml.html
 
-
 }
 
 const app = express();
 
 app.use('/dist', express.static('dist'));
+
 
 app.get('/find', (req, res) => {
 
