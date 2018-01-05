@@ -5,7 +5,7 @@
     "start": "parcel src/client/index.html",
     "svelte": "svelte compile -f umd -i shared/components -o dist/server/components",
     "build": "npm run build-client && npm run build-server",
-    "build-client": "npm run svelte && parcel build src/client/index.html -d dist/client --public-url /dist",
+    "build-client": "npm run svelte && parcel build src/client/index.html -d dist --public-url ./dist",
     "build-server": "cross-env BABEL_ENV=node babel src -d dist"
   },
   "devDependencies": {
