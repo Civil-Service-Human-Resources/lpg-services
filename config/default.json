@@ -1,0 +1,18 @@
+{
+  "logging": {
+    "appenders": [
+      { "type": "console" }
+    ],
+    "levels": {
+      "[all]": "DEBUG"
+    }
+  },
+  "session": {
+    "secret": "bobbob"
+  },
+  "ect": {
+    "watch": true,
+    "ext": ".ect",
+    "root": "views"
+  }
+}

@@ -17,12 +17,18 @@
     "parcel-bundler": "^1.2.0"
   },
   "dependencies": {
+    "config": "^1.29.0",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
     "govuk-elements-sass": "^3.1.2",
     "govuk_frontend_toolkit": "^7.2.0",
+    "log4js": "^1.1.0",
+    "lusca": "^1.5.2",
     "node-fetch": "^1.7.3",
     "node-sass": "^4.7.2",
     "object-assign": "^4.1.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "promise": "^8.0.1",
     "roadtrip": "^0.6.0",
     "svelte": "^1.49.1",

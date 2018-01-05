@@ -1,0 +1,12 @@
+{
+  "logging": {
+    "levels": {
+      "[all]": "DEBUG"
+    }
+  },
+  "ect": {
+    "watch": false,
+    "ext": ".ect",
+    "root": "views"
+  }
+}
