@@ -1,14 +1,24 @@
-<form action="/search" method="get" role="search">
-
-    <div class="govuk-search on-govuk-blue" data-module="toggle-input-class-on-focus">
-        <label for="search-main-07bcff8d" class="search-label">
-            Search GOV.UK
-        </label>
-        <div class="search-wrapper">
-            <input type="search" value="" id="search-main-07bcff8d" name="q" title="Search" class="search-element search-input js-class-toggle">
-            <div class="search-element search-submit-wrapper">
-                <button type="submit" class="search-submit">Search</button>
-            </div>
+<div class="column-full">
+    <form action="/{{formAction}}" method="get" role="search" on:submit="handleSubmit( event )">
+        <div class="form-group">
+            <label class="form-label" for="{{searchId}}">{{labelText}}</label>
+            <input class="form-control" id="{{searchId}}"  bind:value="inputValue" type="text" name ="full-name-f1">
+            <input class="button" type="submit" value="Search">
         </div>
-    </div>
-</form>
+    </form>
+</div>
+
+
+<script>
+    export default {
+        methods: {
+            handleSubmit: function ( event ) {
+                // prevent the page from reloading
+                event.preventDefault();
+
+                var value = this.get( 'inputValue' );
+                console.log( 'value', value );
+            }
+        }
+    };
+</script>
