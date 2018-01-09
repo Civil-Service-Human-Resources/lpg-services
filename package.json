@@ -18,8 +18,11 @@
   },
   "dependencies": {
     "config": "^1.29.0",
+    "connect-flash": "^0.1.1",
+    "ejs": "^2.5.7",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
+    "express-validator": "^4.3.0",
     "govuk-elements-sass": "^3.1.2",
     "govuk_frontend_toolkit": "^7.2.0",
     "log4js": "^1.1.0",

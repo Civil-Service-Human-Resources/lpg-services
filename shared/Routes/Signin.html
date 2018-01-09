@@ -3,7 +3,7 @@
     <h1 class="heading-large">Sign in</h1>
 
     <form method="post" name="userLoginForm" class="push-bottom">
-        <input type="hidden" name="_csrf" value="<%- @_csrf %>">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
         <div class="form-group">
             <label for="username" class="form-label">
                 Email address

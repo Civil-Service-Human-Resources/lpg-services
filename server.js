@@ -23,6 +23,68 @@ function writePageWith(component) {
 
 }
 
+module.exports = function configureRoutes(router) {
+
+    configurePassport();
+
+    router.get('/Signin', displaySignIn);
+    router.get('/sign-out', doSignOut);
+
+    router.post('/Signin', passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/Signin',
+        failureFlash: 'Invalid email address or password.'
+    }));
+};
+
+function displaySignIn(req, res) {
+    logger.trace('Displaying sign in');
+    if (!!req.user) {
+        logger.debug('Already signed in');
+        res.redirect('/');
+    } else {
+
+        const signin = require('./shared/Routes/Signin.html');
+
+        // let view = res.render('Signin', { errors: req.flash('error') });
+        let html = writePageWith(signin);
+        res.send(html);
+
+    }
+}
+
+
+
+function doSignOut(req, res) {
+    logger.trace('Signing user out');
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+}
+
+function configurePassport() {
+
+    passport.use(new LocalStrategy({
+            usernameField: 'emailAddress'
+        },
+        (emailAddress, password, done) => {
+            done(null, { id: '1', name: 'Mr Misterious' });
+        }
+    ));
+
+    passport.serializeUser((user, done) => {
+        done(null, user.id);
+    });
+
+    passport.deserializeUser((id, done) => {
+        User.findById(id)
+            .then(user => done(null, user))
+            .catch(done);
+    });
+}
+
+
+
 const app = express();
 
 app.use(session({
@@ -53,6 +115,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
 
     const signin = require('./shared/Routes/Signin.html');
+    console.log(res);
 
     let html = writePageWith(signin.render().html);
     res.send(html);
@@ -82,3 +145,5 @@ app.listen(port, () => {
   console.log(`Listening to port ${port}...`);
 });
 
+
+module.exports = app;
