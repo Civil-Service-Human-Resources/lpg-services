@@ -45,8 +45,6 @@ function displaySignIn(req, res) {
     } else {
 
         const signin = require('./shared/Routes/Signin.html');
-
-        // let view = res.render('Signin', { errors: req.flash('error') });
         let html = writePageWith(signin);
         res.send(html);
 
