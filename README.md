@@ -1,16 +1,10 @@
 ##LPG-ui--svelte
 
-This branch contains svelte (and svelte-cli) SSR. It also contains parcel for ease of client dev.
+This branch contains svelte SSR and sapper. It also contains webpack.
 
 
-`npm run build` to build the client and server
-`node server` to start the server listening on `1234`.
+`npm run dev` to build and start the server on localhost:3001
 
-
-**good to knows:**
-* Parcel will build and hash `client.js` and `index.html`. The result is a dist folder with `index.html` which includes the built `client.js` and `index.css`. The server will return this, plus {{{app}}}.
-* Add HTML components to `${ROOT_DIR}/shared/components/`. `npm run svelte` is compiling components into js, which is useful for client side dev. (Although, we probably wont need or use it)
-* Add Routes (*.html) to `${ROOT_DIR}/shared/routes`. From these files you can import components and pass data to them. You can also pass data from them at render-time in server.js 
 
 
 
