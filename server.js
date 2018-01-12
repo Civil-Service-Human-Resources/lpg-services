@@ -13,7 +13,6 @@ const flash = require('connect-flash');
 require('svelte');
 require('svelte/ssr/register');
 
-
 const { PORT = 3001 } = process.env;
 
 app.use(flash());
@@ -49,14 +48,6 @@ app.use(lusca.csrf());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 
-app.use((req, res, next) => {
-    // add helper functions
-    res.locals.isAuthenticated = () => !!req.user;
-    res.locals.hasAnyRole = roles => !!req.user && roles.indexOf(req.user.role) > -1;
-    res.locals.today = new Date();
-    res.locals.signedInUser = req.user;
-    next();
-});
 
 app.use((err, req, res, next) => {
     console.log('Error handling request for', req.method, req.url, req.body, '\n', err.stack);
@@ -89,25 +80,30 @@ function doSignOut(req, res) {
 function configurePassport() {
 
     passport.use(new SamlStrategy({
-            path: '/login',
+            path: '/authenticate',
             entryPoint: 'https://localhost:9443/samlsso',
             issuer: 'lpg-ui',
             acceptedClockSkewMs: -1
         },
         (profile, done) => {
-            done(null, { id: profile.nameID, name: profile.nameID });
+            console.log(profile);
+            done(null, {
+                emailAddress: profile.nameID,
+                department: profile['http://wso2.org/claims/department'],
+                profession: profile['http://wso2.org/claims/profession'],
+                grade: profile['http://wso2.org/claims/grade']
+            });
         })
     );
 
     passport.serializeUser((user, done) => {
-        done(null, user.id);
+        done(null, JSON.stringify(user));
     });
 
-    passport.deserializeUser((id, done) => {
-        done(null, { id: '1', name: 'Mr Misterious' });
+    passport.deserializeUser((data, done) => {
+        done(null, JSON.parse(data));
     });
 }
-
 configurePassport();
 
 app.get('/login', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), displaySignIn);
@@ -135,6 +131,16 @@ app.get('/logout', doSignOut);
 //     passport.authenticate('auth0', {}), function (req, res) {
 //         res.redirect("/");
 //     });
+
+app.use((req, res, next) => {
+    // add helper functions
+    res.locals.isAuthenticated = () => !!req.user;
+    res.locals.hasAnyRole = roles => !!req.user && roles.indexOf(req.user.role) > -1;
+    res.locals.today = new Date();
+    res.locals.signedInUser = req.user;
+    next();
+});
+
 
 app.use(sapper());
 
