@@ -18,9 +18,13 @@
     "uglifyjs-webpack-plugin": "^1.1.6"
   },
   "dependencies": {
+    "co": "^4.6.0",
     "compression": "^1.7.1",
     "config": "^1.29.0",
+    "connect": "^3.6.5",
     "connect-flash": "^0.1.1",
+    "connect-multiparty": "^2.1.0",
+    "connect-session-sequelize": "^4.1.0",
     "css-loader": "^0.28.8",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
@@ -29,7 +33,6 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "govuk-elements-sass": "^3.1.2",
     "govuk_frontend_toolkit": "^7.2.0",
-    "log4js": "^1.1.0",
     "lusca": "^1.5.2",
     "marked": "^0.3.12",
     "node-fetch": "^1.7.3",
@@ -47,8 +50,6 @@
     "svelte": "^1.49.1",
     "svelte-cli": "^1.4.0",
     "svelte-extras": "^1.6.0",
-    "svelte-loader": "^2.3.3",
-    "uglify-js": "^3.3.5",
-    "uglifyjs": "^2.4.11"
+    "svelte-loader": "^2.3.3"
   }
 }

@@ -1,5 +1,6 @@
 <:Head>
-	<title>Sign in • Conduit</title>
+	<title>Sign in</title>
+	<meta name="csrf-token" content="{{locals}}">
 </:Head>
 
 <Layout page='login' :user>
@@ -15,17 +16,26 @@
 
 					<ListErrors :errors/>
 
-					<form on:submit='submit(event)'>
-						<fieldset class="form-group">
-							<input class="form-control form-control-lg" type="email" placeholder="Email" bind:value=email>
-						</fieldset>
-						<fieldset class="form-group">
-							<input class="form-control form-control-lg" type="password" placeholder="Password" bind:value=password>
-						</fieldset>
-						<button class="btn btn-lg btn-primary pull-xs-right" type="submit" disabled='{{!email || !password}}'>
-							Sign in
-						</button>
-					</form>
+					<div class="column-two-thirds">
+
+						<h1 class="heading-large">Sign in</h1>
+
+						<form action="/login" method="post">
+							<input type="hidden" name="_csrf" value="{{ csrf }}">
+							<fieldset class="form-group">
+								<input class="form-control form-control-2-3" type="email" placeholder="Email" bind:value=email>
+							</fieldset>
+							<fieldset class="form-group">
+								<input class="form-control form-control-2-3" type="password" placeholder="Password" bind:value=password>
+							</fieldset>
+							<div>
+								<input type="submit" class="button" value="Continue">
+							</div>
+						</form>
+
+					</div>
+
+
 				</div>
 			</div>
 		</div>
@@ -41,12 +51,6 @@
 	export default {
 		components: { Layout, ListErrors },
 
-		preload({ session }) {
-			return {
-				user: session ? session.user : auth.user
-			};
-		},
-
 		data() {
 			return {
 				email: '',
@@ -55,25 +59,6 @@
 			};
 		},
 
-		methods: {
-			submit(event) {
-				event.preventDefault();
 
-				const { email, password } = this.get();
-
-				auth.login({ email, password })
-					.then(response => {
-						if (response.errors) {
-							this.set({ errors: response.errors });
-						} else {
-							goto('/');
-						}
-					})
-					.catch(err => {
-						// TODO handle network errors
-						console.error({ err });
-					});
-			}
-		}
 	};
 </script>
