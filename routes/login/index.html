@@ -1,27 +1,22 @@
 <:Head>
 	<title>Sign in</title>
-	<meta name="csrf-token" content="{{locals}}">
 </:Head>
 
-<Layout page='login' :user>
+<Layout page='login'>
 	<div class="auth-page">
 		<div class="container page">
 			<div class="row">
 
 				<div class="col-md-6 offset-md-3 col-xs-12">
 					<h1 class="text-xs-center">Sign In</h1>
-					<p class="text-xs-center">
-						<a href="/register">Need an account?</a>
-					</p>
 
-					<ListErrors :errors/>
+
 
 					<div class="column-two-thirds">
 
 						<h1 class="heading-large">Sign in</h1>
 
-						<form action="/login" method="post">
-							<input type="hidden" name="_csrf" value="{{ csrf }}">
+						<form action="/routes/login" method="post">
 							<fieldset class="form-group">
 								<input class="form-control form-control-2-3" type="email" placeholder="Email" bind:value=email>
 							</fieldset>
@@ -45,11 +40,9 @@
 <script>
 	import { goto } from 'sapper/runtime.js';
 	import Layout from '../_components/Layout.html';
-	import ListErrors from '../_components/ListErrors.html';
-	import * as auth from '../_auth.js';
 
 	export default {
-		components: { Layout, ListErrors },
+		components: { Layout },
 
 		data() {
 			return {

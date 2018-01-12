@@ -1,9 +1,7 @@
 const passport = require('passport');
 const lusca = require('lusca');
 const config = require('config');
-const express = require('express');
 const path = require('path');
-const fs = require('fs');
 const app = require('express')();
 const compression = require('compression');
 const session = require('express-session');
@@ -16,54 +14,11 @@ require('svelte');
 require('svelte/ssr/register');
 
 
-
 const { PORT = 3001 } = process.env;
 
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-
-const LocalStrategy = require('passport-local').Strategy;
-
-
-function doSignOut(req, res) {
-    req.session.destroy(() => {
-        res.redirect('/');
-    });
-}
-
-function configurePassport() {
-
-    passport.serializeUser((user, done) => {
-        done(null, user.id);
-    });
-
-    passport.deserializeUser((id, done) => {
-        User.findById(id)
-            .then(user => done(null, user))
-            .catch(done);
-    });
-}
-
-
-
-var Auth0Strategy = require('passport-auth0');
-
-var strategy = new Auth0Strategy({
-        domain:       'cshr-test.eu.auth0.com',
-        clientID:     '6u7W0gNq1POal6jAHqKdoHJau9ygxb1h',
-        clientSecret:  config.get('session.secret'),
-        callbackURL:  '/callback'
-    },
-    function(accessToken, refreshToken, extraParams, profile, done) {
-        // accessToken is the token to call Auth0 API (not needed in the most cases)
-        // extraParams.id_token has the JSON Web Token
-        // profile has all the information from the user
-        return done(null, profile);
-    }
-);
-
-passport.use(strategy);
 
 
 
@@ -115,35 +70,71 @@ app.use(compression({ threshold: 0 }));
 
 app.use(static('assets'));
 
+const SamlStrategy = require('passport-saml').Strategy;
 
 
 
-app.get('/callback',
-    passport.authenticate('auth0', { failureRedirect: '/login' }),
-    function(req, res) {
-        if (!req.user) {
-            throw new Error('user null');
-        }
-        res.redirect("/");
-    }
-);
+function displaySignIn(req, res) {
+    console.log('Displaying sign in');
+    res.redirect('/');
+}
 
+function doSignOut(req, res) {
+    console.log('Signing user out');
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+}
+
+function configurePassport() {
+
+    passport.use(new SamlStrategy({
+            path: '/signin',
+            entryPoint: 'https://localhost:9443/samlsso',
+            issuer: 'lpg-ui',
+            acceptedClockSkewMs: -1
+        },
+        (profile, done) => {
+            done(null, { id: profile.nameID, name: profile.nameID });
+        })
+    );
+
+    passport.serializeUser((user, done) => {
+        done(null, user.id);
+    });
+
+    passport.deserializeUser((id, done) => {
+        done(null, { id: '1', name: 'Mr Misterious' });
+    });
+}
 
 configurePassport();
 
+app.get('/login', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), displaySignIn);
+app.get('/logout', doSignOut);
 
-app.get('/sign-out', doSignOut);
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: 'Invalid email address or password.'
-}));
-
-app.get('/login',
-    passport.authenticate('auth0', {}), function (req, res) {
-        res.redirect("/");
-    });
-
+// app.get('/callback',
+//     passport.authenticate('auth0', { failureRedirect: '/login' }),
+//     function(req, res) {
+//         if (!req.user) {
+//             throw new Error('user null');
+//         }
+//         res.redirect("/");
+//     }
+// );
+//
+//
+//
+// app.post('/login', passport.authenticate('local', {
+//     successRedirect: '/',
+//     failureRedirect: '/login',
+//     failureFlash: 'Invalid email address or password.'
+// }));
+//
+// app.get('/login',
+//     passport.authenticate('auth0', {}), function (req, res) {
+//         res.redirect("/");
+//     });
 
 app.use(sapper());
 
