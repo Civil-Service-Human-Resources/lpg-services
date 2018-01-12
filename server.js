@@ -89,7 +89,7 @@ function doSignOut(req, res) {
 function configurePassport() {
 
     passport.use(new SamlStrategy({
-            path: '/signin',
+            path: '/login',
             entryPoint: 'https://localhost:9443/samlsso',
             issuer: 'lpg-ui',
             acceptedClockSkewMs: -1
