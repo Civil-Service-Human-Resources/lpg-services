@@ -64,15 +64,17 @@ const SamlStrategy = require('passport-saml').Strategy;
 function displaylogin(req, res) {
 
     let sessionDataKey = req.query.sessionDataKey;
-
-    if (!sessionDataKey) {
+    console.log(sessionDataKey);
+    const loginPage = require('./routes/login/index.html');
+    goto('/authenticate');
+    //res.send(loginPage);
+    /*if (!sessionDataKey) {
         res.redirect('/authenticate');
     } else {
-
-        res.render('login', {
-            sessionDataKey
-        });
-    }
+        const loginPage = require('/routes/index.html');
+        console.log
+        res.send(loginPage.render())
+    }*/
 }
 
 function doSignOut(req, res) {
@@ -116,7 +118,6 @@ app.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', f
         res.redirect('/')
     });
 
-app.get('/login', displaylogin);
 
 app.get('/logout', doSignOut);
 
@@ -129,6 +130,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// app.get('/login', displaylogin);
 
 app.use(sapper());
 
@@ -136,6 +138,8 @@ app.use(sapper());
 
 app.listen(PORT, () => {
 	console.log(`listening on port ${PORT}`);
+
+
 });
 
 module.exports = app;

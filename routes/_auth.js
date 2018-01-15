@@ -5,47 +5,62 @@ const SamlStrategy = require('passport-saml').Strategy;
 
 
 
-export function displaySignIn(req, res) {
-    console.log('Displaying sign in');
-    res.redirect('/');
+module.exports = function configureRoutes(router) {
+
+    configurePassport();
+
+    router.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+        (req, res) => res.redirect('/'));
+
+    router.get('/sign-in', displaySignIn);
+    router.get('/sign-out', doSignOut);
+};
+
+function displaySignIn(req, res) {
+    logger.trace('Displaying sign in');
+    let sessionDataKey = req.query.sessionDataKey;
+
+    if (!sessionDataKey) {
+        res.redirect('/authenticate');
+    } else {
+        res.render('sign-in', {
+            sessionDataKey
+        });
+    }
 }
 
-export function doSignOut(req, res) {
-    console.log('Signing user out');
+function doSignOut(req, res) {
+    logger.trace('Signing user out');
     req.session.destroy(() => {
-      res.redirect('/');
-});
+        res.redirect('/');
+    });
 }
 
 function configurePassport() {
 
     passport.use(new SamlStrategy({
-            path: '/signin',
+            path: '/authenticate',
             entryPoint: 'https://localhost:9443/samlsso',
             issuer: 'lpg-ui',
             acceptedClockSkewMs: -1
         },
         (profile, done) => {
-            done(null, { id: profile.nameID, name: profile.nameID });
+            logger.info(profile);
+            done(null, {
+                emailAddress: profile.nameID,
+                department: profile['http://wso2.org/claims/department'],
+                profession: profile['http://wso2.org/claims/profession'],
+                grade: profile['http://wso2.org/claims/grade']
+            });
         })
     );
 
     passport.serializeUser((user, done) => {
-        done(null, user.id);
+        done(null, JSON.stringify(user));
     });
 
-    passport.deserializeUser((id, done) => {
-        done(null, { id: '1', name: 'Mr Misterious' });
+    passport.deserializeUser((data, done) => {
+        done(null, JSON.parse(data));
     });
 }
 
-// function interceptUser(response) {
-//     if (response.user) user = response.user;
-//     return response;
-// }
-//
-// export function init() {
-//     return fetch(`/auth/user`, { credentials: 'include' })
-//         .then(r => r.json())
-//         .then(interceptUser);
-// }

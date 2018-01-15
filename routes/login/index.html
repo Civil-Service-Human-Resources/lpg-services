@@ -8,9 +8,7 @@
 			<div class="row">
 
 				<div class="col-md-6 offset-md-3 col-xs-12">
-					<h1 class="text-xs-center">Sign In</h1>
-
-
+					<h1 class="text-xs-center">Sign In {{sessionDataKey}}</h1>
 
 					<div class="column-two-thirds">
 
@@ -20,7 +18,7 @@
 							<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
 
 							<fieldset class="form-group">
-								<input class="form-control form-control-2-3" type="email" placeholder="Email" bind:value=email>
+								<input class="form-control form-control-2-3" placeholder="Username" id="username" name="username" type="email" bind:value=username>
 							</fieldset>
 							<fieldset class="form-group">
 								<input class="form-control form-control-2-3" type="password" placeholder="Password" bind:value=password>
@@ -43,19 +41,23 @@
 	import { goto } from 'sapper/runtime.js';
 	import Layout from '../_components/Layout.html';
 
-	function sessionDataKey(){
-        let sessionDataKey = req.query.sessionDataKey;
-		return sessionDataKey;
-	}
+    let sessionDataKey;
+    
+
+
 	export default {
 		components: { Layout },
+        preload({ params, query }) {
+		    sessionDataKey = query.sessionDataKey;
 
+
+        },
 		data() {
 			return {
-				email: '',
+				username: '',
 				password: '',
 				errors: null,
-				sessionDataKey: sessionDataKey()
+				sessionDataKey: sessionDataKey
 			};
 		},
 
