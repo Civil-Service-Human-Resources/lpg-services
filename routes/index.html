@@ -1,9 +1,9 @@
-<Layout page='home' :user>
+<Layout page='home'>
 	<div class="home-page">
 		<h1>home</h1>
 		<div class="container page">
 			<div class="row">
-				<MainView :user bind:tab />
+
 
 			</div>
 		</div>
@@ -12,9 +12,9 @@
 
 <script>
 	import Layout from './_components/Layout.html';
-	import MainView from './_components/MainView/index.html';
+
 	export default {
-		components: { Layout, MainView}
+		components: { Layout }
 
 		// preload({ session }) {
 		// 	return {
