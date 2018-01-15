@@ -1,3 +1,4 @@
+<:Window/>
 <:Head>
 	<title>Sign in</title>
 </:Head>
@@ -8,7 +9,8 @@
 			<div class="row">
 
 				<div class="col-md-6 offset-md-3 col-xs-12">
-					<h1 class="text-xs-center">Sign In {{sessionDataKey}}</h1>
+					<h1 class="text-xs-center">Sign In</h1>
+
 
 					<div class="column-two-thirds">
 
@@ -40,24 +42,25 @@
 <script>
 	import { goto } from 'sapper/runtime.js';
 	import Layout from '../_components/Layout.html';
-
-    let sessionDataKey;
-    
-
+    var getQueryString = function ( field, url ) {
+        var href = url ? url : window.location.href;
+        var reg = new RegExp( '[?&]' + field + '=([^&#]*)', 'i' );
+        var string = reg.exec(href);
+        return string ? string[1] : null;
+    };
 
 	export default {
 		components: { Layout },
-        preload({ params, query }) {
-		    sessionDataKey = query.sessionDataKey;
-
-
+        oncreate() {
+            this.set({sessionDataKey: getQueryString('sessionDataKey')});
         },
+
 		data() {
 			return {
 				username: '',
 				password: '',
-				errors: null,
-				sessionDataKey: sessionDataKey
+				errors: null
+
 			};
 		},
 

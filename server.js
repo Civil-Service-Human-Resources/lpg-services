@@ -61,20 +61,15 @@ app.use(static('assets'));
 const SamlStrategy = require('passport-saml').Strategy;
 
 
-function displaylogin(req, res) {
+function displaySignin(req, res) {
 
     let sessionDataKey = req.query.sessionDataKey;
-    console.log(sessionDataKey);
-    const loginPage = require('./routes/login/index.html');
-    goto('/authenticate');
-    //res.send(loginPage);
-    /*if (!sessionDataKey) {
+
+    if (!sessionDataKey) {
         res.redirect('/authenticate');
     } else {
-        const loginPage = require('/routes/index.html');
-        console.log
-        res.send(loginPage.render())
-    }*/
+        res.redirect('/sign-in');
+    }
 }
 
 function doSignOut(req, res) {
@@ -93,7 +88,7 @@ function configurePassport() {
             acceptedClockSkewMs: -1
         },
         (profile, done) => {
-            console.log(profile);
+            console.log("profile" + profile);
             done(null, {
                 emailAddress: profile.nameID,
                 department: profile['http://wso2.org/claims/department'],
@@ -119,6 +114,8 @@ app.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', f
     });
 
 
+app.get('/login', displaySignin);
+
 app.get('/logout', doSignOut);
 
 app.use((req, res, next) => {
@@ -130,7 +127,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.get('/login', displaylogin);
 
 app.use(sapper());
 
