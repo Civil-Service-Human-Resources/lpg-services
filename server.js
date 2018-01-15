@@ -41,9 +41,6 @@ app.use(session({
 }));
 
 
-
-
-
 app.use(lusca.csrf());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
@@ -64,10 +61,18 @@ app.use(static('assets'));
 const SamlStrategy = require('passport-saml').Strategy;
 
 
+function displaylogin(req, res) {
 
-function displaySignIn(req, res) {
-    console.log('Displaying sign in');
-    res.redirect('/');
+    let sessionDataKey = req.query.sessionDataKey;
+
+    if (!sessionDataKey) {
+        res.redirect('/authenticate');
+    } else {
+
+        res.render('login', {
+            sessionDataKey
+        });
+    }
 }
 
 function doSignOut(req, res) {
@@ -106,31 +111,14 @@ function configurePassport() {
 }
 configurePassport();
 
-app.get('/login', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), displaySignIn);
-app.get('/logout', doSignOut);
+app.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+    (req, res) => {
+        res.redirect('/')
+    });
 
-// app.get('/callback',
-//     passport.authenticate('auth0', { failureRedirect: '/login' }),
-//     function(req, res) {
-//         if (!req.user) {
-//             throw new Error('user null');
-//         }
-//         res.redirect("/");
-//     }
-// );
-//
-//
-//
-// app.post('/login', passport.authenticate('local', {
-//     successRedirect: '/',
-//     failureRedirect: '/login',
-//     failureFlash: 'Invalid email address or password.'
-// }));
-//
-// app.get('/login',
-//     passport.authenticate('auth0', {}), function (req, res) {
-//         res.redirect("/");
-//     });
+app.get('/login', displaylogin);
+
+app.get('/logout', doSignOut);
 
 app.use((req, res, next) => {
     // add helper functions

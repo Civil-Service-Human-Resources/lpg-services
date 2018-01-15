@@ -16,7 +16,9 @@
 
 						<h1 class="heading-large">Sign in</h1>
 
-						<form action="/routes/login" method="post">
+						<form method="post" action="https://localhost:9443/commonauth" name="userLoginForm" class="push-bottom">
+							<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
+
 							<fieldset class="form-group">
 								<input class="form-control form-control-2-3" type="email" placeholder="Email" bind:value=email>
 							</fieldset>
@@ -41,6 +43,10 @@
 	import { goto } from 'sapper/runtime.js';
 	import Layout from '../_components/Layout.html';
 
+	function sessionDataKey(){
+        let sessionDataKey = req.query.sessionDataKey;
+		return sessionDataKey;
+	}
 	export default {
 		components: { Layout },
 
@@ -48,7 +54,8 @@
 			return {
 				email: '',
 				password: '',
-				errors: null
+				errors: null,
+				sessionDataKey: sessionDataKey()
 			};
 		},
 
