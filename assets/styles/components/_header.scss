@@ -81,7 +81,7 @@
     background-size: 36px 32px;
     background-position: 0 0;
     @include ie-lte(8) {
-      background-image: image-url('./../../img/gov.uk_logotype_crown-1x.png');
+      background-image: image-url('/img/gov.uk_logotype_crown-1x.png');
     }
 
     img {
