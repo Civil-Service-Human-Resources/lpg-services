@@ -28,16 +28,27 @@ module.exports = {
 					}
 				}
 			},
-			isDev && {
+			{
 				test: /\.scss$/,
-                use: [{
-                    loader: "style-loader" // creates style nodes from JS strings
-                }, {
-                    loader: "css-loader" // translates CSS into CommonJS
-                }, {
-                    loader: "sass-loader" // compiles Sass to CSS
-                }]
-			},
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                // If you are having trouble with urls not resolving add this setting.
+                                // See https://github.com/webpack-contrib/css-loader#url
+                                url: false,
+                                minimize: true,
+                                sourceMap: true
+                            }
+                        },
+                        {
+                            loader: 'sass-loader'
+                        }
+                    ]
+                })
+			}/*,
 			!isDev && {
 				test: /\.scss$/,
                 use: ExtractTextPlugin.extract({
@@ -61,7 +72,7 @@ module.exports = {
                         }
                     ]
                 })
-			}
+			}*/
 		].filter(Boolean)
 	},
 	plugins: [
@@ -69,11 +80,13 @@ module.exports = {
 			minChunks: 2,
 			async: false,
 			children: true
-		})
+		}),
+
 	].concat(isDev ? [
-		new webpack.HotModuleReplacementPlugin()
+		new webpack.HotModuleReplacementPlugin(),
+        new ExtractTextPlugin('./../../assets/styles/main.css')
 	] : [
-		new ExtractTextPlugin('main.css'),
+		//new ExtractTextPlugin('main.css'),
 		new webpack.optimize.ModuleConcatenationPlugin(),
 		new UglifyJSPlugin()
 	]).filter(Boolean),

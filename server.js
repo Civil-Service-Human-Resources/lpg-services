@@ -20,6 +20,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+app.use((req, res, next) => {
+
+    console.log('URL: ' + req.url);
+    console.log('Query: ' + req.query);
+    console.log('Body: ' + req.body);
+
+   next();
+});
+
 
 // this allows us to do e.g. `fetch('/api/blog')` on the server
 const fetch = require('node-fetch');
@@ -41,7 +50,7 @@ app.use(session({
 }));
 
 
-app.use(lusca.csrf());
+//app.use(lusca.csrf());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 
@@ -64,8 +73,9 @@ const SamlStrategy = require('passport-saml').Strategy;
 function displaySignin(req, res) {
 
     let sessionDataKey = req.query.sessionDataKey;
-
-    if (!sessionDataKey) {
+    if (req.user) {
+        res.redirect('/');
+    } else if (!sessionDataKey) {
         res.redirect('/authenticate');
     } else {
         res.redirect('/sign-in');
@@ -78,6 +88,24 @@ function doSignOut(req, res) {
         res.redirect('/');
     });
 }
+
+function isAuthenticated(req, res, next) {
+    if (!req.user) {
+        _forbidden(req, res);
+    } else {
+        next();
+    }
+}
+
+function _forbidden(req, res) {
+    if (!req.accepts('html')) {
+        res.sendStatus(403);
+    } else {
+        req.session.originalRequestUrl = req.url;
+        res.redirect('/sign-in');
+    }
+}
+
 
 function configurePassport() {
 
@@ -108,7 +136,10 @@ function configurePassport() {
 }
 configurePassport();
 
-app.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+app.all('/authenticate', (req, res, next) => {
+    console.log('1');
+    next();
+    }, passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
     (req, res) => {
         res.redirect('/')
     });
