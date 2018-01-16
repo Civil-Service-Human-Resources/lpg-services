@@ -18,10 +18,10 @@
 							<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
 
 							<fieldset class="form-group">
-								<input class="form-control form-control-2-3" placeholder="Username" id="username" name="username" type="email" bind:value=username>
+								<input class="form-control form-control-2-3" placeholder="Username" name="username" type="email">
 							</fieldset>
 							<fieldset class="form-group">
-								<input class="form-control form-control-2-3" type="password" name="password" placeholder="Password" bind:value=password>
+								<input class="form-control form-control-2-3" type="password" name="password" placeholder="Password" >
 							</fieldset>
 							<div>
 								<input type="submit" class="button" value="Continue">
@@ -47,6 +47,7 @@
         return string ? string[1] : null;
     };
 
+
 	export default {
 		components: { Layout },
         oncreate() {
@@ -61,6 +62,7 @@
 
 			};
 		}
+
 
 
 	};

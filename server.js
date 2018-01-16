@@ -62,6 +62,7 @@ app.use((err, req, res, next) => {
 
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(compression({ threshold: 0 }));
 
@@ -73,6 +74,7 @@ const SamlStrategy = require('passport-saml').Strategy;
 function displaySignin(req, res) {
 
     let sessionDataKey = req.query.sessionDataKey;
+
     if (req.user) {
         res.redirect('/');
     } else if (!sessionDataKey) {
@@ -134,15 +136,12 @@ function configurePassport() {
         done(null, JSON.parse(data));
     });
 }
-configurePassport();
-
-app.all('/authenticate', (req, res, next) => {
-    console.log('1');
-    next();
-    }, passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+app.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
     (req, res) => {
         res.redirect('/')
     });
+
+configurePassport();
 
 
 app.get('/login', displaySignin);
