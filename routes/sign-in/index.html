@@ -3,7 +3,7 @@
 	<title>Sign in</title>
 </:Head>
 
-<Layout page='login'>
+<Layout page='login' >
 	<div class="auth-page">
 		<div class="container page">
 			<div class="row">
@@ -16,6 +16,7 @@
 
 						<form method="post" action="https://localhost:9443/commonauth" name="userLoginForm" class="push-bottom">
 							<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
+
 
 							<fieldset class="form-group">
 								<input class="form-control form-control-2-3" placeholder="Username" name="username" type="email">
@@ -38,7 +39,7 @@
 </Layout>
 
 <script>
-	import { goto } from 'sapper/runtime.js';
+
 	import Layout from '../_components/Layout.html';
     var getQueryString = function ( field, url ) {
         var href = url ? url : window.location.href;
@@ -49,16 +50,16 @@
 
 
 	export default {
-		components: { Layout },
+		components: { Layout, SessionDataKey },
         oncreate() {
             this.set({sessionDataKey: getQueryString('sessionDataKey')});
         },
-
 		data() {
 			return {
 				username: '',
 				password: '',
 				errors: null
+
 
 			};
 		}

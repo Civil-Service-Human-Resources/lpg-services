@@ -13,6 +13,7 @@ const flash = require('connect-flash');
 require('svelte');
 require('svelte/ssr/register');
 
+
 const { PORT = 3001 } = process.env;
 
 app.use(flash());
@@ -71,6 +72,7 @@ app.use(static('assets'));
 const SamlStrategy = require('passport-saml').Strategy;
 
 
+
 function displaySignin(req, res) {
 
     let sessionDataKey = req.query.sessionDataKey;
@@ -81,6 +83,7 @@ function displaySignin(req, res) {
         res.redirect('/authenticate');
     } else {
         res.redirect('/sign-in');
+
     }
 }
 
@@ -108,6 +111,19 @@ function _forbidden(req, res) {
     }
 }
 
+app.get('/sign-in', (req, res, next) => {
+    let sessionDataKey = req.query.sessionDataKey;
+    const login = require('./routes/sign-in/index.html');
+    console.log(login);
+
+    const rendered = login.render({sessionDataKey: sessionDataKey});
+    res.send(rendered.html);
+
+    console.log(res.body);
+
+
+    next();
+});
 
 function configurePassport() {
 
@@ -118,7 +134,6 @@ function configurePassport() {
             acceptedClockSkewMs: -1
         },
         (profile, done) => {
-            console.log("profile" + profile);
             done(null, {
                 emailAddress: profile.nameID,
                 department: profile['http://wso2.org/claims/department'],
@@ -129,6 +144,7 @@ function configurePassport() {
     );
 
     passport.serializeUser((user, done) => {
+        console.log(user);
         done(null, JSON.stringify(user));
     });
 
@@ -138,6 +154,7 @@ function configurePassport() {
 }
 app.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
     (req, res) => {
+    console.log(req.user);
         res.redirect('/')
     });
 
@@ -147,6 +164,9 @@ configurePassport();
 app.get('/login', displaySignin);
 
 app.get('/logout', doSignOut);
+
+
+
 
 app.use((req, res, next) => {
     // add helper functions
