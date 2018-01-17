@@ -114,12 +114,15 @@ function _forbidden(req, res) {
 app.get('/sign-in', (req, res, next) => {
     let sessionDataKey = req.query.sessionDataKey;
     const login = require('./routes/sign-in/index.html');
-    console.log(login);
+    console.log(login.render());
 
-    const rendered = login.render({sessionDataKey: sessionDataKey});
-    res.send(rendered.html);
 
-    console.log(res.body);
+    const { html, css, head } = login.render({sessionDataKey: sessionDataKey});
+
+
+     res.send(html);
+
+
 
 
     next();

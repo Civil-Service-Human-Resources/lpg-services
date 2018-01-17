@@ -1,7 +1,5 @@
-<:Window/>
-<:Head>
-	<title>Sign in</title>
-</:Head>
+<Page title="Sign in">
+
 
 <Layout page='login' >
 	<div class="auth-page">
@@ -37,10 +35,12 @@
 		</div>
 	</div>
 </Layout>
+</Page>
 
 <script>
 
 	import Layout from '../_components/Layout.html';
+    import Page from '../_components/Page.html';
     var getQueryString = function ( field, url ) {
         var href = url ? url : window.location.href;
         var reg = new RegExp( '[?&]' + field + '=([^&#]*)', 'i' );
@@ -50,7 +50,7 @@
 
 
 	export default {
-		components: { Layout, SessionDataKey },
+		components: { Layout, Page },
         oncreate() {
             this.set({sessionDataKey: getQueryString('sessionDataKey')});
         },
