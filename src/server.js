@@ -7,7 +7,6 @@ const compression = require('compression');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const FileStore = require('session-file-store')(session);
-const sapper = require('sapper');
 const static = require('serve-static');
 const flash = require('connect-flash');
 require('svelte');
@@ -111,21 +110,14 @@ function _forbidden(req, res) {
     }
 }
 
-app.get('/sign-in', (req, res, next) => {
+app.get('/sign-in', (req, res) => {
+
     let sessionDataKey = req.query.sessionDataKey;
-    const login = require('./routes/sign-in/index.html');
-    console.log(login.render());
+    const login = require('../page/sign-in/index.html');
+    const html = login.render({sessionDataKey: sessionDataKey});
 
+    res.send(html);
 
-    const { html, css, head } = login.render({sessionDataKey: sessionDataKey});
-
-
-     res.send(html);
-
-
-
-
-    next();
 });
 
 function configurePassport() {
@@ -181,7 +173,6 @@ app.use((req, res, next) => {
 });
 
 
-app.use(sapper());
 
 
 
