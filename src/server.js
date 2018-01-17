@@ -114,7 +114,7 @@ app.get('/sign-in', (req, res) => {
 
     let sessionDataKey = req.query.sessionDataKey;
     const login = require('../page/sign-in/index.html');
-    const html = login.render({sessionDataKey: sessionDataKey});
+    const html = login.render({sessionDataKey: sessionDataKey}).html;
 
     res.send(html);
 
@@ -155,6 +155,14 @@ app.all('/authenticate', passport.authenticate('saml', { failureRedirect: '/', f
 
 configurePassport();
 
+app.get('/', (req, res) => {
+
+    const home = require('../page/index.html');
+    const html = home.render().html;
+
+    res.send(html);
+
+});
 
 app.get('/login', displaySignin);
 

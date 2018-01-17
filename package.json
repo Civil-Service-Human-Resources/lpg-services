@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "sass": "node-sass assets/styles/index.scss assets/styles/main.css",
-    "start": "npm run sass && node server.js"
+    "start": "npm run sass && node src/server.js"
   },
   "devDependencies": {},
   "dependencies": {
