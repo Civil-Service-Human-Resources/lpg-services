@@ -1,0 +1,37 @@
+<Page title="Profile">
+    <Layout page='profile'>
+        <div class="profile-page">
+            <div class="container page">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3 col-xs-12">
+
+                        <div class="column-two-thirds">
+
+                            <h1 class="heading-large">Profile</h1>
+                            <User :emailAddress :department :profession :grade/>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Layout>
+</Page>
+
+<script>
+
+    import Layout from '../../component/Layout.html';
+    import Page from '../../component/Page.html';
+    import User from '../../component/User.html';
+
+    export default {
+        components: { Layout, Page, User },
+        data() {
+            return {
+            };
+        }
+
+
+
+    };
+</script>

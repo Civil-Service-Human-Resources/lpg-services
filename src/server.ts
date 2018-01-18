@@ -66,9 +66,9 @@ const SamlStrategy = require('passport-saml').Strategy
 
 function displaySignin(req, res) {
 	const sessionDataKey = req.query.sessionDataKey
-
-	if (req.user) {
-		res.redirect('/')
+	const user = req.session.passport
+	if (user) {
+		res.redirect('/profile')
 	} else if (!sessionDataKey) {
 		res.redirect('/authenticate')
 	} else {
@@ -129,8 +129,7 @@ function configurePassport() {
 	)
 
 	passport.serializeUser((user, done) => {
-		console.log(user)
-		done(null, JSON.stringify(user))
+		done(null, user)
 	})
 
 	passport.deserializeUser((data, done) => {
@@ -142,8 +141,7 @@ app.all(
 	'/authenticate',
 	passport.authenticate('saml', {failureRedirect: '/', failureFlash: true}),
 	(req, res) => {
-		console.log(req.user)
-		res.redirect('/')
+		res.redirect('/profile')
 	}
 )
 
@@ -160,14 +158,14 @@ app.get('/login', displaySignin)
 
 app.get('/logout', doSignOut)
 
-app.use((req, res, next) => {
-	// add helper functions
-	res.locals.isAuthenticated = () => !!req.user
-	res.locals.hasAnyRole = roles =>
-		!!req.user && roles.indexOf(req.user.role) > -1
-	res.locals.today = new Date()
-	res.locals.signedInUser = req.user
-	next()
+app.get('/profile', (req, res) => {
+	const profile = require('../page/profile/index.html')
+
+	const data = req.session.passport.user
+
+	const html = profile.render(data).html
+
+	res.send(html)
 })
 
 app.listen(PORT, () => {
