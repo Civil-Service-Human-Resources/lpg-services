@@ -8,11 +8,6 @@
     }
   },
   "session": {
-    "secret": "bobbob"
-  },
-  "ect": {
-    "watch": true,
-    "ext": ".ect",
-    "root": "views"
+    "secret": "dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt"
   }
 }

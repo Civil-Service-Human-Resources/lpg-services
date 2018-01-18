@@ -1,0 +1,54 @@
+<Page title="Sign in">
+	<Layout page='login' >
+		<div class="auth-page">
+			<div class="container page">
+				<div class="row">
+					<div class="col-md-6 offset-md-3 col-xs-12">
+
+						<div class="column-two-thirds">
+
+							<h1 class="heading-large">Sign in</h1>
+
+							<form method="post" action="https://localhost:9443/commonauth" name="userLoginForm" class="push-bottom">
+								<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
+
+
+								<fieldset class="form-group">
+									<input class="form-control form-control-2-3" placeholder="Username" name="username" type="email">
+								</fieldset>
+								<fieldset class="form-group">
+									<input class="form-control form-control-2-3" type="password" name="password" placeholder="Password" >
+								</fieldset>
+								<div>
+									<input type="submit" class="button" value="Continue">
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</Layout>
+</Page>
+
+<script>
+
+	import Layout from '../../component/Layout.html';
+    import Page from '../../component/Page.html';
+
+	export default {
+		components: { Layout, Page },
+		data() {
+			return {
+				username: '',
+				password: '',
+				errors: null
+
+			};
+		}
+
+
+
+	};
+</script>

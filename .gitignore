@@ -1,5 +1,8 @@
-node_modules
 *.log
 .cache
-dist
 .idea
+.sessions
+assets/styles/main.css
+dist/
+node_modules/
+package-lock.json
