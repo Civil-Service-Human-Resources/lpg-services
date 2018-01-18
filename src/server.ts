@@ -17,14 +17,6 @@ const FileStore = sessionFileStore(session)
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use((req, res, next) => {
-	console.log('URL: ' + req.url)
-	console.log('Query: ' + req.query)
-	console.log('Body: ' + req.body)
-
-	next()
-})
-
 app.use(
 	session({
 		cookie: {
@@ -102,8 +94,12 @@ function _forbidden(req, res) {
 
 app.get('/sign-in', (req, res) => {
 	const sessionDataKey = req.query.sessionDataKey
+	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
 	const login = require('../page/sign-in/index.html')
-	const html = login.render({sessionDataKey}).html
+	const html = login.render({
+		sessionDataKey,
+		loginFailed,
+	}).html
 
 	res.send(html)
 })
