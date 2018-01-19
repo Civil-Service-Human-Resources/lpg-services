@@ -134,6 +134,14 @@ app.get('/profile', (req, res) => {
 	}
 })
 
+app.get('/search', (req, res) => {
+	if (req.session.passport) {
+		res.send(render.search(req.session.passport.user))
+	} else {
+		res.send(render.search())
+	}
+})
+
 app.listen(PORT, () => {
 	console.log(`listening on port ${PORT}`)
 })

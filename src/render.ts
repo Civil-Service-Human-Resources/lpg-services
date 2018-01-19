@@ -23,3 +23,7 @@ export function profile(props: Profile) {
 export function homepage() {
 	return svelte.render('index')
 }
+
+export function search(props: Profile) {
+	return svelte.render('search', props)
+}
