@@ -1,24 +1,9 @@
 <div class="column-full">
-    <form action="/{{formAction}}" method="get" role="search" on:submit="handleSubmit( event )">
+    <form action="/{{formAction}}" method="get" role="search">
         <div class="form-group">
             <label class="form-label" for="{{searchId}}">{{labelText}}</label>
-            <input class="form-control" id="{{searchId}}"  bind:value="inputValue" type="text" name ="full-name-f1">
+            <input class="form-control" id="{{searchId}}" bind:value="inputValue" type="text" name="full-name-f1">
             <input class="button" type="submit" value="Search">
         </div>
     </form>
 </div>
-
-
-<script>
-    export default {
-        methods: {
-            handleSubmit: function ( event ) {
-                // prevent the page from reloading
-                event.preventDefault();
-
-                var value = this.get( 'inputValue' );
-                console.log( 'value', value );
-            }
-        }
-    };
-</script>
