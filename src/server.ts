@@ -14,9 +14,6 @@ const {PORT = 3001} = process.env
 const app = express()
 const FileStore = sessionFileStore(session)
 
-app.use(passport.initialize())
-app.use(passport.session())
-
 app.use(
 	session({
 		cookie: {
@@ -30,6 +27,9 @@ app.use(
 		}),
 	})
 )
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 //app.use(lusca.csrf());
 app.use(lusca.xframe('SAMEORIGIN'))
@@ -56,49 +56,22 @@ app.use(serveStatic('assets'))
 
 const SamlStrategy = require('passport-saml').Strategy
 
-function displaySignin(req, res) {
+app.get('/sign-in', (req, res) => {
 	const sessionDataKey = req.query.sessionDataKey
-	const user = req.session.passport
-	if (user) {
+	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
+
+	if (req.isAuthenticated()) {
 		res.redirect('/profile')
 	} else if (!sessionDataKey) {
 		res.redirect('/authenticate')
 	} else {
-		res.redirect('/sign-in')
+		res.send(
+			render.signIn({
+				loginFailed,
+				sessionDataKey,
+			})
+		)
 	}
-}
-
-function doSignOut(req, res) {
-	console.log('Signing user out')
-	req.session.destroy(() => {
-		res.redirect('/')
-	})
-}
-
-function isAuthenticated(req, res, next) {
-	if (!req.user) {
-		_forbidden(req, res)
-	} else {
-		next()
-	}
-}
-
-function _forbidden(req, res) {
-	if (!req.accepts('html')) {
-		res.sendStatus(403)
-	} else {
-		req.session.originalRequestUrl = req.url
-		res.redirect('/sign-in')
-	}
-}
-
-app.get('/sign-in', (req, res) => {
-	const sessionDataKey = req.query.sessionDataKey
-	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
-	res.send(render.signIn({
-		loginFailed,
-		sessionDataKey,
-	})
 })
 
 function configurePassport() {
@@ -106,7 +79,7 @@ function configurePassport() {
 		new SamlStrategy(
 			{
 				acceptedClockSkewMs: -1,
-				entryPoint: 'https://localhost:9443/samlsso',
+				entryPoint: 'https://identity.dev.cshr.digital:9443/samlsso',
 				issuer: 'lpg-ui',
 				path: '/authenticate',
 			},
@@ -122,7 +95,7 @@ function configurePassport() {
 	)
 
 	passport.serializeUser((user, done) => {
-		done(null, user)
+		done(null, JSON.stringify(user))
 	})
 
 	passport.deserializeUser((data, done) => {
@@ -132,7 +105,10 @@ function configurePassport() {
 
 app.all(
 	'/authenticate',
-	passport.authenticate('saml', {failureRedirect: '/', failureFlash: true}),
+	passport.authenticate('saml', {
+		failureRedirect: '/',
+		failureFlash: true,
+	}),
 	(req, res) => {
 		res.redirect('/profile')
 	}
@@ -144,12 +120,18 @@ app.get('/', (req, res) => {
 	res.send(render.homepage())
 })
 
-app.get('/login', displaySignin)
-
-app.get('/logout', doSignOut)
+app.get('/sign-out', (req, res) => {
+	req.session.destroy(() => {
+		res.redirect('/')
+	})
+})
 
 app.get('/profile', (req, res) => {
-	res.send(render.profile(req.session.passport.user))
+	if (!req.isAuthenticated()) {
+		res.redirect('/sign-in')
+	} else {
+		res.send(render.profile(req.user))
+	}
 })
 
 app.listen(PORT, () => {
