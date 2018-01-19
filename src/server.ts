@@ -7,7 +7,7 @@ import * as lusca from 'lusca'
 import * as passport from 'passport'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
-import 'svelte/ssr/register'
+import * as render from 'ui/render'
 
 const {PORT = 3001} = process.env
 
@@ -95,13 +95,10 @@ function _forbidden(req, res) {
 app.get('/sign-in', (req, res) => {
 	const sessionDataKey = req.query.sessionDataKey
 	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
-	const login = require('../page/sign-in/index.html')
-	const html = login.render({
-		sessionDataKey,
+	res.send(render.signIn({
 		loginFailed,
-	}).html
-
-	res.send(html)
+		sessionDataKey,
+	})
 })
 
 function configurePassport() {
@@ -144,10 +141,7 @@ app.all(
 configurePassport()
 
 app.get('/', (req, res) => {
-	const home = require('../page/index.html')
-	const html = home.render().html
-
-	res.send(html)
+	res.send(render.homepage())
 })
 
 app.get('/login', displaySignin)
@@ -155,13 +149,7 @@ app.get('/login', displaySignin)
 app.get('/logout', doSignOut)
 
 app.get('/profile', (req, res) => {
-	const profile = require('../page/profile/index.html')
-
-	const data = req.session.passport.user
-
-	const html = profile.render(data).html
-
-	res.send(html)
+	res.send(render.profile(req.session.passport.user))
 })
 
 app.listen(PORT, () => {

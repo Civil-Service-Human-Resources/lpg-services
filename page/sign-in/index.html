@@ -1,5 +1,6 @@
+<script src="foo"></script>
 <Page title="Sign in">
-	<Layout page='login' >
+	<Layout page='login'>
 		<div class="auth-page">
 			<div class="container page">
 				<div class="row">
@@ -8,14 +9,14 @@
 						<div class="column-two-thirds">
 
 							{{#if loginFailed}}
-							<div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-								<h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
-									Login failed
-								</h2>
-								<p>
-									You have entered the wrong email address or password, please try again.
-								</p>
-							</div>
+								<div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+									<h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+										Login failed
+									</h2>
+									<p>
+										You have entered the wrong email address or password, please try again.
+									</p>
+								</div>
 							{{/if}}
 
 							<h1 class="heading-large">Sign in</h1>
@@ -27,7 +28,7 @@
 									<input class="form-control form-control-2-3" placeholder="Username" name="username" type="email">
 								</fieldset>
 								<fieldset class="form-group">
-									<input class="form-control form-control-2-3" type="password" name="password" placeholder="Password" >
+									<input class="form-control form-control-2-3" type="password" name="password" placeholder="Password">
 								</fieldset>
 								<div>
 									<input type="submit" class="button" value="Continue">
@@ -41,24 +42,3 @@
 		</div>
 	</Layout>
 </Page>
-
-<script>
-
-	import Layout from '../../component/Layout.html';
-    import Page from '../../component/Page.html';
-
-	export default {
-		components: { Layout, Page },
-		data() {
-			return {
-				username: '',
-				password: '',
-				errors: null
-
-			};
-		}
-
-
-
-	};
-</script>

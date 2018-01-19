@@ -1,20 +1,3 @@
 <div class="column-full">
-    <Searchbar  :labelText :formAction></Searchbar>
+    <Searchbar labelText="Find course" formAction="search"></Searchbar>
 </div>
-
-<script>
-    import Searchbar from './Searchbar.html';
-    export default {
-        data () {
-            return {
-                formAction: 'search',
-                labelText: 'Find course'
-            }
-        },
-
-        components: {
-            Searchbar
-        }
-    };
-
-</script>
