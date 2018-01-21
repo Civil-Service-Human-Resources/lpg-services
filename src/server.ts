@@ -69,6 +69,7 @@ app.get('/sign-in', (req, res) => {
 			render.signIn({
 				loginFailed,
 				sessionDataKey,
+				authenticationServiceUrl: config.get('authentication.serviceUrl'),
 			})
 		)
 	}
@@ -79,7 +80,7 @@ function configurePassport() {
 		new SamlStrategy(
 			{
 				acceptedClockSkewMs: -1,
-				entryPoint: 'https://identity.dev.cshr.digital:9443/samlsso',
+				entryPoint: `${config.get('authentication.serviceUrl')}/samlsso`,
 				issuer: 'lpg-ui',
 				path: '/authenticate',
 			},

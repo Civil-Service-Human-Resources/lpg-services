@@ -9,5 +9,8 @@
   },
   "session": {
     "secret": "dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt"
+  },
+  "authentication": {
+    "serviceUrl": "https://identity.dev.cshr.digital:9443"
   }
 }
