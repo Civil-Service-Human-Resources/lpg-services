@@ -7,7 +7,12 @@ import * as lusca from 'lusca'
 import * as passport from 'passport'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
-import * as render from 'ui/render'
+
+import * as homeController from 'ui/controllers/home'
+import * as userController from 'ui/controllers/user'
+import * as searchController from 'ui/controllers/search'
+
+import * as passportConfig from 'ui/config/passport'
 
 const {PORT = 3001} = process.env
 
@@ -31,11 +36,10 @@ app.use(
 app.use(passport.initialize())
 app.use(passport.session())
 
-//app.use(lusca.csrf());
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
 
-app.use((err, req, res, next) => {
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
 	console.log(
 		'Error handling request for',
 		req.method,
@@ -54,55 +58,11 @@ app.use(compression({threshold: 0}))
 
 app.use(serveStatic('assets'))
 
-const SamlStrategy = require('passport-saml').Strategy
-
-app.get('/sign-in', (req, res) => {
-	const sessionDataKey = req.query.sessionDataKey
-	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
-
-	if (req.isAuthenticated()) {
-		res.redirect('/profile')
-	} else if (!sessionDataKey) {
-		res.redirect('/authenticate')
-	} else {
-		res.send(
-			render.signIn({
-				loginFailed,
-				sessionDataKey,
-				authenticationServiceUrl: config.get('authentication.serviceUrl'),
-			})
-		)
-	}
-})
-
-function configurePassport() {
-	passport.use(
-		new SamlStrategy(
-			{
-				acceptedClockSkewMs: -1,
-				entryPoint: `${config.get('authentication.serviceUrl')}/samlsso`,
-				issuer: 'lpg-ui',
-				path: '/authenticate',
-			},
-			(profile, done) => {
-				done(null, {
-					department: profile['http://wso2.org/claims/department'],
-					emailAddress: profile.nameID,
-					grade: profile['http://wso2.org/claims/grade'],
-					profession: profile['http://wso2.org/claims/profession'],
-				})
-			}
-		)
-	)
-
-	passport.serializeUser((user, done) => {
-		done(null, JSON.stringify(user))
-	})
-
-	passport.deserializeUser((data, done) => {
-		done(null, JSON.parse(data))
-	})
-}
+app.get('/', homeController.index)
+app.get('/sign-in', userController.signIn)
+app.get('/sign-out', userController.signOut)
+app.get('/profile', passportConfig.isAuthenticated, userController.profile)
+app.get('/search', passportConfig.isAuthenticated, searchController.index)
 
 app.all(
 	'/authenticate',
@@ -114,34 +74,6 @@ app.all(
 		res.redirect('/profile')
 	}
 )
-
-configurePassport()
-
-app.get('/', (req, res) => {
-	res.send(render.homepage())
-})
-
-app.get('/sign-out', (req, res) => {
-	req.session.destroy(() => {
-		res.redirect('/')
-	})
-})
-
-app.get('/profile', (req, res) => {
-	if (!req.isAuthenticated()) {
-		res.redirect('/sign-in')
-	} else {
-		res.send(render.profile(req.user))
-	}
-})
-
-app.get('/search', (req, res) => {
-	if (req.session.passport) {
-		res.send(render.search(req.session.passport.user))
-	} else {
-		res.send(render.search())
-	}
-})
 
 app.listen(PORT, () => {
 	console.log(`listening on port ${PORT}`)
