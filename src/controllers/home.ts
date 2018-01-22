@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
-import * as svelte from 'ui/svelte'
+import * as template from 'ui/template'
 
 export let index = (req: Request, res: Response) => {
-	res.send(svelte.render('index'))
+	res.send(template.render('index'))
 }
