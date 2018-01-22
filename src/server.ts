@@ -63,6 +63,7 @@ app.use(serveStatic('assets'))
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
+app.get('/reset-password', userController.resetPassword)
 app.get('/profile', passportConfig.isAuthenticated, userController.profile)
 app.get('/search', passportConfig.isAuthenticated, searchController.index)
 

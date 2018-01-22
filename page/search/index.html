@@ -1,17 +1,13 @@
 <Page title="Search">
 	<Layout page="search">
-		<div class="search-page">
-			<div class="container page">
-				<div class="row">
-					<div class="column-full">
-						<Find />
-						{{#if emailAddress}}
-						<Recommended :emailAddress/>
-						{{else}}
-						<p><a href="/login">Sign in</a> to view your recommended courses</p>
-						{{/if}}
-					</div>
-				</div>
+		<div class="grid-row">
+			<div class="column-full">
+				<Find />
+				{{#if emailAddress}}
+					<Recommended :emailAddress/>
+				{{else}}
+					<p><a href="/login">Sign in</a> to view your recommended courses</p>
+				{{/if}}
 			</div>
 		</div>
 	</Layout>
