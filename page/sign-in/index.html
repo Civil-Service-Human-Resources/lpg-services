@@ -1,43 +1,44 @@
 <script src="foo"></script>
 <Page title="Sign in">
 	<Layout page='login'>
-		<div class="auth-page">
-			<div class="container page">
-				<div class="row">
-					<div class="col-md-6 offset-md-3 col-xs-12">
+		<div class="grid-row">
+			<div class="column-two-thirds">
 
-						<div class="column-two-thirds">
-
-							{{#if loginFailed}}
-								<div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-									<h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
-										Login failed
-									</h2>
-									<p>
-										You have entered the wrong email address or password, please try again.
-									</p>
-								</div>
-							{{/if}}
-
-							<h1 class="heading-large">Sign in</h1>
-
-							<form method="post" action="{{authenticationServiceUrl}}/commonauth" name="userLoginForm" class="push-bottom">
-								<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
-
-								<fieldset class="form-group">
-									<input class="form-control form-control-2-3" placeholder="Username" name="username" type="email">
-								</fieldset>
-								<fieldset class="form-group">
-									<input class="form-control form-control-2-3" type="password" name="password" placeholder="Password">
-								</fieldset>
-								<div>
-									<input type="submit" class="button" value="Continue">
-								</div>
-							</form>
-
-						</div>
+				{{#if loginFailed}}
+					<div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+						<h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+							Login failed
+						</h2>
+						<p>
+							You have entered the wrong email address or password, please try again.
+						</p>
 					</div>
-				</div>
+				{{/if}}
+
+				<h1 class="heading-large">Sign in</h1>
+
+				<p>If you do not have an account, you can <a href="/register">create one now</a>.</p>
+
+				<form method="post" action="{{authenticationServiceUrl}}/commonauth" name="userLoginForm" class="push-bottom">
+					<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
+
+					<div class="form-group">
+						<label for="password" class="form-label">
+							Email address
+						</label>
+						<input class="form-control form-control-2-3" name="username" type="email">
+					</div>
+					<div class="form-group">
+						<label for="password" class="form-label">
+							Password
+						</label>
+						<input class="form-control form-control-2-3" type="password" name="password">
+					</div>
+					<div>
+						<input type="submit" class="button" value="Continue">
+					</div>
+				</form>
+				<a href="/reset-password" class="reset-password clear">Forgot your password?</a>
 			</div>
 		</div>
 	</Layout>
