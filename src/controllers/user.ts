@@ -1,6 +1,6 @@
-import {Request, Response} from 'express'
-import * as svelte from 'ui/svelte'
 import * as config from 'config'
+import {Request, Response} from 'express'
+import * as template from 'ui/template'
 
 export let signIn = (req: Request, res: Response) => {
 	const sessionDataKey = req.query.sessionDataKey
@@ -13,9 +13,9 @@ export let signIn = (req: Request, res: Response) => {
 	} else {
 		res.send(
 			renderSignIn({
+				authenticationServiceUrl: config.get('authentication.serviceUrl'),
 				loginFailed,
 				sessionDataKey,
-				authenticationServiceUrl: config.get('authentication.serviceUrl'),
 			})
 		)
 	}
@@ -45,9 +45,9 @@ export interface User {
 }
 
 function renderSignIn(props: SignIn) {
-	return svelte.render('sign-in', props)
+	return template.render('sign-in', props)
 }
 
 function renderProfile(props: User) {
-	return svelte.render('profile', props)
+	return template.render('profile', props)
 }
