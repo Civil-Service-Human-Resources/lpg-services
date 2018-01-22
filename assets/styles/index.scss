@@ -12,7 +12,11 @@
 }
 
 #global-header {
+  .header-global {
+    width: 35% !important;
+  }
   .header-proposition {
+    width: 65% !important;
     text-align: right;
     #proposition-links {
       li {

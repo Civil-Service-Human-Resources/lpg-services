@@ -26,6 +26,10 @@ export let signOut = (req: Request, res: Response) => {
 	res.redirect('/')
 }
 
+export let resetPassword = (req: Request, res: Response) => {
+    res.send(template.render('account/reset-password'))
+}
+
 export let profile = (req: Request, res: Response) => {
 	res.send(renderProfile(req.user))
 }
@@ -45,7 +49,7 @@ export interface User {
 }
 
 function renderSignIn(props: SignIn) {
-	return template.render('sign-in', props)
+	return template.render('account/sign-in', props)
 }
 
 function renderProfile(props: User) {

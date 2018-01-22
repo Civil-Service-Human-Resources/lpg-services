@@ -17,22 +17,22 @@
 
 				<h1 class="heading-large">Sign in</h1>
 
-				<p>If you do not have an account, you can <a href="/register">create one now</a>.</p>
+				<p>If you do not have an account, please <a href="mailto:feedback@cslearning.gov.uk">get in touch to create one</a>.</p>
 
 				<form method="post" action="{{authenticationServiceUrl}}/commonauth" name="userLoginForm" class="push-bottom">
 					<input type="hidden" name="sessionDataKey" value="{{sessionDataKey}}" />
 
 					<div class="form-group">
-						<label for="password" class="form-label">
+						<label for="email-address" class="form-label">
 							Email address
 						</label>
-						<input class="form-control form-control-2-3" name="username" type="email">
+						<input class="form-control form-control-2-3" id="email-address" name="username" type="email">
 					</div>
 					<div class="form-group">
 						<label for="password" class="form-label">
 							Password
 						</label>
-						<input class="form-control form-control-2-3" type="password" name="password">
+						<input class="form-control form-control-2-3" id="password" type="password" name="password">
 					</div>
 					<div>
 						<input type="submit" class="button" value="Continue">
