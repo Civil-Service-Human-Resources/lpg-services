@@ -20,6 +20,7 @@
 		"@types/node-fetch": "1.6.7",
 		"@types/node": "9.3.0",
 		"@types/passport": "0.4.2",
+		"@types/passport-saml": "0.15.5",
 		"@types/session-file-store": "1.2.0",
 		"tslint": "5.9.1",
 		"typescript": "2.6.2"
