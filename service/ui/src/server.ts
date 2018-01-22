@@ -41,17 +41,24 @@ app.use(passport.session())
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
 
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-	console.log(
-		'Error handling request for',
-		req.method,
-		req.url,
-		req.body,
-		'\n',
-		err.stack
-	)
-	res.sendStatus(500)
-})
+app.use(
+	(
+		err: Error,
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction
+	) => {
+		console.log(
+			'Error handling request for',
+			req.method,
+			req.url,
+			req.body,
+			'\n',
+			err.stack
+		)
+		res.sendStatus(500)
+	}
+)
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
@@ -65,6 +72,7 @@ app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
 app.get('/profile', passportConfig.isAuthenticated, userController.profile)
+app.post('/profile', passportConfig.isAuthenticated, userController.updateUser)
 app.get('/search', passportConfig.isAuthenticated, searchController.index)
 
 app.all(
