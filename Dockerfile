@@ -31,7 +31,7 @@ RUN . $NVM_DIR/nvm.sh \
 
 COPY package.json package.json
 # Ensure dev dependencies are install to allow building
-RUN NODE_ENV=development npm install
+RUN NODE_ENV=development npm install --unsafe-perm
 
 COPY . .
 
