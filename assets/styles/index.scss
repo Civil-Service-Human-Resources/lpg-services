@@ -6,3 +6,28 @@
 @import "components/header";
 @import "components/footer";
 
+.push-bottom {
+  margin-bottom: 30px;
+  display: block;
+}
+
+#global-header {
+  .header-proposition {
+    text-align: right;
+    #proposition-links {
+      li {
+        display: inline;
+        border: none;
+        padding: 5px 0;
+        line-height: 1.25;
+        float: none;
+        width: 100%;
+        text-align: left;
+
+        a {
+          margin-left: 15px;
+        }
+      }
+    }
+  }
+}
