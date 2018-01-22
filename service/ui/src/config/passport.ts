@@ -13,10 +13,11 @@ passport.use(
 		},
 		(profile, done) => {
 			done(null, {
-				department: profile['http://wso2.org/claims/department'],
+				id: profile['http://wso2.org/claims/userid'],
 				emailAddress: profile.nameID,
-				grade: profile['http://wso2.org/claims/grade'],
+				department: profile['http://wso2.org/claims/department'],
 				profession: profile['http://wso2.org/claims/profession'],
+				grade: profile['http://wso2.org/claims/grade'],
 			})
 		}
 	)
