@@ -4,6 +4,22 @@ import * as svelte from 'svelte'
 import * as env from 'ui/env'
 import * as vm from 'vm'
 
+interface AST {
+	children: AST[]
+	name: string
+	type: string
+}
+
+interface ParseError {
+	frame: string
+	loc: {
+		column: number
+		line: number
+	}
+	message: string
+	name: string
+}
+
 interface Renderer {
 	render(props?: object): {html: string}
 }
@@ -19,18 +35,17 @@ let pages: {[key: string]: Renderer} = {}
 
 function compile(
 	path: string,
+	source: string,
 	name: string,
 	isComponent?: boolean
 ): Renderer | undefined {
-	let source = fs.readFileSync(path, {encoding: 'utf8'})
 	// Ensure that there aren't any <script> blocks with content.
 	svelte.preprocess(source, {
-		script: (info: any) => {
+		script: (info: {content: string}): {code: string} => {
 			if (info.content) {
-				throw new Error(
-					`ui/svelte: unexpected <script> tag found in ${pagePath}`
-				)
+				throw new Error(`ui/svelte: unexpected <script> tag found in ${path}`)
 			}
+			return {code: ''}
 		},
 	})
 	let componentNames = allComponentNames
@@ -53,22 +68,14 @@ components: {${componentNames}}
 	try {
 		compiled = svelte.compile(source, {
 			css: false,
-			dev: !env.PRODUCTION,
+			dev: false,
 			filename: path,
 			format: 'cjs',
 			generate: 'ssr',
 			name: constructorName,
 		})
 	} catch (err) {
-		if (err.name !== 'ParseError') {
-			throw err
-		}
-		console.log(`Error parsing ${path}:${err.loc.line}:${err.loc.column}`)
-		console.log()
-		console.log(err.frame)
-		console.log()
-		console.log(err.message)
-		console.log()
+		logParseError(path, err)
 		return
 	}
 	return createModule(path, compiled.code, componentNames) as Renderer
@@ -87,9 +94,34 @@ ${code}
 	return module.exports
 }
 
+function gatherComponents(node: AST, seen: Set<string>) {
+	if (node.type === 'Element' && isCapitalised(node.name)) {
+		seen.add(node.name)
+	}
+	if (node.children && node.children.length) {
+		for (const child of node.children) {
+			gatherComponents(child, seen)
+		}
+	}
+}
+
 function getName(ident: string) {
 	ident = ident.split('/').pop()!.replace('-', '')
 	return ident.charAt(0).toUpperCase() + ident.slice(1)
+}
+
+function getDependencies(root: AST) {
+	const seen: Set<string> = new Set()
+	gatherComponents(root, seen)
+	return seen
+}
+
+function isCapitalised(ident: string) {
+	if (!ident) {
+		return false
+	}
+	const char = ident.charCodeAt(0)
+	return char >= 65 && char <= 90
 }
 
 function isFile(path: string) {
@@ -98,6 +130,18 @@ function isFile(path: string) {
 	} catch (err) {
 		return false
 	}
+}
+
+function logParseError(path: string, err: ParseError) {
+	if (err.name !== 'ParseError') {
+		throw err
+	}
+	console.log(`Error parsing ${path}:${err.loc.line}:${err.loc.column}`)
+	console.log()
+	console.log(err.frame)
+	console.log()
+	console.log(err.message)
+	console.log()
 }
 
 function resetCache() {
@@ -110,12 +154,61 @@ function resetCache() {
 	allComponentNames = componentList.join(', ')
 	components = {}
 	pages = {}
+	const reverseDeps: Record<string, Set<string>> = {}
+	const sources: Record<string, [string, string]> = {}
+	// Do a first pass in order to figure out the component dependencies.
 	for (const component of componentList) {
-		components[component] = compile(
-			path.join(componentDir, component + '.html'),
-			component,
-			true
-		)
+		const filepath = path.join(componentDir, component + '.html')
+		const source = fs.readFileSync(filepath, {encoding: 'utf8'})
+		try {
+			const compiled = svelte.compile(source, {
+				css: false,
+				dev: false,
+				filename: filepath,
+				format: 'cjs',
+				generate: 'ssr',
+				name: component,
+				onerror: (err: Error) => {
+					throw err
+				},
+				onwarn: () => {
+					return
+				},
+			})
+			// TODO(tav): Handle cyclical dependencies.
+			for (const dep of getDependencies(compiled.ast.html)) {
+				if (!reverseDeps[dep]) {
+					reverseDeps[dep] = new Set()
+				}
+				reverseDeps[dep].add(component)
+			}
+			sources[component] = [filepath, source]
+		} catch (err) {
+			logParseError(filepath, err)
+		}
+	}
+	// Do a second pass to figure out the right compilation order.
+	const seq: string[] = []
+	for (const component of componentList) {
+		let idx = seq.length
+		const deps = reverseDeps[component]
+		if (deps) {
+			for (const dep of deps) {
+				const depIdx = seq.indexOf(dep)
+				if (depIdx === -1) {
+					continue
+				}
+				if (depIdx < idx) {
+					idx = depIdx
+				}
+			}
+		}
+		seq.splice(idx, 0, component)
+	}
+	// Do a final pass doing the actual Component compilation.
+	for (const component of seq) {
+		const [filepath, source] = sources[component]
+		components[component] = compile(filepath, source, component, true)
 	}
 }
 
@@ -129,7 +222,8 @@ export function render(page: string, props?: object): string {
 				throw new Error(`Could not find a matching .html file for ${page}`)
 			}
 		}
-		mod = compile(pagePath, getName(page))
+		const source = fs.readFileSync(pagePath, {encoding: 'utf8'})
+		mod = compile(pagePath, source, getName(page))
 		if (!mod) {
 			throw new Error(`Could not compile renderer for ${page}`)
 		}
