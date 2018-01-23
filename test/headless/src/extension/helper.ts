@@ -26,9 +26,9 @@ export async function returnElementInnerHtml(
 	return page.$eval(selector, element => element.innerHTML)
 }
 
-export async function returnvalue(
+export async function returnElementValue(
 	selector: string,
 	page: puppeteer.Page
 ): Promise<string> {
-	return page.$eval(selector, element => element.getProperty('value'))
+	return page.$eval(selector, element => element.getAttribute('value'))
 }
