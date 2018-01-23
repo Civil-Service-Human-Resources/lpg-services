@@ -16,5 +16,5 @@ after_success:
 
 deploy:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      echo "TODO: deploy to test"
+      echo "TODO deploy to test"
     fi
