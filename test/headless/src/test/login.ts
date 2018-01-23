@@ -37,7 +37,8 @@ describe('login page elements', () => {
 	})
 
 	it('Should display accont recovery steps when login fails', async () => {
-		await loginToCsl(page, 'username', 'failed')
+		await loginToCsl(page, 'username@test.com', 'failed')
+		await page.waitFor(selectors.loginFailure, {timeout: 5000})
 		expect(
 			await helper.checkElementIsPresent(selectors.loginFailure, page)
 		).toBe(true)
@@ -47,7 +48,7 @@ describe('login page elements', () => {
 		await loginToCsl(page, USERNAME, PASS)
 		await page.waitFor(selectors.loginSucess, {timeout: 9000})
 		expect(
-			await helper.returnElementInnerHtml(selectors.loginSucess, page)
+			await helper.returnElementValue(selectors.loginSucess, page)
 		).toContain(USERNAME)
 	})
 })
