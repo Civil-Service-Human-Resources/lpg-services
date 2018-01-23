@@ -2,7 +2,6 @@ import * as config from 'config'
 import {Request, Response} from 'express'
 import * as template from 'ui/template'
 import * as request from 'request'
-import {updateUser} from '../../dist/controllers/user'
 
 export let signIn = (req: Request, res: Response) => {
 	const sessionDataKey = req.query.sessionDataKey
@@ -29,11 +28,11 @@ export let signOut = (req: Request, res: Response) => {
 }
 
 export let resetPassword = (req: Request, res: Response) => {
-    res.send(template.render('account/reset-password'))
+	res.send(template.render('account/reset-password'))
 }
 
 export let profile = (req: Request, res: Response) => {
-	res.send(renderProfile(req.user))
+	res.send(renderProfile({user: req.user, updateFailed: false}))
 }
 
 export interface SignIn {
@@ -50,12 +49,16 @@ export interface User {
 	grade: string
 }
 
+export interface Profile {
+	user: User
+	updateFailed: boolean
+}
+
 function renderSignIn(props: SignIn) {
 	return template.render('account/sign-in', props)
 }
 
-function renderProfile(props: User) {
-	console.log(props)
+function renderProfile(props: Profile) {
 	return template.render('profile', props)
 }
 
@@ -83,14 +86,19 @@ export let updateUser = (req: Request, res: Response) => {
 	}
 
 	request(options, function(error: Error, response: Response, body: Body) {
+		let updateFailed: boolean = false
 		if (!error && response.statusCode == 200) {
 			let updatedUser = JSON.parse(body).CshrUser
 			updateUserObject(req, updatedUser)
-
-			res.send(renderProfile(req.user))
 		} else {
-			res.send(console.log(error))
+			updateFailed = true
 		}
+		res.send(
+			renderProfile({
+				user: req.user,
+				updateFailed,
+			})
+		)
 	})
 }
 
