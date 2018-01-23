@@ -2,6 +2,7 @@ import * as config from 'config'
 import {Request, Response} from 'express'
 import * as template from 'ui/template'
 import * as request from 'request'
+import {updateUser} from '../../dist/controllers/user'
 
 export let signIn = (req: Request, res: Response) => {
 	const sessionDataKey = req.query.sessionDataKey
@@ -59,31 +60,47 @@ function renderProfile(props: User) {
 }
 
 export let updateUser = (req: Request, res: Response) => {
-	let headers = {
-		'Content-Type': 'application/json',
+	let updateProfileObject = {
+		userName: req.body.userName,
+		CshrUser: {
+			profession: req.body.profession,
+			grade: req.body.grade,
+			department: req.body.department,
+		},
 	}
+
 	let options = {
 		uri:
 			config.get('authentication.serviceUrl') + '/scim2/Users/' + req.user.id,
 		method: 'PUT',
-		headers: headers,
-		body: JSON.stringify(req.body),
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(updateProfileObject),
+		rejectUnauthorized: false, //Jen - TODO: Is there a securer way to do this?
 		auth: {
 			user: config.get('authentication.serviceAdmin'),
 			pass: config.get('authentication.servicePassword'),
 		},
 	}
-	console.log(JSON.stringify(req.body))
-	console.log(options)
+
+	console.log('options: ' + JSON.stringify(options))
+
 	// res.send()
 
-	request(options, function(error: Error, response: Response, body: JSON) {
+	request(options, function(error: Error, response: Response, body: Body) {
 		if (!error && response.statusCode == 200) {
-			console.log('done')
-			console.log(body) // Print the shortened url.
-			res.send(body)
+			console.log(req.user)
+			let updatedUser = JSON.parse(body).CshrUser
+			updateUserObject(req, updatedUser)
+
+			res.send(renderProfile(req.user))
 		} else {
 			res.send(console.log(error))
 		}
 	})
+}
+
+function updateUserObject(req: Express.Request, updatedProfile: User) {
+	req.user.profession = updatedProfile.profession
+	req.user.grade = updatedProfile.grade
+	req.user.department = updatedProfile.department
 }
