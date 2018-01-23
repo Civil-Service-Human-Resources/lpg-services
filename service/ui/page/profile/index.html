@@ -3,8 +3,19 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">Profile</h1>
-                <User :emailAddress :department :profession :grade/>
+                {{#if updateFailed}}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                        Update failed
+                    </h2>
+                    <p>
+                        Update failed, please try again or contact the <a href="mailto:feedback@cslearning.gov.uk">admin.</a>
+                    </p>
+                </div>
+                {{/if}}
+                <User :user/>
             </div>
         </div>
     </Layout>
 </Page>
+
