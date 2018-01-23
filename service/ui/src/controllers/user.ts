@@ -82,13 +82,8 @@ export let updateUser = (req: Request, res: Response) => {
 		},
 	}
 
-	console.log('options: ' + JSON.stringify(options))
-
-	// res.send()
-
 	request(options, function(error: Error, response: Response, body: Body) {
 		if (!error && response.statusCode == 200) {
-			console.log(req.user)
 			let updatedUser = JSON.parse(body).CshrUser
 			updateUserObject(req, updatedUser)
 
