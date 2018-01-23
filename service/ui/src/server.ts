@@ -82,6 +82,7 @@ app.all(
 		failureFlash: true,
 	}),
 	(req, res) => {
+		console.log(res.user)
 		res.redirect('/profile')
 	}
 )
