@@ -1,0 +1,17 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+    docker pull cshr/lpg-ui
+
+install:
+  - cd service/ui && docker build -t cshr/lpg-ui:$TRAVIS_COMMIT .
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      docker push cshr/lpg-ui
+    fi
