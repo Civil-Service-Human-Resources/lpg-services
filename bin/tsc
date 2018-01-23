@@ -27,7 +27,7 @@ try {
 	// Ignore the error
 }
 
-const tsc = proc.spawn(bin, process.argv.slice(2), {cwd: repo})
+const tsc = proc.spawn(bin, process.argv.slice(2))
 
 let str = ''
 
