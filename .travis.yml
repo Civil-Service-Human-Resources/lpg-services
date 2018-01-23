@@ -13,8 +13,6 @@ install:
 after_success:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
     docker push cshr/lpg-ui
-
-deploy:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
       echo "TODO deploy to test";
     fi
