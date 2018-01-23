@@ -29,11 +29,10 @@ RUN . $NVM_DIR/nvm.sh \
   && nvm alias default $NODE_VERSION \
   && nvm use default
 
-COPY service/ui/package.json package.json
-# Ensure dev dependencies are install to allow building
+COPY package.json package.json
 RUN NODE_ENV=development npm install --unsafe-perm
 
-COPY service/ui/. .
+COPY . .
 
 RUN npm run build
 RUN npm run sass

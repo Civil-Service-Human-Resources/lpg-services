@@ -8,7 +8,7 @@ before_install:
     docker pull cshr/lpg-ui
 
 install:
-  - docker build -t cshr/lpg-ui:$TRAVIS_COMMIT -f service/ui/Dockerfile .
+  - cd service/ui && docker build -t cshr/lpg-ui:$TRAVIS_COMMIT .
 
 after_success:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
