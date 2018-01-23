@@ -1,9 +1,7 @@
 *.iml
 .idea
 .sessions
-.cache
 .DS_Store
 README.md
 .gitignore
-.prettierrc.json
 node_modules
