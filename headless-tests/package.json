@@ -25,7 +25,7 @@
 	"repository":
 		"https://github.com/Civil-Service-Human-Resources/lpg-headless-tests",
 	"scripts": {
-		"build": "./bin/tsc",
+		"build": "../bin/tsc",
 		"clean": "rm -rf dist",
 		"lint": "tslint --project tsconfig.json",
 		"test": "jest",
