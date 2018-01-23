@@ -19,16 +19,14 @@ export async function checkElementIsPresent(
 	}, selector)
 }
 
-export async function returnElementInnerHtml(
+export async function returnElementAttribute(
 	selector: string,
+	attri: string,
 	page: puppeteer.Page
 ): Promise<string> {
-	return page.$eval(selector, element => element.innerHTML)
-}
-
-export async function returnElementValue(
-	selector: string,
-	page: puppeteer.Page
-): Promise<string> {
-	return page.$eval(selector, element => element.getAttribute('value'))
+	return page.$eval(
+		selector,
+		(element, attri) => element.getAttribute(attri),
+		attri
+	)
 }

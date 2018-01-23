@@ -6,7 +6,7 @@ declare var browser: puppeteer.Browser
 const timeout = 5000
 const {URL = '', USERNAME = '', PASS = ''} = process.env
 
-describe('login page elements', () => {
+describe('login page functionality', () => {
 	let page: puppeteer.Page
 
 	beforeAll(async () => {
@@ -36,7 +36,19 @@ describe('login page elements', () => {
 		).toBe(true)
 	})
 
-	it('Should display accont recovery steps when login fails', async () => {
+	it('Should display a feedback link with the correct email address', async () => {
+		expect(
+			await helper.checkElementIsPresent(selectors.feedbackLink, page)
+		).toBe(true)
+		const feedbackUrl = await helper.returnElementAttribute(
+			selectors.feedbackLink,
+			'href',
+			page
+		)
+		expect(feedbackUrl).toEqual('mailto:feedback@cslearning.gov.uk')
+	})
+
+	it('Should display login failure message when credentials are incorrect', async () => {
 		await loginToCsl(page, 'username@test.com', 'failed')
 		await page.waitFor(selectors.loginFailure, {timeout: 5000})
 		expect(
@@ -46,9 +58,12 @@ describe('login page elements', () => {
 
 	it('Should login to the CSL portal', async () => {
 		await loginToCsl(page, USERNAME, PASS)
-		await page.waitFor(selectors.loginSucess, {timeout: 9000})
-		expect(
-			await helper.returnElementValue(selectors.loginSucess, page)
-		).toContain(USERNAME)
+		await page.waitFor(selectors.loginSucess, {timeout: 5000})
+		const loggedInUser = await helper.returnElementAttribute(
+			selectors.loginSucess,
+			'value',
+			page
+		)
+		expect(loggedInUser).toEqual(USERNAME)
 	})
 })
