@@ -1,4 +1,5 @@
 *.log
+service/**/src/**/*.js
 .idea
 dist/
 node_modules/

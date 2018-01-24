@@ -31,8 +31,12 @@ export let resetPassword = (req: Request, res: Response) => {
 	res.send(template.render('account/reset-password'))
 }
 
-export let profile = (req: Request, res: Response) => {
+export let editProfile = (req: Request, res: Response) => {
 	res.send(renderProfile({user: req.user, updateFailed: false}))
+}
+
+export let editProfileComplete = (req: Request, res: Response) => {
+	res.send(template.render('profile/edit-success'))
 }
 
 export interface SignIn {
@@ -59,10 +63,10 @@ function renderSignIn(props: SignIn) {
 }
 
 function renderProfile(props: Profile) {
-	return template.render('profile', props)
+	return template.render('profile/edit', props)
 }
 
-export let updateUser = (req: Request, res: Response) => {
+export let updateProfile = (req: Request, res: Response) => {
 	let updateProfileObject = {
 		userName: req.body.userName,
 		CshrUser: {
@@ -86,19 +90,17 @@ export let updateUser = (req: Request, res: Response) => {
 	}
 
 	request(options, (error: Error, response: Response, body: Body) => {
-		let updateFailed: boolean = false
 		if (!error && response.statusCode == 200) {
-			let updatedUser = JSON.parse(body).CshrUser
-			updateUserObject(req, updatedUser)
+			updateUserObject(req, updateProfileObject.CshrUser)
+			res.redirect('/profile-updated')
 		} else {
-			updateFailed = true
+			res.send(
+				renderProfile({
+					user: {...req.user, ...req.body},
+					updateFailed: true,
+				})
+			)
 		}
-		res.send(
-			renderProfile({
-				user: req.user,
-				updateFailed,
-			})
-		)
 	})
 }
 
