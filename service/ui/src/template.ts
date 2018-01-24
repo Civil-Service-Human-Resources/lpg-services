@@ -1,3 +1,4 @@
+import * as express from 'express'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as svelte from 'svelte'
@@ -31,6 +32,7 @@ const pageDir = path.join(rootDir, 'page')
 let allComponentNames = ''
 let componentList: string[] = []
 let components: {[key: string]: Renderer | undefined} = {}
+let currentRequest: express.Request
 let pages: {[key: string]: Renderer} = {}
 
 function compile(
@@ -60,7 +62,10 @@ function compile(
 	source += `
 <script>
 export default {
-components: {${componentNames}}
+components: {${componentNames}},
+data() {
+    return {signedInUser: getCurrentRequest().user}
+}
 }
 </script>
 `
@@ -84,13 +89,13 @@ components: {${componentNames}}
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components) {
+		`(function(module, exports, require, components, getCurrentRequest) {
 const {${componentNames}} = components
 ${code}
 });`,
 		{filename}
 	)
-	wrapper(module, module.exports, require, components)
+	wrapper(module, module.exports, require, components, getCurrentRequest)
 	return module.exports
 }
 
@@ -103,6 +108,10 @@ function gatherComponents(node: AST, seen: Set<string>) {
 			gatherComponents(child, seen)
 		}
 	}
+}
+
+function getCurrentRequest() {
+    return currentRequest
 }
 
 function getName(ident: string) {
@@ -212,8 +221,15 @@ function resetCache() {
 	}
 }
 
-export function render(page: string, props?: object): string {
+export function render(page: string, req: express.Request, props?: object): string {
+
+	if (props.signedInUser) {
+		throw new Error('Attempt to override signedInUser in props')
+	}
+
 	let mod: Renderer | undefined = pages[page]
+	currentRequest = req
+
 	if (!mod) {
 		let pagePath = path.join(pageDir, page + '.html')
 		if (!isFile(pagePath)) {
