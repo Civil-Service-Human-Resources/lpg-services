@@ -5,15 +5,15 @@
     </div>
     <div class="form-group">
         <label class="form-label" for="department">Department</label>
-        <input class="form-control" id="department" name="department" type="text" value="{{user.department}}">
+        <input class="form-control" id="department" name="department" type="text" value="{{user.department || ''}}">
     </div>
     <div class="form-group">
         <label class="form-label" for="profession">Profession</label>
-        <input class="form-control" id="profession" name="profession" type="text" value="{{user.profession}}">
+        <input class="form-control" id="profession" name="profession" type="text" value="{{user.profession || ''}}">
     </div>
     <div class="form-group">
         <label class="form-label" for="grade">Grade</label>
-        <input class="form-control" id="grade" name="grade" type="text" value="{{user.grade}}">
+        <input class="form-control" id="grade" name="grade" type="text" value="{{user.grade || ''}}">
     </div>
     <input type="submit" class="button" value="Continue">
 </form>

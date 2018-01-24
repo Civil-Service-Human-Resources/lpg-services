@@ -82,7 +82,7 @@ app.all(
 		failureFlash: true,
 	}),
 	(req, res) => {
-		res.redirect('/profile')
+		res.redirect('/')
 	}
 )
 
