@@ -1,0 +1,28 @@
+<div class="header-proposition">
+	<div class="content">
+		<a href="#proposition-links" class="menu">
+			Menu
+		</a>
+		<nav id="proposition-menu">
+			<ul id="proposition-links">
+				<li>
+					<a href="/">Home</a>
+				</li>
+				<li>
+					<a href="/profile">Profile</a>
+				</li>
+				<li>
+					<a href="/search">Search</a>
+				</li>
+				<li>
+                    {{#if user}}
+                    <a href="/sign-out">Sign out</a>
+                    {{else}}
+                    <a href="/sign-in">Sign in</a>
+                    {{/if}}
+				</li>
+			</ul>
+		</nav>
+	</div>
+</div>
+
