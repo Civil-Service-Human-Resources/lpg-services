@@ -5,6 +5,7 @@
 		</a>
 		<nav id="proposition-menu">
 			<ul id="proposition-links">
+				{{#if signedInUser}}
 				<li>
 					<a href="/">Home</a>
 				</li>
@@ -15,12 +16,13 @@
 					<a href="/search">Search</a>
 				</li>
 				<li>
-                    {{#if user}}
                     <a href="/sign-out">Sign out</a>
-                    {{else}}
-                    <a href="/sign-in">Sign in</a>
-                    {{/if}}
 				</li>
+				{{else}}
+				<li>
+					<a href="/sign-in">Sign in</a>
+				</li>
+				{{/if}}
 			</ul>
 		</nav>
 	</div>

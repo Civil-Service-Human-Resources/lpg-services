@@ -14,7 +14,7 @@ export let signIn = (req: Request, res: Response) => {
 		res.redirect('/authenticate')
 	} else {
 		res.send(
-			renderSignIn({
+			renderSignIn(req, {
 				authenticationServiceUrl: config.get('authentication.serviceUrl'),
 				loginFailed,
 				sessionDataKey,
@@ -28,15 +28,15 @@ export let signOut = (req: Request, res: Response) => {
 }
 
 export let resetPassword = (req: Request, res: Response) => {
-	res.send(template.render('account/reset-password'))
+	res.send(template.render('account/reset-password', req))
 }
 
 export let editProfile = (req: Request, res: Response) => {
-	res.send(renderProfile({user: req.user, updateFailed: false}))
+	res.send(renderProfile(req, {user: req.user, updateFailed: false}))
 }
 
 export let editProfileComplete = (req: Request, res: Response) => {
-	res.send(template.render('profile/edit-success'))
+	res.send(template.render('profile/edit-success', req))
 }
 
 export interface SignIn {
@@ -58,12 +58,12 @@ export interface Profile {
 	updateFailed: boolean
 }
 
-function renderSignIn(props: SignIn) {
-	return template.render('account/sign-in', {...props, hideNav: true})
+function renderSignIn(req: Request, props: SignIn) {
+	return template.render('account/sign-in', req, props)
 }
 
-function renderProfile(props: Profile) {
-	return template.render('profile/edit', props)
+function renderProfile(req: Request, props: Profile) {
+	return template.render('profile/edit', req, props)
 }
 
 export let updateProfile = (req: Request, res: Response) => {

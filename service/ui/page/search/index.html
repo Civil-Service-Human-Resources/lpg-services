@@ -1,9 +1,9 @@
-<Page title="Search" :user>
+<Page title="Search">
 	<Layout page="search">
 		<div class="grid-row">
 			<div class="column-full">
 				<Find />
-				{{#if emailAddress}}
+				{{#if signedInUser.emailAddress}}
 					<Recommended :emailAddress/>
 				{{else}}
 					<p><a href="/sign-in">Sign in</a> to view your recommended courses</p>
