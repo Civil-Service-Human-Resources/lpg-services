@@ -3,8 +3,8 @@
 		<div class="grid-row">
 			<div class="column-full">
 				<Find />
-				{{#if emailAddress}}
-					<Recommended :emailAddress/>
+				{{#if user}}
+					<Recommended emailAddress="{{user.emailAddress}}"/>
 				{{else}}
 					<p><a href="/sign-in">Sign in</a> to view your recommended courses</p>
 				{{/if}}
