@@ -1,11 +1,12 @@
 import {Request, Response} from 'express'
-import {User} from 'ui/controllers/user'
+import {Profile} from 'ui/controllers/user'
 import * as template from 'ui/template'
 
 export let index = (req: Request, res: Response) => {
-	res.send(renderSearch(req.user))
+	let profile: Profile = {user: req.user}
+	res.send(renderSearch(profile))
 }
 
-function renderSearch(user: User) {
-	return template.render('search', user)
+function renderSearch(props: Profile) {
+	return template.render('search', props)
 }
