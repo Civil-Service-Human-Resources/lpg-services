@@ -1,7 +1,5 @@
-//login page
 import * as puppeteer from 'puppeteer'
 
-//selectors
 export const selectors: {[key: string]: string} = {
 	usernameField: '#email-address',
 	passwordField: '#password',
