@@ -7,10 +7,10 @@ export let index = (req: Request, res: Response) => {
 	if (!req.user.profession) {
 		res.redirect('/profile')
 	} else {
-		res.send(renderSearch(profile))
+		res.send(renderSearch(req, profile))
 	}
 }
 
-function renderSearch(props: Profile) {
-	return template.render('search', props)
+function renderSearch(req: Request, props: Profile) {
+	return template.render('search', req, props)
 }
