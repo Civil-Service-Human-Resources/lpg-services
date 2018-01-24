@@ -5,6 +5,7 @@ import * as puppeteer from 'puppeteer'
 declare var browser: puppeteer.Browser
 const timeout = 5000
 const {URL = '', USERNAME = '', PASS = ''} = process.env
+const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
 
 describe('login page functionality', () => {
 	let page: puppeteer.Page
@@ -45,7 +46,19 @@ describe('login page functionality', () => {
 			'href',
 			page
 		)
-		expect(feedbackUrl).toEqual('mailto:feedback@cslearning.gov.uk')
+		expect(feedbackUrl).toEqual(contactUsEmailAddress)
+	})
+
+	it('Should diplay a link to the user allowing them to get in touch to create account', async () => {
+		expect(
+			await helper.checkElementIsPresent(selectors.getInTouchLink, page)
+		).toBe(true)
+		const contactUsLink = await helper.returnElementAttribute(
+			selectors.getInTouchLink,
+			'href',
+			page
+		)
+		expect(contactUsLink).toEqual(contactUsEmailAddress)
 	})
 
 	it('Should display login failure message when credentials are incorrect', async () => {

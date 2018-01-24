@@ -7,9 +7,10 @@ export const selectors: {[key: string]: string} = {
 	passwordField: '#password',
 	loginButton:
 		'#content > div.main-content > div > div > form > div:nth-child(4) > input',
-	loginSucess: '#emailaddress',
+	loginSucess: '#userName',
 	loginFailure: '#error-summary-heading-example-1',
 	feedbackLink: '#content > div.phase-banner > p > span > a',
+	getInTouchLink: '#content > div.main-content > div > div > p > a',
 }
 
 export async function loginToCsl(
