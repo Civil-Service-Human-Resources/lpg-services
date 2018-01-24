@@ -71,8 +71,17 @@ app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
-app.get('/profile', passportConfig.isAuthenticated, userController.profile)
-app.post('/profile', passportConfig.isAuthenticated, userController.updateUser)
+app.get('/profile', passportConfig.isAuthenticated, userController.editProfile)
+app.post(
+	'/profile',
+	passportConfig.isAuthenticated,
+	userController.updateProfile
+)
+app.get(
+	'/profile-updated',
+	passportConfig.isAuthenticated,
+	userController.editProfileComplete
+)
 app.get('/search', passportConfig.isAuthenticated, searchController.index)
 
 app.all(
