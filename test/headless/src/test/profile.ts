@@ -44,4 +44,10 @@ describe('profile page functionality', () => {
 	it('Should display the grade field', async () => {
 		expect(await helper.checkElementIsPresent(selectors.grade, page)).toBe(true)
 	})
+
+	it('Should display the save profile changes button', async () => {
+		expect(
+			await helper.checkElementIsPresent(selectors.saveProfileButton, page)
+		).toBe(true)
+	})
 })

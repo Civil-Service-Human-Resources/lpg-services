@@ -5,4 +5,5 @@ export const selectors: {[key: string]: string} = {
 	department: '#department',
 	profession: '#profession',
 	grade: '#grade',
+	saveProfileButton: '#content > div.main-content > div > div > form > input',
 }
