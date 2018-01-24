@@ -223,7 +223,7 @@ function resetCache() {
 
 export function render(page: string, req: express.Request, props?: object): string {
 
-	if (props.signedInUser) {
+	if (props && props.signedInUser) {
 		throw new Error('Attempt to override signedInUser in props')
 	}
 
