@@ -3,6 +3,7 @@ import {loginToCsl, selectors} from 'page/login'
 import * as puppeteer from 'puppeteer'
 
 declare var browser: puppeteer.Browser
+
 const timeout = 5000
 const {URL = '', USERNAME = '', PASS = ''} = process.env
 const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'

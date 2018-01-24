@@ -1,9 +1,9 @@
 import * as helper from 'extension/helper'
 import {selectors} from 'page/profile'
-//import {loginToCsl} from 'page/login'
 import * as puppeteer from 'puppeteer'
 
 declare var browser: puppeteer.Browser
+
 const timeout = 5000
 const {URL = ''} = process.env
 
@@ -20,7 +20,7 @@ describe('profile page functionality', () => {
 	})
 
 	it('Should display a feedback link with the correct email address', async () => {
-		//Implement correctly once logout in working
+		// TODO(will): Implement correctly once logout in working
 		const feedbackUrl = await helper.returnElementAttribute(
 			selectors.feedbackLink,
 			'href',
