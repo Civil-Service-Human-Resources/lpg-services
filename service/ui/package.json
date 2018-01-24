@@ -2,7 +2,7 @@
 	"name": "lpg-ui-service",
 	"version": "0.0.1",
 	"scripts": {
-		"build": "tsc",
+		"build": "../../tsc",
 		"clean": "rm -rf dist",
 		"lint": "tslint --project tsconfig.json",
 		"postinstall": "test -e node_modules/ui || ln -s ../dist node_modules/ui",
@@ -10,7 +10,7 @@
 		"server": "node dist/server.js",
 		"start": "npm run sass && node dist/server.js",
 		"test": "jest",
-		"watch": "tsc --watch"
+		"watch": "../../tsc --watch"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
@@ -20,10 +20,7 @@
 		"@types/node-fetch": "1.6.7",
 		"@types/passport": "0.4.2",
 		"@types/passport-saml": "0.15.5",
-		"@types/session-file-store": "1.2.0",
-		"@types/node": "9.3.0",
-		"tslint": "5.9.1",
-		"typescript": "2.6.2"
+		"@types/session-file-store": "1.2.0"
 	},
 	"dependencies": {
 		"compression": "1.7.1",

@@ -1,5 +1,7 @@
 sudo: required
 
+language: node_js
+
 services:
   - docker
 
@@ -8,7 +10,8 @@ install:
     docker pull cshr/lpg-ui
 
 script:
-  - cd service/ui && docker build -t cshr/lpg-ui:$TRAVIS_COMMIT .
+  - cd service/ui && npm run sass && npm run build
+  - docker build -t cshr/lpg-ui:$TRAVIS_COMMIT -f service/ui/Dockerfile .
 
 after_success:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
