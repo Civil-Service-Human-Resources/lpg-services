@@ -16,6 +16,7 @@ module.exports = async function() {
 		args: [
 			'--ignore-certificate-errors',
 			'--ignore-certificate-errors-spki-list ',
+			'--disk-cache-size=0',
 		],
 		headless: false,
 	})
