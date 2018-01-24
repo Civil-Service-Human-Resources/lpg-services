@@ -20,6 +20,18 @@ describe('login page functionality', () => {
 		await page.close()
 	})
 
+	it('Should display the sign-in link with correct url', async () => {
+		const signinLink = await helper.returnElementAttribute(
+			selectors.signinButton,
+			'href',
+			page
+		)
+		expect(
+			await helper.checkElementIsPresent(selectors.signinButton, page)
+		).toBe(true)
+		expect(signinLink).toEqual('/sign-in')
+	})
+
 	it('Should load the username field', async () => {
 		expect(
 			await helper.checkElementIsPresent(selectors.usernameField, page)
