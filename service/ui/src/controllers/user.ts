@@ -2,6 +2,7 @@ import * as config from 'config'
 import {Request, Response} from 'express'
 import * as template from 'ui/template'
 import * as request from 'request'
+import {logout} from 'ui/config/passport'
 
 export let signIn = (req: Request, res: Response) => {
 	const sessionDataKey = req.query.sessionDataKey
@@ -23,8 +24,7 @@ export let signIn = (req: Request, res: Response) => {
 }
 
 export let signOut = (req: Request, res: Response) => {
-	req.logout()
-	res.redirect('/')
+	logout(req, res)
 }
 
 export let resetPassword = (req: Request, res: Response) => {
@@ -55,7 +55,7 @@ export interface Profile {
 }
 
 function renderSignIn(props: SignIn) {
-	return template.render('account/sign-in', props)
+	return template.render('account/sign-in', {...props, hideNav: true})
 }
 
 function renderProfile(props: Profile) {
@@ -85,7 +85,7 @@ export let updateUser = (req: Request, res: Response) => {
 		},
 	}
 
-	request(options, function(error: Error, response: Response, body: Body) {
+	request(options, (error: Error, response: Response, body: Body) => {
 		let updateFailed: boolean = false
 		if (!error && response.statusCode == 200) {
 			let updatedUser = JSON.parse(body).CshrUser
@@ -102,8 +102,7 @@ export let updateUser = (req: Request, res: Response) => {
 	})
 }
 
-function updateUserObject(req: Express.Request, updatedProfile: User) {
-	req.user.profession = updatedProfile.profession
-	req.user.grade = updatedProfile.grade
-	req.user.department = updatedProfile.department
+function updateUserObject(req: Request, updatedProfile: User) {
+	let newUser = {...req.user, ...updatedProfile}
+	req.login(newUser, () => {})
 }
