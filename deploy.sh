@@ -12,6 +12,7 @@ Host	github.com
 	IdentityFile    "$TRAVIS_BUILD_DIR/github"
 	IdentitiesOnly	yes
 EOF
+
 cat ~/.ssh/config
 chmod 600 github
 git clone git@github.com:Civil-Service-Human-Resources/${repo}.git
