@@ -10,10 +10,10 @@ Host	github.com
 	IdentitiesOnly	yes
 EOF
 
+chmod 600 ~/.ssh/config
 git clone git@github.com:Civil-Service-Human-Resources/${repo}.git
 cd lpg-ansible-mvp-services
 git checkout test
-git merge master
 echo "lpgui: $TRAVIS_COMMIT" > group_vars/all/services
 git commit -am "set ${key} version to $TRAVIS_COMMIT"
 git push
