@@ -42,25 +42,6 @@ app.use(passport.session())
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
 
-app.use(
-	(
-		err: Error,
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
-		console.log(
-			'Error handling request for',
-			req.method,
-			req.url,
-			req.body,
-			'\n',
-			err.stack
-		)
-		res.sendStatus(500)
-	}
-)
-
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
@@ -127,6 +108,25 @@ app.get('/catalog.demo', (req, res) => {
 		console.log('Got error with catalog.demo:', err)
 	})
 })
+
+app.use(
+	(
+		err: Error,
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction
+	) => {
+		console.log(
+			'Error handling request for',
+			req.method,
+			req.url,
+			req.body,
+			'\n',
+			err.stack
+		)
+		res.sendStatus(500)
+	}
+)
 
 app.listen(PORT, () => {
 	console.log(`listening on port ${PORT}`)

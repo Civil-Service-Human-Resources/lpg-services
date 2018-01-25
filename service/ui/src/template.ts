@@ -111,7 +111,7 @@ function gatherComponents(node: AST, seen: Set<string>) {
 }
 
 function getCurrentRequest() {
-    return currentRequest
+	return currentRequest
 }
 
 function getName(ident: string) {
@@ -221,8 +221,11 @@ function resetCache() {
 	}
 }
 
-export function render(page: string, req: express.Request, props?: object): string {
-
+export function render(
+	page: string,
+	req: express.Request,
+	props?: object
+): string {
 	if (props && props.signedInUser) {
 		throw new Error('Attempt to override signedInUser in props')
 	}
