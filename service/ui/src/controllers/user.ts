@@ -53,9 +53,15 @@ export interface User {
 	grade: string
 }
 
+interface IdentityServiceUser {
+	userName: string
+	CshrUser: User
+}
+
 export interface Profile {
 	user: User
-	updateFailed: boolean
+	identityServerFailed?: boolean
+	errors?: object
 }
 
 function renderSignIn(req: Request, props: SignIn) {
@@ -66,6 +72,15 @@ function renderProfile(req: Request, props: Profile) {
 	return template.render('profile/edit', req, props)
 }
 
+function tryUpdateProfile = (req: Request, res: Response) => {
+    let errors = validateForm(req)
+    if (errors) {
+        console.log(errors)
+        res.send(renderProfile(req, {user: req.user, errors: errors}))
+    } else {
+    	updateProfile(req, res)
+	}
+}
 export let updateProfile = (req: Request, res: Response) => {
 	let updateProfileObject = {
 		userName: req.body.userName,
@@ -76,6 +91,7 @@ export let updateProfile = (req: Request, res: Response) => {
 		},
 	}
 
+
 	let options = {
 		uri:
 			config.get('authentication.serviceUrl') + '/scim2/Users/' + req.user.id,
@@ -84,8 +100,8 @@ export let updateProfile = (req: Request, res: Response) => {
 		body: JSON.stringify(updateProfileObject),
 		rejectUnauthorized: false, //Jen - TODO: Is there a securer way to do this?
 		auth: {
-			user: config.get('authentication.serviceAdmin'),
-			pass: config.get('authentication.servicePassword'),
+			// user: config.get('authentication.serviceAdmin'),
+			// pass: config.get('authentication.servicePassword'),
 		},
 	}
 
@@ -94,17 +110,37 @@ export let updateProfile = (req: Request, res: Response) => {
 			updateUserObject(req, updateProfileObject.CshrUser)
 			res.redirect('/profile-updated')
 		} else {
-			res.send(
-				renderProfile({
-					user: {...req.user, ...req.body},
-					updateFailed: true,
-				})
-			)
+			res.send(renderProfile(req, {user: req.user, identityServerFailed: true}))
 		}
 	})
 }
 
+
 function updateUserObject(req: Request, updatedProfile: User) {
 	let newUser = {...req.user, ...updatedProfile}
 	req.login(newUser, () => {})
+}
+
+function validateForm(req: request) {
+	let areErrors: boolean
+	let inputsValid = {
+		userName: true,
+		department: true,
+		profession: true,
+		grade: true,
+	}
+	let form = req.body
+	console.log(form)
+
+	for (let input in form) {
+		if (/\S/.test(form[input])) {
+			inputsValid[input] = true
+		} else {
+			areErrors = true
+		}
+	}
+
+	if (areErrors) {
+		return inputsValid
+	}
 }
