@@ -11,8 +11,11 @@ Host	github.com
 EOF
 
 chmod 600 ~/.ssh/config
+ls -la
 git clone git@github.com:Civil-Service-Human-Resources/${repo}.git
+ls -la
 cd lpg-ansible-mvp-services
+ls -la
 git checkout test
 echo "lpgui: $TRAVIS_COMMIT" > group_vars/all/services
 git commit -am "set ${key} version to $TRAVIS_COMMIT"
