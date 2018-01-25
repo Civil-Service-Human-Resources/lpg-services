@@ -75,7 +75,7 @@ app.get('/profile', passportConfig.isAuthenticated, userController.editProfile)
 app.post(
 	'/profile',
 	passportConfig.isAuthenticated,
-	userController.updateProfile
+	userController.tryUpdateProfile
 )
 app.get(
 	'/profile-updated',
