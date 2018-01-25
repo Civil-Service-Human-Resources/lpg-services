@@ -12,7 +12,7 @@ const DIR = path.join(os.tmpdir(), 'jest_puppeteer_global_setup')
 module.exports = async function() {
 	console.log(chalk.green('Setup Puppeteer'))
 	const b = await puppeteer.launch({
-		ignoreHTTPSErrors: false,
+		// ignoreHTTPSErrors: true,
 		args: [
 			'--ignore-certificate-errors',
 			'--ignore-certificate-errors-spki-list ',

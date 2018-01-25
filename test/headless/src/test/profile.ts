@@ -13,6 +13,7 @@ describe('profile page functionality', () => {
 	beforeAll(async () => {
 		page = await browser.newPage()
 		await page.goto(URL)
+		await page.click(selectors.profilePageButton)
 	}, timeout)
 
 	afterAll(async () => {
