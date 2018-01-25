@@ -10,7 +10,7 @@ Host	github.com
 	IdentitiesOnly	yes
 EOF
 
-chmod 600 ~/.ssh/config
+chmod 600 github
 ls -la
 git clone git@github.com:Civil-Service-Human-Resources/${repo}.git
 ls -la
