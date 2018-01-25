@@ -12,10 +12,10 @@ cache:
     - "node_modules"
 
 install:
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-    docker pull cshr/lpg-ui
-  - cd $TRAVIS_BUILD_DIR && npm install
-  - cd $TRAVIS_BUILD_DIR/service/ui && npm install
+#  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+#    docker pull cshr/lpg-ui
+#  - cd $TRAVIS_BUILD_DIR && npm install
+#  - cd $TRAVIS_BUILD_DIR/service/ui && npm install
 
 #script:
 #  - cd $TRAVIS_BUILD_DIR/service/ui && npm run sass && npm run build
