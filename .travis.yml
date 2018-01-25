@@ -33,7 +33,7 @@ install:
   - pwd
   - ls -la
   - chmod +x deploy.sh
-  - deploy.sh lpg-ansible-mvp-services lpgui
+  - ./deploy.sh lpg-ansible-mvp-services lpgui
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_6f6bf00c5309_key -iv $encrypted_6f6bf00c5309_iv
