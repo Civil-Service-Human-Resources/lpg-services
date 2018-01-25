@@ -3,7 +3,7 @@
 repo=${1}
 key=${2}
 
-cat > ~.ssh/config << EOF
+cat > ~/.ssh/config << EOF
 Host	github.com
 	Hostname        github.com
 	IdentityFile    "github"

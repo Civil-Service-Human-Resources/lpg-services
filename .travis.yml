@@ -27,11 +27,7 @@ install:
 #  - if [ "$TRAVIS_BRANCH" == "master" ]; then
 #      echo "TODO deploy to test";
 #    fi
-  - pwd
-  - ls -la
   - cd $TRAVIS_BUILD_DIR
-  - pwd
-  - ls -la
   - chmod +x deploy.sh
   - ./deploy.sh lpg-ansible-mvp-services lpgui
 
