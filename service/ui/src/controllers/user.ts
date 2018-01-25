@@ -32,7 +32,11 @@ export let resetPassword = (req: Request, res: Response) => {
 }
 
 export let editProfile = (req: Request, res: Response) => {
-	res.send(renderProfile(req, {user: req.user, updateFailed: false}))
+	res.send(
+		renderProfile(req, {
+			user: req.user,
+		})
+	)
 }
 
 export let editProfileComplete = (req: Request, res: Response) => {
@@ -40,10 +44,9 @@ export let editProfileComplete = (req: Request, res: Response) => {
 }
 
 export let tryUpdateProfile = (req: Request, res: Response) => {
-	let invalidFields = validateForm(req)
-	if (invalidFields) {
-		console.log(invalidFields)
-		res.send(renderProfile(req, {user: req.user, invalidFields: invalidFields}))
+	let validFields = validateForm(req)
+	if (validFields) {
+		res.send(renderProfile(req, {user: req.user, validFields: validFields}))
 	} else {
 		updateProfile(req, res)
 	}
@@ -63,15 +66,10 @@ export interface User {
 	grade: string
 }
 
-interface IdentityServiceUser {
-	userName: string
-	CshrUser: User
-}
-
 export interface Profile {
 	user: User
 	identityServerFailed?: boolean
-	invalidFields?: object
+	validFields?: object
 }
 
 function renderSignIn(req: Request, props: SignIn) {
@@ -121,7 +119,7 @@ function updateUserObject(req: Request, updatedProfile: User) {
 }
 
 function validateForm(req: request) {
-	let areErrors: boolean
+	let areErrors = false
 	let validInputs = {
 		userName: true,
 		department: true,
@@ -129,12 +127,10 @@ function validateForm(req: request) {
 		grade: true,
 	}
 	let form = req.body
-	console.log(form)
 
 	for (let input in form) {
 		if (!/\S/.test(form[input])) {
 			validInputs[input] = false
-		} else {
 			areErrors = true
 		}
 	}
