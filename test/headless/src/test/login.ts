@@ -12,6 +12,8 @@ describe('login page functionality', () => {
 	let page: puppeteer.Page
 
 	beforeAll(async () => {
+		// const session = await helper.getSession('login')
+		// page = await session.newPage()
 		page = await browser.newPage()
 		await page.goto(URL)
 	}, timeout)
@@ -84,6 +86,8 @@ describe('login page functionality', () => {
 
 	it('Should login to the CSL portal', async () => {
 		await loginToCsl(page, USERNAME, PASS)
+		await page.waitFor(selectors.profilePageButton, timeout)
+		await page.click(selectors.profilePageButton)
 		await page.waitFor(selectors.loginSucess, {timeout: 5000})
 		const loggedInUser = await helper.returnElementAttribute(
 			selectors.loginSucess,
