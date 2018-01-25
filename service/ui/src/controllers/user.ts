@@ -39,6 +39,16 @@ export let editProfileComplete = (req: Request, res: Response) => {
 	res.send(template.render('profile/edit-success', req))
 }
 
+export let tryUpdateProfile = (req: Request, res: Response) => {
+	let invalidFields = validateForm(req)
+	if (invalidFields) {
+		console.log(invalidFields)
+		res.send(renderProfile(req, {user: req.user, invalidFields: invalidFields}))
+	} else {
+		updateProfile(req, res)
+	}
+}
+
 export interface SignIn {
 	loginFailed: boolean
 	sessionDataKey: string
@@ -61,7 +71,7 @@ interface IdentityServiceUser {
 export interface Profile {
 	user: User
 	identityServerFailed?: boolean
-	errors?: object
+	invalidFields?: object
 }
 
 function renderSignIn(req: Request, props: SignIn) {
@@ -72,15 +82,6 @@ function renderProfile(req: Request, props: Profile) {
 	return template.render('profile/edit', req, props)
 }
 
-function tryUpdateProfile = (req: Request, res: Response) => {
-    let errors = validateForm(req)
-    if (errors) {
-        console.log(errors)
-        res.send(renderProfile(req, {user: req.user, errors: errors}))
-    } else {
-    	updateProfile(req, res)
-	}
-}
 export let updateProfile = (req: Request, res: Response) => {
 	let updateProfileObject = {
 		userName: req.body.userName,
@@ -91,7 +92,6 @@ export let updateProfile = (req: Request, res: Response) => {
 		},
 	}
 
-
 	let options = {
 		uri:
 			config.get('authentication.serviceUrl') + '/scim2/Users/' + req.user.id,
@@ -100,8 +100,8 @@ export let updateProfile = (req: Request, res: Response) => {
 		body: JSON.stringify(updateProfileObject),
 		rejectUnauthorized: false, //Jen - TODO: Is there a securer way to do this?
 		auth: {
-			// user: config.get('authentication.serviceAdmin'),
-			// pass: config.get('authentication.servicePassword'),
+			user: config.get('authentication.serviceAdmin'),
+			pass: config.get('authentication.servicePassword'),
 		},
 	}
 
@@ -115,7 +115,6 @@ export let updateProfile = (req: Request, res: Response) => {
 	})
 }
 
-
 function updateUserObject(req: Request, updatedProfile: User) {
 	let newUser = {...req.user, ...updatedProfile}
 	req.login(newUser, () => {})
@@ -123,7 +122,7 @@ function updateUserObject(req: Request, updatedProfile: User) {
 
 function validateForm(req: request) {
 	let areErrors: boolean
-	let inputsValid = {
+	let validInputs = {
 		userName: true,
 		department: true,
 		profession: true,
@@ -133,14 +132,14 @@ function validateForm(req: request) {
 	console.log(form)
 
 	for (let input in form) {
-		if (/\S/.test(form[input])) {
-			inputsValid[input] = true
+		if (!/\S/.test(form[input])) {
+			validInputs[input] = false
 		} else {
 			areErrors = true
 		}
 	}
 
 	if (areErrors) {
-		return inputsValid
+		return validInputs
 	}
 }
