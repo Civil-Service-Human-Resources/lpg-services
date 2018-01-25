@@ -50,4 +50,16 @@ describe('profile page functionality', () => {
 			await helper.checkElementIsPresent(selectors.saveProfileButton, page)
 		).toBe(true)
 	})
+
+	it('Should display a sign-out button with correct url', async () => {
+		const signoutLink = await helper.returnElementAttribute(
+			selectors.signoutButton,
+			'href',
+			page
+		)
+		expect(
+			await helper.checkElementIsPresent(selectors.signoutButton, page)
+		).toBe(true)
+		expect(signoutLink).toEqual('/sign-out')
+	})
 })

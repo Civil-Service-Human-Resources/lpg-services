@@ -2,7 +2,7 @@
 	"name": "lpg-ui-service",
 	"version": "0.0.1",
 	"scripts": {
-		"build": "../../tsc",
+		"build": "../../bin/tsc",
 		"clean": "rm -rf dist",
 		"lint": "tslint --project tsconfig.json",
 		"postinstall": "test -e node_modules/ui || ln -s ../dist node_modules/ui",
@@ -10,7 +10,7 @@
 		"server": "node dist/server.js",
 		"start": "npm run sass && node dist/server.js",
 		"test": "jest",
-		"watch": "../../tsc --watch"
+		"watch": "../../bin/tsc --watch"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",

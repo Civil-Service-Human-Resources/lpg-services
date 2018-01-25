@@ -1,17 +1,29 @@
 sudo: required
-language: node_js
-services:
-- docker
-#install:
-#- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; docker pull cshr/lpg-ui
-script:
-#- cd service/ui && npm run sass && npm run build
-#- docker build -t cshr/lpg-ui:$TRAVIS_COMMIT -f service/ui/Dockerfile .
-#- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; docker push cshr/lpg-ui
-#- if [ "$TRAVIS_BRANCH" == "master" ]; then echo "TODO deploy to test"; fi
-- chmod +x deploy.sh
-- deploy.sh lpg-ansible-mvp-services lpgui
 
-before_install:
-- openssl aes-256-cbc -K $encrypted_6f6bf00c5309_key -iv $encrypted_6f6bf00c5309_iv
-  -in github.enc -out github -d
+language: node_js
+node_js:
+  - "9"
+
+services:
+  - docker
+
+cache:
+  directories:
+    - "node_modules"
+
+install:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+    docker pull cshr/lpg-ui
+  - cd $TRAVIS_BUILD_DIR && npm install
+  - cd $TRAVIS_BUILD_DIR/service/ui && npm install
+
+script:
+  - cd $TRAVIS_BUILD_DIR/service/ui && npm run sass && npm run build
+  - cd $TRAVIS_BUILD_DIR && docker build -t cshr/lpg-ui:$TRAVIS_COMMIT -f service/ui/Dockerfile .
+
+after_success:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+    docker push cshr/lpg-ui
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      echo "TODO deploy to test";
+    fi

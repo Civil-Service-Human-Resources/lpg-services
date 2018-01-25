@@ -9,6 +9,7 @@ export const selectors: {[key: string]: string} = {
 	loginFailure: '#error-summary-heading-example-1',
 	feedbackLink: '#content > div.phase-banner > p > span > a',
 	getInTouchLink: '#content > div.main-content > div > div > p > a',
+	signinButton: '#proposition-links > li:nth-child(4) > a',
 }
 
 export async function loginToCsl(
