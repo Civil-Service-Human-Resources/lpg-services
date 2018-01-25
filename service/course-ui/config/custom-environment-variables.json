@@ -1,0 +1,15 @@
+{
+  "session": {
+    "secret": "SESSION_SECRET"
+  },
+  "authentication": {
+    "serviceUrl": "AUTHENTICATION_SERVICE_URL"
+  },
+  "xapi": {
+    "url": "XAPI_URL",
+    "auth": {
+      "user": "XAPI_USER",
+      "pass": "XAPI_PASS"
+    }
+  }
+}

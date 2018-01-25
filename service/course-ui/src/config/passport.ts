@@ -7,18 +7,15 @@ const strategy = new Strategy(
 	{
 		acceptedClockSkewMs: -1,
 		entryPoint: `${config.get('authentication.serviceUrl')}/samlsso`,
-		issuer: 'lpg-ui',
+		issuer: 'lpg-course-ui',
 		path: '/authenticate',
 	},
 	(profile, done) => {
 		done(null, {
-			department: profile['http://wso2.org/claims/department'],
 			emailAddress: profile.nameID,
-			grade: profile['http://wso2.org/claims/grade'],
 			id: profile['http://wso2.org/claims/userid'],
 			nameID: profile.nameID,
 			nameIDFormat: profile.nameIDFormat,
-			profession: profile['http://wso2.org/claims/profession'],
 			sessionIndex: profile.sessionIndex,
 		})
 	}
@@ -52,5 +49,5 @@ export let isAuthenticated = (
 	if (req.isAuthenticated()) {
 		return next()
 	}
-	res.redirect('/sign-in')
+	res.redirect('/authenticate')
 }
