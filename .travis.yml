@@ -30,6 +30,8 @@ install:
   - pwd
   - ls -la
   - cd $TRAVIS_BUILD_DIR
+  - pwd
+  - ls -la
   - chmod +x deploy.sh
   - deploy.sh lpg-ansible-mvp-services lpgui
 
