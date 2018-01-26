@@ -1,0 +1,25 @@
+version: "3.4"
+services:
+  dgraph-server:
+    command: ["dgraph", "server", "--memory_mb", "2048", "--my", "dgraph-server:7080", "--zero", "dgraph-zero:5080"]
+    depends_on:
+      - dgraph-zero
+    image: dgraph/dgraph@sha256:435646c5fc42b7da3879203a6c1d8f246b4181843aed4df6e2afd9cdc11efa30
+    ports:
+      - 8080:8080
+      - 9080:9080
+    restart: on-failure
+  dgraph-viewer:
+    command: ["dgraph-ratel"]
+    depends_on:
+      - dgraph-server
+    image: dgraph/dgraph@sha256:435646c5fc42b7da3879203a6c1d8f246b4181843aed4df6e2afd9cdc11efa30
+    ports:
+      - 8081:8081
+  dgraph-zero:
+    command: ["dgraph", "zero", "--my", "dgraph-zero:5080", "--port_offset", "-2000"]
+    image: dgraph/dgraph@sha256:435646c5fc42b7da3879203a6c1d8f246b4181843aed4df6e2afd9cdc11efa30
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
