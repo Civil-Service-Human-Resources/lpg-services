@@ -25,6 +25,7 @@
 	"dependencies": {
 		"compression": "1.7.1",
 		"config": "1.29.0",
+		"dgraph-js": "1.0.1",
 		"express": "4.16.2",
 		"express-session": "1.15.6",
 		"express-validator": "4.3.0",
