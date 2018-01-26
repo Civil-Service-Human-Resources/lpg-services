@@ -8,11 +8,12 @@ import * as passport from 'passport'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
-import * as homeController from 'ui/controllers/home'
-import * as userController from 'ui/controllers/user'
-import * as searchController from 'ui/controllers/search'
-
 import * as passportConfig from 'ui/config/passport'
+import * as homeController from 'ui/controllers/home'
+import * as searchController from 'ui/controllers/search'
+import * as userController from 'ui/controllers/user'
+import * as catalog from 'ui/service/catalog'
+import * as elko from 'ui/service/elko'
 
 const {PORT = 3001} = process.env
 
@@ -87,13 +88,45 @@ app.get('/search', passportConfig.isAuthenticated, searchController.index)
 app.all(
 	'/authenticate',
 	passport.authenticate('saml', {
-		failureRedirect: '/',
 		failureFlash: true,
+		failureRedirect: '/',
 	}),
 	(req, res) => {
 		res.redirect('/')
 	}
 )
+
+const SCHEMA = `tags: [string] @index(exact) .
+title: string @index(fulltext) .
+uri: string .
+`
+
+async function catalogDemo(req: express.Request, res: express.Response) {
+	await catalog.wipe(elko.context())
+	await catalog.setSchema(elko.context(), {schema: SCHEMA})
+	for (const [title, tags] of Object.entries({
+		Alice: ['david', 'jen'],
+		Reia: ['alice', 'tav'],
+		Zeno: ['alice', 'tav'],
+	})) {
+		const id = await catalog.add(elko.context(), {
+			entry: {tags, title, uri: 'family'},
+		})
+		console.log('Created:', id)
+	}
+	const resp = await catalog.search(elko.context(), {
+		// after: '0x01',
+		first: 1,
+		tags: ['alice', 'david', 'tav'],
+	})
+	res.send(JSON.stringify(resp))
+}
+
+app.get('/catalog.demo', (req, res) => {
+	catalogDemo(req, res).catch((err: Error) => {
+		console.log('Got error with catalog.demo:', err)
+	})
+})
 
 app.listen(PORT, () => {
 	console.log(`listening on port ${PORT}`)
