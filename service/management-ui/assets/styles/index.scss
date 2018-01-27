@@ -1,0 +1,38 @@
+@import "custom";
+@import "common/variables";
+@import "common/utils";
+@import "common/global";
+
+@import "components/header";
+@import "components/footer";
+@import "components/related-items";
+
+.push-bottom {
+  margin-bottom: 30px;
+  display: block;
+}
+
+#global-header {
+  .header-global {
+    width: 35% !important;
+  }
+  .header-proposition {
+    width: 65% !important;
+    text-align: right;
+    #proposition-links {
+      li {
+        display: inline;
+        border: none;
+        padding: 5px 0;
+        line-height: 1.25;
+        float: none;
+        width: 100%;
+        text-align: left;
+
+        a {
+          margin-left: 15px;
+        }
+      }
+    }
+  }
+}

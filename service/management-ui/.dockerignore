@@ -1,0 +1,7 @@
+*.iml
+.idea
+.sessions
+.DS_Store
+README.md
+.gitignore
+node_modules
