@@ -1,7 +1,7 @@
 import * as dgraph from 'dgraph-js'
 import * as grpc from 'grpc'
-import * as api from 'ui/service/catalog/api'
-import * as elko from 'ui/service/elko'
+import * as api from 'management-ui/service/catalog/api'
+import * as elko from 'management-ui/service/elko'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -42,6 +42,7 @@ export async function search(
 	for (const tag of req.tags) {
 		const query = `query all($tag: string) {
 			entries(func: eq(tags, $tag)) {
+				shortDescription
 				tags
 				title
 				uid
@@ -85,6 +86,64 @@ export async function search(
 	}
 	for (const info of results) {
 		const entry = info[2]
+		if (include) {
+			resp.push(entry)
+		} else {
+			if (entry.uid === after) {
+				include = true
+			}
+			continue
+		}
+		if (first) {
+			count += 1
+			if (count === first) {
+				break
+			}
+		}
+	}
+	return {entries: resp}
+}
+
+export async function listAll(
+	ctx: elko.Context,
+	req: api.SearchRequest
+): Promise<api.SearchResponse> {
+	const query = `{
+		entries(func: ge(count(tags), 1)) {
+			tags
+			title
+			shortDescription
+			uid
+			uri
+		}
+	}`
+	const qresp = await client.newTxn().query(query)
+	const results = qresp.getJson().entries
+
+	results.sort(
+		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
+			if (b[0] > a[0]) {
+				return 1
+			} else if (b[0] < a[0]) {
+				return -1
+			}
+			if (b[1] > a[1]) {
+				return 1
+			} else if (b[1] < a[1]) {
+				return -1
+			}
+			return 0
+		}
+	)
+
+	const {after, first} = req
+	const resp: api.Entry[] = []
+	let count = 0
+	let include = true
+	if (after) {
+		include = false
+	}
+	for (const entry of results) {
 		if (include) {
 			resp.push(entry)
 		} else {
