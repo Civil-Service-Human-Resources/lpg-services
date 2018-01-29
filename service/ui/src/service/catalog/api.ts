@@ -3,6 +3,7 @@ export interface Entry {
 	title?: string
 	uid?: string
 	uri?: string
+	shortDescription?: string
 }
 
 export interface SearchRequest {

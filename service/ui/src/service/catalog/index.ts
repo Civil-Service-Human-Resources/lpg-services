@@ -1,7 +1,7 @@
 import * as dgraph from 'dgraph-js'
 import * as grpc from 'grpc'
-import * as api from 'management-ui/service/catalog/api'
-import * as elko from 'management-ui/service/elko'
+import * as api from 'ui/service/catalog/api'
+import * as elko from 'ui/service/elko'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -21,6 +21,7 @@ export async function add(ctx: elko.Context, {entry}: {entry: api.Entry}) {
 			tags: entry.tags || [],
 			title: entry.title || '',
 			uri: entry.uri || '',
+			shortDescription: entry.shortDescription || '',
 		})
 		mu.setCommitNow(true)
 		const assigned = await txn.mutate(mu)
