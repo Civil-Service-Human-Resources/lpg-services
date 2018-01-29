@@ -1,8 +1,0 @@
-{
-  "session": {
-    "secret": "SESSION_SECRET"
-  },
-  "authentication": {
-    "serviceUrl": "AUTHENTICATION_SERVICE_URL"
-  }
-}

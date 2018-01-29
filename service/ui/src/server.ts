@@ -14,6 +14,8 @@ import * as homeController from 'ui/controllers/home'
 import * as searchController from 'ui/controllers/search'
 import * as userController from 'ui/controllers/user'
 import * as xApiController from 'ui/controllers/xapi'
+import * as courseController from 'ui/controllers/course'
+import * as coursePlayerController from 'ui/controllers/course/player'
 
 const {PORT = 3001} = process.env
 
@@ -65,6 +67,28 @@ i18n.configure(app)
 app.get('/learning-plan', searchController.listAllCourses)
 
 app.all(/^\/xapi\/.+/, passport.isAuthenticated, xApiController.proxy)
+app.get(
+	/.*Scorm\.js/,
+	passport.isAuthenticated,
+	coursePlayerController.scormApi
+)
+app.get(
+	/.*portal_overrides\.js/,
+	passport.isAuthenticated,
+	coursePlayerController.portalOverrides
+)
+
+app.get(
+	'/courses/:courseId',
+	passport.isAuthenticated,
+    courseController.display
+)
+
+app.use(
+	'/courses/:courseId/do',
+	passport.isAuthenticated,
+	coursePlayerController.play
+)
 
 app.use(
 	(

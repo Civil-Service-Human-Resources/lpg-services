@@ -14,6 +14,7 @@
 		"watch": "../../bin/tsc --watch"
 	},
 	"devDependencies": {
+		"@types/aws-sdk": "^2.7.0",
 		"@types/compression": "0.0.35",
 		"@types/express-session": "1.15.6",
 		"@types/lusca": "1.5.0",
@@ -23,8 +24,10 @@
 		"@types/session-file-store": "1.2.0"
 	},
 	"dependencies": {
+		"aws-sdk": "^2.188.0",
 		"compression": "1.7.1",
 		"express": "4.16.2",
+		"express-fileupload": "^0.4.0",
 		"express-session": "1.15.6",
 		"express-validator": "4.3.0",
 		"govuk-elements-sass": "3.1.2",
@@ -36,7 +39,12 @@
 		"node-sass": "4.7.2",
 		"passport": "0.3.2",
 		"passport-saml": "0.32.1",
+		"request": "^2.83.0",
+		"request-promise": "^4.2.2",
 		"session-file-store": "1.2.0",
-		"svelte": "1.49.1"
+		"streamifier": "^0.1.1",
+		"svelte": "1.49.1",
+		"unzip": "^0.1.11",
+		"xml2js": "^0.4.19"
 	}
 }
