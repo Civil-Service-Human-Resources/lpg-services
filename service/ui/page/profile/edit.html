@@ -3,6 +3,7 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">Profile</h1>
+                {{signedInUser.id}}
                 {{#if identityServerFailed || validFields || !signedInUser.department || !signedInUser.profession || !signedInUser.grade}}
 
 
