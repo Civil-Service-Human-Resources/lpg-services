@@ -35,6 +35,7 @@ export let editProfile = (req: Request, res: Response) => {
 	res.send(
 		renderProfile(req, {
 			user: req.user,
+			validFields: true,
 		})
 	)
 }
@@ -46,7 +47,7 @@ export let editProfileComplete = (req: Request, res: Response) => {
 export let tryUpdateProfile = (req: Request, res: Response) => {
 	let validFields = validateForm(req)
 	if (validFields) {
-		res.send(renderProfile(req, {user: validFields, validFields: validFields}))
+		res.send(renderProfile(req, {user: validFields, validFields: false}))
 	} else {
 		updateProfile(req, res)
 	}
@@ -59,6 +60,7 @@ export interface SignIn {
 }
 
 export interface User {
+	id: string
 	email: string
 	department: string
 	profession: string
@@ -68,7 +70,7 @@ export interface User {
 export interface Profile {
 	user: User
 	identityServerFailed?: boolean
-	validFields?: object
+	validFields?: boolean
 }
 
 function renderSignIn(req: Request, props: SignIn) {
@@ -107,7 +109,12 @@ export let updateProfile = (req: Request, res: Response) => {
 			updateUserObject(req, updateProfileObject.CshrUser)
 			res.redirect('/profile-updated')
 		} else {
-			res.send(renderProfile(req, {user: req.user, identityServerFailed: true}))
+			res.send(
+				renderProfile(req, {
+					user: req.user,
+					identityServerFailed: true,
+				})
+			)
 		}
 	})
 }
@@ -121,7 +128,6 @@ function validateForm(req: request) {
 	let areErrors = false
 	let form = req.body
 	let validInputs = {
-		emailAddress: form.userName,
 		department: form.department,
 		profession: form.profession,
 		grade: form.grade,
