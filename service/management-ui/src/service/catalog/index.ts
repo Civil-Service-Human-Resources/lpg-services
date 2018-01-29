@@ -1,7 +1,7 @@
 import * as dgraph from 'dgraph-js'
 import * as grpc from 'grpc'
 import * as api from 'management-ui/service/catalog/api'
-import * as elko from 'ui/service/elko'
+import * as elko from 'management-ui/service/elko'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -107,7 +107,6 @@ export async function listAll(
 	ctx: elko.Context,
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
-
 	const query = `{
 		entries(func: ge(count(tags), 1)) {
 			tags
