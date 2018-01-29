@@ -1,11 +1,32 @@
+
 <Page title="Search">
 	<Layout page="search">
 		<div class="grid-row">
 			<div class="column-full">
-				<Find />
-				{{#if signedInUser}}
-					<Recommended/>
-				{{else}}
+			    <h2 class="heading-medium">Welcome back, {{signedInUser.emailAddress}}</h2>
+                <h1 class="heading-large">Your learning plan</h1>
+
+                <h2 class="heading-small">Required learning</h2>
+                <ul>
+                    {{#each mandatory as course}}
+                    <li>
+                        <Course :course/>
+                    </li>
+                    {{/each}}
+                </ul>
+
+                <h2 class="heading-small">Learning to consider</h2>
+                <ul>
+                    {{#each suggested as course}}
+                    <li>
+                        <Course :course/>
+                    </li>
+                    {{/each}}
+                </ul>
+
+
+
+				{{#if !signedInUser}}
 					<p><a href="/sign-in">Sign in</a> to view your recommended courses</p>
 				{{/if}}
 			</div>
