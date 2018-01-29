@@ -46,7 +46,7 @@ export let editProfileComplete = (req: Request, res: Response) => {
 export let tryUpdateProfile = (req: Request, res: Response) => {
 	let validFields = validateForm(req)
 	if (validFields) {
-		res.send(renderProfile(req, {user: req.user, validFields: validFields}))
+		res.send(renderProfile(req, {user: validFields, validFields: validFields}))
 	} else {
 		updateProfile(req, res)
 	}
@@ -59,7 +59,6 @@ export interface SignIn {
 }
 
 export interface User {
-	id: string
 	email: string
 	department: string
 	profession: string
@@ -120,13 +119,13 @@ function updateUserObject(req: Request, updatedProfile: User) {
 
 function validateForm(req: request) {
 	let areErrors = false
-	let validInputs = {
-		userName: true,
-		department: true,
-		profession: true,
-		grade: true,
-	}
 	let form = req.body
+	let validInputs = {
+		emailAddress: form.userName,
+		department: form.department,
+		profession: form.profession,
+		grade: form.grade,
+	}
 
 	for (let input in form) {
 		if (!/\S/.test(form[input])) {
