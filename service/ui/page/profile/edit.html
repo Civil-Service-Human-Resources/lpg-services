@@ -3,8 +3,7 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">Profile</h1>
-
-                {{#if identityServerFailed || validFields || !signedInUser.department}}
+                {{#if identityServerFailed || validFields || !signedInUser.department || !signedInUser.profession || !signedInUser.grade}}
 
 
                     <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
@@ -20,7 +19,7 @@
                                 Form error. Fields cannot be empty.
                             {{/if}}
                         </p>
-                        {{#if !signedInUser.department }}
+                        {{#if !signedInUser.department || !signedInUser.profession || !signedInUser.grade }}
                         <p>
                             To view learning opportunities, you must complete your profile.
                         </p>
