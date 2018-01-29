@@ -9,6 +9,12 @@ function set<T>(defaultValue: T, envValues: Record<string, T> = {}): T {
 	return val
 }
 
+export const AWS = set({
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    region: process.env.REGION || 'eu-west-2',
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+})
+
 export const AUTHENTICATION = set({
 	serviceAdmin: 'admin@cslearning.gov.uk',
 	servicePassword: 'admin',

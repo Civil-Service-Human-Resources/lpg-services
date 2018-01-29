@@ -1,14 +1,17 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
+import * as fileUpload from 'express-fileupload'
 import * as session from 'express-session'
 import * as config from 'lib/config'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
-import * as courseController from 'management-ui/controllers/course'
 import * as homeController from 'management-ui/controllers/home'
+import * as displayCourseController from 'management-ui/controllers/course/display'
+import * as editCourseController from 'management-ui/controllers/course/edit'
+import * as resetCourseController from 'management-ui/controllers/course/reset'
 
 const {PORT = 3003} = process.env
 
@@ -34,6 +37,7 @@ app.enable('trust proxy')
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
 
+app.use(fileUpload())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
@@ -42,13 +46,14 @@ app.use(compression({threshold: 0}))
 app.use(serveStatic('assets'))
 
 app.get('/', homeController.index)
-app.get('/courses', courseController.index)
-app.get('/courses/add', courseController.editCourse)
-app.post('/courses/add', courseController.doEditCourse)
-app.get('/courses/reset', courseController.resetCourses)
-app.get('/courses/:courseId/edit', courseController.editCourse)
-app.post('/courses/:courseId/edit', courseController.doEditCourse)
-app.get('/courses/:courseId', courseController.displayCourse)
+app.get('/courses', displayCourseController.index)
+app.get('/courses/add', editCourseController.addCourse)
+app.post('/courses/add', editCourseController.doAddCourse)
+app.get('/courses/reset', resetCourseController.reset)
+app.param('courseId', editCourseController.loadCourse)
+app.get('/courses/:courseId/edit', editCourseController.editCourse)
+app.post('/courses/:courseId/edit', editCourseController.doEditCourse)
+app.get('/courses/:courseId', displayCourseController.displayCourse)
 
 app.use(
 	(
