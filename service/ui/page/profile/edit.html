@@ -3,11 +3,11 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">Profile</h1>
-                {{#if identityServerFailed || user || !signedInUser.department || !signedInUser.profession || !signedInUser.grade}}
+                {{#if identityServerFailed || !validFields || !signedInUser.department || !signedInUser.profession || !signedInUser.grade}}
 
 
                     <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-                        {{#if identityServerFailed || user }}
+                        {{#if identityServerFailed || !validFields }}
                         <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                             Update failed
                         </h2>
@@ -15,7 +15,7 @@
                         <p>
                             {{#if identityServerFailed}}
                                 Server error. Update failed, please try again or contact the <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>
-                            {{elseif user}}
+                            {{elseif !validFields}}
                                 Form error. Fields cannot be empty.
                             {{/if}}
                         </p>
