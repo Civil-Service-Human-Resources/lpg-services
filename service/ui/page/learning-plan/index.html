@@ -7,6 +7,8 @@
                 <h1 class="heading-large">Your learning plan</h1>
 
                 <h2 class="heading-small">Required learning</h2>
+
+                {{#if mandatory.length}}
                 <ul>
                     {{#each mandatory as course}}
                     <li>
@@ -14,8 +16,15 @@
                     </li>
                     {{/each}}
                 </ul>
+                {{else}}
+                <p>No mandatory courses to show.</p>
+                {{/if}}
+
+
 
                 <h2 class="heading-small">Learning to consider</h2>
+
+                {{#if suggested.length}}
                 <ul>
                     {{#each suggested as course}}
                     <li>
@@ -23,6 +32,9 @@
                     </li>
                     {{/each}}
                 </ul>
+                {{else}}
+                <p>No suggested courses to show.</p>
+                {{/if}}
 
 
 
