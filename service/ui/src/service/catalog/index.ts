@@ -1,7 +1,7 @@
 import * as dgraph from 'dgraph-js'
 import * as grpc from 'grpc'
-import * as api from 'ui/service/catalog/api'
-import * as elko from 'ui/service/elko'
+import * as api from 'management-ui/service/catalog/api'
+import * as elko from 'management-ui/service/elko'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -18,10 +18,10 @@ export async function add(ctx: elko.Context, {entry}: {entry: api.Entry}) {
 	try {
 		const mu = new dgraph.Mutation()
 		mu.setSetJson({
+			shortDescription: entry.shortDescription || '',
 			tags: entry.tags || [],
 			title: entry.title || '',
 			uri: entry.uri || '',
-			shortDescription: entry.shortDescription || '',
 		})
 		mu.setCommitNow(true)
 		const assigned = await txn.mutate(mu)
@@ -43,7 +43,6 @@ export async function search(
 	for (const tag of req.tags) {
 		const query = `query all($tag: string) {
 			entries(func: eq(tags, $tag)) {
-				shortDescription
 				tags
 				title
 				uid
@@ -105,21 +104,36 @@ export async function search(
 	return {entries: resp}
 }
 
+function u8ToStr(arr) {
+	var buf = Buffer.from(arr.buffer).toString()
+	if (arr.byteLength !== arr.buffer.byteLength) {
+		buf = buf.slice(arr.byteOffset, arr.byteOffset + arr.byteLength)
+	}
+	return buf.toString()
+}
+
 export async function listAll(
 	ctx: elko.Context,
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
 	const query = `{
 		entries(func: ge(count(tags), 1)) {
+			shortDescription
 			tags
 			title
-			shortDescription
 			uid
 			uri
 		}
 	}`
 	const qresp = await client.newTxn().query(query)
-	const results = qresp.getJson().entries
+	let results
+
+	try {
+		results = qresp.getJson().entries
+	} catch (e) {
+		let jsonString = u8ToStr(qresp.array[0])
+		results = JSON.parse(jsonString.substring(0, jsonString.length - 2)).entries
+	}
 
 	results.sort(
 		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {

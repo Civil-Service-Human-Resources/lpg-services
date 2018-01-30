@@ -6,6 +6,7 @@ import * as template from 'management-ui/template'
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
+shortDescription: string .
 uri: string .
 `
 

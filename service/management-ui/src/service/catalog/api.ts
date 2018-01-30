@@ -1,4 +1,5 @@
 export interface Entry {
+	shortDescriptionb?: string
 	tags?: string[]
 	title?: string
 	uid?: string

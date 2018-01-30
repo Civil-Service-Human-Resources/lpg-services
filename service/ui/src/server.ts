@@ -62,7 +62,6 @@ app.get(
 	passportConfig.isAuthenticated,
 	userController.editProfileComplete
 )
-app.get('/search', passportConfig.isAuthenticated, searchController.index)
 
 app.all(
 	'/authenticate',
@@ -75,7 +74,7 @@ app.all(
 	}
 )
 
-app.get('/allcourses', searchController.listAllCourses)
+app.get('/learning-plan', searchController.listAllCourses)
 
 app.use(
 	(
