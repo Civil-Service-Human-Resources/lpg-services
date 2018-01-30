@@ -18,6 +18,7 @@ export async function add(ctx: elko.Context, {entry}: {entry: api.Entry}) {
 	try {
 		const mu = new dgraph.Mutation()
 		mu.setSetJson({
+			shortDescription: entry.shortDescription || '',
 			tags: entry.tags || [],
 			title: entry.title || '',
 			uri: entry.uri || '',
@@ -103,21 +104,36 @@ export async function search(
 	return {entries: resp}
 }
 
+function u8ToStr(arr) {
+	var buf = Buffer.from(arr.buffer).toString()
+	if (arr.byteLength !== arr.buffer.byteLength) {
+		buf = buf.slice(arr.byteOffset, arr.byteOffset + arr.byteLength)
+	}
+	return buf.toString()
+}
+
 export async function listAll(
 	ctx: elko.Context,
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
 	const query = `{
 		entries(func: ge(count(tags), 1)) {
+			shortDescription
 			tags
 			title
-			shortDescription
 			uid
 			uri
 		}
 	}`
 	const qresp = await client.newTxn().query(query)
-	const results = qresp.getJson().entries
+	let results
+
+	try {
+		results = qresp.getJson().entries
+	} catch (e) {
+		let jsonString = u8ToStr(qresp.array[0])
+		results = JSON.parse(jsonString.substring(0, jsonString.length - 2)).entries
+	}
 
 	results.sort(
 		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
