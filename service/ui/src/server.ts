@@ -12,6 +12,8 @@ import * as passportConfig from 'ui/config/passport'
 import * as homeController from 'ui/controllers/home'
 import * as searchController from 'ui/controllers/search'
 import * as userController from 'ui/controllers/user'
+import * as catalog from 'lib/service/catalog'
+import * as elko from 'lib/service/elko'
 
 const {PORT = 3001} = process.env
 
