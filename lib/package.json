@@ -1,0 +1,13 @@
+{
+	"name": "lib",
+	"version": "0.0.1",
+	"main": "index.js",
+	"scripts": {
+		"build": "../bin/tsc"
+	},
+	"devDependencies": {},
+	"dependencies": {
+		"dgraph-js": "^1.0.3",
+		"grpc": "^1.8.4"
+	}
+}

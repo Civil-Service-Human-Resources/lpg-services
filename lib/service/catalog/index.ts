@@ -1,7 +1,7 @@
 import * as dgraph from 'dgraph-js'
 import * as grpc from 'grpc'
-import * as api from 'management-ui/service/catalog/api'
-import * as elko from 'management-ui/service/elko'
+import * as api from './api'
+import * as elko from '../elko'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -18,7 +18,6 @@ export async function add(ctx: elko.Context, {entry}: {entry: api.Entry}) {
 	try {
 		const mu = new dgraph.Mutation()
 		mu.setSetJson({
-			shortDescription: entry.shortDescription || '',
 			tags: entry.tags || [],
 			title: entry.title || '',
 			uri: entry.uri || '',
@@ -86,79 +85,6 @@ export async function search(
 	}
 	for (const info of results) {
 		const entry = info[2]
-		if (include) {
-			resp.push(entry)
-		} else {
-			if (entry.uid === after) {
-				include = true
-			}
-			continue
-		}
-		if (first) {
-			count += 1
-			if (count === first) {
-				break
-			}
-		}
-	}
-	return {entries: resp}
-}
-
-function u8ToStr(arr) {
-	var buf = Buffer.from(arr.buffer).toString()
-	if (arr.byteLength !== arr.buffer.byteLength) {
-		buf = buf.slice(arr.byteOffset, arr.byteOffset + arr.byteLength)
-	}
-	return buf.toString()
-}
-
-export async function listAll(
-	ctx: elko.Context,
-	req: api.SearchRequest
-): Promise<api.SearchResponse> {
-	const query = `{
-		entries(func: ge(count(tags), 1)) {
-			shortDescription
-			tags
-			title
-			uid
-			uri
-		}
-	}`
-	const qresp = await client.newTxn().query(query)
-	let results
-
-	try {
-		results = qresp.getJson().entries
-	} catch (e) {
-		let jsonString = u8ToStr(qresp.array[0])
-		results = JSON.parse(jsonString.substring(0, jsonString.length - 2)).entries
-	}
-
-	results.sort(
-		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
-			if (b[0] > a[0]) {
-				return 1
-			} else if (b[0] < a[0]) {
-				return -1
-			}
-			if (b[1] > a[1]) {
-				return 1
-			} else if (b[1] < a[1]) {
-				return -1
-			}
-			return 0
-		}
-	)
-
-	const {after, first} = req
-	const resp: api.Entry[] = []
-	let count = 0
-	let include = true
-	if (after) {
-		include = false
-	}
-	for (const entry of results) {
 		if (include) {
 			resp.push(entry)
 		} else {
