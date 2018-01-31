@@ -4,9 +4,9 @@ PREFIX=lpg-
 ORGANISATION="cshr"
 
 function pull {
-    IMAGE=$1
-    echo "Pulling ${ORGANISATION}/${PREFIX}${IMAGE}"
-    docker pull ${ORGANISATION}/${PREFIX}${IMAGE} || true
+    SERVICE=$1
+    echo "Pulling ${ORGANISATION}/${PREFIX}${SERVICE}"
+    docker pull ${ORGANISATION}/${PREFIX}${SERVICE} || true
 }
 
 function install {
@@ -18,19 +18,23 @@ function install {
 }
 
 function build {
-    IMAGE=$1
+    SERVICE=$1
     TAG=$2
-    echo "Building ${ORGANISATION}/${PREFIX}${IMAGE}"
+    echo "Building ${ORGANISATION}/${PREFIX}${SERVICE}"
+
+    pushd service/${SERVICE}
     npm run clean
     npm run sass
     npm run build
-    docker build -t ${ORGANISATION}/${PREFIX}${IMAGE}}:${TAG} -f service/${IMAGE}/Dockerfile .
+    popd
+
+    docker build -t ${ORGANISATION}/${PREFIX}${SERVICE}:${TAG} -f service/${SERVICE}/Dockerfile .
 }
 
 function push {
-    IMAGE=$1
-    echo "Pushing ${ORGANISATION}/${PREFIX}${IMAGE}"
-    docker push ${ORGANISATION}/${PREFIX}${IMAGE}
+    SERVICE=$1
+    echo "Pushing ${ORGANISATION}/${PREFIX}${SERVICE}"
+    docker push ${ORGANISATION}/${PREFIX}${SERVICE}
 }
 
 if [ "$1" = "install" ]; then
