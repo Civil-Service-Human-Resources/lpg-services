@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
-import * as catalog from 'management-ui/service/catalog'
-import * as elko from 'management-ui/service/elko'
+import * as catalog from 'lib/service/catalog'
+import * as elko from 'lib/service/elko'
 import * as log4js from 'log4js'
 import * as template from 'management-ui/template'
 
