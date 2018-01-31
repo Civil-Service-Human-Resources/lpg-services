@@ -1,6 +1,8 @@
 *.log
 service/**/src/**/*.js
 lib/**/*.js
+lib/**/**/*.d.ts
+lib/**/**/*.js.map
 .idea
 dist/
 node_modules/
