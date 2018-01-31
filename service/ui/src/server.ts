@@ -8,7 +8,8 @@ import * as passport from 'passport'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
-import * as passportConfig from 'ui/config/passport'
+import * as passportConfig from 'lib/config/passport'
+
 import * as homeController from 'ui/controllers/home'
 import * as searchController from 'ui/controllers/search'
 import * as userController from 'ui/controllers/user'

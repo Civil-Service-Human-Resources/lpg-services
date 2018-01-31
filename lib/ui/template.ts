@@ -2,7 +2,7 @@ import * as express from 'express'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as svelte from 'svelte'
-import * as env from 'ui/env'
+import * as env from '../env'
 import * as vm from 'vm'
 
 interface AST {
@@ -25,11 +25,12 @@ interface Renderer {
 	render(props?: object): {html: string}
 }
 
-const rootDir = path.dirname(__dirname)
+const rootDir = process.cwd()
 const componentDir = path.join(rootDir, 'component')
 const pageDir = path.join(rootDir, 'page')
 
 let allComponentNames = ''
+
 let componentList: string[] = []
 let components: {[key: string]: Renderer | undefined} = {}
 let currentRequest: express.Request

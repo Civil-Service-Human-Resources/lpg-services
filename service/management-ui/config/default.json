@@ -9,6 +9,7 @@
 		"secret": "dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt"
 	},
 	"authentication": {
+		"issuer": "lpg-management-ui",
 		"serviceUrl": "https://identity.dev.cshr.digital:9443",
 		"serviceAdmin": "admin@cslearning.gov.uk",
 		"servicePassword": "admin"
