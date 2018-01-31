@@ -17,6 +17,7 @@ module.exports = async function() {
 			'--ignore-certificate-errors',
 			'--ignore-certificate-errors-spki-list ',
 			'--disk-cache-size=0',
+			'--remote-debugging-port=9222',
 		],
 		headless: false,
 	})

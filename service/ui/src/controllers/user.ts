@@ -1,5 +1,7 @@
+import {default as axios, AxiosResponse} from 'axios'
 import * as config from 'config'
 import {Request, Response} from 'express'
+import * as https from 'https'
 import * as template from 'ui/template'
 import * as request from 'request'
 import {logout} from 'ui/config/passport'
@@ -73,12 +75,56 @@ export interface Profile {
 	validFields?: boolean
 }
 
+export interface NewUser {
+	id: string
+}
+
 function renderSignIn(req: Request, props: SignIn) {
 	return template.render('account/sign-in', req, props)
 }
 
 function renderProfile(req: Request, props: Profile) {
 	return template.render('profile/edit', req, props)
+}
+
+const http = axios.create({
+	httpsAgent: new https.Agent({
+		rejectUnauthorized: false,
+	}),
+})
+
+export async function createUser(username: string, password: string) {
+	const url = config.get('authentication.serviceUrl') + '/scim2/Users/'
+	const data = JSON.stringify({
+		userName: username,
+		password: password,
+		emails: [
+			{
+				primary: true,
+				value: username,
+				type: 'work',
+			},
+		],
+	})
+	let resp: AxiosResponse<NewUser>
+	try {
+		resp = await http.post(url, data, {
+			method: 'POST',
+			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+			auth: {
+				username: config.get('authentication.serviceAdmin') as string,
+				password: config.get('authentication.servicePassword') as string,
+			},
+		})
+	} catch (err) {
+		throw err
+	}
+	if (resp.status !== 201) {
+		throw new Error(
+			`Received response code ${resp.status} when expecting a 201`
+		)
+	}
+	return resp.data.id
 }
 
 export let updateProfile = (req: Request, res: Response) => {
