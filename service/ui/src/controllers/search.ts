@@ -1,7 +1,7 @@
 import {Request, Response} from 'express'
 import * as template from 'ui/template'
-import * as catalog from 'ui/service/catalog'
-import * as elko from 'ui/service/elko'
+import * as catalog from 'lib/service/catalog'
+import * as elko from 'lib/service/elko'
 
 const SCHEMA = `tags: [string] @count @index(exact) .
 title: string @index(fulltext) .
