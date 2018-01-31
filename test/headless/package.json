@@ -8,7 +8,8 @@
 		"postinstall":
 			"(test -e node_modules/extension || ln -s ../dist/extension node_modules/extension) && (test -e node_modules/test || ln -s ../dist/page node_modules/page) && (test -e node_modules/test || ln -s ../dist/test node_modules/test)",
 		"test": "jest",
-		"watch": "../../bin/tsc --watch"
+		"watch": "../../bin/tsc --watch",
+		"debug": "node --debug-brk --inspect ./node_modules/.bin/jest -i"
 	},
 	"dependencies": {
 		"@types/jest": "22.0.1",

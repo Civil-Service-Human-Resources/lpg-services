@@ -1,11 +1,13 @@
 import * as helper from 'extension/helper'
-import {selectors} from 'page/profile'
+import {selectors, returnUserProfileDetails} from 'page/profile'
+import {loginToCsl} from 'page/login'
 import * as puppeteer from 'puppeteer'
+import {createUser} from '../../../../service/ui/src/controllers/user'
 
 declare var browser: puppeteer.Browser
 
 const timeout = 5000
-const {URL = ''} = process.env
+const {URL = '', USERNAME = '', PASS = ''} = process.env
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
@@ -13,10 +15,15 @@ describe('profile page functionality', () => {
 	beforeAll(async () => {
 		page = await browser.newPage()
 		await page.goto(URL)
-		await page.click(selectors.profilePageButton)
+		const userId = await createUser('sample@example.com', 'password1')
+		console.log('CREATED USER ID >>>>>>>>>>>>>>.', userId)
+		await loginToCsl(page, USERNAME, PASS)
+		await page.waitFor(selectors.profilePageButton, timeout)
 	}, timeout)
 
 	afterAll(async () => {
+		await page.click(selectors.signoutButton)
+		await page.waitFor('#password', timeout)
 		await page.close()
 	})
 
@@ -63,4 +70,26 @@ describe('profile page functionality', () => {
 		).toBe(true)
 		expect(signoutLink).toEqual('/sign-out')
 	})
+
+	it('Should display empty profession, department and grade fields on first login', async () => {
+		const profile = await returnUserProfileDetails(page)
+		expect(profile.userName).toBeTruthy()
+		for (const prop of ['department', 'profession', 'grade']) {
+			expect(profile[prop]).toBe('')
+		}
+	})
+
+	it('Should display an error message to the user if profile is incomplete', async () => {
+		expect(
+			await helper.checkElementIsPresent(selectors.incompleteProfileError, page)
+		).toBe(true)
+	})
+
+	it('Should display the username field as readonly', async () => {
+		expect(
+			await helper.returnElementAttribute(selectors.userName, 'readonly', page)
+		).toBeTruthy()
+	})
+
+	it('Should display an error message for missing information for all required fields', async () => {})
 })
