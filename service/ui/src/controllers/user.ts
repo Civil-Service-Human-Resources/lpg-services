@@ -1,8 +1,8 @@
 import * as config from 'config'
 import {Request, Response} from 'express'
-import * as template from 'ui/template'
+import * as template from 'lib/ui/template'
 import * as request from 'request'
-import {logout} from 'ui/config/passport'
+import {logout} from 'lib/config/passport'
 
 export let signIn = (req: Request, res: Response) => {
 	const sessionDataKey = req.query.sessionDataKey

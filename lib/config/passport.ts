@@ -7,7 +7,7 @@ const strategy = new Strategy(
 	{
 		acceptedClockSkewMs: -1,
 		entryPoint: `${config.get('authentication.serviceUrl')}/samlsso`,
-		issuer: 'lpg-ui',
+		issuer: config.get('authentication.issuer'),
 		path: '/authenticate',
 	},
 	(profile, done) => {

@@ -2,7 +2,7 @@ import {Request, Response} from 'express'
 import * as catalog from 'lib/service/catalog'
 import * as elko from 'lib/service/elko'
 import * as log4js from 'log4js'
-import * as template from 'management-ui/template'
+import * as template from 'lib/ui/template'
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
