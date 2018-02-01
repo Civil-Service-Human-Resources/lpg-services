@@ -54,7 +54,4 @@ export let isAuthenticated = (
 	res.redirect('/sign-in')
 }
 
-export const passportInit = passport.initialize()
-export const passportSession = passport.session()
-
 export {passport}
