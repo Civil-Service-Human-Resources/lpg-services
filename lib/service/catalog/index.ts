@@ -471,9 +471,13 @@ export async function resetCourses(ctx: elko.Context) {
 	]
 
 	for (const course of BASE_COURSES) {
-		await add(ctx, {entry: course})
+		await add(ctx, {entry: course}).catch((err: Error) => {
+			console.log(err)
+		})
 	}
-	let result = await listAll(ctx, {})
+	let result = await listAll(ctx, {}).catch((err: Error) => {
+		console.log(err)
+	})
 
 	return result
 }

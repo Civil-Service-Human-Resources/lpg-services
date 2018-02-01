@@ -37,10 +37,17 @@ function filterCourses(allCourses: JSON) {
 }
 
 export let listAllCourses = async (req: Request, res: Response) => {
-	await catalog.setSchema(elko.context(), {schema: SCHEMA})
-	await catalog.wipe(elko.context())
+	await catalog
+		.setSchema(elko.context(), {schema: SCHEMA})
+		.catch((err: Error) => {
+			console.log(err)
+		})
 
-	const result = await catalog.listAll(elko.context(), {})
+	const result = await catalog
+		.resetCourses(elko.context())
+		.catch((err: Error) => {
+			console.log(err)
+		})
 	console.log(result)
 
 	res.send(result)
