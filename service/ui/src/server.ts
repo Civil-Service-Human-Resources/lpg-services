@@ -4,7 +4,6 @@ import * as config from 'config'
 import * as express from 'express'
 import * as session from 'express-session'
 import * as lusca from 'lusca'
-import * as passport from 'passport'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
@@ -35,8 +34,8 @@ app.use(
 
 app.enable('trust proxy')
 
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passportConfig.passport.initialize())
+app.use(passportConfig.passport.session())
 
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
@@ -66,7 +65,7 @@ app.get(
 
 app.all(
 	'/authenticate',
-	passport.authenticate('saml', {
+	passportConfig.passport.authenticate('saml', {
 		failureFlash: true,
 		failureRedirect: '/',
 	}),
