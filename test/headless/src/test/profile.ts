@@ -1,8 +1,13 @@
 import * as helper from 'extension/helper'
-import {selectors, returnUserProfileDetails} from 'page/profile'
+import {
+	selectors,
+	returnUserProfileDetails,
+	setProfileFieldToEmptyAndSave,
+} from 'page/profile'
 import {loginToCsl} from 'page/login'
 import * as puppeteer from 'puppeteer'
-import {createUser} from '../../../../service/ui/src/controllers/user'
+import {getUser} from '../extension/user'
+//import {createUser} from '../../../../service/ui/src/controllers/user'
 
 declare var browser: puppeteer.Browser
 
@@ -15,8 +20,8 @@ describe('profile page functionality', () => {
 	beforeAll(async () => {
 		page = await browser.newPage()
 		await page.goto(URL)
-		const userId = await createUser('sample@example.com', 'password1')
-		console.log('CREATED USER ID >>>>>>>>>>>>>>.', userId)
+		const userId = (await getUser(USERNAME)).id
+		console.log('USERNAME ID >>>>>>>>>>>>>>>>>>.', userId)
 		await loginToCsl(page, USERNAME, PASS)
 		await page.waitFor(selectors.profilePageButton, timeout)
 	}, timeout)
@@ -80,6 +85,7 @@ describe('profile page functionality', () => {
 	})
 
 	it('Should display an error message to the user if profile is incomplete', async () => {
+		await page.waitFor(selectors.incompleteProfileError, timeout)
 		expect(
 			await helper.checkElementIsPresent(selectors.incompleteProfileError, page)
 		).toBe(true)
@@ -91,5 +97,29 @@ describe('profile page functionality', () => {
 		).toBeTruthy()
 	})
 
-	it('Should display an error message for missing information for all required fields', async () => {})
+	it('Should display an error message for missing department field entry', async () => {
+		await setProfileFieldToEmptyAndSave(selectors.department, page)
+		await page.waitFor(selectors.departmentFieldError, timeout)
+		expect(
+			await helper.checkElementIsPresent(selectors.departmentFieldError, page)
+		).toBe(true)
+	})
+
+	it('Should display an error message for missing department field entry', async () => {
+		await setProfileFieldToEmptyAndSave(selectors.profession, page)
+		await page.waitFor(selectors.professionFieldError, timeout)
+		expect(
+			await helper.checkElementIsPresent(selectors.professionFieldError, page)
+		).toBe(true)
+	})
+
+	it('Should display an error message for missing department field entry', async () => {
+		await setProfileFieldToEmptyAndSave(selectors.grade, page)
+		await page.waitFor(selectors.gradeFieldError, timeout)
+		expect(
+			await helper.checkElementIsPresent(selectors.gradeFieldError, page)
+		).toBe(true)
+	})
+
+	it('')
 })

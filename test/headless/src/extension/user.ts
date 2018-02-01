@@ -1,7 +1,7 @@
-import {default as axios, AxiosResponse} from 'axios'
+import { default as axios, AxiosResponse } from 'axios'
 import * as https from 'https'
 
-const {ADMIN_URL = '', ADMIN_USERNAME = '', ADMIN_PASSWORD = ''} = process.env
+const { ADMIN_URL = '', ADMIN_USERNAME = '', ADMIN_PASSWORD = '' } = process.env
 
 export interface User {
 	created: string
@@ -37,7 +37,7 @@ export async function createUser(username: string, password: string) {
 	try {
 		resp = await http.post(url, data, {
 			method: 'POST',
-			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+			headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
 			auth: {
 				username: ADMIN_USERNAME as string,
 				password: ADMIN_PASSWORD as string,
@@ -63,7 +63,7 @@ export async function getUser(username: string) {
 	try {
 		resp = await http.get(url, {
 			method: 'GET',
-			headers: {Accept: 'application/json'},
+			headers: { Accept: 'application/json' },
 			auth: {
 				username: ADMIN_USERNAME as string,
 				password: ADMIN_PASSWORD as string,
@@ -89,7 +89,7 @@ export async function deleteUser(userid: string) {
 	try {
 		resp = await http.delete(url, {
 			method: 'DELETE',
-			headers: {Accept: 'application/json'},
+			headers: { Accept: 'application/json' },
 			auth: {
 				username: ADMIN_USERNAME as string,
 				password: ADMIN_PASSWORD as string,
