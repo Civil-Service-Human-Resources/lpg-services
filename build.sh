@@ -23,8 +23,8 @@ function build {
     echo "Building ${ORGANISATION}/${PREFIX}${SERVICE}"
 
     pushd service/${SERVICE}
-    npm run clean
-    npm run sass
+    npm run clean || true
+    npm run sass || true
     npm run build
     popd
 
@@ -46,8 +46,6 @@ if [ "$1" = "install" ]; then
     popd
 elif [ "$1" = "build" ]; then
     pushd lib
-    npm run clean
-    npm run sass
     npm run build
     popd
 fi
@@ -66,8 +64,6 @@ do
             pull ${service}
         elif [ "$1" = "push" ]; then
             push ${service}
-        else
-            echo "Unknown command ${1}"
         fi
     fi
 done
