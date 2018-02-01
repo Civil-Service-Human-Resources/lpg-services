@@ -28,7 +28,9 @@ function build {
     npm run build
     popd
 
-    docker build -t ${ORGANISATION}/${PREFIX}${SERVICE}:${TAG} -f service/${SERVICE}/Dockerfile .
+    if [ -f service/${service}/Dockerfile ]; then
+        docker build -t ${ORGANISATION}/${PREFIX}${SERVICE}:${TAG} -f service/${SERVICE}/Dockerfile .
+    fi
 }
 
 function push {
@@ -39,6 +41,15 @@ function push {
 
 if [ "$1" = "install" ]; then
     npm install
+    pushd lib
+    npm install
+    popd
+elif [ "$1" = "build" ]; then
+    pushd lib
+    npm run clean
+    npm run sass
+    npm run build
+    popd
 fi
 
 for service in service/*
@@ -48,11 +59,11 @@ do
 
     if [ "$1" = "install" ]; then
         install ${service}
+    elif [ "$1" = "build" ]; then
+        build ${service} ${2}
     elif [ -f service/${service}/Dockerfile ]; then
         if [ "$1" = "pull" ]; then
             pull ${service}
-        elif [ "$1" = "build" ]; then
-            build ${service} ${2}
         elif [ "$1" = "push" ]; then
             push ${service}
         else
