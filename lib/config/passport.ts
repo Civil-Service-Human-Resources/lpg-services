@@ -1,13 +1,12 @@
 import {Request, Response, NextFunction} from 'express'
 import * as passport from 'passport'
-import * as config from 'config'
 import {Strategy} from 'passport-saml'
 
-const strategy = new Strategy(
+export const strategy = new Strategy(
 	{
 		acceptedClockSkewMs: -1,
-		entryPoint: `${config.get('authentication.serviceUrl')}/samlsso`,
-		issuer: config.get('authentication.issuer'),
+		entryPoint: `https://identity.dev.cshr.digital:9443/samlsso`,
+		issuer: 'lpg-ui',
 		path: '/authenticate',
 	},
 	(profile, done) => {
@@ -54,3 +53,8 @@ export let isAuthenticated = (
 	}
 	res.redirect('/sign-in')
 }
+
+export const passportInit = passport.initialize()
+export const passportSession = passport.session()
+
+export {passport}
