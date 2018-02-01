@@ -36,16 +36,24 @@ function filterCourses(allCourses: JSON) {
 }
 
 export let listAllCourses = async (req: Request, res: Response) => {
-	if (req.user.department) {
-		await catalog.setSchema(elko.context(), {schema: SCHEMA})
+	await catalog.setSchema(elko.context(), {schema: SCHEMA})
+	await catalog.wipe(elko.context())
 
-		const result = await catalog.listAll(elko.context(), {})
-		const filteredResult = filterCourses(result)
+	const result = await catalog.listAll(elko.context(), {})
+	console.log(result)
 
-		res.send(renderLearningPlan(req, filteredResult))
-	} else {
-		res.redirect('/profile')
-	}
+	res.send(result)
+
+	// if (req.user.department) {
+	// 	await catalog.setSchema(elko.context(), {schema: SCHEMA})
+	//
+	// 	const result = await catalog.listAll(elko.context(), {})
+	// 	const filteredResult = filterCourses(result)
+	//
+	// 	res.send(renderLearningPlan(req, filteredResult))
+	// } else {
+	// 	res.redirect('/profile')
+	// }
 }
 
 function renderLearningPlan(req: Request, props: LearningPlan) {
