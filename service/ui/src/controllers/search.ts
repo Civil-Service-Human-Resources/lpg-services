@@ -3,8 +3,9 @@ import * as template from 'lib/ui/template'
 import * as catalog from 'lib/service/catalog'
 import * as elko from 'lib/service/elko'
 
-const SCHEMA = `tags: [string] @count @index(exact) .
+const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
+shortDescription: string .
 uri: string .
 `
 
