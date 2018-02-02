@@ -5,8 +5,7 @@
 		"build": "../../bin/tsc",
 		"clean": "rm -rf dist",
 		"lint": "tslint --project tsconfig.json",
-		"postinstall":
-			"test -e node_modules/management-ui || ln -s ../dist node_modules/management-ui",
+		"postinstall": "test -e node_modules/management-ui || ln -s ../dist node_modules/management-ui",
 		"sass": "node-sass assets/styles/index.scss assets/styles/main.css",
 		"server": "node dist/server.js",
 		"start": "npm run sass && node dist/server.js",
