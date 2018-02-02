@@ -144,7 +144,9 @@ export async function listAll(
 		results = qresp.getJson().entries
 	} catch (e) {
 		let jsonString = u8ToStr(qresp.array[0])
-		results = JSON.parse(jsonString.substring(0, jsonString.length - 2)).entries
+		results = JSON.parse(
+			jsonString.substring(0, jsonString.lastIndexOf('}') + 1)
+		).entries
 	}
 
 	results.sort(
@@ -189,7 +191,10 @@ export async function listAll(
 	return {entries: resp}
 }
 
-export async function resetCourses(ctx: elko.Context) {
+export async function resetCourses(ctx: elko.Context, schema: string) {
+	await wipe(ctx)
+	await setSchema(ctx, {schema: schema})
+
 	const tags = ['profession:commercial', 'department:cshr', 'grade:aa']
 	const mandatoryTags = [...tags, 'mandatory']
 
@@ -475,9 +480,4 @@ export async function resetCourses(ctx: elko.Context) {
 			console.log(err)
 		})
 	}
-	let result = await listAll(ctx, {}).catch((err: Error) => {
-		console.log(err)
-	})
-
-	return result
 }
