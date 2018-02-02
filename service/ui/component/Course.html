@@ -1,4 +1,4 @@
-<div class="course">
+<div class="course" {{showType}}>
     <a href="{{course.uri}}">{{course.title}}</a>
     {{#if course.shortDescription}}
     <p>
@@ -8,7 +8,10 @@
         {{course.shortDescription }}
     </p>
     {{/if}}
+
+{{#if showType}}
     <p class="font-xsmall">
-    <span>Type:</span>{{course.tags}}
+    <span>Type: </span>{{course.tags}}
     </p>
+{{/if}}
 </div>

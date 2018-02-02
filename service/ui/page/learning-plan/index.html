@@ -12,7 +12,7 @@
                 <ul>
                     {{#each mandatory as course}}
                     <li>
-                        <Course :course/>
+                        <Course :course showType="{{false}}"/>
                     </li>
                     {{/each}}
                 </ul>
@@ -28,7 +28,22 @@
                 <ul>
                     {{#each suggested as course}}
                     <li>
-                        <Course :course/>
+                        <Course :course showType="{{false}}" />
+                    </li>
+                    {{/each}}
+                </ul>
+                {{else}}
+                <p>No suggested courses to show.</p>
+                {{/if}}
+
+
+                <h2 class="heading-small">Suggested for you</h2>
+
+                {{#if informal.length}}
+                <ul>
+                    {{#each informal as course}}
+                    <li>
+                        <Course :course showType="{{true}}"/>
                     </li>
                     {{/each}}
                 </ul>

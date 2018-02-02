@@ -2,6 +2,7 @@ import {Request, Response} from 'express'
 import * as template from 'lib/ui/template'
 import * as catalog from 'lib/service/catalog'
 import * as elko from 'lib/service/elko'
+import * as api from 'lib/service/catalog/api'
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
@@ -20,19 +21,44 @@ export interface Course {
 export interface LearningPlan {
 	mandatory: [Course]
 	suggested: [Course]
+	informal: [Course]
 }
 
-function filterCourses(allCourses: JSON) {
-	let mandatory: [Course] = allCourses.entries.filter(
-		course => course.tags == 'mandatory'
+const informalLearningTypes = [
+	'Blog post',
+	'LinkedIn',
+	'IACCM',
+	'Video',
+	'Github',
+	'CIPS',
+	'Conference',
+]
+
+function filterCourses(allCourses: api.SearchResponse) {
+	// let mandatory: api.Entry[] = allCourses.entries.filter(
+	// 	course => course.tags == 'mandatory'
+	// )
+
+	let mandatory = allCourses.entries.filter(course =>
+		course.tags.some(tag => tag == 'mandatory')
 	)
-	let suggested: [Course] = allCourses.entries.filter(
-		course => course.tags != 'mandatory'
+
+	let suggested = allCourses.entries.filter(function(course) {
+		return mandatory.indexOf(course) === -1
+	})
+
+	let informal = suggested.filter(course =>
+		course.tags.some(tag => informalLearningTypes.includes(tag))
 	)
+
+	suggested = suggested.filter(function(course) {
+		return informal.indexOf(course) === -1
+	})
 
 	return {
 		mandatory: mandatory,
 		suggested: suggested,
+		informal: informal,
 	}
 }
 

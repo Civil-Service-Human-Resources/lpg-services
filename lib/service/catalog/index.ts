@@ -262,14 +262,14 @@ export async function resetCourses(ctx: elko.Context, schema: string) {
 		{
 			shortDescription:
 				'​Contracting for Agile software development should focus on enabling a smooth vendor-client relationship rather than on specifying terms and conditions in exhaustive detail.',
-			tags: [...tags, 'blog post'],
+			tags: ['blog post'],
 			title: 'Going Agile: The new mind-set for procurement officials',
 			uri:
 				'https://www2.deloitte.com/insights/us/en/industry/public-sector/agile-in-government-procurement-mindset.html',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'blog post', 'LinkedIn'],
+			tags: ['blog post', 'LinkedIn'],
 			title: "Let's talk about public procurement.",
 			uri:
 				'https://www.linkedin.com/pulse/lets-talk-public-procurement-james-findlay/',
@@ -277,14 +277,14 @@ export async function resetCourses(ctx: elko.Context, schema: string) {
 		{
 			shortDescription:
 				'This is the first Difrent Group sponsored Unconference in the newly refurbished conference facilities at National Archives, Kew on 5th March 2018.',
-			tags: [...tags, 'Conference'],
+			tags: ['Conference'],
 			title: 'Agile P1.0',
 			uri: 'https://www.eventbrite.co.uk/e/agile-p10-tickets-41337414319',
 		},
 		{
 			shortDescription:
 				"One of the goals of an agile organization is to continuously improve, by reflecting on what's happened at the end of an iteration",
-			tags: [...tags, 'Blog post', 'Github'],
+			tags: ['Blog post', 'Github'],
 			title: 'Lessons Learned From "Search" Procurement',
 			uri:
 				'https://github.com/AlaskaDHSS/EIS-Modernization/blob/master/vendor-info/retrospective-on-buy-1.md',
@@ -292,28 +292,28 @@ export async function resetCourses(ctx: elko.Context, schema: string) {
 		{
 			shortDescription:
 				'Whenever the team at OSL talk to businesses about Supplier Collaboration and Innovation (SC&I), one key theme always comes through. The challenge of linking procurement activity directly to business objectives.',
-			tags: [...tags, 'Blog post'],
+			tags: ['Blog post'],
 			title: 'Aligning Suppliers: Insight from a former Mars CPO',
 			uri:
 				'http://blog.vizibl.co/aligning-suppliers-insight-from-a-former-mars-cpo/?utm_content=65697372&utm_medium=social&utm_source=twitter',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Overview of the Thomas-Kilmann Conflict Mode Instrument (TKI)',
 			uri:
 				'http://www.kilmanndiagnostics.com/overview-thomas-kilmann-conflict-mode-instrument-tki',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'Blog post'],
+			tags: ['Blog post'],
 			title: 'IS THE CPO AND CATEGORY MANAGEMENT DEAD?',
 			uri:
 				'https://procurementstories.com/2017/03/24/is-the-cpo-and-category-management-dead/?utm_content=60894668&utm_medium=social&utm_source=twitter',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'Blog post'],
+			tags: ['Blog post'],
 			title:
 				'A Definitive Guide to Mastering the Four Faces of the Procurement Specialist ',
 			uri:
@@ -321,7 +321,7 @@ export async function resetCourses(ctx: elko.Context, schema: string) {
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'LinkedIn'],
+			tags: ['LinkedIn'],
 			title:
 				'MUST-READ: I asked 9 CPOs how they improve relationships with their business partners - here is what they said:',
 			uri:
@@ -329,131 +329,131 @@ export async function resetCourses(ctx: elko.Context, schema: string) {
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: 'The Purpose of a Contract',
 			uri: 'https://www2.iaccm.com/resources/?id=9591',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: 'The Role of a Contract Manager',
 			uri: 'https://www2.iaccm.com/resources/?id=9592&cb=1488187167&',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: 'Top Terms in Negotiation 2015',
 			uri: 'https://www2.iaccm.com/resources/?id=8930&src=NAO',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: '10 Pitfalls to Avoid in Contracting',
 			uri: 'https://www2.iaccm.com/resources/?id=8414&src=tenpitfallsspecial',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title:
 				'Tackling the Weaknesses in Contract Management Pitfall 1: Lack of clarity in scope and goals',
 			uri: 'https://www2.iaccm.com/resources/?id=9277&src=scopeandgoals',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title:
 				'Tackling the Weaknesses in Contract Management Pitfall 2: Timing of Engagement',
 			uri: 'https://www2.iaccm.com/resources/?id=9292&src=NAO',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title:
 				'Tackling the weaknesses in Contract Management Pitfall 3: Stakeholder Engagement',
 			uri: 'https://www2.iaccm.com/resources/?id=9378&src=NAO',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title:
 				'Tackling the weaknesses in Contract Management Pitfall 4: Protracted Negotiations',
 			uri: 'https://www2.iaccm.com/resources/?id=9526&src=NAO',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: 'SME Policy and Practice',
 			uri: 'https://www2.iaccm.com/resources/?id=9527&src=NAO',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: 'Performance and Outcome-based contracts',
 			uri: 'https://www2.iaccm.com/resources/?id=8541&src=NAO',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: 'Contracts as a Connector',
 			uri: 'https://www2.iaccm.com/resources/?id=8709&cb=1488188623&',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'IACCM'],
+			tags: ['IACCM'],
 			title: 'https://www2.iaccm.com/resources/?id=9594&cb=1488189981&',
 			uri:
 				'Contract and Commercial Management: The Operational Guide: Key Chapters for Download',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: "Mendelow's matrix",
 			uri:
 				'http://kfknowledgebank.kaplan.co.uk/KFKB/Wiki%20Pages/Mendelow%27s%20matrix.aspx',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Talk on stakeholders',
 			uri: 'https://hstalks.com/t/2203/stakeholders/?business',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Nogotiation articles',
 			uri: 'https://www.negotiations.com/articles/',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Why is Contract Management so Important?',
 			uri:
 				'https://www.linkedin.com/pulse/why-contract-management-important-david-beare/',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Good practice contract management framework',
 			uri:
 				'https://www.nao.org.uk/report/good-practice-contract-management-framework-2-2/',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Microeconomics Versus Macroeconomics',
 			uri:
 				'https://www.thoughtco.com/microeconomics-versus-macroeconomics-1147004',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Call Yourself an Effective Leader?',
 			uri:
 				'https://www.cips.org/Documents/Knowledge/Procurement-Topics-and-Skills/8-People-and-Skills/Leadership-and-Promotion-of-PSM/Call_yourself_an_effective_leader.pdf',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title:
 				'Purchasing and supply management: Collaboration Between Organisations',
 			uri:
@@ -461,14 +461,14 @@ export async function resetCourses(ctx: elko.Context, schema: string) {
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'CIPS article: Supplier Management (HS2)',
 			uri:
 				'https://www.cips.org/supply-management/news/2016/november/hs2-says-supplier-collaboration-will-keep-costs-down/',
 		},
 		{
 			shortDescription: '',
-			tags: [...tags, 'CIPS'],
+			tags: ['CIPS'],
 			title: 'Overview of the Thomas-Kilmann Conflict Mode Instrument (TKI)',
 			uri:
 				'http://www.kilmanndiagnostics.com/overview-thomas-kilmann-conflict-mode-instrument-tki',
