@@ -7,7 +7,7 @@ import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
-import * as passportConfig from 'lib/config/passport'
+import * as passport from 'lib/config/passport'
 
 import * as homeController from 'ui/controllers/home'
 import * as searchController from 'ui/controllers/search'
@@ -34,9 +34,6 @@ app.use(
 
 app.enable('trust proxy')
 
-app.use(passportConfig.passport.initialize())
-app.use(passportConfig.passport.session())
-
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
 
@@ -47,31 +44,22 @@ app.use(compression({threshold: 0}))
 
 app.use(serveStatic('assets'))
 
+passport.configure(
+	config.get('authentication.issuer'),
+	config.get('authentication.serviceUrl'),
+	app
+)
+
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
-app.get('/profile', passportConfig.isAuthenticated, userController.editProfile)
-app.post(
-	'/profile',
-	passportConfig.isAuthenticated,
-	userController.tryUpdateProfile
-)
+app.get('/profile', passport.isAuthenticated, userController.editProfile)
+app.post('/profile', passport.isAuthenticated, userController.tryUpdateProfile)
 app.get(
 	'/profile-updated',
-	passportConfig.isAuthenticated,
+	passport.isAuthenticated,
 	userController.editProfileComplete
-)
-
-app.all(
-	'/authenticate',
-	passportConfig.passport.authenticate('saml', {
-		failureFlash: true,
-		failureRedirect: '/',
-	}),
-	(req, res) => {
-		res.redirect('/')
-	}
 )
 
 app.get('/learning-plan', searchController.listAllCourses)

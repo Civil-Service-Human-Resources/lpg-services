@@ -2,36 +2,56 @@ import {Request, Response, NextFunction} from 'express'
 import * as passport from 'passport'
 import {Strategy} from 'passport-saml'
 
-export const strategy = new Strategy(
-	{
-		acceptedClockSkewMs: -1,
-		entryPoint: `https://identity.dev.cshr.digital:9443/samlsso`,
-		issuer: 'lpg-ui',
-		path: '/authenticate',
-	},
-	(profile, done) => {
-		done(null, {
-			department: profile['http://wso2.org/claims/department'],
-			emailAddress: profile.nameID,
-			grade: profile['http://wso2.org/claims/grade'],
-			id: profile['http://wso2.org/claims/userid'],
-			nameID: profile.nameID,
-			nameIDFormat: profile.nameIDFormat,
-			profession: profile['http://wso2.org/claims/profession'],
-			sessionIndex: profile.sessionIndex,
-		})
-	}
-)
+let strategy;
 
-passport.use(strategy)
+export let configure = (issuer: string, authenticationServiceUrl: string, app: Express.Application) => {
 
-passport.serializeUser((user, done) => {
-	done(null, JSON.stringify(user))
-})
+    app.use(passport.initialize())
+    app.use(passport.session())
 
-passport.deserializeUser((data, done) => {
-	done(null, JSON.parse(data))
-})
+    strategy = new Strategy(
+        {
+            acceptedClockSkewMs: -1,
+            entryPoint: `${authenticationServiceUrl}/samlsso`,
+            issuer,
+            path: '/authenticate',
+        },
+        (profile, done) => {
+            done(null, {
+                department: profile['http://wso2.org/claims/department'],
+                emailAddress: profile.nameID,
+                grade: profile['http://wso2.org/claims/grade'],
+                id: profile['http://wso2.org/claims/userid'],
+                nameID: profile.nameID,
+                nameIDFormat: profile.nameIDFormat,
+                profession: profile['http://wso2.org/claims/profession'],
+                sessionIndex: profile.sessionIndex,
+            })
+        }
+    )
+
+    passport.use(strategy)
+
+    passport.serializeUser((user, done) => {
+        done(null, JSON.stringify(user))
+    })
+
+    passport.deserializeUser((data, done) => {
+        done(null, JSON.parse(data))
+    })
+
+    app.all(
+        '/authenticate',
+        passport.authenticate('saml', {
+            failureFlash: true,
+            failureRedirect: '/',
+        }),
+        (req, res) => {
+            // TODO: remember URL accessed and redirect to, default to LPG UI home
+            res.redirect('/')
+        }
+    )
+}
 
 export let logout = (req: Request, res: Response) => {
 	strategy.logout(req, (err, url) => {
@@ -51,7 +71,7 @@ export let isAuthenticated = (
 	if (req.isAuthenticated()) {
 		return next()
 	}
-	res.redirect('/sign-in')
+	res.redirect('/authenticate')
 }
 
 export {passport}
