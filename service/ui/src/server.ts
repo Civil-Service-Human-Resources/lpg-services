@@ -8,6 +8,7 @@ import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
+import * as i18n from 'lib/service/translation'
 
 import * as homeController from 'ui/controllers/home'
 import * as searchController from 'ui/controllers/search'
@@ -61,6 +62,12 @@ app.get(
 	passport.isAuthenticated,
 	userController.editProfileComplete
 )
+
+i18n.configure(app)
+
+app.get('/testlocales', (req, res) => {
+	res.send(res.__('hello'))
+})
 
 app.get('/learning-plan', searchController.listAllCourses)
 

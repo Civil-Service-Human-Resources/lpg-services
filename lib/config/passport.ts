@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from 'express'
 import * as passport from 'passport'
 import {Strategy} from 'passport-saml'
 
+
 let strategy;
 
 export let configure = (issuer: string, authenticationServiceUrl: string, app: Express.Application) => {
