@@ -5,16 +5,16 @@ import * as request from 'request'
 
 const logger = log4js.getLogger('controllers/xapi')
 
-export let proxy = (req: Request, res: Response) => {
+export function proxy(req: Request, res: Response) {
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
-	let agent = {
-		objectType: 'Agent',
+	const agent = {
 		mbox: `mailto:${req.user.emailAddress}`,
 		name: req.user.id,
+		objectType: 'Agent',
 	}
 
-	let query = req.query
+	const query = req.query
 	if (query && query.hasOwnProperty('agent')) {
 		query.agent = JSON.stringify(agent)
 	}

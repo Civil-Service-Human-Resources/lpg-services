@@ -4,6 +4,10 @@ ENV NODE_ENV production
 ENV SESSION_SECRET topsecret
 ENV AUTHENTICATION_SERVICE_URL https://identity.dev.cshr.digital:9443
 
+ENV XAPI_URL http://localhost:8082/data/xAPI
+ENV XAPI_USER user
+ENV XAPI_PASS pass
+
 EXPOSE 3001
 
 CMD [ "node", "dist/server.js" ]
