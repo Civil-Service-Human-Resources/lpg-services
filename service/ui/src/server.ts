@@ -1,8 +1,8 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
-import * as config from 'config'
 import * as express from 'express'
 import * as session from 'express-session'
+import * as config from 'lib/config'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
@@ -27,7 +27,7 @@ app.use(
 		},
 		resave: true,
 		saveUninitialized: true,
-		secret: config.get('session.secret'),
+		secret: config.SESSION_SECRET,
 		store: new FileStore({
 			path: process.env.NOW ? `/tmp/sessions` : `.sessions`,
 		}),
@@ -46,11 +46,7 @@ app.use(compression({threshold: 0}))
 
 app.use(serveStatic('assets'))
 
-passport.configure(
-	config.get('authentication.issuer'),
-	config.get('authentication.serviceUrl'),
-	app
-)
+passport.configure('lpg-ui', config.AUTHENTICATION.serviceUrl, app)
 
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)

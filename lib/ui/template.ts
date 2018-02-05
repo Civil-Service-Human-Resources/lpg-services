@@ -2,8 +2,8 @@ import * as express from 'express'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as svelte from 'svelte'
-import * as env from '../env'
 import * as vm from 'vm'
+import * as config from '../config'
 
 interface AST {
 	children: AST[]
@@ -258,7 +258,7 @@ export function render(
 // TODO(tav): Populate the cache and clear it more intelligently, i.e. just the
 // ones that need to be regenerated as opposed to wiping the whole cache
 // whenever any template file changes.
-if (!env.PRODUCTION) {
+if (!config.PRODUCTION_ENV) {
 	fs.watch(componentDir, {}, resetCache)
 	fs.watch(pageDir, {recursive: true}, resetCache)
 }

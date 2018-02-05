@@ -14,7 +14,6 @@
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
-		"@types/config": "0.0.33",
 		"@types/express-session": "1.15.6",
 		"@types/lusca": "1.5.0",
 		"@types/node-fetch": "1.6.7",
@@ -25,7 +24,6 @@
 	},
 	"dependencies": {
 		"compression": "1.7.1",
-		"config": "1.29.0",
 		"express": "4.16.2",
 		"express-session": "1.15.6",
 		"express-validator": "4.3.0",

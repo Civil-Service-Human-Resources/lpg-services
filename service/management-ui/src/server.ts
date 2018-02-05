@@ -1,14 +1,14 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
-import * as config from 'config'
 import * as express from 'express'
 import * as session from 'express-session'
+import * as config from 'lib/config'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
-import * as homeController from 'management-ui/controllers/home'
 import * as courseController from 'management-ui/controllers/course'
+import * as homeController from 'management-ui/controllers/home'
 
 const {PORT = 3003} = process.env
 
@@ -22,7 +22,7 @@ app.use(
 		},
 		resave: true,
 		saveUninitialized: true,
-		secret: config.get('session.secret'),
+		secret: config.SESSION_SECRET,
 		store: new FileStore({
 			path: process.env.NOW ? `/tmp/sessions` : `.sessions`,
 		}),
