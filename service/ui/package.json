@@ -20,6 +20,7 @@
 		"@types/node-fetch": "1.6.7",
 		"@types/passport": "0.4.2",
 		"@types/passport-saml": "0.15.5",
+		"@types/request": "2.47.0",
 		"@types/session-file-store": "1.2.0"
 	},
 	"dependencies": {
@@ -31,9 +32,11 @@
 		"govuk-elements-sass": "3.1.2",
 		"govuk_frontend_toolkit": "7.2.0",
 		"lib": "file:../../lib",
+		"log4js": "2.5.2",
 		"lusca": "1.5.2",
 		"node-fetch": "1.7.3",
 		"node-sass": "4.7.2",
+		"request": "2.83.0",
 		"session-file-store": "1.2.0"
 	}
 }

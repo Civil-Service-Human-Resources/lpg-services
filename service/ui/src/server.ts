@@ -13,6 +13,7 @@ import * as i18n from 'lib/service/translation'
 import * as homeController from 'ui/controllers/home'
 import * as searchController from 'ui/controllers/search'
 import * as userController from 'ui/controllers/user'
+import * as xApiController from 'ui/controllers/xapi'
 
 const {PORT = 3001} = process.env
 
@@ -66,6 +67,8 @@ app.get(
 i18n.configure(app)
 
 app.get('/learning-plan', searchController.listAllCourses)
+
+app.all(/^\/xapi\/.+/, passport.isAuthenticated, xApiController.proxy)
 
 app.use(
 	(
