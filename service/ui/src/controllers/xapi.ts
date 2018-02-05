@@ -1,5 +1,5 @@
-import * as config from 'config'
 import {Request, Response} from 'express'
+import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as request from 'request'
 
@@ -28,7 +28,7 @@ export function proxy(req: Request, res: Response) {
 	}
 
 	request({
-		auth: config.get('xapi.auth'),
+		auth: config.XAPI.auth,
 		body,
 		headers: {
 			'Content-Type': req.header('Content-Type'),
@@ -36,6 +36,6 @@ export function proxy(req: Request, res: Response) {
 		},
 		method: req.method,
 		qs: query,
-		url: `${config.get('xapi.url')}/${req.path.slice(6)}`,
+		url: `${config.XAPI.url}/${req.path.slice(6)}`,
 	}).pipe(res)
 }

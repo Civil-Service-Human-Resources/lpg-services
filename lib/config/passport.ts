@@ -1,60 +1,62 @@
-import {Request, Response, NextFunction} from 'express'
+import {NextFunction, Request, Response} from 'express'
 import * as passport from 'passport'
 import {Strategy} from 'passport-saml'
 
+let strategy: Strategy
 
-let strategy;
+export function configure(
+	issuer: string,
+	authenticationServiceUrl: string,
+	app: Express.Application
+) {
+	app.use(passport.initialize())
+	app.use(passport.session())
 
-export let configure = (issuer: string, authenticationServiceUrl: string, app: Express.Application) => {
+	strategy = new Strategy(
+		{
+			acceptedClockSkewMs: -1,
+			entryPoint: `${authenticationServiceUrl}/samlsso`,
+			issuer,
+			path: '/authenticate',
+		},
+		(profile, done) => {
+			done(null, {
+				department: profile['http://wso2.org/claims/department'],
+				emailAddress: profile.nameID,
+				grade: profile['http://wso2.org/claims/grade'],
+				id: profile['http://wso2.org/claims/userid'],
+				nameID: profile.nameID,
+				nameIDFormat: profile.nameIDFormat,
+				profession: profile['http://wso2.org/claims/profession'],
+				sessionIndex: profile.sessionIndex,
+			})
+		}
+	)
 
-    app.use(passport.initialize())
-    app.use(passport.session())
+	passport.use(strategy)
 
-    strategy = new Strategy(
-        {
-            acceptedClockSkewMs: -1,
-            entryPoint: `${authenticationServiceUrl}/samlsso`,
-            issuer,
-            path: '/authenticate',
-        },
-        (profile, done) => {
-            done(null, {
-                department: profile['http://wso2.org/claims/department'],
-                emailAddress: profile.nameID,
-                grade: profile['http://wso2.org/claims/grade'],
-                id: profile['http://wso2.org/claims/userid'],
-                nameID: profile.nameID,
-                nameIDFormat: profile.nameIDFormat,
-                profession: profile['http://wso2.org/claims/profession'],
-                sessionIndex: profile.sessionIndex,
-            })
-        }
-    )
+	passport.serializeUser((user, done) => {
+		done(null, JSON.stringify(user))
+	})
 
-    passport.use(strategy)
+	passport.deserializeUser((data, done) => {
+		done(null, JSON.parse(data))
+	})
 
-    passport.serializeUser((user, done) => {
-        done(null, JSON.stringify(user))
-    })
-
-    passport.deserializeUser((data, done) => {
-        done(null, JSON.parse(data))
-    })
-
-    app.all(
-        '/authenticate',
-        passport.authenticate('saml', {
-            failureFlash: true,
-            failureRedirect: '/',
-        }),
-        (req, res) => {
-            // TODO: remember URL accessed and redirect to, default to LPG UI home
-            res.redirect('/')
-        }
-    )
+	app.all(
+		'/authenticate',
+		passport.authenticate('saml', {
+			failureFlash: true,
+			failureRedirect: '/',
+		}),
+		(req, res) => {
+			// TODO: remember URL accessed and redirect to, default to LPG UI home
+			res.redirect('/')
+		}
+	)
 }
 
-export let logout = (req: Request, res: Response) => {
+export function logout(req: Request, res: Response) {
 	strategy.logout(req, (err, url) => {
 		if (err) {
 			res.sendStatus(500)
@@ -64,11 +66,11 @@ export let logout = (req: Request, res: Response) => {
 	})
 }
 
-export let isAuthenticated = (
+export function isAuthenticated(
 	req: Request,
 	res: Response,
 	next: NextFunction
-) => {
+) {
 	if (req.isAuthenticated()) {
 		return next()
 	}
