@@ -7,9 +7,12 @@
 					<h1 class="heading-xlarge">
 						Course complete
 					</h1>
-                	<span>{{ course.title }}</span>
+                	<div>{{ completionDate }}</div>
+                    <div>
+                        <strong>{{ course.title }}</strong>
+                    </div>
 				</div>
-				<a href="/learning-plan">Back to your learning plan</a>
+				<p>Your <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
             </div>
 		</div>
 	</Layout>

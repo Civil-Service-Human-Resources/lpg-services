@@ -36,6 +36,7 @@
 		"lib": "file:../../lib",
 		"log4js": "2.5.2",
 		"lusca": "1.5.2",
+		"moment": "^2.20.1",
 		"node-fetch": "1.7.3",
 		"node-sass": "4.7.2",
 		"session-file-store": "1.2.0"

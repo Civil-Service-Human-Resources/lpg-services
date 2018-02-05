@@ -14,7 +14,7 @@ description: string .
 learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
-identifier: string .
+duration: string .
 `
 
 // TODO(tav): Figure out how to make client requests respect deadlines.
@@ -38,6 +38,7 @@ export async function add(course: Course) {
 			type: course.type || '',
 			uid: course.uid || null,
 			uri: course.uri || '',
+            duration: course.duration || '',
 		})
 		mu.setCommitNow(true)
 		const assigned = await txn.mutate(mu)
@@ -62,10 +63,11 @@ export async function get(uid: string) {
 				shortDescription
 				description
 				learningOutcomes
+				duration
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
-		const entries = qresp.getJson().entries
+		const entries = getJson(qresp).entries
 		return entries[0]
 	} finally {
 		await txn.discard()
@@ -87,10 +89,11 @@ export async function findCourseByUri(uri: string) {
 				shortDescription
 				description
 				learningOutcomes
+				duration
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$uri: uri})
-		const entries = qresp.getJson().entries
+		const entries = getJson(qresp).entries
 		return entries[0]
 	} finally {
 		await txn.discard()
@@ -117,7 +120,7 @@ export async function search(
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$tag: tag})
-		const entries = qresp.getJson().entries
+		const entries = getJson(qresp).entries
 		for (const entry of entries) {
 			let info = map[entry.uid]
 			if (info) {
@@ -204,22 +207,11 @@ export async function listAll(
 			shortDescription
 			description
 			learningOutcomes
+			duration
 		}
 	}`
 	const qresp = await client.newTxn().query(query)
-	let results
-
-	try {
-		results = qresp.getJson().entries
-	} catch (e) {
-		let jsonString = u8ToStr(qresp.array[0])
-		if (!jsonString.startsWith('{')) {
-			jsonString = '{' + jsonString
-		}
-		results = JSON.parse(
-			jsonString.substring(0, jsonString.lastIndexOf('}') + 1)
-		).entries
-	}
+	let results = getJson(qresp).entries
 
 	results.sort(
 		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
@@ -274,7 +266,7 @@ export async function resetCourses() {
 	const highestUid = Number(lines[lines.length - 1][0])
 	let currentUid = 0x0
 
-    /* tslint:disable */
+	/* tslint:disable */
 	while (highestUid > currentUid) {
 		currentUid = Number(await add({title: 'placeholder'}))
 	}
@@ -287,4 +279,18 @@ export async function resetCourses() {
 		await add(course)
 	}
 	/* tslint:enable */
+}
+
+function getJson(qresp) {
+    try {
+        return qresp.getJson()
+    } catch (e) {
+        let jsonString = u8ToStr(qresp.array[0])
+        if (!jsonString.startsWith('{')) {
+            jsonString = '{' + jsonString
+        }
+        return JSON.parse(
+            jsonString.substring(0, jsonString.lastIndexOf('}') + 1)
+        )
+    }
 }

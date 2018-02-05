@@ -2,7 +2,6 @@ import {Request, Response} from 'express'
 import {Course} from 'lib/model/course'
 import * as catalog from 'lib/service/catalog'
 import * as api from 'lib/service/catalog/api'
-import * as elko from 'lib/service/elko'
 import * as template from 'lib/ui/template'
 
 export interface LearningPlan {
@@ -49,11 +48,8 @@ function filterCourses(allCourses: api.SearchResponse) {
 	}
 }
 
-export let listAllCourses = async (req: Request, res: Response) => {
+export async function listAllCourses(req: Request, res: Response) {
 	if (req.user.department) {
-		await catalog.resetCourses().catch((err: Error) => {
-			console.log(err)
-		})
 		const result = await catalog.listAll({}).catch((err: Error) => {
 			console.log(err)
 		})

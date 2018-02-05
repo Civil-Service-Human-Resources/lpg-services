@@ -62,7 +62,7 @@ export let editCourse = (req: Request, res: Response) => {
 export let doEditCourse = async (req: Request, res: Response) => {
 	const entry = {
 		...req.body,
-		tags: (req.body.tags || '').split(/,/),
+		tags: (req.body.tags || '').split(/,/).map(tag => tag.trim()),
 		type: req.course.type || req.body.type,
 		uid: req.course.uid,
 	}

@@ -1,0 +1,30 @@
+<Page title="Course">
+    <Layout page="course">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Online learning</span>
+                    {{course.title}}
+                </h1>
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <h2 class="heading-medium">Description</h2>
+                <div>{{{course.description}}}</div>
+
+                <h2 class="heading-medium">Learning Outcomes</h2>
+                <div>{{{course.learningOutcomes}}}</div>
+
+                <a class="button" href="/courses/{{course.uid}}/do">Start this learning</a>
+            </div>
+            <div class="column-one-third">
+                {{#if courseDetails.length}}
+                {{#each courseDetails as dataRows}}
+                <Rightbox bind:dataRows></Rightbox>
+                {{/each}}
+                {{/if}}
+            </div>
+        </div>
+    </Layout>
+</Page>

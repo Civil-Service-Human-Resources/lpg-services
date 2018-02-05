@@ -10,11 +10,11 @@ export let index = async (req: Request, res: Response) => {
 	const result = await catalog.listAll({})
 
 	console.log(
-		'uid,title,type,identifier,uri,tags,shortDescription,description,learningOutcomes'
+		'uid,title,type,duration,uri,tags,shortDescription,description,learningOutcomes'
 	)
 	for (const course of result.entries) {
 		console.log(
-			`${course.uid},${o(course.title)},${course.type},${course.identifier ||
+			`${course.uid},${o(course.title)},${course.type},${course.duration ||
 				''},${course.uri},"${course.tags.join(',')}",${o(
 				course.shortDescription || ''
 			)},${o(course.description || '')},${o(course.learningOutcomes || '')}`
