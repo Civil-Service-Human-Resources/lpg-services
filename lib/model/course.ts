@@ -7,6 +7,7 @@ export class Course {
 	public shortDescription: string
 	public description: string
 	public learningOutcomes: string
+	public duration: string
 
 	constructor(uid: string, type: string) {
 		this.uid = uid

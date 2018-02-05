@@ -71,6 +71,7 @@ app.get(/.*close_methods\.js/, coursePlayerController.closeMethods)
 
 app.param('courseId', courseController.loadCourse)
 
+app.get('/courses/reset', courseController.resetCourses)
 app.get('/courses/:courseId', courseController.display)
 app.use('/courses/:courseId/do', coursePlayerController.play)
 app.use('/courses/:courseId/xapi', xApiController.proxy)
