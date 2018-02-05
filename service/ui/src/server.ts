@@ -65,10 +65,6 @@ app.get(
 
 i18n.configure(app)
 
-app.get('/testlocales', (req, res) => {
-	res.send(res.__('hello'))
-})
-
 app.get('/learning-plan', searchController.listAllCourses)
 
 app.use(
