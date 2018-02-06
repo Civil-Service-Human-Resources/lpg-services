@@ -31,7 +31,7 @@ export async function add(ctx: elko.Context, {entry}: {entry: api.Entry}) {
 		const mu = new dgraph.Mutation()
 		mu.setSetJson({
 			description: entry.description || '',
-            identifier: entry.identifier || '',
+			identifier: entry.identifier || '',
 			learningOutcomes: entry.learningOutcomes || '',
 			shortDescription: entry.shortDescription || '',
 			tags: entry.tags || [],
@@ -49,11 +49,11 @@ export async function add(ctx: elko.Context, {entry}: {entry: api.Entry}) {
 }
 
 export async function get(ctx: elko.Context, {id}: {id: string}) {
-    await setSchema(ctx, {schema: SCHEMA})
+	await setSchema(ctx, {schema: SCHEMA})
 
 	const txn = client.newTxn()
 	try {
-        const query = `query all($id: string) {
+		const query = `query all($id: string) {
 			entries(func: uid($id)) {
 				identifier
 				tags
@@ -66,9 +66,9 @@ export async function get(ctx: elko.Context, {id}: {id: string}) {
 				learningOutcomes
 			}
 		}`
-        const qresp = await client.newTxn().queryWithVars(query, {$id: id})
-        const entries = qresp.getJson().entries
-        return entries[0]
+		const qresp = await client.newTxn().queryWithVars(query, {$id: id})
+		const entries = qresp.getJson().entries
+		return entries[0]
 	} finally {
 		await txn.discard()
 	}
@@ -78,7 +78,7 @@ export async function search(
 	ctx: elko.Context,
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
-    await setSchema(ctx, {schema: SCHEMA})
+	await setSchema(ctx, {schema: SCHEMA})
 
 	const map: Record<string, [number, number, api.Entry]> = {}
 	const results = []
@@ -173,7 +173,7 @@ export async function listAll(
 	ctx: elko.Context,
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
-    await setSchema(ctx, {schema: SCHEMA})
+	await setSchema(ctx, {schema: SCHEMA})
 
 	const query = `{
 		entries(func: ge(count(tags), 1)) {
@@ -247,7 +247,7 @@ export async function listAll(
 
 export async function resetCourses(ctx: elko.Context) {
 	await wipe(ctx)
-    await setSchema(ctx, {schema: SCHEMA})
+	await setSchema(ctx, {schema: SCHEMA})
 
 	const rawData = fs.readFileSync(__dirname + '/data.csv')
 	const lines = parse(rawData)

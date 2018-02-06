@@ -15,13 +15,12 @@ const logger = log4js.getLogger('controllers/course/player')
 export async function play(req: Request, res: Response) {
 	logger.debug(`Loading course resource, courseId: ${req.params.courseId}`)
 
-	const course = await catalog.get(elko.context(), {id: req.params.courseId})
+	const course = req.course
 
 	if (!course || !course.uri) {
 		res.sendStatus(404)
 	} else {
-
-	    // TODO: If website content record completion and redirect to site
+		// TODO: If website content record completion and redirect to site
 
 		let location
 		const path = req.path
@@ -45,7 +44,7 @@ export async function play(req: Request, res: Response) {
 			(err, data) => {
 				if (err) {
 					logger.error('Error retrieving course content', err)
-					res.sendStatus(500)
+					res.sendStatus(err.statusCode || 500)
 				} else {
 					res.setHeader('Content-Type', data.ContentType)
 					res.setHeader('ETag', data.ETag)
@@ -88,4 +87,9 @@ ${fileContent}
 export function portalOverrides(req: Request, res: Response) {
 	res.set('Content-Type', 'application/javascript')
 	fs.createReadStream('assets/js/player_overrides.js').pipe(res)
+}
+
+export function closeMethods(req: Request, res: Response) {
+	res.set('Content-Type', 'application/javascript')
+	fs.createReadStream('assets/js/close_methods.js').pipe(res)
 }

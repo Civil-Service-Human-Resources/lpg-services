@@ -16,6 +16,7 @@ import * as userController from 'ui/controllers/user'
 import * as xApiController from 'ui/controllers/xapi'
 import * as courseController from 'ui/controllers/course'
 import * as coursePlayerController from 'ui/controllers/course/player'
+import * as learningRecordController from 'ui/controllers/learning-record'
 
 const {PORT = 3001} = process.env
 
@@ -49,46 +50,33 @@ app.use(compression({threshold: 0}))
 app.use(serveStatic('assets'))
 
 passport.configure('lpg-ui', config.AUTHENTICATION.serviceUrl, app)
+i18n.configure(app)
 
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
-app.get('/profile', passport.isAuthenticated, userController.editProfile)
-app.post('/profile', passport.isAuthenticated, userController.tryUpdateProfile)
-app.get(
-	'/profile-updated',
-	passport.isAuthenticated,
-	userController.editProfileComplete
-)
 
-i18n.configure(app)
+app.use(passport.isAuthenticated)
+
+app.get('/profile', userController.editProfile)
+app.post('/profile', userController.tryUpdateProfile)
+app.get('/profile-updated', userController.editProfileComplete)
 
 app.get('/learning-plan', searchController.listAllCourses)
 
-app.all(/^\/xapi\/.+/, passport.isAuthenticated, xApiController.proxy)
-app.get(
-	/.*Scorm\.js/,
-	passport.isAuthenticated,
-	coursePlayerController.scormApi
-)
-app.get(
-	/.*portal_overrides\.js/,
-	passport.isAuthenticated,
-	coursePlayerController.portalOverrides
-)
+app.get(/.*Scorm\.js/, coursePlayerController.scormApi)
+app.get(/.*portal_overrides\.js/, coursePlayerController.portalOverrides)
+app.get(/.*close_methods\.js/, coursePlayerController.closeMethods)
 
-app.get(
-	'/courses/:courseId',
-	passport.isAuthenticated,
-    courseController.display
-)
+app.param('courseId', courseController.loadCourse)
 
-app.use(
-	'/courses/:courseId/do',
-	passport.isAuthenticated,
-	coursePlayerController.play
-)
+app.get('/courses/:courseId', courseController.display)
+app.use('/courses/:courseId/do', coursePlayerController.play)
+app.use('/courses/:courseId/xapi', xApiController.proxy)
+
+app.get('/learning-record', learningRecordController.display)
+app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
 app.use(
 	(

@@ -1,11 +1,11 @@
+import * as axios from 'axios'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
-import * as request from 'request'
 
 const logger = log4js.getLogger('controllers/xapi')
 
-export function proxy(req: Request, res: Response) {
+export async function proxy(req: Request, res: Response) {
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
 	const agent = {
@@ -15,8 +15,13 @@ export function proxy(req: Request, res: Response) {
 	}
 
 	const query = req.query
-	if (query && query.hasOwnProperty('agent')) {
-		query.agent = JSON.stringify(agent)
+	if (query) {
+		if (query.hasOwnProperty('agent')) {
+			query.agent = JSON.stringify(agent)
+		}
+		if (query.hasOwnProperty('activityId')) {
+			query.activityId = req.course.uri
+		}
 	}
 
 	let body = req.body
@@ -24,18 +29,40 @@ export function proxy(req: Request, res: Response) {
 		if (body.hasOwnProperty('actor')) {
 			body.actor = agent
 		}
-		body = JSON.stringify(body)
+		if (
+			body.hasOwnProperty('object') &&
+			body.object.objectType === 'Activity'
+		) {
+			body.object.id = req.course.uri
+		}
 	}
 
-	request({
-		auth: config.XAPI.auth,
-		body,
-		headers: {
-			'Content-Type': req.header('Content-Type'),
-			'X-Experience-API-Version': req.header('X-Experience-API-Version'),
-		},
-		method: req.method,
-		qs: query,
-		url: `${config.XAPI.url}/${req.path.slice(6)}`,
-	}).pipe(res)
+	let headers = {
+		'X-Experience-API-Version': req.header('X-Experience-API-Version'),
+	}
+
+	if (req.header('Content-Type')) {
+		headers['Content-Type'] = req.header('Content-Type')
+	}
+
+	try {
+		let response = await axios({
+			auth: config.XAPI.auth,
+			data: body,
+			headers,
+			method: req.method,
+			params: query,
+			responseType: 'stream',
+			url: `${config.XAPI.url}${req.path}`,
+		})
+
+		response.data.pipe(res)
+	} catch (e) {
+		logger.warn('Error proxying xapi request', e)
+		if (e.response) {
+			res.sendStatus(e.response.status)
+		} else {
+			res.sendStatus(500)
+		}
+	}
 }

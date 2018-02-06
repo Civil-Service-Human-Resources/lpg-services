@@ -11,7 +11,7 @@ function set<T>(defaultValue: T, envValues: Record<string, T> = {}): T {
 
 export const AWS = set({
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    region: process.env.REGION || 'eu-west-2',
+	region: process.env.REGION || 'eu-west-2',
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 })
 
@@ -47,8 +47,10 @@ export const SESSION_SECRET = set(
 
 export const XAPI = set({
 	auth: {
-		pass: process.env.XAPI_PASS || 'e8a8d35073eb61eb81d2c68ec929ac3c7c63e3cc',
-		user: process.env.XAPI_USER || '0184b0eb9a0db1c30d4b0186c847b222a122a71f',
+		password:
+			process.env.XAPI_PASS || '1c0e1b6827606d7efed71e204939d048f94f842b',
+		username:
+			process.env.XAPI_USER || '66f2b4fc001e3da992d23b57d8a7457655bea078',
 	},
-	url: process.env.XAPI_URL || 'http://localhost:8081/data/xAPI',
+	url: process.env.XAPI_URL || 'http://localhost:7081/data/xAPI',
 })
