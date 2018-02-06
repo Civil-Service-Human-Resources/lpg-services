@@ -8,10 +8,10 @@ import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
-import * as homeController from 'management-ui/controllers/home'
-import * as displayCourseController from 'management-ui/controllers/course/display'
-import * as editCourseController from 'management-ui/controllers/course/edit'
-import * as resetCourseController from 'management-ui/controllers/course/reset'
+import * as homeController from './controllers/home'
+import * as displayCourseController from './controllers/course/display'
+import * as editCourseController from './controllers/course/edit'
+import * as resetCourseController from './controllers/course/reset'
 
 const {PORT = 3003} = process.env
 

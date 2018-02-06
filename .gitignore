@@ -1,6 +1,4 @@
 *.log
-service/**/src/**/*.js
-lib/**/*.js
 *.d.ts
 *.js.map
 .idea
