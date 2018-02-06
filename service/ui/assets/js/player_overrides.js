@@ -8,8 +8,12 @@ if(OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-search"] && OBJ_NAV_BUTTONS["extra-
 if(OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-jlr-menu"] && OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton = false;
 
 var host = window.location.origin;
+var path = window.location.pathname.replace('/do/', '/xapi');
 
-BOO_INCLUDE_EXIT_ON_NAV = false;BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;
+BOO_INCLUDE_EXIT_ON_NAV = false;
+BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;
+CLOSE_METHOD = 'csl';
+
 var CONTENT_TRACKING_CONFIG = {
     enabled: true,
     pollingInterval: 60000,
@@ -19,7 +23,7 @@ var CONTENT_TRACKING_CONFIG = {
             version: '1.0',
             username: 'someone',
             password: 'somewhere',
-            endpoint: host + '/xapi'
+            endpoint: host + path
         }
     ]
 }
