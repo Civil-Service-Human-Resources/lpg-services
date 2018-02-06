@@ -8,15 +8,16 @@
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
-		"outDir": "dist",
+		"outDir": "./dist",
 		"preserveConstEnums": true,
 		"pretty": true,
 		"sourceMap": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
-		"target": "ESNext"
-	},
-	"include": [
-		"src/**/*"
-	]
+		"target": "ESNext",
+		"baseUrl": ".",
+		"paths": {
+			"lib/*": ["dist/node_modules/lib/*"]
+		}
+	}
 }

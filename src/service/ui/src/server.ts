@@ -10,14 +10,14 @@ import * as sessionFileStore from 'session-file-store'
 import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
 
-import * as courseController from 'ui/controllers/course'
-import * as coursePlayerController from 'ui/controllers/course/player'
-import * as homeController from 'ui/controllers/home'
-import * as learningRecordController from 'ui/controllers/learning-record'
-import * as searchController from 'ui/controllers/search'
-import * as userController from 'ui/controllers/user'
-import * as videoController from 'ui/controllers/video'
-import * as xApiController from 'ui/controllers/xapi'
+import * as homeController from './controllers/home'
+import * as searchController from './controllers/search'
+import * as userController from './controllers/user'
+import * as xApiController from './controllers/xapi'
+import * as courseController from './controllers/course'
+import * as coursePlayerController from './controllers/course/player'
+import * as videoController from './controllers/video'
+import * as learningRecordController from './controllers/learning-record'
 
 const {PORT = 3001} = process.env
 

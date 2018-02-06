@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../dist/service/management-ui",
+  },
+  "include": [
+    "./src/*"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "service-ui-server",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node dist/server.js"
+  }
+}
