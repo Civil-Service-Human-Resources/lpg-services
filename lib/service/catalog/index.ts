@@ -13,7 +13,7 @@ shortDescription: string .
 description: string .
 learningOutcomes: string .
 type: string .
-uri: string .
+uri: string @index(exact) .
 identifier: string .
 `
 
@@ -67,6 +67,32 @@ export async function get(ctx: elko.Context, {id}: {id: string}) {
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: id})
+		const entries = qresp.getJson().entries
+		return entries[0]
+	} finally {
+		await txn.discard()
+	}
+}
+
+export async function findCourseByUri(uri: string) {
+	await setSchema(elko.context(), {schema: SCHEMA})
+
+	const txn = client.newTxn()
+	try {
+		const query = `query all($uri: string) {
+			entries(func: eq(uri, $uri)) {
+				identifier
+				tags
+				title
+				type
+				uid
+				uri
+				shortDescription
+				description
+				learningOutcomes
+			}
+		}`
+		const qresp = await client.newTxn().queryWithVars(query, {$uri: uri})
 		const entries = qresp.getJson().entries
 		return entries[0]
 	} finally {
