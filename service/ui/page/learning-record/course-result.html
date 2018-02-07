@@ -4,6 +4,13 @@
 		<div class="grid-row">
 			<div class="column-full">
                 <h1 class="heading-large">{{ course.title }}</h1>
+				<p>
+					{{#if state === 'complete'}}
+					Course complete
+					{{else}}
+					Course in progress <a href="/courses/{{course.uid}}/do">Continue</a>
+					{{/if}}
+				</p>
             </div>
 		</div>
 	</Layout>

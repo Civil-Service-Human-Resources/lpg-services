@@ -13,6 +13,7 @@
 		"watch": "../../bin/tsc --watch"
 	},
 	"devDependencies": {
+		"@types/axios": "^0.14.0",
 		"@types/compression": "0.0.35",
 		"@types/express-session": "1.15.6",
 		"@types/lusca": "1.5.0",

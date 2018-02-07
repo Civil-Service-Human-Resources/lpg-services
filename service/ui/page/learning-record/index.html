@@ -4,6 +4,21 @@
 		<div class="grid-row">
 			<div class="column-full">
                 <h1 class="heading-large">Your learning record</h1>
+
+				{{#if courses.length}}
+				<ul>
+					{{#each courses as course}}
+					<li>
+						{{ course.title }}
+						<span>
+							{{course.result}}
+						</span>
+					</li>
+					{{/each}}
+				</ul>
+				{{else}}
+				<p>You haven't completed any courses yet!</p>
+				{{/if}}
             </div>
 		</div>
 	</Layout>
