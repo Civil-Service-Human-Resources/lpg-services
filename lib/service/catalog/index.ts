@@ -271,7 +271,14 @@ export async function resetCourses() {
 	const lines = parse(rawData)
 	const attributes = lines.shift()
 
-	/* tslint:disable */
+	const highestUid = Number(lines[lines.length - 1][0])
+	let currentUid = 0x0
+
+    /* tslint:disable */
+	while (highestUid > currentUid) {
+		currentUid = Number(await add({title: 'placeholder'}))
+	}
+
 	for (const line of lines) {
 		let course = {}
 		for (const i in attributes) {
