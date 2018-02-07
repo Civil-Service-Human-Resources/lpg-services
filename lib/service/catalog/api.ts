@@ -1,13 +1,4 @@
-export interface Entry {
-	tags?: string[]
-	title?: string
-	type?: string
-	uid?: string
-	uri?: string
-	shortDescription?: string
-	description?: string
-	learningOutcomes?: string
-}
+import {Course} from '../../model/course'
 
 export interface SearchRequest {
 	tags?: string[]
@@ -16,5 +7,5 @@ export interface SearchRequest {
 }
 
 export interface SearchResponse {
-	entries: Entry[]
+	entries: Course[]
 }

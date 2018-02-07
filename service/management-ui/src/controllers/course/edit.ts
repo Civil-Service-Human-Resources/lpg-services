@@ -19,11 +19,11 @@ export let loadCourse = async (
 	res: Response,
 	next: NextFunction
 ) => {
-	const courseId = req.params.courseId
+	const courseId: string = req.params.courseId
 	if (courseId === 'new') {
 		req.course = req.session.course || {}
 	} else {
-		req.course = await catalog.get(elko.context(), {id: courseId})
+		req.course = await catalog.get(courseId)
 		if (!req.course) {
 			return res.sendStatus(404)
 		}
@@ -67,9 +67,7 @@ export let doEditCourse = async (req: Request, res: Response) => {
 		uid: req.course.uid,
 	}
 
-	const id = await catalog.add(elko.context(), {
-		entry,
-	})
+	const id = await catalog.add(entry)
 	entry.uid = id
 
 	if (req.files && req.files.content) {
@@ -83,9 +81,7 @@ export let doEditCourse = async (req: Request, res: Response) => {
 		if (!entry.title) {
 			entry.title = title
 		}
-		await catalog.add(elko.context(), {
-			entry,
-		})
+		await catalog.add(entry)
 	}
 
 	logger.debug(`Course ${id} updated`)
@@ -118,7 +114,6 @@ async function upload(uid, entry) {
 		logger.debug(`Uploading ${uid}/${entry.path}`)
 		s3.upload(
 			{
-				ACL: 'public-read',
 				Body: entry,
 				Bucket: 'csl-learning-content',
 				ContentType: getContentType(entry.path),

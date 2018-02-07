@@ -1,6 +1,7 @@
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
+import {User} from 'lib/model/user'
 import * as template from 'lib/ui/template'
 import * as request from 'request'
 
@@ -14,14 +15,6 @@ export interface SignIn {
 	loginFailed: boolean
 	sessionDataKey: string
 	authenticationServiceUrl: string
-}
-
-export interface User {
-	id: string
-	email: string
-	department: string
-	profession: string
-	grade: string
 }
 
 function renderProfile(req: Request, props: Profile) {

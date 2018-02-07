@@ -7,7 +7,7 @@ import * as template from 'lib/ui/template'
 const logger = log4js.getLogger('controllers/course/display')
 
 export let index = async (req: Request, res: Response) => {
-	const result = await catalog.listAll(elko.context(), {})
+	const result = await catalog.listAll({})
 
 	console.log(
 		'uid,title,type,identifier,uri,tags,shortDescription,description,learningOutcomes'
