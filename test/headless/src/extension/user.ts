@@ -82,6 +82,11 @@ export async function getUser(username: string) {
 	}
 	return resp.data.Resources[0]
 }
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Profile load, save
 
 export async function deleteUser(userid: string) {
 	const url = ADMIN_URL + '/scim2/Users/' + userid
@@ -103,4 +108,5 @@ export async function deleteUser(userid: string) {
 			`Received response code ${resp.status} when expecting a 204`
 		)
 	}
+
 }
