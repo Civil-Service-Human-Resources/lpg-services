@@ -26,8 +26,8 @@ export async function courseResult(req: Request, res: Response) {
 	try {
 		const {state, result} = await getCourseRecord(req.user, req.course)
 
-		if (!state) {
-			res.redirect('/courses/' + req.params.courseId)
+		if (!state || state !== 'completed') {
+			res.redirect('/learning-plan')
 		} else {
 			res.send(
 				template.render('learning-record/course-result', req, {

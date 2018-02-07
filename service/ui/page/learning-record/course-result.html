@@ -3,14 +3,13 @@
 	<Layout page="learning-record-course">
 		<div class="grid-row">
 			<div class="column-full">
-                <h1 class="heading-large">{{ course.title }}</h1>
-				<p>
-					{{#if state === 'completed'}}
-					Course complete
-					{{else}}
-					Course in progress <a href="/courses/{{course.uid}}/do">Continue</a>
-					{{/if}}
-				</p>
+				<div class="govuk-box-highlight">
+					<h1 class="heading-xlarge">
+						Course complete
+					</h1>
+                	<span>{{ course.title }}</span>
+				</div>
+				<a href="/learning-plan">Back to your learning plan</a>
             </div>
 		</div>
 	</Layout>
