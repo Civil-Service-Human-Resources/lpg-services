@@ -4,8 +4,6 @@ import * as fs from 'fs'
 import * as url from 'url'
 import * as concat from 'concat'
 import * as config from 'lib/config'
-import * as catalog from 'lib/service/catalog'
-import * as elko from 'lib/service/elko'
 import * as log4js from 'log4js'
 
 const s3 = new aws.S3(config.AWS)

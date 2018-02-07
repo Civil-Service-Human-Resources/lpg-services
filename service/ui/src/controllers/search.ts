@@ -1,22 +1,9 @@
 import {Request, Response} from 'express'
-import * as template from 'lib/ui/template'
+import {Course} from 'lib/model/course'
 import * as catalog from 'lib/service/catalog'
-import * as elko from 'lib/service/elko'
 import * as api from 'lib/service/catalog/api'
-
-const SCHEMA = `tags: [string] @count @index(term) .
-title: string @index(fulltext) .
-shortDescription: string .
-uri: string .
-`
-
-export interface Course {
-	title: string
-	tags: [string]
-	shortDescription?: string
-	uri: string
-	uid: string
-}
+import * as elko from 'lib/service/elko'
+import * as template from 'lib/ui/template'
 
 export interface LearningPlan {
 	mandatory: [Course]
@@ -64,14 +51,12 @@ function filterCourses(allCourses: api.SearchResponse) {
 
 export let listAllCourses = async (req: Request, res: Response) => {
 	if (req.user.department) {
-		await catalog.resetCourses(elko.context(), SCHEMA).catch((err: Error) => {
+		await catalog.resetCourses().catch((err: Error) => {
 			console.log(err)
 		})
-		const result = await catalog
-			.listAll(elko.context(), {})
-			.catch((err: Error) => {
-				console.log(err)
-			})
+		const result = await catalog.listAll({}).catch((err: Error) => {
+			console.log(err)
+		})
 		const filteredResult = filterCourses(result)
 
 		res.send(renderLearningPlan(req, filteredResult))

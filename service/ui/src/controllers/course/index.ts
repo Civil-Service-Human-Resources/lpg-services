@@ -1,7 +1,6 @@
 import {Request, Response, NextFunction} from 'express'
 import * as log4js from 'log4js'
 import * as catalog from 'lib/service/catalog'
-import * as elko from 'lib/service/elko'
 
 const logger = log4js.getLogger('controllers/course/index')
 
@@ -10,7 +9,8 @@ export async function loadCourse(
 	res: Response,
 	next: NextFunction
 ) {
-	const course = await catalog.get(elko.context(), {id: req.params.courseId})
+	const courseId: string = req.params.courseId
+	const course = await catalog.get(courseId)
 	if (course) {
 		req.course = course
 		next()

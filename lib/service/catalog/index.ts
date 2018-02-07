@@ -2,8 +2,8 @@ import * as fs from 'fs'
 import * as parse from 'csv-parse/lib/sync'
 import * as dgraph from 'dgraph-js'
 import * as grpc from 'grpc'
+import {Course} from '../../model/course'
 import * as api from './api'
-import * as elko from '../elko'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -25,37 +25,35 @@ const client = new dgraph.DgraphClient(
 	)
 )
 
-export async function add(ctx: elko.Context, {entry}: {entry: api.Entry}) {
+export async function add(course: Course) {
 	const txn = client.newTxn()
 	try {
 		const mu = new dgraph.Mutation()
 		mu.setSetJson({
-			description: entry.description || '',
-			identifier: entry.identifier || '',
-			learningOutcomes: entry.learningOutcomes || '',
-			shortDescription: entry.shortDescription || '',
-			tags: entry.tags || [],
-			title: entry.title || '',
-			type: entry.type || '',
-			uid: entry.uid || null,
-			uri: entry.uri || '',
+			description: course.description || '',
+			learningOutcomes: course.learningOutcomes || '',
+			shortDescription: course.shortDescription || '',
+			tags: course.tags || [],
+			title: course.title || '',
+			type: course.type || '',
+			uid: course.uid || null,
+			uri: course.uri || '',
 		})
 		mu.setCommitNow(true)
 		const assigned = await txn.mutate(mu)
-		return assigned.getUidsMap().get('blank-0') || entry.uid
+		return assigned.getUidsMap().get('blank-0') || course.uid
 	} finally {
 		await txn.discard()
 	}
 }
 
-export async function get(ctx: elko.Context, {id}: {id: string}) {
-	await setSchema(ctx, {schema: SCHEMA})
+export async function get(uid: string) {
+	await setSchema(SCHEMA)
 
 	const txn = client.newTxn()
 	try {
 		const query = `query all($id: string) {
 			entries(func: uid($id)) {
-				identifier
 				tags
 				title
 				type
@@ -66,7 +64,7 @@ export async function get(ctx: elko.Context, {id}: {id: string}) {
 				learningOutcomes
 			}
 		}`
-		const qresp = await client.newTxn().queryWithVars(query, {$id: id})
+		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
 		const entries = qresp.getJson().entries
 		return entries[0]
 	} finally {
@@ -75,13 +73,12 @@ export async function get(ctx: elko.Context, {id}: {id: string}) {
 }
 
 export async function findCourseByUri(uri: string) {
-	await setSchema(elko.context(), {schema: SCHEMA})
+	await setSchema(SCHEMA)
 
 	const txn = client.newTxn()
 	try {
 		const query = `query all($uri: string) {
 			entries(func: eq(uri, $uri)) {
-				identifier
 				tags
 				title
 				type
@@ -101,12 +98,11 @@ export async function findCourseByUri(uri: string) {
 }
 
 export async function search(
-	ctx: elko.Context,
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
-	await setSchema(ctx, {schema: SCHEMA})
+	await setSchema(SCHEMA)
 
-	const map: Record<string, [number, number, api.Entry]> = {}
+	const map: Record<string, [number, number, Course]> = {}
 	const results = []
 	if (!req.tags || !req.tags.length) {
 		return {entries: []}
@@ -133,23 +129,21 @@ export async function search(
 			}
 		}
 	}
-	results.sort(
-		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
-			if (b[0] > a[0]) {
-				return 1
-			} else if (b[0] < a[0]) {
-				return -1
-			}
-			if (b[1] > a[1]) {
-				return 1
-			} else if (b[1] < a[1]) {
-				return -1
-			}
-			return 0
+	results.sort((a: [number, number, Course], b: [number, number, Course]) => {
+		if (b[0] > a[0]) {
+			return 1
+		} else if (b[0] < a[0]) {
+			return -1
 		}
-	)
+		if (b[1] > a[1]) {
+			return 1
+		} else if (b[1] < a[1]) {
+			return -1
+		}
+		return 0
+	})
 	const {after, first} = req
-	const resp: api.Entry[] = []
+	const resp: Course[] = []
 	let count = 0
 	let include = true
 	if (after) {
@@ -175,13 +169,13 @@ export async function search(
 	return {entries: resp}
 }
 
-export async function setSchema(ctx: elko.Context, {schema}: {schema: string}) {
+export async function setSchema(schema: string) {
 	const op = new dgraph.Operation()
 	op.setSchema(schema)
 	await client.alter(op)
 }
 
-export async function wipe(ctx: elko.Context) {
+export async function wipe() {
 	const op = new dgraph.Operation()
 	op.setDropAll(true)
 	await client.alter(op)
@@ -196,14 +190,12 @@ function u8ToStr(arr) {
 }
 
 export async function listAll(
-	ctx: elko.Context,
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
-	await setSchema(ctx, {schema: SCHEMA})
+	await setSchema(SCHEMA)
 
 	const query = `{
 		entries(func: ge(count(tags), 1)) {
-			identifier
 			tags
 			title
 			type
@@ -246,7 +238,7 @@ export async function listAll(
 	)
 
 	const {after, first} = req
-	const resp: api.Entry[] = []
+	const resp: Course[] = []
 	let count = 0
 	let include = true
 	if (after) {
@@ -271,21 +263,21 @@ export async function listAll(
 	return {entries: resp}
 }
 
-export async function resetCourses(ctx: elko.Context) {
-	await wipe(ctx)
-	await setSchema(ctx, {schema: SCHEMA})
+export async function resetCourses() {
+	await wipe()
+	await setSchema(SCHEMA)
 
 	const rawData = fs.readFileSync(__dirname + '/data.csv')
 	const lines = parse(rawData)
 	const attributes = lines.shift()
 
+	/* tslint:disable */
 	for (const line of lines) {
 		let course = {}
 		for (const i in attributes) {
 			course[attributes[i]] = line[i]
 		}
-		await add(ctx, {entry: course}).catch((err: Error) => {
-			console.log(err)
-		})
+		await add(course)
 	}
+	/* tslint:enable */
 }

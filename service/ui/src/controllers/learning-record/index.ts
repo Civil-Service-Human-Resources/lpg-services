@@ -9,9 +9,11 @@ const logger = log4js.getLogger('controllers/learning-record/index')
 
 export async function display(req: Request, res: Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
-	res.send(template.render('learning-record', req, {
-		courses: await getLearningRecord(req.user)
-	}))
+	res.send(
+		template.render('learning-record', req, {
+			courses: await getLearningRecord(req.user),
+		})
+	)
 }
 
 export async function courseResult(req: Request, res: Response) {
