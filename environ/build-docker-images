@@ -1,0 +1,20 @@
+#! /usr/bin/env bash
+
+function pushd {
+    command pushd "$@" > /dev/null
+}
+
+function popd {
+    command popd "$@" > /dev/null
+}
+
+for file in `ls */Dockerfile`; do
+    image=`dirname $file`
+    pushd $image
+    rm -f .digests
+    digests=`find . -type f | sort | xargs shasum -a 256`
+    echo "$digests" > .digests
+    digest=`shasum -a 256 .digests | cut -d ' ' -f1`
+    docker build -t "cshr/lpg-$image:$digest" .
+    popd
+done
