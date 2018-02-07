@@ -10,9 +10,9 @@ function set<T>(defaultValue: T, envValues: Record<string, T> = {}): T {
 }
 
 export const AWS = set({
-	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
 	region: process.env.REGION || 'eu-west-2',
-	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
 })
 
 export const AUTHENTICATION = set({
@@ -54,3 +54,5 @@ export const XAPI = set({
 	},
 	url: process.env.XAPI_URL || 'http://localhost:8083/data/xAPI',
 })
+
+export const YOUTUBE_API_KEY = 'AIzaSyB0qRHFNFQGlfMAjCimxUPhxY8wKpIU94Y'
