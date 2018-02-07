@@ -10,13 +10,14 @@ import * as sessionFileStore from 'session-file-store'
 import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
 
-import * as homeController from 'ui/controllers/home'
-import * as searchController from 'ui/controllers/search'
-import * as userController from 'ui/controllers/user'
-import * as xApiController from 'ui/controllers/xapi'
 import * as courseController from 'ui/controllers/course'
 import * as coursePlayerController from 'ui/controllers/course/player'
+import * as homeController from 'ui/controllers/home'
 import * as learningRecordController from 'ui/controllers/learning-record'
+import * as searchController from 'ui/controllers/search'
+import * as userController from 'ui/controllers/user'
+import * as videoController from 'ui/controllers/video'
+import * as xApiController from 'ui/controllers/xapi'
 
 const {PORT = 3001} = process.env
 
@@ -78,6 +79,8 @@ app.use('/courses/:courseId/xapi', xApiController.proxy)
 
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
+
+app.get('/video', passport.isAuthenticated, videoController.play)
 
 app.use(
 	(
