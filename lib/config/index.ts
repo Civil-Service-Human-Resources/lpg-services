@@ -52,5 +52,5 @@ export const XAPI = set({
 		username:
 			process.env.XAPI_USER || '66f2b4fc001e3da992d23b57d8a7457655bea078',
 	},
-	url: process.env.XAPI_URL || 'http://localhost:7081/data/xAPI',
+	url: process.env.XAPI_URL || 'http://localhost:8083/data/xAPI',
 })
