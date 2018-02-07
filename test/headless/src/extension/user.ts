@@ -80,6 +80,10 @@ export async function getUser(username: string) {
 	if (!resp.data.Resources.length) {
 		throw new Error(`Unable to find user ${username} from service`)
 	}
+<<<<<<< HEAD
+=======
+	console.log('RESPONSE DATA>>>>>>>>>>>>>>>', resp.data.Resources[0])
+>>>>>>> 71fa958d175ba1414d1a54e51bc44fce23c91d03
 	return resp.data.Resources[0]
 }
 
@@ -103,5 +107,8 @@ export async function deleteUser(userid: string) {
 			`Received response code ${resp.status} when expecting a 204`
 		)
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 71fa958d175ba1414d1a54e51bc44fce23c91d03
 }
