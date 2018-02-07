@@ -5,14 +5,14 @@ import {
 	setProfileFieldToEmptyAndSave,
 	setUserProfileDetails,
 } from 'page/profile'
-import { loginToCsl } from 'page/login'
-import { createUser, deleteUser, getUser } from 'extension/user'
+import {loginToCsl} from 'page/login'
+import {createUser, deleteUser, getUser} from 'extension/user'
 import * as puppeteer from 'puppeteer'
 
 declare var browser: puppeteer.Browser
 
 const timeout = 5000
-const { URL = '', TEST_USERNAME = '', TEST_PASSWORD = '' } = process.env
+const {URL = '', TEST_USERNAME = '', TEST_PASSWORD = ''} = process.env
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
@@ -26,10 +26,10 @@ describe('profile page functionality', () => {
 	}, timeout)
 
 	afterAll(async () => {
-		const userInfo = (await getUser(TEST_USERNAME))
+		const userInfo = await getUser(TEST_USERNAME)
 		await page.click(selectors.signoutButton)
 		await page.waitFor('#password', timeout)
-		await (deleteUser(userInfo.id))
+		await deleteUser(userInfo.id)
 		await page.close()
 	})
 
@@ -130,5 +130,3 @@ describe('profile page functionality', () => {
 		await page.waitFor(selectors.grade)
 	})
 })
-
-

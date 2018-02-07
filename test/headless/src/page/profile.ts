@@ -22,6 +22,19 @@ export const selectors: Record<string, string> = {
 		'#content > div.main-content > div > div > form > div:nth-child(4) > span',
 }
 
+export async function returnUserProfileDetails(page: puppeteer.Page) {
+	return page.$$eval('.form-control', values => {
+		const profile: Record<string, string> = {}
+		for (const val of values) {
+			const attrName = val.getAttribute('name')
+			if (attrName) {
+				profile[attrName] = val.getAttribute('value') || ''
+			}
+		}
+		return profile
+	})
+}
+
 export async function setUserProfileDetails(page: puppeteer.Page) {
 	await page.type(selectors.department, 'department')
 	await page.type(selectors.profession, 'profession')
@@ -36,17 +49,4 @@ export async function setProfileFieldToEmptyAndSave(
 ) {
 	await page.type(selector, ' ')
 	await page.click(selectors.saveProfileButton)
-}
-
-export async function returnUserProfileDetails(page: puppeteer.Page) {
-	return page.$$eval('.form-control', values => {
-		const profile: Record<string, string> = {}
-		for (const val of values) {
-			const attrName = val.getAttribute('name')
-			if (attrName) {
-				profile[attrName] = val.getAttribute('value') || ''
-			}
-		}
-		return profile
-	})
 }
