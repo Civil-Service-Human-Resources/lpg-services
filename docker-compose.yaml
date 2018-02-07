@@ -29,7 +29,7 @@ services:
       - mongodb
       - redis
       - mailhog
-    image: cshr/lpg-learning-locker:dbcbc3b8c847f9c1bbc88189e29fcf624dce1aa67a04947d59ec9b84c8a9b4bc
+    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
     ports:
       - 8082:8082
     working_dir: /opt/learning-locker
@@ -37,11 +37,11 @@ services:
     command: ["node", "/opt/learning-locker/worker/dist/server"]
     depends_on:
       - learning-locker-api-server
-    image: cshr/lpg-learning-locker:dbcbc3b8c847f9c1bbc88189e29fcf624dce1aa67a04947d59ec9b84c8a9b4bc
+    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
     working_dir: /opt/learning-locker
   learning-locker-ui:
     command: ["node", "/opt/learning-locker/ui/dist/server"]
-    image: cshr/lpg-learning-locker:dbcbc3b8c847f9c1bbc88189e29fcf624dce1aa67a04947d59ec9b84c8a9b4bc
+    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
     ports:
       - 3000:3000
     depends_on:
@@ -53,7 +53,7 @@ services:
       - mongodb
       - redis
       - learning-locker-api-worker
-    image: cshr/lpg-learning-locker:dbcbc3b8c847f9c1bbc88189e29fcf624dce1aa67a04947d59ec9b84c8a9b4bc
+    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
     ports:
       - 8083:8083
     working_dir: /opt/xapi-service
@@ -72,5 +72,5 @@ services:
       - mongodb
     environment:
       - NODE_PATH=/opt/learning-locker
-    image: cshr/lpg-learning-locker:dbcbc3b8c847f9c1bbc88189e29fcf624dce1aa67a04947d59ec9b84c8a9b4bc
+    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
     working_dir: /opt/learning-locker
