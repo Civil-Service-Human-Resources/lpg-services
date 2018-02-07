@@ -83,8 +83,6 @@ export async function getUser(username: string) {
 	console.log('RESPONSE DATA>>>>>>>>>>>>>>>', resp.data.Resources[0])
 	return resp.data.Resources[0]
 }
-<<<<<<< Updated upstream
-=======
 
 export async function deleteUser(userid: string) {
 	const url = ADMIN_URL + '/scim2/Users/' + userid
@@ -107,4 +105,3 @@ export async function deleteUser(userid: string) {
 		)
 	}
 }
->>>>>>> Stashed changes
