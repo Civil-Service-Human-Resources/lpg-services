@@ -8,6 +8,7 @@ export const selectors: Record<string, string> = {
 	grade: '#grade',
 	profileForm: '.form-control',
 	saveProfileButton: '#content > div.main-content > div > div > form > input',
+	profileUpdatedMessage: '#content > div.main-content > div > div > div > h1',
 	signoutButton: '#proposition-links > li:nth-child(3) > a',
 	profilePageButton: '#proposition-links > li:nth-child(2) > a',
 	incompleteProfileError: '#content > div.main-content > div > div > div',
@@ -26,6 +27,7 @@ export async function setUserProfileDetails(page: puppeteer.Page) {
 	await page.type(selectors.profession, 'profession')
 	await page.type(selectors.grade, 'grade')
 	await page.click(selectors.saveProfileButton)
+	await page.waitFor(selectors.profileUpdatedMessage)
 }
 
 export async function setProfileFieldToEmptyAndSave(

@@ -3,8 +3,15 @@ import {
 	selectors,
 	returnUserProfileDetails,
 	setProfileFieldToEmptyAndSave,
+<<<<<<< Updated upstream
 } from 'page/profile'
 import {loginToCsl} from 'page/login'
+=======
+	setUserProfileDetails,
+} from 'page/profile'
+import { loginToCsl } from 'page/login'
+import { createUser, getUser, deleteUser } from 'extension/user'
+>>>>>>> Stashed changes
 import * as puppeteer from 'puppeteer'
 import {getUser} from '../extension/user'
 //import {createUser} from '../../../../service/ui/src/controllers/user'
@@ -12,7 +19,11 @@ import {getUser} from '../extension/user'
 declare var browser: puppeteer.Browser
 
 const timeout = 5000
+<<<<<<< Updated upstream
 const {URL = '', USERNAME = '', PASS = ''} = process.env
+=======
+const { URL = '', TEST_USERNAME = '', TEST_PASSWORD = '' } = process.env
+>>>>>>> Stashed changes
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
@@ -20,15 +31,27 @@ describe('profile page functionality', () => {
 	beforeAll(async () => {
 		page = await browser.newPage()
 		await page.goto(URL)
+<<<<<<< Updated upstream
 		const userId = (await getUser(USERNAME)).id
 		console.log('USERNAME ID >>>>>>>>>>>>>>>>>>.', userId)
 		await loginToCsl(page, USERNAME, PASS)
+=======
+		await createUser(TEST_USERNAME, TEST_PASSWORD)
+		await loginToCsl(page, TEST_USERNAME, TEST_PASSWORD)
+>>>>>>> Stashed changes
 		await page.waitFor(selectors.profilePageButton, timeout)
 	}, timeout)
 
 	afterAll(async () => {
+<<<<<<< Updated upstream
 		await page.click(selectors.signoutButton)
 		await page.waitFor('#password', timeout)
+=======
+		const userInfo = (await getUser(TEST_USERNAME))
+		await page.click(selectors.signoutButton)
+		await page.waitFor('#password', timeout)
+		await (deleteUser(userInfo.id))
+>>>>>>> Stashed changes
 		await page.close()
 	})
 
@@ -121,5 +144,22 @@ describe('profile page functionality', () => {
 		).toBe(true)
 	})
 
+<<<<<<< Updated upstream
 	it('')
+=======
+	it('Should save profile details to the user account and display profile updated page', async () => {
+		await setUserProfileDetails(page)
+		expect(
+			await helper.checkElementIsPresent(selectors.profileUpdatedMessage, page)
+		).toBe(true)
+		await page.click(selectors.profilePageButton)
+		await page.waitFor(selectors.grade)
+		const profile = await returnUserProfileDetails(page)
+		expect(profile.profession).toEqual('profession')
+		expect(profile.grade).toEqual('grade')
+		expect(profile.department).toEqual('department')
+	})
+>>>>>>> Stashed changes
 })
+
+
