@@ -1,8 +1,19 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
 import {User} from 'lib/model/user'
 import * as template from 'lib/ui/template'
+=======
+=======
+>>>>>>> 71fa958d175ba1414d1a54e51bc44fce23c91d03
+import {default as axios, AxiosResponse} from 'axios'
+import * as config from 'config'
+import {Request, Response} from 'express'
+import * as https from 'https'
+import * as template from 'ui/template'
+>>>>>>> Added create user functionality, additional tests for profile
 import * as request from 'request'
 
 export interface Profile {
@@ -85,8 +96,21 @@ export function signIn(req: Request, res: Response) {
 	}
 }
 
+<<<<<<< HEAD
 export function signOut(req: Request, res: Response) {
 	passport.logout(req, res)
+=======
+export interface NewUser {
+	id: string
+}
+
+export interface NewUser {
+	id: string
+}
+
+function renderSignIn(req: Request, props: SignIn) {
+	return template.render('account/sign-in', req, props)
+>>>>>>> Added create user functionality, additional tests for profile
 }
 
 export function tryUpdateProfile(req: Request, res: Response) {
@@ -98,8 +122,94 @@ export function tryUpdateProfile(req: Request, res: Response) {
 	}
 }
 
+<<<<<<< HEAD
 export function updateProfile(req: Request, res: Response) {
 	const updateProfileObject = {
+=======
+const http = axios.create({
+	httpsAgent: new https.Agent({
+		rejectUnauthorized: false,
+	}),
+})
+
+export async function createUser(username: string, password: string) {
+	const url = config.get('authentication.serviceUrl') + '/scim2/Users/'
+	const data = JSON.stringify({
+		userName: username,
+		password: password,
+		emails: [
+			{
+				primary: true,
+				value: username,
+				type: 'work',
+			},
+		],
+	})
+	let resp: AxiosResponse<NewUser>
+	try {
+		resp = await http.post(url, data, {
+			method: 'POST',
+			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+			auth: {
+				username: config.get('authentication.serviceAdmin') as string,
+				password: config.get('authentication.servicePassword') as string,
+			},
+		})
+	} catch (err) {
+		throw err
+	}
+	if (resp.status !== 201) {
+		throw new Error(
+			`Received response code ${resp.status} when expecting a 201`
+		)
+	}
+	return resp.data.id
+}
+
+const http = axios.create({
+	httpsAgent: new https.Agent({
+		rejectUnauthorized: false,
+	}),
+})
+
+export async function createUser(username: string, password: string) {
+	const url = config.get('authentication.serviceUrl') + '/scim2/Users/'
+	const data = JSON.stringify({
+		userName: username,
+		password: password,
+		emails: [
+			{
+				primary: true,
+				value: username,
+				type: 'work',
+			},
+		],
+	})
+	let resp: AxiosResponse<NewUser>
+	try {
+		resp = await http.post(url, data, {
+			method: 'POST',
+			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+			auth: {
+				username: config.get('authentication.serviceAdmin') as string,
+				password: config.get('authentication.servicePassword') as string,
+			},
+		})
+	} catch (err) {
+		throw err
+	}
+	if (resp.status !== 201) {
+		throw new Error(
+			`Received response code ${resp.status} when expecting a 201`
+		)
+	}
+	return resp.data.id
+}
+
+export let updateProfile = (req: Request, res: Response) => {
+	let updateProfileObject = {
+		userName: req.body.userName,
+>>>>>>> Added create user functionality, additional tests for profile
 		CshrUser: {
 			department: req.body.department,
 			grade: req.body.grade,

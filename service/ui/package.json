@@ -24,8 +24,16 @@
 		"@types/session-file-store": "1.2.0"
 	},
 	"dependencies": {
+<<<<<<< HEAD
+<<<<<<< HEAD
 		"aws-sdk": "^2.189.0",
 		"axios": "^0.17.1",
+=======
+		"axios": "0.17.1 ",
+>>>>>>> Added create user functionality, additional tests for profile
+=======
+		"axios": "0.17.1 ",
+>>>>>>> 71fa958d175ba1414d1a54e51bc44fce23c91d03
 		"compression": "1.7.1",
 		"concat": "^1.0.3",
 		"express": "4.16.2",
