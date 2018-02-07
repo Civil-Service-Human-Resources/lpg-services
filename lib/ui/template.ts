@@ -4,6 +4,7 @@ import * as path from 'path'
 import * as svelte from 'svelte'
 import * as vm from 'vm'
 import * as config from '../config'
+import * as html from '../html'
 
 interface AST {
 	children: AST[]
@@ -65,7 +66,7 @@ function compile(
 export default {
 components: {${componentNames}},
 data() {
-    return {signedInUser: getCurrentRequest().user}
+    return {html: htmlModule, signedInUser: getCurrentRequest().user}
 }
 }
 </script>
@@ -79,6 +80,9 @@ data() {
 			format: 'cjs',
 			generate: 'ssr',
 			name: constructorName,
+			onwarn: () => {
+				return
+			},
 		})
 	} catch (err) {
 		logParseError(path, err)
@@ -90,13 +94,13 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest) {
+		`(function(module, exports, require, components, getCurrentRequest, htmlModule) {
 const {${componentNames}} = components
 ${code}
 });`,
 		{filename}
 	)
-	wrapper(module, module.exports, require, components, getCurrentRequest)
+	wrapper(module, module.exports, require, components, getCurrentRequest, html)
 	return module.exports
 }
 
