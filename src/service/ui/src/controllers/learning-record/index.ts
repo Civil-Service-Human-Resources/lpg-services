@@ -3,7 +3,6 @@ import {Request, Response} from 'express'
 import * as log4js from 'log4js'
 import * as config from 'lib/config'
 import * as catalog from 'lib/service/catalog'
-import * as moment from 'moment'
 import * as template from 'lib/ui/template'
 
 const logger = log4js.getLogger('controllers/learning-record/index')
@@ -25,14 +24,17 @@ export async function courseResult(req: Request, res: Response) {
 	)
 
 	try {
-		const {state, result, completionDate} = await getCourseRecord(req.user, req.course)
+		const {state, result, completionDate} = await getCourseRecord(
+			req.user,
+			req.course
+		)
 
 		if (!state || state !== 'completed') {
 			res.redirect('/learning-plan')
 		} else {
 			res.send(
 				template.render('learning-record/course-result', req, {
-                    completionDate,
+					completionDate,
 					course: req.course,
 					result,
 					state,
@@ -115,7 +117,7 @@ async function getCourseRecord(user: any, course: any) {
 	const completionDate = getCompletionDate(statements)
 
 	return {
-        completionDate,
+		completionDate,
 		result,
 		state,
 	}
@@ -130,7 +132,9 @@ function getCompletionDate(statements: [any]) {
 			statement.verb.id === 'http://adlnet.gov/expapi/verbs/completed'
 	)
 	if (completed) {
-		return moment(completed.timestamp).format('DD/MM/YYYY')
+		return new Intl.DateTimeFormat('en-GB').format(
+			new Date(completed.timestamp)
+		)
 	}
 	return null
 }

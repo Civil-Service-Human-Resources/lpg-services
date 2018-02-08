@@ -17,7 +17,6 @@ uri: string @index(exact) .
 duration: string .
 `
 
-// TODO(tav): Figure out how to make client requests respect deadlines.
 const client = new dgraph.DgraphClient(
 	new dgraph.DgraphClientStub(
 		DGRAPH_ENDPOINT,
@@ -31,6 +30,7 @@ export async function add(course: Course) {
 		const mu = new dgraph.Mutation()
 		mu.setSetJson({
 			description: course.description || '',
+			duration: course.duration || '',
 			learningOutcomes: course.learningOutcomes || '',
 			shortDescription: course.shortDescription || '',
 			tags: course.tags || [],
@@ -38,7 +38,6 @@ export async function add(course: Course) {
 			type: course.type || '',
 			uid: course.uid || null,
 			uri: course.uri || '',
-            duration: course.duration || '',
 		})
 		mu.setCommitNow(true)
 		const assigned = await txn.mutate(mu)
@@ -282,15 +281,13 @@ export async function resetCourses() {
 }
 
 function getJson(qresp) {
-    try {
-        return qresp.getJson()
-    } catch (e) {
-        let jsonString = u8ToStr(qresp.array[0])
-        if (!jsonString.startsWith('{')) {
-            jsonString = '{' + jsonString
-        }
-        return JSON.parse(
-            jsonString.substring(0, jsonString.lastIndexOf('}') + 1)
-        )
-    }
+	try {
+		return qresp.getJson()
+	} catch (e) {
+		let jsonString = u8ToStr(qresp.array[0])
+		if (!jsonString.startsWith('{')) {
+			jsonString = '{' + jsonString
+		}
+		return JSON.parse(jsonString.substring(0, jsonString.lastIndexOf('}') + 1))
+	}
 }
