@@ -33,4 +33,6 @@ RUN . $NVM_DIR/nvm.sh \
 COPY package.json package.json
 RUN npm install --unsafe-perm
 
+ENV NODE_ICU_DATA /var/www/app/node_modules/full-icu
+
 COPY dist .

@@ -14,8 +14,8 @@
 		"sass:management": "cd src/service/management-ui/ && node-sass assets/styles/index.scss ../../../dist/service/management-ui/assets/styles/main.css",
 		"sass:ui": "cd src/service/ui && node-sass assets/styles/index.scss ../../../dist/service/ui/assets/styles/main.css",
 		"start:all": "npm run start:management & npm run start:ui",
-		"start:ui": "cd dist/service/ui && node server.js",
-		"start:management": "cd dist/service/management-ui && node server.js"
+		"start:ui": "cd dist/service/ui && node --icu-data-dir=../../../node_modules/full-icu server.js",
+		"start:management": "cd dist/service/management-ui && node --icu-data-dir=../../../node_modules/full-icu server.js"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
@@ -43,6 +43,7 @@
 		"express": "4.16.2",
 		"express-session": "1.15.6",
 		"express-validator": "4.3.0",
+		"full-icu": "^1.2.0",
 		"govuk-elements-sass": "3.1.2",
 		"govuk_frontend_toolkit": "7.2.0",
 		"grpc": "1.8.4",
