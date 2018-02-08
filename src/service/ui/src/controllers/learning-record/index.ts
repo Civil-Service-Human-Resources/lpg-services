@@ -12,7 +12,7 @@ export async function display(req: Request, res: Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 	res.send(
 		template.render('learning-record', req, {
-			courses: await getLearningRecord(req.user),
+			courses: await getLearningRecordOf(CourseState.Completed, req.user),
 		})
 	)
 }
@@ -48,7 +48,12 @@ export async function courseResult(req: Request, res: Response) {
 	}
 }
 
-async function getLearningRecord(user: any) {
+export enum CourseState {
+	Completed = 'completed',
+	InProgress = 'in-progress',
+}
+
+export async function getLearningRecordOf(courseState: CourseState, user: any) {
 	const agent = {
 		mbox: `mailto:${user.emailAddress}`,
 		name: user.id,
@@ -83,7 +88,7 @@ async function getLearningRecord(user: any) {
 	for (const key in groupedStatements) {
 		const statements = groupedStatements[key]
 		const state = getState(statements)
-		if (state === 'completed') {
+		if (state === courseState) {
 			const result = getResult(statements)
 			const course = await catalog.findCourseByUri(key)
 			courses.push({...course, result, state})
