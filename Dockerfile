@@ -7,7 +7,7 @@ ENV AUTHENTICATION_SERVICE_URL https://identity.dev.cshr.digital:9443
 
 EXPOSE 3001
 
-CMD [ "cd", "service/ui", "&&", "node", "server.js" ]
+CMD [ "bash", "-c", "cd service/ui && node server.js" ]
 
 RUN apt-get update && \
   apt-get install --yes wget ssh sshpass g++ make && \
