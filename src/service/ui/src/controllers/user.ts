@@ -3,7 +3,8 @@ import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
 import {User} from 'lib/model/user'
 import * as template from 'lib/ui/template'
-import * as request from 'request'
+import Axios from 'axios'
+import * as https from 'https'
 
 export interface Profile {
 	user: User
@@ -32,7 +33,7 @@ function updateUserObject(req: Request, updatedProfile: User) {
 	req.login(newUser, () => {})
 }
 
-function validateForm(req: request) {
+function validateForm(req: Express.request) {
 	const form = req.body
 	const validInputs = {
 		givenName: form.givenName,
@@ -87,14 +88,6 @@ export function signIn(req: Request, res: Response) {
 		)
 	}
 }
-export interface User {
-	id: string
-	email: string
-	givenName: string
-	department: string
-	profession: string
-	grade: string
-}
 
 export function signOut(req: Request, res: Response) {
 	passport.logout(req, res)
@@ -124,29 +117,34 @@ export let updateProfile = (req: Request, res: Response) => {
 		},
 	}
 
-	const options = {
-		auth: {
-			pass: config.AUTHENTICATION.servicePassword,
-			user: config.AUTHENTICATION.serviceAdmin,
-		},
-		body: JSON.stringify(updateProfileObject),
-		headers: {'Content-Type': 'application/json'},
-		method: 'PUT',
-		rejectUnauthorized: false, //Jen - TODO: Is there a securer way to do this?
-		uri: config.AUTHENTICATION.serviceUrl + '/scim2/Users/' + req.user.id,
-	}
+	const requestConfig = {
+		url: '/scim2/Users/' + req.user.id,
+		method: 'put',
+		baseURL: config.AUTHENTICATION.serviceUrl,
 
-	request(options, (error: Error, response: Response, body: Body) => {
-		if (!error && response.statusCode == 200) {
-			updateUserObject(req, updateProfileObject)
+		// `headers` are custom headers to be sent
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json',
+		},
+		data: updateProfileObject,
+		httpsAgent: new https.Agent({rejectUnauthorized: false}),
+		auth: {
+			username: config.AUTHENTICATION.serviceAdmin,
+			password: config.AUTHENTICATION.servicePassword,
+		},
+	}
+	Axios.request(requestConfig)
+		.then(function(response) {
+			updateUserObject(req, JSON.parse(response.config.data))
 			res.redirect('/profile-updated')
-		} else {
+		})
+		.catch(function(error) {
 			res.send(
 				renderProfile(req, {
 					identityServerFailed: true,
 					user: req.user,
 				})
 			)
-		}
-	})
+		})
 }

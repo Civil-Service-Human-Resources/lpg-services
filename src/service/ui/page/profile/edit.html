@@ -48,7 +48,7 @@
                     <div class="form-group {{validFields == false && !user.department ?  "form-group-error": ''}}">
                         <label class="form-label" for="department">Department</label>
                         {{#if validFields == false && !user.department}}
-                        <span class="error-message">Department field cwwwannot be empty.</span>
+                        <span class="error-message">Department field cannot be empty.</span>
                         {{/if}}
                         <input class="form-control" id="department" name="department" type="text" value="{{user.department || ''}}">
                     </div>
