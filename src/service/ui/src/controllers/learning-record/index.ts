@@ -2,6 +2,7 @@ import * as axios from 'axios'
 import {Request, Response} from 'express'
 import * as log4js from 'log4js'
 import * as config from 'lib/config'
+import * as dateTime from 'lib/datetime'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 
@@ -132,9 +133,7 @@ function getCompletionDate(statements: [any]) {
 			statement.verb.id === 'http://adlnet.gov/expapi/verbs/completed'
 	)
 	if (completed) {
-		return new Intl.DateTimeFormat('en-GB').format(
-			new Date(completed.timestamp)
-		)
+		return dateTime.formatDate(new Date(completed.timestamp))
 	}
 	return null
 }
