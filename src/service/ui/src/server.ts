@@ -3,6 +3,7 @@ import * as compression from 'compression'
 import * as express from 'express'
 import * as session from 'express-session'
 import * as config from 'lib/config'
+import * as log4js from 'log4js'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
@@ -19,7 +20,11 @@ import * as userController from './controllers/user'
 import * as videoController from './controllers/video'
 import * as xApiController from './controllers/xapi'
 
+log4js.configure(config.LOGGING)
+
 const {PORT = 3001} = process.env
+
+const logger = log4js.getLogger('server')
 
 const app = express()
 const FileStore = sessionFileStore(session)
@@ -89,7 +94,7 @@ app.use(
 		res: express.Response,
 		next: express.NextFunction
 	) => {
-		console.log(
+		logger.error(
 			'Error handling request for',
 			req.method,
 			req.url,
@@ -102,5 +107,5 @@ app.use(
 )
 
 app.listen(PORT, () => {
-	console.log(`listening on port ${PORT}`)
+	logger.info(`listening on port ${PORT}`)
 })

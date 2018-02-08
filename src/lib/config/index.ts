@@ -25,16 +25,20 @@ export const AUTHENTICATION = set({
 
 export const LOGGING = set(
 	{
-		appenders: [],
-		levels: {
-			'[all]': 'DEBUG',
+		appenders: {
+			out: {type: 'console'},
+		},
+		categories: {
+			default: {appenders: ['out'], level: 'info'},
 		},
 	},
 	{
 		development: {
-			appenders: [{type: 'console'}],
-			levels: {
-				'[all]': 'DEBUG',
+			appenders: {
+				out: {type: 'console'},
+			},
+			categories: {
+				default: {appenders: ['out'], level: 'debug'},
 			},
 		},
 	}
