@@ -7,10 +7,29 @@
 @import 'components/footer';
 @import 'components/course';
 @import 'components/rightbox';
+@import 'components/basket';
+@import 'components/learning';
 
 .push-bottom {
 	margin-bottom: 30px;
 	display: block;
+}
+
+.view-all {
+	@include e(button) {
+		display: none;
+	}
+	.showing {
+		display: none;
+	}
+	@include m(showing) {
+		.hidden {
+			display: none;
+		}
+		.showing {
+			display: inline;
+		}
+	}
 }
 
 #global-header {
@@ -34,6 +53,20 @@
 					margin-left: 15px;
 				}
 			}
+		}
+	}
+}
+
+.js-enabled {
+	.js-hidden {
+		display: none;
+	}
+}
+
+body:not(.js-enabled) {
+	.js-only {
+		* {
+			display: none;
 		}
 	}
 }

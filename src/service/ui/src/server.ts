@@ -19,6 +19,7 @@ import * as searchController from './controllers/search'
 import * as userController from './controllers/user'
 import * as videoController from './controllers/video'
 import * as xApiController from './controllers/xapi'
+import * as basketController from './controllers/basket'
 
 log4js.configure(config.LOGGING)
 
@@ -84,6 +85,8 @@ app.use('/courses/:courseId/xapi', xApiController.proxy)
 
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
+
+app.get('/basket', basketController.basketPage)
 
 app.get('/video', passport.isAuthenticated, videoController.play)
 

@@ -11,12 +11,21 @@
     <meta property="og:image" content="/img/opengraph-image.png">
     <title>{{title}}</title>
     <link rel="stylesheet" href="./styles/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
+
+
 </head>
 
 <body>
     <Header />
 
-    <slot></slot>
+    <slot/>
+    <script src="./javascript/main.js"></script>
+        <script src="./javascript/govuk_frontend_toolkit/govuk/show-hide-content.js"></script>
+        <script src="./javascript/govuk_frontend_toolkit/govuk/modules.js"></script>
+
 </body>
+
+
 
 </html>

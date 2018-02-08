@@ -3,7 +3,7 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">Profile</h1>
-                {{#if identityServerFailed || !validFields || !signedInUser.department || !signedInUser.profession || !signedInUser.grade}}
+                {{#if identityServerFailed || !validFields || !signedInUser.givenName || !signedInUser.department || !signedInUser.profession || !signedInUser.grade}}
 
 
                     <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
@@ -19,7 +19,7 @@
                                 Form error. Fields cannot be empty.
                             {{/if}}
                         </p>
-                        {{#if !signedInUser.department || !signedInUser.profession || !signedInUser.grade }}
+                        {{#if !signedInUser.department || !signedInUser.givenName || !signedInUser.profession || !signedInUser.grade }}
                         <p>
                             To view learning opportunities, you must complete your profile.
                         </p>
@@ -28,16 +28,27 @@
 
                 {{/if}}
 
+
+
                 <form method="post" class="push-bottom">
                     <div class="form-group">
                         <label class="form-label" for="userName">Email address</label>
                         <input class="form-control" id="userName" name="userName" value="{{signedInUser.emailAddress || ''}}" type="text" readonly="readonly">
                     </div>
+                    
+                    <div class="form-group {{validFields == false && !user.givenName ?  "form-group-error": ''}}">
+                        <label class="form-label" for="givenName">First name</label>
+                        {{#if validFields == false && !user.givenName}}
+                        <span class="error-message">Department field cannot be empty.</span>
+                        {{/if}}
+                        <input class="form-control" id="givenName" name="givenName" type="text" value="{{user.givenName || ''}}">
+                    </div>
+
 
                     <div class="form-group {{validFields == false && !user.department ?  "form-group-error": ''}}">
                         <label class="form-label" for="department">Department</label>
                         {{#if validFields == false && !user.department}}
-                        <span class="error-message">Department field cannot be empty.</span>
+                        <span class="error-message">Department field cwwwannot be empty.</span>
                         {{/if}}
                         <input class="form-control" id="department" name="department" type="text" value="{{user.department || ''}}">
                     </div>
