@@ -1,0 +1,21 @@
+<div class="learning">
+    <div class="grid-row">
+        <div class="learning__actions column-third">
+            <a href="{{uri}}" class="learning__title">{{title}}</a>
+            <a href="#">Resume</a>
+            <a href="#">Delete</a>
+        </div>
+
+        <span class="learning__progress">{{progress}}</span>
+
+        <div class="column-one-third">
+            <p class="learning__information-desc">{{desc}}</p>
+
+            <ul class="learning__information-list">
+            {{#each list as item}}
+                <li>{{item}}</li>
+            {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>

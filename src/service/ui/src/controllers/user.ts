@@ -17,22 +17,25 @@ export interface SignIn {
 	authenticationServiceUrl: string
 }
 
-function renderProfile(req: Request, props: Profile) {
-	return template.render('profile/edit', req, props)
-}
-
 function renderSignIn(req: Request, props: SignIn) {
 	return template.render('account/sign-in', req, props)
 }
 
 function updateUserObject(req: Request, updatedProfile: User) {
-	const newUser = {...req.user, ...updatedProfile}
+	let cshrUserObject = updatedProfile.CshrUser
+
+	let newUser = {
+		...req.user,
+		givenName: updatedProfile.name.givenName,
+		...cshrUserObject,
+	}
 	req.login(newUser, () => {})
 }
 
 function validateForm(req: request) {
 	const form = req.body
 	const validInputs = {
+		givenName: form.givenName,
 		department: form.department,
 		grade: form.grade,
 		profession: form.profession,
@@ -84,6 +87,14 @@ export function signIn(req: Request, res: Response) {
 		)
 	}
 }
+export interface User {
+	id: string
+	email: string
+	givenName: string
+	department: string
+	profession: string
+	grade: string
+}
 
 export function signOut(req: Request, res: Response) {
 	passport.logout(req, res)
@@ -98,14 +109,19 @@ export function tryUpdateProfile(req: Request, res: Response) {
 	}
 }
 
-export function updateProfile(req: Request, res: Response) {
-	const updateProfileObject = {
-		CshrUser: {
-			department: req.body.department,
-			grade: req.body.grade,
-			profession: req.body.profession,
-		},
+function renderProfile(req: Request, props: Profile) {
+	return template.render('profile/edit', req, props)
+}
+
+export let updateProfile = (req: Request, res: Response) => {
+	let updateProfileObject = {
 		userName: req.body.userName,
+		name: {givenName: req.body.givenName},
+		CshrUser: {
+			profession: req.body.profession,
+			grade: req.body.grade,
+			department: req.body.department,
+		},
 	}
 
 	const options = {
@@ -120,9 +136,9 @@ export function updateProfile(req: Request, res: Response) {
 		uri: config.AUTHENTICATION.serviceUrl + '/scim2/Users/' + req.user.id,
 	}
 
-	request(options, (error, response, body) => {
-		if (!error && response.statusCode === 200) {
-			updateUserObject(req, updateProfileObject.CshrUser)
+	request(options, (error: Error, response: Response, body: Body) => {
+		if (!error && response.statusCode == 200) {
+			updateUserObject(req, updateProfileObject)
 			res.redirect('/profile-updated')
 		} else {
 			res.send(

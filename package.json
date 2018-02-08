@@ -3,16 +3,24 @@
 	"version": "0.0.1",
 	"main": "index.js",
 	"scripts": {
-		"build:all": "npm run clean && npm run build:lib && npm run build:management && npm run build:ui",
+		"build:all":
+			"npm run clean && npm run build:lib && npm run build:management && npm run build:ui",
 		"build:lib": "cd src/lib && ../../bin/tsc && npm run copy:lib",
-		"build:management": "cd src/service/management-ui && ../../../bin/tsc && cd ../../.. && npm run copy:management && npm run sass:management",
-		"build:ui": "cd src/service/ui && ../../../bin/tsc && cd ../../.. && npm run copy:ui && npm run sass:ui",
+		"build:management":
+			"cd src/service/management-ui && ../../../bin/tsc && cd ../../.. && npm run copy:management && npm run sass:management",
+		"build:ui":
+			"cd src/service/ui && ../../../bin/tsc && cd ../../.. && npm run copy:ui && npm run sass:ui",
 		"clean": "rm -rf dist",
-		"copy:lib": "cd src/lib/service && cp catalog/data.csv ../../../dist/node_modules/lib/service/catalog",
-		"copy:ui": "cd src/service/ui && cp src/package.json ../../../dist/service/ui && cp -r component ../../../dist/service/ui/component && cp -r page ../../../dist/service/ui/page && cp -r assets ../../../dist/service/ui/ && rm -rf ../../../dist/service/ui/assets/styles",
-		"copy:management": "cd src/service/management-ui && cp src/package.json ../../../dist/service/management-ui && cp -r component ../../../dist/service/management-ui/component && cp -r page ../../../dist/service/management-ui/page && cp -r assets ../../../dist/service/management-ui/ && rm -rf ../../../dist/service/management-ui/assets/styles",
-		"sass:management": "cd src/service/management-ui/ && node-sass assets/styles/index.scss ../../../dist/service/management-ui/assets/styles/main.css",
-		"sass:ui": "cd src/service/ui && node-sass assets/styles/index.scss ../../../dist/service/ui/assets/styles/main.css",
+		"copy:lib":
+			"cd src/lib/service && cp catalog/data.csv ../../../dist/node_modules/lib/service/catalog",
+		"copy:ui":
+			"cd src/service/ui && cp src/package.json ../../../dist/service/ui && cp -r component ../../../dist/service/ui/component && cp -r page ../../../dist/service/ui/page && cp -r assets ../../../dist/service/ui/ && rm -rf ../../../dist/service/ui/assets/styles",
+		"copy:management":
+			"cd src/service/management-ui && cp src/package.json ../../../dist/service/management-ui && cp -r component ../../../dist/service/management-ui/component && cp -r page ../../../dist/service/management-ui/page && cp -r assets ../../../dist/service/management-ui/ && rm -rf ../../../dist/service/management-ui/assets/styles",
+		"sass:management":
+			"cd src/service/management-ui/ && node-sass assets/styles/index.scss ../../../dist/service/management-ui/assets/styles/main.css",
+		"sass:ui":
+			"cd src/service/ui && node-sass assets/styles/main.scss ../../../dist/service/ui/assets/styles/main.css",
 		"start:all": "npm run start:management & npm run start:ui",
 		"start:ui": "cd dist/service/ui && node --icu-data-dir=../../../node_modules/full-icu server.js",
 		"start:management": "cd dist/service/management-ui && node --icu-data-dir=../../../node_modules/full-icu server.js"
