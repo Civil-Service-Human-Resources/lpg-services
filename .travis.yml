@@ -13,14 +13,8 @@ cache:
 
 install:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-  - ./build.sh pull
-  - ./build.sh install
+  - docker pull cshr/lpg-services
+  - npm install
 
 script:
-  - ./build.sh build ${TRAVIS_COMMIT}
-
-after_success:
-  - ./build.sh push
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      echo "TODO deploy to test";
-    fi
+  - npm run build:all
