@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from 'express'
 import {Course} from 'lib/model/course'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
+import * as youtube from 'lib/youtube'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/course/index')
@@ -28,13 +29,16 @@ export async function resetCourses(req: Request, res: Response) {
 
 export async function display(req: Request, res: Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const course: Course = req.course
+	const course = req.course as Course
+	const props = {video: null}
 
 	switch (course.type) {
-		case 'elearning':
 		case 'video':
+			props.video = (await getVideoData(course.uri)) as any
+		case 'elearning':
 			res.send(
 				template.render(`course/${course.type}`, req, {
+					...props,
 					course,
 					courseDetails: getCourseDetails(course),
 				})
@@ -95,4 +99,12 @@ function getCourseDetails(course: Course): CourseDetail[] {
 			label: 'Key information',
 		},
 	]
+}
+
+async function getVideoData(url: string) {
+	const info = await youtube.getBasicInfo(url)
+	if (!info) {
+		return null
+	}
+	return info
 }

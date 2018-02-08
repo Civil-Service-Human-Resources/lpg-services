@@ -1,6 +1,9 @@
 ;(function() {
+	var videoId
+	var duration
+
 	var notify = function(elapsed) {
-		var pct = elapsed / VIDEO_DURATION * 100
+		var pct = elapsed / duration * 100
 		if (pct > 100) {
 			pct = 100
 		} else {
@@ -8,23 +11,20 @@
 		}
 		console.log('Progress: ' + pct + '%')
 	}
+
+	videoId = document.getElementById('video-id').value
+
 	window.onYouTubeIframeAPIReady = function() {
 		var player = new YT.Player('video-player', {
-			height: VIDEO_HEIGHT,
-			videoId: VIDEO_ID,
-			width: VIDEO_WIDTH,
+			height: 390,
+			videoId: videoId,
+			width: 640,
 			playerVars: {
 				modestbranding: 1,
 			},
 			events: {
 				onReady: function() {
-					var duration = player.getDuration()
-					if (duration !== VIDEO_DURATION) {
-						console.log('ERROR: Video duration mismatch')
-						console.log('Expected: ' + VIDEO_DURATION.toString())
-						console.log('Actual: ' + duration.toString())
-						return
-					}
+					duration = player.getDuration()
 					setInterval(function() {
 						var elapsed = player.getCurrentTime()
 						if (elapsed) {
@@ -33,7 +33,7 @@
 					}, 1000)
 				},
 				onStateChange: function(e) {
-					if (e.data === YT.PlayerState.ENDED) notify(VIDEO_DURATION)
+					if (e.data === YT.PlayerState.ENDED) notify(duration)
 				},
 			},
 		})
