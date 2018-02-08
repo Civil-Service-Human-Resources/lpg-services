@@ -1,0 +1,21 @@
+
+.govuk-box-highlight {
+
+	&.results {
+		padding: 1em;
+
+		h1 {
+			@extend .heading-large;
+			margin-top: 0;
+			text-transform: capitalize;
+		}
+
+		div {
+			font-size: 1.1em;
+			margin-bottom: 0.5em;
+			strong {
+				font-weight: bold;
+			}
+		}
+	}
+}

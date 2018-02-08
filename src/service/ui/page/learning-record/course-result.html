@@ -3,14 +3,24 @@
 	<Layout page="learning-record-course">
 		<div class="grid-row">
 			<div class="column-full">
-				<div class="govuk-box-highlight">
+				<div class="govuk-box-highlight results">
 					<h1 class="heading-xlarge">
+						{{#if result.result}}
+							{{result.result}}
+						{{else}}
 						Course complete
+						{{/if}}
 					</h1>
                 	<div>{{ completionDate }}</div>
                     <div>
                         <strong>{{ course.title }}</strong>
                     </div>
+					{{#if result.score}}
+					<div>Your score</div>
+					<div>
+						<strong>{{ result.score.scaled * 100 }}</strong>%
+					</div>
+					{{/if}}
 				</div>
 				<p>Your <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
             </div>

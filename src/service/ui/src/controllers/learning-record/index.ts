@@ -158,5 +158,33 @@ function getState(statements: [any]) {
 }
 
 function getResult(statements: [any]) {
-	return 'passed'
+	if (statements.length === 0) {
+		return null
+	}
+	const completedStatement = statements.find(
+		statement =>
+			statement.verb.id === 'http://adlnet.gov/expapi/verbs/completed'
+	)
+	const resultStatement = statements.find(
+		statement =>
+			statement.verb.id === 'http://adlnet.gov/expapi/verbs/passed' ||
+			statement.verb.id === 'http://adlnet.gov/expapi/verbs/failed'
+	)
+
+	let result = null
+	let score = null
+
+	if (completedStatement) {
+		score = completedStatement.result.score
+	}
+	if (resultStatement) {
+		result =
+			resultStatement.verb.id === 'http://adlnet.gov/expapi/verbs/passed'
+				? 'passed'
+				: 'failed'
+	}
+	return {
+		result,
+		score,
+	}
 }
