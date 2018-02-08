@@ -1,6 +1,5 @@
 import {Request, Response} from 'express'
 import * as catalog from 'lib/service/catalog'
-import * as elko from 'lib/service/elko'
 import * as log4js from 'log4js'
 import * as template from 'lib/ui/template'
 
@@ -8,18 +7,6 @@ const logger = log4js.getLogger('controllers/course/display')
 
 export let index = async (req: Request, res: Response) => {
 	const result = await catalog.listAll({})
-
-	console.log(
-		'uid,title,type,duration,uri,tags,shortDescription,description,learningOutcomes'
-	)
-	for (const course of result.entries) {
-		console.log(
-			`${course.uid},${o(course.title)},${course.type},${course.duration ||
-				''},${course.uri},"${course.tags.join(',')}",${o(
-				course.shortDescription || ''
-			)},${o(course.description || '')},${o(course.learningOutcomes || '')}`
-		)
-	}
 
 	res.send(
 		template.render('courses/list', req, {

@@ -41,7 +41,9 @@ export async function display(req: Request, res: Response) {
 			)
 			break
 		default:
-			logger.debug(`Course type (${course.type}) unsupported, redirecting to URI`)
+			logger.debug(
+				`Course type (${course.type}) unsupported, redirecting to URI`
+			)
 			// TODO record initialisation / completion?
 			res.redirect(course.uri)
 	}
@@ -58,9 +60,12 @@ interface CourseDetail {
 }
 
 function getCourseDetails(course: Course): CourseDetail[] {
-
-	const levels = course.tags.filter(tag => tag.startsWith('grade')).map(tag => tag.replace('grade:', ''))
-	const keyAreas = course.tags.filter(tag => tag.startsWith('profession')).map(tag => tag.replace('profession:', ''))
+	const levels = course.tags
+		.filter(tag => tag.startsWith('grade'))
+		.map(tag => tag.replace('grade:', ''))
+	const keyAreas = course.tags
+		.filter(tag => tag.startsWith('profession'))
+		.map(tag => tag.replace('profession:', ''))
 	const duration = course.duration
 
 	const dataRows: DataRow[] = []

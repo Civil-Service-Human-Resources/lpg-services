@@ -26,7 +26,7 @@ function filterCourses(allCourses: api.SearchResponse) {
 	// )
 
 	let mandatory = allCourses.entries.filter(course =>
-		course.tags.some(tag => tag == 'mandatory')
+		course.tags.some(tag => tag === 'mandatory')
 	)
 
 	let suggested = allCourses.entries.filter(function(course) {
