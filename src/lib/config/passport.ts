@@ -23,6 +23,7 @@ export function configure(
 			done(null, {
 				department: profile['http://wso2.org/claims/department'],
 				emailAddress: profile.nameID,
+				givenName: profile['http://wso2.org/claims/givenname'],
 				grade: profile['http://wso2.org/claims/grade'],
 				id: profile['http://wso2.org/claims/userid'],
 				nameID: profile.nameID,
