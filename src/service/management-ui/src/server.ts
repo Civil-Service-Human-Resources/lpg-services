@@ -4,6 +4,7 @@ import * as express from 'express'
 import * as fileUpload from 'express-fileupload'
 import * as session from 'express-session'
 import * as config from 'lib/config'
+import * as log4js from 'log4js'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
@@ -12,6 +13,10 @@ import * as homeController from './controllers/home'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as resetCourseController from './controllers/course/reset'
+
+log4js.configure(config.LOGGING)
+
+const logger = log4js.getLogger('server')
 
 const {PORT = 3003} = process.env
 
@@ -62,7 +67,7 @@ app.use(
 		res: express.Response,
 		next: express.NextFunction
 	) => {
-		console.log(
+		logger.error(
 			'Error handling request for',
 			req.method,
 			req.url,
@@ -75,5 +80,5 @@ app.use(
 )
 
 app.listen(PORT, () => {
-	console.log(`listening on port ${PORT}`)
+	logger.info(`listening on port ${PORT}`)
 })
