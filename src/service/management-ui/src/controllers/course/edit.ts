@@ -7,6 +7,7 @@ import * as unzip from 'unzip'
 import * as catalog from 'lib/service/catalog'
 import * as log4js from 'log4js'
 import * as template from 'lib/ui/template'
+import * as youtube from 'lib/youtube'
 import {parseString} from 'xml2js'
 
 const logger = log4js.getLogger('controllers/course/edit')
@@ -71,15 +72,17 @@ export let doEditCourse = async (req: Request, res: Response) => {
 
 	if (req.files && req.files.content) {
 		logger.debug('Uploading zip content')
-		const {launchUrl, title, identifier} = await saveContent(
-			id,
-			req.files.content
-		)
+		const {launchUrl, title} = await saveContent(id, req.files.content)
 		entry.uri = launchUrl
-		entry.identifier = identifier
 		if (!entry.title) {
 			entry.title = title
 		}
+		await catalog.add(entry)
+	}
+	if (entry.type === 'video') {
+		const info = await youtube.getBasicInfo(entry.uri)
+		entry.duration = await youtube.getDuration(info.id)
+		entry.title = entry.title || info.title
 		await catalog.add(entry)
 	}
 
