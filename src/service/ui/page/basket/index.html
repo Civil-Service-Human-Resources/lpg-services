@@ -4,117 +4,38 @@
             <h2 class="heading-medium basket__heading">Welcome back, {{signedInUser.givenName}}</h2>
 
             <h3 class="heading-small">Required learning</h3>
-                {{#if courses.length}}
-				<ul>
-					{{#each courses as course}}
-					<li>
-                        <Learning
-                            type="{{course.type}}"
-                            uri="{{course.uri}}"
-                            title="{{course.title}}"
-                            progress="{{course.state == 'in-progress' ? 'in progress' : course.state }}"
-                            desc="Required by 31/03/2018"
-                            list="{{course.tags}}"
-                            />
-					</li>
-					{{/each}}
-				</ul>
-				{{else}}
-				<p>You don't have any courses in progress yet!</p>
-				{{/if}}
+
+            {{#if requiredLearning.length}}
+            <ul>
+                {{#each requiredLearning as course}}
+                <li>
+                    <Learning bind:course />
+                </li>
+                {{/each}}
+            </ul>
+            {{else}}
+            <p>You have completed all your required learning.</p>
+            {{/if}}
 
             <h2 class="heading-small">Planned learning</h2>
 
+
+            {{#if plannedLearning.length}}
             <ul>
+                {{#each plannedLearning as course}}
                 <li>
-                    <Learning
-                        type="planned"
-                        uri="#"
-                        title="Influencing skills as a leader"
-                        progress="Booked"
-                        desc="From your performance review"
-                        list="{{['Training course','1 Day', '15/03/2018']}}"
-
-                        />
+                    <Learning bind:course />
                 </li>
-
-                <li>
-                    <Learning
-                        type="planned"
-                        uri="#"
-                        title="Analysis and use of evidence"
-                        progress="Not started"
-                        desc="Because of your Key Work Objectives"
-                        list="{{['Online learning', '1 Hour']}}"
-                        />
-                </li>
-                <li>
-                    <ul id="view-all" class="js-hidden">
-
-                        <li>
-                            <Learning
-                                type="planned"
-                                uri="#"
-                                title="First"
-                                progress="Booked"
-                                desc="From your performance review"
-                                list="{{['Training course','1 Day', '15/03/2018']}}"
-
-                                />
-                        </li>
-                        <li>
-                            <Learning
-                                type="planned"
-                                uri="#"
-                                title="Second"
-                                progress="Booked"
-                                desc="From your performance review"
-                                list="{{['Training course','1 Day', '15/03/2018']}}"
-
-                                />
-                        </li>
-
-                        <li>
-                            <Learning
-                                type="planned"
-                                uri="#"
-                                title="Third"
-                                progress="Booked"
-                                desc="From your performance review"
-                                list="{{['Training course','1 Day', '15/03/2018']}}"
-
-                                />
-                        </li>
-                        <li>
-                            <Learning
-                            type="planned"
-                            uri="#"
-                            title="Fourth"
-                            progress="Not started"
-                            desc="Because of your Key Work Objectives"
-                            list="{{['Online learning', '1 Hour']}}"
-                            />
-                        </li>
-                        <li>
-                             <Learning
-                                 type="planned"
-                                 uri="#"
-                                 title="Last one"
-                                 progress="Not started"
-                                 desc="Because of your Key Work Objectives"
-                                 list="{{['Online learning', '1 Hour']}}"
-                                 />
-                        </li>
-                    </ul>
-                </li>
-
-
+                {{/each}}
             </ul>
+            {{else}}
+            <p>You don't have any planned learning yet.</p>
+            {{/if}}
+
             <a href="#" data-target="view-all-button" class="js-only view-all font-xsmall">
-                <span class="hidden">View all (5)</span>
+                <span class="hidden">View all</span>
                 <span class="showing">Hide courses</span>
             </a>
-
 
             <h2 class="heading-large">Need some inspiration?</h2>
             <p>
@@ -122,13 +43,6 @@
                 <a href="/suggestions" target="_blank">suggestions</a> page which is tailored for you based on your
                 information.
             </p>
-
-
-
-            {{#if !signedInUser}}
-                <p><a href="/sign-in">Sign in</a> to view your recommended courses</p>
-            {{/if}}
         </div>
-
 	</Layout>
 </Page>

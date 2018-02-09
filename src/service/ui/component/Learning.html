@@ -1,20 +1,24 @@
 <div class="learning">
     <div class="grid-row">
         <div class="learning__actions column-third">
-            <a href="{{uri}}" class="learning__title">{{title}}</a>
-            <a href="#">Resume</a>
-            <a href="#">Delete</a>
+            <a href="/courses/{{course.uid}}" class="learning__title">{{course.title}}</a>
+            {{#if course.state}}
+                {{#if course.type === 'elearning'}}
+                <a href="/courses/{{course.uid}}/do">Resume</a>
+                {{else}}
+                <a href="{{course.uri}}">Resume</a>
+                {{/if}}
+            {{/if}}
         </div>
 
-        <span class="learning__progress">{{progress}}</span>
+        <span class="learning__progress">{{course.state || 'not started'}}</span>
 
         <div class="column-one-third">
-            <p class="learning__information-desc">{{desc}}</p>
+            <p class="learning__information-desc"></p>
 
             <ul class="learning__information-list">
-            {{#each list as item}}
-                <li>{{item}}</li>
-            {{/each}}
+                <li>{{course.type}}</li>
+                <li>{{course.duration}}</li>
             </ul>
         </div>
     </div>

@@ -68,8 +68,8 @@ function getCourseDetails(course: Course): CourseDetail[] {
 		.filter(tag => tag.startsWith('grade'))
 		.map(tag => tag.replace('grade:', ''))
 	const keyAreas = course.tags
-		.filter(tag => tag.startsWith('profession'))
-		.map(tag => tag.replace('profession:', ''))
+		.filter(tag => tag.startsWith('key-area'))
+		.map(tag => tag.replace('key-area:', ''))
 	const duration = course.duration
 
 	const dataRows: DataRow[] = []
