@@ -1,4 +1,8 @@
 {
-	"Hello World": "Hello World",
-	"Hello": "Hello"
+	"elearning": "Online course",
+	"video": "Video",
+	"website": "Website",
+	"completed": "Completed",
+	"in-progress": "In progress",
+	"not started": "Not started"
 }
