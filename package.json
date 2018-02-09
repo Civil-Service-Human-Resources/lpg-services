@@ -13,6 +13,8 @@
 		"clean": "rm -rf dist",
 		"copy:lib":
 			"cd src/lib/service && cp catalog/data.csv ../../../dist/node_modules/lib/service/catalog && cp -r translation/locales ../../../dist/node_modules/lib/service/translation/locales",
+		"copy:ui":
+			"cd src/service/ui && cp src/package.json ../../../dist/service/ui && cp -r component ../../../dist/service/ui/component && cp -r page ../../../dist/service/ui/page && cp -r assets ../../../dist/service/ui/ && rm -rf ../../../dist/service/ui/assets/styles",
 		"copy:management":
 			"cd src/service/management-ui && cp src/package.json ../../../dist/service/management-ui && cp -r component ../../../dist/service/management-ui/component && cp -r page ../../../dist/service/management-ui/page && cp -r assets ../../../dist/service/management-ui/ && rm -rf ../../../dist/service/management-ui/assets/styles",
 		"sass:management":
