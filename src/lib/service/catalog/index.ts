@@ -4,6 +4,7 @@ import * as dgraph from 'dgraph-js'
 import * as grpc from 'grpc'
 import {Course} from '../../model/course'
 import * as api from './api'
+import {User} from 'lib/model/user'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -254,6 +255,48 @@ export async function listAll(
 	return {entries: resp}
 }
 
+export async function findRequiredLearning(
+	user: User
+): Promise<api.SearchResponse> {
+	await setSchema(SCHEMA)
+
+	const query = `query all($department: string, $mandatory: string) {
+		entries(func: anyofterms(tags, $department)) @filter(anyofterms(tags, $mandatory)) {
+			tags
+			title
+			type
+			uid
+			uri
+			shortDescription
+			description
+			learningOutcomes
+			duration
+		}
+	}`
+	const qresp = await client.newTxn().queryWithVars(query, {
+		$department: `department:${user.department} department:all`,
+		$mandatory: `mandatory:${user.department} mandatory:all`,
+	})
+
+	const results = getJson(qresp).entries
+	results.sort(
+		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
+			if (b[0] > a[0]) {
+				return 1
+			} else if (b[0] < a[0]) {
+				return -1
+			}
+			if (b[1] > a[1]) {
+				return 1
+			} else if (b[1] < a[1]) {
+				return -1
+			}
+			return 0
+		}
+	)
+	return {entries: results}
+}
+
 export async function resetCourses() {
 	await wipe()
 	await setSchema(SCHEMA)
@@ -273,7 +316,11 @@ export async function resetCourses() {
 	for (const line of lines) {
 		let course = {}
 		for (const i in attributes) {
-			course[attributes[i]] = line[i] && line[i].replace(/\\n/g, '\n')
+			if (attributes[i] === 'tags') {
+				course.tags = line[i].split(',').map(tag => tag.trim())
+			} else {
+				course[attributes[i]] = line[i] && line[i].replace(/\\n/g, '\n')
+			}
 		}
 		await add(course)
 	}

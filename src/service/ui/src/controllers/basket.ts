@@ -1,15 +1,41 @@
 import {Request, Response} from 'express'
+import {User} from 'lib/model/user'
+import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as learningRecord from './learning-record'
+import * as learningRecordController from './learning-record'
 
-export let basketPage = async (req: Request, res: Response) => {
-	if (req.user.department) {
+export async function basketPage(req: Request, res: Response) {
+	const user = req.user as User
+	if (user.department) {
+		const learningRecord = await learningRecordController.getLearningRecordOf(
+			null,
+			user
+		)
+		const plannedLearning = []
+		let requiredLearning = (await catalog.findRequiredLearning(user)).entries
+
+		for (const record of learningRecord) {
+			let found = false
+			for (const [i, requiredCourse] of requiredLearning.entries()) {
+				if (requiredCourse.uid === record.uid) {
+					if (record.state === 'completed') {
+						requiredLearning.splice(i, 1)
+					} else {
+						requiredLearning[i] = record
+					}
+					found = true
+					break
+				}
+			}
+			if (!found && record.state !== 'completed') {
+				plannedLearning.push(record)
+			}
+		}
+
 		res.send(
 			template.render('basket', req, {
-				courses: await learningRecord.getLearningRecordOf(
-					learningRecord.CourseState.InProgress,
-					req.user
-				),
+				requiredLearning,
+				plannedLearning,
 			})
 		)
 	} else {

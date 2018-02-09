@@ -31,7 +31,7 @@ export async function courseResult(req: Request, res: Response) {
 		)
 
 		if (!state || state !== 'completed') {
-			res.redirect('/learning-plan')
+			res.redirect('/basket')
 		} else {
 			res.send(
 				template.render('learning-record/course-result', req, {
@@ -88,9 +88,17 @@ export async function getLearningRecordOf(courseState: CourseState, user: any) {
 	for (const key in groupedStatements) {
 		const statements = groupedStatements[key]
 		const state = getState(statements)
-		if (state === courseState) {
+		if (courseState === null || state === courseState) {
 			const result = getResult(statements)
 			const course = await catalog.findCourseByUri(key)
+			if (!course) {
+				logger.warn(
+					`LRS data for course that doesn't exist. User ID: ${
+						user.id
+					}, course URI: ${key}`
+				)
+				continue
+			}
 			courses.push({...course, result, state})
 		}
 	}
