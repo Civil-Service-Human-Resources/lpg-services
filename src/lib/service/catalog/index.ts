@@ -273,7 +273,7 @@ export async function resetCourses() {
 	for (const line of lines) {
 		let course = {}
 		for (const i in attributes) {
-			course[attributes[i]] = line[i]
+			course[attributes[i]] = line[i] && line[i].replace(/\\n/g, '\n')
 		}
 		await add(course)
 	}
