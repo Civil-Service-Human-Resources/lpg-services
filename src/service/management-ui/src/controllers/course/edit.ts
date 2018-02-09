@@ -155,7 +155,23 @@ async function uploadEntries(uid: string, file: any) {
 }
 
 async function parseMetadata(uploadResponse) {
-	return request(uploadResponse.Location)
+
+    return new Promise((resolve, reject) => {
+            s3.getObject(
+                {
+                    Bucket: 'csl-learning-content',
+                    Key: uploadResponse.Key,
+                },
+                (err, data) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+
+                        resolve(data.Body)
+                    }
+                }
+            )
+        })
 		.then(content => {
 			return new Promise((resolve, reject) => {
 				parseString(content, (err, data) => {
