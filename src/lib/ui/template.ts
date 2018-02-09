@@ -1,5 +1,6 @@
 import * as express from 'express'
 import * as fs from 'fs'
+import * as i18n from 'i18n'
 import * as path from 'path'
 import * as svelte from 'svelte'
 import * as vm from 'vm'
@@ -66,7 +67,11 @@ function compile(
 export default {
 components: {${componentNames}},
 data() {
-    return {html: htmlModule, signedInUser: getCurrentRequest().user}
+    return {
+        html: htmlModule, 
+        signedInUser: getCurrentRequest().user,
+        i18n: i18nModule
+    }
 }
 }
 </script>
@@ -94,13 +99,13 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, htmlModule) {
+		`(function(module, exports, require, components, getCurrentRequest, htmlModule, i18nModule) {
 const {${componentNames}} = components
 ${code}
 });`,
 		{filename}
 	)
-	wrapper(module, module.exports, require, components, getCurrentRequest, html)
+	wrapper(module, module.exports, require, components, getCurrentRequest, html, i18n)
 	return module.exports
 }
 
