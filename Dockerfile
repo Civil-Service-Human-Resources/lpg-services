@@ -3,7 +3,7 @@ FROM library/ubuntu
 ENV NODE_ENV production
 ENV PORT 3001
 ENV SESSION_SECRET topsecret
-ENV AUTHENTICATION_SERVICE_URL https://identity.dev.cshr.digital:9443
+ENV AUTHENTICATION_SERVICE_URL http://identity.dev.cshr.digital:9443
 
 EXPOSE 3001
 
