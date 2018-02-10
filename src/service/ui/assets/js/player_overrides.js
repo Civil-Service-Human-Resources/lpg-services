@@ -21,8 +21,6 @@ var CONTENT_TRACKING_CONFIG = {
         {
             adapter: 'tincan',
             version: '1.0',
-            username: 'someone',
-            password: 'somewhere',
             endpoint: host + path
         }
     ]

@@ -19,6 +19,7 @@ export async function play(req: Request, res: Response) {
 		res.sendStatus(404)
 	} else {
 		// TODO: If website content record completion and redirect to site
+		// TODO: Caching
 
 		let location
 		const path = req.path
@@ -90,4 +91,9 @@ export function portalOverrides(req: Request, res: Response) {
 export function closeMethods(req: Request, res: Response) {
 	res.set('Content-Type', 'application/javascript')
 	fs.createReadStream('assets/js/close_methods.js').pipe(res)
+}
+
+export function tincanWrapper(req: Request, res: Response) {
+	res.set('Content-Type', 'application/javascript')
+	fs.createReadStream('assets/js/tincan_wrapper.js').pipe(res)
 }

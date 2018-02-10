@@ -2,6 +2,7 @@ import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
 import * as session from 'express-session'
+import * as cache from 'express-cache-response'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as lusca from 'lusca'
@@ -75,20 +76,19 @@ app.get('/learning-plan', searchController.listAllCourses)
 app.get(/.*Scorm\.js/, coursePlayerController.scormApi)
 app.get(/.*portal_overrides\.js/, coursePlayerController.portalOverrides)
 app.get(/.*close_methods\.js/, coursePlayerController.closeMethods)
+app.get(/.*tincan_wrapper\.js/, coursePlayerController.tincanWrapper)
 
 app.param('courseId', courseController.loadCourse)
 
 app.get('/courses/reset', courseController.resetCourses)
 app.get('/courses/:courseId', courseController.display)
-app.use('/courses/:courseId/do', coursePlayerController.play)
+app.use('/courses/:courseId/do', cache(), coursePlayerController.play)
 app.use('/courses/:courseId/xapi', xApiController.proxy)
 
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
 app.get('/basket', basketController.basketPage)
-
-app.get('/video', passport.isAuthenticated, videoController.play)
 
 app.use(
 	(
