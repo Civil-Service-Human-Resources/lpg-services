@@ -1,6 +1,5 @@
 uid,title,type,duration,uri,tags,shortDescription,description,learningOutcomes
 0x281,"Mendelow's matrix",website,,http://kfknowledgebank.kaplan.co.uk/KFKB/Wiki%20Pages/Mendelow%27s%20matrix.aspx,"CIPS","","",""
-0x264,"Health and safety awareness for all staff",website,,,"profession:commercial,mandatory,department:cshr,grade:aa","Everyone needs to be able to identify, manage and control health and safety risks in the workplace.","",""
 0x26d,"Let's talk about public procurement.",website,,https://www.linkedin.com/pulse/lets-talk-public-procurement-james-findlay/,"LinkedIn,blog post","","",""
 0x26e,"Agile P1.0",website,,https://www.eventbrite.co.uk/e/agile-p10-tickets-41337414319,"Conference","This is the first Difrent Group sponsored Unconference in the newly refurbished conference facilities at National Archives, Kew on 5th March 2018.","",""
 0x26f,"Lessons Learned From ""Search"" Procurement",website,,https://github.com/AlaskaDHSS/EIS-Modernization/blob/master/vendor-info/retrospective-on-buy-1.md,"Blog post,Github","One of the goals of an agile organization is to continuously improve, by reflecting on what's happened at the end of an iteration","",""
@@ -20,7 +19,7 @@ uid,title,type,duration,uri,tags,shortDescription,description,learningOutcomes
 0x27d,"SME Policy and Practice",website,,https://www2.iaccm.com/resources/?id=9527&src=NAO,"IACCM","","",""
 0x27e,"Performance and Outcome-based contracts",website,,https://www2.iaccm.com/resources/?id=8541&src=NAO,"IACCM","","",""
 0x27f,"Contracts as a Connector",website,,https://www2.iaccm.com/resources/?id=8709&cb=1488188623&,"IACCM","","",""
-0x280,"https://www2.iaccm.com/resources/?id=9594&cb=1488189981&",website,,Contract and Commercial Management: The Operational Guide: Key Chapters for Download,"IACCM","","",""
+0x280,"Contract and Commercial Management: The Operational Guide: Key Chapters for Download",website,,https://www2.iaccm.com/resources/?id=9594&cb=1488189981&,"IACCM","","",""
 0x26c,"Going Agile: The new mind-set for procurement officials",website,,https://www2.deloitte.com/insights/us/en/industry/public-sector/agile-in-government-procurement-mindset.html,"blog post","​Contracting for Agile software development should focus on enabling a smooth vendor-client relationship rather than on specifying terms and conditions in exhaustive detail.","",""
 0x282,"Talk on stakeholders",website,,https://hstalks.com/t/2203/stakeholders/?business,"CIPS","","",""
 0x283,"Nogotiation articles",website,,https://www.negotiations.com/articles/,"CIPS","","",""
