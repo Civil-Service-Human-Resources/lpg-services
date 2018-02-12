@@ -75,7 +75,11 @@ export function signIn(req: Request, res: Response) {
 	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
 
 	if (req.isAuthenticated()) {
-		res.redirect('/profile')
+		if (req.user.department) {
+			res.redirect('/learning-plan')
+		} else {
+			res.redirect('/profile')
+		}
 	} else if (!sessionDataKey) {
 		res.redirect('/authenticate')
 	} else {
