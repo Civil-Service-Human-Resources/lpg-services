@@ -16,18 +16,32 @@ export class Course {
 }
 
 export class User {
-	readonly id: string
-	readonly email: string
-	public department: string
-	public profession: string
-	public grade: string
+    readonly id: string
+    readonly emailAddress: string
+    readonly nameID: string
+    readonly nameIDFormat: string
+    readonly sessionIndex: string
 
-	constructor(id: string, email: string) {
-		this.id = id
-		this.email = email
-	}
+    public department: string
+    public profession: string
+    public givenName: string
+    public grade: string
 
-	hasCompleteProfile() {
-		return this.department && this.profession && this.grade
-	}
+    constructor(
+        id: string,
+        emailAddress: string,
+        nameID: string,
+        nameIDFormat: string,
+        sessionIndex: string
+    ) {
+        this.id = id
+        this.emailAddress = emailAddress
+        this.nameID = nameID
+        this.nameIDFormat = nameIDFormat
+        this.sessionIndex = sessionIndex
+    }
+
+    hasCompleteProfile() {
+        return this.department && this.profession && this.grade
+    }
 }
