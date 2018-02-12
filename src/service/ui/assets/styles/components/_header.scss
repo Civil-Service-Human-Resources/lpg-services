@@ -71,13 +71,12 @@
 
 		color: $white;
 		font-weight: bold;
-		font-size: 30px;
+		font-size: 27px;
 		line-height: 1;
 		text-decoration: none;
 		text-rendering: optimizeLegibility;
 		border-bottom: 1px solid transparent;
 
-		background: url('/img/gov.uk_logotype_crown.png') no-repeat;
 		background-size: 36px 32px;
 		background-position: 0 0;
 		@include ie-lte(8) {
