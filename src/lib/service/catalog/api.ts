@@ -1,4 +1,4 @@
-import {Course} from '../../model/course'
+import * as model from '../../model'
 
 export interface SearchRequest {
 	tags?: string[]
@@ -7,5 +7,5 @@ export interface SearchRequest {
 }
 
 export interface SearchResponse {
-	entries: Course[]
+	entries: model.Course[]
 }

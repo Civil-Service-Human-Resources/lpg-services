@@ -1,11 +1,13 @@
-import * as axios from 'axios'
-import {Request, Response} from 'express'
+import axios from 'axios'
+import * as express from 'express'
 import * as config from 'lib/config'
+import * as extended from 'lib/extended'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/xapi')
 
-export async function proxy(req: Request, res: Response) {
+export async function proxy(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
 	const agent = {
@@ -24,7 +26,7 @@ export async function proxy(req: Request, res: Response) {
 		}
 	}
 
-	let body = req.body
+	const body = req.body
 	if (body) {
 		if (body.hasOwnProperty('actor')) {
 			body.actor = agent
@@ -37,16 +39,18 @@ export async function proxy(req: Request, res: Response) {
 		}
 	}
 
-	let headers = {
-		'X-Experience-API-Version': req.header('X-Experience-API-Version'),
+	const headers: Record<string, string> = {
+		'X-Experience-API-Version':
+			req.header('X-Experience-API-Version') || '1.0.3',
 	}
 
-	if (req.header('Content-Type')) {
-		headers['Content-Type'] = req.header('Content-Type')
+	const ctype = req.header('Content-Type')
+	if (ctype) {
+		headers['Content-Type'] = ctype
 	}
 
 	try {
-		let response = await axios({
+		const response = await axios({
 			auth: config.XAPI.auth,
 			data: body,
 			headers,
@@ -55,7 +59,6 @@ export async function proxy(req: Request, res: Response) {
 			responseType: 'stream',
 			url: `${config.XAPI.url}${req.path}`,
 		})
-
 		response.data.pipe(res)
 	} catch (e) {
 		logger.warn('Error proxying xapi request', e)

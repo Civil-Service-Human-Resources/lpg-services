@@ -5,7 +5,6 @@ import * as path from 'path'
 import * as svelte from 'svelte'
 import * as vm from 'vm'
 import * as config from '../config'
-import * as html from '../html'
 
 interface AST {
 	children: AST[]
@@ -68,7 +67,6 @@ export default {
 components: {${componentNames}},
 data() {
     return {
-        html: htmlModule, 
         signedInUser: getCurrentRequest().user,
         i18n: i18nModule
     }
@@ -99,21 +97,13 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, htmlModule, i18nModule) {
+		`(function(module, exports, require, components, getCurrentRequest, i18nModule) {
 const {${componentNames}} = components
 ${code}
 });`,
 		{filename}
 	)
-	wrapper(
-		module,
-		module.exports,
-		require,
-		components,
-		getCurrentRequest,
-		html,
-		i18n
-	)
+	wrapper(module, module.exports, require, components, getCurrentRequest, i18n)
 	return module.exports
 }
 
@@ -242,7 +232,7 @@ function resetCache() {
 export function render(
 	page: string,
 	req: express.Request,
-	props?: object
+	props?: any
 ): string {
 	if (props && props.signedInUser) {
 		throw new Error('Attempt to override signedInUser in props')
@@ -280,5 +270,4 @@ if (!config.PRODUCTION_ENV) {
 	fs.watch(pageDir, {recursive: true}, resetCache)
 }
 
-//
 resetCache()

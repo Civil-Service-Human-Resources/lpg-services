@@ -1,19 +1,19 @@
 import * as aws from 'aws-sdk'
-import {Request, Response} from 'express'
-import * as fs from 'fs'
-import * as url from 'url'
 import * as concat from 'concat'
+import * as express from 'express'
+import * as fs from 'fs'
 import * as config from 'lib/config'
+import * as extended from 'lib/extended'
 import * as log4js from 'log4js'
-
-const s3 = new aws.S3(config.AWS)
+import * as url from 'url'
 
 const logger = log4js.getLogger('controllers/course/player')
+const s3 = new aws.S3(config.AWS)
 
-export async function play(req: Request, res: Response) {
-	logger.debug(`Loading course resource, courseId: ${req.params.courseId}`)
-
+export async function play(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	const course = req.course
+	logger.debug(`Loading course resource, courseId: ${req.params.courseId}`)
 
 	if (!course || !course.uri) {
 		res.sendStatus(404)
@@ -32,7 +32,7 @@ export async function play(req: Request, res: Response) {
 			location = course.uri.substring(0, course.uri.lastIndexOf('/')) + path
 		}
 
-		let parsedLocation = url.parse(location)
+		const parsedLocation = url.parse(location)
 
 		s3.getObject(
 			{
@@ -54,7 +54,7 @@ export async function play(req: Request, res: Response) {
 	}
 }
 
-export async function scormApi(req: Request, res: Response) {
+export async function scormApi(req: express.Request, res: express.Response) {
 	res.set('Content-Type', 'application/javascript')
 
 	const fileContent = await concat([
@@ -66,7 +66,7 @@ export async function scormApi(req: Request, res: Response) {
 
 	res.send(`
 window.activity = document.location.protocol + "//" + document.location.host + document.location.pathname;
-	
+
 window.xapiConfig = {
 	lrs: {
 		endpoint: window.location.origin + "/xapi/",
@@ -82,17 +82,17 @@ ${fileContent}
 `)
 }
 
-export function portalOverrides(req: Request, res: Response) {
+export function portalOverrides(req: express.Request, res: express.Response) {
 	res.set('Content-Type', 'application/javascript')
 	fs.createReadStream('assets/js/player_overrides.js').pipe(res)
 }
 
-export function closeMethods(req: Request, res: Response) {
+export function closeMethods(req: express.Request, res: express.Response) {
 	res.set('Content-Type', 'application/javascript')
 	fs.createReadStream('assets/js/close_methods.js').pipe(res)
 }
 
-export function tincanWrapper(req: Request, res: Response) {
+export function tincanWrapper(req: express.Request, res: express.Response) {
 	res.set('Content-Type', 'application/javascript')
 	fs.createReadStream('assets/js/tincan_wrapper.js').pipe(res)
 }
