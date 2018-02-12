@@ -99,7 +99,12 @@ export async function getLearningRecordOf(courseState: CourseState, user: any) {
 				)
 				continue
 			}
-			courses.push({...course, result, state})
+			courses.push({
+				...course,
+				completionDate: await getCompletionDate(statements),
+				result,
+				state,
+			})
 		}
 	}
 	return courses
@@ -183,6 +188,7 @@ function getResult(statements: [any]) {
 	let score = null
 
 	if (completedStatement) {
+		result = 'completed'
 		score = completedStatement.result.score
 	}
 	if (resultStatement) {

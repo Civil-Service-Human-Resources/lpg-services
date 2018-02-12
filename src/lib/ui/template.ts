@@ -105,7 +105,15 @@ ${code}
 });`,
 		{filename}
 	)
-	wrapper(module, module.exports, require, components, getCurrentRequest, html, i18n)
+	wrapper(
+		module,
+		module.exports,
+		require,
+		components,
+		getCurrentRequest,
+		html,
+		i18n
+	)
 	return module.exports
 }
 
