@@ -10,6 +10,7 @@ import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
+import * as User from 'lib/model/user';
 import * as i18n from 'lib/service/translation'
 
 import * as basketController from './controllers/basket'
@@ -72,7 +73,17 @@ app.get('/profile', userController.editProfile)
 app.post('/profile', userController.tryUpdateProfile)
 app.get('/profile-updated', userController.editProfileComplete)
 
-app.get('/learning-plan', searchController.listAllCourses)
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+	const user = req.user as User
+	if (!user.hasCompleteProfile()) {
+		logger.debug('Incomplete profile, redirecting user')
+		res.redirect('/profile')
+	} else {
+		next()
+	}
+})
+
+app.get('/search', searchController.listAllCourses)
 
 app.get(/.*Scorm\.js/, coursePlayerController.scormApi)
 app.get(/.*portal_overrides\.js/, coursePlayerController.portalOverrides)
@@ -89,7 +100,7 @@ app.use('/courses/:courseId/xapi', xApiController.proxy)
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
-app.get('/basket', basketController.basketPage)
+app.get('/learning-plan', basketController.basketPage)
 
 app.use(
 	(

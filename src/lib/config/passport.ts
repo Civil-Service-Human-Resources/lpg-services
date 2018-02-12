@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as passport from 'passport'
 import * as saml from 'passport-saml'
+import * as model from '../model'
 
 let strategy: saml.Strategy
 
@@ -22,7 +23,7 @@ export function configure(
 		(profile: any, done: saml.VerifiedCallback) => {
 			done(
 				null,
-				{
+                createUser({
 					department: profile['http://wso2.org/claims/department'],
 					emailAddress: profile.nameID,
 					givenName: profile['http://wso2.org/claims/givenname'],
@@ -32,7 +33,7 @@ export function configure(
 					nameIDFormat: profile.nameIDFormat,
 					profession: profile['http://wso2.org/claims/profession'],
 					sessionIndex: profile.sessionIndex,
-				},
+				}),
 				{}
 			)
 		}
@@ -45,7 +46,7 @@ export function configure(
 	})
 
 	passport.deserializeUser((data, done) => {
-		done(null, JSON.parse(data))
+		done(null, createUser(JSON.parse(data)))
 	})
 
 	app.all(
@@ -54,9 +55,14 @@ export function configure(
 			failureFlash: true,
 			failureRedirect: '/',
 		}),
-		(req, res) => {
-			// TODO: remember URL accessed and redirect to, default to LPG UI home
-			res.redirect('/')
+		(req: express.Request, res: express.Response) => {
+			let {redirectTo} = req.session
+			if (!redirectTo) {
+				redirectTo = '/'
+			}
+			req.session.save(() => {
+				res.redirect(redirectTo)
+			})
 		}
 	)
 }
@@ -80,7 +86,25 @@ export function isAuthenticated(
 	if (req.isAuthenticated()) {
 		return next()
 	}
-	res.redirect('/authenticate')
+	req.session.redirectTo = req.originalUrl
+	req.session.save(() => {
+		res.redirect('/authenticate')
+	})
 }
 
 export {passport}
+
+function createUser(data: any) {
+	const user = new model.User(
+		data.id,
+		data.emailAddress,
+		data.nameID,
+		data.nameIDFormat,
+		data.sessionIndex
+	)
+	user.department = data.department
+	user.profession = data.profession
+	user.givenName = data.givenName
+	user.grade = data.grade
+	return user
+}
