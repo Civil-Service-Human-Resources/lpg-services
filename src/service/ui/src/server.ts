@@ -10,10 +10,9 @@ import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
-import * as User from 'lib/model/user'
+import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
 
-import * as basketController from './controllers/basket'
 import * as courseController from './controllers/course'
 import * as coursePlayerController from './controllers/course/player'
 import * as homeController from './controllers/home'
@@ -75,7 +74,7 @@ app.get('/profile-updated', userController.editProfileComplete)
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
-		const user = req.user as User
+		const user = req.user as model.User
 		if (!user.hasCompleteProfile()) {
 			logger.debug('Incomplete profile, redirecting user')
 			res.redirect('/profile')
@@ -84,8 +83,6 @@ app.use(
 		}
 	}
 )
-
-app.get('/search', searchController.listAllCourses)
 
 app.get(/.*Scorm\.js/, coursePlayerController.scormApi)
 app.get(/.*portal_overrides\.js/, coursePlayerController.portalOverrides)
@@ -103,7 +100,9 @@ app.use('/courses/:courseId/delete', courseController.markCourseDeleted)
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
-app.get('/home', basketController.basketPage)
+app.get('/suggested-for-you', searchController.suggestedForYou)
+
+app.get('/home', homeController.home)
 
 app.use(
 	(

@@ -24,7 +24,7 @@
 						<td>{{ course.title }}</td>
 						<td>
 							{{#if course.result.score }}
-								{{ result.score.scaled * 100 }}%
+								{{ course.result.score.scaled * 100 }}%
 							{{else}}
 								{{ i18n.__(course.result.result) }}
 							{{/if}}

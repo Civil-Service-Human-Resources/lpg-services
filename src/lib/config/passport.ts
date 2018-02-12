@@ -60,6 +60,7 @@ export function configure(
 			if (!redirectTo) {
 				redirectTo = '/'
 			}
+			delete req.session.redirectTo
 			req.session.save(() => {
 				res.redirect(redirectTo)
 			})

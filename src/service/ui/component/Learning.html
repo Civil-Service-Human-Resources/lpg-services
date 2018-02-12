@@ -1,7 +1,15 @@
 <div class="learning">
     <div class="grid-row">
         <div class="learning__actions column-third">
-            <a href="/courses/{{course.uid}}" class="learning__title">{{course.title}}</a>
+            {{#if course.type === 'link'}}
+                <a href="/courses/{{course.uid}}" class="learning__title" target="_blank">
+                    {{course.title}}
+                </a>
+            {{else}}
+                <a href="/courses/{{course.uid}}" class="learning__title">
+                    {{course.title}}
+                </a>
+            {{/if}}
             {{#if course.state}}
                 {{#if course.type === 'elearning'}}
                 <a href="/courses/{{course.uid}}/do">Resume</a>

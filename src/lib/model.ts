@@ -9,6 +9,10 @@ export class Course {
 	public learningOutcomes: string
 	public duration: string
 
+	public completionDate?: string
+	public result?: any
+	public state?: string
+
 	constructor(uid: string, type: string) {
 		this.uid = uid
 		this.type = type
@@ -16,8 +20,8 @@ export class Course {
 
 	isRequired(user: User) {
 		return (
-			this.tags.contains('mandatory:all') ||
-			this.tags.contains(`mandatory:${user.department}`)
+			this.tags.indexOf('mandatory:all') > -1 ||
+			this.tags.indexOf(`mandatory:${user.department}`) > -1
 		)
 	}
 

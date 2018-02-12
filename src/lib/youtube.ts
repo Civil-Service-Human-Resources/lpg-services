@@ -48,7 +48,7 @@ export async function getBasicInfo(
 		resp = await axios.get(
 			`https://www.youtube.com/oembed?url=${encodeURIComponent(
 				url
-			)}&format=json`
+			)}&format=json&key=${config.YOUTUBE_API_KEY}`
 		)
 	} catch (err) {
 		return
