@@ -6,7 +6,10 @@
                 {{#if course.type === 'elearning'}}
                 <a href="/courses/{{course.uid}}/do">Resume</a>
                 {{else}}
-                <a href="{{course.uri}}">Resume</a>
+                <a href="/courses/{{course.uid}}">Resume</a>
+                {{/if}}
+                {{#if !course.isRequired()}}
+                <a href="/courses/{{course.uid}}/delete">Delete</a>
                 {{/if}}
             {{/if}}
         </div>

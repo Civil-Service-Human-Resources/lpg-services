@@ -1,17 +1,16 @@
 
 <nav id="proposition-menu">
-    <a href="/" id="proposition-name">Learning Platform</a>
     <ul id="proposition-links">
         {{#if signedInUser}}
-            <li>
-                <a href="/profile">Profile</a>
-            </li>
             {{#if signedInUser.hasCompleteProfile()}}
                 <li>
-                    <a href="/learning-plan">Learning plan</a>
+                    <a href="/home">Home</a>
                 </li>
                 <li>
-                    <a href="/search">Search</a>
+                    <a href="/suggested-for-you">Suggested for you</a>
+                </li>
+                <li>
+                    <a href="/learning-record">Learning record</a>
                 </li>
             {{/if}}
             <li>

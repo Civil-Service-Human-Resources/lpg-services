@@ -100,7 +100,7 @@ app.use('/courses/:courseId/xapi', xApiController.proxy)
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
-app.get('/learning-plan', basketController.basketPage)
+app.get('/home', basketController.basketPage)
 
 app.use(
 	(
