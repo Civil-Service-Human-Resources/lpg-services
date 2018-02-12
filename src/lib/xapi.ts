@@ -69,7 +69,7 @@ export async function record(
 			objectType: 'Agent',
 		},
 		object: {
-			id: courseID,
+			id: `${config.XAPI.activityBaseUri}/${courseID}`,
 			objectType: 'Activity',
 		},
 		verb: {
