@@ -39,7 +39,7 @@
                     <div class="form-group {{validFields == false && !user.givenName ?  "form-group-error": ''}}">
                         <label class="form-label" for="givenName">First name</label>
                         {{#if validFields == false && !user.givenName}}
-                        <span class="error-message">Department field cannot be empty.</span>
+                        <span class="error-message">Name field cannot be empty.</span>
                         {{/if}}
                         <input class="form-control" id="givenName" name="givenName" type="text" value="{{user.givenName || ''}}">
                     </div>
@@ -64,7 +64,7 @@
                     <div class="form-group {{validFields == false && !user.grade ? "form-group-error": ''}}">
                         <label class="form-label" for="grade">Grade</label>
                         {{#if validFields == false && !user.grade}}
-                        <span class="error-message">Department field cannot be empty.</span>
+                        <span class="error-message">Grade field cannot be empty.</span>
                         {{/if}}
                         <input class="form-control" id="grade" name="grade" type="text" value="{{user.grade || ''}}">
                     </div>
