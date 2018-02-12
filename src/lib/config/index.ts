@@ -20,7 +20,7 @@ export const AUTHENTICATION = set({
 	servicePassword: 'admin',
 	serviceUrl:
 		process.env.AUTHENTICATION_SERVICE_URL ||
-		'http://identity.dev.cshr.digital:9443',
+		'https://identity.dev.cshr.digital:9443',
 })
 
 export const LOGGING = set(
