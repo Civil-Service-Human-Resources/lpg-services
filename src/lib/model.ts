@@ -13,35 +13,54 @@ export class Course {
 		this.uid = uid
 		this.type = type
 	}
+
+	isRequired(user: User) {
+		return (
+			this.tags.contains('mandatory:all') ||
+			this.tags.contains(`mandatory:${user.department}`)
+		)
+	}
+
+	static create(data: any) {
+		const course = new Course(data.uid, data.type)
+		course.description = data.description
+		course.learningOutcomes = data.learningOutcomes
+		course.duration = data.duration
+		course.shortDescription = data.shortDescription
+		course.tags = data.tags
+		course.title = data.title
+		course.uri = data.uri
+		return course
+	}
 }
 
 export class User {
-    readonly id: string
-    readonly emailAddress: string
-    readonly nameID: string
-    readonly nameIDFormat: string
-    readonly sessionIndex: string
+	readonly id: string
+	readonly emailAddress: string
+	readonly nameID: string
+	readonly nameIDFormat: string
+	readonly sessionIndex: string
 
-    public department: string
-    public profession: string
-    public givenName: string
-    public grade: string
+	public department: string
+	public profession: string
+	public givenName: string
+	public grade: string
 
-    constructor(
-        id: string,
-        emailAddress: string,
-        nameID: string,
-        nameIDFormat: string,
-        sessionIndex: string
-    ) {
-        this.id = id
-        this.emailAddress = emailAddress
-        this.nameID = nameID
-        this.nameIDFormat = nameIDFormat
-        this.sessionIndex = sessionIndex
-    }
+	constructor(
+		id: string,
+		emailAddress: string,
+		nameID: string,
+		nameIDFormat: string,
+		sessionIndex: string
+	) {
+		this.id = id
+		this.emailAddress = emailAddress
+		this.nameID = nameID
+		this.nameIDFormat = nameIDFormat
+		this.sessionIndex = sessionIndex
+	}
 
-    hasCompleteProfile() {
-        return this.department && this.profession && this.grade
-    }
+	hasCompleteProfile() {
+		return this.department && this.profession && this.grade
+	}
 }

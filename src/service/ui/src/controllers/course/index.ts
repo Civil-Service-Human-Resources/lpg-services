@@ -59,14 +59,6 @@ function getTagValues(tagName: string, tags: string[]) {
 		.map(tag => i18n.__(tag.replace(`${tagName}:`, '')))
 }
 
-async function getVideoData(url: string) {
-	const info = await youtube.getBasicInfo(url)
-	if (!info) {
-		return null
-	}
-	return info
-}
-
 export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
@@ -122,5 +114,13 @@ export async function resetCourses(
 	res: express.Response
 ) {
 	await catalog.resetCourses()
+	res.redirect('/')
+}
+
+export async function markCourseDeleted(
+	req: express.Request,
+	res: express.Response
+) {
+	await xapi.record(req, req.course.uid, xapi.Verb.Terminated)
 	res.redirect('/')
 }
