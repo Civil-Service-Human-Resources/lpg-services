@@ -6,16 +6,38 @@
                 <h1 class="heading-large">Your learning record</h1>
 
 				{{#if courses.length}}
-				<ul>
+				<table>
+					<thead>
+					<tr>
+						<th scope="col">Date</th>
+						<th scope="col">Name</th>
+						<th scope="col">Score</th>
+						<th scope="col">Type</th>
+						<th scope="col">Expiry</th>
+						<th scope="col"></th>
+					</tr>
+					</thead>
+					<tbody>
 					{{#each courses as course}}
-					<li>
-						{{ course.title }}
-						<span>
-							{{course.result.result}}
-						</span>
-					</li>
+					<tr>
+						<td>{{ course.completionDate }}</td>
+						<td>{{ course.title }}</td>
+						<td>
+							{{#if course.result.score }}
+								{{ result.score.scaled * 100 }}%
+							{{else}}
+								{{ i18n.__(course.result.result) }}
+							{{/if}}
+                        </td>
+						<td>{{ i18n.__(course.type) }}</td>
+						<td>-</td>
+						<td>
+							<a href="/courses/{{ course.uid }}/do" class="button">Retake</a>
+						</td>
+					</tr>
 					{{/each}}
-				</ul>
+					</tbody>
+				</table>
 				{{else}}
 				<p>You haven't completed any courses yet!</p>
 				{{/if}}

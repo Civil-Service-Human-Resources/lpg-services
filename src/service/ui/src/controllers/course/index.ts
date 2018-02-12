@@ -1,4 +1,5 @@
 import {Request, Response, NextFunction} from 'express'
+import * as i18n from 'i18n'
 import {Course} from 'lib/model/course'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
@@ -63,13 +64,15 @@ interface CourseDetail {
 	dataRows: DataRow[]
 }
 
+function getTagValues(tagName: string, tags: string[]) {
+	return tags
+		.filter(tag => tag.startsWith(tagName))
+		.map(tag => i18n.__(tag.replace(`${tagName}:`, '')))
+}
+
 function getCourseDetails(course: Course): CourseDetail[] {
-	const levels = course.tags
-		.filter(tag => tag.startsWith('grade'))
-		.map(tag => tag.replace('grade:', ''))
-	const keyAreas = course.tags
-		.filter(tag => tag.startsWith('key-area'))
-		.map(tag => tag.replace('key-area:', ''))
+	const levels = getTagValues('grade', course.tags)
+	const keyAreas = getTagValues('key-area', course.tags)
 	const duration = course.duration
 
 	const dataRows: DataRow[] = []
