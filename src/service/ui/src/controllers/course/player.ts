@@ -19,7 +19,6 @@ export async function play(req: Request, res: Response) {
 		res.sendStatus(404)
 	} else {
 		// TODO: If website content record completion and redirect to site
-		// TODO: Caching
 
 		let location
 		const path = req.path
