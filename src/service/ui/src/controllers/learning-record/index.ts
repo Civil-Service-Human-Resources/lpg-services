@@ -206,6 +206,12 @@ export async function record(req: express.Request, res: express.Response) {
 		res.sendStatus(500)
 		return
 	}
+	const course = await catalog.get(courseId)
+	if (!course) {
+		logger.error(`No matching course found for course ID ${courseId}`)
+		res.sendStatus(400)
+		return
+	}
 	const verb = req.query.verb
 	if (!verb) {
 		logger.error('Expected a verb to be present in the query parameters')
@@ -219,7 +225,7 @@ export async function record(req: express.Request, res: express.Response) {
 		return
 	}
 	try {
-		await xapi.record(req, courseId, verbId, value)
+		await xapi.record(req, `${config.XAPI.activityBaseUri}/${courseId}`, verbId, value)
 	} catch (err) {
 		logger.error(err.toString())
 		res.sendStatus(500)
