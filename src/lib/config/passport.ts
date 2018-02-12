@@ -66,6 +66,7 @@ export function logout(req: express.Request, res: express.Response) {
 		if (err) {
 			res.sendStatus(500)
 		} else {
+			req.logout()
 			res.redirect(url)
 		}
 	})
