@@ -175,7 +175,7 @@ export async function courseResult(
 		)
 
 		if (!state || state !== 'completed') {
-			res.redirect('/basket')
+			res.redirect('/learning-plan')
 		} else {
 			res.send(
 				template.render('learning-record/course-result', req, {
