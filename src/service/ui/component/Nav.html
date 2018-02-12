@@ -1,28 +1,26 @@
+
 <nav id="proposition-menu">
     <a href="/" id="proposition-name">Learning Platform</a>
     <ul id="proposition-links">
         {{#if signedInUser}}
-        <li>
-            <a href="/">Home</a>
-        </li>
-        <li>
-            <a href="/profile">Profile</a>
-        </li>
-            {{#if signedInUser.department || signedInUser.profession || signedInUser.grade}}
-        <li>
-            <a href="/basket">Basket</a>
-        </li>
-        <li>
-            <a href="/learning-plan">Learning plan</a>
-        </li>
-        {{/if}}
-        <li>
-            <a href="/sign-out">Sign out</a>
-        </li>
-        {{else}}
-        <li>
-            <a href="/sign-in">Sign in</a>
-        </li>
+            <li>
+                <a href="/profile">Profile</a>
+            </li>
+            {{#if signedInUser.hasCompleteProfile()}}
+                <li>
+                    <a href="/learning-plan">Learning plan</a>
+                </li>
+                <li>
+                    <a href="/search">Search</a>
+                </li>
+            {{/if}}
+            <li>
+                <a href="/sign-out">Sign out</a>
+            </li>
+            {{else}}
+            <li>
+                <a href="/sign-in">Sign in</a>
+            </li>
         {{/if}}
     </ul>
 </nav>

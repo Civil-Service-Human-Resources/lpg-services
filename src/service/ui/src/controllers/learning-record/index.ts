@@ -93,7 +93,8 @@ export async function getLearningRecordOf(courseState: CourseState, user: any) {
 		const state = getState(statements)
 		if (courseState === null || state === courseState) {
 			const result = getResult(statements)
-			const course = await catalog.findCourseByUri(key)
+			const courseId = key.substring(key.lastIndexOf('/') + 1)
+			const course = await catalog.get(courseId)
 			if (!course) {
 				logger.warn(
 					`LRS data for course that doesn't exist. User ID: ${
@@ -131,7 +132,9 @@ function getResult(statements: xapi.Statement[]) {
 
 	if (completedStatement) {
 		result = 'completed'
-		score = completedStatement.result.score
+		if (completedStatement.result) {
+			score = completedStatement.result.score
+		}
 	}
 	if (resultStatement) {
 		result = resultStatement.verb.id === xapi.Verb.Passed ? 'passed' : 'failed'
@@ -172,7 +175,7 @@ export async function courseResult(
 		)
 
 		if (!state || state !== 'completed') {
-			res.redirect('/basket')
+			res.redirect('/learning-plan')
 		} else {
 			res.send(
 				template.render('learning-record/course-result', req, {
@@ -204,6 +207,12 @@ export async function record(req: express.Request, res: express.Response) {
 	if (!courseId) {
 		logger.error('Expected a course ID to be present in the query parameters')
 		res.sendStatus(500)
+		return
+	}
+	const course = await catalog.get(courseId)
+	if (!course) {
+		logger.error(`No matching course found for course ID ${courseId}`)
+		res.sendStatus(400)
 		return
 	}
 	const verb = req.query.verb

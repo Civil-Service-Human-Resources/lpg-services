@@ -39,9 +39,9 @@
 			played = true
 		}
 		if (decile > maxDecile) {
-			record('Progresed', decile)
+			record('Progresed', decile * 10)
 			maxDecile = decile
-			if (decile === 8) {
+			if (decile >= 8 && !completed) {
 				completed = true
 				record('Completed')
 			}

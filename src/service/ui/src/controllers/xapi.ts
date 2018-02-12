@@ -35,7 +35,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			body.hasOwnProperty('object') &&
 			body.object.objectType === 'Activity'
 		) {
-			body.object.id = req.course.uri
+			body.object.id = `${config.XAPI.activityBaseUri}/${req.course.uid}`
 		}
 	}
 
