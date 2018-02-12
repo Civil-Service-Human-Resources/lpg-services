@@ -1,10 +1,9 @@
-import * as fs from 'fs'
-import * as parse from 'csv-parse/lib/sync'
+import * as parse from 'csv-parse'
 import * as dgraph from 'dgraph-js'
+import * as fs from 'fs'
 import * as grpc from 'grpc'
-import {Course} from '../../model/course'
+import * as model from '../../model'
 import * as api from './api'
-import {User} from 'lib/model/user'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
@@ -25,7 +24,7 @@ const client = new dgraph.DgraphClient(
 	)
 )
 
-export async function add(course: Course) {
+export async function add(course: model.Course) {
 	const txn = client.newTxn()
 	try {
 		const mu = new dgraph.Mutation()
@@ -67,7 +66,7 @@ export async function get(uid: string) {
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
-		const entries = getJson(qresp).entries
+		const entries = qresp.getJson().entries
 		return entries[0]
 	} finally {
 		await txn.discard()
@@ -93,7 +92,7 @@ export async function findCourseByUri(uri: string) {
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$uri: uri})
-		const entries = getJson(qresp).entries
+		const entries = qresp.getJson().entries
 		return entries[0]
 	} finally {
 		await txn.discard()
@@ -105,7 +104,7 @@ export async function search(
 ): Promise<api.SearchResponse> {
 	await setSchema(SCHEMA)
 
-	const map: Record<string, [number, number, Course]> = {}
+	const map: Record<string, [number, number, model.Course]> = {}
 	const results = []
 	if (!req.tags || !req.tags.length) {
 		return {entries: []}
@@ -120,7 +119,7 @@ export async function search(
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$tag: tag})
-		const entries = getJson(qresp).entries
+		const entries = qresp.getJson().entries
 		for (const entry of entries) {
 			let info = map[entry.uid]
 			if (info) {
@@ -132,21 +131,23 @@ export async function search(
 			}
 		}
 	}
-	results.sort((a: [number, number, Course], b: [number, number, Course]) => {
-		if (b[0] > a[0]) {
-			return 1
-		} else if (b[0] < a[0]) {
-			return -1
+	results.sort(
+		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
+			if (b[0] > a[0]) {
+				return 1
+			} else if (b[0] < a[0]) {
+				return -1
+			}
+			if (b[1] > a[1]) {
+				return 1
+			} else if (b[1] < a[1]) {
+				return -1
+			}
+			return 0
 		}
-		if (b[1] > a[1]) {
-			return 1
-		} else if (b[1] < a[1]) {
-			return -1
-		}
-		return 0
-	})
+	)
 	const {after, first} = req
-	const resp: Course[] = []
+	const resp: model.Course[] = []
 	let count = 0
 	let include = true
 	if (after) {
@@ -184,14 +185,6 @@ export async function wipe() {
 	await client.alter(op)
 }
 
-function u8ToStr(arr) {
-	var buf = Buffer.from(arr.buffer).toString()
-	if (arr.byteLength !== arr.buffer.byteLength) {
-		buf = buf.slice(arr.byteOffset, arr.byteOffset + arr.byteLength)
-	}
-	return buf.toString()
-}
-
 export async function listAll(
 	req: api.SearchRequest
 ): Promise<api.SearchResponse> {
@@ -211,10 +204,10 @@ export async function listAll(
 		}
 	}`
 	const qresp = await client.newTxn().query(query)
-	let results = getJson(qresp).entries
+	const results = qresp.getJson().entries
 
 	results.sort(
-		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
+		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
 			if (b[0] > a[0]) {
 				return 1
 			} else if (b[0] < a[0]) {
@@ -230,7 +223,7 @@ export async function listAll(
 	)
 
 	const {after, first} = req
-	const resp: Course[] = []
+	const resp: model.Course[] = []
 	let count = 0
 	let include = true
 	if (after) {
@@ -256,7 +249,7 @@ export async function listAll(
 }
 
 export async function findRequiredLearning(
-	user: User
+	user: model.User
 ): Promise<api.SearchResponse> {
 	await setSchema(SCHEMA)
 
@@ -278,9 +271,9 @@ export async function findRequiredLearning(
 		$mandatory: `mandatory:${user.department} mandatory:all`,
 	})
 
-	const results = getJson(qresp).entries
+	const results = qresp.getJson().entries
 	results.sort(
-		(a: [number, number, api.Entry], b: [number, number, api.Entry]) => {
+		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
 			if (b[0] > a[0]) {
 				return 1
 			} else if (b[0] < a[0]) {
@@ -302,7 +295,7 @@ export async function resetCourses() {
 	await setSchema(SCHEMA)
 
 	const rawData = fs.readFileSync(__dirname + '/data.csv')
-	const lines = parse(rawData)
+	const lines = parse(rawData.toString())
 	const attributes = lines.shift()
 
 	const highestUid = Number(lines[lines.length - 1][0])
@@ -314,7 +307,7 @@ export async function resetCourses() {
 	}
 
 	for (const line of lines) {
-		let course = {}
+		const course: model.Course = {}
 		for (const i in attributes) {
 			if (attributes[i] === 'tags') {
 				course.tags = line[i].split(',').map(tag => tag.trim())
@@ -325,16 +318,4 @@ export async function resetCourses() {
 		await add(course)
 	}
 	/* tslint:enable */
-}
-
-function getJson(qresp) {
-	try {
-		return qresp.getJson()
-	} catch (e) {
-		let jsonString = u8ToStr(qresp.array[0])
-		if (!jsonString.startsWith('{')) {
-			jsonString = '{' + jsonString
-		}
-		return JSON.parse(jsonString.substring(0, jsonString.lastIndexOf('}') + 1))
-	}
 }

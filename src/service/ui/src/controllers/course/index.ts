@@ -1,57 +1,16 @@
-import {Request, Response, NextFunction} from 'express'
+import * as express from 'express'
 import * as i18n from 'i18n'
-import {Course} from 'lib/model/course'
+import * as extended from 'lib/extended'
+import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
+import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
 import * as log4js from 'log4js'
 
-const logger = log4js.getLogger('controllers/course/index')
-
-export async function loadCourse(
-	req: Request,
-	res: Response,
-	next: NextFunction
-) {
-	const courseId: string = req.params.courseId
-	const course = await catalog.get(courseId)
-	if (course) {
-		req.course = course
-		next()
-	} else {
-		res.sendStatus(404)
-	}
-}
-
-export async function resetCourses(req: Request, res: Response) {
-	await catalog.resetCourses()
-	res.redirect('/')
-}
-
-export async function display(req: Request, res: Response) {
-	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const course = req.course as Course
-	const props = {video: null}
-
-	switch (course.type) {
-		case 'video':
-			props.video = (await getVideoData(course.uri)) as any
-		case 'elearning':
-			res.send(
-				template.render(`course/${course.type}`, req, {
-					...props,
-					course,
-					courseDetails: getCourseDetails(course),
-				})
-			)
-			break
-		default:
-			logger.debug(
-				`Course type (${course.type}) unsupported, redirecting to URI`
-			)
-			// TODO record initialisation / completion?
-			res.redirect(course.uri)
-	}
+interface CourseDetail {
+	label: string
+	dataRows: DataRow[]
 }
 
 interface DataRow {
@@ -59,22 +18,12 @@ interface DataRow {
 	value: string
 }
 
-interface CourseDetail {
-	label: string
-	dataRows: DataRow[]
-}
+const logger = log4js.getLogger('controllers/course')
 
-function getTagValues(tagName: string, tags: string[]) {
-	return tags
-		.filter(tag => tag.startsWith(tagName))
-		.map(tag => i18n.__(tag.replace(`${tagName}:`, '')))
-}
-
-function getCourseDetails(course: Course): CourseDetail[] {
+function getCourseDetails(course: model.Course): CourseDetail[] {
 	const levels = getTagValues('grade', course.tags)
 	const keyAreas = getTagValues('key-area', course.tags)
 	const duration = course.duration
-
 	const dataRows: DataRow[] = []
 
 	if (levels.length) {
@@ -104,10 +53,73 @@ function getCourseDetails(course: Course): CourseDetail[] {
 	]
 }
 
+function getTagValues(tagName: string, tags: string[]) {
+	return tags
+		.filter(tag => tag.startsWith(tagName))
+		.map(tag => i18n.__(tag.replace(`${tagName}:`, '')))
+}
+
 async function getVideoData(url: string) {
 	const info = await youtube.getBasicInfo(url)
 	if (!info) {
 		return null
 	}
 	return info
+}
+
+export async function display(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
+	const course = req.course
+	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
+	switch (course.type) {
+		case 'elearning':
+			res.send(
+				template.render(`course/${course.type}`, req, {
+					course,
+					courseDetails: getCourseDetails(course),
+				})
+			)
+			break
+		case 'link':
+			await xapi.record(req, req.params.courseId, xapi.Verb.Initialised)
+			res.redirect(course.uri)
+			break
+		case 'video':
+			await xapi.record(req, req.params.courseId, xapi.Verb.Initialised)
+			res.send(
+				template.render(`course/${course.type}`, req, {
+					course,
+					courseDetails: getCourseDetails(course),
+					video: await youtube.getBasicInfo(course.uri),
+				})
+			)
+			break
+		default:
+			logger.debug(`Unknown course type: (${course.type})`)
+			res.sendStatus(500)
+	}
+}
+
+export async function loadCourse(
+	ireq: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) {
+	const req = ireq as extended.CourseRequest
+	const courseId: string = req.params.courseId
+	const course = await catalog.get(courseId)
+	if (course) {
+		req.course = course
+		next()
+	} else {
+		res.sendStatus(404)
+	}
+}
+
+export async function resetCourses(
+	req: express.Request,
+	res: express.Response
+) {
+	await catalog.resetCourses()
+	res.redirect('/')
 }

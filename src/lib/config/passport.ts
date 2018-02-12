@@ -1,36 +1,40 @@
-import {NextFunction, Request, Response} from 'express'
+import * as express from 'express'
 import * as passport from 'passport'
-import {Strategy} from 'passport-saml'
+import * as saml from 'passport-saml'
 
-let strategy: Strategy
+let strategy: saml.Strategy
 
 export function configure(
 	issuer: string,
 	authenticationServiceUrl: string,
-	app: Express.Application
+	app: express.Express
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
 
-	strategy = new Strategy(
+	strategy = new saml.Strategy(
 		{
 			acceptedClockSkewMs: -1,
 			entryPoint: `${authenticationServiceUrl}/samlsso`,
 			issuer,
 			path: '/authenticate',
 		},
-		(profile, done) => {
-			done(null, {
-				department: profile['http://wso2.org/claims/department'],
-				emailAddress: profile.nameID,
-				givenName: profile['http://wso2.org/claims/givenname'],
-				grade: profile['http://wso2.org/claims/grade'],
-				id: profile['http://wso2.org/claims/userid'],
-				nameID: profile.nameID,
-				nameIDFormat: profile.nameIDFormat,
-				profession: profile['http://wso2.org/claims/profession'],
-				sessionIndex: profile.sessionIndex,
-			})
+		(profile: any, done: saml.VerifiedCallback) => {
+			done(
+				null,
+				{
+					department: profile['http://wso2.org/claims/department'],
+					emailAddress: profile.nameID,
+					givenName: profile['http://wso2.org/claims/givenname'],
+					grade: profile['http://wso2.org/claims/grade'],
+					id: profile['http://wso2.org/claims/userid'],
+					nameID: profile.nameID,
+					nameIDFormat: profile.nameIDFormat,
+					profession: profile['http://wso2.org/claims/profession'],
+					sessionIndex: profile.sessionIndex,
+				},
+				{}
+			)
 		}
 	)
 
@@ -57,7 +61,7 @@ export function configure(
 	)
 }
 
-export function logout(req: Request, res: Response) {
+export function logout(req: express.Request, res: express.Response) {
 	strategy.logout(req, (err, url) => {
 		if (err) {
 			res.sendStatus(500)
@@ -68,9 +72,9 @@ export function logout(req: Request, res: Response) {
 }
 
 export function isAuthenticated(
-	req: Request,
-	res: Response,
-	next: NextFunction
+	req: express.Request,
+	res: express.Response,
+	next: express.NextFunction
 ) {
 	if (req.isAuthenticated()) {
 		return next()

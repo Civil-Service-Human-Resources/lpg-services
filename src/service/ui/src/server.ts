@@ -1,8 +1,8 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
-import * as session from 'express-session'
 import * as cache from 'express-cache-response'
+import * as session from 'express-session'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as lusca from 'lusca'
@@ -12,15 +12,14 @@ import * as sessionFileStore from 'session-file-store'
 import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
 
+import * as basketController from './controllers/basket'
 import * as courseController from './controllers/course'
 import * as coursePlayerController from './controllers/course/player'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
 import * as searchController from './controllers/search'
 import * as userController from './controllers/user'
-import * as videoController from './controllers/video'
 import * as xApiController from './controllers/xapi'
-import * as basketController from './controllers/basket'
 
 log4js.configure(config.LOGGING)
 
@@ -66,6 +65,8 @@ app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
 
 app.use(passport.isAuthenticated)
+
+app.get('/api/lrs.record', learningRecordController.record)
 
 app.get('/profile', userController.editProfile)
 app.post('/profile', userController.tryUpdateProfile)

@@ -1,13 +1,13 @@
-import {Request, Response} from 'express'
+import axios from 'axios'
+import * as express from 'express'
+import * as https from 'https'
 import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
-import {User} from 'lib/model/user'
+import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
-import Axios from 'axios'
-import * as https from 'https'
 
 export interface Profile {
-	user: User
+	user: model.User
 	identityServerFailed?: boolean
 	validFields?: boolean
 }
@@ -18,14 +18,23 @@ export interface SignIn {
 	authenticationServiceUrl: string
 }
 
-function renderSignIn(req: Request, props: SignIn) {
+const http = axios.create({
+	httpsAgent: new https.Agent({
+		rejectUnauthorized: false,
+	}),
+})
+
+function renderProfile(req: express.Request, props: Profile) {
+	return template.render('profile/edit', req, props)
+}
+
+function renderSignIn(req: express.Request, props: SignIn) {
 	return template.render('account/sign-in', req, props)
 }
 
-function updateUserObject(req: Request, updatedProfile: User) {
-	let cshrUserObject = updatedProfile.CshrUser
-
-	let newUser = {
+function updateUserObject(req: express.Request, updatedProfile: model.User) {
+	const cshrUserObject = updatedProfile.CshrUser
+	const newUser = {
 		...req.user,
 		givenName: updatedProfile.name.givenName,
 		...cshrUserObject,
@@ -33,11 +42,11 @@ function updateUserObject(req: Request, updatedProfile: User) {
 	req.login(newUser, () => {})
 }
 
-function validateForm(req: Express.request) {
+function validateForm(req: express.Request) {
 	const form = req.body
 	const validInputs = {
-		givenName: form.givenName,
 		department: form.department,
+		givenName: form.givenName,
 		grade: form.grade,
 		profession: form.profession,
 	}
@@ -53,7 +62,7 @@ function validateForm(req: Express.request) {
 	}
 }
 
-export function editProfile(req: Request, res: Response) {
+export function editProfile(req: express.Request, res: express.Response) {
 	res.send(
 		renderProfile(req, {
 			user: req.user,
@@ -62,15 +71,18 @@ export function editProfile(req: Request, res: Response) {
 	)
 }
 
-export function editProfileComplete(req: Request, res: Response) {
+export function editProfileComplete(
+	req: express.Request,
+	res: express.Response
+) {
 	res.send(template.render('profile/edit-success', req))
 }
 
-export function resetPassword(req: Request, res: Response) {
+export function resetPassword(req: express.Request, res: express.Response) {
 	res.send(template.render('account/reset-password', req))
 }
 
-export function signIn(req: Request, res: Response) {
+export function signIn(req: express.Request, res: express.Response) {
 	const sessionDataKey = req.query.sessionDataKey
 	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
 
@@ -93,11 +105,11 @@ export function signIn(req: Request, res: Response) {
 	}
 }
 
-export function signOut(req: Request, res: Response) {
+export function signOut(req: express.Request, res: express.Response) {
 	passport.logout(req, res)
 }
 
-export function tryUpdateProfile(req: Request, res: Response) {
+export function tryUpdateProfile(req: express.Request, res: express.Response) {
 	const validFields = validateForm(req)
 	if (validFields) {
 		res.send(renderProfile(req, {user: validFields, validFields: false}))
@@ -106,44 +118,34 @@ export function tryUpdateProfile(req: Request, res: Response) {
 	}
 }
 
-function renderProfile(req: Request, props: Profile) {
-	return template.render('profile/edit', req, props)
-}
-
-export let updateProfile = (req: Request, res: Response) => {
-	let updateProfileObject = {
-		userName: req.body.userName,
-		name: {givenName: req.body.givenName},
+export function updateProfile(req: express.Request, res: express.Response) {
+	const updateProfileObject = {
 		CshrUser: {
-			profession: req.body.profession,
-			grade: req.body.grade,
 			department: req.body.department,
+			grade: req.body.grade,
+			profession: req.body.profession,
 		},
+		name: {givenName: req.body.givenName},
+		userName: req.body.userName,
 	}
-
-	const requestConfig = {
-		url: '/scim2/Users/' + req.user.id,
-		method: 'put',
-		baseURL: config.AUTHENTICATION.serviceUrl,
-
-		// `headers` are custom headers to be sent
-		headers: {
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-		},
-		data: updateProfileObject,
-		httpsAgent: new https.Agent({rejectUnauthorized: false}),
+	const options = {
 		auth: {
-			username: config.AUTHENTICATION.serviceAdmin,
 			password: config.AUTHENTICATION.servicePassword,
+			username: config.AUTHENTICATION.serviceAdmin,
+		},
+		baseURL: config.AUTHENTICATION.serviceUrl,
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
 		},
 	}
-	Axios.request(requestConfig)
-		.then(function(response) {
+	http
+		.put('/scim2/Users/' + req.user.id, updateProfileObject, options)
+		.then(response => {
 			updateUserObject(req, JSON.parse(response.config.data))
 			res.redirect('/profile-updated')
 		})
-		.catch(function(error) {
+		.catch(error => {
 			res.send(
 				renderProfile(req, {
 					identityServerFailed: true,
