@@ -33,31 +33,6 @@
 	}
 }
 
-#global-header {
-	.header-global {
-		width: 35% !important;
-	}
-	.header-proposition {
-		width: 65% !important;
-		text-align: right;
-		#proposition-links {
-			li {
-				display: inline;
-				border: none;
-				padding: 5px 0;
-				line-height: 1.25;
-				float: none;
-				width: 100%;
-				text-align: left;
-
-				a {
-					margin-left: 15px;
-				}
-			}
-		}
-	}
-}
-
 .js-enabled {
 	.js-hidden {
 		display: none;
