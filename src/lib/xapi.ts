@@ -28,7 +28,8 @@ export const Verb = {
 	Initialised: 'http://adlnet.gov/expapi/verbs/initialized',
 	Passed: 'http://adlnet.gov/expapi/verbs/passed',
 	PlayedVideo: 'https://w3id.org/xapi/video/verbs/played',
-	Progresed: 'http://adlnet.gov/expapi/verbs/progressed',
+	Progressed: 'http://adlnet.gov/expapi/verbs/progressed',
+	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
 }
 
@@ -38,7 +39,8 @@ export const Labels: Record<string, string> = {
 	[Verb.Initialised]: 'initialised',
 	[Verb.Passed]: 'passed',
 	[Verb.PlayedVideo]: 'played video',
-	[Verb.Progresed]: 'progressed',
+	[Verb.Progressed]: 'progressed',
+	[Verb.Terminated]: 'terminated',
 	[Verb.Viewed]: 'viewed',
 }
 
@@ -79,7 +81,7 @@ export async function record(
 			id: verb,
 		},
 	}
-	if (verb === Verb.Progresed) {
+	if (verb === Verb.Progressed) {
 		if (!valueJSON) {
 			throw new Error('Missing value for the xAPI Progressed statement')
 		}

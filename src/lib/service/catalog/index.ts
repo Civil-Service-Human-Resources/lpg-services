@@ -1,4 +1,4 @@
-import * as parse from 'csv-parse'
+import * as parse from 'csv-parse/lib/sync'
 import * as dgraph from 'dgraph-js'
 import * as fs from 'fs'
 import * as grpc from 'grpc'
@@ -67,33 +67,7 @@ export async function get(uid: string) {
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
 		const entries = qresp.getJson().entries
-		return entries[0]
-	} finally {
-		await txn.discard()
-	}
-}
-
-export async function findCourseByUri(uri: string) {
-	await setSchema(SCHEMA)
-
-	const txn = client.newTxn()
-	try {
-		const query = `query all($uri: string) {
-			entries(func: eq(uri, $uri)) {
-				tags
-				title
-				type
-				uid
-				uri
-				shortDescription
-				description
-				learningOutcomes
-				duration
-			}
-		}`
-		const qresp = await client.newTxn().queryWithVars(query, {$uri: uri})
-		const entries = qresp.getJson().entries
-		return entries[0]
+		return model.Course.create(entries[0])
 	} finally {
 		await txn.discard()
 	}
@@ -287,7 +261,7 @@ export async function findRequiredLearning(
 			return 0
 		}
 	)
-	return {entries: results}
+	return {entries: results.map(model.Course.create)}
 }
 
 export async function resetCourses() {

@@ -23,7 +23,7 @@ export function configure(
 		(profile: any, done: saml.VerifiedCallback) => {
 			done(
 				null,
-                createUser({
+				createUser({
 					department: profile['http://wso2.org/claims/department'],
 					emailAddress: profile.nameID,
 					givenName: profile['http://wso2.org/claims/givenname'],

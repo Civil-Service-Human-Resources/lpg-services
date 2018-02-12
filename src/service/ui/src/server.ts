@@ -10,7 +10,7 @@ import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
-import * as User from 'lib/model/user';
+import * as User from 'lib/model/user'
 import * as i18n from 'lib/service/translation'
 
 import * as basketController from './controllers/basket'
@@ -73,15 +73,17 @@ app.get('/profile', userController.editProfile)
 app.post('/profile', userController.tryUpdateProfile)
 app.get('/profile-updated', userController.editProfileComplete)
 
-app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-	const user = req.user as User
-	if (!user.hasCompleteProfile()) {
-		logger.debug('Incomplete profile, redirecting user')
-		res.redirect('/profile')
-	} else {
-		next()
+app.use(
+	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+		const user = req.user as User
+		if (!user.hasCompleteProfile()) {
+			logger.debug('Incomplete profile, redirecting user')
+			res.redirect('/profile')
+		} else {
+			next()
+		}
 	}
-})
+)
 
 app.get('/search', searchController.listAllCourses)
 
@@ -96,6 +98,7 @@ app.get('/courses/reset', courseController.resetCourses)
 app.get('/courses/:courseId', courseController.display)
 app.use('/courses/:courseId/do', cache(), coursePlayerController.play)
 app.use('/courses/:courseId/xapi', xApiController.proxy)
+app.use('/courses/:courseId/delete', courseController.markCourseDeleted)
 
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)

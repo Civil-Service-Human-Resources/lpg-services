@@ -8,7 +8,7 @@
                 {{else}}
                 <a href="/courses/{{course.uid}}">Resume</a>
                 {{/if}}
-                {{#if !course.isRequired()}}
+                {{#if !course.isRequired(signedInUser)}}
                 <a href="/courses/{{course.uid}}/delete">Delete</a>
                 {{/if}}
             {{/if}}
