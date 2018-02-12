@@ -103,12 +103,10 @@ export async function getLearningRecordOf(courseState: CourseState, user: any) {
 				)
 				continue
 			}
-			courses.push({
-				...course,
-				completionDate: await getCompletionDate(statements),
-				result,
-				state,
-			})
+			course.completionDate = await getCompletionDate(statements)
+			course.result = result
+			course.state = state
+			courses.push(course)
 		}
 	}
 	return courses
@@ -149,11 +147,16 @@ function getState(statements: xapi.Statement[]) {
 	if (!statements.length) {
 		return null
 	}
-	const completed = statements.find(
-		statement => statement.verb.id === xapi.Verb.Completed
+	const finished = statements.find(
+		statement =>
+			statement.verb.id === xapi.Verb.Completed ||
+			statement.verb.id === xapi.Verb.Terminated
 	)
-	if (completed) {
-		return 'completed'
+	if (finished) {
+		if (finished.verb.id === xapi.Verb.Completed) {
+			return 'completed'
+		}
+		return 'terminated'
 	}
 	return 'in-progress'
 }

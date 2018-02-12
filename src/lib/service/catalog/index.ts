@@ -264,6 +264,48 @@ export async function findRequiredLearning(
 	return {entries: results.map(model.Course.create)}
 }
 
+export async function findSuggestedLearning(
+	user: model.User
+): Promise<api.SearchResponse> {
+	await setSchema(SCHEMA)
+
+	const query = `query all($areaOfWork:string, $mandatory: string) {
+		entries(func: anyofterms(tags, $areaOfWork)) @filter(NOT anyofterms(tags, $mandatory)) {
+			tags
+			title
+			type
+			uid
+			uri
+			shortDescription
+			description
+			learningOutcomes
+			duration
+		}
+	}`
+	const qresp = await client.newTxn().queryWithVars(query, {
+		$areaOfWork: `area-of-work:${user.profession} area-of-work:all`,
+		$mandatory: `mandatory:${user.department} mandatory:all`,
+	})
+
+	const results = qresp.getJson().entries
+	results.sort(
+		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
+			if (b[0] > a[0]) {
+				return 1
+			} else if (b[0] < a[0]) {
+				return -1
+			}
+			if (b[1] > a[1]) {
+				return 1
+			} else if (b[1] < a[1]) {
+				return -1
+			}
+			return 0
+		}
+	)
+	return {entries: results.map(model.Course.create)}
+}
+
 export async function resetCourses() {
 	await wipe()
 	await setSchema(SCHEMA)
