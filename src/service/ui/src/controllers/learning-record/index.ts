@@ -93,7 +93,8 @@ export async function getLearningRecordOf(courseState: CourseState, user: any) {
 		const state = getState(statements)
 		if (courseState === null || state === courseState) {
 			const result = getResult(statements)
-			const course = await catalog.findCourseByUri(key)
+			const courseId = key.substring(key.lastIndexOf('/') + 1)
+			const course = await catalog.get(courseId)
 			if (!course) {
 				logger.warn(
 					`LRS data for course that doesn't exist. User ID: ${
