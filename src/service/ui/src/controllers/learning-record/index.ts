@@ -131,7 +131,9 @@ function getResult(statements: xapi.Statement[]) {
 
 	if (completedStatement) {
 		result = 'completed'
-		score = completedStatement.result.score
+		if (completedStatement.result) {
+			score = completedStatement.result.score
+		}
 	}
 	if (resultStatement) {
 		result = resultStatement.verb.id === xapi.Verb.Passed ? 'passed' : 'failed'
@@ -225,7 +227,12 @@ export async function record(req: express.Request, res: express.Response) {
 		return
 	}
 	try {
-		await xapi.record(req, `${config.XAPI.activityBaseUri}/${courseId}`, verbId, value)
+		await xapi.record(
+			req,
+			`${config.XAPI.activityBaseUri}/${courseId}`,
+			verbId,
+			value
+		)
 	} catch (err) {
 		logger.error(err.toString())
 		res.sendStatus(500)
