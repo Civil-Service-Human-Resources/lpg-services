@@ -42,7 +42,7 @@ async function getCourseRecord(user: any, course: any) {
 		},
 		method: 'get',
 		params: {
-			activity: course.uri,
+			activity: `${config.XAPI.activityBaseUri}/${course.uid}`,
 			agent: JSON.stringify(agent),
 		},
 		url: `${config.XAPI.url}/statements`,
