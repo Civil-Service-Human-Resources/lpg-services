@@ -1,6 +1,7 @@
 import * as parse from 'csv-parse/lib/sync'
 import * as dgraph from 'dgraph-js'
 import * as fs from 'fs'
+import * as path from 'path'
 import * as grpc from 'grpc'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
@@ -29,6 +30,9 @@ const elasticConfig = [
 ]
 
 const SCHEMA = `tags: [string] @count @index(term) .
+title: string @index(fulltext) .
+shortDescription: string @index(fulltext) .
+description: string .
 title: string @index(term) .
 shortDescription: string @index(term) .
 description: string @index(term).
@@ -42,6 +46,7 @@ price: string .
 requiredBy: dateTime .
 frequency: string .
 `
+const maxCopyLength = 80
 
 const client = new dgraph.DgraphClient(
 	new dgraph.DgraphClientStub(
@@ -468,8 +473,9 @@ export async function findSuggestedLearning(
 export async function resetCourses() {
 	await wipe()
 	await setSchema(SCHEMA)
-
-	const rawData = fs.readFileSync(__dirname + '/data.csv')
+	const rawData = fs.readFileSync(
+		path.join(__dirname, '../../../..', 'catalog', 'data.csv')
+	)
 	const lines = parse(rawData.toString())
 	const attributes = lines.shift()
 
