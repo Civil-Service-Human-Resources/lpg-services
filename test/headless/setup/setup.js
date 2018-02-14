@@ -18,7 +18,7 @@ module.exports = async function() {
 			'--ignore-certificate-errors-spki-list ',
 			'--disk-cache-size=0',
 		],
-		headless: false,
+		headless: true,
 	})
 	global.browser = b
 	mkdirp.sync(DIR)

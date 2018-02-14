@@ -7,28 +7,42 @@ import {
 } from 'page/profile'
 import {loginToCsl} from 'page/login'
 import {createUser, deleteUser, getUser} from 'extension/user'
+import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
 import * as puppeteer from 'puppeteer'
 
-declare var browser: puppeteer.Browser
+const timeout = 10000
+const {
+	URL = '',
+	TEST_PASSWORD = '',
+	DIALOG_USERNAME = '',
+	DIALOG_PASSWORD = '',
+} = process.env
 
-const timeout = 5000
-const {URL = '', TEST_USERNAME = '', TEST_PASSWORD = ''} = process.env
+function genUserEmail() {
+	return `test${Date.now()}@c.gov.uk`
+}
+
+let TEST_USERNAME = genUserEmail()
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
 
-	beforeAll(async () => {
-		page = await browser.newPage()
+	wrappedBeforeAll(async () => {
+		const session = await helper.getSession('profile')
+		page = await session.newPage()
+		await page.authenticate({
+			username: DIALOG_USERNAME,
+			password: DIALOG_PASSWORD,
+		})
 		await page.goto(URL)
 		await createUser(TEST_USERNAME, TEST_PASSWORD)
 		await loginToCsl(page, TEST_USERNAME, TEST_PASSWORD)
-		await page.waitFor(selectors.profilePageButton, timeout)
-	}, timeout)
+		await page.waitFor(selectors.signoutButton, {timeout: 10000})
+		await page.goto('https://lpg.demo.cshr.digital/profile')
+	})
 
-	afterAll(async () => {
+	wrappedAfterAll(async () => {
 		const userInfo = await getUser(TEST_USERNAME)
-		await page.click(selectors.signoutButton)
-		await page.waitFor('#password', timeout)
 		await deleteUser(userInfo.id)
 		await page.close()
 	})
@@ -41,6 +55,21 @@ describe('profile page functionality', () => {
 			page
 		)
 		expect(feedbackUrl).toEqual('mailto:feedback@cslearning.gov.uk')
+	})
+
+	it('Should display username field which matches email address', async () => {
+		const username = await helper.returnElementAttribute(
+			selectors.userName,
+			'value',
+			page
+		)
+		expect(username).toEqual(TEST_USERNAME)
+	})
+
+	it('Should display the first name field', async () => {
+		expect(await helper.checkElementIsPresent(selectors.firstName, page)).toBe(
+			true
+		)
 	})
 
 	it('Should display the department field', async () => {
@@ -76,6 +105,7 @@ describe('profile page functionality', () => {
 		).toBe(true)
 		expect(signoutLink).toEqual('/sign-out')
 	})
+
 	it('Should display empty profession, department and grade fields on first login', async () => {
 		const profile = await returnUserProfileDetails(page)
 		expect(profile.userName).toBeTruthy()
@@ -97,6 +127,14 @@ describe('profile page functionality', () => {
 		).toBeTruthy()
 	})
 
+	it('Should display an error message for missing firstname entry', async () => {
+		await setProfileFieldToEmptyAndSave(selectors.firstName, page)
+		await page.waitFor(selectors.firstNameFieldError, timeout)
+		expect(
+			await helper.checkElementIsPresent(selectors.firstNameFieldError, page)
+		).toBe(true)
+	})
+
 	it('Should display an error message for missing department field entry', async () => {
 		await setProfileFieldToEmptyAndSave(selectors.department, page)
 		await page.waitFor(selectors.departmentFieldError, timeout)
@@ -105,7 +143,7 @@ describe('profile page functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display an error message for missing department field entry', async () => {
+	it('Should display an error message for missing professions field entry', async () => {
 		await setProfileFieldToEmptyAndSave(selectors.profession, page)
 		await page.waitFor(selectors.professionFieldError, timeout)
 		expect(
@@ -113,7 +151,7 @@ describe('profile page functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display an error message for missing department field entry', async () => {
+	it('Should display an error message for missing grade field entry', async () => {
 		await setProfileFieldToEmptyAndSave(selectors.grade, page)
 		await page.waitFor(selectors.gradeFieldError, timeout)
 		expect(
@@ -126,7 +164,5 @@ describe('profile page functionality', () => {
 		expect(
 			await helper.checkElementIsPresent(selectors.profileUpdatedMessage, page)
 		).toBe(true)
-		await page.click(selectors.profilePageButton)
-		await page.waitFor(selectors.grade)
 	})
 })

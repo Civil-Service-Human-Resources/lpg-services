@@ -70,13 +70,10 @@ export class Session {
 			browser._ignoreHTTPSErrors,
 			browser._screenshotTaskQueue
 		)
-		const originalClose = page.close
 		page.close = async () => {
 			await browser._connection.send('Target.disposeBrowserContext', {
 				browserContextId: this.browserContextId,
 			})
-			page.close = originalClose
-			await page.close()
 		}
 		return page
 	}

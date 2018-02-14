@@ -5,12 +5,12 @@ export const selectors: Record<string, string> = {
 	passwordField: '#password',
 	loginButton:
 		'#content > div.main-content > div > div > form > div:nth-child(4) > input',
-	loginSucess: '#userName',
 	loginFailure: '#error-summary-heading-example-1',
 	feedbackLink: '#content > div.phase-banner > p > span > a',
 	getInTouchLink: '#content > div.main-content > div > div > p > a',
 	signinButton: '#proposition-links > li > a',
-	profilePageButton: '#proposition-links > li:nth-child(2) > a',
+	profileUserName: '#userName',
+	homeNavButton: '#proposition-links > li:nth-child(1) > a',
 }
 
 export async function loginToCsl(

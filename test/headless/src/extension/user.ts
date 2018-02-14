@@ -54,6 +54,7 @@ export async function createUser(username: string, password: string) {
 	return resp.data.id
 }
 
+//TODO (Will) Fix this
 export async function deleteUser(userid: string) {
 	const url = ADMIN_URL + '/scim2/Users/' + userid
 	let resp: AxiosResponse<QueryUser>
