@@ -1,10 +1,10 @@
 import * as express from 'express'
 import * as fs from 'fs'
 import * as i18n from 'i18n'
+import * as config from 'lib/config'
 import * as path from 'path'
 import * as svelte from 'svelte'
 import * as vm from 'vm'
-import * as config from '../config'
 
 interface AST {
 	children: AST[]
