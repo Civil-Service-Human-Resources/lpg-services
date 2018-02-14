@@ -12,7 +12,7 @@
 	"dependencies": {
 		"@types/jest": "22.0.1",
 		"@types/node": "8.0.58",
-		"@types/puppeteer": "0.13.9",
+		"@types/puppeteer": "1.0.0",
 		"dotenv": "4.0.0",
 		"jest": "22.0.6",
 		"puppeteer": "1.0.0"

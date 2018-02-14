@@ -1,24 +1,31 @@
 import * as helper from 'extension/helper'
 import {loginToCsl, selectors} from 'page/login'
 import * as puppeteer from 'puppeteer'
+import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
 
-declare var browser: puppeteer.Browser
-
-const timeout = 5000
-const {URL = '', USERNAME = '', PASS = ''} = process.env
+const {
+	URL = '',
+	USERNAME = '',
+	PASS = '',
+	DIALOG_USERNAME = '',
+	DIALOG_PASSWORD = '',
+} = process.env
 const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
 
 describe('login page functionality', () => {
 	let page: puppeteer.Page
 
-	beforeAll(async () => {
-		// const session = await helper.getSession('login')
-		// page = await session.newPage()
-		page = await browser.newPage()
+	wrappedBeforeAll(async () => {
+		const session = await helper.getSession('login')
+		page = await session.newPage()
+		await page.authenticate({
+			username: DIALOG_USERNAME,
+			password: DIALOG_PASSWORD,
+		})
 		await page.goto(URL)
-	}, timeout)
+	})
 
-	afterAll(async () => {
+	wrappedAfterAll(async () => {
 		await page.close()
 	})
 
@@ -86,14 +93,9 @@ describe('login page functionality', () => {
 
 	it('Should login to the CSL portal', async () => {
 		await loginToCsl(page, USERNAME, PASS)
-		await page.waitFor(selectors.profilePageButton, timeout)
-		await page.click(selectors.profilePageButton)
-		await page.waitFor(selectors.loginSucess, {timeout: 5000})
-		const loggedInUser = await helper.returnElementAttribute(
-			selectors.loginSucess,
-			'value',
-			page
-		)
-		expect(loggedInUser).toEqual(USERNAME)
+		await page.waitFor(selectors.homeNavButton, {timeout: 9500})
+		expect(
+			await helper.checkElementIsPresent(selectors.homeNavButton, page)
+		).toBe(true)
 	})
 })
