@@ -20,13 +20,13 @@ jobs:
       - npm install
     - script:
       - npm run build
-      - docker build -t cshr/lpg-services:latest .
-      - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-        && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
-        && docker push cshr/lpg-services
+      - echo "----- 1 -----" && docker build -t cshr/lpg-services:latest .
+      - echo "----- 2 -----" && docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - echo "----- 3 -----" && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
+      - echo "----- 4 -----" && docker push cshr/lpg-services
     - stage: Deploy
       script:
-        - ./deploy.sh lpgservices
+        - "./deploy.sh lpgservices"
 
 addons:
   ssh_known_hosts:
