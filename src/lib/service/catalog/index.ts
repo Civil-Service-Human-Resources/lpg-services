@@ -10,13 +10,14 @@ const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
-shortDescription: string .
+shortDescription: string @index(fulltext) .
 description: string .
 learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
 duration: string .
 `
+const maxCopyLength = 80
 
 const client = new dgraph.DgraphClient(
 	new dgraph.DgraphClientStub(
@@ -24,6 +25,12 @@ const client = new dgraph.DgraphClient(
 		grpc.credentials.createInsecure()
 	)
 )
+
+function formatResultString(resultString: string, searchTerm: string): string {
+	return resultString
+		.replace(searchTerm, '<b>' + searchTerm + '</b>')
+		.substr(0, maxCopyLength)
+}
 
 export async function add(course: model.Course) {
 	const txn = client.newTxn()
@@ -75,6 +82,31 @@ export async function get(uid: string) {
 	} finally {
 		await txn.discard()
 	}
+}
+
+class SomeObject {
+	constructor(public foo: string)
+}
+
+export async function textSearch(): Promise<api.SearchResponse> {
+	await setSchema(SCHEMA)
+	const query = `{entries(func: alloftext(shortDescription, "test")) {
+		   expand(_all_) 
+		}}`
+
+	const qresp = await client.newTxn().query(query)
+	const entries = qresp.getJson().entries
+	const resp: model.Course[] = []
+
+	for (const entry of entries) {
+		entry.shortDescription = formatResultString(
+			entry.shortDescription,
+			'facilities'
+		)
+		resp.push(entry)
+	}
+
+	return {entries: resp}
 }
 
 export async function search(

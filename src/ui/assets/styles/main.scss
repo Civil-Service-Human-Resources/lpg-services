@@ -3,13 +3,13 @@
 @import 'common/utils';
 @import 'common/global';
 
-@import 'components/header';
-@import 'components/footer';
 @import 'components/course';
-@import 'components/rightbox';
 @import 'components/basket';
+@import 'components/footer';
+@import 'components/header';
 @import 'components/learning';
 @import 'components/results';
+@import 'components/search';
 
 .push-bottom {
 	margin-bottom: 30px;

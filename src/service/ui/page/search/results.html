@@ -1,0 +1,15 @@
+<Page title="Search LPG">
+    <Layout page='Search'>
+        <div class="grid-row">
+            <div class="column-two-thirds search-results">
+                <h1 class="heading-large">Search Results</h1>
+                {{#if searchResults.entries}} {{#if searchResults.entries.length}} {{#each searchResults.entries as course}}
+                <a href="#">{{course.title}}</a>
+                <div>
+                    {{{course.shortDescription}}}
+                </div>
+                {{/each}} {{/if}} {{/if}}
+            </div>
+        </div>
+    </Layout>
+</Page>
