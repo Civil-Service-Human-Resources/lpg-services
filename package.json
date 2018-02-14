@@ -7,15 +7,11 @@
 		"lint": "tslint --project tsconfig.json",
 		"nuke": "rm -rf dist node_modules",
 		"postinstall": "./bin/setup-dist",
-		"sass:management":
-			"node-sass src/management-ui/assets/styles/index.scss src/management-ui/assets/styles/main.css",
-		"sass:ui":
-			"node-sass src/ui/assets/styles/main.scss src/ui/assets/styles/main.css",
+		"sass:management": "node-sass src/management-ui/assets/styles/index.scss src/management-ui/assets/styles/main.css",
+		"sass:ui": "node-sass src/ui/assets/styles/main.scss src/ui/assets/styles/main.css",
 		"start:all": "npm run start:management & npm run start:ui",
-		"start:management":
-			"cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
-		"start:ui":
-			"cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
+		"start:management": "cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
+		"start:ui": "cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
 		"watch": "./bin/tsc -w"
 	},
 	"devDependencies": {
@@ -33,6 +29,7 @@
 		"@types/session-file-store": "1.2.0",
 		"nodemon": "1.14.12",
 		"protobufjs": "6.8.4",
+		"striptags": "^3.1.1",
 		"tslint": "5.9.1",
 		"typescript": "2.7.1"
 	},
