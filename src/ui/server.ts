@@ -21,6 +21,7 @@ import * as learningRecordController from './controllers/learning-record'
 import * as searchController from './controllers/search'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
+import * as bookingController from './controllers/booking'
 
 log4js.configure(config.LOGGING)
 
@@ -106,6 +107,8 @@ app.get('/learning-record/:courseId', learningRecordController.courseResult)
 app.get('/suggested-for-you', searchController.suggestedForYou)
 
 app.get('/home', homeController.home)
+
+app.get('/book/:courseId', bookingController.renderBookableCourseInformation)
 
 app.use(
 	(
