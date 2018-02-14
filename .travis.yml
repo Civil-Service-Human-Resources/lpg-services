@@ -11,13 +11,25 @@ cache:
   directories:
     - "node_modules"
 
-install:
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-  - docker pull cshr/lpg-services || true
-  - npm install
+jobs:
+  include:
+    - stage: "install, build and push"
+    - install:
+        - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+        - docker pull cshr/lpg-services || true
+        - npm install
+    - script:
+        - npm run build:all
+        - docker build -t cshr/lpg-services:latest .
+          && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
+          && docker push cshr/lpg-services
+    - stage: Deploy
+      script:
+        - ./deploy.sh lpgservices
 
-script:
-  - npm run build
-  - docker build -t cshr/lpg-services:latest .
-    && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
-    && docker push cshr/lpg-services
+addons:
+  ssh_known_hosts:
+  - test-lpg.uksouth.cloudapp.azure.com
+  - 10.0.10.4
+  - 10.0.11.4
+  - 10.0.12.4
