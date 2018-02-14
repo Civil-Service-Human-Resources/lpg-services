@@ -19,3 +19,13 @@ export async function suggestedForYou(
 		})
 	)
 }
+
+export function index(req: express.Request, res: express.Response) {
+	res.send(template.render('search', req))
+}
+
+export async function search(req: express.Request, res: express.Response) {
+	let searchResults: api.SearchResponse = await catalog.textSearch()
+	console.log(searchResults)
+	res.send(template.render('search/results', req, {searchResults}))
+}

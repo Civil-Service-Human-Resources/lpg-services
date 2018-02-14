@@ -101,6 +101,8 @@ app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
 app.get('/suggested-for-you', searchController.suggestedForYou)
+app.get('/search', searchController.index)
+app.post('/search', searchController.search)
 
 app.get('/home', homeController.home)
 
