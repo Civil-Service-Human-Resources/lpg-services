@@ -7,8 +7,6 @@ ENV AUTHENTICATION_SERVICE_URL http://identity.dev.cshr.digital:9443
 
 EXPOSE 3001
 
-CMD [ "bash", "-c", "cd service/ui && node server.js" ]
-
 RUN apt-get update && \
   apt-get install --yes wget ssh sshpass g++ make && \
   apt-get clean && \
@@ -31,8 +29,12 @@ RUN . $NVM_DIR/nvm.sh \
   && nvm use default
 
 COPY package.json package.json
+COPY bin/setup-dist bin/setup-dist
+COPY src src
 RUN npm install --unsafe-perm
 
 ENV NODE_ICU_DATA /var/www/app/node_modules/full-icu
 
-COPY dist .
+COPY dist dist
+
+CMD [ "bash", "-c", "cd dist/ui && node ../node_modules/ui/server.js" ]

@@ -17,7 +17,7 @@ install:
   - npm install
 
 script:
-  - npm run build:all
+  - npm run build
   - docker build -t cshr/lpg-services:latest .
     && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
     && docker push cshr/lpg-services
