@@ -1,4 +1,4 @@
-import * as model from '../../model'
+import * as model from 'lib/model'
 
 export interface SearchRequest {
 	tags?: string[]

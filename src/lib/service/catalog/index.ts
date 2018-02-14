@@ -2,8 +2,8 @@ import * as parse from 'csv-parse/lib/sync'
 import * as dgraph from 'dgraph-js'
 import * as fs from 'fs'
 import * as grpc from 'grpc'
-import * as model from '../../model'
-import * as api from './api'
+import * as model from 'lib/model'
+import * as api from 'lib/service/catalog/api'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 

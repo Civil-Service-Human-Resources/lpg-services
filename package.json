@@ -1,31 +1,22 @@
 {
 	"name": "lib",
 	"version": "0.0.1",
-	"main": "index.js",
 	"scripts": {
-		"build:all":
-			"npm run clean && npm run build:lib && npm run build:management && npm run build:ui",
-		"build:lib": "cd src/lib && ../../bin/tsc && npm run copy:lib",
-		"build:management":
-			"cd src/service/management-ui && ../../../bin/tsc && cd ../../.. && npm run copy:management && npm run sass:management",
-		"build:ui":
-			"cd src/service/ui && ../../../bin/tsc && cd ../../.. && npm run copy:ui && npm run sass:ui",
-		"clean": "rm -rf dist",
-		"copy:lib":
-			"cd src/lib/service && cp catalog/data.csv ../../../dist/node_modules/lib/service/catalog && cp -r translation/locales ../../../dist/node_modules/lib/service/translation/locales",
-		"copy:ui":
-			"cd src/service/ui && cp src/package.json ../../../dist/service/ui && cp -r component ../../../dist/service/ui/component && cp -r page ../../../dist/service/ui/page && cp -r assets ../../../dist/service/ui/ && rm -rf ../../../dist/service/ui/assets/styles",
-		"copy:management":
-			"cd src/service/management-ui && cp src/package.json ../../../dist/service/management-ui && cp -r component ../../../dist/service/management-ui/component && cp -r page ../../../dist/service/management-ui/page && cp -r assets ../../../dist/service/management-ui/ && rm -rf ../../../dist/service/management-ui/assets/styles",
+		"build": "./bin/tsc",
+		"clean": "./bin/setup-dist",
+		"lint": "tslint --project tsconfig.json",
+		"nuke": "rm -rf dist node_modules",
+		"postinstall": "./bin/setup-dist",
 		"sass:management":
-			"cd src/service/management-ui/ && node-sass assets/styles/index.scss ../../../dist/service/management-ui/assets/styles/main.css",
+			"node-sass src/management-ui/assets/styles/index.scss src/management-ui/assets/styles/main.css",
 		"sass:ui":
-			"cd src/service/ui && node-sass assets/styles/main.scss ../../../dist/service/ui/assets/styles/main.css",
+			"node-sass src/ui/assets/styles/main.scss src/ui/assets/styles/main.css",
 		"start:all": "npm run start:management & npm run start:ui",
-		"start:ui":
-			"cd dist/service/ui && node --icu-data-dir=../../../node_modules/full-icu server.js",
 		"start:management":
-			"cd dist/service/management-ui && node --icu-data-dir=../../../node_modules/full-icu server.js"
+			"cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
+		"start:ui":
+			"cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
+		"watch": "./bin/tsc -w"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
@@ -40,6 +31,7 @@
 		"@types/passport-saml": "0.15.5",
 		"@types/request": "2.47.0",
 		"@types/session-file-store": "1.2.0",
+		"nodemon": "1.14.12",
 		"protobufjs": "6.8.4",
 		"tslint": "5.9.1",
 		"typescript": "2.7.1"

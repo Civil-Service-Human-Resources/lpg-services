@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+
+root="$(dirname "$(cd "$(dirname "$0")"; pwd)")"
+dist="$root/dist"
+
+rm -rf "$dist"
+mkdir -p "$dist"
+
+cd "$dist"
+
+ln -s ../src/catalog
+ln -s ../src/locale
+
+mkdir management-ui
+mkdir ui
+
+cd "$dist/management-ui"
+
+ln -s ../../src/management-ui/assets .
+ln -s ../../src/management-ui/component .
+ln -s ../../src/management-ui/page .
+
+cd "$dist/ui"
+
+ln -s ../../src/ui/assets
+ln -s ../../src/ui/component
+ln -s ../../src/ui/page

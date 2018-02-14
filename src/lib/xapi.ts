@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as express from 'express'
-import * as config from './config'
+import * as config from 'lib/config'
 
 export interface Statement {
 	actor: {

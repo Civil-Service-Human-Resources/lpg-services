@@ -1,7 +1,7 @@
 import * as express from 'express'
+import * as model from 'lib/model'
 import * as passport from 'passport'
 import * as saml from 'passport-saml'
-import * as model from '../model'
 
 let strategy: saml.Strategy
 

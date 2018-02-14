@@ -1,5 +1,5 @@
-import {default as axios} from 'axios'
-import * as config from './config'
+import axios from 'axios'
+import * as config from 'lib/config'
 
 export interface BasicInfo {
 	height: number
