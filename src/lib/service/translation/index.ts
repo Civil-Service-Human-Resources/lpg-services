@@ -4,7 +4,7 @@ import * as path from 'path'
 
 export let configure = (app: express.Express) => {
 	i18n.configure({
-		directory: path.join(path.dirname(process.cwd()), '/locales'),
+		directory: path.join(path.dirname(process.cwd()), '/locale'),
 		locales: ['en', 'de'],
 	})
 	app.use(i18n.init)
