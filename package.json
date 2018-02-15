@@ -19,7 +19,11 @@
 		"start:ui":
 			"cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
 		"watch": "./bin/tsc -w",
-		"watch-sass": "nodemon -e scss -x \"npm run sass:all\"",
+		"watch-sass-nodemon": "nodemon -e scss -x \"npm run sass:all\"",
+		"watch-sass:ui":
+			"node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles",
+		"watch-sass:management":
+			"node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles",
 		"dev:ui": "npm run watch & npm run watch-sass & npm run start:ui & wait",
 		"dev:management":
 			"npm run watch & npm run watch-sass & npm run start:management & wait"
