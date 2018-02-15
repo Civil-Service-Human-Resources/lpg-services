@@ -67,8 +67,9 @@ export default {
 components: {${componentNames}},
 data() {
     return {
+        config: configModule,
+        i18n: i18nModule,
         signedInUser: getCurrentRequest().user,
-        i18n: i18nModule
     }
 }
 }
@@ -97,13 +98,21 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, i18nModule) {
+		`(function(module, exports, require, components, getCurrentRequest, i18nModule, configModule) {
 const {${componentNames}} = components
 ${code}
 });`,
 		{filename}
 	)
-	wrapper(module, module.exports, require, components, getCurrentRequest, i18n)
+	wrapper(
+		module,
+		module.exports,
+		require,
+		components,
+		getCurrentRequest,
+		i18n,
+		config
+	)
 	return module.exports
 }
 
