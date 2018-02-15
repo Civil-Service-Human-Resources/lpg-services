@@ -1,0 +1,6 @@
+.booking {
+	@include e(col-heading) {
+		padding: 10px 0;
+		border-top: 5px solid #000;
+	}
+}
