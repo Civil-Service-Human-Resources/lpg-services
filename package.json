@@ -8,6 +8,7 @@
 		"lint": "tslint --project tsconfig.json",
 		"nuke": "rm -rf dist node_modules",
 		"postinstall": "./bin/setup-dist",
+		"sass:all": "npm run sass:management & npm run sass:ui",
 		"sass:management":
 			"node-sass src/management-ui/assets/styles/index.scss src/management-ui/assets/styles/main.css",
 		"sass:ui":
@@ -17,7 +18,9 @@
 			"cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
 		"start:ui":
 			"cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
-		"watch": "./bin/tsc -w"
+		"watch-sass": "nodemon -e scss -x \"npm run sass:all\"",
+		"watch-ts": "./bin/tsc -w",
+		"watch": "npm run watch-ts & npm run watch-sass"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
