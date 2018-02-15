@@ -2,8 +2,9 @@
 	"name": "lib",
 	"version": "0.0.1",
 	"scripts": {
-		"build": "./bin/tsc",
+		"build": "npm run compile && npm run sass:management && npm run sass:ui",
 		"clean": "./bin/setup-dist",
+		"compile": "./bin/tsc",
 		"lint": "tslint --project tsconfig.json",
 		"nuke": "rm -rf dist node_modules",
 		"postinstall": "./bin/setup-dist",
