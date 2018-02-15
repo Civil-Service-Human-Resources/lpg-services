@@ -20,7 +20,7 @@ export const AUTHENTICATION = set({
 	servicePassword: 'admin',
 	serviceUrl:
 		process.env.AUTHENTICATION_SERVICE_URL ||
-		'https://identity.dev.cshr.digital:9443',
+		'https://identity.local.cshr.digital:9443',
 })
 
 export const LOGGING = set(
@@ -44,10 +44,21 @@ export const LOGGING = set(
 	}
 )
 
+export const POSTGRES = set(
+	process.env.POSTGRES || 'postgres://user:password@host:5433/lpg'
+)
+
 export const SESSION_SECRET = set(
 	process.env.SESSION_SECRET ||
 		'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
 )
+
+export const UI_SERVER = set('lpg.local.cshr.digital:3001', {
+	demo: 'lpg.demo.cshr.digital',
+	dev: 'lpg.dev.cshr.digital',
+	production: 'lpg.cshr.digital',
+	test: 'lpg.test.cshr.digital',
+})
 
 export const XAPI = set({
 	auth: {

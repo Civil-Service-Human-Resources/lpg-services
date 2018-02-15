@@ -6,22 +6,21 @@
 
                 <table>
                     <thead>
-                    <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col"></th>
-                    </tr>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col"></th>
+                        </tr>
                     </thead>
                     <tbody>
                         {{#each courses as course, i}}
-                            <tr>
-                                <th scope="row">
-                                    <a href="/courses/{{course.uid}}/edit">{{course.title}}</a>
-                                </th>
-                                <td>
-                                    <!-- FIXME: not portable -->
-                                    <a href="http://lpg.dev.cshr.digital:3001/courses/{{course.uid}}/">Review</a>
-                                </td>
-                            </tr>
+                        <tr>
+                            <th scope="row">
+                                <a href="/courses/{{course.uid}}/edit">{{course.title}}</a>
+                            </th>
+                            <td>
+                                <a href="//{{config.UI_SERVER}}/courses/{{course.uid}}/">Review</a>
+                            </td>
+                        </tr>
                         {{/each}}
                     </tbody>
                 </table>
@@ -46,4 +45,3 @@
         </div>
     </Layout>
 </Page>
-
