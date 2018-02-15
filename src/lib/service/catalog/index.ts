@@ -68,7 +68,10 @@ export async function get(uid: string) {
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
 		const entries = qresp.getJson().entries
-		return model.Course.create(entries[0])
+		if (entries.length) {
+			return model.Course.create(entries[0])
+		}
+		return null
 	} finally {
 		await txn.discard()
 	}

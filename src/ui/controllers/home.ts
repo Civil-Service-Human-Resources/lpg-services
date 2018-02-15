@@ -34,7 +34,11 @@ export async function home(req: express.Request, res: express.Response) {
 				break
 			}
 		}
-		if (!found && record.state !== 'completed' && record.state !== 'terminated') {
+		if (
+			!found &&
+			record.state !== 'completed' &&
+			record.state !== 'terminated'
+		) {
 			plannedLearning.push(record)
 		}
 	}
