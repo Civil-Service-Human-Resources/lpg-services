@@ -1,10 +1,4 @@
 .search-container {
-	label {
-		position: absolute;
-		color: $secondary-text-colour;
-		padding: 5px 5px 0;
-	}
-
 	.search-wrapper {
 		input {
 			display: inline-block;
@@ -16,6 +10,11 @@
 }
 
 .search-results {
+
+	li {
+		margin-bottom:20px;
+	}
+
 	b {
 		font-weight: bold;
 	}

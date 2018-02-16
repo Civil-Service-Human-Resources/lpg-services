@@ -9,3 +9,7 @@ export interface SearchRequest {
 export interface SearchResponse {
 	entries: model.Course[]
 }
+
+export interface textSearchResponse {
+	entries: model.textSearchResult[]
+}

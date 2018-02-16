@@ -5,6 +5,7 @@ import * as api from 'lib/service/catalog/api'
 import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as learningRecordController from './learning-record'
+import * as body from 'body-parser'
 
 export async function suggestedForYou(
 	req: express.Request,
@@ -25,7 +26,10 @@ export function index(req: express.Request, res: express.Response) {
 }
 
 export async function search(req: express.Request, res: express.Response) {
-	let searchResults: api.SearchResponse = await catalog.textSearch()
+	let searchTerm = req.body.searchTerm
+	let searchResults: api.textSearchResponse = await catalog.textSearch(
+		searchTerm
+	)
 	console.log(searchResults)
 	res.send(template.render('search/results', req, {searchResults}))
 }
