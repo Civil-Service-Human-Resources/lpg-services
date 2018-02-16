@@ -27,10 +27,10 @@ COPY package.json package.json
 COPY bin/setup-dist bin/setup-dist
 COPY src src
 
+# Runtime environment variables
 ENV AUTHENTICATION_SERVICE_URL=http://identity.dev.cshr.digital:9443 \
   LPG_UI_SERVER=lpg.dev.cshr.digital \
   NODE_ENV=production \
-  NODE_ICU_DATA=/var/www/app/node_modules/full-icu \
   PORT=3001 \
   SESSION_SECRET=topsecret
 
@@ -38,5 +38,8 @@ ENV AUTHENTICATION_SERVICE_URL=http://identity.dev.cshr.digital:9443 \
 RUN npm install --unsafe-perm
 
 COPY dist dist
+
+# This needs to be specified after the `npm install`
+ENV NODE_ICU_DATA=/var/www/app/node_modules/full-icu
 
 CMD [ "bash", "-c", "cd dist/ui && node ../node_modules/ui/server.js" ]
