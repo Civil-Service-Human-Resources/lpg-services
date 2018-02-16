@@ -2,18 +2,67 @@ import * as express from 'express'
 import * as template from 'lib/ui/template'
 import * as courseController from './course/index'
 import * as catalog from 'lib/service/catalog'
+import * as model from 'lib/model'
 
 export async function renderBookableCourseInformation(
 	req: express.Request,
 	res: express.Response
 ) {
 	const courseId: string = req.params.courseId
-	const course = await catalog.get(courseId)
+	const course: model.Course = await catalog.get(courseId)
 
-	return res.send(
+	let breadcrumbs: BookingBreadcrumb[] = [
+		{
+			url: req.baseUrl,
+			name: 'home',
+		},
+		{
+			url: req.originalUrl,
+			name: course.title,
+		},
+	]
+
+	res.send(
 		template.render('booking/bookablecourse', req, {
 			course,
 			courseDetails: courseController.getCourseDetails(course),
+			breadcrumbs: breadcrumbs,
 		})
 	)
+}
+
+export async function renderChooseDate(
+	req: express.Request,
+	res: express.Response
+) {
+	const courseId: string = req.params.courseId
+	const course: model.Course = await catalog.get(courseId)
+
+	let breadcrumbs: BookingBreadcrumb[] = [
+		{
+			url: req.baseUrl,
+			name: 'home',
+		},
+		{
+			url: req.baseUrl + '/book/' + course.uid,
+			name: course.title,
+		},
+		{
+			url: req.originalUrl,
+			name: 'Choose Date',
+		},
+	]
+
+	res.send(
+		template.render('booking/choose-date', req, {
+			course,
+			courseDetails: courseController.getCourseDetails(course),
+			breadcrumbs: breadcrumbs,
+		})
+	)
+}
+
+interface BookingBreadcrumb {
+	url: string
+	name: string
 }
