@@ -44,8 +44,12 @@ export const LOGGING = set(
 	}
 )
 
+export const LPG_UI_SERVER = set(
+	process.env.LPG_UI_SERVER || 'lpg.local.cshr.digital:3001'
+)
+
 export const POSTGRES = set(
-	process.env.POSTGRES || 'postgres://user:password@host:5433/lpg'
+	process.env.POSTGRES || 'postgres://user:password@localhost:5433/lpg'
 )
 
 export const SESSION_SECRET = set(
@@ -53,14 +57,8 @@ export const SESSION_SECRET = set(
 		'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
 )
 
-export const UI_SERVER = set('lpg.local.cshr.digital:3001', {
-	demo: 'lpg.demo.cshr.digital',
-	dev: 'lpg.dev.cshr.digital',
-	production: 'lpg.cshr.digital',
-	test: 'lpg.test.cshr.digital',
-})
-
 export const XAPI = set({
+	activityBaseUri: 'http://cslearning.gov.uk/courses',
 	auth: {
 		password:
 			process.env.XAPI_PASS || '1c0e1b6827606d7efed71e204939d048f94f842b',
@@ -68,7 +66,6 @@ export const XAPI = set({
 			process.env.XAPI_USER || '66f2b4fc001e3da992d23b57d8a7457655bea078',
 	},
 	url: process.env.XAPI_URL || 'http://localhost:8083/data/xAPI',
-	activityBaseUri: 'http://cslearning.gov.uk/courses',
 })
 
 export const YOUTUBE_API_KEY = 'AIzaSyB0qRHFNFQGlfMAjCimxUPhxY8wKpIU94Y'
