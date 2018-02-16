@@ -11,7 +11,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
 	const agent = {
-		mbox: `mailto:${req.user.emailAddress}`,
+		mbox: `mailto:noone@cslearning.gov.uk`,
 		name: req.user.id,
 		objectType: 'Agent',
 	}
