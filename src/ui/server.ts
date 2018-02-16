@@ -112,7 +112,7 @@ app.get('/book/:courseId', bookingController.renderBookableCourseInformation)
 app.get('/book/:courseId/choose-date', bookingController.renderChooseDate)
 app.get(
 	'/book/:courseId/:availabilityUid',
-	bookingController.renderChoosePayment
+	bookingController.renderPaymentOptions
 )
 
 app.use(
