@@ -5,14 +5,17 @@
 		"build": "npm run compile && npm run sass:management && npm run sass:ui",
 		"clean": "./bin/setup-dist",
 		"compile": "./bin/tsc",
+		"dev:management":
+			"npm run watch & npm run watch-sass:management & npm run start:management & wait",
+		"dev:ui": "npm run watch & npm run watch-sass:ui & npm run start:ui & wait",
 		"lint": "tslint --project tsconfig.json",
 		"nuke": "rm -rf dist node_modules",
 		"postinstall": "./bin/setup-dist",
+		"sass:all": "npm run sass:management & npm run sass:ui",
 		"sass:management":
 			"node-sass src/management-ui/assets/styles/index.scss dist/management-ui/assets/styles/main.css",
 		"sass:ui":
 			"node-sass src/ui/assets/styles/main.scss dist/ui/assets/styles/main.css",
-		"sass:all": "npm run sass:management & npm run sass:ui",
 		"start:all": "npm run start:management & npm run start:ui",
 		"start:management":
 			"cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
@@ -23,14 +26,12 @@
 		"watch-sass:ui":
 			"node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles",
 		"watch-sass:management":
-			"node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles",
-		"dev:ui": "npm run watch & npm run watch-sass:ui & npm run start:ui & wait",
-		"dev:management":
-			"npm run watch & npm run watch-sass:management & npm run start:management & wait"
+			"node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
 		"@types/csv-parse": "1.1.11",
+		"@types/dotenv": "4.0.2",
 		"@types/express-session": "1.15.6",
 		"@types/google-protobuf": "3.2.7",
 		"@types/i18n": "0.8.3",
@@ -41,14 +42,15 @@
 		"@types/passport-saml": "0.15.5",
 		"@types/request": "2.47.0",
 		"@types/session-file-store": "1.2.0",
+		"dotenv": "5.0.0",
 		"nodemon": "1.14.12",
 		"protobufjs": "6.8.4",
 		"tslint": "5.9.1",
 		"typescript": "2.7.1"
 	},
 	"dependencies": {
-		"axios": "0.17.1",
 		"aws-sdk": "2.189.0",
+		"axios": "0.17.1",
 		"compression": "1.7.1",
 		"concat": "1.0.3",
 		"csv": "2.0.0",
