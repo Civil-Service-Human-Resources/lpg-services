@@ -1,165 +1,12 @@
-import axios from 'axios'
 import * as express from 'express'
-import * as config from 'lib/config'
-import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as catalog from 'lib/service/catalog'
+import * as learnerRecord from 'lib/learnerrecord'
+import * as log4js from 'log4js'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
-import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/learning-record')
-
-export enum CourseState {
-	Completed = 'completed',
-	InProgress = 'in-progress',
-}
-
-function getCompletionDate(statements: xapi.Statement[]) {
-	if (statements.length === 0) {
-		return null
-	}
-	const completed = statements.find(
-		statement => statement.verb.id === xapi.Verb.Completed
-	)
-	if (completed) {
-		return dateTime.formatDate(new Date(completed.timestamp))
-	}
-	return null
-}
-
-async function getCourseRecord(user: any, course: any) {
-	const agent = {
-		mbox: `mailto:${user.emailAddress}`,
-		name: user.id,
-		objectType: 'Agent',
-	}
-
-	const response = await axios({
-		auth: config.XAPI.auth,
-		headers: {
-			'X-Experience-API-Version': '1.0.3',
-		},
-		method: 'get',
-		params: {
-			activity: `${config.XAPI.activityBaseUri}/${course.uid}`,
-			agent: JSON.stringify(agent),
-		},
-		url: `${config.XAPI.url}/statements`,
-	})
-
-	const statements = response.data.statements
-	const state = getState(statements)
-	const result = getResult(statements)
-	const completionDate = getCompletionDate(statements)
-
-	return {
-		completionDate,
-		result,
-		state,
-	}
-}
-
-export async function getLearningRecordOf(courseState: CourseState, user: any) {
-	const agent = {
-		mbox: `mailto:${user.emailAddress}`,
-		name: user.id,
-		objectType: 'Agent',
-	}
-
-	const response = await axios({
-		auth: config.XAPI.auth,
-		headers: {
-			'X-Experience-API-Version': '1.0.3',
-		},
-		method: 'get',
-		params: {
-			agent: JSON.stringify(agent),
-		},
-		url: `${config.XAPI.url}/statements`,
-	})
-
-	const groupedStatements: Record<string, xapi.Statement[]> = {}
-	for (const statement of response.data.statements as xapi.Statement[]) {
-		const key = statement.object.id
-		if (!groupedStatements[key]) {
-			groupedStatements[key] = []
-		}
-		groupedStatements[key].push(statement)
-	}
-
-	const courses = []
-	for (const [key, statements] of Object.entries(groupedStatements)) {
-		const state = getState(statements)
-		if (courseState === null || state === courseState) {
-			const result = getResult(statements)
-			const courseId = key.substring(key.lastIndexOf('/') + 1)
-			const course = await catalog.get(courseId)
-			if (!course) {
-				logger.warn(
-					`LRS data for course that doesn't exist. User ID: ${
-						user.id
-					}, course URI: ${key}`
-				)
-				continue
-			}
-			course.completionDate = await getCompletionDate(statements)
-			course.result = result
-			course.state = state
-			courses.push(course)
-		}
-	}
-	return courses
-}
-
-function getResult(statements: xapi.Statement[]) {
-	if (!statements.length) {
-		return null
-	}
-	const completedStatement = statements.find(
-		statement => statement.verb.id === xapi.Verb.Completed
-	)
-	const resultStatement = statements.find(
-		statement =>
-			statement.verb.id === xapi.Verb.Passed ||
-			statement.verb.id === xapi.Verb.Failed
-	)
-
-	let result = null
-	let score = null
-
-	if (completedStatement) {
-		result = 'completed'
-		if (completedStatement.result) {
-			score = completedStatement.result.score
-		}
-	}
-	if (resultStatement) {
-		result = resultStatement.verb.id === xapi.Verb.Passed ? 'passed' : 'failed'
-	}
-	return {
-		result,
-		score,
-	}
-}
-
-function getState(statements: xapi.Statement[]) {
-	if (!statements.length) {
-		return null
-	}
-	const finished = statements.find(
-		statement =>
-			statement.verb.id === xapi.Verb.Completed ||
-			statement.verb.id === xapi.Verb.Terminated
-	)
-	if (finished) {
-		if (finished.verb.id === xapi.Verb.Completed) {
-			return 'completed'
-		}
-		return 'terminated'
-	}
-	return 'in-progress'
-}
 
 export async function courseResult(
 	ireq: express.Request,
@@ -172,7 +19,7 @@ export async function courseResult(
 		}`
 	)
 	try {
-		const {state, result, completionDate} = await getCourseRecord(
+		const {state, result, completionDate} = await learnerRecord.getCourseRecord(
 			req.user,
 			req.course
 		)
@@ -199,7 +46,7 @@ export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 	res.send(
 		template.render('learning-record', req, {
-			courses: await getLearningRecordOf(CourseState.Completed, req.user),
+			courses: await learnerRecord.getLearningRecordOf(learnerRecord.CourseState.Completed, req.user),
 		})
 	)
 }
