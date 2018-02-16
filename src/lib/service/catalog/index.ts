@@ -1,7 +1,6 @@
 import * as parse from 'csv-parse/lib/sync'
 import * as dgraph from 'dgraph-js'
 import * as fs from 'fs'
-import * as path from 'path'
 import * as grpc from 'grpc'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
@@ -171,7 +170,7 @@ export async function textSearch(
 				searchTerm +
 				`")) {
 	       uid
-		   expand(_all_) 
+		   expand(_all_)
 		}}`
 
 			const qresp = await client.newTxn().query(query)
@@ -449,9 +448,8 @@ export async function findSuggestedLearning(
 export async function resetCourses() {
 	await wipe()
 	await setSchema(SCHEMA)
-	const rawData = fs.readFileSync(
-		path.join(__dirname, '../../../..', 'catalog', 'data.csv')
-	)
+
+	const rawData = fs.readFileSync(__dirname + '/data.csv')
 	const lines = parse(rawData.toString())
 	const attributes = lines.shift()
 
