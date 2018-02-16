@@ -36,7 +36,8 @@ export async function renderChooseDate(
 	res: express.Response
 ) {
 	const courseId: string = req.params.courseId
-	const course: model.Course = await catalog.get(courseId)
+	const course: BookableCourse = await catalog.get(courseId)
+	course.availability = mockAvailability
 
 	let breadcrumbs: BookingBreadcrumb[] = [
 		{
@@ -102,7 +103,7 @@ interface BookingBreadcrumb {
 	name: string
 }
 
-interface availability extends model.Course {
+interface BookableCourse extends model.Course {
 	availability: [
 		{
 			date: Date
@@ -111,15 +112,13 @@ interface availability extends model.Course {
 	]
 }
 
-let mockAvailability: availability = {
-	availability: [
-		{
-			date: 1518796618,
-			uid: 'auid1',
-		},
-		{
-			date: 1518796675,
-			uid: 'auid2',
-		},
-	],
-}
+let mockAvailability = [
+	{
+		date: 1518796618,
+		uid: 'auid1',
+	},
+	{
+		date: 1518796675,
+		uid: 'auid2',
+	},
+]
