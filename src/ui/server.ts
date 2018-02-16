@@ -110,10 +110,7 @@ app.get('/search', searchController.elasticSearch)
 app.get('/home', homeController.home)
 
 app.get('/book/:courseId', bookingController.renderBookableCourseInformation)
-app.get(
-	'/book/:courseId/choose-date',
-	bookingController.renderchooseDate
-)
+app.get('/book/:courseId/choose-date', bookingController.renderChooseDate)
 
 app.use(
 	(
