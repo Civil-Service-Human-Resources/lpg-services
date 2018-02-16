@@ -66,7 +66,7 @@ export async function record(
 	}
 	const payload: Statement = {
 		actor: {
-			mbox: `mailto:${req.user.emailAddress}`,
+			mbox: `mailto:noone@cslearning.gov.uk`,
 			name: req.user.id,
 			objectType: 'Agent',
 		},
@@ -136,7 +136,7 @@ export async function send(statement: Statement) {
 export async function voidify(req: express.Request, id: string) {
 	const payload: Statement = {
 		actor: {
-			mbox: `mailto:${req.user.emailAddress}`,
+			mbox: `mailto:noone@cslearning.gov.uk`,
 			name: req.user.id,
 			objectType: 'Agent',
 		},

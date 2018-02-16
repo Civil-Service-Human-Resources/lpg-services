@@ -2,7 +2,7 @@ import * as express from 'express'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as learningRecordController from './learning-record'
+import * as learnerRecord from 'lib/learnerrecord'
 
 export let index = (req: express.Request, res: express.Response) => {
 	if (req.isAuthenticated()) {
@@ -14,7 +14,7 @@ export let index = (req: express.Request, res: express.Response) => {
 
 export async function home(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
-	const learningRecord = await learningRecordController.getLearningRecordOf(
+	const learningRecord = await learnerRecord.getLearningRecordOf(
 		null,
 		user
 	)
