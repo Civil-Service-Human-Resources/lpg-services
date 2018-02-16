@@ -10,15 +10,20 @@ import * as striptags from 'striptags'
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
 const SCHEMA = `tags: [string] @count @index(term) .
-title: string @index(fulltext) .
-shortDescription: string @index(fulltext) .
-description: string @index(fulltext).
+title: string @index(term) .
+shortDescription: string @index(term) .
+description: string @index(term).
 learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
 duration: string .
 `
 const maxCopyLength = 80
+const weighting = {
+	large: 8,
+	medium: 4,
+	small: 2,
+}
 
 const client = new dgraph.DgraphClient(
 	new dgraph.DgraphClientStub(
@@ -27,15 +32,64 @@ const client = new dgraph.DgraphClient(
 	)
 )
 
+/** weigh terms found in predicate text
+ *  doesn't take into account multiple hits on any particular term
+ * **/
+function termWeight(resultString: string, searchTerm: string): number {
+	if (resultString.indexOf(searchTerm) >= 0) {
+		return weighting.large // if exact term found return heighest rating
+	} else {
+		// must be multi term else would not be in search results
+		let weight = 0
+		let arrSearchTerm = searchTerm.split(' ')
+		for (let [index, term] of arrSearchTerm.entries()) {
+			if (resultString.toLowerCase().indexOf(term) > 0) {
+				weight += weighting.small
+			}
+		}
+		return weight
+	}
+}
+
 function formatResultString(resultString: string, searchTerm: string): string {
 	let pos = resultString.toLowerCase().indexOf(searchTerm)
-	let actualTermText = resultString.substr(pos, searchTerm.length)
-	let start = pos - maxCopyLength / 2
-	if (start < 0) start = 0
-	console.log('rs:' + resultString)
-	return striptags(resultString)
-		.replace(actualTermText, '<b>' + actualTermText + '</b>')
-		.substr(start, maxCopyLength)
+	let out = ''
+	if (pos >= 0) {
+		let actualTermText = resultString.substr(pos, searchTerm.length)
+		let start = pos - maxCopyLength / 2
+		if (start < 0) start = 0
+
+		out = striptags(resultString)
+			.replace(actualTermText, '<b>' + actualTermText + '</b>')
+			.substr(start, maxCopyLength)
+	} else {
+		// must have multiple search terms if term not found  or wouldn't be a result
+
+		out = striptags(resultString)
+		let initial = null
+		let arrSearchTerm = searchTerm.split(' ')
+		// lets highlight all terms
+		for (let [index, term] of arrSearchTerm.entries()) {
+			pos = 0
+			while (pos >= 0) {
+				pos = out.toLowerCase().indexOf(term, pos)
+				if (pos >= 0) {
+					if (!initial) initial = pos
+					let actualTermText = out.substr(pos, term.length)
+					out = out.replace(actualTermText, '<b>' + actualTermText + '</b>')
+					pos += actualTermText.length + 7
+				}
+			}
+		}
+
+		let start = 0
+		if (initial) start = initial - maxCopyLength / 2
+		if (start < 0) start = 0
+
+		return out.substr(start, maxCopyLength)
+	}
+
+	return out
 }
 
 export async function add(course: model.Course) {
@@ -94,41 +148,69 @@ export async function textSearch(
 	searchTerm: string
 ): Promise<api.textSearchResponse> {
 	await setSchema(SCHEMA)
-	const predicates = ['title', 'shortDescription', 'description']
+	const searches = [
+		{label: 'allofterms', weight: weighting.large},
+		{label: 'anyofterms', weight: weighting.small},
+	]
+	const predicates = [
+		{label: 'title', weight: weighting.large},
+		{label: 'shortDescription', weight: weighting.medium},
+		{label: 'description', weight: weighting.small},
+	]
 
 	let resp: model.textSearchResult[] = []
-	let hash = []
-
-	for (let [index, predicate] of predicates.entries()) {
-		let query =
-			`{entries(func: alloftext(` +
-			predicate +
-			`, "` +
-			searchTerm +
-			`")) {
+	let hashMap: Record<string, model.textSearchResult> = {}
+	for (let search of searches) {
+		for (let predicate of predicates) {
+			let query =
+				`{entries(func: ` +
+				search.label +
+				`(` +
+				predicate.label +
+				`, "` +
+				searchTerm +
+				`")) {
 	       uid
 		   expand(_all_) 
 		}}`
 
-		console.log(query + '\n\n')
+			const qresp = await client.newTxn().query(query)
+			const entries = qresp.getJson().entries
 
-		const qresp = await client.newTxn().query(query)
-		const entries = qresp.getJson().entries
-
-		for (let entry of entries) {
-			if (!hash[entry.uid]) {
+			for (let entry of entries) {
 				let searchResult: model.textSearchResult = {
 					uid: entry.uid,
 					title: entry.title,
-					searchText: formatResultString(entry[predicate], searchTerm),
-					sortOrder: index,
+					searchText: formatResultString(entry[predicate.label], searchTerm),
+					weight:
+						(predicate.weight as number) *
+						search.weight *
+						termWeight(entry[predicate.label], searchTerm),
 				}
-				hash[entry.uid] = true
-				resp.push(searchResult)
+				if (
+					!hashMap[entry.uid] ||
+					searchResult.weight > hashMap[entry.uid].weight
+				) {
+					// do not add to results if exist or exists but has higher weighting
+					searchResult.title += '[weight :' + searchResult.weight + ' ]'
+					hashMap[entry.uid] = searchResult
+				}
 			}
 		}
 	}
-	return {entries: resp}
+
+	// have complete hashMapmap push to simple array
+
+	for (let index in hashMap) {
+		resp.push(hashMap[index])
+	}
+	return {
+		entries: resp.sort((a, b) => {
+			if (a.weight < b.weight) return 1
+			if (a.weight > b.weight) return -1
+			return 0
+		}),
+	}
 }
 
 export async function search(

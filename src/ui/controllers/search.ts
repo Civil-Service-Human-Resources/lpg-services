@@ -30,6 +30,6 @@ export async function search(req: express.Request, res: express.Response) {
 	let searchResults: api.textSearchResponse = await catalog.textSearch(
 		searchTerm
 	)
-	console.log(searchResults)
-	res.send(template.render('search/results', req, {searchResults}))
+
+	res.send(template.render('search', req, {searchTerm, searchResults}))
 }

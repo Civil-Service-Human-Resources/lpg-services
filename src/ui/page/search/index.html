@@ -1,7 +1,7 @@
 <Page title="Search LPG">
     <Layout page='Search'>
         <div class="grid-row">
-            <div class="column-two-thirds">
+            <div class="three-quarters">
                 <h1 class="heading-large">Search</h1>
 
                 <form method="post" post="search">
@@ -10,14 +10,33 @@
                             Search Civil Service Learning
                         </label>
                         <div class="search-wrapper">
-                            <input class="form-control" id="searchTerm" type="text" name="searchTerm">
+                            <input class="form-control" id="searchTerm" type="text" name="searchTerm" value="{{ searchTerm }}">
                             <div class="submit-wrapper">
                                 <button type="submit" class="search-submit">Search</button>
                             </div>
                         </div>
                     </div>
                 </form>
+                {{#if searchResults}}
+                <div class="search-results">
+                    <h1 class="heading-large">{{#if searchResults.entries}} {{#if searchResults.entries.length}} {{searchResults.entries.length}} {{/if}}
+                        {{/if}} Search Results
+                    </h1>
+
+                    <ol>
+                        {{#if searchResults.entries}} {{#if searchResults.entries.length}} {{#each searchResults.entries as course}}
+                        <li>
+                            <a href="/courses/{{course.uid}}">{{course.title}}</a>
+                            <div>
+                                {{{course.searchText}}}
+                            </div>
+                        </li>
+                        {{/each}} {{/if}} {{/if}}
+                    </ol>
+                </div>
+                {{/if}}
             </div>
+
         </div>
     </Layout>
 </Page>
