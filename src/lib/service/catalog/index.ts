@@ -36,6 +36,9 @@ description: string .
 title: string @index(term) .
 shortDescription: string @index(term) .
 description: string @index(term).
+title: string @index(term) .
+shortDescription: string @index(term) .
+description: string @index(term).
 learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
