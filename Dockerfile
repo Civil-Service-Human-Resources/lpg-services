@@ -1,10 +1,5 @@
 FROM library/ubuntu
 
-ENV NODE_ENV production
-ENV PORT 3001
-ENV SESSION_SECRET topsecret
-ENV AUTHENTICATION_SERVICE_URL http://identity.dev.cshr.digital:9443
-
 EXPOSE 3001
 
 RUN apt-get update && \
@@ -31,9 +26,16 @@ RUN . $NVM_DIR/nvm.sh \
 COPY package.json package.json
 COPY bin/setup-dist bin/setup-dist
 COPY src src
-RUN npm install --unsafe-perm
 
-ENV NODE_ICU_DATA /var/www/app/node_modules/full-icu
+ENV AUTHENTICATION_SERVICE_URL=http://identity.dev.cshr.digital:9443 \
+  LPG_UI_SERVER=lpg.dev.cshr.digital \
+  NODE_ENV=production \
+  NODE_ICU_DATA=/var/www/app/node_modules/full-icu \
+  PORT=3001 \
+  SESSION_SECRET=topsecret
+
+# TODO(tav): Create an actual user so that we don't run this as root
+RUN npm install --unsafe-perm
 
 COPY dist dist
 
