@@ -62,7 +62,64 @@ export async function renderChooseDate(
 	)
 }
 
+export async function renderPaymentOptions(
+	req: express.Request,
+	res: express.Response
+) {
+	const courseId: string = req.params.courseId
+	const course: model.Course = await catalog.get(courseId)
+
+	let breadcrumbs: BookingBreadcrumb[] = [
+		{
+			url: req.baseUrl,
+			name: 'home',
+		},
+		{
+			url: req.baseUrl + '/book/' + course.uid,
+			name: course.title,
+		},
+		{
+			url: req.originalUrl + /book/,
+			name: 'Choose Date',
+		},
+		{
+			url: req.originalUrl,
+			name: 'Choose Date',
+		},
+	]
+
+	res.send(
+		template.render('booking/choose-date', req, {
+			course,
+			courseDetails: courseController.getCourseDetails(course),
+			breadcrumbs: breadcrumbs,
+		})
+	)
+}
+
 interface BookingBreadcrumb {
 	url: string
 	name: string
+}
+
+interface availability extends model.Course {
+	availability: [
+		{
+			date: Date
+			uid: string
+		}
+	]
+}
+
+let mockAvailability: availability = {
+	availability: [
+		{
+			date: 1518796618,
+			uid: 'auid1',
+		},
+		{
+			date: 1518796675,
+			uid: 'auid2',
+		},
+	],
 }
