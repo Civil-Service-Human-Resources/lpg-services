@@ -3,4 +3,30 @@
 		padding: 10px 0;
 		border-top: 5px solid #000;
 	}
+	@include e(select) {
+		color: $turquoise;
+		border: 2px solid $turquoise;
+		border-radius: 5px;
+		padding: 2px 5px;
+		display: inline-block;
+		cursor: pointer;
+		@include m(selected) {
+			background-color: $turquoise;
+			color: #fff;
+		}
+	}
+	@include e(date) {
+		display: none;
+		+ label .booking__select--selected {
+			display: none;
+		}
+		&:checked + label {
+			.booking__select--select {
+				display: none;
+			}
+			.booking__select--selected {
+				display: inline-block;
+			}
+		}
+	}
 }

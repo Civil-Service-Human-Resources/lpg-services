@@ -13,38 +13,52 @@
                 Check on which dates you can attend and in which locations, then
                 select a suitable option below.
             </p>
-            <table>
-            <caption class="heading-small">{{course.title || 'Working with budgets'}}</caption>
-                <thead>
+            <form>
+                <table>
+                <caption class="heading-small">{{course.title || 'Working with budgets'}}</caption>
+                    <thead>
 
-                    <tr>
-                        <th scope="col">Course dates</th>
-                        <th scope="col">Duration</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">
-                            <span class="visually-hidden">Selection</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>27th Feb 2018 - 9:30AM</td>
-                        <td>{{course.duration}}</td>
-                        <td>London</td>
-                        <td>&pound;249</td>
-                        <td><button>Selected</button></td>
-                    </tr>
-                    <tr>
-                        <td>11th Mar 2018 - 9:30AM</td>
-                        <td>{{course.duration}}</td>
-                        <td>London</td>
-                        <td>&pound;249</td>
-                        <td><button>Selected</button></td>
-                    </tr>
+                        <tr>
+                            <th scope="col">Course dates</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">
+                                <span class="visually-hidden">Selection</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>27th Feb 2018 - 9:30AM</td>
+                            <td>{{course.duration}}</td>
+                            <td>London</td>
+                            <td>&pound;249</td>
+                            <td>
+                                <input id="radio-1" type="radio" name="radio-group" class="booking__date" value="27th Feb 2018 - 9:30AM" checked>
+                                <label for="radio-1">
+                                    <span class="booking__select booking__select--select">Select</span>
+                                    <span class="booking__select booking__select--selected">Selected</span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>11th Mar 2018 - 9:30AM</td>
+                            <td>{{course.duration}}</td>
+                            <td>London</td>
+                            <td>&pound;249</td>
+                            <td>
+                                <input id="radio-2" type="radio" name="radio-group" class="booking__date" value="11th Mar 2018 - 9:30AM">
+                                <label for="radio-2">
+                                    <span class="booking__select booking__select--select">Select</span>
+                                    <span class="booking__select booking__select--selected">Selected</span>
+                                </label>
+                            </td>
+                        </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </form>
             <p>
                 You are confirming that you have approval to book this course.
             </p>
@@ -57,15 +71,8 @@
                 </p>
             </div>
 
+            <a class="button" href="#" role="button">Book selected course</a>
 
-        </div>
-    </div>
-    <div class="grid-row">
-        <div class="column-full">
-            <h3 class="heading-large">Masquerade</h3>
-            <a class="button" href="/book/{{course.uid}}/choose-date">
-                Go
-            </a>
         </div>
     </div>
 </Layout>
