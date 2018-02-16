@@ -5,13 +5,14 @@ import * as path from 'path'
 import * as grpc from 'grpc'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
+import * as striptags from 'striptags'
 
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
 shortDescription: string @index(fulltext) .
-description: string .
+description: string @index(fulltext).
 learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
@@ -27,9 +28,14 @@ const client = new dgraph.DgraphClient(
 )
 
 function formatResultString(resultString: string, searchTerm: string): string {
-	return resultString
-		.replace(searchTerm, '<b>' + searchTerm + '</b>')
-		.substr(0, maxCopyLength)
+	let pos = resultString.toLowerCase().indexOf(searchTerm)
+	let actualTermText = resultString.substr(pos, searchTerm.length)
+	let start = pos - maxCopyLength / 2
+	if (start < 0) start = 0
+	console.log('rs:' + resultString)
+	return striptags(resultString)
+		.replace(actualTermText, '<b>' + actualTermText + '</b>')
+		.substr(start, maxCopyLength)
 }
 
 export async function add(course: model.Course) {
@@ -84,28 +90,44 @@ export async function get(uid: string) {
 	}
 }
 
-class SomeObject {
-	constructor(public foo: string)
-}
-
-export async function textSearch(): Promise<api.SearchResponse> {
+export async function textSearch(
+	searchTerm: string
+): Promise<api.textSearchResponse> {
 	await setSchema(SCHEMA)
-	const query = `{entries(func: alloftext(shortDescription, "test")) {
+	const predicates = ['title', 'shortDescription', 'description']
+
+	let resp: model.textSearchResult[] = []
+	let hash = []
+
+	for (let [index, predicate] of predicates.entries()) {
+		let query =
+			`{entries(func: alloftext(` +
+			predicate +
+			`, "` +
+			searchTerm +
+			`")) {
+	       uid
 		   expand(_all_) 
 		}}`
 
-	const qresp = await client.newTxn().query(query)
-	const entries = qresp.getJson().entries
-	const resp: model.Course[] = []
+		console.log(query + '\n\n')
 
-	for (const entry of entries) {
-		entry.shortDescription = formatResultString(
-			entry.shortDescription,
-			'facilities'
-		)
-		resp.push(entry)
+		const qresp = await client.newTxn().query(query)
+		const entries = qresp.getJson().entries
+
+		for (let entry of entries) {
+			if (!hash[entry.uid]) {
+				let searchResult: model.textSearchResult = {
+					uid: entry.uid,
+					title: entry.title,
+					searchText: formatResultString(entry[predicate], searchTerm),
+					sortOrder: index,
+				}
+				hash[entry.uid] = true
+				resp.push(searchResult)
+			}
+		}
 	}
-
 	return {entries: resp}
 }
 
