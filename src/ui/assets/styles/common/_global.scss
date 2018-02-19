@@ -1,3 +1,11 @@
 .column-one-sixth {
 	@include grid-column( 1/6 );
 }
+
+.flash-message {
+	background: #28a197;
+	color: #fff;
+	margin-top: 1em;
+	padding: 1em;
+	text-align: center;
+}

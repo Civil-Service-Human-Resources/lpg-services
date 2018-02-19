@@ -15,6 +15,7 @@ import * as i18n from 'lib/service/translation'
 
 import * as courseController from './controllers/course'
 import * as coursePlayerController from './controllers/course/player'
+import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
 import * as searchController from './controllers/search'
@@ -63,6 +64,8 @@ app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
+
+app.post('/feedback.record', feedbackController.record)
 
 app.use(passport.isAuthenticated)
 

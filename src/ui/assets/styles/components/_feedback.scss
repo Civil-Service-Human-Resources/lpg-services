@@ -1,0 +1,53 @@
+.feedback {
+    margin-top: 3em;
+    max-width: 35em;
+    a.feedback-prompt {
+        color: #6f777b;
+        font-size: 16px;
+        line-height: 1.25;
+        text-decoration: underline;
+        &:active {
+            color: #000;
+        }
+        &:focus {
+            color: #000;
+        }
+    }
+    h2 {
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.25;
+        margin: 1em 0;
+    }
+    label {
+        cursor: pointer;
+        display: block;
+        font-size: 19px;
+        font-weight: bold;
+        margin-bottom: 0.22em;
+        line-height: 1.3157894737;
+    }
+    input {
+        background-color: #f8f8f8;
+        border: 1px inset #bfc1c3;
+        display: block;
+        font-size: 19px;
+        line-height: 1.3157894737;
+        margin: 0 0 1em 0;
+        padding: 0.3em 0 0.1em 0.4em;
+        width: 90%;
+        &:focus {
+            outline: 3px solid #ffbf47;
+        }
+    }
+    p {
+        font-size: 19px;
+        font-weight: 400;
+        padding-bottom: 1em;
+        line-height: 1.3157894737;
+    }
+}
+
+.js-enabled .feedback-details {
+    display: none;
+}
