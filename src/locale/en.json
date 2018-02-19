@@ -6,5 +6,9 @@
 	"in-progress": "In progress",
 	"not started": "Not started",
 	"health-and-safety": "Health & safety",
-	"information-management": "Information management"
+	"information-management": "Information management",
+	"all": "all",
+	"courseResult.passed": "Passed",
+	"courseResult.failed": "Failed",
+	"courseResult.complete": "Course complete"
 }
