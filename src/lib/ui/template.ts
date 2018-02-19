@@ -68,6 +68,7 @@ components: {${componentNames}},
 data() {
     return {
         config: configModule,
+        currentReq: getCurrentRequest(),
         i18n: i18nModule,
         signedInUser: getCurrentRequest().user,
     }
