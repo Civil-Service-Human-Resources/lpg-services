@@ -3,6 +3,7 @@ import * as template from 'lib/ui/template'
 import * as courseController from './course/index'
 import * as catalog from 'lib/service/catalog'
 import * as model from 'lib/model'
+import * as dateTime from 'lib/datetime'
 
 export async function renderBookableCourseInformation(
 	req: express.Request,
@@ -63,12 +64,20 @@ export async function renderChooseDate(
 	)
 }
 
+export function selectedDate(req: express.Request, res: express.Response) {
+	const selected = req.body['selected-course']
+	res.redirect(
+		req.baseUrl + `/book/${req.params.courseId}/${selected}/payment-options`
+	)
+}
+
 export async function renderPaymentOptions(
 	req: express.Request,
-	res: express.Response
+	res: express.Response,
+	next: express.NextFunction
 ) {
 	const courseId: string = req.params.courseId
-	const course: model.Course = await catalog.get(courseId)
+	const course: BookableCourse = await catalog.get(courseId)
 
 	let breadcrumbs: BookingBreadcrumb[] = [
 		{
@@ -80,17 +89,17 @@ export async function renderPaymentOptions(
 			name: course.title,
 		},
 		{
-			url: req.originalUrl + /book/,
+			url: req.baseUrl + /book/ + course.uid + '/choose-date',
 			name: 'Choose Date',
 		},
 		{
 			url: req.originalUrl,
-			name: 'Choose Date',
+			name: 'Payment Options',
 		},
 	]
 
 	res.send(
-		template.render('booking/choose-date', req, {
+		template.render('booking/payment-options', req, {
 			course,
 			courseDetails: courseController.getCourseDetails(course),
 			breadcrumbs: breadcrumbs,
@@ -114,11 +123,11 @@ interface BookableCourse extends model.Course {
 
 let mockAvailability = [
 	{
-		date: 1518796618,
+		dateString: dateTime.formatTime(new Date('2018-02-27T09:30:00')),
 		uid: 'auid1',
 	},
 	{
-		date: 1518796675,
+		dateString: dateTime.formatTime(new Date('2018-03-11T09:30:00')),
 		uid: 'auid2',
 	},
 ]
