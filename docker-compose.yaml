@@ -29,7 +29,7 @@ services:
       - mongodb
       - redis
       - mailhog
-    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
+    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     ports:
       - 8082:8082
     working_dir: /opt/learning-locker
@@ -37,11 +37,11 @@ services:
     command: ["node", "/opt/learning-locker/worker/dist/server"]
     depends_on:
       - learning-locker-api-server
-    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
+    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     working_dir: /opt/learning-locker
   learning-locker-ui:
     command: ["node", "/opt/learning-locker/ui/dist/server"]
-    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
+    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     ports:
       - 3000:3000
     depends_on:
@@ -53,7 +53,7 @@ services:
       - mongodb
       - redis
       - learning-locker-api-worker
-    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
+    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     ports:
       - 8083:8083
     working_dir: /opt/xapi-service
@@ -63,6 +63,11 @@ services:
       - 8025:8025
   mongodb:
     image: mongo@sha256:fbb95eaa5a0c84d0d2098775f166003c568a79f993d91309cee7cda4135bbbfd
+  postgres:
+    image: cshr/lpg-postgres:e33a84b43425d735d364142fa6cf72b0db5e7998dd80fe515beea48acbfa4ad1
+    ports:
+      - 5433:5432
+    restart: on-failure
   redis:
     image: redis@sha256:3446883dfe13ab3db67433aace0e72d8cd669c528e60c617c42d6c697f0fa41f
   setup-learning-locker:
@@ -72,5 +77,5 @@ services:
       - mongodb
     environment:
       - NODE_PATH=/opt/learning-locker
-    image: cshr/lpg-learning-locker:5c6cea37123f575c211ddfb87cc7ce0bfc9f51a2114e277f95c6726688ce6bd6
+    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     working_dir: /opt/learning-locker
