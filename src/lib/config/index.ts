@@ -103,7 +103,7 @@ export const XAPI = set({
 })
 
 export const LEARNER_RECORD = set({
-	url: env.LEARNER_RECORD_URL || 'http://localhost:9000',
+	url: env.LEARNER_RECORD_SERVICE_URL || 'http://localhost:9000',
 })
 
 export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
