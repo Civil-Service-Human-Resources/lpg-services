@@ -55,9 +55,13 @@ export const AUTHENTICATION = set({
 		'https://identity.local.cshr.digital:9443',
 })
 
-export const FEEDBACK_RECEIVERS = ['tav@kainos.com']
+export const FEEDBACK_RECIPIENTS = ['tav@kainos.com']
 
-export const FEEDBACK_TEMPLATE_ID = ''
+export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
+
+export const GOV_NOTIFY_API_KEY =
+	env.GOV_NOTIFY_API_KEY ||
+	'test-22877568-4bca-40f9-8f54-8bf7922583cf-e2f80f22-e3de-4007-9ce2-b50a2b5785b7'
 
 export const LOGGING = set(
 	{
