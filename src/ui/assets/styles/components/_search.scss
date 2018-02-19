@@ -1,5 +1,7 @@
 .search-container {
 	.search-wrapper {
+		vertical-align: top;
+
 		input {
 			display: inline-block;
 		}
@@ -10,9 +12,8 @@
 }
 
 .search-results {
-
 	li {
-		margin-bottom:20px;
+		margin-bottom: 20px;
 	}
 
 	b {

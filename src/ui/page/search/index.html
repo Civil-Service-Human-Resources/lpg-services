@@ -4,15 +4,15 @@
             <div class="three-quarters">
                 <h1 class="heading-large">Search</h1>
 
-                <form method="post" post="search">
+                <form method="GET">
                     <div class="search-container">
                         <label for="search-main">
                             Search Civil Service Learning
                         </label>
                         <div class="search-wrapper">
-                            <input class="form-control" id="searchTerm" type="text" name="searchTerm" value="{{ searchTerm }}">
+                            <input class="form-control" id="q" type="text" name="q" value="{{ query }}">
                             <div class="submit-wrapper">
-                                <button type="submit" class="search-submit">Search</button>
+                                <button type="submit" class="button">Search</button>
                             </div>
                         </div>
                     </div>

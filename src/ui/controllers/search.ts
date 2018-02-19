@@ -5,7 +5,7 @@ import * as api from 'lib/service/catalog/api'
 import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as learningRecordController from './learning-record'
-import * as body from 'body-parser'
+import * as striptags from 'striptags'
 
 export async function suggestedForYou(
 	req: express.Request,
@@ -21,15 +21,14 @@ export async function suggestedForYou(
 	)
 }
 
-export function index(req: express.Request, res: express.Response) {
-	res.send(template.render('search', req))
-}
-
 export async function search(req: express.Request, res: express.Response) {
-	let searchTerm = req.body.searchTerm
-	let searchResults: api.textSearchResponse = await catalog.textSearch(
-		searchTerm
-	)
+	let query = ''
+	let searchResults: api.textSearchResponse = {entries: []}
 
-	res.send(template.render('search', req, {searchTerm, searchResults}))
+	if (req.query.q) {
+		query = striptags(req.query.q)
+		searchResults = await catalog.textSearch(query)
+	}
+
+	res.send(template.render('search', req, {query, searchResults}))
 }
