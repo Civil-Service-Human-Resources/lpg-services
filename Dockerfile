@@ -27,20 +27,20 @@ COPY package.json package.json
 COPY bin/setup-dist bin/setup-dist
 COPY src src
 
-# Runtime environment variables
-ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
-  LEARNER_RECORD_SERVICE_URL=http://localhost:9000 \
-  LPG_UI_SERVER=lpg.local.cshr.digital \
-  NODE_ENV=production \
-  PORT=3001 \
-  SESSION_SECRET=topsecret
-
 # TODO(tav): Create an actual user so that we don't run this as root
 RUN npm install --unsafe-perm
 
 COPY dist dist
 
-# This needs to be specified after the `npm install`
-ENV NODE_ICU_DATA=/var/www/app/node_modules/full-icu
+# Runtime environment variables. Most osf these should be overridden by the env
+# variables passed in by the ops setup.
+ENV AUTHENTICATION_SERVICE_URL=https://identity.dev.cshr.digital \
+  ENV_PROFILE=dev \
+  LEARNER_RECORD_SERVICE_URL=http://localhost:9000 \
+  LPG_UI_SERVER=lpg.dev.cshr.digital \
+  NODE_ENV=production \
+  NODE_ICU_DATA=/var/www/app/node_modules/full-icu \
+  PORT=3001 \
+  SESSION_SECRET=topsecret
 
 CMD [ "bash", "-c", "cd dist/ui && node ../node_modules/ui/server.js" ]
