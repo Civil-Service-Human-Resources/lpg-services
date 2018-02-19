@@ -1,12 +1,11 @@
 .search-container {
 	.search-wrapper {
-		vertical-align: top;
-
 		input {
 			display: inline-block;
 		}
 		.submit-wrapper {
 			display: inline-block;
+			vertical-align: top;
 		}
 	}
 }
