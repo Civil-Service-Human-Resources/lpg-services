@@ -4,12 +4,12 @@
 			<Breadcrumb:breadcrumbs />
 			<div class="column-full">
 				<h2 class="heading-medium">Booking a course</h2>
-				<h1 class="heading-large">Payment options</h1>
+				<h1 class="heading-large">Payment</h1>
 			</div>
 		</div>
 		<div class="grid-row">
 			<div class="column-two-thirds">
-			<form>
+			<form method="post">
 			    <div class="form-group">
                     {{#if signedInUser.deparment == "co" || "dh"}}
                     <p>Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.</p>
