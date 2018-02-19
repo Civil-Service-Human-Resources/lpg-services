@@ -110,11 +110,20 @@ app.get('/home', homeController.home)
 
 app.get('/book/:courseId', bookingController.renderBookableCourseInformation)
 app.get('/book/:courseId/choose-date', bookingController.renderChooseDate)
+
 app.post('/book/:courseId/choose-date', bookingController.selectedDate)
 
 app.get(
-	'/book/:courseId/:availabilityUid/payment-options',
+	'/book/:courseId/:availabilityUid',
 	bookingController.renderPaymentOptions
+)
+app.post(
+	'/book/:courseId/:availabilityUid',
+	bookingController.enteredPaymentDetails
+)
+app.get(
+	'/book/:courseId/:availabilityUid/confirm',
+	bookingController.renderConfirmPayment
 )
 
 app.use(

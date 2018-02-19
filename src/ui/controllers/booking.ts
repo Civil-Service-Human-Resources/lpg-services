@@ -64,17 +64,9 @@ export async function renderChooseDate(
 	)
 }
 
-export function selectedDate(req: express.Request, res: express.Response) {
-	const selected = req.body['selected-course']
-	res.redirect(
-		req.baseUrl + `/book/${req.params.courseId}/${selected}/payment-options`
-	)
-}
-
 export async function renderPaymentOptions(
 	req: express.Request,
-	res: express.Response,
-	next: express.NextFunction
+	res: express.Response
 ) {
 	const courseId: string = req.params.courseId
 	const course: BookableCourse = await catalog.get(courseId)
@@ -103,6 +95,37 @@ export async function renderPaymentOptions(
 			course,
 			courseDetails: courseController.getCourseDetails(course),
 			breadcrumbs: breadcrumbs,
+		})
+	)
+}
+
+export function selectedDate(req: express.Request, res: express.Response) {
+	const selected = req.body['selected-course']
+	res.redirect(req.baseUrl + `/book/${req.params.courseId}/${selected}`)
+}
+
+export function enteredPaymentDetails(
+	req: express.Request,
+	res: express.Response
+) {
+	if (req.body['purchase-order']) {
+		req.po = req.body['purchase-order']
+		res.redirect(`${req.originalUrl}/confirm`)
+	} else {
+		req.fap = req.body['financial-approver']
+	}
+}
+
+export async function renderConfirmPayment(
+	req: express.Request,
+	res: express.Response
+) {
+	const courseId: string = req.params.courseId
+	const course: BookableCourse = await catalog.get(courseId)
+	res.send(
+		template.render('booking/confirm-booking', req, {
+			course,
+			courseDetails: courseController.getCourseDetails(course),
 		})
 	)
 }
