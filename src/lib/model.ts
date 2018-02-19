@@ -22,6 +22,7 @@ export class Course {
 
 	public completionDate?: string
 	public result?: any
+	public score?: string
 	public state?: string
 
 	constructor(uid: string, type: string) {

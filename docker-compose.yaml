@@ -93,8 +93,8 @@ services:
   learner-record-service:
     environment:
       XAPI_AUTHORISATION: NjZmMmI0ZmMwMDFlM2RhOTkyZDIzYjU3ZDhhNzQ1NzY1NWJlYTA3ODoxYzBlMWI2ODI3NjA2ZDdlZmVkNzFlMjA0OTM5ZDA0OGY5NGY4NDJi
-      XAPI_BASE_URL: http://learning-locker-xapi:8083/data/xAPI
-    image: cshr/lpg-learner-record:latest
+      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
+    image: cshr/lpg-learner-record:5057bf2f63aa3097ffda1259995665037d870774
     links:
       - learning-locker-xapi
     ports:
