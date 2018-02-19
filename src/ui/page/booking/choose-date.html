@@ -13,7 +13,7 @@
                 Check on which dates you can attend and in which locations, then
                 select a suitable option below.
             </p>
-            <form>
+            <form method="post">
                 <table>
                 <caption class="heading-small">{{course.title || 'Working with budgets'}}</caption>
                     <thead>
@@ -29,36 +29,42 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {{#each course.availability as availableCourse, index}}
                         <tr>
-                            <td>27th Feb 2018 - 9:30AM</td>
+                            <td>{{availableCourse.dateString}}</td>
                             <td>{{course.duration}}</td>
                             <td>London</td>
                             <td>&pound;249</td>
                             <td>
-                                <input id="radio-1" type="radio" name="radio-group" class="booking__date" value="27th Feb 2018 - 9:30AM" checked>
-                                <label for="radio-1">
+                                {{#if (index == 0) }}
+                                <input id="radio-{{index}}"
+                                    type="radio"
+                                    name="selected-course"
+                                    class="booking__date"
+                                    value="{{availableCourse.uid}}"
+                                    checked >
+
+                                {{else}}
+                                <input id="radio-{{index}}"
+                                    type="radio"
+                                    name="selected-course"
+                                    class="booking__date"
+                                    value="{{availableCourse.uid}}"
+                                    >
+                                {{/if}}
+
+
+                                <label for="radio-{{index}}">
                                     <span class="booking__select booking__select--select">Select</span>
                                     <span class="booking__select booking__select--selected">Selected</span>
                                 </label>
                             </td>
-                        </tr>
-                        <tr>
-                            <td>11th Mar 2018 - 9:30AM</td>
-                            <td>{{course.duration}}</td>
-                            <td>London</td>
-                            <td>&pound;249</td>
-                            <td>
-                                <input id="radio-2" type="radio" name="radio-group" class="booking__date" value="11th Mar 2018 - 9:30AM">
-                                <label for="radio-2">
-                                    <span class="booking__select booking__select--select">Select</span>
-                                    <span class="booking__select booking__select--selected">Selected</span>
-                                </label>
-                            </td>
-                        </tr>
+                            </tr>
+                        {{/each}}
 
                     </tbody>
                 </table>
-            </form>
+
             <p>
                 You are confirming that you have approval to book this course.
             </p>
@@ -70,10 +76,8 @@
                     By booking this course you are agreeing to the terms and conditions
                 </p>
             </div>
-
-            <div class="column-full">
-                <a class="button" href="/book/{{course.uid}}/t3st">Book selected course</a>
-            </div>
+                <input type="submit" class="button" value="Continue">
+            </form>
 
         </div>
     </div>
