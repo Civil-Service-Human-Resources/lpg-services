@@ -8,6 +8,8 @@ function popd {
     command popd "$@" > /dev/null
 }
 
+cd "$(dirname "$0")"
+
 for file in `ls */Dockerfile`; do
     image=`dirname $file`
     pushd $image
