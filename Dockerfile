@@ -28,8 +28,9 @@ COPY bin/setup-dist bin/setup-dist
 COPY src src
 
 # Runtime environment variables
-ENV AUTHENTICATION_SERVICE_URL=http://identity.dev.cshr.digital:9443 \
-  LPG_UI_SERVER=lpg.dev.cshr.digital \
+ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
+  LEARNER_RECORD_SERVICE_URL=http://localhost:9000 \
+  LPG_UI_SERVER=lpg.local.cshr.digital \
   NODE_ENV=production \
   PORT=3001 \
   SESSION_SECRET=topsecret

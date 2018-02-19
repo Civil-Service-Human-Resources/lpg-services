@@ -79,3 +79,12 @@ services:
       - NODE_PATH=/opt/learning-locker
     image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     working_dir: /opt/learning-locker
+  learner-record-service:
+    environment:
+      XAPI_AUTHORISATION: NjZmMmI0ZmMwMDFlM2RhOTkyZDIzYjU3ZDhhNzQ1NzY1NWJlYTA3ODoxYzBlMWI2ODI3NjA2ZDdlZmVkNzFlMjA0OTM5ZDA0OGY5NGY4NDJi
+      XAPI_BASE_URL: http://learning-locker-xapi:8083/data/xAPI
+    image: cshr/lpg-learner-record:latest
+    links:
+      - learning-locker-xapi
+    ports:
+      - 9000:9000
