@@ -23,10 +23,12 @@
 						<td>{{ course.completionDate }}</td>
 						<td>{{ course.title }}</td>
 						<td>
-							{{#if course.result.score }}
-								{{ course.result.score.scaled * 100 }}%
+							{{#if course.score }}
+								{{ course.score.scaled * 100 }}%
+							{{elseif course.result}}
+								{{ i18n.__(course.result) }}
 							{{else}}
-								{{ i18n.__(course.result.result) }}
+								-
 							{{/if}}
                         </td>
 						<td>{{ i18n.__(course.type) }}</td>

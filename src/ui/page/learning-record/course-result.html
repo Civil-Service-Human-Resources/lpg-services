@@ -5,20 +5,20 @@
 			<div class="column-full">
 				<div class="govuk-box-highlight results">
 					<h1 class="heading-xlarge">
-						{{#if result.result}}
-							{{result.result}}
+						{{#if record.result}}
+							{{ i18n.__('courseResult.' + record.result) }}
 						{{else}}
-						Course complete
+							{{ i18n.__('courseResult.complete') }}
 						{{/if}}
 					</h1>
-                	<div>{{ completionDate }}</div>
+                	<div>{{ record.completionDate }}</div>
                     <div>
                         <strong>{{ course.title }}</strong>
                     </div>
-					{{#if result.score}}
+					{{#if record.score}}
 					<div>Your score</div>
 					<div>
-						<strong>{{ result.score.scaled * 100 }}</strong>%
+						<strong>{{ record.score.scaled * 100 }}</strong>%
 					</div>
 					{{/if}}
 				</div>
