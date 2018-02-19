@@ -21,6 +21,21 @@ export async function suggestedForYou(
 	)
 }
 
+export async function elasticSearch(
+	req: express.Request,
+	res: express.Response
+) {
+	let query = ''
+	let searchResults: api.textSearchResponse = {entries: []}
+
+	if (req.query.q) {
+		query = striptags(req.query.q)
+		searchResults = await catalog.elasticSearch(query)
+	}
+
+	res.send(template.render('search', req, {query, searchResults}))
+}
+
 export async function search(req: express.Request, res: express.Response) {
 	let query = ''
 	let searchResults: api.textSearchResponse = {entries: []}

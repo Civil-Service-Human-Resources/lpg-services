@@ -5,7 +5,8 @@ import * as grpc from 'grpc'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
 import * as striptags from 'striptags'
-
+import * as elastic from 'elasticsearch'
+import * as util from 'util'
 const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
 
 const SCHEMA = `tags: [string] @count @index(term) .
@@ -30,6 +31,14 @@ const client = new dgraph.DgraphClient(
 		grpc.credentials.createInsecure()
 	)
 )
+
+var elasticClient: elastic.Client
+
+function connect() {
+	elasticClient = new elastic.Client({
+		hosts: ['http://127.0.0.1:9200/'],
+	})
+}
 
 /** weigh terms found in predicate text
  *  doesn't take into account multiple hits on any particular term
@@ -210,6 +219,45 @@ export async function textSearch(
 			return 0
 		}),
 	}
+}
+
+export async function elasticSearch(
+	searchTerm: string
+): Promise<api.textSearchResponse> {
+	let query = {
+		size: 100,
+		body: {
+			query: {
+				multi_match: {
+					query: searchTerm,
+					fuzziness: 'AUTO',
+					fields: ['title^8', 'shortDescription^4', 'description^2'],
+				},
+			},
+			highlight: {
+				fields: {
+					'*': {},
+				},
+			},
+		},
+	}
+	connect()
+	let resp: model.textSearchResult[] = []
+
+	resp = await elasticClient.search(query).then(function(res) {
+		for (let entry of res.hits.hits) {
+			let searchResult: model.textSearchResult = {
+				uid: entry._id,
+				title: (entry._source as any).title,
+				searchText: entry.highlight[Object.keys(entry.highlight)[0]][0],
+				weight: entry._score,
+			}
+
+			resp.push(searchResult)
+		}
+		return resp
+	})
+	return {entries: resp}
 }
 
 export async function search(

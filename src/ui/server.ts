@@ -102,6 +102,7 @@ app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
 app.get('/suggested-for-you', searchController.suggestedForYou)
 app.get('/search', searchController.search)
+app.get('/elastic', searchController.elasticSearch)
 
 app.get('/home', homeController.home)
 
