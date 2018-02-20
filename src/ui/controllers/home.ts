@@ -14,10 +14,7 @@ export let index = (req: express.Request, res: express.Response) => {
 
 export async function home(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
-	const learningRecord = await learnerRecord.getLearningRecordOf(
-		null,
-		user
-	)
+	const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
 	const plannedLearning = []
 	const requiredLearning = (await catalog.findRequiredLearning(user)).entries
 

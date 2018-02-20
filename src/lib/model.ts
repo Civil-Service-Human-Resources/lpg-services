@@ -9,6 +9,13 @@ export class Course {
 	public learningOutcomes: string
 	public duration: string
 
+	public availability: [
+		{
+			date: Date
+			uid: string
+		}
+	]
+
 	public completionDate?: string
 	public result?: any
 	public score?: string
