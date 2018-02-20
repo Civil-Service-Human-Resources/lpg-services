@@ -36,6 +36,7 @@ learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
 duration: string .
+availability: uid .
 `
 
 const client = new dgraph.DgraphClient(
@@ -67,6 +68,7 @@ export async function add(course: model.Course) {
 
 	try {
 		mu.setSetJson({
+            availability: course.availability || [],
 			description: course.description || '',
 			duration: course.duration || '',
 			learningOutcomes: course.learningOutcomes || '',
@@ -116,6 +118,7 @@ export async function get(uid: string) {
 				description
 				learningOutcomes
 				duration
+				availability
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
@@ -304,6 +307,7 @@ export async function listAll(
 			description
 			learningOutcomes
 			duration
+			availability
 		}
 	}`
 	const qresp = await client.newTxn().query(query)
@@ -367,6 +371,7 @@ export async function findRequiredLearning(
 			description
 			learningOutcomes
 			duration
+			availability
 		}
 	}`
 	const qresp = await client.newTxn().queryWithVars(query, {
@@ -409,6 +414,7 @@ export async function findSuggestedLearning(
 			description
 			learningOutcomes
 			duration
+			availability
 		}
 	}`
 	const qresp = await client.newTxn().queryWithVars(query, {
