@@ -1,6 +1,5 @@
 import * as express from 'express'
 import * as fs from 'fs'
-import * as i18n from 'i18n'
 import * as config from 'lib/config'
 import * as path from 'path'
 import * as svelte from 'svelte'
@@ -66,11 +65,12 @@ function compile(
 export default {
 components: {${componentNames}},
 data() {
+    const req = getCurrentRequest()
     return {
         config: configModule,
-        currentReq: getCurrentRequest(),
-        i18n: i18nModule,
-        signedInUser: getCurrentRequest().user,
+        currentReq: req,
+        i18n: req.__.bind(req),
+        signedInUser: req.user,
     }
 }
 }
@@ -99,7 +99,7 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, i18nModule, configModule) {
+		`(function(module, exports, require, components, getCurrentRequest, configModule) {
 const {${componentNames}} = components
 ${code}
 });`,
@@ -111,7 +111,6 @@ ${code}
 		require,
 		components,
 		getCurrentRequest,
-		i18n,
 		config
 	)
 	return module.exports
