@@ -29,11 +29,29 @@
 			}
 		}
 	}
+	@include e(detail-h) {
+		width: 33%;
+	}
+	@include e(panel) {
+		border-top: 1px solid $grey-2;
+		padding-bottom: 20px;
+	}
+	@include e(change) {
+		float: right;
+	}
 	@include e(table) {
-		td {
+		th {
 			border: none;
+			padding: 0;
+			span {
+				display: none;
+			}
+		}
+
+		td {
 			padding-top: 0;
 			padding-bottom: 0;
+			border: none;
 		}
 	}
 }
