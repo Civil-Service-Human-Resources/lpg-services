@@ -1,11 +1,11 @@
 import * as aws from 'aws-sdk'
 import * as config from 'lib/config'
 import {Request, Response, NextFunction} from 'express'
-import * as request from 'request-promise'
 import * as streamifier from 'streamifier'
 import * as unzip from 'unzip'
 import * as catalog from 'lib/service/catalog'
 import * as log4js from 'log4js'
+import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 import {parseString} from 'xml2js'
@@ -23,7 +23,11 @@ export let loadCourse = async (
 	if (courseId === 'new') {
 		req.course = req.session.course || {}
 	} else {
-		req.course = await catalog.get(courseId)
+		if (req.session.course && req.session.course.uid === courseId) {
+			req.course = req.session.course
+		} else {
+			req.course = await catalog.get(courseId)
+		}
 		if (!req.course) {
 			return res.sendStatus(404)
 		}
@@ -60,34 +64,57 @@ export let editCourse = (req: Request, res: Response) => {
 }
 
 export let doEditCourse = async (req: Request, res: Response) => {
-	const entry = {
-		...req.body,
-		tags: (req.body.tags || '').split(/,/).map(tag => tag.trim()),
-		type: req.course.type || req.body.type,
-		uid: req.course.uid,
-	}
+	const entry = new model.Course(
+		req.course.uid,
+		req.course.type || req.body.type
+	)
+	entry.description = req.body.description
+	entry.duration = req.body.duration
+	entry.title = req.body.title
+	entry.tags = (req.body.tags || '').split(/,/).map(tag => tag.trim())
+	entry.shortDescription = req.body.shortDescription
+	entry.learningOutcomes = req.body.learningOutcomes
+	entry.uri = req.body.uri
 
-	const id = await catalog.add(entry)
-	entry.uid = id
-
-	if (req.files && req.files.content) {
-		logger.debug('Uploading zip content')
-		const {launchUrl, title} = await saveContent(id, req.files.content)
-		entry.uri = launchUrl
-		if (!entry.title) {
-			entry.title = title
+	const availability = []
+	for (const key of Object.keys(req.body)) {
+		if (key.startsWith('availability')) {
+			const parts = key.split(/\./)
+			if (req.body[key]) {
+				availability[parts[1]] = new Date(req.body[key])
+			}
 		}
-		await catalog.add(entry)
 	}
-	if (entry.type === 'video') {
-		const info = await youtube.getBasicInfo(entry.uri)
-		entry.duration = await youtube.getDuration(info.id)
-		entry.title = entry.title || info.title
-		await catalog.add(entry)
-	}
+	entry.availability = availability
 
-	logger.debug(`Course ${id} updated`)
-	res.redirect('/courses')
+	if (req.body['add-availability']) {
+		req.session.course = entry
+		req.session.save(() => {
+			res.redirect(req.path)
+		})
+	} else {
+		const id = await catalog.add(entry)
+		entry.uid = id
+
+		if (req.files && req.files.content) {
+			logger.debug('Uploading zip content')
+			const {launchUrl, title} = await saveContent(id, req.files.content)
+			entry.uri = launchUrl
+			if (!entry.title) {
+				entry.title = title
+			}
+			await catalog.add(entry)
+		}
+		if (entry.type === 'video') {
+			const info = await youtube.getBasicInfo(entry.uri)
+			entry.duration = await youtube.getDuration(info.id)
+			entry.title = entry.title || info.title
+			await catalog.add(entry)
+		}
+
+		logger.debug(`Course ${id} updated`)
+		res.redirect('/courses')
+	}
 }
 
 async function saveContent(uid: string, file: any) {
