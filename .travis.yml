@@ -14,15 +14,15 @@ cache:
 jobs:
   include:
     - stage: "install, build and push"
-    - install:
-      - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-      - docker pull cshr/lpg-services || true
-      - npm install
-      - npm run build
-      - echo "----- 1 -----" && docker build -t cshr/lpg-services:latest .
-      - echo "----- 2 -----" && docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-      - echo "----- 3 -----" && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
-      - echo "----- 4 -----" && docker push cshr/lpg-services
+      script:
+        - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+        - docker pull cshr/lpg-services || true
+        - npm install
+        - npm run build
+        - echo "----- 1 -----" && docker build -t cshr/lpg-services:latest .
+        - echo "----- 2 -----" && docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        - echo "----- 3 -----" && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
+        - echo "----- 4 -----" && docker push cshr/lpg-services
     - stage: Deploy
       script:
         - "./deploy.sh lpgservices"
