@@ -18,7 +18,6 @@ jobs:
       - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
       - docker pull cshr/lpg-services || true
       - npm install
-    - script:
       - npm run build
       - echo "----- 1 -----" && docker build -t cshr/lpg-services:latest .
       - echo "----- 2 -----" && docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
