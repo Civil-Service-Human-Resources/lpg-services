@@ -23,14 +23,10 @@ RUN . $NVM_DIR/nvm.sh \
   && nvm alias default $NODE_VERSION \
   && nvm use default
 
-COPY package.json package.json
-COPY bin/setup-dist bin/setup-dist
+# TODO(tav): This is temporary. Will update to resolve symlinks via tar.
 COPY src src
-
-# TODO(tav): Create an actual user so that we don't run this as root
-RUN npm install --unsafe-perm
-
 COPY dist dist
+COPY node_modules node_modules
 
 # Runtime environment variables. Most osf these should be overridden by the env
 # variables passed in by the ops setup.
@@ -43,4 +39,5 @@ ENV AUTHENTICATION_SERVICE_URL=https://identity.dev.cshr.digital \
   PORT=3001 \
   SESSION_SECRET=topsecret
 
+# TODO(tav): Create an actual user so that we don't run this as root
 CMD [ "bash", "-c", "cd dist/ui && node ../node_modules/ui/server.js" ]
