@@ -16,7 +16,7 @@ learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
 duration: string .
-availability: uid .
+availability: [dateTime] .
 `
 
 const client = new dgraph.DgraphClient(
@@ -31,7 +31,7 @@ export async function add(course: model.Course) {
 	try {
 		const mu = new dgraph.Mutation()
 		mu.setSetJson({
-            availability: course.availability || [],
+			availability: course.availability || [],
 			description: course.description || '',
 			duration: course.duration || '',
 			learningOutcomes: course.learningOutcomes || '',
