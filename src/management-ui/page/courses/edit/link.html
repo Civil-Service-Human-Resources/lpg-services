@@ -1,50 +1,45 @@
 <Page title="Edit link">
-    <Layout>
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-large">
-                    {{#if course.uid}}Edit{{else}}Add{{/if}} link
-                </h1>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-large">
+                {{#if course.uid}}Edit{{else}}Add{{/if}} link
+            </h1>
 
-                <form method="post" name="editCourseForm" class="push-bottom">
-                    <div class="form-group">
-                        <label for="title" class="form-label">
-                            Title
-                        </label>
-                        <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
-                    </div>
+            <form method="post" name="editCourseForm" class="push-bottom">
+                <div class="form-group">
+                    <label for="title" class="form-label">
+                        Title
+                    </label>
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
+                </div>
 
-                    <div class="form-group">
-                        <label for="uri" class="form-label">
-                            URL
-                        </label>
-                        <input class="form-control form-control-2-3" id="uri" name="uri" type="text" value="{{ course.uri || '' }}">
-                    </div>
+                <div class="form-group">
+                    <label for="uri" class="form-label">
+                        URL
+                    </label>
+                    <input class="form-control form-control-2-3" id="uri" name="uri" type="text" value="{{ course.uri || '' }}">
+                </div>
 
-                    <div class="form-group">
-                        <label for="short-description" class="form-label">
-                            Short description
-                        </label>
-                        <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label for="short-description" class="form-label">
+                        Short description
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
+                </div>
 
-                    <div class="form-group">
-                        <label for="tags" class="form-label">
-                            Tags
-                        </label>
-                        <input class="form-control form-control-2-3" id="tags" name="tags" type="text" value="{{ (course.tags || []).join(', ') }}">
-                    </div>
+                <div class="form-group">
+                    <label for="tags" class="form-label">
+                        Tags
+                    </label>
+                    <input class="form-control form-control-2-3" id="tags" name="tags" type="text" value="{{ (course.tags || []).join(', ') }}">
+                </div>
 
-                    <div>
-                        {{#if course.uid}}
-                        <input type="submit" class="button" value="Update">
-                        {{else}}
-                        <input type="submit" class="button" value="Add">
-                        {{/if}}
-                    </div>
-                </form>
-            </div>
+                <div>
+                    {{#if course.uid}}
+                    <input type="submit" class="button" value="Update"> {{else}}
+                    <input type="submit" class="button" value="Add"> {{/if}}
+                </div>
+            </form>
         </div>
-    </Layout>
+    </div>
 </Page>
-

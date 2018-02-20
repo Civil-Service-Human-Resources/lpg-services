@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <base href="/">
     <meta charset="utf-8">
@@ -12,22 +11,16 @@
     <title>{{title}}</title>
     <link rel="stylesheet" href="/styles/main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
-
-
 </head>
-
 <body>
     <Header />
-
-    <slot/>
+    <Layout>
+        <slot></slot>
+    </Layout>
     <script src="/js/govuk_frontend_toolkit/govuk/show-hide-content.js"></script>
     <script src="/js/govuk_frontend_toolkit/govuk/modules.js"></script>
     <script src="/js/main.js"></script>
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
     <script src="/js/govuk_frontend_toolkit/govuk/govuk-template.js"></script>
-
 </body>
-
-
-
 </html>

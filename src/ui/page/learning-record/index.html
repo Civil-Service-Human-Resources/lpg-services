@@ -1,13 +1,11 @@
-
 <Page title="Learning Record">
-	<Layout page="learning-record">
-		<div class="grid-row">
-			<div class="column-full">
-                <h1 class="heading-large">Your learning record</h1>
+	<div class="grid-row">
+		<div class="column-full">
+			<h1 class="heading-large">Your learning record</h1>
 
-				{{#if courses.length}}
-				<table>
-					<thead>
+			{{#if courses.length}}
+			<table>
+				<thead>
 					<tr>
 						<th scope="col">Date</th>
 						<th scope="col">Name</th>
@@ -16,21 +14,15 @@
 						<th scope="col">Expiry</th>
 						<th scope="col"></th>
 					</tr>
-					</thead>
-					<tbody>
+				</thead>
+				<tbody>
 					{{#each courses as course}}
 					<tr>
 						<td>{{ course.completionDate }}</td>
 						<td>{{ course.title }}</td>
 						<td>
-							{{#if course.score }}
-								{{ course.score.scaled * 100 }}%
-							{{elseif course.result}}
-								{{ i18n.__(course.result) }}
-							{{else}}
-								-
-							{{/if}}
-                        </td>
+							{{#if course.score }} {{ course.score.scaled * 100 }}% {{elseif course.result}} {{ i18n.__(course.result) }} {{else}} - {{/if}}
+						</td>
 						<td>{{ i18n.__(course.type) }}</td>
 						<td>-</td>
 						<td>
@@ -38,12 +30,11 @@
 						</td>
 					</tr>
 					{{/each}}
-					</tbody>
-				</table>
-				{{else}}
-				<p>You haven't completed any courses yet!</p>
-				{{/if}}
-            </div>
+				</tbody>
+			</table>
+			{{else}}
+			<p>You haven't completed any courses yet!</p>
+			{{/if}}
 		</div>
-	</Layout>
+	</div>
 </Page>
