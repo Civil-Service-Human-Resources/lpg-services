@@ -1,29 +1,23 @@
-
 <Page title="Learning Record">
-	<Layout page="learning-record-course">
-		<div class="grid-row">
-			<div class="column-full">
-				<div class="govuk-box-highlight results">
-					<h1 class="heading-xlarge">
-						{{#if record.result}}
-							{{ i18n.__('courseResult.' + record.result) }}
-						{{else}}
-							{{ i18n.__('courseResult.complete') }}
-						{{/if}}
-					</h1>
-                	<div>{{ record.completionDate }}</div>
-                    <div>
-                        <strong>{{ course.title }}</strong>
-                    </div>
-					{{#if record.score}}
-					<div>Your score</div>
-					<div>
-						<strong>{{ record.score.scaled * 100 }}</strong>%
-					</div>
-					{{/if}}
+	<div class="grid-row">
+		<div class="column-full">
+			<div class="govuk-box-highlight results">
+				<h1 class="heading-xlarge">
+					{{#if record.result}} {{ i18n.__('courseResult.' + record.result) }} {{else}} {{ i18n.__('courseResult.complete') }} {{/if}}
+				</h1>
+				<div>{{ record.completionDate }}</div>
+				<div>
+					<strong>{{ course.title }}</strong>
 				</div>
-				<p>Your <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
-            </div>
+				{{#if record.score}}
+				<div>Your score</div>
+				<div>
+					<strong>{{ record.score.scaled * 100 }}</strong>%
+				</div>
+				{{/if}}
+			</div>
+			<p>Your
+				<a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
 		</div>
-	</Layout>
+	</div>
 </Page>

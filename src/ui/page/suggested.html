@@ -1,13 +1,11 @@
-
 <Page title="Suggested for you">
-    <Layout>
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class="heading-large">Suggested for you</h1>
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Suggested for you</h1>
 
-                {{#if courses.length}}
-                <table>
-                    <tbody>
+            {{#if courses.length}}
+            <table>
+                <tbody>
                     {{#each courses as course}}
                     <tr>
                         <td>
@@ -17,10 +15,9 @@
                         <td>{{ course.shortDescription }}</td>
                     </tr>
                     {{/each}}
-                    </tbody>
-                </table>
-                {{/if}}
-            </div>
+                </tbody>
+            </table>
+            {{/if}}
         </div>
-    </Layout>
+    </div>
 </Page>

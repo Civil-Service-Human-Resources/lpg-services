@@ -1,47 +1,45 @@
 <Page title="Courses">
-    <Layout page='courses'>
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-large">Courses</h1>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-large">Courses</h1>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Title</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each courses as course, i}}
-                        <tr>
-                            <th scope="row">
-                                <a href="/courses/{{course.uid}}/edit">{{course.title}}</a>
-                            </th>
-                            <td>
-                                <a href="//{{config.LPG_UI_SERVER}}/courses/{{course.uid}}/">Review</a>
-                            </td>
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="column-one-third">
-                <aside class="govuk-related-items" role="complementary">
-                    <h2>Course management</h2>
-
-                    <nav role="navigation">
-                        <ul>
-                            <li>
-                                <a href="/courses/add">Add a course</a>
-                            </li>
-                            <li>
-                                <a href="/courses/reset">Reset courses</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </aside>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each courses as course, i}}
+                    <tr>
+                        <th scope="row">
+                            <a href="/courses/{{course.uid}}/edit">{{course.title}}</a>
+                        </th>
+                        <td>
+                            <a href="//{{config.LPG_UI_SERVER}}/courses/{{course.uid}}/">Review</a>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
         </div>
-    </Layout>
+
+        <div class="column-one-third">
+            <aside class="govuk-related-items" role="complementary">
+                <h2>Course management</h2>
+
+                <nav role="navigation">
+                    <ul>
+                        <li>
+                            <a href="/courses/add">Add a course</a>
+                        </li>
+                        <li>
+                            <a href="/courses/reset">Reset courses</a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+        </div>
+    </div>
 </Page>
