@@ -1,6 +1,7 @@
 export const selectors: Record<string, string> = {
-	//     /home
-	// /suggested-for-you
-	// /learning-record
-	// /sign-out
+	feedbackPrompt: '.feedback-prompt',
+	feedbackDetails: '.feedback-details',
+	feedbackDoingField: '#whatDoing',
+	feedbackWrongField: '#wentWrong',
+	feedbackSubmitButton: ".button button[name='commit']",
 }
