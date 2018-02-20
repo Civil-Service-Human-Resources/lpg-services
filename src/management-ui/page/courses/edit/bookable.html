@@ -1,81 +1,78 @@
 <Page title="Edit course">
-    <Layout page='edit-course'>
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-large">
-                    {{#if course.uid}}Edit{{else}}Add{{/if}} course
-                </h1>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-large">
+                {{#if course.uid}}Edit{{else}}Add{{/if}} course
+            </h1>
 
-                <form method="post" name="editCourseForm" class="push-bottom" encType="multipart/form-data">
-                    <input name="uri" type="hidden" value="{{ course.uri || '' }}">
+            <form method="post" name="editCourseForm" class="push-bottom" encType="multipart/form-data">
+                <input name="uri" type="hidden" value="{{ course.uri || '' }}">
 
-                    <div class="form-group">
-                        <label for="title" class="form-label">
-                            Title
-                        </label>
-                        <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
+                <div class="form-group">
+                    <label for="title" class="form-label">
+                        Title
+                    </label>
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="short-description" class="form-label">
+                        Short description
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="short-description" class="form-label">
+                        Description
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ course.description || '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="short-description" class="form-label">
+                        Learning outcomes
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="learning-outcomes" name="learningOutcomes" rows="3">{{ course.learningOutcomes || '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration" class="form-label">
+                        Duration
+                    </label>
+                    <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{{ course.duration || '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="tags" class="form-label">
+                        Tags
+                    </label>
+                    <input class="form-control form-control-2-3" id="tags" name="tags" type="text" value="{{ (course.tags || []).join(', ') }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Availability
+                    </label>
+                    {{#each (course.availability || []) as availability, i}}
+                    <div class="availability">
+                        <input class="form-control form-control-2-3" name="availability.{{i}}" type="date" value="{{ availability.slice(0,10) }}">
                     </div>
-
-                    <div class="form-group">
-                        <label for="short-description" class="form-label">
-                            Short description
-                        </label>
-                        <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
+                    {{/each}}
+                    <div class="availability">
+                        <input class="form-control form-control-2-3" name="availability.{{(course.availability || []).length}}" type="date" value="">
+                        <button type="submit" class="button" name="add-availability" value="true">Add</button>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="short-description" class="form-label">
-                            Description
-                        </label>
-                        <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ course.description || '' }}</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="short-description" class="form-label">
-                            Learning outcomes
-                        </label>
-                        <textarea class="form-control form-control-2-3" id="learning-outcomes" name="learningOutcomes" rows="3">{{ course.learningOutcomes || '' }}</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="duration" class="form-label">
-                            Duration
-                        </label>
-                        <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{{ course.duration || '' }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tags" class="form-label">
-                            Tags
-                        </label>
-                        <input class="form-control form-control-2-3" id="tags" name="tags" type="text" value="{{ (course.tags || []).join(', ') }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            Availability
-                        </label>
-                        {{#each (course.availability || []) as availability, i}}
-                            <div class="availability">
-                                <input class="form-control form-control-2-3" name="availability.{{i}}" type="date" value="{{ availability.slice(0,10) }}">
-                            </div>
-                        {{/each}}
-                        <div class="availability">
-                            <input class="form-control form-control-2-3" name="availability.{{(course.availability || []).length}}" type="date" value="">
-                            <button type="submit" class="button" name="add-availability" value="true">Add</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        {{#if course.uid}}
-                        <input type="submit" class="button" value="Update">
-                        {{else}}
-                        <input type="submit" class="button" value="Add">
-                        {{/if}}
-                    </div>
-                </form>
-            </div>
+                <div>
+                    {{#if course.uid}}
+                    <input type="submit" class="button" value="Update">
+                    {{else}}
+                    <input type="submit" class="button" value="Add">
+                    {{/if}}
+                </div>
+            </form>
         </div>
-    </Layout>
+    </div>
 </Page>
-
