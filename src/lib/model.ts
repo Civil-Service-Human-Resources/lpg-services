@@ -19,13 +19,7 @@ export class Course {
 	public description: string
 	public learningOutcomes: string
 	public duration: string
-
-	public availability: [
-		{
-			date: Date
-			uid: string
-		}
-	]
+	public availability: Date[]
 
 	public completionDate?: string
 	public result?: any
@@ -46,6 +40,7 @@ export class Course {
 
 	static create(data: any) {
 		const course = new Course(data.uid, data.type)
+		course.availability = data.availability
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
 		course.duration = data.duration

@@ -52,10 +52,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="content-zip" class="form-label">
-                            Content
+                        <label class="form-label">
+                            Availability
                         </label>
-                        <input class="form-control form-control-2-3" id="content-zip" name="content" type="file">
+                        {{#each (course.availability || []) as availability, i}}
+                            <div class="availability">
+                                <input class="form-control form-control-2-3" name="availability.{{i}}" type="date" value="{{ availability.slice(0,10) }}">
+                            </div>
+                        {{/each}}
+                        <div class="availability">
+                            <input class="form-control form-control-2-3" name="availability.{{(course.availability || []).length}}" type="date" value="">
+                            <button type="submit" class="button" name="add-availability" value="true">Add</button>
+                        </div>
                     </div>
 
                     <div>
