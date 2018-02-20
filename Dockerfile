@@ -23,24 +23,21 @@ RUN . $NVM_DIR/nvm.sh \
   && nvm alias default $NODE_VERSION \
   && nvm use default
 
-COPY package.json package.json
-COPY bin/setup-dist bin/setup-dist
+# TODO(tav): This is temporary. Will update to resolve symlinks via tar.
 COPY src src
+COPY dist dist
+COPY node_modules node_modules
 
-# Runtime environment variables
-ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
+# Runtime environment variables. Most osf these should be overridden by the env
+# variables passed in by the ops setup.
+ENV AUTHENTICATION_SERVICE_URL=https://identity.dev.cshr.digital \
+  ENV_PROFILE=dev \
   LEARNER_RECORD_SERVICE_URL=http://localhost:9000 \
-  LPG_UI_SERVER=lpg.local.cshr.digital \
+  LPG_UI_SERVER=lpg.dev.cshr.digital \
   NODE_ENV=production \
+  NODE_ICU_DATA=/var/www/app/node_modules/full-icu \
   PORT=3001 \
   SESSION_SECRET=topsecret
 
 # TODO(tav): Create an actual user so that we don't run this as root
-RUN npm install --unsafe-perm
-
-COPY dist dist
-
-# This needs to be specified after the `npm install`
-ENV NODE_ICU_DATA=/var/www/app/node_modules/full-icu
-
 CMD [ "bash", "-c", "cd dist/ui && node ../node_modules/ui/server.js" ]
