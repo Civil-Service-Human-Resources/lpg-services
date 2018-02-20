@@ -1,99 +1,103 @@
-<div class="grid-row">
-    <Breadcrumb:breadcrumbs/>
-    <div class="column-full">
-        <h2 class="heading-medium">Booking a course</h2>
-        <h1 class="heading-large">
-            Confirm your details before completing your booking
-        </h1>
-    </div>
-</div>
-<div class="grid-row booking__panel">
-    <div class="column-two-thirds">
-        <table class="booking__table">
-            <caption class="heading-small">Course details</caption>
-             <thead class="booking__thead">
-                <tr>
-                <th class="booking__detail-h"><span>Booking detail</span></th>
-                <th><span>Booking information</span></th>
-                </tr>
-            </thead>
-            <tbody>
+<Page title="Confirm">
+	<Layout page="confirm">
+		<div class="grid-row">
+			<Breadcrumb:breadcrumbs/>
+			<div class="column-full">
+				<h2 class="heading-medium">Booking a course</h2>
+				<h1 class="heading-large">
+					Confirm your details before completing your booking
+				</h1>
+			</div>
+		</div>
+		<div class="grid-row booking__panel">
+            <div class="column-two-thirds">
+                <table class="booking__table">
+                    <caption class="heading-small">Course details</caption>
+                     <thead class="booking__thead">
+                        <tr>
+                        <th class="booking__detail-h"><span>Booking detail</span></th>
+                        <th><span>Booking information</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                <tr>
-                    <td>Course title</td>
-                    <td>{{course.title}}</td>
-                </tr>
-                <tr>
-                    <td>Start date</td>
-                    <td>27th Feb 2018 </td>
-                </tr>
-                <tr>
-                    <td>Duration</td>
-                    <td>1hr</td>
-                </tr>
-                <tr>
-                    <td>Location</td>
-                    <td>London</td>
-                </tr>
-            </tbody>
-        </table>
+                        <tr>
+                            <td>Course title</td>
+                            <td>{{course.title}}</td>
+                        </tr>
+                        <tr>
+                            <td>Start date</td>
+                            <td>27th Feb 2018 </td>
+                        </tr>
+                        <tr>
+                            <td>Duration</td>
+                            <td>1hr</td>
+                        </tr>
+                        <tr>
+                            <td>Location</td>
+                            <td>London</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-    </div>
-    <a href="#" class="booking__change">Change</a>
-</div>
-<div class="grid-row booking__panel">
-    <div class="column-two-thirds">
-    <table class="booking__table">
-        <caption class="heading-small">Payment details</caption>
-         <thead class="booking__thead">
-            <tr>
-                <th class="booking__detail-h"><span>Booking detail</span></th>
-                <th><span>Booking information</span></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Payment method</td>
-                <td>Purchase order</td>
-            </tr>
-            <tr>
-                <td>Duration</td>
-                <td>1hr</td>
-            </tr>
-            <tr>
-                <td>Amount</td>
-                <td>&pound;249</td>
-            </tr>
+            </div>
+            <a href="#" class="booking__change">Change</a>
+        </div>
+        <div class="grid-row booking__panel">
+            <div class="column-two-thirds">
+            <table class="booking__table">
+                <caption class="heading-small">Payment details</caption>
+                 <thead class="booking__thead">
+                    <tr>
+                        <th class="booking__detail-h"><span>Booking detail</span></th>
+                        <th><span>Booking information</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Payment method</td>
+                        <td>Purchase order</td>
+                    </tr>
+                    <tr>
+                        <td>Duration</td>
+                        <td>1hr</td>
+                    </tr>
+                    <tr>
+                        <td>Amount</td>
+                        <td>&pound;249</td>
+                    </tr>
 
-        </tbody>
-    </table>
-    </div>
-    <a href="#" class="booking__change">Change</a>
-</div>
-<div class="grid-row booking__panel">
-    <div class="column-two-thirds">
-        <table class="booking__table">
-            <caption class="heading-small">Accessibility details</caption>
-             <thead class="booking__thead">
-                <tr>
-                    <th class="booking__detail-h"><span>Booking detail</span></th>
-                    <th><span>Booking information</span></th>
-                </tr>
-            </thead>
+                </tbody>
+            </table>
+            </div>
+            <a href="#" class="booking__change">Change</a>
+        </div>
+        <div class="grid-row booking__panel">
+            <div class="column-two-thirds">
+                <table class="booking__table">
+                    <caption class="heading-small">Accessibility details</caption>
+                     <thead class="booking__thead">
+                        <tr>
+                            <th class="booking__detail-h"><span>Booking detail</span></th>
+                            <th><span>Booking information</span></th>
+                        </tr>
+                    </thead>
 
-            <tbody>
-                <tr>
-                    <td>Accessibility needs</td>
-                    <td>None</td>
-                </tr>
+                    <tbody>
+                        <tr>
+                            <td>Accessibility needs</td>
+                            <td>None</td>
+                        </tr>
 
-            </tbody>
-        </table>
-    </div>
-    <a href="#" class="booking__change">Change</a>
-</div>
-<div class="grid-row">
-   <div class="column-full">
-        <a class="button" href="confirm-booking">Complete booking</a>
-    </div>
-</div>
+                    </tbody>
+                </table>
+            </div>
+            <a href="" class="booking__change">Change</a>
+		</div>
+        <div class="grid-row">
+           <div class="column-full">
+                <a class="button" href="confirm-booking">Complete booking</a>
+            </div>
+        </div>
+	</Layout>
+</Page>
