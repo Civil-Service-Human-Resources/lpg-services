@@ -35,9 +35,17 @@
 	@include e(panel) {
 		border-top: 1px solid $grey-2;
 		padding-bottom: 20px;
+		position: relative;
 	}
 	@include e(change) {
-		float: right;
+		position: absolute;
+		top: 50%;
+		right: 0;
+		transform: translateY(-50%);
+		@media (max-width: 640px) {
+			top: 20px;
+			right: 15px;
+		}
 	}
 	@include e(table) {
 		th {
@@ -52,6 +60,16 @@
 			padding-top: 0;
 			padding-bottom: 0;
 			border: none;
+		}
+	}
+}
+
+.confirmed {
+	@include e(heading) {
+		margin-top: 0;
+		margin-bottom: 0;
+		@include m(caps) {
+			text-transform: uppercase;
 		}
 	}
 }

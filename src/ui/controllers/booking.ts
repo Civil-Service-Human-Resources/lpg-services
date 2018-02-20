@@ -130,6 +130,13 @@ export async function renderConfirmPayment(
 	)
 }
 
+export async function tryCompleteBooking(
+	req: express.Request,
+	res: express.Response
+) {
+	res.send(template.render('booking/confirmed', req))
+}
+
 interface BookingBreadcrumb {
 	url: string
 	name: string
@@ -143,6 +150,8 @@ interface BookableCourse extends model.Course {
 		}
 	]
 }
+
+interface BookingData {}
 
 let mockAvailability = [
 	{

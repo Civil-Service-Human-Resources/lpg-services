@@ -125,6 +125,8 @@ app.get(
 	'/book/:courseId/:availabilityUid/confirm',
 	bookingController.renderConfirmPayment
 )
+app.get('/confirm-booking', bookingController.tryCompleteBooking)
+
 
 app.use(
 	(
