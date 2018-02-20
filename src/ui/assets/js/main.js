@@ -10,6 +10,9 @@ $(document).ready(function() {
 	$('.feedback-prompt').click(function(e) {
 		e.preventDefault()
 		if (feedbackRevealed) {
+			var details = $('.feedback-details')[0]
+			details.style.display = 'none'
+			feedbackRevealed = false
 			return
 		}
 		feedbackRevealed = true
