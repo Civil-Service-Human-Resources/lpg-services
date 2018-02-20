@@ -19,10 +19,7 @@ export async function courseResult(
 		}`
 	)
 	try {
-		const record = await learnerRecord.getCourseRecord(
-			req.user,
-			req.course
-		)
+		const record = await learnerRecord.getCourseRecord(req.user, req.course)
 
 		if (!record || record.state !== 'completed') {
 			res.redirect('/home')
@@ -42,7 +39,10 @@ export async function courseResult(
 
 export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
-	const courses = await learnerRecord.getLearningRecordOf(learnerRecord.CourseState.Completed, req.user)
+	const courses = await learnerRecord.getLearningRecordOf(
+		learnerRecord.CourseState.Completed,
+		req.user
+	)
 	res.send(
 		template.render('learning-record', req, {
 			courses,
