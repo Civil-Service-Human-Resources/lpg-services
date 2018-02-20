@@ -21,9 +21,9 @@
 						<td>{{ course.completionDate }}</td>
 						<td>{{ course.title }}</td>
 						<td>
-							{{#if course.score }} {{ course.score.scaled * 100 }}% {{elseif course.result}} {{ i18n.__(course.result) }} {{else}} - {{/if}}
+							{{#if course.score }} {{ course.score.scaled * 100 }}% {{elseif course.result}} {{ i18n(course.result) }} {{else}} - {{/if}}
 						</td>
-						<td>{{ i18n.__(course.type) }}</td>
+						<td>{{ i18n(course.type) }}</td>
 						<td>-</td>
 						<td>
 							<a href="/courses/{{ course.uid }}/do" class="button">Retake</a>
