@@ -59,6 +59,15 @@ export const FEEDBACK_RECIPIENTS = ['tav@kainos.com']
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
 
+export const GOOGLE_ANALYTICS_ID = env.GOOGLE_ANALYTICS_ID || 'UA-22141655-4'
+
+export const GOOGLE_ANALYTICS_CODE = `<script>
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', ${GOOGLE_ANALYTICS_ID}, { anonymize_ip: true });
+</script>`
+
 export const GOV_NOTIFY_API_KEY =
 	env.GOV_NOTIFY_API_KEY ||
 	'test-22877568-4bca-40f9-8f54-8bf7922583cf-e2f80f22-e3de-4007-9ce2-b50a2b5785b7'
