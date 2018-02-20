@@ -22,13 +22,13 @@
             {{/if}}
         </div>
 
-        <span class="learning__progress">{{i18n.__(course.state || 'not started')}}</span>
+        <span class="learning__progress">{{i18n(course.state || 'not started')}}</span>
 
         <div class="column-one-third">
             <p class="learning__information-desc"></p>
 
             <ul class="learning__information-list">
-                <li>{{i18n.__(course.type)}}</li>
+                <li>{{i18n(course.type)}}</li>
                 <li>{{course.duration}}</li>
             </ul>
         </div>

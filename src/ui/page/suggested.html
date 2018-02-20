@@ -11,7 +11,7 @@
                         <td>
                             <a href="/courses/{{ course.uid }}">{{ course.title }}</a>
                         </td>
-                        <td>{{ i18n.__(course.type) }}</td>
+                        <td>{{ i18n(course.type) }}</td>
                         <td>{{ course.shortDescription }}</td>
                     </tr>
                     {{/each}}
