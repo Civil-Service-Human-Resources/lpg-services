@@ -1,85 +1,81 @@
-<Page title="Choose Date">
-<Layout page="choose date">
-    <div class="grid-row">
+<div class="grid-row">
     <Breadcrumb :breadcrumbs/>
-        <div class="column-full">
-            <h2 class="heading-medium">Booking a course</h2>
-            <h1 class="heading-large">Choose Date</h1>
-        </div>
+    <div class="column-full">
+        <h2 class="heading-medium">Booking a course</h2>
+        <h1 class="heading-large">Choose Date</h1>
     </div>
-    <div class="grid-row">
-        <div class="column-full">
-            <p>
-                Check on which dates you can attend and in which locations, then
-                select a suitable option below.
-            </p>
-            <form method="post">
-                <table>
-                <caption class="heading-small">{{course.title || 'Working with budgets'}}</caption>
-                    <thead>
+</div>
+<div class="grid-row">
+    <div class="column-full">
+        <p>
+            Check on which dates you can attend and in which locations, then
+            select a suitable option below.
+        </p>
+        <form method="post">
+            <table>
+            <caption class="heading-small">{{course.title || 'Working with budgets'}}</caption>
+                <thead>
 
-                        <tr>
-                            <th scope="col">Course dates</th>
-                            <th scope="col">Duration</th>
-                            <th scope="col">Location</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">
-                                <span class="visually-hidden">Selection</span>
-                            </th>
+                    <tr>
+                        <th scope="col">Course dates</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">
+                            <span class="visually-hidden">Selection</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each course.availability as availableCourse, index}}
+                    <tr>
+                        <td>{{availableCourse.dateString}}</td>
+                        <td>{{course.duration}}</td>
+                        <td>London</td>
+                        <td>&pound;249</td>
+                        <td>
+                            {{#if (index == 0) }}
+                            <input id="radio-{{index}}"
+                                type="radio"
+                                name="selected-course"
+                                class="booking__date"
+                                value="{{availableCourse.uid}}"
+                                checked >
+
+                            {{else}}
+                            <input id="radio-{{index}}"
+                                type="radio"
+                                name="selected-course"
+                                class="booking__date"
+                                value="{{availableCourse.uid}}"
+                                >
+                            {{/if}}
+
+
+                            <label for="radio-{{index}}">
+                                <span class="booking__select booking__select--select">Select</span>
+                                <span class="booking__select booking__select--selected">Selected</span>
+                            </label>
+                        </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {{#each course.availability as availableCourse, index}}
-                        <tr>
-                            <td>{{availableCourse.dateString}}</td>
-                            <td>{{course.duration}}</td>
-                            <td>London</td>
-                            <td>&pound;249</td>
-                            <td>
-                                {{#if (index == 0) }}
-                                <input id="radio-{{index}}"
-                                    type="radio"
-                                    name="selected-course"
-                                    class="booking__date"
-                                    value="{{availableCourse.uid}}"
-                                    checked >
+                    {{/each}}
 
-                                {{else}}
-                                <input id="radio-{{index}}"
-                                    type="radio"
-                                    name="selected-course"
-                                    class="booking__date"
-                                    value="{{availableCourse.uid}}"
-                                    >
-                                {{/if}}
+                </tbody>
+            </table>
 
-
-                                <label for="radio-{{index}}">
-                                    <span class="booking__select booking__select--select">Select</span>
-                                    <span class="booking__select booking__select--selected">Selected</span>
-                                </label>
-                            </td>
-                            </tr>
-                        {{/each}}
-
-                    </tbody>
-                </table>
-
+        <p>
+            You are confirming that you have approval to book this course.
+        </p>
+        <p>
+        You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
+        </p>
+        <div class="panel panel-border-wide">
             <p>
-                You are confirming that you have approval to book this course.
+                By booking this course you are agreeing to the terms and conditions
             </p>
-            <p>
-            You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
-            </p>
-            <div class="panel panel-border-wide">
-                <p>
-                    By booking this course you are agreeing to the terms and conditions
-                </p>
-            </div>
-                <input type="submit" class="button" value="Continue">
-            </form>
-
         </div>
+            <input type="submit" class="button" value="Continue">
+        </form>
+
     </div>
-</Layout>
-</Page>
+</div>
