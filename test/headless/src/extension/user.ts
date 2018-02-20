@@ -105,3 +105,37 @@ export async function getUser(username: string) {
 	}
 	return resp.data.Resources[0]
 }
+
+export async function updateUser(
+	userid: string,
+	username: string,
+	firstname: string,
+	dept: string,
+	prof: string,
+	grade: string
+) {
+	const url = ADMIN_URL + '/scim2/Users/' + userid
+	const data = JSON.stringify({
+		userName: username,
+		CshrUser: {department: dept, profession: prof, grade: grade},
+		name: {givenName: firstname},
+	})
+	let resp: AxiosResponse<User>
+	try {
+		resp = await http.put(url, data, {
+			method: 'PUT',
+			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
+			auth: {
+				username: ADMIN_USERNAME as string,
+				password: ADMIN_PASSWORD as string,
+			},
+		})
+	} catch (err) {
+		throw err
+	}
+	if (resp.status !== 200) {
+		throw new Error(
+			`Received response code ${resp.status} when expecting a 200`
+		)
+	}
+}
