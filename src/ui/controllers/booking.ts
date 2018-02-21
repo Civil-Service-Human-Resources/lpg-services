@@ -75,7 +75,7 @@ export async function renderPaymentOptions(
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
-	req.session.bookingSession.selectedDate = selected
+	req.session.bookingSession.dateSelected = selected
 	res.redirect(req.baseUrl + `/book/${req.params.courseId}/${selected}`)
 }
 
