@@ -109,10 +109,6 @@ export class Course {
 		course.tags = data.tags
 		course.title = data.title
 		course.uri = data.uri
-		course.location = data.location
-		course.price = data.price
-		course.frequency = data.frequency
-		course.requiredBy = data.requiredBy
 		return course
 	}
 }
