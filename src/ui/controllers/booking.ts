@@ -65,10 +65,13 @@ export async function renderPaymentOptions(
 	req.session.bookingSession.bookingStep = 4
 
 	let breadcrumbs = getBreadcrumbs(req)
-
+	let previouslyEntered = req.session.bookingSession.po
+		? req.session.bookingSession.po
+		: req.session.bookingSession.fap
 	res.send(
 		template.render('booking/payment-options', req, {
 			breadcrumbs: breadcrumbs,
+			previouslyEntered: previouslyEntered,
 		})
 	)
 }
@@ -90,7 +93,7 @@ export function enteredPaymentDetails(
 		req.body['financial-approver'] &&
 		/\S/.test(req.body['financial-approver'])
 	) {
-		req.session.bookingSession.po = req.body['financial-approver']
+		req.session.bookingSession.fap = req.body['financial-approver']
 		res.redirect(`${req.originalUrl}/confirm`)
 	} else {
 		res.send(
