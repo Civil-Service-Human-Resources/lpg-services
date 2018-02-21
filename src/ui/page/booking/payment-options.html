@@ -17,7 +17,6 @@
             <p>You must enter the {{signedInUser.deparment == ('co' || 'dh') ? 'purchase order number' : 'email address of your financial approver' }} </p>
         </div>
         {{/if}}
-        {{previouslyEntered}}
         <form method="post">
             <div class="form-group">
                 {{#if signedInUser.deparment == ('co' || 'dh')}}
