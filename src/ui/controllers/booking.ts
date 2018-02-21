@@ -117,6 +117,8 @@ export async function renderConfirmPayment(
 			course,
 			courseDetails: courseController.getCourseDetails(course),
 			breadcrumbs: getBreadcrumbs(req),
+			dateSelected:
+				course.availability[req.session.bookingSession.dateSelected],
 		})
 	)
 }
