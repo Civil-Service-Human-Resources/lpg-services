@@ -4,15 +4,7 @@ import {selectors} from 'page/learningPlan'
 import {loginToCsl} from 'page/login'
 import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
-
-const {
-	URL = '',
-	USERNAME = '',
-	PASS = '',
-	TEST_PASSWORD = '',
-	DIALOG_USERNAME = '',
-	DIALOG_PASSWORD = '',
-} = process.env
+import * as config from 'test/config'
 
 function genUserEmail() {
 	return `test${Date.now()}@c.gov.uk`
@@ -27,13 +19,13 @@ describe('profile page functionality', () => {
 		const session = await helper.getSession('learning plan')
 		page = await session.newPage()
 		await page.authenticate({
-			username: DIALOG_USERNAME,
-			password: DIALOG_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
+			password: config.BASIC_AUTH_PASSWORD,
 		})
-		await page.goto(URL)
-		const userId = await createUser(TEST_USERNAME, TEST_PASSWORD)
+		await page.goto(config.URL)
+		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
 		await updateUser(userId, TEST_USERNAME, 'Test', 'CO', 'HR', 'G7')
-		await loginToCsl(page, USERNAME, PASS)
+		await loginToCsl(page, config.USERNAME, config.PASSWORD)
 		await page.waitFor(selectors.signoutButton)
 	})
 
