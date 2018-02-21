@@ -17,6 +17,10 @@ type: string .
 uri: string @index(exact) .
 duration: string .
 availability: [dateTime] .
+location: string .
+price: string .
+requiredBy: dateTime .
+frequency: string .
 `
 
 const client = new dgraph.DgraphClient(
@@ -34,7 +38,11 @@ export async function add(course: model.Course) {
 			availability: course.availability || [],
 			description: course.description || '',
 			duration: course.duration || '',
+			frequency: course.frequency || '',
 			learningOutcomes: course.learningOutcomes || '',
+			location: course.location || '',
+			price: course.price || '',
+			requiredBy: course.requiredBy,
 			shortDescription: course.shortDescription || '',
 			tags: course.tags || [],
 			title: course.title || '',
@@ -67,6 +75,10 @@ export async function get(uid: string) {
 				learningOutcomes
 				duration
 				availability
+				location
+				price
+				requiredBy
+				frequency
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
@@ -183,6 +195,10 @@ export async function listAll(
 			learningOutcomes
 			duration
 			availability
+			location
+			price
+			requiredBy
+			frequency
 		}
 	}`
 	const qresp = await client.newTxn().query(query)
@@ -247,6 +263,10 @@ export async function findRequiredLearning(
 			learningOutcomes
 			duration
 			availability
+			location
+			price
+			requiredBy
+			frequency
 		}
 	}`
 	const qresp = await client.newTxn().queryWithVars(query, {
@@ -290,6 +310,10 @@ export async function findSuggestedLearning(
 			learningOutcomes
 			duration
 			availability
+			location
+			price
+			requiredBy
+			frequency
 		}
 	}`
 	const qresp = await client.newTxn().queryWithVars(query, {
