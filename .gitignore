@@ -4,8 +4,10 @@
 .idea
 .sessions
 dist/
+environ/lpg-ansible-mvp
 node_modules/
 package-lock.json
+pyhome/
 src/management-ui/assets/styles/main.css
 src/ui/assets/styles/main.css
 yarn.lock

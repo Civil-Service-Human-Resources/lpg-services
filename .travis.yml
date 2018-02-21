@@ -1,4 +1,5 @@
 sudo: required
+dist: trusty
 
 language: node_js
 node_js:
@@ -9,28 +10,13 @@ services:
 
 cache:
   directories:
-    - "node_modules"
+    - environ/lpg-ansible-mvp
+    - node_modules
+    - pyhome
+    - test/headless/node_modules
 
-jobs:
-  include:
-    - stage: "install, build and push"
-    - install:
-      - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-      - docker pull cshr/lpg-services || true
-      - npm install
-    - script:
-      - npm run build
-      - echo "----- 1 -----" && docker build -t cshr/lpg-services:latest .
-      - echo "----- 2 -----" && docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-      - echo "----- 3 -----" && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
-      - echo "----- 4 -----" && docker push cshr/lpg-services
-    - stage: Deploy
-      script:
-        - "./deploy.sh lpgservices"
+env:
+  - ENV_PROFILE=dev
 
-addons:
-  ssh_known_hosts:
-  - test-lpg.uksouth.cloudapp.azure.com
-  - 10.0.10.4
-  - 10.0.11.4
-  - 10.0.12.4
+install: true
+script: ./environ/ci

@@ -1,0 +1,59 @@
+#! /usr/bin/env bash
+
+# TODO(tav):
+# - Trap and handle failures properly.
+# - Add further checks, e.g. linting, prettier, unit tests, etc.
+# - Bail on typescript and test errors.
+# - Enforce import restrictions in modules.
+# - Ensure package.json dependency listing, fixed versioning, etc.
+# - Speed up builds.
+
+counter=0
+
+function stage {
+  ((counter++))
+  printf "\n\033[34;1m➡  $1  \033[90m[stage $counter] [running ${SECONDS}s]\033[0m\n\n"
+}
+
+stage "Pulling the latest lpg-services docker image"
+docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+docker pull cshr/lpg-services || true
+
+stage "Installing the top-level dependencies"
+npm install
+
+stage "Building the main src"
+npm run build
+
+stage "Building the new lpg-services docker image"
+docker build --cache-from cshr/lpg-services:latest -t cshr/lpg-services:${TRAVIS_COMMIT} .
+
+stage "Pushing the lpg-services:${TRAVIS_COMMIT} docker image"
+docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+docker push cshr/lpg-services:${TRAVIS_COMMIT}
+
+stage "Installing ansible if necessary"
+export PATH="`pwd`/pyhome/bin:${PATH}"
+export PYTHONPATH="`pwd`/pyhome/lib/python/site-packages:${PYTHONPATH}"
+export PYTHONPATH="`pwd`/pyhome/lib/python2.7/site-packages:${PYTHONPATH}"
+python -c "import ansible, sys; sys.exit(0) if ansible.__version__ == '2.4.3.0' else sys.exit(1)"
+if [ $? -ne 0 ]; then
+  rm -rf pyhome
+  PYTHONUSERBASE=pyhome pip install --user ansible==2.4.3.0
+fi
+
+stage "Deploying to the dev environment"
+./environ/deploy dev ${TRAVIS_COMMIT}
+
+stage "Installing the headless test dependencies"
+cd test/headless
+rm -f node_modules/extension node_modules/page node_modules/test
+npm install
+
+stage "Building the headless test code"
+npm run build
+
+stage "Running the headless tests"
+npm test || true
+
+echo "Total run time: ${SECONDS}s"

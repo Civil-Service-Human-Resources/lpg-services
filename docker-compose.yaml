@@ -64,7 +64,7 @@ services:
   mongodb:
     image: mongo@sha256:fbb95eaa5a0c84d0d2098775f166003c568a79f993d91309cee7cda4135bbbfd
   postgres:
-    image: cshr/lpg-postgres:e33a84b43425d735d364142fa6cf72b0db5e7998dd80fe515beea48acbfa4ad1
+    image: cshr/lpg-postgres@sha256:2cca70e22b75afb7fc3d47abb1aa07344700624e2a77d21fed39bac14cc94edc
     ports:
       - 5433:5432
     restart: on-failure
