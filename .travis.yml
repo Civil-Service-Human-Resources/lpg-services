@@ -20,7 +20,7 @@ jobs:
       - npm install
     - script:
       - npm run build
-      - echo "----- 1 -----" && docker build -t cshr/lpg-services:latest .
+      - echo "----- 1 -----" && docker build --cache-from="cshr/lpg-services" -t cshr/lpg-services:latest .
       - echo "----- 2 -----" && docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       - echo "----- 3 -----" && docker tag cshr/lpg-services:latest cshr/lpg-services:${TRAVIS_COMMIT}
       - echo "----- 4 -----" && docker push cshr/lpg-services
