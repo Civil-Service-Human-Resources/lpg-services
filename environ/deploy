@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Usage: deploy [ENVIRONMENT] [IMAGE_TAG]
+
+repo=lpg-ansible-mvp
+
+cd "$(dirname "$0")"
+
+if [ -d "$repo/.git" ]; then
+    cd $repo
+    git config advice.detachedHead false
+    git clean -fdx
+    git reset --hard HEAD
+    git remote update
+    git checkout origin/master
+else
+    rm -rf $repo
+    git clone https://github.com/Civil-Service-Human-Resources/$repo
+    cd $repo
+fi
+
+# TODO(tav): Make this default to deploying to the test environment and use the
+# current checked out source to derive the image tag.
+#
+# ./deploy.sh lpgservices "${1:-test}" "${2:-$(git rev-parse HEAD)}"
+./deploy.sh lpgservices "$1" "$2"
