@@ -54,7 +54,11 @@ export async function getCourseRecord(user: model.User, course: model.Course) {
 		url: `${config.LEARNER_RECORD.url}/record/${user.id}`,
 	})
 	if (response.data.records.length > 0) {
-		return response.data.records[0]
+		const record = response.data.records[0]
+		if (record.completionDate) {
+			record.completionDate = new Date(record.completionDate)
+		}
+		return record
 	}
 	return null
 }

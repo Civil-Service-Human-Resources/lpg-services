@@ -1,7 +1,28 @@
-export const Frequency = {
-	FiveYearly: 'five-yearly',
-	ThreeYearly: 'two-yearly',
-	Yearly: 'yearly',
+export class Frequency {
+	static FiveYearly: 'five-yearly'
+	static ThreeYearly: 'two-yearly'
+	static Yearly: 'yearly'
+
+	static increment(frequency: string, date: Date) {
+		const step = this.getStep(frequency)
+		return new Date(date.getFullYear() + step, date.getMonth(), date.getDate())
+	}
+
+	static decrement(frequency: string, date: Date) {
+		const step = this.getStep(frequency)
+		return new Date(date.getFullYear() - step, date.getMonth(), date.getDate())
+	}
+
+	private static getStep(frequency: string) {
+		switch (frequency) {
+			case Frequency.FiveYearly:
+				return 5
+			case Frequency.ThreeYearly:
+				return 3
+			default:
+				return 1
+		}
+	}
 }
 
 export class Course {
@@ -22,7 +43,7 @@ export class Course {
 	public requiredBy?: Date
 	public frequency?: string
 
-	public completionDate?: string
+	public completionDate?: Date
 	public result?: any
 	public score?: string
 	public state?: string
@@ -37,6 +58,30 @@ export class Course {
 			this.tags.indexOf('mandatory:all') > -1 ||
 			this.tags.indexOf(`mandatory:${user.department}`) > -1
 		)
+	}
+
+	nextRequiredBy() {
+		if (!this.requiredBy || !this.frequency) {
+			return null
+		}
+		const today = new Date()
+		let nextDate = this.requiredBy
+		while (nextDate < today) {
+			nextDate = Frequency.increment(this.frequency, nextDate)
+		}
+		return nextDate
+	}
+
+	shouldRepeat() {
+		if (this.frequency) {
+			if (!this.completionDate) {
+				return true
+			}
+			const nextDate = this.nextRequiredBy()
+			const lastDate = Frequency.decrement(this.frequency, nextDate)
+			return this.completionDate < lastDate
+		}
+		return false
 	}
 
 	static create(data: any) {

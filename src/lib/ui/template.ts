@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as fs from 'fs'
 import * as config from 'lib/config'
+import * as dateTime from 'lib/datetime'
 import * as path from 'path'
 import * as svelte from 'svelte'
 import * as vm from 'vm'
@@ -69,7 +70,8 @@ data() {
     return {
         config: configModule,
         currentReq: req,
-        i18n: req.__.bind(req),
+        formatDate: dateTimeModule.formatDate,
+        i18n: req.__ ? req.__.bind(req) : null,
         signedInUser: req.user,
     }
 }
@@ -99,7 +101,7 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, configModule) {
+		`(function(module, exports, require, components, getCurrentRequest, configModule, dateTimeModule) {
 const {${componentNames}} = components
 ${code}
 });`,
@@ -111,7 +113,8 @@ ${code}
 		require,
 		components,
 		getCurrentRequest,
-		config
+		config,
+		dateTime
 	)
 	return module.exports
 }

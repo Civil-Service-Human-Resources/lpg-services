@@ -5,7 +5,7 @@
 				<h1 class="heading-xlarge">
 					{{#if record.result}} {{ i18n('courseResult.' + record.result) }} {{else}} {{ i18n('courseResult.complete') }} {{/if}}
 				</h1>
-				<div>{{ record.completionDate }}</div>
+				<div>{{ formatDate(record.completionDate) }}</div>
 				<div>
 					<strong>{{ course.title }}</strong>
 				</div>
