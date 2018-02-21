@@ -57,12 +57,33 @@
                     <input class="form-control form-control-2-3" id="content-zip" name="content" type="file">
                 </div>
 
+                <div class="form-group">
+                    <label for="required-by" class="form-label">
+                        Required by
+                    </label>
+                    <input class="form-control form-control-2-3" id="required-by" name="requiredBy" type="date" value="{{ (course.requiredBy || '').slice(0,10) }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="frequency" class="form-label">
+                        Frequency
+                    </label>
+                    <select class="form-control" id="frequency" name="frequency">
+                        <option value="yearly" {{#if course.frequency === 'yearly'}}selected{{/if}}>Yearly</option>
+                        <option value="three-yearly" {{#if course.frequency === 'three-yearly'}}selected{{/if}}>Three yearly</option>
+                        <option value="five-yearly" {{#if course.frequency === 'five-yearly'}}selected{{/if}}>Five yearly</option>
+                    </select>
+                </div>
+
                 <div>
                     {{#if course.uid}}
-                    <input type="submit" class="button" value="Update"> {{else}}
-                    <input type="submit" class="button" value="Add"> {{/if}}
+                    <input type="submit" class="button" value="Update">
+                    {{else}}
+                    <input type="submit" class="button" value="Add">
+                    {{/if}}
                 </div>
             </form>
         </div>
     </div>
 </Page>
+

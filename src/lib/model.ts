@@ -1,3 +1,9 @@
+export const Frequency = {
+	FiveYearly: 'five-yearly',
+	ThreeYearly: 'two-yearly',
+	Yearly: 'yearly',
+}
+
 export class Course {
 	readonly uid: string
 	readonly type: string
@@ -8,7 +14,13 @@ export class Course {
 	public description: string
 	public learningOutcomes: string
 	public duration: string
-	public availability: Date[]
+
+	public availability?: Date[]
+	public location?: string
+	public price?: string
+
+	public requiredBy?: Date
+	public frequency?: string
 
 	public completionDate?: string
 	public result?: any
@@ -31,12 +43,20 @@ export class Course {
 		const course = new Course(data.uid, data.type)
 		course.availability = data.availability
 		course.description = data.description
-		course.learningOutcomes = data.learningOutcomes
 		course.duration = data.duration
+		course.frequency = data.frequency
+		course.learningOutcomes = data.learningOutcomes
+		course.location = data.location
+		course.price = data.price
+		course.requiredBy = data.requiredBy
 		course.shortDescription = data.shortDescription
 		course.tags = data.tags
 		course.title = data.title
 		course.uri = data.uri
+		course.location = data.location
+		course.price = data.price
+		course.frequency = data.frequency
+		course.requiredBy = data.requiredBy
 		return course
 	}
 }
