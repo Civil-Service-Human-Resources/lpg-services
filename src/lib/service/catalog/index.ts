@@ -158,24 +158,6 @@ export async function elasticSearch(
 	let query = {
 		size: 100,
 		body: {
-			suggest: {
-				text: searchTerm,
-				suggest_title: {
-					term: {
-						field: 'title',
-					},
-				},
-				suggest_shortDescription: {
-					term: {
-						field: 'shortDescription',
-					},
-				},
-				suggest_description: {
-					term: {
-						field: 'description',
-					},
-				},
-			},
 			query: {
 				multi_match: {
 					query: searchTerm,
