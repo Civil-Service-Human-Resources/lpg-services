@@ -22,12 +22,12 @@ export async function home(req: express.Request, res: express.Response) {
 		let found = false
 		for (const [i, requiredCourse] of requiredLearning.entries()) {
 			if (requiredCourse.uid === record.uid) {
-				if (
-					record.state === 'completed' &&
-					!requiredCourse.shouldRepeat(record)
-				) {
+				if (record.state === 'completed' && !record.shouldRepeat()) {
 					requiredLearning.splice(i, 1)
 				} else {
+					if (record.state === 'completed') {
+						record.state = null
+					}
 					requiredLearning[i] = record
 				}
 				found = true

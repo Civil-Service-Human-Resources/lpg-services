@@ -77,7 +77,7 @@ export let doEditCourse = async (req: Request, res: Response) => {
 		if (key.startsWith('availability')) {
 			const parts = key.split(/\./)
 			if (req.body[key]) {
-				availability[parts[1]] = new Date(req.body[key])
+				availability[parts[1]] = req.body[key]
 			}
 		}
 	}
