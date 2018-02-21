@@ -87,6 +87,15 @@ export async function display(ireq: express.Request, res: express.Response) {
 				})
 			)
 			break
+		case 'bookable':
+			res.send(
+				template.render(`course/${course.type}`, req, {
+					course,
+					courseDetails: getCourseDetails(course),
+				})
+			)
+
+			break
 		default:
 			logger.debug(`Unknown course type: (${course.type})`)
 			res.sendStatus(500)

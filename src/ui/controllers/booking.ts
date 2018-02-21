@@ -5,33 +5,6 @@ import * as catalog from 'lib/service/catalog'
 import * as model from 'lib/model'
 import * as dateTime from 'lib/datetime'
 
-export async function renderBookableCourseInformation(
-	req: express.Request,
-	res: express.Response
-) {
-	const courseId: string = req.params.courseId
-	const course: model.Course = await catalog.get(courseId)
-
-	let breadcrumbs: BookingBreadcrumb[] = [
-		{
-			url: req.baseUrl,
-			name: 'home',
-		},
-		{
-			url: req.originalUrl,
-			name: course.title,
-		},
-	]
-
-	res.send(
-		template.render('booking/bookablecourse', req, {
-			course,
-			courseDetails: courseController.getCourseDetails(course),
-			breadcrumbs: breadcrumbs,
-		})
-	)
-}
-
 export async function renderChooseDate(
 	req: express.Request,
 	res: express.Response
@@ -145,7 +118,7 @@ function getBreadcrumbs(req: express.Request): BookingBreadcrumb[] {
 			name: 'home',
 		},
 		{
-			url: req.baseUrl + '/book/' + session.courseId,
+			url: req.baseUrl + '/courses/' + session.courseId,
 			name: session.courseTitle,
 		},
 		{

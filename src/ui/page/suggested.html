@@ -9,11 +9,7 @@
                     {{#each courses as course}}
                     <tr>
                         <td>
-                            {{#if course.type == 'bookable'}}
-                                <a href="/book/{{ course.uid }}">{{ course.title }}</a>
-                            {{else}}
-                                <a href="/courses/{{ course.uid }}">{{ course.title }}</a>
-                            {{/if}}
+                            <a href="/courses/{{ course.uid }}">{{ course.title }}</a>
                         </td>
                         <td>{{ i18n(course.type) }}</td>
                         <td>{{ course.shortDescription }}</td>
