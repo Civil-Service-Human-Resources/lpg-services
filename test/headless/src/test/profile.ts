@@ -9,14 +9,9 @@ import {loginToCsl} from 'page/login'
 import {createUser, deleteUser, getUser} from 'extension/user'
 import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
 import * as puppeteer from 'puppeteer'
+import * as config from 'test/config'
 
 const timeout = 10000
-const {
-	URL = '',
-	TEST_PASSWORD = '',
-	DIALOG_USERNAME = '',
-	DIALOG_PASSWORD = '',
-} = process.env
 
 function genUserEmail() {
 	return `test${Date.now()}@c.gov.uk`
@@ -31,12 +26,12 @@ describe('profile page functionality', () => {
 		const session = await helper.getSession('profile')
 		page = await session.newPage()
 		await page.authenticate({
-			username: DIALOG_USERNAME,
-			password: DIALOG_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
+			password: config.BASIC_AUTH_PASSWORD,
 		})
-		await page.goto(URL)
-		await createUser(TEST_USERNAME, TEST_PASSWORD)
-		await loginToCsl(page, TEST_USERNAME, TEST_PASSWORD)
+		await page.goto(config.URL)
+		await createUser(TEST_USERNAME, config.TEST_PASSWORD)
+		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
 		await page.waitFor(selectors.signoutButton, {timeout: 10000})
 		await page.goto('https://lpg.demo.cshr.digital/profile')
 	})

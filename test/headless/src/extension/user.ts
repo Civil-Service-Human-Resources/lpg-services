@@ -1,7 +1,6 @@
 import {default as axios, AxiosResponse} from 'axios'
 import * as https from 'https'
-
-const {ADMIN_URL = '', ADMIN_USERNAME = '', ADMIN_PASSWORD = ''} = process.env
+import * as config from 'test/config'
 
 export interface QueryUser {
 	Resources: User[]
@@ -21,7 +20,7 @@ const http = axios.create({
 })
 
 export async function createUser(username: string, password: string) {
-	const url = ADMIN_URL + '/scim2/Users/'
+	const url = config.WSO2_URL + '/scim2/Users/'
 	const data = JSON.stringify({
 		userName: username,
 		password: password,
@@ -39,8 +38,8 @@ export async function createUser(username: string, password: string) {
 			method: 'POST',
 			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
 			auth: {
-				username: ADMIN_USERNAME as string,
-				password: ADMIN_PASSWORD as string,
+				username: config.WSO2_ADMIN_USERNAME as string,
+				password: config.WSO2_ADMIN_PASSWORD as string,
 			},
 		})
 	} catch (err) {
@@ -56,15 +55,15 @@ export async function createUser(username: string, password: string) {
 
 //TODO (Will) Fix this
 export async function deleteUser(userid: string) {
-	const url = ADMIN_URL + '/scim2/Users/' + userid
+	const url = config.WSO2_URL + '/scim2/Users/' + userid
 	let resp: AxiosResponse<QueryUser>
 	try {
 		resp = await http.delete(url, {
 			method: 'DELETE',
 			headers: {Accept: 'application/json'},
 			auth: {
-				username: ADMIN_USERNAME as string,
-				password: ADMIN_PASSWORD as string,
+				username: config.WSO2_ADMIN_USERNAME as string,
+				password: config.WSO2_ADMIN_PASSWORD as string,
 			},
 		})
 	} catch (err) {
@@ -79,7 +78,7 @@ export async function deleteUser(userid: string) {
 
 export async function getUser(username: string) {
 	const url =
-		ADMIN_URL +
+		config.WSO2_URL +
 		'/scim2/Users/?filter=userName+Eq+' +
 		encodeURIComponent(username)
 	let resp: AxiosResponse<QueryUser>
@@ -88,8 +87,8 @@ export async function getUser(username: string) {
 			method: 'GET',
 			headers: {Accept: 'application/json'},
 			auth: {
-				username: ADMIN_USERNAME as string,
-				password: ADMIN_PASSWORD as string,
+				username: config.WSO2_ADMIN_USERNAME as string,
+				password: config.WSO2_ADMIN_PASSWORD as string,
 			},
 		})
 	} catch (err) {
@@ -114,7 +113,7 @@ export async function updateUser(
 	prof: string,
 	grade: string
 ) {
-	const url = ADMIN_URL + '/scim2/Users/' + userid
+	const url = config.WSO2_URL + '/scim2/Users/' + userid
 	const data = JSON.stringify({
 		userName: username,
 		CshrUser: {department: dept, profession: prof, grade: grade},
@@ -126,8 +125,8 @@ export async function updateUser(
 			method: 'PUT',
 			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
 			auth: {
-				username: ADMIN_USERNAME as string,
-				password: ADMIN_PASSWORD as string,
+				username: config.WSO2_ADMIN_USERNAME as string,
+				password: config.WSO2_ADMIN_PASSWORD as string,
 			},
 		})
 	} catch (err) {
