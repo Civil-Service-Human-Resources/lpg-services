@@ -30,6 +30,19 @@ export async function checkElementIsPresent(
 	}, selector)
 }
 
+export async function getText(
+	selector: string,
+	page: puppeteer.Page
+): Promise<boolean> {
+	return page.evaluate(selector => {
+		const e = document.querySelector(selector)
+		if (!e) {
+			return false
+		}
+		return e.innerText
+	}, selector)
+}
+
 export async function returnElementAttribute(
 	selector: string,
 	attri: string,
