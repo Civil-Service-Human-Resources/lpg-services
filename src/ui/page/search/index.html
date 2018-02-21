@@ -17,21 +17,26 @@
                         </div>
                     </div>
                 </form>
-                {{#if searchResults}}
+                {{#if searchResults && query}}
                 <div class="search-results">
-                    <h1 class="heading-large">{{#if searchResults.entries}} {{#if searchResults.entries.length}} {{searchResults.entries.length}} {{/if}}
-                        {{/if}} Search Results
+                    <h1 class="heading-large">{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{/if}}
+                        Search Results
                     </h1>
-
+                    <span class="time"> In {{end }} seconds</span>
+                    {{#if searchResults.suggestion}}
+                    <span class="suggest">Did you mean
+                        <a href="search?q={{ searchResults.suggestion }}">{{ searchResults.suggestion }}</a>?
+                    </span>
+                    {{/if}}
                     <ol>
-                        {{#if searchResults.entries}} {{#if searchResults.entries.length}} {{#each searchResults.entries as course}}
+                        {{#if searchResults.entries && searchResults.entries.length}} {{#each searchResults.entries as course}}
                         <li>
                             <a href="/courses/{{course.uid}}">{{course.title}}</a>
                             <div>
                                 {{{course.searchText}}}
                             </div>
                         </li>
-                        {{/each}} {{/if}} {{/if}}
+                        {{/each}} {{/if}}
                     </ol>
                 </div>
                 {{/if}}

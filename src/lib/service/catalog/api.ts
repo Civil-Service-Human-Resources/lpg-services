@@ -11,5 +11,6 @@ export interface SearchResponse {
 }
 
 export interface textSearchResponse {
+	suggestion?: string
 	entries: model.textSearchResult[]
 }

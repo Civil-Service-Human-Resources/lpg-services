@@ -27,23 +27,11 @@ export async function elasticSearch(
 ) {
 	let query = ''
 	let searchResults: api.textSearchResponse = {entries: []}
-
+	let start = new Date()
 	if (req.query.q) {
 		query = striptags(req.query.q)
 		searchResults = await catalog.elasticSearch(query)
 	}
-
-	res.send(template.render('search', req, {query, searchResults}))
-}
-
-export async function search(req: express.Request, res: express.Response) {
-	let query = ''
-	let searchResults: api.textSearchResponse = {entries: []}
-
-	if (req.query.q) {
-		query = striptags(req.query.q)
-		searchResults = await catalog.textSearch(query)
-	}
-
-	res.send(template.render('search', req, {query, searchResults}))
+	let end: string = (((new Date() as any) - (start as any)) / 1000).toFixed(2)
+	res.send(template.render('search', req, {end, query, searchResults}))
 }

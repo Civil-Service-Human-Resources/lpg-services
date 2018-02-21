@@ -11,6 +11,24 @@
 }
 
 .search-results {
+	h1 {
+		margin-bottom: 0px;
+	}
+
+	.time {
+		margin-bottom: 10px;
+		color: $secondary-text-colour;
+		display: block;
+	}
+
+	.suggest {
+		color: $secondary-text-colour;
+		font-weight: bold;
+		display: block;
+		font-style: italic;
+		margin-bottom: 10px;
+	}
+
 	li {
 		margin-bottom: 20px;
 	}

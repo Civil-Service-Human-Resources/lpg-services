@@ -6,8 +6,27 @@ import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
 import * as striptags from 'striptags'
 import * as elastic from 'elasticsearch'
-import * as util from 'util'
-const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
+import {isArray} from 'util'
+
+const {
+	DGRAPH_ENDPOINT = 'localhost:9080',
+	ELASTIC_ENDPOINT = 'http://127.0.01:9200',
+} = process.env
+
+const elasticConfig = [
+	{
+		settings: {
+			analysis: {
+				analyzer: {
+					default: {
+						type: 'standard',
+						stopwords: ['_english_'],
+					},
+				},
+			},
+		},
+	},
+]
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(term) .
@@ -18,12 +37,6 @@ type: string .
 uri: string @index(exact) .
 duration: string .
 `
-const maxCopyLength = 80
-const weighting = {
-	large: 8,
-	medium: 4,
-	small: 2,
-}
 
 const client = new dgraph.DgraphClient(
 	new dgraph.DgraphClientStub(
@@ -32,78 +45,27 @@ const client = new dgraph.DgraphClient(
 	)
 )
 
-var elasticClient: elastic.Client
-
-function connect() {
-	elasticClient = new elastic.Client({
-		hosts: ['http://127.0.0.1:9200/'],
+async function getElasticClient() {
+	let client = new elastic.Client({
+		hosts: [ELASTIC_ENDPOINT],
 	})
-}
 
-/** weigh terms found in predicate text
- *  doesn't take into account multiple hits on any particular term
- * **/
-function termWeight(resultString: string, searchTerm: string): number {
-	if (resultString.indexOf(searchTerm) >= 0) {
-		return weighting.large // if exact term found return heighest rating
-	} else {
-		// must be multi term else would not be in search results
-		let weight = 0
-		let arrSearchTerm = searchTerm.split(' ')
-		for (let [index, term] of arrSearchTerm.entries()) {
-			if (resultString.toLowerCase().indexOf(term) > 0) {
-				weight += weighting.small
-			}
+	// check for existing index
+	await client.indices.exists({index: 'dgraph'}).then(function(res) {
+		let exists: boolean = res
+		if (!exists) {
+			client.indices.create({index: 'dgraph', body: elasticConfig[0]})
 		}
-		return weight
-	}
-}
+	})
 
-function formatResultString(resultString: string, searchTerm: string): string {
-	let pos = resultString.toLowerCase().indexOf(searchTerm)
-	let out = ''
-	if (pos >= 0) {
-		let actualTermText = resultString.substr(pos, searchTerm.length)
-		let start = pos - maxCopyLength / 2
-		if (start < 0) start = 0
-
-		out = striptags(resultString)
-			.replace(actualTermText, '<b>' + actualTermText + '</b>')
-			.substr(start, maxCopyLength)
-	} else {
-		// must have multiple search terms if term not found  or wouldn't be a result
-
-		out = striptags(resultString)
-		let initial = null
-		let arrSearchTerm = searchTerm.split(' ')
-		// lets highlight all terms
-		for (let [index, term] of arrSearchTerm.entries()) {
-			pos = 0
-			while (pos >= 0) {
-				pos = out.toLowerCase().indexOf(term, pos)
-				if (pos >= 0) {
-					if (!initial) initial = pos
-					let actualTermText = out.substr(pos, term.length)
-					out = out.replace(actualTermText, '<b>' + actualTermText + '</b>')
-					pos += actualTermText.length + 7
-				}
-			}
-		}
-
-		let start = 0
-		if (initial) start = initial - maxCopyLength / 2
-		if (start < 0) start = 0
-
-		return out.substr(start, maxCopyLength)
-	}
-
-	return out
+	return client
 }
 
 export async function add(course: model.Course) {
 	const txn = client.newTxn()
+	const mu = new dgraph.Mutation()
+
 	try {
-		const mu = new dgraph.Mutation()
 		mu.setSetJson({
 			description: course.description || '',
 			duration: course.duration || '',
@@ -119,6 +81,21 @@ export async function add(course: model.Course) {
 		const assigned = await txn.mutate(mu)
 		return assigned.getUidsMap().get('blank-0') || course.uid
 	} finally {
+		// add to elastic search
+		let elasticClient = await getElasticClient()
+		let data: any = {}
+		let entry = mu.getSetJson()
+
+		for (let prop in entry) {
+			data[prop] = (entry as any)[prop]
+		}
+
+		await elasticClient.index({
+			index: 'dgraph',
+			type: 'lpg',
+			body: data,
+		})
+
 		await txn.discard()
 	}
 }
@@ -152,81 +129,30 @@ export async function get(uid: string) {
 	}
 }
 
-export async function textSearch(
-	searchTerm: string
-): Promise<api.textSearchResponse> {
-	await setSchema(SCHEMA)
-	const searches = [
-		{label: 'allofterms', weight: weighting.large},
-		{label: 'anyofterms', weight: weighting.small},
-	]
-	const predicates = [
-		{label: 'title', weight: weighting.large},
-		{label: 'shortDescription', weight: weighting.medium},
-		{label: 'description', weight: weighting.small},
-	]
-
-	let resp: model.textSearchResult[] = []
-	let hashMap: Record<string, model.textSearchResult> = {}
-	for (let search of searches) {
-		for (let predicate of predicates) {
-			let query =
-				`{entries(func: ` +
-				search.label +
-				`(` +
-				predicate.label +
-				`, "` +
-				searchTerm +
-				`")) {
-	       uid
-		   expand(_all_)
-		}}`
-
-			const qresp = await client.newTxn().query(query)
-			const entries = qresp.getJson().entries
-
-			for (let entry of entries) {
-				let searchResult: model.textSearchResult = {
-					uid: entry.uid,
-					title: entry.title,
-					searchText: formatResultString(entry[predicate.label], searchTerm),
-					weight:
-						(predicate.weight as number) *
-						search.weight *
-						termWeight(entry[predicate.label], searchTerm),
-				}
-				if (
-					!hashMap[entry.uid] ||
-					searchResult.weight > hashMap[entry.uid].weight
-				) {
-					// do not add to results if exist or exists but has higher weighting
-					searchResult.title += '[weight :' + searchResult.weight + ' ]'
-					hashMap[entry.uid] = searchResult
-				}
-			}
-		}
-	}
-
-	// have complete hashMapmap push to simple array
-
-	for (let index in hashMap) {
-		resp.push(hashMap[index])
-	}
-	return {
-		entries: resp.sort((a, b) => {
-			if (a.weight < b.weight) return 1
-			if (a.weight > b.weight) return -1
-			return 0
-		}),
-	}
-}
-
 export async function elasticSearch(
 	searchTerm: string
 ): Promise<api.textSearchResponse> {
 	let query = {
 		size: 100,
 		body: {
+			suggest: {
+				text: searchTerm,
+				suggest_title: {
+					term: {
+						field: 'title',
+					},
+				},
+				suggest_shortDescription: {
+					term: {
+						field: 'shortDescription',
+					},
+				},
+				suggest_description: {
+					term: {
+						field: 'description',
+					},
+				},
+			},
 			query: {
 				multi_match: {
 					query: searchTerm,
@@ -241,10 +167,25 @@ export async function elasticSearch(
 			},
 		},
 	}
-	connect()
-	let resp: model.textSearchResult[] = []
+	let elasticClient = await getElasticClient()
 
-	resp = await elasticClient.search(query).then(function(res) {
+	let search = await elasticClient.search(query).then(function(res) {
+		let suggestion = ''
+		let resp: model.textSearchResult[] = []
+		for (let suggest of Object.keys((res as any).suggest)
+			.sort()
+			.reverse()) {
+			for (let suggestObj of (res as any).suggest[suggest]) {
+				let replace = suggestObj.text
+				let options = suggestObj.options
+
+				if (options && isArray(options) && options.length > 0) {
+					suggestion = searchTerm.replace(replace, options[0].text)
+					searchTerm = suggestion
+				}
+			}
+		}
+
 		for (let entry of res.hits.hits) {
 			let searchResult: model.textSearchResult = {
 				uid: entry._id,
@@ -255,9 +196,10 @@ export async function elasticSearch(
 
 			resp.push(searchResult)
 		}
-		return resp
+		return {suggestion, resp}
 	})
-	return {entries: resp}
+
+	return {suggestion: search.suggestion, entries: search.resp}
 }
 
 export async function search(

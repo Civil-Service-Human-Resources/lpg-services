@@ -1,5 +1,16 @@
 version: "3.4"
 services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana@sha256:0d2565286641d213fdbc26ffe29c33268d31e4820ea7af636ebc7d879d736895
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+  elasticsearch: 
+    image: docker.elastic.co/elasticsearch/elasticsearch@sha256:5b2bb3e91379f04a9da7c477314a24b2428fb1a4c20696991dff54b70d1b4ef3
+    ports:
+      - "9200:9200"
+    command: "elasticsearch -E cluster.name=local -E discovery.type=single-node "
   dgraph-server:
     command: ["dgraph", "server", "--memory_mb", "2048", "--my", "dgraph-server:7080", "--zero", "dgraph-zero:5080"]
     depends_on:
