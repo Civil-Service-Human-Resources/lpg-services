@@ -51,6 +51,20 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="location" class="form-label">
+                        Location
+                    </label>
+                    <input class="form-control form-control-2-3" id="location" name="location" type="text" value="{{ course.location || '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="price" class="form-label">
+                        Price
+                    </label>
+                    <input class="form-control form-control-2-3" id="price" name="price" type="number" value="{{ course.price || '' }}">
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">
                         Availability
                     </label>
@@ -76,3 +90,4 @@
         </div>
     </div>
 </Page>
+

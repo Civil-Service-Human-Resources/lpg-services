@@ -64,17 +64,14 @@ export let editCourse = (req: Request, res: Response) => {
 }
 
 export let doEditCourse = async (req: Request, res: Response) => {
-	const entry = new model.Course(
-		req.course.uid,
-		req.course.type || req.body.type
-	)
-	entry.description = req.body.description
-	entry.duration = req.body.duration
-	entry.title = req.body.title
-	entry.tags = (req.body.tags || '').split(/,/).map(tag => tag.trim())
-	entry.shortDescription = req.body.shortDescription
-	entry.learningOutcomes = req.body.learningOutcomes
-	entry.uri = req.body.uri
+
+	const data = {
+		...req.body,
+        requiredBy: req.body.requiredBy ? new Date(req.body.requiredBy) : null,
+		tags: (req.body.tags || '').split(/,/).map(tag => tag.trim()),
+		type: req.course.type || req.body.type,
+		uid: req.course.uid,
+	}
 
 	const availability = []
 	for (const key of Object.keys(req.body)) {
@@ -85,7 +82,9 @@ export let doEditCourse = async (req: Request, res: Response) => {
 			}
 		}
 	}
-	entry.availability = availability
+	data.availability = availability
+
+	const entry = model.Course.create(data)
 
 	if (req.body['add-availability']) {
 		req.session.course = entry
