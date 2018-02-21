@@ -1,9 +1,10 @@
 import * as puppeteer from 'puppeteer'
-import * as helper from '../extension/helper'
-import {wrappedBeforeAll, wrappedAfterAll} from '../extension/testsetup'
-import {createUser, updateUser} from '../extension/user'
-import * as xapi from '../extension/xapi'
-import {loginToCsl, selectors} from '../page/login'
+import * as helper from 'extension/helper'
+import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
+import {createUser, updateUser} from 'extension/user'
+import * as xapi from 'extension/xapi'
+import {loginToCsl} from 'page/login'
+import {selectors} from 'page/learningPlan'
 
 const {
 	URL = '',
@@ -42,25 +43,35 @@ describe('recurring courses functionality', () => {
 		await page.close()
 	})
 
-	it('Should display recurring courses with a required by date', async () => {})
+	it('Should display recurring courses with a required by date', async () => {
+		const requiredByText = await helper.getText(selectors.firstRequiredBy, page)
+		expect(requiredByText).toEqual('31/03/2017')
+	})
 
 	it('Should hide completed course before required by date', async () => {
+
+        expect(await helper.checkElementIsPresent(selectors.counterFraudCourse, page)).toBe(true)
+
 		// Counter fraud, ...
 		await xapi.addStatement(
-			'f6bb29cb-876f-45fa-b851-34f6569d35d2',
+			userId,
 			'0x390',
 			xapi.Verb.Completed,
 			new Date()
 		)
-	})
 
-	it('Should show completed course after required by date passes', async () => {
+        expect(await helper.checkElementIsPresent(selectors.counterFraudCourse, page)).toBe(false)
+    })
+
+	it('Should show completed course after previous required by date passes', async () => {
 		// Basic fire awareness
 		await xapi.addStatement(
-			'f6bb29cb-876f-45fa-b851-34f6569d35d2',
+            userId,
 			'0x394',
 			xapi.Verb.Completed,
-			new Date(2016, 0, 1)
+			new Date(2017, 0, 1)
 		)
+
+		expect(await helper.checkElementIsPresent(selectors.fireAwarenessCourse, page)).toBe(true)
 	})
 })
