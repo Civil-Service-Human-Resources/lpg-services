@@ -44,9 +44,8 @@ export async function renderChooseDate(
 		bookingProgress: 3,
 		courseTitle: course.title,
 		courseId: courseId,
+		dateSelected: 0,
 	}
-
-	console.log(req.session.bookingSession)
 
 	let breadcrumbs = getBreadcrumbs(req)
 
@@ -65,9 +64,6 @@ export async function renderPaymentOptions(
 ) {
 	req.session.bookingSession.bookingStep = 4
 
-	console.log('renderPaymentOptions')
-	console.log(req.session.bookingSession)
-
 	let breadcrumbs = getBreadcrumbs(req)
 
 	res.send(
@@ -78,9 +74,8 @@ export async function renderPaymentOptions(
 }
 
 export function selectedDate(req: express.Request, res: express.Response) {
-	console.log('selected date')
-	req.session.bookingSession.selectedDate = req.body['selected-course']
-	const selected = req.body['selected-course']
+	const selected = req.body['selected-date']
+	req.session.bookingSession.selectedDate = selected
 	res.redirect(req.baseUrl + `/book/${req.params.courseId}/${selected}`)
 }
 
@@ -91,8 +86,9 @@ export function enteredPaymentDetails(
 	if (req.body['purchase-order']) {
 		req.session.bookingSession.po = req.body['purchase-order']
 		res.redirect(`${req.originalUrl}/confirm`)
-	} else {
+	} else if (req.body['financial-approver']) {
 		req.session.bookingSession.po = req.body['financial-approver']
+		res.redirect(`${req.originalUrl}/confirm`)
 	}
 }
 
@@ -101,13 +97,13 @@ export async function renderConfirmPayment(
 	res: express.Response
 ) {
 	req.session.bookingSession.bookingStep = 5
-	console.log('render confirm payment')
-	console.log(req.session.bookingSession.po)
+
 	const course = await catalog.get(req.session.bookingSession.courseId)
 	res.send(
 		template.render('booking/confirm-booking', req, {
 			course,
 			courseDetails: courseController.getCourseDetails(course),
+			breadcrumbs: getBreadcrumbs(req),
 		})
 	)
 }
@@ -117,7 +113,7 @@ export async function tryCompleteBooking(
 	res: express.Response
 ) {
 	req.session.bookingSession.bookingStep = 6
-	console.log(req.session.bookingSession.bookingStep)
+
 	res.send(template.render('booking/confirmed', req))
 }
 
@@ -126,20 +122,7 @@ interface BookingBreadcrumb {
 	name: string
 }
 
-interface BookingData {
-	bookingStep: number
-	bookingProgress: number
-	courseTitle: string
-	courseId: string
-	dateSelectedId: string
-	purchaseOrder?: number
-	financialApprover?: string
-	breadcrumbs: BookingBreadcrumb[]
-}
-
 function getBreadcrumbs(req: express.Request): BookingBreadcrumb[] {
-	console.log('breadcrumbs')
-	console.log(req.session.bookingSession)
 	let session = req.session.bookingSession
 	const allBreadcrumbs: BookingBreadcrumb[] = [
 		{
@@ -155,12 +138,12 @@ function getBreadcrumbs(req: express.Request): BookingBreadcrumb[] {
 			name: 'Choose Date',
 		},
 		{
-			url: `${req.baseUrl}/book/${session.courseId}/${session.dateSelectedId}`,
+			url: `${req.baseUrl}/book/${session.courseId}/${session.dateSelected}`,
 			name: 'Payment Options',
 		},
 		{
 			url: `${req.baseUrl}/book/${session.courseId}/${
-				session.dateSelectedId
+				session.dateSelected
 			}/confirm`,
 			name: 'Confirm details',
 		},

@@ -1,8 +1,8 @@
 <Page title="Confirm">
 	<Layout page="confirm">
 		<div class="grid-row">
-			<Breadcrumb:breadcrumbs/>
 			<div class="column-full">
+			    <Breadcrumb :breadcrumbs/>
 				<h2 class="heading-medium">Booking a course</h2>
 				<h1 class="heading-large">
 					Confirm your details before completing your booking
@@ -41,7 +41,7 @@
                 </table>
 
             </div>
-            <a href="#" class="booking__change">Change</a>
+            <a href="{{breadcrumbs[2].url}}" class="booking__change">Change</a>
         </div>
         <div class="grid-row booking__panel">
             <div class="column-two-thirds">
@@ -70,7 +70,7 @@
                 </tbody>
             </table>
             </div>
-            <a href="#" class="booking__change">Change</a>
+            <a href="{{breadcrumbs[3].url}}" class="booking__change">Change</a>
         </div>
         <div class="grid-row booking__panel">
             <div class="column-two-thirds">
@@ -92,7 +92,7 @@
                     </tbody>
                 </table>
             </div>
-            <a href="" class="booking__change">Change</a>
+            <a href="#" class="booking__change">Change</a>
 		</div>
         <div class="grid-row">
            <div class="column-full">
