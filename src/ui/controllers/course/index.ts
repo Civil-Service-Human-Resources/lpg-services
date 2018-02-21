@@ -1,5 +1,4 @@
 import * as express from 'express'
-import * as i18n from 'i18n'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
@@ -20,9 +19,12 @@ interface DataRow {
 
 const logger = log4js.getLogger('controllers/course')
 
-export function getCourseDetails(course: model.Course): CourseDetail[] {
-	const levels = getTagValues('grade', course.tags)
-	const keyAreas = getTagValues('key-area', course.tags)
+function getCourseDetails(
+	req: extended.CourseRequest,
+	course: model.Course
+): CourseDetail[] {
+	const levels = getTagValues(req, 'grade', course.tags)
+	const keyAreas = getTagValues(req, 'key-area', course.tags)
 	const duration = course.duration
 	const dataRows: DataRow[] = []
 
@@ -53,12 +55,15 @@ export function getCourseDetails(course: model.Course): CourseDetail[] {
 	]
 }
 
-function getTagValues(tagName: string, tags: string[]) {
+function getTagValues(
+	req: extended.CourseRequest,
+	tagName: string,
+	tags: string[]
+) {
 	return tags
 		.filter(tag => tag.startsWith(tagName))
-		.map(tag => i18n.__(tag.replace(`${tagName}:`, '')))
+		.map(tag => req.__(tag.replace(`${tagName}:`, '')))
 }
-
 export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
@@ -68,7 +73,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 			res.send(
 				template.render(`course/${course.type}`, req, {
 					course,
-					courseDetails: getCourseDetails(course),
+					courseDetails: getCourseDetails(req, course),
 				})
 			)
 			break
@@ -82,7 +87,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 			res.send(
 				template.render(`course/${course.type}`, req, {
 					course,
-					courseDetails: getCourseDetails(course),
+					courseDetails: getCourseDetails(req, course),
 					video: await youtube.getBasicInfo(course.uri),
 				})
 			)
