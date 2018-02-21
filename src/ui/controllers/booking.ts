@@ -83,12 +83,22 @@ export function enteredPaymentDetails(
 	req: express.Request,
 	res: express.Response
 ) {
-	if (req.body['purchase-order']) {
+	if (req.body['purchase-order'] && /\S/.test(req.body['purchase-order'])) {
 		req.session.bookingSession.po = req.body['purchase-order']
 		res.redirect(`${req.originalUrl}/confirm`)
-	} else if (req.body['financial-approver']) {
+	} else if (
+		req.body['financial-approver'] &&
+		/\S/.test(req.body['financial-approver'])
+	) {
 		req.session.bookingSession.po = req.body['financial-approver']
 		res.redirect(`${req.originalUrl}/confirm`)
+	} else {
+		res.send(
+			template.render('booking/payment-options', req, {
+				breadcrumbs: getBreadcrumbs(req),
+				paymentOptionsFailed: true,
+			})
+		)
 	}
 }
 
