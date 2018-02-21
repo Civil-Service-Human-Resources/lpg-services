@@ -72,39 +72,50 @@ export class Course {
 	}
 
 	nextRequiredBy() {
-		if (!this.requiredBy || !this.frequency) {
+		const [last, next] = this._currentRecurrancePeriod()
+		if (!last || !next) {
 			return null
+		}
+
+		if (this.completionDate && this.completionDate > last) {
+			return Frequency.increment(this.frequency, next)
+		}
+		return next
+	}
+
+	shouldRepeat() {
+		const [last, next] = this._currentRecurrancePeriod()
+		if (!last || !next) {
+			return !this.completionDate
+		}
+		return this.completionDate < last
+	}
+
+	_currentRecurrancePeriod() {
+		if (!this.requiredBy || !this.frequency) {
+			return []
 		}
 		const today = new Date()
 		let nextDate = this.requiredBy
 		while (nextDate < today) {
 			nextDate = Frequency.increment(this.frequency, nextDate)
 		}
-		return nextDate
-	}
-
-	shouldRepeat() {
-		if (this.frequency) {
-			if (!this.completionDate) {
-				return true
-			}
-			const nextDate = this.nextRequiredBy()
-			const lastDate = Frequency.decrement(this.frequency, nextDate)
-			return this.completionDate < lastDate
-		}
-		return false
+		const lastDate = Frequency.decrement(this.frequency, nextDate)
+		return [lastDate, nextDate]
 	}
 
 	static create(data: any) {
 		const course = new Course(data.uid, data.type)
-		course.availability = data.availability
+		course.availability = (data.availability || []).map(
+			availability => new Date(availability)
+		)
 		course.description = data.description
 		course.duration = data.duration
 		course.frequency = data.frequency
 		course.learningOutcomes = data.learningOutcomes
 		course.location = data.location
 		course.price = data.price
-		course.requiredBy = data.requiredBy
+		course.requiredBy = data.requiredBy ? new Date(data.requiredBy) : null
 		course.shortDescription = data.shortDescription
 		course.tags = data.tags
 		course.title = data.title
