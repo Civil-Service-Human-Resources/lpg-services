@@ -362,6 +362,10 @@ export async function resetCourses() {
 		for (const i in attributes) {
 			if (attributes[i] === 'tags') {
 				course.tags = line[i].split(',').map(tag => tag.trim())
+			} else if (attributes[i] === 'requiredBy') {
+				if (line[i]) {
+					course.requiredBy = new Date(line[i])
+				}
 			} else {
 				course[attributes[i]] = line[i] && line[i].replace(/\\n/g, '\n')
 			}

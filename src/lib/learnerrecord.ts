@@ -37,6 +37,8 @@ export async function getLearningRecordOf(
 			continue
 		}
 		course.completionDate = record.completionDate
+			? new Date(record.completionDate)
+			: null
 		course.result = record.result
 		course.score = record.score
 		course.state = record.state
