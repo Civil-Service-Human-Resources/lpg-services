@@ -128,12 +128,7 @@ app.get(
 	bookingController.renderConfirmPayment
 )
 
-app.post(
-	'/book/:courseId/:availabilityUid/confirm',
-	bookingController.tryCompleteBooking
-)
-
-// app.get('/confirm-booking', bookingController.tryCompleteBooking)
+app.get('/confirm-booking', bookingController.tryCompleteBooking)
 
 app.use(
 	(

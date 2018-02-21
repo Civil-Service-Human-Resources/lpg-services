@@ -1,8 +1,8 @@
 <Page title="Choose Date">
 <Layout page="choose date">
     <div class="grid-row">
-    <Breadcrumb :breadcrumbs/>
         <div class="column-full">
+            <Breadcrumb :breadcrumbs/>
             <h2 class="heading-medium">Booking a course</h2>
             <h1 class="heading-large">Choose Date</h1>
         </div>
@@ -29,9 +29,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each course.availability as availableCourse, index}}
+                        {{#each course.availability as courseDate, index}}
                         <tr>
-                            <td>{{availableCourse.dateString}}</td>
+                            <td>{{new Date(courseDate).toDateString()}}</td>
                             <td>{{course.duration}}</td>
                             <td>{{course.location}}</td>
                             <td>{{course.price}}</td>
@@ -39,7 +39,7 @@
                                 {{#if (index == 0) }}
                                 <input id="radio-{{index}}"
                                     type="radio"
-                                    name="selected-course"
+                                    name="selected-date"
                                     class="booking__date"
                                     value="{{index}}"
                                     checked >
@@ -47,7 +47,7 @@
                                 {{else}}
                                 <input id="radio-{{index}}"
                                     type="radio"
-                                    name="selected-course"
+                                    name="selected-date"
                                     class="booking__date"
                                     value="{{index}}"
                                     >
