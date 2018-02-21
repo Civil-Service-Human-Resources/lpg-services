@@ -2,14 +2,8 @@ import * as helper from 'extension/helper'
 import {loginToCsl, selectors} from 'page/login'
 import * as puppeteer from 'puppeteer'
 import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
+import * as config from 'test/config'
 
-const {
-	URL = '',
-	USERNAME = '',
-	PASS = '',
-	DIALOG_USERNAME = '',
-	DIALOG_PASSWORD = '',
-} = process.env
 const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
 
 describe('login page functionality', () => {
@@ -19,10 +13,10 @@ describe('login page functionality', () => {
 		const session = await helper.getSession('login')
 		page = await session.newPage()
 		await page.authenticate({
-			username: DIALOG_USERNAME,
-			password: DIALOG_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
+			password: config.BASIC_AUTH_PASSWORD,
 		})
-		await page.goto(URL)
+		await page.goto(config.URL)
 	})
 
 	wrappedAfterAll(async () => {
@@ -92,7 +86,7 @@ describe('login page functionality', () => {
 	})
 
 	it('Should login to the CSL portal', async () => {
-		await loginToCsl(page, USERNAME, PASS)
+		await loginToCsl(page, config.USERNAME, config.PASSWORD)
 		await page.waitFor(selectors.homeNavButton, {timeout: 9500})
 		expect(
 			await helper.checkElementIsPresent(selectors.homeNavButton, page)
