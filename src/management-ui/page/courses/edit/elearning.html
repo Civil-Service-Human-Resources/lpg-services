@@ -69,9 +69,10 @@
                         Frequency
                     </label>
                     <select class="form-control" id="frequency" name="frequency">
-                        <option value="yearly" {{#if course.frequency === 'yearly'}}selected{{/if}}>Yearly</option>
-                        <option value="three-yearly" {{#if course.frequency === 'three-yearly'}}selected{{/if}}>Three yearly</option>
-                        <option value="five-yearly" {{#if course.frequency === 'five-yearly'}}selected{{/if}}>Five yearly</option>
+                        <option value=""></option>
+                        <option value="yearly" selected="{{ course.frequency === 'yearly' ? 'selected' : '' }}">Yearly</option>
+                        <option value="three-yearly" selected="{{ course.frequency === 'three-yearly' ? 'selected' : '' }}">Three yearly</option>
+                        <option value="five-yearly" selected="{{ course.frequency === 'five-yearly' ? 'selected' : '' }}">Five yearly</option>
                     </select>
                 </div>
 
