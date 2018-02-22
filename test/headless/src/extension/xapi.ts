@@ -1,6 +1,5 @@
 import axios from 'axios'
-
-const {XAPI_URL = '', XAPI_PASS = '', XAPI_USER = ''} = process.env
+import * as config from 'test/config'
 
 export const Verb = {
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
@@ -28,10 +27,10 @@ export async function addStatement(
 		},
 	}
 
-	await axios.post(`${XAPI_URL}/statements`, JSON.stringify([statement]), {
+	await axios.post(`${config.XAPI_URL}/statements`, JSON.stringify([statement]), {
 		auth: {
-			password: XAPI_PASS,
-			username: XAPI_USER,
+			password: config.XAPI_PASS,
+			username: config.XAPI_USER,
 		},
 		headers: {
 			'Content-Type': 'application/json; charset=utf-8',
