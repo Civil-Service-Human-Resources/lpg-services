@@ -27,14 +27,18 @@ export async function addStatement(
 		},
 	}
 
-	await axios.post(`${config.XAPI_URL}/statements`, JSON.stringify([statement]), {
-		auth: {
-			password: config.XAPI_PASS,
-			username: config.XAPI_USER,
-		},
-		headers: {
-			'Content-Type': 'application/json; charset=utf-8',
-			'X-Experience-API-Version': '1.0.3',
-		},
-	})
+	await axios.post(
+		`${config.XAPI_URL}/statements`,
+		JSON.stringify([statement]),
+		{
+			auth: {
+				password: config.XAPI_PASS,
+				username: config.XAPI_USER,
+			},
+			headers: {
+				'Content-Type': 'application/json; charset=utf-8',
+				'X-Experience-API-Version': '1.0.3',
+			},
+		}
+	)
 }
