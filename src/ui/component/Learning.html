@@ -33,7 +33,7 @@
 
             <ul class="learning__information-list">
                 <li>{{i18n(course.type)}}</li>
-                <li>{{course.duration}}</li>
+                <li>{{course.type == 'video' ? new Date(course.duration * 1000).toTimeString().replace(/.*(\d{2}:\d{2}).*/, "$1") : course.duration}}</li>
             </ul>
         </div>
     </div>
