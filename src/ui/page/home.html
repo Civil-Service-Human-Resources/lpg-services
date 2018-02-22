@@ -22,20 +22,29 @@
 
             {{#if plannedLearning.length}}
             <ul>
-                {{#each plannedLearning as course}}
+                {{#each plannedLearning.slice(0,3) as course}}
                 <li>
                     <Learning bind:course />
                 </li>
                 {{/each}}
             </ul>
-            {{else}}
-            <p>You don't have any planned learning yet.</p>
-            {{/if}}
-
+            <ul id="view-all" class="js-hidden">
+                {{#each plannedLearning.slice(3) as course}}
+                <li>
+                    <Learning bind:course />
+                </li>
+                {{/each}}
+            </ul>
+            {{#if plannedLearning.length > 3 }}
             <a href="#" data-target="view-all-button" class="js-only view-all font-xsmall">
                 <span class="hidden">View all</span>
                 <span class="showing">Hide courses</span>
             </a>
+            {{/if}}
+            {{else}}
+            <p>You don't have any planned learning yet.</p>
+            {{/if}}
+
 
             <h2 class="heading-large">Need some inspiration?</h2>
             <p>
