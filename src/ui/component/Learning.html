@@ -24,7 +24,7 @@
 
         <span class="learning__progress">{{i18n(course.state || 'not started')}}</span>
 
-        <div class="column-one-third">
+        <div class="column-one-third learning__information">
             <p class="learning__information-desc">
                 {{#if course.requiredBy}}
                     Required by {{formatDate(course.nextRequiredBy())}}
