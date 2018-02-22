@@ -65,7 +65,7 @@ export const GOOGLE_ANALYTICS_CODE = `<script>
 window.dataLayer = window.dataLayer || [];
 function gtag() { dataLayer.push(arguments); }
 gtag('js', new Date());
-gtag('config', ${GOOGLE_ANALYTICS_ID}, { anonymize_ip: true });
+gtag('config', '${GOOGLE_ANALYTICS_ID}', { anonymize_ip: true });
 </script>`
 
 export const GOV_NOTIFY_API_KEY =
