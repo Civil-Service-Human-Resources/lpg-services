@@ -94,12 +94,6 @@ const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
 shortDescription: string @index(fulltext) .
 description: string .
-title: string @index(term) .
-shortDescription: string @index(term) .
-description: string @index(term).
-title: string @index(term) .
-shortDescription: string @index(term) .
-description: string @index(term).
 learningOutcomes: string .
 type: string .
 uri: string @index(exact) .
