@@ -4,7 +4,7 @@ export const selectors: Record<string, string> = {
 	learningHeader: '#content > div.main-content > div > div > h2.heading-medium',
 	requiredLearingSection: '#content > div.main-content > div > h3',
 	learningPlanSection: '#content > div.main-content > div > h2.heading-small',
-    counterFraudCourse: 'a[href="/courses/0x390"]',
-    fireAwarenessCourse: 'a[href="/courses/0x394"]',
-    firstRequiredBy: '.learning__information-desc:first-child',
+	counterFraudCourse: 'a[href="/courses/0x390"]',
+	fireAwarenessCourse: 'a[href="/courses/0x394"]',
+	firstRequiredBy: '.learning__information-desc:first-child',
 }
