@@ -14,8 +14,69 @@ const {
 	ELASTIC_ENDPOINT = 'http://127.0.01:9200',
 } = process.env
 
+const suggestThreshold = 0.7
+
 const elasticConfig = [
 	{
+		mappings: {
+			lpg: {
+				properties: {
+					description: {
+						type: 'text',
+						copy_to: 'suggested_terms',
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					learningOutcomes: {
+						type: 'text',
+
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					shortDescription: {
+						type: 'text',
+
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					tags: {
+						type: 'text',
+
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					title: {
+						type: 'text',
+						copy_to: 'suggested_terms',
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					suggested_terms: {
+						type: 'text',
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+				},
+			},
+		},
 		settings: {
 			analysis: {
 				analyzer: {
@@ -77,6 +138,7 @@ async function getElasticClient() {
 export async function add(course: model.Course) {
 	const txn = client.newTxn()
 	const mu = new dgraph.Mutation()
+	let uid
 
 	try {
 		mu.setSetJson({
@@ -97,7 +159,8 @@ export async function add(course: model.Course) {
 		})
 		mu.setCommitNow(true)
 		const assigned = await txn.mutate(mu)
-		return assigned.getUidsMap().get('blank-0') || course.uid
+		uid = assigned.getUidsMap().get('blank-0') || course.uid
+		return uid
 	} finally {
 		// add to elastic search
 		let elasticClient = await getElasticClient()
@@ -107,6 +170,7 @@ export async function add(course: model.Course) {
 		for (let prop in entry) {
 			data[prop] = (entry as any)[prop]
 		}
+		data.uid = uid
 
 		await elasticClient.index({
 			index: 'dgraph',
@@ -157,12 +221,26 @@ export async function elasticSearch(
 ): Promise<api.textSearchResponse> {
 	let query = {
 		size: 100,
+		index: 'dgraph',
 		body: {
+			suggest: {
+				text: searchTerm,
+				suggest_description: {
+					term: {
+						field: 'suggested_terms',
+					},
+				},
+			},
 			query: {
 				multi_match: {
 					query: searchTerm,
 					fuzziness: 'AUTO',
-					fields: ['title^8', 'shortDescription^4', 'description^2'],
+					fields: [
+						'title^8',
+						'shortDescription^4',
+						'description^2',
+						'learningOutcomes^2',
+					],
 				},
 			},
 			highlight: {
@@ -184,7 +262,13 @@ export async function elasticSearch(
 				let replace = suggestObj.text
 				let options = suggestObj.options
 
-				if (options && isArray(options) && options.length > 0) {
+				if (
+					options &&
+					isArray(options) &&
+					options.length > 0 &&
+					options[0].score > suggestThreshold &&
+					options[0].freq > 1
+				) {
 					suggestion = searchTerm.replace(replace, options[0].text)
 					searchTerm = suggestion
 				}
@@ -192,10 +276,20 @@ export async function elasticSearch(
 		}
 
 		for (let entry of res.hits.hits) {
+			// Don't show context if it's in the title
+			let searchText = striptags(
+				entry.highlight[Object.keys(entry.highlight)[0]][0],
+				'<em>'
+			)
+			let title = (entry._source as any).title
+			if (striptags(searchText) === title) {
+				title = searchText
+				searchText = ''
+			}
 			let searchResult: model.textSearchResult = {
-				uid: entry._id,
-				title: (entry._source as any).title,
-				searchText: entry.highlight[Object.keys(entry.highlight)[0]][0],
+				uid: (entry._source as any).uid,
+				title,
+				searchText,
 				weight: entry._score,
 			}
 

@@ -1,46 +1,44 @@
-<Page title="Search LPG">
-    <Layout page='Search'>
-        <div class="grid-row">
-            <div class="three-quarters">
-                <h1 class="heading-large">Search</h1>
+<Page title="Search">
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Search</h1>
 
-                <form method="GET">
-                    <div class="search-container">
-                        <label for="search-main">
-                            Search Civil Service Learning
-                        </label>
-                        <div class="search-wrapper">
-                            <input class="form-control" id="q" type="text" name="q" value="{{ query }}">
-                            <div class="submit-wrapper">
-                                <button type="submit" class="button">Search</button>
-                            </div>
+            <form method="GET">
+                <div class="search-container">
+                    <label for="search-main">
+                        Search Civil Service Learning
+                    </label>
+                    <div class="search-wrapper">
+                        <input class="form-control" id="q" type="text" name="q" value="{{ query }}">
+                        <div class="submit-wrapper">
+                            <button type="submit" class="button">Search</button>
                         </div>
                     </div>
-                </form>
-                {{#if searchResults && query}}
-                <div class="search-results">
-                    <h1 class="heading-large">{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{/if}}
-                        Search Results
-                    </h1>
-                    <span class="time"> In {{end }} seconds</span>
-                    {{#if searchResults.suggestion}}
-                    <span class="suggest">Did you mean
-                        <a href="search?q={{ searchResults.suggestion }}">{{ searchResults.suggestion }}</a>?
-                    </span>
-                    {{/if}}
-                    <ol>
-                        {{#if searchResults.entries && searchResults.entries.length}} {{#each searchResults.entries as course}}
-                        <li>
-                            <a href="/courses/{{course.uid}}">{{course.title}}</a>
-                            <div>
-                                {{{course.searchText}}}
-                            </div>
-                        </li>
-                        {{/each}} {{/if}}
-                    </ol>
                 </div>
+            </form>
+            {{#if searchResults && query}}
+            <div class="search-results">
+                <h1 class="heading-large">{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{/if}} Search
+                    Results
+                </h1>
+                <span class="time"> In {{end }} seconds</span>
+                {{#if searchResults.suggestion}}
+                <span class="suggest">Did you mean
+                    <a href="search?q={{ searchResults.suggestion }}">{{ searchResults.suggestion }}</a>?
+                </span>
                 {{/if}}
+                <ol>
+                    {{#if searchResults.entries && searchResults.entries.length}} {{#each searchResults.entries as course}}
+                    <li>
+                        <a href="/courses/{{course.uid}}">{{{course.title}}}</a>
+                        <div>
+                            {{{course.searchText}}}
+                        </div>
+                    </li>
+                    {{/each}} {{/if}}
+                </ol>
             </div>
+            {{/if}}
         </div>
-    </Layout>
+    </div>
 </Page>
