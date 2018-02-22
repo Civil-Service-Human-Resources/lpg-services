@@ -27,6 +27,17 @@ export class Frequency {
 	}
 }
 
+export class textSearchResult {
+	public readonly uid: string
+	public title: string
+	public searchText: string
+	public weight: number
+
+	constructor(uid: string) {
+		this.uid = uid
+	}
+}
+
 export class Course {
 	readonly uid: string
 	readonly type: string
