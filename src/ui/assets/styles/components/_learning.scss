@@ -18,6 +18,15 @@
 		text-align: center;
 		font-weight: 400;
 		margin: 5px 0;
+		@media (max-width: 640px) {
+			margin-left: 15px;
+		}
+	}
+
+	@include e(information) {
+		@media (max-width: 640px) {
+			clear: both;
+		}
 	}
 
 	@include e(information-desc) {
