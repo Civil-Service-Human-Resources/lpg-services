@@ -5,12 +5,94 @@ import * as path from 'path'
 import * as grpc from 'grpc'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
+import * as striptags from 'striptags'
+import * as elastic from 'elasticsearch'
+import {isArray} from 'util'
 
-const {DGRAPH_ENDPOINT = 'localhost:9080'} = process.env
+const {
+	DGRAPH_ENDPOINT = 'localhost:9080',
+	ELASTIC_ENDPOINT = 'http://127.0.01:9200',
+} = process.env
+
+const suggestThreshold = 0.7
+
+const elasticConfig = [
+	{
+		mappings: {
+			lpg: {
+				properties: {
+					description: {
+						type: 'text',
+						copy_to: 'suggested_terms',
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					learningOutcomes: {
+						type: 'text',
+
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					shortDescription: {
+						type: 'text',
+
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					tags: {
+						type: 'text',
+
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					title: {
+						type: 'text',
+						copy_to: 'suggested_terms',
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+					suggested_terms: {
+						type: 'text',
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+					},
+				},
+			},
+		},
+		settings: {
+			analysis: {
+				analyzer: {
+					default: {
+						type: 'standard',
+						stopwords: ['_english_'],
+					},
+				},
+			},
+		},
+	},
+]
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
-shortDescription: string .
+shortDescription: string @index(fulltext) .
 description: string .
 learningOutcomes: string .
 type: string .
@@ -22,6 +104,7 @@ price: string .
 requiredBy: dateTime .
 frequency: string .
 `
+const maxCopyLength = 80
 
 const client = new dgraph.DgraphClient(
 	new dgraph.DgraphClientStub(
@@ -30,10 +113,28 @@ const client = new dgraph.DgraphClient(
 	)
 )
 
+async function getElasticClient() {
+	let client = new elastic.Client({
+		hosts: [ELASTIC_ENDPOINT],
+	})
+
+	// check for existing index
+	await client.indices.exists({index: 'dgraph'}).then(function(res) {
+		let exists: boolean = res
+		if (!exists) {
+			client.indices.create({index: 'dgraph', body: elasticConfig[0]})
+		}
+	})
+
+	return client
+}
+
 export async function add(course: model.Course) {
 	const txn = client.newTxn()
+	const mu = new dgraph.Mutation()
+	let uid
+
 	try {
-		const mu = new dgraph.Mutation()
 		mu.setSetJson({
 			availability: course.availability || [],
 			description: course.description || '',
@@ -52,8 +153,25 @@ export async function add(course: model.Course) {
 		})
 		mu.setCommitNow(true)
 		const assigned = await txn.mutate(mu)
-		return assigned.getUidsMap().get('blank-0') || course.uid
+		uid = assigned.getUidsMap().get('blank-0') || course.uid
+		return uid
 	} finally {
+		// add to elastic search
+		let elasticClient = await getElasticClient()
+		let data: any = {}
+		let entry = mu.getSetJson()
+
+		for (let prop in entry) {
+			data[prop] = (entry as any)[prop]
+		}
+		data.uid = uid
+
+		await elasticClient.index({
+			index: 'dgraph',
+			type: 'lpg',
+			body: data,
+		})
+
 		await txn.discard()
 	}
 }
@@ -90,6 +208,91 @@ export async function get(uid: string) {
 	} finally {
 		await txn.discard()
 	}
+}
+
+export async function elasticSearch(
+	searchTerm: string
+): Promise<api.textSearchResponse> {
+	let query = {
+		size: 100,
+		index: 'dgraph',
+		body: {
+			suggest: {
+				text: searchTerm,
+				suggest_description: {
+					term: {
+						field: 'suggested_terms',
+					},
+				},
+			},
+			query: {
+				multi_match: {
+					query: searchTerm,
+					fuzziness: 'AUTO',
+					fields: [
+						'title^8',
+						'shortDescription^4',
+						'description^2',
+						'learningOutcomes^2',
+					],
+				},
+			},
+			highlight: {
+				fields: {
+					'*': {},
+				},
+			},
+		},
+	}
+	let elasticClient = await getElasticClient()
+
+	let search = await elasticClient.search(query).then(function(res) {
+		let suggestion = ''
+		let resp: model.textSearchResult[] = []
+		for (let suggest of Object.keys((res as any).suggest)
+			.sort()
+			.reverse()) {
+			for (let suggestObj of (res as any).suggest[suggest]) {
+				let replace = suggestObj.text
+				let options = suggestObj.options
+
+				if (
+					options &&
+					isArray(options) &&
+					options.length > 0 &&
+					options[0].score > suggestThreshold &&
+					options[0].freq > 1
+				) {
+					suggestion = searchTerm.replace(replace, options[0].text)
+					searchTerm = suggestion
+				}
+			}
+		}
+
+		for (let entry of res.hits.hits) {
+			// Don't show context if it's in the title
+			let searchText = striptags(
+				entry.highlight[Object.keys(entry.highlight)[0]][0],
+				'<em>'
+			)
+			let title = (entry._source as any).title
+			if (striptags(searchText) === title) {
+				title = searchText
+				searchText = ''
+			}
+			let searchResult: model.textSearchResult = {
+				uid: (entry._source as any).uid,
+				title,
+				searchText,
+				weight: entry._score,
+			}
+
+			resp.push(searchResult)
+		}
+		return {suggestion, resp}
+	})
+
+	return {suggestion: search.suggestion, entries: search.resp}
 }
 
 export async function search(
