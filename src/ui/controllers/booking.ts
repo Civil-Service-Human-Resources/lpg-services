@@ -1,9 +1,11 @@
 import * as express from 'express'
+import * as config from 'lib/config'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as template from 'lib/ui/template'
 import * as courseController from './course/index'
 import * as model from 'lib/model'
 import * as xapi from 'lib/xapi'
+import * as messenger from 'lib/service/messaging'
 
 export async function renderChooseDate(
 	req: express.Request,
@@ -162,6 +164,15 @@ export async function tryCompleteBooking(
 	})
 
 	req.session.save(() => {
+		if (config.BOOKING_ALERT_WEBHOOK) {
+			messenger.send(
+				`####BOOKING COMPLETE####\n\nuser ${req.user.id} completed booking on ${
+					req.course.uid
+				}`,
+				messenger.slack(config.BOOKING_ALERT_WEBHOOK)
+			)
+		}
+
 		res.send(
 			template.render('booking/confirmed', req, {
 				course,
@@ -205,6 +216,16 @@ export async function tryCancelBooking(
 
 	if (req.body['cancel-tc']) {
 		await xapi.record(req, course, xapi.Verb.Unregistered)
+
+		if (config.BOOKING_ALERT_WEBHOOK) {
+			messenger.send(
+				`####BOOKING CANCELED####\n\nuser ${req.user.id} canceled booking on ${
+					req.course.uid
+				}`,
+				messenger.slack(config.BOOKING_ALERT_WEBHOOK)
+			)
+		}
+
 		res.send(
 			template.render('booking/confirmed', req, {
 				course,
