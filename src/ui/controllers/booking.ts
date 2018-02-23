@@ -99,31 +99,6 @@ export async function renderConfirmPayment(
 	const dateSelected =
 		course.availability[req.session.bookingSession.dateSelected]
 
-	await xapi.send({
-		actor: {
-			mbox: `mailto:noone@cslearning.gov.uk`,
-			name: req.user.id,
-			objectType: 'Agent',
-		},
-		object: {
-			definition: {
-				type: 'http://adlnet.gov/expapi/activities/event',
-			},
-			id: `${config.XAPI.activityBaseUri}/${course.uid}/${dateSelected}`,
-			objectType: 'Activity',
-		},
-		result: {
-			po: req.session.bookingSession.po,
-			fap: req.session.bookingSession.fap,
-		},
-		verb: {
-			display: {
-				en: xapi.Labels[xapi.Verb.Registered],
-			},
-			id: xapi.Verb.Registered,
-		},
-	})
-
 	req.session.save(() => {
 		res.send(
 			template.render('booking/confirm-booking', req, {
@@ -141,6 +116,34 @@ export async function tryCompleteBooking(
 	res: express.Response
 ) {
 	req.session.bookingSession.bookingStep = 6
+
+	const course = req.course
+
+	await xapi.send({
+		actor: {
+			mbox: `mailto:noone@cslearning.gov.uk`,
+			name: req.user.id,
+			objectType: 'Agent',
+		},
+		object: {
+			definition: {
+				type: 'http://adlnet.gov/expapi/activities/event',
+			},
+			id: `${config.XAPI.activityBaseUri}/${course.uid}/${
+				req.session.bookingSession.dateSelected
+			}`,
+			objectType: 'Activity',
+		},
+		result: {
+			response: req.session.bookingSession.po || req.session.bookingSession.fap,
+		},
+		verb: {
+			display: {
+				en: xapi.Labels[xapi.Verb.Registered],
+			},
+			id: xapi.Verb.Registered,
+		},
+	})
 
 	req.session.save(() => {
 		res.send(template.render('booking/confirmed', req))
