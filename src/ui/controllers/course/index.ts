@@ -19,7 +19,7 @@ interface DataRow {
 
 const logger = log4js.getLogger('controllers/course')
 
-function getCourseDetails(
+export function getCourseDetails(
 	req: extended.CourseRequest,
 	course: model.Course
 ): CourseDetail[] {
@@ -96,10 +96,9 @@ export async function display(ireq: express.Request, res: express.Response) {
 			res.send(
 				template.render(`course/${course.type}`, req, {
 					course,
-					courseDetails: getCourseDetails(course),
+					courseDetails: getCourseDetails(req, course),
 				})
 			)
-
 			break
 		default:
 			logger.debug(`Unknown course type: (${course.type})`)

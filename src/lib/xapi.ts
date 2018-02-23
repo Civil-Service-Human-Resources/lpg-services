@@ -9,6 +9,9 @@ export interface Statement {
 		objectType: 'Agent'
 	}
 	object: {
+		definition?: {
+			type: string
+		}
 		id: string
 		objectType: 'Activity' | 'StatementRef'
 	}
@@ -29,6 +32,7 @@ export const Verb = {
 	Passed: 'http://adlnet.gov/expapi/verbs/passed',
 	PlayedVideo: 'https://w3id.org/xapi/video/verbs/played',
 	Progressed: 'http://adlnet.gov/expapi/verbs/progressed',
+	Registered: 'http://adlnet.gov/expapi/verbs/registered',
 	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
 }
@@ -40,6 +44,7 @@ export const Labels: Record<string, string> = {
 	[Verb.Passed]: 'passed',
 	[Verb.PlayedVideo]: 'played video',
 	[Verb.Progressed]: 'progressed',
+	[Verb.Registered]: 'registered',
 	[Verb.Terminated]: 'terminated',
 	[Verb.Viewed]: 'viewed',
 }
