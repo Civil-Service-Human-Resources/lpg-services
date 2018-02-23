@@ -56,6 +56,11 @@ export const URL = set(
 	`https://lpg.${PROFILE}.cshr.digital/sign-in`
 )
 
+export const BASE_URL = set(
+	'https://lpg.local.cshr.digital:3001',
+	`https://lpg.${PROFILE}.cshr.digital`
+)
+
 export const USERNAME = 'test@lpg.dev.cshr.digital'
 
 export const XAPI_URL = env.XAPI_URL || 'http://localhost:8083/data/xAPI'
