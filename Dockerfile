@@ -29,6 +29,7 @@ COPY src src
 
 # Runtime environment variables
 ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
+  BOOKING_ALERT_WEBHOOK="" \
   LEARNER_RECORD_SERVICE_URL=http://localhost:9000 \
   LPG_UI_SERVER=lpg.local.cshr.digital \
   NODE_ENV=production \

@@ -116,3 +116,5 @@ export const LEARNER_RECORD = set({
 })
 
 export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
+
+export const BOOKING_ALERT_WEBHOOK = env.BOOKING_ALERT_WEBHOOK
