@@ -43,6 +43,13 @@ export async function getText(
 	}, selector)
 }
 
+// export function returnAll(locator: string){
+// 	const results = []
+// 	const elems = document.evaluate(locator => {}
+
+// 	let next = elems.itr
+// }
+
 export async function returnElementAttribute(
 	selector: string,
 	attri: string,
@@ -72,6 +79,23 @@ export async function getSession(name?: string) {
 		sessions[name] = session
 	}
 	return session
+}
+
+export function xpath(locator: string) {
+	const elems = document.evaluate(
+		locator,
+		document.body,
+		null,
+		XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+		null
+	)
+	const results = []
+	let next = elems.iterateNext()
+	while (next) {
+		results.push(next)
+		next = elems.iterateNext()
+	}
+	return results
 }
 
 export class Session {
