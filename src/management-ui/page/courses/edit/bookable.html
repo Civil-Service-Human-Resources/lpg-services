@@ -70,7 +70,7 @@
                     </label>
                     {{#each (course.availability || []) as availability, i}}
                     <div class="availability">
-                        <input class="form-control form-control-2-3" name="availability.{{i}}" type="date" value="{{ availability.toISOString().slice(0,10) }}">
+                        <input class="form-control form-control-2-3" name="availability.{{i}}" type="date" value="{{ new Date(availability).toISOString().slice(0,10) }}">
                     </div>
                     {{/each}}
                     <div class="availability">
