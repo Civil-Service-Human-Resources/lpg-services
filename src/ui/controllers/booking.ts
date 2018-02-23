@@ -105,6 +105,7 @@ export async function renderConfirmPayment(
 				breadcrumbs: getBreadcrumbs(req),
 				course,
 				courseDetails: courseController.getCourseDetails(req, course),
+				dateIndex: req.session.bookingSession.dateSelected,
 				dateSelected,
 			})
 		)
@@ -146,8 +147,42 @@ export async function tryCompleteBooking(
 	})
 
 	req.session.save(() => {
-		res.send(template.render('booking/confirmed', req))
+		res.send(
+			template.render('booking/confirmed', req, {
+				message: confirmedMessage.Booked,
+			})
+		)
 	})
+}
+
+export async function renderCancelBookingPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const course = req.course
+
+	res.send(
+		template.render('booking/cancel-booking', req, {
+			breadcrumbs: getBreadcrumbs(req),
+			course: course,
+		})
+	)
+}
+
+enum confirmedMessage {
+	Booked = 'Booking request submitted',
+	Cancelled = 'Booking request cancelled',
+}
+
+export async function tryCancelBooking(
+	req: express.Request,
+	res: express.Response
+) {
+	res.send(
+		template.render('booking/confirmed', req, {
+			message: confirmedMessage.Cancelled,
+		})
+	)
 }
 
 interface BookingBreadcrumb {
