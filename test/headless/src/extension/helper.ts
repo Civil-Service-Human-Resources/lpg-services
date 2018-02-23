@@ -11,6 +11,14 @@ declare var browser: PrivateBrowser
 
 const sessions: Record<string, Session> = {}
 
+export async function checkHidden(selector: string, page: puppeteer.Page) {
+	return page.evaluate(selector => {
+		const e = document.querySelector(selector)
+		const style = window.getComputedStyle(e)
+		return style.display
+	}, selector)
+}
+
 export async function checkElementIsPresent(
 	selector: string,
 	page: puppeteer.Page
@@ -42,13 +50,6 @@ export async function getText(
 		return e.innerText
 	}, selector)
 }
-
-// export function returnAll(locator: string){
-// 	const results = []
-// 	const elems = document.evaluate(locator => {}
-
-// 	let next = elems.itr
-// }
 
 export async function returnElementAttribute(
 	selector: string,
