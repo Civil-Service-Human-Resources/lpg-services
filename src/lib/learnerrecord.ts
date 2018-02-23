@@ -26,7 +26,7 @@ export async function getLearningRecordOf(
 	const courses = []
 	for (const record of response.data.records) {
 		const activityId = record.activityId
-		const courseId = activityId.substring(activityId.lastIndexOf('/') + 1)
+		const courseId = activityId.match(/courses\/([^\/]+)/)[1]
 		const course = await catalog.get(courseId)
 		if (!course) {
 			logger.warn(

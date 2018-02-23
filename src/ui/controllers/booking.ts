@@ -102,6 +102,7 @@ export async function renderConfirmPayment(
 	req.session.save(() => {
 		res.send(
 			template.render('booking/confirm-booking', req, {
+				availabilityUid: req.session.bookingSession.dateSelected,
 				breadcrumbs: getBreadcrumbs(req),
 				course,
 				courseDetails: courseController.getCourseDetails(req, course),
