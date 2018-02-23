@@ -73,3 +73,9 @@
 		}
 	}
 }
+
+.cancel {
+	@include e(return) {
+		float: right;
+	}
+}

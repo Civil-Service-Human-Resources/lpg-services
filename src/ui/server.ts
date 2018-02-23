@@ -131,14 +131,8 @@ app.get(
 	bookingController.tryCompleteBooking
 )
 
-app.get(
-	'/cancel/:courseId/:availabilityUid',
-	bookingController.renderCancelBookingPage
-)
-app.post(
-	'/cancel/:courseId/:availabilityUid',
-	bookingController.tryCancelBooking
-)
+app.get('/cancel/:courseId', bookingController.renderCancelBookingPage)
+app.post('/cancel/:courseId', bookingController.tryCancelBooking)
 
 app.use(
 	(

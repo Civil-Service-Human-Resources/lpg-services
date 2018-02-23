@@ -33,6 +33,7 @@ export const Verb = {
 	PlayedVideo: 'https://w3id.org/xapi/video/verbs/played',
 	Progressed: 'http://adlnet.gov/expapi/verbs/progressed',
 	Registered: 'http://adlnet.gov/expapi/verbs/registered',
+	Unregistered: 'http://adlnet.gov/expapi/verbs/unregistered',
 	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
 }
@@ -45,6 +46,7 @@ export const Labels: Record<string, string> = {
 	[Verb.PlayedVideo]: 'played video',
 	[Verb.Progressed]: 'progressed',
 	[Verb.Registered]: 'registered',
+	[Verb.Unregistered]: 'unregistered',
 	[Verb.Terminated]: 'terminated',
 	[Verb.Viewed]: 'viewed',
 }

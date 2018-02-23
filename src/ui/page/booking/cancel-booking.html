@@ -8,20 +8,23 @@
     </div>
     <div class="grid-row">
         <div class="column-two-thirds">
-            {{signedInUser.givenName}}
-            {{course.availability}}
+            {{#if cancelBookingFailed }}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                        Error
+                    </h2>
+                    <p>You must enter agree to the Terms &amp; Conditions to cancel this booking</p>
+                </div>
+            {{/if}}
             <ul class="cancel__list">
                 <li class="cancel__li">
-
-                </li>
-                 <li class="cancel__li">
-
+                    {{signedInUser.givenName}}
                 </li>
 
             </ul>
-            <form>
+            <form method="post">
                 <div class="multiple-choice">
-                  <input id="cancel-tc" name="contact-by-text-phone" type="checkbox" value="true">
+                  <input id="cancel-tc" name="cancel-tc" type="checkbox">
                   <label for="cancel-tc">I agree to the Terms &amp; Conditions and wish to continue with the cancellation of this Course</label>
                 </div>
                 <input class="button" type="submit" value="Cancel Booking">

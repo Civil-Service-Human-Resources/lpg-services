@@ -150,6 +150,7 @@ export async function tryCompleteBooking(
 		res.send(
 			template.render('booking/confirmed', req, {
 				message: confirmedMessage.Booked,
+				course,
 			})
 		)
 	})
@@ -165,6 +166,7 @@ export async function renderCancelBookingPage(
 		template.render('booking/cancel-booking', req, {
 			breadcrumbs: getBreadcrumbs(req),
 			course: course,
+			cancelBookingFailed: false,
 		})
 	)
 }
@@ -178,11 +180,25 @@ export async function tryCancelBooking(
 	req: express.Request,
 	res: express.Response
 ) {
-	res.send(
-		template.render('booking/confirmed', req, {
-			message: confirmedMessage.Cancelled,
-		})
-	)
+	const course = req.course
+
+	if (req.body['cancel-tc']) {
+		await xapi.record(req, course.uid, xapi.Verb.Unregistered)
+		res.send(
+			template.render('booking/confirmed', req, {
+				message: confirmedMessage.Cancelled,
+				course,
+			})
+		)
+	} else {
+		res.send(
+			template.render('booking/cancel-booking', req, {
+				breadcrumbs: getBreadcrumbs(req),
+				cancelBookingFailed: true,
+				course,
+			})
+		)
+	}
 }
 
 interface BookingBreadcrumb {
