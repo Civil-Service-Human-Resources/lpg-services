@@ -21,10 +21,14 @@ export let loadCourse = async (
 ) => {
 	const courseId: string = req.params.courseId
 	if (courseId === 'new') {
-		req.course = req.session.course || {}
+		if (req.session.course) {
+			req.course = model.Course.create(req.session.course)
+		} else {
+			req.course = {}
+		}
 	} else {
 		if (req.session.course && req.session.course.uid === courseId) {
-			req.course = req.session.course
+			req.course = model.Course.create(req.session.course)
 		} else {
 			req.course = await catalog.get(courseId)
 		}
