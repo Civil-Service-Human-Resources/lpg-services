@@ -57,7 +57,8 @@ describe('profile page functionality', () => {
 
 	it('Should hide hide two text fields and a send button when feedback link is clicked', async () => {
 		await page.click(selectors.feedbackPrompt)
-		//expect()
+		const display = await helper.checkHidden(selectors.feedbackDetails, page)
+		expect(display).toEqual('none')
 	})
 
 	it('Should send feedback when the information is entered and submitted', async () => {
