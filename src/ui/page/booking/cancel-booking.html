@@ -1,0 +1,32 @@
+<Page title="Cancel Booking">
+    <div class="grid-row">
+        <div class="column-full">
+            <Breadcrumb :breadcrumbs />
+            <h2 class="heading-medium">Booking a course</h2>
+            <h1 class="heading-large">Cancel Course Request</h1>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {{signedInUser.givenName}}
+            {{course.availability}}
+            <ul class="cancel__list">
+                <li class="cancel__li">
+
+                </li>
+                 <li class="cancel__li">
+
+                </li>
+
+            </ul>
+            <form>
+                <div class="multiple-choice">
+                  <input id="cancel-tc" name="contact-by-text-phone" type="checkbox" value="true">
+                  <label for="cancel-tc">I agree to the Terms &amp; Conditions and wish to continue with the cancellation of this Course</label>
+                </div>
+                <input class="button" type="submit" value="Cancel Booking">
+                <a href="/courses/{{ course.uid }}" class="cancel__return">Return</a>
+            </form>
+        </div>
+    </div>
+</Page>
