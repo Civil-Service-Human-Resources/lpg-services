@@ -112,8 +112,10 @@ app.get('/suggested-for-you', searchController.suggestedForYou)
 app.get('/home', homeController.home)
 
 app.get('/book/:courseId/choose-date', bookingController.renderChooseDate)
-
 app.post('/book/:courseId/choose-date', bookingController.selectedDate)
+
+app.get('/book/:courseId/cancel', bookingController.renderCancelBookingPage)
+app.post('/book/:courseId/cancel', bookingController.tryCancelBooking)
 
 app.get(
 	'/book/:courseId/:availabilityUid',
@@ -130,12 +132,9 @@ app.get(
 )
 
 app.get(
-	'/book/:courseId/:availabilityUid/confirmed',
+	'/book/:courseId/:availabilityUid/complete',
 	bookingController.tryCompleteBooking
 )
-
-app.get('/cancel/:courseId', bookingController.renderCancelBookingPage)
-app.post('/cancel/:courseId', bookingController.tryCancelBooking)
 
 app.use(
 	(

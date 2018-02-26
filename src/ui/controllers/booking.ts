@@ -1,6 +1,5 @@
 import * as express from 'express'
-import * as config from 'lib/config'
-import * as dateTime from 'lib/datetime'
+import * as learnerRecord from 'lib/learnerrecord'
 import * as template from 'lib/ui/template'
 import * as courseController from './course/index'
 import * as model from 'lib/model'
@@ -120,6 +119,9 @@ export async function tryCompleteBooking(
 	req.session.bookingSession.bookingStep = 6
 
 	const course = req.course
+	course.selectedDate =
+		course.availability[req.session.bookingSession.dateSelected]
+
 	const extensions = {}
 
 	if (req.session.bookingSession.po) {
@@ -139,7 +141,7 @@ export async function tryCompleteBooking(
 		context: {
 			contextActivities: {
 				parent: {
-					id: `${config.XAPI.activityBaseUri}/${course.uid}`,
+					id: course.getParentActivityId(),
 				},
 			},
 		},
@@ -148,9 +150,7 @@ export async function tryCompleteBooking(
 				extensions,
 				type: 'http://adlnet.gov/expapi/activities/event',
 			},
-			id: `${config.XAPI.activityBaseUri}/${course.uid}/${
-				course.availability[req.session.bookingSession.dateSelected].toISOString().slice(0, 10)
-			}`,
+			id: course.getActivityId(),
 			objectType: 'Activity',
 		},
 		verb: {
@@ -164,8 +164,8 @@ export async function tryCompleteBooking(
 	req.session.save(() => {
 		res.send(
 			template.render('booking/confirmed', req, {
-				message: confirmedMessage.Booked,
 				course,
+				message: confirmedMessage.Booked,
 			})
 		)
 	})
@@ -179,9 +179,8 @@ export async function renderCancelBookingPage(
 
 	res.send(
 		template.render('booking/cancel-booking', req, {
-			breadcrumbs: getBreadcrumbs(req),
-			course: course,
 			cancelBookingFailed: false,
+			course,
 		})
 	)
 }
@@ -196,19 +195,25 @@ export async function tryCancelBooking(
 	res: express.Response
 ) {
 	const course = req.course
+	const record = await learnerRecord.getCourseRecord(req.user, course)
+
+	if (!record.selectedDate) {
+		res.redirect('/')
+		return
+	}
+	course.selectedDate = record.selectedDate
 
 	if (req.body['cancel-tc']) {
-		await xapi.record(req, course.uid, xapi.Verb.Unregistered)
+		await xapi.record(req, course, xapi.Verb.Unregistered)
 		res.send(
 			template.render('booking/confirmed', req, {
-				message: confirmedMessage.Cancelled,
 				course,
+				message: confirmedMessage.Cancelled,
 			})
 		)
 	} else {
 		res.send(
 			template.render('booking/cancel-booking', req, {
-				breadcrumbs: getBreadcrumbs(req),
 				cancelBookingFailed: true,
 				course,
 			})

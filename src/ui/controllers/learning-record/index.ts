@@ -77,7 +77,7 @@ export async function record(req: express.Request, res: express.Response) {
 		return
 	}
 	try {
-		await xapi.record(req, courseId, verbId, value)
+		await xapi.record(req, course, verbId, value)
 	} catch (err) {
 		logger.error(err.toString())
 		res.sendStatus(500)
