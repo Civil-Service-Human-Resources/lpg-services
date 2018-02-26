@@ -15,7 +15,6 @@ import * as homeController from './controllers/home'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as resetCourseController from './controllers/course/reset'
-import * as path from 'path'
 
 log4js.configure(config.LOGGING)
 
