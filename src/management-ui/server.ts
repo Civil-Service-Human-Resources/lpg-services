@@ -8,11 +8,14 @@ import * as log4js from 'log4js'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
+import * as path from 'path'
+import * as favicon from 'serve-favicon'
 
 import * as homeController from './controllers/home'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as resetCourseController from './controllers/course/reset'
+import * as path from 'path'
 
 log4js.configure(config.LOGGING)
 
@@ -49,6 +52,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(compression({threshold: 0}))
 
 app.use(serveStatic('assets'))
+app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
 app.get('/', homeController.index)
 app.get('/courses', displayCourseController.index)

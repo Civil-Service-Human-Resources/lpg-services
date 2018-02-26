@@ -69,6 +69,7 @@
 		"protobufjs": "6.8.4",
 		"request": "2.83.0",
 		"request-promise": "4.2.2",
+		"serve-favicon": "^2.4.5",
 		"session-file-store": "1.2.0",
 		"svelte": "1.55.0",
 		"unzip": "0.1.11",
