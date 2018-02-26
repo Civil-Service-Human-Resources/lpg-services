@@ -21,6 +21,7 @@ location: string .
 price: string .
 requiredBy: dateTime .
 frequency: string .
+productCode: string .
 `
 
 const client = new dgraph.DgraphClient(
@@ -42,6 +43,7 @@ export async function add(course: model.Course) {
 			learningOutcomes: course.learningOutcomes || '',
 			location: course.location || '',
 			price: course.price || '',
+			productCode: course.productCode || '',
 			requiredBy: course.requiredBy,
 			shortDescription: course.shortDescription || '',
 			tags: course.tags || [],
@@ -79,6 +81,7 @@ export async function get(uid: string) {
 				price
 				requiredBy
 				frequency
+				productCode
 			}
 		}`
 		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
@@ -199,6 +202,7 @@ export async function listAll(
 			price
 			requiredBy
 			frequency
+			productCode
 		}
 	}`
 	const qresp = await client.newTxn().query(query)
@@ -267,6 +271,7 @@ export async function findRequiredLearning(
 			price
 			requiredBy
 			frequency
+			productCode
 		}
 	}`
 	const qresp = await client.newTxn().queryWithVars(query, {
@@ -314,6 +319,7 @@ export async function findSuggestedLearning(
 			price
 			requiredBy
 			frequency
+			productCode
 		}
 	}`
 	const qresp = await client.newTxn().queryWithVars(query, {

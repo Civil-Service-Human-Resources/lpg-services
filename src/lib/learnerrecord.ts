@@ -20,7 +20,7 @@ export async function getLearningRecordOf(
 		params: {
 			state: courseState,
 		},
-		url: `${config.LEARNER_RECORD.url}/record/${user.id}`,
+		url: `${config.LEARNER_RECORD.url}/records/${user.id}`,
 	})
 
 	const courses = []
@@ -56,7 +56,7 @@ export async function getCourseRecord(user: model.User, course: model.Course) {
 		params: {
 			activityId: course.getActivityId(),
 		},
-		url: `${config.LEARNER_RECORD.url}/record/${user.id}`,
+		url: `${config.LEARNER_RECORD.url}/records/${user.id}`,
 	})
 	if (response.data.records.length > 0) {
 		const record = response.data.records[0]
@@ -71,4 +71,42 @@ export async function getCourseRecord(user: model.User, course: model.Course) {
 		return record
 	}
 	return null
+}
+
+export async function getRegistrations() {
+	const response = await axios({
+		method: 'get',
+		url: `${config.LEARNER_RECORD.url}/registrations`,
+	})
+	const registrations: Registration[] = []
+	for (const data of response.data.registrations) {
+		const uriParts = data.activityId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
+		const courseId = uriParts[1]
+		const selectedDate = uriParts[3]
+		const course = await catalog.get(courseId)
+		if (!course) {
+			logger.warn(
+				`LRS data for course that doesn't exist. course URI: ${data.activityId}`
+			)
+			continue
+		}
+		registrations.push({
+			activityId: data.activityId,
+			course,
+			lastUpdated: new Date(data.lastUpdated),
+			selectedDate: new Date(selectedDate),
+			state: data.state,
+			userId: data.userId,
+		})
+	}
+	return registrations
+}
+
+export interface Registration {
+	activityId: string
+	course: model.Course
+	lastUpdated: Date
+	selectedDate: Date
+	state: string
+	userId: string
 }

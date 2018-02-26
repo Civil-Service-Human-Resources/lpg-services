@@ -24,10 +24,16 @@ export async function renderChooseDate(
 
 	req.session.save(() => {
 		const breadcrumbs = getBreadcrumbs(req)
+		const today = new Date()
+		const courseAvailability = course.availability
+			.filter(availability => availability > today)
+			.sort((a, b) => a > b)
+
 		res.send(
 			template.render('booking/choose-date', req, {
 				breadcrumbs,
 				course,
+				courseAvailability,
 				courseDetails: courseController.getCourseDetails(req, course),
 			})
 		)
@@ -75,7 +81,7 @@ export function enteredPaymentDetails(
 		})
 	} else if (
 		req.body['financial-approver'] &&
-		/\S/.test(req.body['financial-approver'])
+		/^\S+@\S+$/.test(req.body['financial-approver'])
 	) {
 		req.session.bookingSession.fap = req.body['financial-approver']
 		req.session.save(() => {
