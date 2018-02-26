@@ -11,13 +11,17 @@
                 </a>
             {{/if}}
             {{#if course.state}}
-                {{#if course.type === 'elearning'}}
-                <a href="/courses/{{course.uid}}/do">Resume</a>
+                {{#if course.type === 'face-to-face'}}
+                    <a href="/book/{{course.uid}}/cancel">Cancel</a>
                 {{else}}
-                <a href="/courses/{{course.uid}}">Resume</a>
-                {{/if}}
-                {{#if !course.isRequired(signedInUser)}}
-                <a href="/courses/{{course.uid}}/delete">Delete</a>
+                    {{#if course.type === 'elearning'}}
+                        <a href="/courses/{{course.uid}}/do">Resume</a>
+                    {{else}}
+                        <a href="/courses/{{course.uid}}">Resume</a>
+                    {{/if}}
+                    {{#if !course.isRequired(signedInUser)}}
+                        <a href="/courses/{{course.uid}}/delete">Delete</a>
+                    {{/if}}
                 {{/if}}
             {{/if}}
         </div>
@@ -29,11 +33,14 @@
                 {{#if course.requiredBy}}
                     Required by {{formatDate(course.nextRequiredBy())}}
                 {{/if}}
+                {{#if course.selectedDate}}
+                    Registered for {{formatDate(course.selectedDate)}}
+                {{/if}}
             </p>
 
             <ul class="learning__information-list">
                 <li>{{i18n(course.type)}}</li>
-                <li>{{course.type == 'video' ? new Date(course.duration * 1000).toTimeString().replace(/.*(\d{2}:\d{2}).*/, "$1") : course.duration}}</li>
+                <li>{{course.duration}}</li>
             </ul>
         </div>
     </div>

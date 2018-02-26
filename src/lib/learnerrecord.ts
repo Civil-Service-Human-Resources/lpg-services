@@ -26,7 +26,9 @@ export async function getLearningRecordOf(
 	const courses = []
 	for (const record of response.data.records) {
 		const activityId = record.activityId
-		const courseId = activityId.match(/courses\/([^\/]+)/)[1]
+		const uriParts = activityId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
+		const courseId = uriParts[1]
+		const selectedDate = uriParts[3]
 		const course = await catalog.get(courseId)
 		if (!course) {
 			logger.warn(
@@ -39,6 +41,7 @@ export async function getLearningRecordOf(
 		course.completionDate = record.completionDate
 			? new Date(record.completionDate)
 			: null
+		course.selectedDate = selectedDate ? new Date(selectedDate) : null
 		course.result = record.result
 		course.score = record.score
 		course.state = record.state
@@ -51,14 +54,19 @@ export async function getCourseRecord(user: model.User, course: model.Course) {
 	const response = await axios({
 		method: 'get',
 		params: {
-			activityId: `${config.XAPI.activityBaseUri}/${course.uid}`,
+			activityId: course.getActivityId(),
 		},
 		url: `${config.LEARNER_RECORD.url}/record/${user.id}`,
 	})
 	if (response.data.records.length > 0) {
 		const record = response.data.records[0]
+		const uriParts = record.activityId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
+		const selectedDate = uriParts[3]
 		if (record.completionDate) {
 			record.completionDate = new Date(record.completionDate)
+		}
+		if (selectedDate) {
+			record.selectedDate = new Date(selectedDate)
 		}
 		return record
 	}

@@ -1,3 +1,5 @@
+import * as config from 'lib/config'
+
 export class Frequency {
 	static FiveYearly: 'five-yearly'
 	static ThreeYearly: 'two-yearly'
@@ -35,6 +37,7 @@ export class Course {
 	public description: string
 	public learningOutcomes: string
 	public duration: string
+	public productCode: string
 
 	public availability?: Date[]
 	public location?: string
@@ -46,11 +49,24 @@ export class Course {
 	public completionDate?: Date
 	public result?: any
 	public score?: string
+	public selectedDate?: Date
 	public state?: string
 
 	constructor(uid: string, type: string) {
 		this.uid = uid
 		this.type = type
+	}
+
+	getActivityId() {
+		let activityId = this.getParentActivityId()
+		if (this.selectedDate) {
+			activityId += `/${this.selectedDate.toISOString().slice(0, 10)}`
+		}
+		return activityId
+	}
+
+	getParentActivityId() {
+		return `${config.XAPI.activityBaseUri}/${this.uid}`
 	}
 
 	isRequired(user: User) {

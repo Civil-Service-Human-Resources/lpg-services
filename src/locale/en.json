@@ -11,7 +11,15 @@
 	"courseResult.passed": "Passed",
 	"courseResult.failed": "Failed",
 	"courseResult.complete": "Course complete",
+	"face-to-face": "Face to face",
+	"link": "Link",
+	"registered": "Registered",
 	"bookable": "bookable",
-	"link": "link",
-	"registered": "registered"
+	"Duration": "Duration",
+	"Price": "Price",
+	"all": "all",
+	"Level": "Level",
+	"Key area": "Key area",
+	"Location": "Location",
+	"unregistered": "unregistered"
 }
