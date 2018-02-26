@@ -1,10 +1,10 @@
 import * as express from 'express'
 import * as config from 'lib/config'
+import * as dateTime from 'lib/datetime'
 import * as template from 'lib/ui/template'
 import * as courseController from './course/index'
 import * as model from 'lib/model'
 import * as xapi from 'lib/xapi'
-import {Labels} from 'lib/xapi'
 
 export async function renderChooseDate(
 	req: express.Request,
@@ -120,6 +120,15 @@ export async function tryCompleteBooking(
 	req.session.bookingSession.bookingStep = 6
 
 	const course = req.course
+	const extensions = {}
+
+	if (req.session.bookingSession.po) {
+		extensions[xapi.Extension.PurchaseOrder] = req.session.bookingSession.po
+	}
+	if (req.session.bookingSession.fap) {
+		extensions[xapi.Extension.FinancialApprover] =
+			req.session.bookingSession.fap
+	}
 
 	await xapi.send({
 		actor: {
@@ -127,17 +136,22 @@ export async function tryCompleteBooking(
 			name: req.user.id,
 			objectType: 'Agent',
 		},
+		context: {
+			contextActivities: {
+				parent: {
+					id: `${config.XAPI.activityBaseUri}/${course.uid}`,
+				},
+			},
+		},
 		object: {
 			definition: {
+				extensions,
 				type: 'http://adlnet.gov/expapi/activities/event',
 			},
 			id: `${config.XAPI.activityBaseUri}/${course.uid}/${
-				req.session.bookingSession.dateSelected
+				course.availability[req.session.bookingSession.dateSelected].toISOString().slice(0, 10)
 			}`,
 			objectType: 'Activity',
-		},
-		result: {
-			response: req.session.bookingSession.po || req.session.bookingSession.fap,
 		},
 		verb: {
 			display: {

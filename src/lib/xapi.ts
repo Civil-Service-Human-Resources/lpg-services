@@ -8,8 +8,16 @@ export interface Statement {
 		name: string
 		objectType: 'Agent'
 	}
+	context: {
+		contextActivities: {
+			parent: {
+				id: string
+			}
+		}
+	}
 	object: {
 		definition?: {
+			extensions: any
 			type: string
 		}
 		id: string
@@ -23,6 +31,11 @@ export interface Statement {
 		}
 		id: string
 	}
+}
+
+export const Extension = {
+	FinancialApprover: 'http://cslearning.gov.uk/extension/finanacialApprover',
+	PurchaseOrder: 'http://cslearning.gov.uk/extension/purhaseOrder',
 }
 
 export const Verb = {
