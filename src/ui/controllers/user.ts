@@ -32,14 +32,19 @@ function renderSignIn(req: express.Request, props: SignIn) {
 	return template.render('account/sign-in', req, props)
 }
 
-function updateUserObject(req: express.Request, updatedProfile: model.User) {
+async function updateUserObject(
+	req: express.Request,
+	updatedProfile: model.User
+) {
 	const cshrUserObject = updatedProfile.CshrUser
 	const newUser = {
 		...req.user,
 		givenName: updatedProfile.name.givenName,
 		...cshrUserObject,
 	}
-	req.login(newUser, () => {})
+	await new Promise(resolve => {
+		req.login(newUser, resolve)
+	})
 }
 
 function validateForm(req: express.Request) {
@@ -114,7 +119,10 @@ export function tryUpdateProfile(req: express.Request, res: express.Response) {
 	}
 }
 
-export function updateProfile(req: express.Request, res: express.Response) {
+export async function updateProfile(
+	req: express.Request,
+	res: express.Response
+) {
 	const updateProfileObject = {
 		CshrUser: {
 			department: req.body.department,
@@ -135,18 +143,21 @@ export function updateProfile(req: express.Request, res: express.Response) {
 			'Content-Type': 'application/json',
 		},
 	}
-	http
-		.put('/scim2/Users/' + req.user.id, updateProfileObject, options)
-		.then(response => {
-			updateUserObject(req, JSON.parse(response.config.data))
-			res.redirect('/profile-updated')
-		})
-		.catch(error => {
-			res.send(
-				renderProfile(req, {
-					identityServerFailed: true,
-					user: req.user,
-				})
-			)
-		})
+
+	try {
+		const response = await http.put(
+			`/scim2/Users/${req.user.id}`,
+			updateProfileObject,
+			options
+		)
+		await updateUserObject(req, JSON.parse(response.config.data))
+		res.redirect('/profile-updated')
+	} catch (e) {
+		res.send(
+			renderProfile(req, {
+				identityServerFailed: true,
+				user: req.user,
+			})
+		)
+	}
 }

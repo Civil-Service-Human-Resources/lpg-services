@@ -18,13 +18,13 @@ mkdir ui/assets
 
 
 cd "$dist/management-ui/assets"
-ln -s ../../src/management-ui/assets/js
-ln -s ../../src/management-ui/assets/img
+
+ln -s ../../../src/management-ui/assets/img .
 
 cd "$dist/management-ui"
 
-ln -s ../../src/management-ui/component .
-ln -s ../../src/management-ui/page .
+ln -s ../../src/management-ui/component
+ln -s ../../src/management-ui/page
 
 cd "$dist/ui/assets"
 

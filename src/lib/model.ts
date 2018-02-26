@@ -120,6 +120,7 @@ export class Course {
 		course.learningOutcomes = data.learningOutcomes
 		course.location = data.location
 		course.price = data.price
+		course.productCode = data.productCode
 		course.requiredBy = data.requiredBy ? new Date(data.requiredBy) : null
 		course.shortDescription = data.shortDescription
 		course.tags = data.tags
