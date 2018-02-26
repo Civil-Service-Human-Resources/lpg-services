@@ -15,6 +15,7 @@ import * as homeController from './controllers/home'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as resetCourseController from './controllers/course/reset'
+import * as bookingsController from './controllers/bookings/index'
 
 log4js.configure(config.LOGGING)
 
@@ -62,6 +63,7 @@ app.param('courseId', editCourseController.loadCourse)
 app.get('/courses/:courseId/edit', editCourseController.editCourse)
 app.post('/courses/:courseId/edit', editCourseController.doEditCourse)
 app.get('/courses/:courseId', displayCourseController.displayCourse)
+app.get('/bookings', bookingsController.index)
 
 app.use(
 	(
