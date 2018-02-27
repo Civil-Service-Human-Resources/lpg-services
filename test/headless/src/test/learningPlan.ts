@@ -12,7 +12,7 @@ function genUserEmail() {
 
 let TEST_USERNAME = genUserEmail()
 
-describe('profile page functionality', () => {
+describe('learning page functionality', () => {
 	let page: puppeteer.Page
 
 	wrappedBeforeAll(async () => {
@@ -37,7 +37,7 @@ describe('profile page functionality', () => {
 
 	it('Should display the required learning section', async () => {
 		expect(
-			await helper.checkElementIsPresent(selectors.requiredLearingSection, page)
+			await helper.checkElementIsPresent(selectors.requiredSection, page)
 		).toBe(true)
 	})
 
