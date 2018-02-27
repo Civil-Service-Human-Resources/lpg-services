@@ -55,7 +55,7 @@ export const AUTHENTICATION = set({
 		'https://identity.local.cshr.digital:9443',
 })
 
-export const FEEDBACK_RECIPIENTS = ['max@cautionyourblast.com', 'rich@cautionyourblast.com']
+export const FEEDBACK_RECIPIENTS = ['max@cautionyourblast.com', 'richard@cautionyourblast.com']
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
 
