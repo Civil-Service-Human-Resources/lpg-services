@@ -33,7 +33,7 @@ describe('profile page functionality', () => {
 		await createUser(TEST_USERNAME, config.TEST_PASSWORD)
 		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
 		await page.waitFor(selectors.signoutButton, {timeout: 10000})
-		await page.goto('https://lpg.demo.cshr.digital/profile')
+		await page.goto(config.BASE_URL + '/profile')
 	})
 
 	wrappedAfterAll(async () => {
