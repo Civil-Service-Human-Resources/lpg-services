@@ -16,6 +16,7 @@ describe('login page functionality', () => {
 			username: config.BASIC_AUTH_USERNAME,
 			password: config.BASIC_AUTH_PASSWORD,
 		})
+		console.log('URL>>>>>>>>>>', config.URL)
 		await page.goto(config.URL)
 	})
 
@@ -87,7 +88,7 @@ describe('login page functionality', () => {
 
 	it('Should login to the CSL portal', async () => {
 		await loginToCsl(page, config.USERNAME, config.PASSWORD)
-		await page.waitFor(selectors.homeNavButton, {timeout: 9500})
+		await page.waitFor(selectors.homeNavButton, {timeout: 11000})
 		expect(
 			await helper.checkElementIsPresent(selectors.homeNavButton, page)
 		).toBe(true)
