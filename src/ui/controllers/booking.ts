@@ -115,6 +115,8 @@ export async function renderConfirmPayment(
 				courseDetails: courseController.getCourseDetails(req, course),
 				dateIndex: req.session.bookingSession.dateSelected,
 				dateSelected,
+				fap: req.session.bookingSession.fap,
+				po: req.session.bookingSession.po,
 			})
 		)
 	})

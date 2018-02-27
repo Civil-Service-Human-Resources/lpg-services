@@ -30,11 +30,11 @@
                     </tr>
                     <tr>
                         <td>Duration</td>
-                        <td>1hr</td>
+                        <td>{{course.duration}}</td>
                     </tr>
                     <tr>
                         <td>Location</td>
-                        <td>London</td>
+                        <td>{{course.location}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -55,17 +55,18 @@
             <tbody>
                 <tr>
                     <td>Payment method</td>
-                    <td>Purchase order</td>
-                </tr>
-                <tr>
-                    <td>Duration</td>
-                    <td>{{course.duration}}</td>
+                    <td>
+                        {{#if fap}}
+                            Financial approver
+                        {{else}}
+                            Purchase order
+                        {{/if}}
+                    </td>
                 </tr>
                 <tr>
                     <td>Amount</td>
                     <td>&pound;{{course.price}}</td>
                 </tr>
-
             </tbody>
         </table>
         </div>
@@ -81,13 +82,11 @@
                         <th><span>Booking information</span></th>
                     </tr>
                 </thead>
-
                 <tbody>
                     <tr>
                         <td>Accessibility needs</td>
                         <td>None</td>
                     </tr>
-
                 </tbody>
             </table>
         </div>
