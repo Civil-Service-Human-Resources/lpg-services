@@ -5,7 +5,7 @@ import * as helper from 'extension/helper'
 export const selectors: Record<string, string> = {
 	signoutButton: 'a[href="/sign-out"]',
 	learningHeader: '.basket__heading',
-	requiredHeading: 'h3.heading-small',
+	requiredSection: 'h3.heading-small',
 	requiredProgress: '.learning__progress',
 	requiredCourseType: 'learning__information-list',
 	requiredDuration: 'learning__information-list',
