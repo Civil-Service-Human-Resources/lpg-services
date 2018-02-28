@@ -8,73 +8,68 @@
             </h1>
         </div>
     </div>
-    <div class="grid-row booking__panel">
-        <div class="column-two-thirds">
-            <table class="booking__table">
-                <caption class="heading-small">Course details</caption>
-                 <thead class="booking__thead">
-                    <tr>
-                    <th class="booking__detail-h"><span>Booking detail</span></th>
-                    <th><span>Booking information</span></th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="booking__panel">
+                <h3 class="heading-small">Course details</h3>
+                <ul>
+                    <li>
+                        <span class="booking__key">Course title</span>
+                        <span>{{course.title}}</span>
+                    </li>
+                    <li>
+                        <span class="booking__key">Start date</span>
+                        <span>{{formatDate(dateSelected)}}</span>
+                    </li>
+                    <li>
+                        <span>Location</span>
+                        <span>{{course.location}}</span>
+                    </li>
+                    <li class="push-bottom">
+                        <span class="booking__key">Duration</span>
+                        <span>{{course.duration}}</span>
+                    </li>
+                    <li>
+                        <a href="{{breadcrumbs[2].url}}" class="booking__change">Change</a>
+                    </li>
 
-                    <tr>
-                        <td>Course title</td>
-                        <td>{{course.title}}</td>
-                    </tr>
-                    <tr>
-                        <td>Start date</td>
-                        <td>{{formatDate(dateSelected)}}</td>
-                    </tr>
-                    <tr>
-                        <td>Duration</td>
-                        <td>{{course.duration}}</td>
-                    </tr>
-                    <tr>
-                        <td>Location</td>
-                        <td>{{course.location}}</td>
-                    </tr>
-                </tbody>
-            </table>
-
+                </ul>
+            </div>
         </div>
-        <a href="{{breadcrumbs[2].url}}" class="booking__change">Change</a>
     </div>
-    <div class="grid-row booking__panel">
-        <div class="column-two-thirds">
-        <table class="booking__table">
-            <caption class="heading-small">Payment details</caption>
-             <thead class="booking__thead">
-                <tr>
-                    <th class="booking__detail-h"><span>Booking detail</span></th>
-                    <th><span>Booking information</span></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Payment method</td>
-                    <td>
-                        {{#if fap}}
-                            Financial approver
-                        {{else}}
-                            Purchase order
-                        {{/if}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Amount</td>
-                    <td>&pound;{{course.price}}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="booking__panel">
+                <h3 class="heading-small">Payment details</h3>
+                <ul>
+                    <li>
+                        <span class="booking__key">Payment method</span>
+                        <span> {{fap ? 'Financial approver' : 'Purchase order' }}</span>
+
+                    </li>
+                    <li>
+                        <span class="booking__key">Amount</span>
+                        <span>&pound;{{course.price}}</span>
+                    </li>
+                    <li>
+                        <span>Location</span>
+                        <span>{{course.location}}</span>
+                    </li>
+                    <li>
+                        <a href="{{breadcrumbs[3].url}}" class="booking__change">Change</a>
+                    </li>
+
+                </ul>
+            </div>
         </div>
-        <a href="{{breadcrumbs[3].url}}" class="booking__change">Change</a>
     </div>
     <div class="grid-row">
        <div class="column-full">
             <a class="button" href="/book/{{course.uid}}/{{availabilityUid}}/complete">Complete booking</a>
         </div>
     </div>
+
+
+
+
 </Page>
