@@ -1,15 +1,15 @@
-<div class="learning">
-    <div class="grid-row">
-        <div class="learning__actions column-third">
-            {{#if course.type === 'link'}}
-                <a href="/courses/{{course.uid}}" class="learning__title" target="_blank">
-                    {{course.title}}
-                </a>
-            {{else}}
-                <a href="/courses/{{course.uid}}" class="learning__title">
-                    {{course.title}}
-                </a>
-            {{/if}}
+<div class="resource__item u-clearfix">
+    <div class="resource__main">
+        {{#if course.type === 'link'}}
+            <a href="/courses/{{course.uid}}" class="resource__title" target="_blank">
+                {{course.title}}
+            </a>
+        {{else}}
+            <a href="/courses/{{course.uid}}" class="learning__title">
+                {{course.title}}
+            </a>
+        {{/if}}
+        <span class="resource__action">
             {{#if course.state}}
                 {{#if course.type === 'face-to-face'}}
                     <a href="/book/{{course.uid}}/cancel">Cancel</a>
@@ -24,24 +24,23 @@
                     {{/if}}
                 {{/if}}
             {{/if}}
-        </div>
+        </span>
+    </div>
+    <div class="resource__info">
+        <span>
+            {{#if course.requiredBy}}
+                Required by {{formatDate(course.nextRequiredBy())}}
+            {{/if}}
+            {{#if course.selectedDate}}
+                Registered for {{formatDate(course.selectedDate)}}
+            {{/if}}
+        </span>
 
-        <span class="learning__progress">{{i18n(course.state || 'not started')}}</span>
-
-        <div class="column-one-third learning__information">
-            <p class="learning__information-desc">
-                {{#if course.requiredBy}}
-                    Required by {{formatDate(course.nextRequiredBy())}}
-                {{/if}}
-                {{#if course.selectedDate}}
-                    Registered for {{formatDate(course.selectedDate)}}
-                {{/if}}
-            </p>
-
-            <ul class="learning__information-list">
-                <li>{{i18n(course.type)}}</li>
-                <li>{{course.duration}}</li>
-            </ul>
-        </div>
+    </div>
+    <div class="resource__duration">
+        <span>{{course.duration}}</span>
+    </div>
+    <div class="resource__status">
+        <span class="badge badge--info badge--smaller">{{i18n(course.state || 'not started')}}</span>
     </div>
 </div>
