@@ -74,6 +74,16 @@
 	}
 }
 
+.booking {
+	@include e(key) {
+		display: inline-block;
+		width: 50%;
+		@include media($tablet-breakpoint) {
+			width: 25%;
+		}
+	}
+}
+
 .cancel {
 	@include e(return) {
 		float: right;
