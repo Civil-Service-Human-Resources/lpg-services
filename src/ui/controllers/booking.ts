@@ -6,6 +6,7 @@ import * as courseController from './course/index'
 import * as model from 'lib/model'
 import * as xapi from 'lib/xapi'
 import * as messenger from 'lib/service/messaging'
+import * as dateTime from 'lib/datetime'
 
 export async function renderChooseDate(
 	req: express.Request,
@@ -174,9 +175,12 @@ export async function tryCompleteBooking(
 	req.session.save(() => {
 		if (config.BOOKING_ALERT_WEBHOOK) {
 			messenger.send(
-				`####BOOKING COMPLETE####\n\nuser ${req.user.id} completed booking on ${
-					req.course.uid
-				}`,
+				config.BOOKING_COMPLETE_MSG(
+					req.user.nameID,
+					req.course.title,
+					req.user.emailAddress,
+					dateTime.formatDate(req.course.selectedDate)
+				),
 				messenger.slack(config.BOOKING_ALERT_WEBHOOK)
 			)
 		}
@@ -227,9 +231,12 @@ export async function tryCancelBooking(
 
 		if (config.BOOKING_ALERT_WEBHOOK) {
 			messenger.send(
-				`####BOOKING CANCELED####\n\nuser ${req.user.id} canceled booking on ${
-					req.course.uid
-				}`,
+				config.BOOKING_CANCELLED_MSG(
+					req.user.nameID,
+					req.course.title,
+					req.user.emailAddress,
+					dateTime.formatDate(req.course.selectedDate)
+				),
 				messenger.slack(config.BOOKING_ALERT_WEBHOOK)
 			)
 		}

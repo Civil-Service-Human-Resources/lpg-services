@@ -55,7 +55,10 @@ export const AUTHENTICATION = set({
 		'https://identity.local.cshr.digital:9443',
 })
 
-export const FEEDBACK_RECIPIENTS = ['max@cautionyourblast.com', 'richard@cautionyourblast.com']
+export const FEEDBACK_RECIPIENTS = [
+	'max@cautionyourblast.com',
+	'richard@cautionyourblast.com',
+]
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
 
@@ -118,3 +121,18 @@ export const LEARNER_RECORD = set({
 export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
 
 export const BOOKING_ALERT_WEBHOOK = env.BOOKING_ALERT_WEBHOOK
+export const BOOKING_COMPLETE_MSG = (
+	userName: string,
+	courseTitle: string,
+	emailAddress: string,
+	date: string
+) =>
+	`*BOOKING COMPLETE*\n\nuser *${userName}* completed booking on *${courseTitle}*\n*User Email*: ${emailAddress}\n*Selected date*: ${date}`
+
+export const BOOKING_CANCELLED_MSG = (
+	userName: string,
+	courseTitle: string,
+	emailAddress: string,
+	date: string
+) =>
+	`*BOOKING CANCELLED*\n\nuser *${userName}* cancelled booking on *${courseTitle}*\n*User Email*: ${emailAddress}\n*Selected date*: ${date}`
