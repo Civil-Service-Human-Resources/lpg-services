@@ -6,9 +6,9 @@
             <h3 class="heading-small">Required learning</h3>
 
             {{#if requiredLearning.length}}
-            <ul>
+            <ul class="resource__list">
                 {{#each requiredLearning as course}}
-                <li>
+                <li class="resource">
                     <Learning bind:course />
                 </li>
                 {{/each}}

@@ -9,8 +9,18 @@
 .resource {
 	margin-bottom: 10px;
 	border-bottom: 1px solid $grey-2;
+	float: left;
+	width: 100%;
+	clear: both;
+
+	@include e(list) {
+		width: 100%;
+		float: left;
+	}
 
 	@include e(item) {
+		float: left;
+		width: 100%;
 		position: relative;
 		text-align: left;
 	}
@@ -18,7 +28,6 @@
 	@include e(main) {
 		@extend %li;
 		width: 100%;
-		max-width: auto;
 
 		@include media(desktop) {
 			width: 320px;

@@ -1,4 +1,4 @@
-<div class="resource__item u-clearfix">
+<div class="resource__item">
     <div class="resource__main">
         {{#if course.type === 'link'}}
             <a href="/courses/{{course.uid}}" class="resource__title" target="_blank">
@@ -14,11 +14,7 @@
                 {{#if course.type === 'face-to-face'}}
                     <a href="/book/{{course.uid}}/cancel">Cancel</a>
                 {{else}}
-                    {{#if course.type === 'elearning'}}
-                        <a href="/courses/{{course.uid}}/do">Resume</a>
-                    {{else}}
-                        <a href="/courses/{{course.uid}}">Resume</a>
-                    {{/if}}
+                <a href="/courses/{{course.uid}}/{{course.type === 'elearning' ? 'do' : ''}}">Resume</a>
                     {{#if !course.isRequired(signedInUser)}}
                         <a href="/courses/{{course.uid}}/delete">Delete</a>
                     {{/if}}
