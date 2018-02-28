@@ -1,34 +1,43 @@
 import * as express from 'express'
+import * as config from 'lib/config'
+import * as learnerRecord from 'lib/learnerrecord'
 import * as template from 'lib/ui/template'
 import * as courseController from './course/index'
-import * as catalog from 'lib/service/catalog'
 import * as model from 'lib/model'
-import * as dateTime from 'lib/datetime'
+import * as xapi from 'lib/xapi'
+import * as messenger from 'lib/service/messaging'
 
 export async function renderChooseDate(
 	req: express.Request,
 	res: express.Response
 ) {
 	const courseId: string = req.params.courseId
-	const course: model.Course = await catalog.get(courseId)
+	const course: model.Course = req.course
 
 	req.session.bookingSession = {
-		bookingStep: 3,
 		bookingProgress: 3,
+		bookingStep: 3,
+		courseId,
 		courseTitle: course.title,
-		courseId: courseId,
 		dateSelected: 0,
 	}
 
-	let breadcrumbs = getBreadcrumbs(req)
+	req.session.save(() => {
+		const breadcrumbs = getBreadcrumbs(req)
+		const today = new Date()
+		const courseAvailability = course.availability
+			.filter(availability => availability > today)
+			.sort((a, b) => a > b)
 
-	res.send(
-		template.render('booking/choose-date', req, {
-			course,
-			courseDetails: courseController.getCourseDetails(course),
-			breadcrumbs: breadcrumbs,
-		})
-	)
+		res.send(
+			template.render('booking/choose-date', req, {
+				breadcrumbs,
+				course,
+				courseAvailability,
+				courseDetails: courseController.getCourseDetails(req, course),
+			})
+		)
+	})
 }
 
 export async function renderPaymentOptions(
@@ -37,22 +46,28 @@ export async function renderPaymentOptions(
 ) {
 	req.session.bookingSession.bookingStep = 4
 
-	let breadcrumbs = getBreadcrumbs(req)
-	let previouslyEntered = req.session.bookingSession.po
+	const breadcrumbs = getBreadcrumbs(req)
+	const previouslyEntered = req.session.bookingSession.po
 		? req.session.bookingSession.po
 		: req.session.bookingSession.fap
-	res.send(
-		template.render('booking/payment-options', req, {
-			breadcrumbs: breadcrumbs,
-			previouslyEntered: previouslyEntered,
-		})
-	)
+
+	req.session.save(() => {
+		res.send(
+			template.render('booking/payment-options', req, {
+				breadcrumbs,
+				previouslyEntered,
+			})
+		)
+	})
 }
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
 	req.session.bookingSession.dateSelected = selected
-	res.redirect(req.baseUrl + `/book/${req.params.courseId}/${selected}`)
+
+	req.session.save(() => {
+		res.redirect(`/book/${req.params.courseId}/${selected}`)
+	})
 }
 
 export function enteredPaymentDetails(
@@ -61,13 +76,17 @@ export function enteredPaymentDetails(
 ) {
 	if (req.body['purchase-order'] && /\S/.test(req.body['purchase-order'])) {
 		req.session.bookingSession.po = req.body['purchase-order']
-		res.redirect(`${req.originalUrl}/confirm`)
+		req.session.save(() => {
+			res.redirect(`${req.originalUrl}/confirm`)
+		})
 	} else if (
 		req.body['financial-approver'] &&
-		/\S/.test(req.body['financial-approver'])
+		/^\S+@\S+$/.test(req.body['financial-approver'])
 	) {
 		req.session.bookingSession.fap = req.body['financial-approver']
-		res.redirect(`${req.originalUrl}/confirm`)
+		req.session.save(() => {
+			res.redirect(`${req.originalUrl}/confirm`)
+		})
 	} else {
 		res.send(
 			template.render('booking/payment-options', req, {
@@ -83,17 +102,24 @@ export async function renderConfirmPayment(
 	res: express.Response
 ) {
 	req.session.bookingSession.bookingStep = 5
+	const course = req.course
+	const dateSelected =
+		course.availability[req.session.bookingSession.dateSelected]
 
-	const course = await catalog.get(req.session.bookingSession.courseId)
-	res.send(
-		template.render('booking/confirm-booking', req, {
-			course,
-			courseDetails: courseController.getCourseDetails(course),
-			breadcrumbs: getBreadcrumbs(req),
-			dateSelected:
-				course.availability[req.session.bookingSession.dateSelected],
-		})
-	)
+	req.session.save(() => {
+		res.send(
+			template.render('booking/confirm-booking', req, {
+				availabilityUid: req.session.bookingSession.dateSelected,
+				breadcrumbs: getBreadcrumbs(req),
+				course,
+				courseDetails: courseController.getCourseDetails(req, course),
+				dateIndex: req.session.bookingSession.dateSelected,
+				dateSelected,
+				fap: req.session.bookingSession.fap,
+				po: req.session.bookingSession.po,
+			})
+		)
+	})
 }
 
 export async function tryCompleteBooking(
@@ -102,7 +128,126 @@ export async function tryCompleteBooking(
 ) {
 	req.session.bookingSession.bookingStep = 6
 
-	res.send(template.render('booking/confirmed', req))
+	const course = req.course
+	course.selectedDate =
+		course.availability[req.session.bookingSession.dateSelected]
+
+	const extensions = {}
+
+	if (req.session.bookingSession.po) {
+		extensions[xapi.Extension.PurchaseOrder] = req.session.bookingSession.po
+	}
+	if (req.session.bookingSession.fap) {
+		extensions[xapi.Extension.FinancialApprover] =
+			req.session.bookingSession.fap
+	}
+
+	await xapi.send({
+		actor: {
+			mbox: `mailto:noone@cslearning.gov.uk`,
+			name: req.user.id,
+			objectType: 'Agent',
+		},
+		context: {
+			contextActivities: {
+				parent: {
+					id: course.getParentActivityId(),
+				},
+			},
+		},
+		object: {
+			definition: {
+				extensions,
+				type: 'http://adlnet.gov/expapi/activities/event',
+			},
+			id: course.getActivityId(),
+			objectType: 'Activity',
+		},
+		verb: {
+			display: {
+				en: xapi.Labels[xapi.Verb.Registered],
+			},
+			id: xapi.Verb.Registered,
+		},
+	})
+
+	req.session.save(() => {
+		if (config.BOOKING_ALERT_WEBHOOK) {
+			messenger.send(
+				`####BOOKING COMPLETE####\n\nuser ${req.user.id} completed booking on ${
+					req.course.uid
+				}`,
+				messenger.slack(config.BOOKING_ALERT_WEBHOOK)
+			)
+		}
+
+		res.send(
+			template.render('booking/confirmed', req, {
+				course,
+				message: confirmedMessage.Booked,
+			})
+		)
+	})
+}
+
+export async function renderCancelBookingPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const course = req.course
+
+	res.send(
+		template.render('booking/cancel-booking', req, {
+			cancelBookingFailed: false,
+			course,
+		})
+	)
+}
+
+enum confirmedMessage {
+	Booked = 'Booking request submitted',
+	Cancelled = 'Booking request cancelled',
+}
+
+export async function tryCancelBooking(
+	req: express.Request,
+	res: express.Response
+) {
+	const course = req.course
+	const record = await learnerRecord.getCourseRecord(req.user, course)
+
+	if (!record.selectedDate) {
+		res.redirect('/')
+		return
+	}
+	course.selectedDate = record.selectedDate
+
+	if (req.body['cancel-tc']) {
+		await xapi.record(req, course, xapi.Verb.Unregistered)
+
+		if (config.BOOKING_ALERT_WEBHOOK) {
+			messenger.send(
+				`####BOOKING CANCELED####\n\nuser ${req.user.id} canceled booking on ${
+					req.course.uid
+				}`,
+				messenger.slack(config.BOOKING_ALERT_WEBHOOK)
+			)
+		}
+
+		res.send(
+			template.render('booking/confirmed', req, {
+				course,
+				message: confirmedMessage.Cancelled,
+			})
+		)
+	} else {
+		res.send(
+			template.render('booking/cancel-booking', req, {
+				cancelBookingFailed: true,
+				course,
+			})
+		)
+	}
 }
 
 interface BookingBreadcrumb {
@@ -111,31 +256,28 @@ interface BookingBreadcrumb {
 }
 
 function getBreadcrumbs(req: express.Request): BookingBreadcrumb[] {
-	let session = req.session.bookingSession
+	const session = req.session.bookingSession
 	const allBreadcrumbs: BookingBreadcrumb[] = [
 		{
-			url: req.baseUrl,
 			name: 'home',
+			url: req.baseUrl,
 		},
 		{
-			url: req.baseUrl + '/courses/' + session.courseId,
 			name: session.courseTitle,
+			url: '/courses/' + session.courseId,
 		},
 		{
-			url: `${req.baseUrl}/book/${session.courseId}/choose-date`,
 			name: 'Choose Date',
+			url: `/book/${session.courseId}/choose-date`,
 		},
 		{
-			url: `${req.baseUrl}/book/${session.courseId}/${session.dateSelected}`,
 			name: 'Payment Options',
+			url: `/book/${session.courseId}/${session.dateSelected}`,
 		},
 		{
-			url: `${req.baseUrl}/book/${session.courseId}/${
-				session.dateSelected
-			}/confirm`,
 			name: 'Confirm details',
+			url: `/book/${session.courseId}/${session.dateSelected}/confirm`,
 		},
 	]
-
 	return allBreadcrumbs.slice(0, session.bookingStep)
 }

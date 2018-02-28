@@ -12,8 +12,10 @@
             <h2 class="heading-medium">Description</h2>
             <div>{{{course.description}}}</div>
 
+            {{#if course.learningOutcomes}}
             <h2 class="heading-medium">Learning Outcomes</h2>
-            <div>{{{course.learningOutcomes}}}</div>
+            <div>{{{course.learningOutcomes }}}</div>
+            {{/if}}
 
             <a class="button" href="/courses/{{course.uid}}/do">Start this learning</a>
         </div>

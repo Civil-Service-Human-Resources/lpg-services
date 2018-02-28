@@ -1,6 +1,7 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
+import * as model from 'lib/model'
 
 export interface Statement {
 	actor: {
@@ -8,7 +9,18 @@ export interface Statement {
 		name: string
 		objectType: 'Agent'
 	}
+	context: {
+		contextActivities: {
+			parent: {
+				id: string
+			}
+		}
+	}
 	object: {
+		definition?: {
+			extensions: any
+			type: string
+		}
 		id: string
 		objectType: 'Activity' | 'StatementRef'
 	}
@@ -22,6 +34,11 @@ export interface Statement {
 	}
 }
 
+export const Extension = {
+	FinancialApprover: 'http://cslearning.gov.uk/extension/finanacialApprover',
+	PurchaseOrder: 'http://cslearning.gov.uk/extension/purhaseOrder',
+}
+
 export const Verb = {
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
 	Failed: 'http://adlnet.gov/expapi/verbs/failed',
@@ -29,7 +46,9 @@ export const Verb = {
 	Passed: 'http://adlnet.gov/expapi/verbs/passed',
 	PlayedVideo: 'https://w3id.org/xapi/video/verbs/played',
 	Progressed: 'http://adlnet.gov/expapi/verbs/progressed',
+	Registered: 'http://adlnet.gov/expapi/verbs/registered',
 	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
+	Unregistered: 'http://adlnet.gov/expapi/verbs/unregistered',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
 }
 
@@ -40,7 +59,9 @@ export const Labels: Record<string, string> = {
 	[Verb.Passed]: 'passed',
 	[Verb.PlayedVideo]: 'played video',
 	[Verb.Progressed]: 'progressed',
+	[Verb.Registered]: 'registered',
 	[Verb.Terminated]: 'terminated',
+	[Verb.Unregistered]: 'unregistered',
 	[Verb.Viewed]: 'viewed',
 }
 
@@ -57,7 +78,7 @@ export function lookup(verb: string) {
 
 export async function record(
 	req: express.Request,
-	courseID: string,
+	course: model.Course,
 	verb: string,
 	valueJSON = ''
 ) {
@@ -71,7 +92,7 @@ export async function record(
 			objectType: 'Agent',
 		},
 		object: {
-			id: `${config.XAPI.activityBaseUri}/${courseID}`,
+			id: course.getActivityId(),
 			objectType: 'Activity',
 		},
 		verb: {

@@ -1,0 +1,42 @@
+<Page title="Cancel Booking">
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">
+                <span class="heading-secondary">Booking a course</span>
+                Cancel Course Request
+            </h1>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {{#if cancelBookingFailed }}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                        Error
+                    </h2>
+                    <p>You must enter agree to the Terms &amp; Conditions to cancel this booking</p>
+                </div>
+            {{/if}}
+            <h3 class="heading-small">{{signedInUser.givenName}}</h3>
+            <ul class="cancel__list push-bottom">
+                <li>
+                    <span class="cancel__item--key">Requested course:</span> <span class="bold-small">{{course.title}}</span>
+                </li>
+                <li>
+                    <span class="cancel__item--key">Requested date:</span> <span class="bold-small">{{new Date(course.availability[0]).toDateString()}}</span>
+                </li>
+            </ul>
+            <form method="post" class="push-bottom">
+                <div class="multiple-choice form-group">
+                  <input id="cancel-tc" name="cancel-tc" type="checkbox">
+                  <label for="cancel-tc">I agree to the Terms &amp; Conditions and wish to continue with the cancellation of this Course</label>
+                </div>
+                <div class="form-group">
+                    <input class="button" type="submit" value="Cancel Booking">
+                    <a href="/courses/{{ course.uid }}" class="cancel__return">Return</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</Page>

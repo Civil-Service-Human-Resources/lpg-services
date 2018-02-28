@@ -73,3 +73,15 @@
 		}
 	}
 }
+
+.cancel {
+	@include e(return) {
+		float: right;
+	}
+	@include e(item) {
+		@include m(key) {
+			width: 50%;
+			display: inline-block;
+		}
+	}
+}

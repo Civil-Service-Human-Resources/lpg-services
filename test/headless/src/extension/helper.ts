@@ -11,6 +11,14 @@ declare var browser: PrivateBrowser
 
 const sessions: Record<string, Session> = {}
 
+export async function checkHidden(selector: string, page: puppeteer.Page) {
+	return page.evaluate(selector => {
+		const e = document.querySelector(selector)
+		const style = window.getComputedStyle(e)
+		return style.display
+	}, selector)
+}
+
 export async function checkElementIsPresent(
 	selector: string,
 	page: puppeteer.Page
@@ -72,6 +80,23 @@ export async function getSession(name?: string) {
 		sessions[name] = session
 	}
 	return session
+}
+
+export function xpath(locator: string) {
+	const elems = document.evaluate(
+		locator,
+		document.body,
+		null,
+		XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+		null
+	)
+	const results = []
+	let next = elems.iterateNext()
+	while (next) {
+		results.push(next)
+		next = elems.iterateNext()
+	}
+	return results
 }
 
 export class Session {

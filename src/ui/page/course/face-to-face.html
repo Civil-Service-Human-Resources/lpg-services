@@ -1,0 +1,42 @@
+<Page title="Course">
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">
+                <span class="heading-secondary">Face to face learning</span>
+                {{course.title}}
+            </h1>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h2 class="heading-medium">Description</h2>
+            <div>{{{course.description}}}</div>
+
+            {{#if course.learningOutcomes}}
+                <h2 class="heading-medium">Learning Outcomes</h2>
+                <div>{{{course.learningOutcomes }}}</div>
+            {{/if}}
+        </div>
+        <div class="column-one-third">
+            {{#if courseDetails.length}}
+            {{#each courseDetails as dataRows}}
+            <Rightbox bind:dataRows></Rightbox>
+            {{/each}}
+            {{/if}}
+        </div>
+    </div>
+
+    {{#if course.selectedDate}}
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <p>You are already booked on this course. <a href="/book/{{course.uid}}/cancel">Do you wish to cancel your booking?</a></p>
+            </div>
+        </div>
+    {{/if}}
+
+    <div class="grid-row">
+        <div class="column-full">
+            <a class="button" href="/book/{{course.uid}}/choose-date">Book this course</a>
+        </div>
+    </div>
+</Page>

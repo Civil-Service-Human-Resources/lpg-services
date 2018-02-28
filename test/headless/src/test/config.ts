@@ -4,15 +4,18 @@ import * as fs from 'fs'
 export const PROFILE = process.env.ENV_PROFILE || 'local'
 
 const envFile = '/keybase/team/lpg/dev/testenv'
+
 try {
 	if (fs.statSync(envFile).isFile()) {
 		dotenv.config({path: envFile})
 	}
 } catch (err) {
-	warn(`
+	if (PROFILE === 'local') {
+		warn(`
 !!! Unable to load the env file at ${envFile} !!!
 
 `)
+	}
 }
 
 function getEnv(obj: any, attr: string) {
@@ -54,6 +57,11 @@ export const TEST_PASSWORD = 'password123'
 export const URL = set(
 	'https://lpg.local.cshr.digital:3001/sign-in',
 	`https://lpg.${PROFILE}.cshr.digital/sign-in`
+)
+
+export const BASE_URL = set(
+	'https://lpg.local.cshr.digital:3001',
+	`https://lpg.${PROFILE}.cshr.digital`
 )
 
 export const USERNAME = 'test@lpg.dev.cshr.digital'

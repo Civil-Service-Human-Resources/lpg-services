@@ -19,31 +19,52 @@ interface DataRow {
 
 const logger = log4js.getLogger('controllers/course')
 
-function getCourseDetails(
+export function getCourseDetails(
 	req: extended.CourseRequest,
 	course: model.Course
 ): CourseDetail[] {
 	const levels = getTagValues(req, 'grade', course.tags)
 	const keyAreas = getTagValues(req, 'key-area', course.tags)
 	const duration = course.duration
+	const productCode = course.productCode
+	const location = course.location
+	const price = course.price
 	const dataRows: DataRow[] = []
 
 	if (levels.length) {
 		dataRows.push({
-			label: 'Level',
+			label: req.__('Level'),
 			value: levels.join(', '),
 		})
 	}
 	if (keyAreas.length) {
 		dataRows.push({
-			label: 'Key area',
+			label: req.__('Key area'),
 			value: keyAreas.join(', '),
 		})
 	}
 	if (duration) {
 		dataRows.push({
-			label: 'Duration',
+			label: req.__('Duration'),
 			value: duration,
+		})
+	}
+	if (productCode) {
+		dataRows.push({
+			label: req.__('Product code'),
+			value: productCode,
+		})
+	}
+	if (location) {
+		dataRows.push({
+			label: req.__('Location'),
+			value: location,
+		})
+	}
+	if (price) {
+		dataRows.push({
+			label: req.__('Price'),
+			value: `£${price}`,
 		})
 	}
 
@@ -78,12 +99,12 @@ export async function display(ireq: express.Request, res: express.Response) {
 			)
 			break
 		case 'link':
-			await xapi.record(req, req.params.courseId, xapi.Verb.Initialised)
-			await xapi.record(req, req.params.courseId, xapi.Verb.Completed)
+			await xapi.record(req, req.course, xapi.Verb.Initialised)
+			await xapi.record(req, req.course, xapi.Verb.Completed)
 			res.redirect(course.uri)
 			break
 		case 'video':
-			await xapi.record(req, req.params.courseId, xapi.Verb.Initialised)
+			await xapi.record(req, req.course, xapi.Verb.Initialised)
 			res.send(
 				template.render(`course/${course.type}`, req, {
 					course,
@@ -92,14 +113,13 @@ export async function display(ireq: express.Request, res: express.Response) {
 				})
 			)
 			break
-		case 'bookable':
+		case 'face-to-face':
 			res.send(
 				template.render(`course/${course.type}`, req, {
 					course,
-					courseDetails: getCourseDetails(course),
+					courseDetails: getCourseDetails(req, course),
 				})
 			)
-
 			break
 		default:
 			logger.debug(`Unknown course type: (${course.type})`)
@@ -135,6 +155,6 @@ export async function markCourseDeleted(
 	req: express.Request,
 	res: express.Response
 ) {
-	await xapi.record(req, req.course.uid, xapi.Verb.Terminated)
+	await xapi.record(req, req.course, xapi.Verb.Terminated)
 	res.redirect('/')
 }

@@ -8,6 +8,8 @@ import * as log4js from 'log4js'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
+import * as path from 'path'
+import * as favicon from 'serve-favicon'
 
 import * as passport from 'lib/config/passport'
 import * as model from 'lib/model'
@@ -57,6 +59,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(compression({threshold: 0}))
 
 app.use(serveStatic('assets'))
+app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
 passport.configure('lpg-ui', config.AUTHENTICATION.serviceUrl, app)
 i18n.configure(app)
@@ -110,8 +113,10 @@ app.get('/search', searchController.elasticSearch)
 app.get('/home', homeController.home)
 
 app.get('/book/:courseId/choose-date', bookingController.renderChooseDate)
-
 app.post('/book/:courseId/choose-date', bookingController.selectedDate)
+
+app.get('/book/:courseId/cancel', bookingController.renderCancelBookingPage)
+app.post('/book/:courseId/cancel', bookingController.tryCancelBooking)
 
 app.get(
 	'/book/:courseId/:availabilityUid',
@@ -127,7 +132,10 @@ app.get(
 	bookingController.renderConfirmPayment
 )
 
-app.get('/confirm-booking', bookingController.tryCompleteBooking)
+app.get(
+	'/book/:courseId/:availabilityUid/complete',
+	bookingController.tryCompleteBooking
+)
 
 app.use(
 	(

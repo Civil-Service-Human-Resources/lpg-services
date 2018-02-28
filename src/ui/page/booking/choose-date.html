@@ -2,8 +2,10 @@
     <div class="grid-row">
         <div class="column-full">
             <Breadcrumb :breadcrumbs/>
-            <h2 class="heading-medium">Booking a course</h2>
-            <h1 class="heading-large">Choose Date</h1>
+            <h1 class="heading-large">
+                <span class="heading-secondary">Booking a course</span>
+                Choose Date
+            </h1>
         </div>
     </div>
     <div class="grid-row">
@@ -14,7 +16,7 @@
             </p>
             <form method="post">
                 <table>
-                <caption class="heading-small">{{course.title || 'Working with budgets'}}</caption>
+                <caption class="heading-small">{{course.title}}</caption>
                     <thead>
 
                         <tr>
@@ -28,14 +30,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each course.availability as courseDate, index}}
+                        {{#each courseAvailability as courseDate, index}}
                         <tr>
-                            <td>{{new Date(courseDate).toDateString()}}</td>
+                            <td>{{formatDate(courseDate)}}</td>
                             <td>{{course.duration}}</td>
                             <td>{{course.location}}</td>
                             <td>&pound;{{course.price}}</td>
                             <td>
-                                {{#if (index == 0) }}
+                                {{#if index == 0}}
                                 <input id="radio-{{index}}"
                                     type="radio"
                                     name="selected-date"
