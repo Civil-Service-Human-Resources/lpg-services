@@ -557,10 +557,13 @@ export async function resetCourses() {
 	)
 	const lines = parse(rawData.toString())
 	const attributes = lines.shift()
-
 	const highestUid = Number(lines[lines.length - 1][0])
+
 	let currentUid = 0x0
 
+	let esClient = await getElasticClient()
+	// delete index for reset
+	await esClient.indices.delete({index: 'dgraph'})
 	/* tslint:disable */
 	while (highestUid > currentUid) {
 		currentUid = Number(await add({title: 'placeholder'}))
