@@ -37,12 +37,12 @@ describe('recurring courses functionality', () => {
 		await page.close()
 	})
 
-	it('Should display recurring courses with a required by date', async () => {
+	xit('Should display recurring courses with a required by date', async () => {
 		const requiredByText = await helper.getText(selectors.firstRequiredBy, page)
 		expect(requiredByText).toEqual('Required by 31/03/2018')
 	})
 
-	it('Should hide completed course before required by date', async () => {
+	xit('Should hide completed course before required by date', async () => {
 		expect(
 			await helper.checkElementIsPresent(selectors.counterFraudCourse, page)
 		).toBe(true)
@@ -55,7 +55,7 @@ describe('recurring courses functionality', () => {
 		).toBe(false)
 	})
 
-	it('Should show completed course after previous required by date passes', async () => {
+	xit('Should show completed course after previous required by date passes', async () => {
 		// Basic fire awareness
 		await xapi.addStatement(
 			userId,
