@@ -55,12 +55,12 @@ export const PASSWORD = '1337h4x0r'
 export const TEST_PASSWORD = 'password123'
 
 export const URL = set(
-	'https://lpg.local.cshr.digital:3001/sign-in',
+	'http://lpg.local.cshr.digital:3001/sign-in',
 	`https://lpg.${PROFILE}.cshr.digital/sign-in`
 )
 
 export const BASE_URL = set(
-	'https://lpg.local.cshr.digital:3001',
+	'http://lpg.local.cshr.digital:3001',
 	`https://lpg.${PROFILE}.cshr.digital`
 )
 

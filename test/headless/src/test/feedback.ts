@@ -12,7 +12,7 @@ function genUserEmail() {
 
 let TEST_USERNAME = genUserEmail()
 
-describe('profile page functionality', () => {
+describe('feedback form functionality', () => {
 	let page: puppeteer.Page
 
 	wrappedBeforeAll(async () => {

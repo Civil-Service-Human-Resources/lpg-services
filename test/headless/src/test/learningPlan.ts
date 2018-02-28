@@ -12,7 +12,7 @@ function genUserEmail() {
 
 let TEST_USERNAME = genUserEmail()
 
-describe('profile page functionality', () => {
+describe('learning page functionality', () => {
 	let page: puppeteer.Page
 
 	wrappedBeforeAll(async () => {
@@ -37,7 +37,7 @@ describe('profile page functionality', () => {
 
 	it('Should display the required learning section', async () => {
 		expect(
-			await helper.checkElementIsPresent(selectors.requiredLearingSection, page)
+			await helper.checkElementIsPresent(selectors.requiredSection, page)
 		).toBe(true)
 	})
 
@@ -59,7 +59,7 @@ describe('profile page functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display required learning courses with the status of not started', async () => {
+	xit('Should display required learning courses with the status of not started', async () => {
 		const statuses = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseProgress
@@ -69,7 +69,7 @@ describe('profile page functionality', () => {
 		}
 	})
 
-	it('Should list course name and further details on the course', async () => {
+	xit('Should list course name and further details on the course', async () => {
 		const courseName = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseProgress
@@ -86,7 +86,7 @@ describe('profile page functionality', () => {
 		}
 	})
 
-	it('Should display course type for all listed courses', async () => {
+	xit('Should display course type for all listed courses', async () => {
 		const courseType = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseType
@@ -96,7 +96,7 @@ describe('profile page functionality', () => {
 		}
 	})
 
-	it('Should display course duration for all listed courses', async () => {
+	xit('Should display course duration for all listed courses', async () => {
 		const courseDuration = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseDuration

@@ -82,8 +82,9 @@ export class Course {
 
 	isRequired(user: User) {
 		return (
+			this.tags && (
 			this.tags.indexOf('mandatory:all') > -1 ||
-			this.tags.indexOf(`mandatory:${user.department}`) > -1
+			this.tags.indexOf(`mandatory:${user.department}`) > -1)
 		)
 	}
 
