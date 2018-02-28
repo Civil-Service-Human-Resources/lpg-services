@@ -59,7 +59,7 @@ describe('learning page functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display required learning courses with the status of not started', async () => {
+	xit('Should display required learning courses with the status of not started', async () => {
 		const statuses = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseProgress
@@ -69,7 +69,7 @@ describe('learning page functionality', () => {
 		}
 	})
 
-	it('Should list course name and further details on the course', async () => {
+	xit('Should list course name and further details on the course', async () => {
 		const courseName = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseProgress
@@ -86,7 +86,7 @@ describe('learning page functionality', () => {
 		}
 	})
 
-	it('Should display course type for all listed courses', async () => {
+	xit('Should display course type for all listed courses', async () => {
 		const courseType = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseType
@@ -96,7 +96,7 @@ describe('learning page functionality', () => {
 		}
 	})
 
-	it('Should display course duration for all listed courses', async () => {
+	xit('Should display course duration for all listed courses', async () => {
 		const courseDuration = await returnXpathStr(
 			page,
 			selectors.requiredLearningCourseDuration
