@@ -24,7 +24,7 @@
     </div>
     <div class="resource__info">
         <span>
-            {{#if course.requiredBy}}
+            {{#if course.requiredBy && course.type === ('elearning' || 'face-to-face') }}
                 Required by {{formatDate(course.nextRequiredBy())}}
             {{/if}}
             {{#if course.selectedDate}}
@@ -34,9 +34,12 @@
 
     </div>
     <div class="resource__duration">
-        <span>{{course.duration}}</span>
+        <span>{{course.type === ('elearning' || 'face-to-face') ? '' : course.type + ', '}}{{course.duration}}</span>
     </div>
     <div class="resource__status">
         <span class="badge badge--info badge--smaller">{{i18n(course.state || 'not started')}}</span>
+        {{#if course.requiredBy && course.type !== ('elearning' || 'face-to-face') }}
+            <span class="meta">21 Aug 2018</span>
+        {{/if}}
     </div>
 </div>

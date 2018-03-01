@@ -12,6 +12,9 @@
 	float: left;
 	width: 100%;
 	clear: both;
+	&:last-child {
+		border-bottom: none;
+	}
 
 	@include e(list) {
 		width: 100%;
