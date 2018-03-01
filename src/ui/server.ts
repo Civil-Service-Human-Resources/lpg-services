@@ -115,8 +115,6 @@ app.get(
 	'/suggested-for-you/remove/:courseId',
 	suggestionController.removeFromSuggested
 )
-app.get('/suggested-for-you', searchController.suggestedForYou)
-app.get('/search', searchController.elasticSearch)
 
 app.get('/home', homeController.home)
 

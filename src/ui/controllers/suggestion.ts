@@ -1,12 +1,8 @@
 import * as express from 'express'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
-import * as api from 'lib/service/catalog/api'
 import * as template from 'lib/ui/template'
-import * as log4js from 'log4js'
-import * as learningRecordController from './learning-record'
 import * as learnerRecord from 'lib/learnerrecord'
-
 import * as xapi from 'lib/xapi'
 
 function findCourseByUID(courses: model.Course[], uid: string) {
@@ -28,7 +24,7 @@ export async function suggestions(user: model.User) {
 		if (matched) {
 			// there is a reference to the course in the learning record
 			if (
-				matched.preference !== xapi.Labels[xapi.Verb.Disliked] ||
+				matched.preference !== xapi.Labels[xapi.Verb.Disliked] &&
 				matched.preference !== xapi.Labels[xapi.Verb.Liked]
 			) {
 				modified.push(course)
