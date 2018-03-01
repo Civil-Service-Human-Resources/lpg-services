@@ -37,6 +37,7 @@
 		"@types/pg": "7.4.3",
 		"@types/request": "2.47.0",
 		"@types/session-file-store": "1.2.0",
+		"body-parser": "^1.18.2",
 		"node-sass": "4.7.2",
 		"dotenv": "5.0.0",
 		"elasticsearch": "^14.1.0",

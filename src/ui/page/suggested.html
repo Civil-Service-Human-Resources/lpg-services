@@ -5,6 +5,7 @@
                 <h1 class="heading-large">Suggested for you</h1>
 
                 {{#if courses.length}}
+
                 <table>
                     <tbody>
                         {{#each courses as course}}
@@ -14,6 +15,12 @@
                             </td>
                             <td>{{ i18n(course.type) }}</td>
                             <td>{{ course.shortDescription }}</td>
+                            <td>
+                                <a class="button" href="/suggested-for-you/add/{{course.uid}}">Add</a>
+                            </td>
+                            <td>
+                                <a class="button" href="/suggested-for-you/remove/{{course.uid}}/">Remove</a>
+                            </td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -21,5 +28,4 @@
                 {{/if}}
             </div>
         </div>
-    </div>
 </Page>
