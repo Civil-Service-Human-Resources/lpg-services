@@ -6,6 +6,7 @@ export const selectors: Record<string, string> = {
 	feedbackDoingField: '#whatDoing',
 	feedbackWrongField: '#wentWrong',
 	feedbackSubmitButton: 'button[name="commit"]',
+	signoutButton: 'a[href="/sign-out"]',
 }
 
 export async function completeFeedback(page: puppeteer.Page) {

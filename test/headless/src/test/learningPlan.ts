@@ -4,7 +4,7 @@ import {selectors, returnXpathStr} from 'page/learningPlan'
 import {loginToCsl} from 'page/login'
 import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
-import * as config from 'test/config'
+import * as config from 'extension/config'
 
 function genUserEmail() {
 	return `test${Date.now()}@c.gov.uk`
