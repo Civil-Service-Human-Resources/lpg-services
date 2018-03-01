@@ -1,0 +1,50 @@
+.heading {
+	@include m(no-margin) {
+		margin: 0;
+	}
+
+	@include m(no-margin-top) {
+		margin-top: 0;
+	}
+
+	@include m(small-margin-bottom) {
+		margin-bottom: 20px;
+	}
+
+	@include e(secondary) {
+		font-family: $nta-light;
+		font-weight: 400;
+		text-transform: none;
+		font-size: 19px;
+		line-height: 1.11111;
+		display: block;
+		padding-top: 8px;
+		padding-bottom: 7px;
+		color: $grey-1;
+		.heading--large & {
+			font-size: 24px;
+			line-height: 1.25;
+		}
+	}
+
+	@include e(meta) {
+		@include core-16;
+		display: block;
+		color: $grey-1;
+	}
+
+	@include m(flush) {
+		margin-top: 0;
+	}
+
+	@include m(red-top) {
+		padding-top: 10px;
+		border-top: 4px solid $civil-service;
+	}
+}
+
+.meta {
+	@include core-16;
+	display: block;
+	color: $grey-1;
+}
