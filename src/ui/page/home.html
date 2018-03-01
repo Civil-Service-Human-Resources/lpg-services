@@ -1,44 +1,72 @@
 <Page title="overview">
-    <div class="grid-row">
-        <div class="column-full">
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
 
-            <h2 class="heading-medium heading heading--medium heading--red-top">Required learning</h2>
+                <h2 class="heading-medium heading heading--medium heading--red-top">Required learning</h2>
 
-            {{#if requiredLearning.length}}
-            <ul class="resource__list">
-                {{#each requiredLearning as course}}
-                <li class="resource">
-                    <Learning bind:course />
-                </li>
-                {{/each}}
-            </ul>
-            {{else}}
-            <p>You have completed all your required learning.</p>
-            {{/if}}
-        </div>
-        <div class="column-full">
-            <h2 class="heading-medium heading heading--medium heading--red-top">Other learning</h2>
+                {{#if requiredLearning.length}}
+                <ul class="resource__list">
+                    {{#each requiredLearning as course}}
+                    <li class="resource">
+                        <Learning bind:course />
+                    </li>
+                    {{/each}}
+                </ul>
+                {{else}}
+                <p>You have completed all your required learning.</p>
+                {{/if}}
+            </div>
+            <div class="column-full">
+                <h2 class="heading-medium heading heading--medium heading--red-top">Other learning</h2>
 
 
-            {{#if plannedLearning.length}}
-            <ul class="resource__list">
-                {{#each plannedLearning.slice(0,3) as course}}
-                <li class="resource">
-                    <Learning bind:course />
-                </li>
-                {{/each}}
-            </ul>
-            {{#if plannedLearning.length > 3 }}
-            <p class="u-space-t30">
-                <a href="#">
-                    See more learning on learning plan
-                </a>
-            </p>
-            {{/if}}
-            {{else}}
-            <p>You don't have any planned learning yet.</p>
-            {{/if}}
+                {{#if plannedLearning.length}}
+                <ul class="resource__list">
+                    {{#each plannedLearning.slice(0,3) as course}}
+                    <li class="resource">
+                        <Learning bind:course />
+                    </li>
+                    {{/each}}
+                </ul>
+                {{#if plannedLearning.length > 3 }}
+                <p class="u-space-t30">
+                    <a href="#">
+                        See more learning on learning plan
+                    </a>
+                </p>
+                {{/if}}
+                {{else}}
+                <p>You don't have any planned learning yet.</p>
+                {{/if}}
+            </div>
         </div>
     </div>
-</Page>
+    <div class="fullbleed fullbleed--grey">
+        <div class="container container--main">
+            <div class="grid-row">
+                <div class="column-full">
+                    <h2 class="heading-medium u-space-t30">Suggestions for you</h2>
+                    <p>Suggestions are tailored by the service or from colleague recommendations.</p>
+                </div>
+            </div>
+            <div class="grid-row">
+                {{#each suggestedLearning.slice(0,3) as course}}
+                <div class="column-third">
+                    <Tile :course/>
+                </div>
+                {{/each}}
+            </div>
 
+            <div class="grid-row">
+                {{#each suggestedLearning.slice(3,suggestedLearning.length) as course}}
+                <div class="column-third">
+                    <Tile :course/>
+                </div>
+                {{/each}}
+            </div>
+
+        </div>
+    </div>
+
+</Page>

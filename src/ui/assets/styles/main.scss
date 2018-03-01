@@ -1,6 +1,6 @@
+@import 'common/utils';
 @import 'custom';
 @import 'common/variables';
-@import 'common/utils';
 @import 'common/global';
 @import 'common/typography';
 
@@ -16,7 +16,12 @@
 @import 'components/breadcrumbs';
 @import 'components/resource';
 @import 'components/badge';
+@import 'components/home-tile';
 
+.phase-banner {
+	@extend %site-width-container;
+	@extend %contain-floats;
+}
 .push-bottom {
 	margin-bottom: 30px;
 	display: block;

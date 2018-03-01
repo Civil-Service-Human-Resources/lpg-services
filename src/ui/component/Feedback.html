@@ -1,18 +1,20 @@
-<div class="grid-row">
-    <div class="column-full">
-        <div class="feedback">
-            <a class="feedback-prompt" href="">Is there anything wrong with this page?</a>
-            <div class="feedback-details">
-                <h2>Help us improve Civil Service Learning</h2>
-                <p>Don’t include personal or financial information like your National Insurance number or credit card details.</p>
-                <form action="/feedback.record" method="POST">
-                    <label for="whatDoing">What were you doing?</label>
-                    <input name="whatDoing" id="whatDoing">
-                    <label for="wentWrong">What went wrong?</label>
-                    <input name="wentWrong" id="wentWrong">
-                    <input type="hidden" name="pageUrl" id="pageUrl" value="{{currentReq.originalUrl}}">
-                    <button class="button" name="commit" type="submit">Send</button>
-                </form>
+<div class="container">
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="feedback">
+                <a class="feedback-prompt" href="">Is there anything wrong with this page?</a>
+                <div class="feedback-details">
+                    <h2>Help us improve Civil Service Learning</h2>
+                    <p>Don’t include personal or financial information like your National Insurance number or credit card details.</p>
+                    <form action="/feedback.record" method="POST">
+                        <label for="whatDoing">What were you doing?</label>
+                        <input name="whatDoing" id="whatDoing">
+                        <label for="wentWrong">What went wrong?</label>
+                        <input name="wentWrong" id="wentWrong">
+                        <input type="hidden" name="pageUrl" id="pageUrl" value="{{currentReq.originalUrl}}">
+                        <button class="button" name="commit" type="submit">Send</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

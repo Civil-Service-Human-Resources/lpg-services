@@ -17,6 +17,9 @@ export async function home(req: express.Request, res: express.Response) {
 	const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
 	const plannedLearning = []
 	const requiredLearning = (await catalog.findRequiredLearning(user)).entries
+	const suggestedLearning = (await catalog.findSuggestedLearning(
+		user
+	)).entries.slice(0, 6)
 
 	for (const record of learningRecord) {
 		let found = false
@@ -48,6 +51,7 @@ export async function home(req: express.Request, res: express.Response) {
 		template.render('home', req, {
 			plannedLearning,
 			requiredLearning,
+			suggestedLearning,
 		})
 	)
 }

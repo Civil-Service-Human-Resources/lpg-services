@@ -6,13 +6,6 @@
 <!--</div>-->
 
 <main class="elements-index" id="content" role="main">
-	<div class="phase-banner">
-		<p>
-			<strong class="phase-tag">BETA</strong>
-			<span>This is a new service – your
-				<a href="mailto:feedback@cslearning.gov.uk">feedback</a>&nbsp;will help us to improve it.</span>
-		</p>
-	</div>
 	{{#if currentReq.session.flash}}
 	<div class="flash-message">
 		{{currentReq.session.flash}} {{(delete currentReq.session.flash) && ''}}

@@ -1,0 +1,48 @@
+.tile {
+	width: 100%;
+	border-bottom: 1px solid $grey-1;
+	margin-bottom: 30px;
+	padding-bottom: 15px;
+
+	@include media(tablet) {
+		max-width: 360px;
+		border-bottom: 0;
+	}
+
+	@include media(desktop) {
+		max-width: 360px;
+		border-bottom: 0;
+	}
+
+	p {
+		margin: 4px 0;
+	}
+
+	@include e(actions) {
+		a {
+			display: inline-block;
+		}
+
+		a + a {
+			margin-left: 8px;
+		}
+	}
+
+	@include e(properties) {
+		@extend %contain-floats;
+		text-align: left;
+	}
+
+	@include e(property) {
+		display: block;
+		width: 100%;
+		float: none;
+		@include bold-16;
+
+		@include media(desktop) {
+			display: inline-block;
+			width: 33%;
+			float: left;
+		}
+	}
+}
