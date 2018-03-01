@@ -176,7 +176,7 @@ export async function tryCompleteBooking(
 		if (config.BOOKING_ALERT_WEBHOOK) {
 			messenger.send(
 				config.BOOKING_COMPLETE_MSG(
-					req.user.nameID,
+					req.user.givenName,
 					req.course.title,
 					req.user.emailAddress,
 					dateTime.formatDate(req.course.selectedDate)
@@ -232,7 +232,7 @@ export async function tryCancelBooking(
 		if (config.BOOKING_ALERT_WEBHOOK) {
 			messenger.send(
 				config.BOOKING_CANCELLED_MSG(
-					req.user.nameID,
+					req.user.givenName,
 					req.course.title,
 					req.user.emailAddress,
 					dateTime.formatDate(req.course.selectedDate)
