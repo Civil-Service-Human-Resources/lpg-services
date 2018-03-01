@@ -4,10 +4,10 @@ import {selectors, completeFeedback} from 'page/globals'
 import {loginToCsl} from 'page/login'
 import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
-import * as config from 'test/config'
+import * as config from 'extension/config'
 
 function genUserEmail() {
-	return `test${Date.now()}@c.gov.uk`
+	return `test${Date.now()}@b.gov.uk`
 }
 
 let TEST_USERNAME = genUserEmail()
@@ -16,7 +16,7 @@ describe('feedback form functionality', () => {
 	let page: puppeteer.Page
 
 	wrappedBeforeAll(async () => {
-		const session = await helper.getSession('feedback')
+		const session = await helper.getSession('feedback form')
 		page = await session.newPage()
 		await page.authenticate({
 			username: config.BASIC_AUTH_USERNAME,
@@ -44,6 +44,7 @@ describe('feedback form functionality', () => {
 
 	it('Should display two text fields and a send button when feedback link is clicked', async () => {
 		await page.click(selectors.feedbackPrompt)
+		await page.waitFor(selectors.feedbackDoingField)
 		expect(
 			await helper.checkElementIsPresent(selectors.feedbackDoingField, page)
 		).toBe(true)

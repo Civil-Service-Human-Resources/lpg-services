@@ -5,7 +5,7 @@ import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import * as xapi from 'extension/xapi'
 import {loginToCsl} from 'page/login'
 import {selectors} from 'page/learningPlan'
-import * as config from 'test/config'
+import * as config from 'extension/config'
 
 function genUserEmail() {
 	return `test${Date.now()}@c.gov.uk`

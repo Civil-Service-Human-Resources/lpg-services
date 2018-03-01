@@ -9,7 +9,7 @@ import {loginToCsl} from 'page/login'
 import {createUser, deleteUser, getUser} from 'extension/user'
 import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
 import * as puppeteer from 'puppeteer'
-import * as config from 'test/config'
+import * as config from 'extension/config'
 
 const timeout = 10000
 

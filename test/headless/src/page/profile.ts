@@ -10,7 +10,7 @@ export const selectors: Record<string, string> = {
 	profileForm: '.form-control',
 	saveProfileButton: '#content > div.main-content > div > div > form > input',
 	profileUpdatedMessage: '#content > div.main-content > div > div > div > h1',
-	signoutButton: '#proposition-links > li > a',
+	signoutButton: 'a[href="/sign-out"]',
 	profilePageButton: '#proposition-links > li > a',
 	incompleteProfileError: '#content > div.main-content > div > div > div',
 	updateProfileError:

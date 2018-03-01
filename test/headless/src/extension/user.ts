@@ -1,6 +1,6 @@
 import {default as axios, AxiosResponse} from 'axios'
 import * as https from 'https'
-import * as config from 'test/config'
+import * as config from 'extension/config'
 
 export interface QueryUser {
 	Resources: User[]

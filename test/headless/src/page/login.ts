@@ -11,6 +11,7 @@ export const selectors: Record<string, string> = {
 	signinButton: '#proposition-links > li > a',
 	profileUserName: '#userName',
 	homeNavButton: '#proposition-links > li:nth-child(1) > a',
+	signoutButton: 'a[href="/sign-out"]',
 }
 
 export async function loginToCsl(

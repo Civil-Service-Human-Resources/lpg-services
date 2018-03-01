@@ -2,7 +2,7 @@ import * as helper from 'extension/helper'
 import {loginToCsl, selectors} from 'page/login'
 import * as puppeteer from 'puppeteer'
 import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
-import * as config from 'test/config'
+import * as config from 'extension/config'
 
 const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
 
@@ -16,7 +16,6 @@ describe('login page functionality', () => {
 			username: config.BASIC_AUTH_USERNAME,
 			password: config.BASIC_AUTH_PASSWORD,
 		})
-		console.log('URL>>>>>>>>>>', config.URL)
 		await page.goto(config.URL)
 	})
 

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as config from 'test/config'
+import * as config from 'extension/config'
 
 export const Verb = {
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
