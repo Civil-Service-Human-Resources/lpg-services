@@ -21,6 +21,7 @@ import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
 import * as searchController from './controllers/search'
+import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 import * as bookingController from './controllers/booking'
@@ -107,8 +108,13 @@ app.use('/courses/:courseId/delete', courseController.markCourseDeleted)
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
-app.get('/suggested-for-you', searchController.suggestedForYou)
 app.get('/search', searchController.elasticSearch)
+app.get('/suggested-for-you', suggestionController.suggestedForYou)
+app.get('/suggested-for-you/add/:courseId', suggestionController.addToPlan)
+app.get(
+	'/suggested-for-you/remove/:courseId',
+	suggestionController.removeFromSuggested
+)
 
 app.get('/home', homeController.home)
 

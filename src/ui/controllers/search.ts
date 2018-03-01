@@ -70,10 +70,7 @@ function renderLearningPlan(req: Request, props: LearningPlan) {
 	return template.render('learning-plan', req, props)
 }
 
-export async function suggestedForYou(
-	req: Request,
-	res: Response
-) {
+export async function suggestedForYou(req: Request, res: Response) {
 	const user = req.user as model.User
 	const suggestedLearning = (await catalog.findSuggestedLearning(user)).entries
 
@@ -84,10 +81,7 @@ export async function suggestedForYou(
 	)
 }
 
-export async function elasticSearch(
-	req : Request ,
-	res : Response
-) {
+export async function elasticSearch(req: Request, res: Response) {
 	let query = ''
 	let searchResults: api.textSearchResponse = {entries: []}
 	let start = new Date()

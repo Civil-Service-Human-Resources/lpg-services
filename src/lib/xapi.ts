@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, {AxiosResponse} from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as model from 'lib/model'
@@ -50,6 +50,8 @@ export const Verb = {
 	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
 	Unregistered: 'http://adlnet.gov/expapi/verbs/unregistered',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
+	Liked: 'https://w3id.org/xapi/acrossx/verbs/liked',
+	Disliked: 'https://w3id.org/xapi/acrossx/verbs/disliked',
 }
 
 export const Labels: Record<string, string> = {
@@ -63,6 +65,8 @@ export const Labels: Record<string, string> = {
 	[Verb.Terminated]: 'terminated',
 	[Verb.Unregistered]: 'unregistered',
 	[Verb.Viewed]: 'viewed',
+	[Verb.Liked]: 'liked',
+	[Verb.Disliked]: 'disliked',
 }
 
 for (const verb of Object.values(Verb)) {
@@ -123,14 +127,16 @@ export async function record(
 			},
 		}
 	}
-	await send(payload)
+	let resp = await send(payload)
+	return resp
 }
 
 export async function search() {}
 
 export async function send(statement: Statement) {
+	let resp
 	try {
-		const resp = await axios.post(
+		resp = await axios.post(
 			`${config.XAPI.url}/statements`,
 			JSON.stringify([statement]),
 			{
@@ -151,7 +157,8 @@ export async function send(statement: Statement) {
 	} catch (err) {
 		throw new Error(`Couldn't post to xAPI: ${err}`)
 	}
-	return
+	// probably good to return response to general transport
+	return resp
 }
 
 export async function voidify(req: express.Request, id: string) {
