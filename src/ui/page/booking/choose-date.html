@@ -1,85 +1,87 @@
 <Page title="Choose Date">
-    <div class="grid-row">
-        <div class="column-full">
-            <Breadcrumb :breadcrumbs/>
-            <h1 class="heading-large">
-                <span class="heading-secondary">Booking a course</span>
-                Choose Date
-            </h1>
-        </div>
-    </div>
-    <div class="grid-row">
-        <div class="column-full">
-            <p>
-                Check on which dates you can attend and in which locations, then
-                select a suitable option below.
-            </p>
-            <form method="post">
-                <table>
-                <caption class="heading-small">{{course.title}}</caption>
-                    <thead>
-
-                        <tr>
-                            <th scope="col">Course dates</th>
-                            <th scope="col">Duration</th>
-                            <th scope="col">Location</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">
-                                <span class="visually-hidden">Selection</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each courseAvailability as courseDate, index}}
-                        <tr>
-                            <td>{{formatDate(courseDate)}}</td>
-                            <td>{{course.duration}}</td>
-                            <td>{{course.location}}</td>
-                            <td>&pound;{{course.price}}</td>
-                            <td>
-                                {{#if index == 0}}
-                                <input id="radio-{{index}}"
-                                    type="radio"
-                                    name="selected-date"
-                                    class="booking__date"
-                                    value="{{index}}"
-                                    checked >
-
-                                {{else}}
-                                <input id="radio-{{index}}"
-                                    type="radio"
-                                    name="selected-date"
-                                    class="booking__date"
-                                    value="{{index}}"
-                                    >
-                                {{/if}}
-
-
-                                <label for="radio-{{index}}">
-                                    <span class="booking__select booking__select--select">Select</span>
-                                    <span class="booking__select booking__select--selected">Selected</span>
-                                </label>
-                            </td>
-                            </tr>
-                        {{/each}}
-
-                    </tbody>
-                </table>
-
-            <p>
-                You are confirming that you have approval to book this course.
-            </p>
-            <p>
-            You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
-            </p>
-            <div class="panel panel-border-wide">
-                <p>
-                    By booking this course you are agreeing to the terms and conditions
-                </p>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <Breadcrumb :breadcrumbs/>
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Booking a course</span>
+                    Choose Date
+                </h1>
             </div>
-                <input type="submit" class="button" value="Continue">
-            </form>
+        </div>
+        <div class="grid-row">
+            <div class="column-full">
+                <p>
+                    Check on which dates you can attend and in which locations, then
+                    select a suitable option below.
+                </p>
+                <form method="post">
+                    <table>
+                    <caption class="heading-small">{{course.title}}</caption>
+                        <thead>
 
+                            <tr>
+                                <th scope="col">Course dates</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">
+                                    <span class="visually-hidden">Selection</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each courseAvailability as courseDate, index}}
+                            <tr>
+                                <td>{{formatDate(courseDate)}}</td>
+                                <td>{{course.duration}}</td>
+                                <td>{{course.location}}</td>
+                                <td>&pound;{{course.price}}</td>
+                                <td>
+                                    {{#if index == 0}}
+                                    <input id="radio-{{index}}"
+                                        type="radio"
+                                        name="selected-date"
+                                        class="booking__date"
+                                        value="{{index}}"
+                                        checked >
+
+                                    {{else}}
+                                    <input id="radio-{{index}}"
+                                        type="radio"
+                                        name="selected-date"
+                                        class="booking__date"
+                                        value="{{index}}"
+                                        >
+                                    {{/if}}
+
+
+                                    <label for="radio-{{index}}">
+                                        <span class="booking__select booking__select--select">Select</span>
+                                        <span class="booking__select booking__select--selected">Selected</span>
+                                    </label>
+                                </td>
+                                </tr>
+                            {{/each}}
+
+                        </tbody>
+                    </table>
+
+                <p>
+                    You are confirming that you have approval to book this course.
+                </p>
+                <p>
+                You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
+                </p>
+                <div class="panel panel-border-wide">
+                    <p>
+                        By booking this course you are agreeing to the terms and conditions
+                    </p>
+                </div>
+                    <input type="submit" class="button" value="Continue">
+                </form>
+
+            </div>
         </div>
     </div>
 </Page>
