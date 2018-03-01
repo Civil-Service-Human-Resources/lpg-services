@@ -36,3 +36,10 @@
 		}
 	}
 }
+
+.fullbleed {
+	@extend %contain-floats;
+	@include m(grey) {
+		background-color: $grey-4;
+	}
+}

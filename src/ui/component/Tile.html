@@ -1,0 +1,27 @@
+<div class="tile">
+	<h4 class="heading-small">
+		<a href="/courses/{{course.uid}}">
+			{{course.title}}
+		</a>
+	</h4>
+
+	<p class="tile__attribution">Recommended by profession</p>
+	<ul class="tile__properties">
+		<li class="tile__property">{{course.type}}</li>
+
+		<li class="tile__property">{{course.duration}}</li>
+
+		<li class="tile__property">{{course.price ? course.price : 'Free'}}</li>
+	</ul>
+	<p>
+		{{course.shortDescription}}
+	</p>
+	<p class="tile__actions">
+		<a href="/prototypes/learner/v1/actions?action=addedToLearningPlan&amp;type=Online">
+			Add to learning plan
+		</a>
+		<a href="/prototypes/learner/v1/actions?action=removedFromSuggestedList&amp;type=Online">
+			Remove <span class="visuallyhidden">from suggested learning list</span>
+		</a>
+	</p>
+</div>
