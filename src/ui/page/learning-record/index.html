@@ -1,40 +1,42 @@
 <Page title="Learning Record">
-	<div class="grid-row">
-		<div class="column-full">
-			<h1 class="heading-large">Your learning record</h1>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large">Your learning record</h1>
 
-			{{#if courses.length}}
-			<table>
-				<thead>
-					<tr>
-						<th scope="col">Date</th>
-						<th scope="col">Name</th>
-						<th scope="col">Score</th>
-						<th scope="col">Type</th>
-						<th scope="col">Expiry</th>
-						<th scope="col"></th>
-					</tr>
-				</thead>
-				<tbody>
-					{{#each courses as course}}
-					<tr>
-						<td>{{ course.completionDate }}</td>
-						<td>{{ course.title }}</td>
-						<td>
-							{{#if course.score }} {{ course.score.scaled * 100 }}% {{elseif course.result}} {{ i18n(course.result) }} {{else}} - {{/if}}
-						</td>
-						<td>{{ i18n(course.type) }}</td>
-						<td>-</td>
-						<td>
-							<a href="/courses/{{ course.uid }}/do" class="button">Retake</a>
-						</td>
-					</tr>
-					{{/each}}
-				</tbody>
-			</table>
-			{{else}}
-			<p>You haven't completed any courses yet!</p>
-			{{/if}}
-		</div>
-	</div>
+                {{#if courses.length}}
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Expiry</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each courses as course}}
+                        <tr>
+                            <td>{{ course.completionDate }}</td>
+                            <td>{{ course.title }}</td>
+                            <td>
+                                {{#if course.score }} {{ course.score.scaled * 100 }}% {{elseif course.result}} {{ i18n(course.result) }} {{else}} - {{/if}}
+                            </td>
+                            <td>{{ i18n(course.type) }}</td>
+                            <td>-</td>
+                            <td>
+                                <a href="/courses/{{ course.uid }}/do" class="button">Retake</a>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                {{else}}
+                <p>You haven't completed any courses yet!</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
 </Page>
