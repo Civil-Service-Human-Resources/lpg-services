@@ -1,3 +1,10 @@
+.grid-row {
+	@include m(suggested) {
+		// the rows the .tiles live in
+		position: relative;
+	}
+}
+
 .tile {
 	width: 100%;
 	border-bottom: 1px solid $grey-1;
@@ -19,6 +26,11 @@
 	}
 
 	@include e(actions) {
+		@include media($desktop-breakpoint) {
+			position: absolute;
+			bottom: 15px;
+		}
+
 		a {
 			display: inline-block;
 		}

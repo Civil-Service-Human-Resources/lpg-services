@@ -50,7 +50,7 @@
                     <p>Suggestions are tailored by the service or from colleague recommendations.</p>
                 </div>
             </div>
-            <div class="grid-row">
+            <div class="grid-row grid-row--suggested">
                 {{#each suggestedLearning.slice(0,3) as course}}
                 <div class="column-third">
                     <Tile :course/>
@@ -58,7 +58,7 @@
                 {{/each}}
             </div>
 
-            <div class="grid-row">
+            <div class="grid-row grid-row--suggested">
                 {{#each suggestedLearning.slice(3,suggestedLearning.length) as course}}
                 <div class="column-third">
                     <Tile :course/>
