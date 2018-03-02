@@ -33,6 +33,7 @@ export async function suggestions(user: model.User) {
 			modified.push(course)
 		}
 	}
+
 	return modified
 }
 
@@ -42,9 +43,11 @@ export async function suggestedForYou(
 ) {
 	let user = req.user as model.User
 
+	let modified = await suggestions(user)
+
 	res.send(
 		template.render('suggested', req, {
-			courses: suggestions(user),
+			courses: modified,
 		})
 	)
 }
@@ -64,7 +67,7 @@ export async function removeFromSuggested(
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
-			res.redirect('/suggested-for-you')
+			res.redirect(req.path)
 		}
 	} else {
 		res.sendStatus(500)
@@ -83,7 +86,7 @@ export async function addToPlan(req: express.Request, res: express.Response) {
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
-			res.redirect('/suggested-for-you')
+			res.redirect(req.path)
 		}
 	} else {
 		res.sendStatus(500)
