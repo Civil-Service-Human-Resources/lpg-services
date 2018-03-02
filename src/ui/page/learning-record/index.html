@@ -21,7 +21,7 @@
                                 <tbody>
                                 {{#each completedRequiredLearning as course}}
                                     <tr>
-                                        <td><a href="#">{{course.title}} </a></td>
+                                        <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
                                         <td>{{course.type}}</td>
                                         <td>{{course.duration}}</td>
                                         <td>{{formatDate(course.completionDate)}}</td>
@@ -51,7 +51,7 @@
                             <tbody>
                             {{#each courses as course}}
                                 <tr>
-                                    <td><a href="#">{{course.title}} </a></td>
+                                    <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
                                     <td>{{course.type}}</td>
                                     <td>{{course.duration}}</td>
                                     <td>{{formatDate(course.completionDate)}}</td>
