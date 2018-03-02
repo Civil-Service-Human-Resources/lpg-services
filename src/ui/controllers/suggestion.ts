@@ -65,7 +65,7 @@ export async function removeFromSuggested(
 
 	if (verbId && course) {
 		try {
-			let resp = await xapi.record(req, course, verbId)
+			await xapi.record(req, course, verbId)
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
@@ -86,7 +86,7 @@ export async function addToPlan(req: express.Request, res: express.Response) {
 
 	if (verbId && course) {
 		try {
-			let resp = await xapi.record(req, course, verbId)
+			await xapi.record(req, course, verbId)
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
