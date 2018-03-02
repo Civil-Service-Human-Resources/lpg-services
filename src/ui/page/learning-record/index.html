@@ -23,7 +23,7 @@
                                     <tr>
                                         <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
                                         <td>{{course.type}}</td>
-                                        <td>{{course.duration}}</td>
+                                        <td>{{course.duration ? course.duration : '-'}}</td>
                                         <td>{{formatDate(course.completionDate)}}</td>
                                     </tr>
                                 {{/each}}
@@ -53,7 +53,7 @@
                                 <tr>
                                     <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
                                     <td>{{course.type}}</td>
-                                    <td>{{course.duration}}</td>
+                                    <td>{{course.duration ? course.duration : '-'}}</td>
                                     <td>{{formatDate(course.completionDate)}}</td>
                                 </tr>
                             {{/each}}
