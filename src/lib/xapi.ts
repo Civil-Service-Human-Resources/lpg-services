@@ -127,8 +127,7 @@ export async function record(
 			},
 		}
 	}
-	let resp = await send(payload)
-	return resp
+	return await send(payload)
 }
 
 export async function search() {}
