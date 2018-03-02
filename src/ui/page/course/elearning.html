@@ -22,7 +22,7 @@
             </div>
             <div class="column-one-third">
                 {{#if courseDetails.length}} {{#each courseDetails as dataRows}}
-                <Rightbox bind:dataRows></Rightbox>
+                <Rightbox :dataRows/>
                 {{/each}} {{/if}}
             </div>
         </div>
