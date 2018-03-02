@@ -43,8 +43,23 @@ export async function display(req: express.Request, res: express.Response) {
 		learnerRecord.CourseState.Completed,
 		req.user
 	)
+	const requiredLearningTotal = (await catalog.findRequiredLearning(req.user))
+		.entries.length
+
+	const completedRequiredLearning = []
+
+	for (const [i, record] of courses.entries()) {
+		const matches = record.tags.filter(tag => tag.includes('mandatory'))
+		if (matches.length) {
+			completedRequiredLearning.push(record)
+			courses.splice(i, 1)
+		}
+	}
+
 	res.send(
 		template.render('learning-record', req, {
+			requiredLearningTotal,
+			completedRequiredLearning,
 			courses,
 		})
 	)
