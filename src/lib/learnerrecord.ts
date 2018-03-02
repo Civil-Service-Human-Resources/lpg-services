@@ -12,7 +12,7 @@ export enum CourseState {
 }
 
 export async function getLearningRecordOf(
-	courseState: CourseState,
+	courseState: CourseState | null,
 	user: model.User
 ) {
 	const response = await axios({
@@ -43,6 +43,7 @@ export async function getLearningRecordOf(
 			: null
 		course.selectedDate = selectedDate ? new Date(selectedDate) : null
 		course.result = record.result
+		course.preference = record.preference
 		course.score = record.score
 		course.state = record.state
 		courses.push(course)

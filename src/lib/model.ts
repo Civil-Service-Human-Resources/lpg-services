@@ -60,6 +60,7 @@ export class Course {
 	public completionDate?: Date
 	public result?: any
 	public score?: string
+	public preference?: string
 	public selectedDate?: Date
 	public state?: string
 
@@ -82,9 +83,9 @@ export class Course {
 
 	isRequired(user: User) {
 		return (
-			this.tags && (
-			this.tags.indexOf('mandatory:all') > -1 ||
-			this.tags.indexOf(`mandatory:${user.department}`) > -1)
+			this.tags &&
+			(this.tags.indexOf('mandatory:all') > -1 ||
+				this.tags.indexOf(`mandatory:${user.department}`) > -1)
 		)
 	}
 
