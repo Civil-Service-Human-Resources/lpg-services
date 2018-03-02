@@ -9,7 +9,7 @@
                 <ul class="resource__list">
                     {{#each requiredLearning as course}}
                     <li class="resource">
-                        <Learning bind:course />
+                        <Learning :course />
                     </li>
                     {{/each}}
                 </ul>
@@ -25,7 +25,7 @@
                 <ul class="resource__list">
                     {{#each plannedLearning.slice(0,3) as course}}
                     <li class="resource">
-                        <Learning bind:course />
+                        <Learning :course />
                     </li>
                     {{/each}}
                 </ul>
