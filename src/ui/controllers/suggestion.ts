@@ -61,13 +61,15 @@ export async function removeFromSuggested(
 	const course = await catalog.get(uid)
 	const verbId = xapi.lookup(verb)
 
+	let ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
+
 	if (verbId && course) {
 		try {
 			let resp = await xapi.record(req, course, verbId)
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
-			res.redirect(req.path)
+			res.redirect(ref)
 		}
 	} else {
 		res.sendStatus(500)
@@ -80,13 +82,15 @@ export async function addToPlan(req: express.Request, res: express.Response) {
 	const course = await catalog.get(uid)
 	const verbId = xapi.lookup(verb)
 
+	let ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
+
 	if (verbId && course) {
 		try {
 			let resp = await xapi.record(req, course, verbId)
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
-			res.redirect(req.path)
+			res.redirect(ref)
 		}
 	} else {
 		res.sendStatus(500)
