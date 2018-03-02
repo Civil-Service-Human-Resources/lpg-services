@@ -6,6 +6,7 @@ import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as learningRecordController from './learning-record'
 import * as learnerRecord from 'lib/learnerrecord'
+
 import * as xapi from 'lib/xapi'
 
 function findCourseByUID(courses: model.Course[], uid: string) {
@@ -17,11 +18,7 @@ function findCourseByUID(courses: model.Course[], uid: string) {
 	return null
 }
 
-export async function suggestedForYou(
-	req: express.Request,
-	res: express.Response
-) {
-	let user = req.user as model.User
+export async function suggestions(user: model.User) {
 	let suggestedLearning = (await catalog.findSuggestedLearning(user)).entries
 	let learningRecord = await learnerRecord.getLearningRecordOf(null, user)
 	let modified: model.Course[] = []
@@ -40,10 +37,18 @@ export async function suggestedForYou(
 			modified.push(course)
 		}
 	}
+	return modified
+}
+
+export async function suggestedForYou(
+	req: express.Request,
+	res: express.Response
+) {
+	let user = req.user as model.User
 
 	res.send(
 		template.render('suggested', req, {
-			courses: modified,
+			courses: suggestions(user),
 		})
 	)
 }

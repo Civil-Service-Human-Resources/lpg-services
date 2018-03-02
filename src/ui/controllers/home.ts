@@ -3,6 +3,7 @@ import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as learnerRecord from 'lib/learnerrecord'
+import * as suggestionController from './suggestion'
 
 export let index = (req: express.Request, res: express.Response) => {
 	if (req.isAuthenticated()) {
@@ -17,9 +18,9 @@ export async function home(req: express.Request, res: express.Response) {
 	const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
 	const plannedLearning = []
 	const requiredLearning = (await catalog.findRequiredLearning(user)).entries
-	const suggestedLearning = (await catalog.findSuggestedLearning(
+	const suggestedLearning = (await suggestionController.suggestions(
 		user
-	)).entries.slice(0, 6)
+	)).slice(0, 6)
 
 	for (const record of learningRecord) {
 		let found = false
