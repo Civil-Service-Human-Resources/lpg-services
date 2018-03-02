@@ -29,7 +29,7 @@ export async function home(req: express.Request, res: express.Response) {
 					requiredLearning.splice(i, 1)
 				} else {
 					if (record.state === 'completed') {
-						record.state = null
+						record.state = undefined
 					}
 					requiredLearning[i] = record
 				}
@@ -41,7 +41,8 @@ export async function home(req: express.Request, res: express.Response) {
 			!found &&
 			record.state !== 'completed' &&
 			record.state !== 'unregistered' &&
-			record.state !== 'terminated'
+			record.state !== 'terminated' &&
+			record.preference !== 'disliked'
 		) {
 			plannedLearning.push(record)
 		}
