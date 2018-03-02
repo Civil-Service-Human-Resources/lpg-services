@@ -2,40 +2,69 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large">Your learning record</h1>
+                <h1 class="heading-large">Learning record</h1>
+                        <h2 class="heading heading--medium heading--red-top heading-medium">
+                          Required learning
+                        </h2>
+                        {{#if completedRequiredLearning.length}}
 
-                {{#if courses.length}}
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Score</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Expiry</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each courses as course}}
-                        <tr>
-                            <td>{{ course.completionDate }}</td>
-                            <td>{{ course.title }}</td>
-                            <td>
-                                {{#if course.score }} {{ course.score.scaled * 100 }}% {{elseif course.result}} {{ i18n(course.result) }} {{else}} - {{/if}}
-                            </td>
-                            <td>{{ i18n(course.type) }}</td>
-                            <td>-</td>
-                            <td>
-                                <a href="/courses/{{ course.uid }}/do" class="button">Retake</a>
-                            </td>
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-                {{else}}
-                <p>You haven't completed any courses yet!</p>
+                            <table class="u-space-b30">
+                                <thead>
+                                    <tr>
+                                        <th class="table--fix-first">Course title</th>
+                                        <th>Type</th>
+                                        <th>Duration</th>
+                                        <th>Completion date</th>
+
+                                    </tr>
+                               </thead>
+                                <tbody>
+                                {{#each completedRequiredLearning as course}}
+                                    <tr>
+                                        <td><a href="#">{{course.title}} </a></td>
+                                        <td>{{course.type}}</td>
+                                        <td>{{course.duration}}</td>
+                                        <td>{{formatDate(course.completionDate)}}</td>
+                                    </tr>
+                                {{/each}}
+                                </tbody>
+                           </table>
+
+
+                        <p>You have completed {{completedRequiredLearning.length}} out of {{requiredLearningTotal}} required learning courses.</p>
+                    {{else}}
+                        <p>You haven't completed any courses yet!</p>
+                    {{/if}}
+                    {{#if completedRequiredLearning.length}}
+                        <h2 class="heading heading--medium heading--red-top heading-medium">
+                          Other learning
+                        </h2>
+                        <table class="u-space-b30">
+                            <thead>
+                                <tr>
+                                    <th class="table--fix-first">Course title</th>
+                                    <th>Type</th>
+                                    <th>Duration</th>
+                                    <th>Completion date</th>
+                                </tr>
+                           </thead>
+                            <tbody>
+                            {{#each courses as course}}
+                                <tr>
+                                    <td><a href="#">{{course.title}} </a></td>
+                                    <td>{{course.type}}</td>
+                                    <td>{{course.duration}}</td>
+                                    <td>{{formatDate(course.completionDate)}}</td>
+                                </tr>
+                            {{/each}}
+                            </tbody>
+                       </table>
+                   {{else}}
+                   <p>You haven't completed any courses yet!</p>
                 {{/if}}
+
+
+
             </div>
         </div>
     </div>

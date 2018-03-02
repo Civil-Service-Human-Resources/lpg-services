@@ -43,3 +43,18 @@
 		background-color: $grey-4;
 	}
 }
+
+.table {
+	margin-bottom: 30px;
+	@include m(top) {
+		td,
+		th {
+			vertical-align: top;
+		}
+	}
+	@include m(fix-first) {
+		@include media(desktop) {
+			width: 460px;
+		}
+	}
+}
