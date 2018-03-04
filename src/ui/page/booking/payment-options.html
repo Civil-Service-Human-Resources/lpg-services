@@ -20,14 +20,14 @@
                 {{/if}}
                 <form method="post">
                     <div class="form-group">
-                        {{#if signedInUser.department == ('co' || 'dh')}}
-                        <p>Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.</p>
-                        <label class="form-label" for="purchase-order">Purchase order number</label>
-                        <input class="form-control" id="purchase-order" type="text" name="purchase-order" value="{{previouslyEntered ? previouslyEntered : ''}}">
-                        {{elseif signedInUser.department == "hmrc"}}
+                        {{#if signedInUser.department == "hmrc"}}
                         <p>Financial approval - when prompted please select an approver to confirm your booking. To find out whether your organisation uses the financial approver process, please contact your learning and development team. They should be able to confirm the name of your financial approver.</p>
                         <label class="form-label" for="financial-approver">Financial approver</label>
                         <input class="form-control" id="financial-approver" type="email" name="financial-approver" value="{{previouslyEntered ? previouslyEntered : ''}}">
+                        {{else}}
+                        <p>Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.</p>
+                        <label class="form-label" for="purchase-order">Purchase order number</label>
+                        <input class="form-control" id="purchase-order" type="text" name="purchase-order" value="{{previouslyEntered ? previouslyEntered : ''}}">
                         {{/if}}
                     </div>
                     <input type="submit" class="button" value="Continue">
