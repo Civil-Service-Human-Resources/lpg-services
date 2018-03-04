@@ -18,6 +18,15 @@
 @import 'components/badge';
 @import 'components/home-tile';
 
+table {
+	th, td {
+		padding-right: 0;
+		@include media($tablet-breakpoint) {
+			padding-right: em(20, 19);
+		}
+	}
+}
+
 .phase-banner {
 	@extend %site-width-container;
 	@extend %contain-floats;

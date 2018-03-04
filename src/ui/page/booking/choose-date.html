@@ -31,32 +31,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{#each courseAvailability as courseDate, index}}
+                            {{#each courseAvailability as availability}}
                             <tr>
-                                <td>{{formatDate(courseDate)}}</td>
+                                <td>{{formatDate(availability.date)}}</td>
                                 <td>{{course.duration}}</td>
                                 <td>{{course.location}}</td>
                                 <td>&pound;{{course.price}}</td>
                                 <td>
-                                    {{#if index == 0}}
-                                    <input id="radio-{{index}}"
+                                    {{#if availability.id == selectedDate}}
+                                    <input id="radio-{{availability.id}}"
                                         type="radio"
                                         name="selected-date"
                                         class="booking__date"
-                                        value="{{index}}"
+                                        value="{{availability.id}}"
                                         checked >
-
                                     {{else}}
-                                    <input id="radio-{{index}}"
+                                    <input id="radio-{{availability.id}}"
                                         type="radio"
                                         name="selected-date"
                                         class="booking__date"
-                                        value="{{index}}"
+                                        value="{{availability.id}}"
                                         >
                                     {{/if}}
 
 
-                                    <label for="radio-{{index}}">
+                                    <label for="radio-{{availability.id}}">
                                         <span class="booking__select booking__select--select">Select</span>
                                         <span class="booking__select booking__select--selected">Selected</span>
                                     </label>

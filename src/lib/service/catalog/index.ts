@@ -144,19 +144,23 @@ export async function add(course: model.Course) {
 	const uid = assigned.getUidsMap().get('blank-0') || course.uid
 	await txn.discard()
 
-	// add to elastic search
-	const elasticClient = await getElasticClient()
-	const data: any = {}
-	const entry = mu.getSetJson()
-	for (const prop of Object.keys(entry)) {
-		data[prop] = entry[prop]
+	try {
+		// add to elastic search
+		const elasticClient = await getElasticClient()
+		const data: any = {}
+		const entry = mu.getSetJson()
+		for (const prop of Object.keys(entry)) {
+			data[prop] = entry[prop]
+		}
+		data.uid = uid
+		await elasticClient.index({
+			body: data,
+			index: 'dgraph',
+			type: 'lpg',
+		})
+	} catch (e) {
+		console.error('Unable to save data to elasticsearch', e)
 	}
-	data.uid = uid
-	await elasticClient.index({
-		body: data,
-		index: 'dgraph',
-		type: 'lpg',
-	})
 	return uid
 }
 
@@ -466,9 +470,15 @@ export async function resetCourses() {
 	const lines = parse(rawData.toString())
 	const attributes = lines.shift()!
 	const highestUid = Number(lines[lines.length - 1][0])
-	const esClient = await getElasticClient()
-	// delete index for reset
-	await esClient.indices.delete({index: 'dgraph'})
+
+	try {
+		const esClient = await getElasticClient()
+		// delete index for reset
+		await esClient.indices.delete({index: 'dgraph'})
+	} catch (e) {
+		console.error('Unable to delete elasticsearch index')
+	}
+
 	let currentUid = 0
 	while (highestUid > currentUid) {
 		currentUid = Number(await add({title: 'placeholder'} as model.Course))

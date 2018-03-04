@@ -99,15 +99,16 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 		bookingStep: 3,
 		courseId,
 		courseTitle: course.title,
-		dateSelected: 0,
+		dateSelected: -1,
 	}
 
 	session.save(() => {
 		const breadcrumbs = getBreadcrumbs(req)
 		const today = new Date()
 		const courseAvailability = (course.availability || [])
-			.filter(availability => availability > today)
-			.sort((a, b) => a.getTime() - b.getTime())
+			.map((availability, i) => ({id: i, date: availability}))
+			.filter(availability => availability.date > today)
+			.sort((a, b) => a.date.getTime() - b.date.getTime())
 
 		res.send(
 			template.render('booking/choose-date', req, {
@@ -115,6 +116,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 				course,
 				courseAvailability,
 				courseDetails: courseController.getCourseDetails(req, course),
+				selectedDate: session.bookingSession.dateSelected,
 			})
 		)
 	})
