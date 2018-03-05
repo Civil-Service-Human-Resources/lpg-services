@@ -14,6 +14,9 @@ import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as resetCourseController from './controllers/course/reset'
 import * as homeController from './controllers/home'
+import * as loginController from './controllers/login'
+import * as i18n from 'lib/service/translation'
+import * as passport from 'lib/config/passport'
 
 /* tslint:disable:no-var-requires */
 const favicon = require('serve-favicon')
@@ -55,6 +58,13 @@ app.use(compression({threshold: 0}))
 
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
+
+passport.configure('management', config.AUTHENTICATION.serviceUrl, app)
+i18n.configure(app)
+
+app.use(passport.isAuthenticated)
+app.get('/sign-in', loginController.signIn)
+app.get('/sign-out', loginController.signOut)
 
 app.get('/', homeController.index)
 app.get('/courses', displayCourseController.index)
