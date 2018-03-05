@@ -22,6 +22,10 @@ docker pull cshr/lpg-services || true
 stage "Installing the top-level dependencies"
 npm install
 
+stage "Linting the codebase"
+npm run lint
+npm run lint:headless
+
 stage "Building the main src"
 npm run build
 
@@ -29,8 +33,8 @@ stage "Building the new lpg-services docker image"
 docker build --cache-from cshr/lpg-services:latest -t cshr/lpg-services:${TRAVIS_COMMIT} .
 
 stage "Pushing the lpg-services:${TRAVIS_COMMIT} docker image"
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-docker push cshr/lpg-services:${TRAVIS_COMMIT}
+docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
+docker push cshr/lpg-services
 
 stage "Installing ansible if necessary"
 export PATH="`pwd`/pyhome/bin:${PATH}"

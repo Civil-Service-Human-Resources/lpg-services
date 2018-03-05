@@ -55,7 +55,40 @@ export const AUTHENTICATION = set({
 		'https://identity.local.cshr.digital:9443',
 })
 
-export const FEEDBACK_RECIPIENTS = ['max@cautionyourblast.com', 'richard@cautionyourblast.com']
+export const BOOKING_ALERT_WEBHOOK = env.BOOKING_ALERT_WEBHOOK
+
+export function BOOKING_CANCELLED_MSG(
+	userName: string,
+	courseTitle: string,
+	emailAddress: string,
+	date: string
+) {
+	return `*BOOKING CANCELLED*
+user *${userName}* cancelled booking on *${courseTitle}*
+*User Email*: ${emailAddress}
+*Selected date*: ${date}`
+}
+
+export function BOOKING_COMPLETE_MSG(
+	userName: string,
+	courseTitle: string,
+	emailAddress: string,
+	date: string
+) {
+	return `*BOOKING COMPLETE*
+user *${userName}* completed booking on *${courseTitle}*
+*User Email*: ${emailAddress}
+*Selected date*: ${date}`
+}
+
+export const DGRAPH_ENDPOINT = env.DGRAPH_ENDPOINT || 'localhost:9080'
+
+export const ELASTIC_ENDPOINT = env.ELASTIC_ENDPOINT || 'http://localhost:9200'
+
+export const FEEDBACK_RECIPIENTS = [
+	'max@cautionyourblast.com',
+	'richard@cautionyourblast.com',
+]
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
 
@@ -71,6 +104,10 @@ gtag('config', '${GOOGLE_ANALYTICS_ID}', { anonymize_ip: true });
 export const GOV_NOTIFY_API_KEY =
 	env.GOV_NOTIFY_API_KEY ||
 	'test-22877568-4bca-40f9-8f54-8bf7922583cf-e2f80f22-e3de-4007-9ce2-b50a2b5785b7'
+
+export const LEARNER_RECORD = {
+	url: env.LEARNER_RECORD_SERVICE_URL || 'http://localhost:9000',
+}
 
 export const LOGGING = set(
 	{
@@ -95,9 +132,6 @@ export const LOGGING = set(
 
 export const LPG_UI_SERVER = env.LPG_UI_SERVER || 'lpg.local.cshr.digital:3001'
 
-export const POSTGRES =
-	env.POSTGRES || 'postgres://user:password@localhost:5433/lpg'
-
 export const SESSION_SECRET =
 	env.SESSION_SECRET ||
 	'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
@@ -111,10 +145,4 @@ export const XAPI = set({
 	url: env.XAPI_URL || 'http://localhost:8083/data/xAPI',
 })
 
-export const LEARNER_RECORD = set({
-	url: env.LEARNER_RECORD_SERVICE_URL || 'http://localhost:9000',
-})
-
 export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
-
-export const BOOKING_ALERT_WEBHOOK = env.BOOKING_ALERT_WEBHOOK

@@ -1,68 +1,51 @@
 import * as config from 'lib/config'
 
-export class Frequency {
-	static FiveYearly: 'five-yearly'
-	static ThreeYearly: 'two-yearly'
-	static Yearly: 'yearly'
-
-	static increment(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() + step, date.getMonth(), date.getDate())
-	}
-
-	static decrement(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() - step, date.getMonth(), date.getDate())
-	}
-
-	private static getStep(frequency: string) {
-		switch (frequency) {
-			case Frequency.FiveYearly:
-				return 5
-			case Frequency.ThreeYearly:
-				return 3
-			default:
-				return 1
-		}
-	}
-}
-
-export class textSearchResult {
-	public readonly uid: string
-	public title: string
-	public searchText: string
-	public weight: number
-
-	constructor(uid: string) {
-		this.uid = uid
-	}
-}
-
 export class Course {
-	readonly uid: string
-	readonly type: string
-	public title: string
-	public tags: string[]
-	public uri: string
-	public shortDescription: string
-	public description: string
-	public learningOutcomes: string
-	public duration: string
-	public productCode: string
+	static create(data: any) {
+		const course = new Course(data.uid, data.type)
+		course.availability = ((data.availability as Date[]) || []).map(
+			availability => new Date(availability)
+		)
+		course.description = data.description
+		course.duration = data.duration
+		course.frequency = data.frequency
+		course.learningOutcomes = data.learningOutcomes
+		course.location = data.location
+		course.price = data.price
+		course.productCode = data.productCode
+		course.requiredBy = data.requiredBy ? new Date(data.requiredBy) : null
+		course.shortDescription = data.shortDescription
+		course.tags = data.tags
+		course.title = data.title
+		course.uri = data.uri
+		return course
+	}
 
-	public availability?: Date[]
-	public location?: string
-	public price?: string
+	uid: string
+	type: string
 
-	public requiredBy?: Date
-	public frequency?: string
+	title: string
+	tags: string[]
+	uri: string
+	shortDescription: string
+	description: string
+	learningOutcomes: string
+	duration: string
+	productCode: string
 
-	public completionDate?: Date
-	public result?: any
-	public score?: string
-	public preference?: string
-	public selectedDate?: Date
-	public state?: string
+	availability?: Date[]
+	location?: string
+	price?: string
+
+	requiredBy?: Date | null
+	frequency?: string
+
+	completionDate?: Date | null
+	result?: any
+	score?: string
+	preference?: string
+	selectedDate?: Date | null
+	state?: string
 
 	constructor(uid: string, type: string) {
 		this.uid = uid
@@ -90,28 +73,34 @@ export class Course {
 	}
 
 	nextRequiredBy() {
-		const [last, next] = this._currentRecurrancePeriod()
+		const [last, next] = this._currentRecurrencePeriod()
 		if (!last || !next) {
 			return null
 		}
 
 		if (this.completionDate && this.completionDate > last) {
+			if (!this.frequency) {
+				throw new Error(`course.frequency not set for course ${this.uid}`)
+			}
 			return Frequency.increment(this.frequency, next)
 		}
 		return next
 	}
 
 	shouldRepeat() {
-		const [last, next] = this._currentRecurrancePeriod()
+		const [last, next] = this._currentRecurrencePeriod()
 		if (!last || !next) {
 			return !this.completionDate
+		}
+		if (!this.completionDate) {
+			throw new Error(`course.completionDate not set for course ${this.uid}`)
 		}
 		return this.completionDate < last
 	}
 
-	_currentRecurrancePeriod() {
+	_currentRecurrencePeriod() {
 		if (!this.requiredBy || !this.frequency) {
-			return []
+			return [null, null]
 		}
 		const today = new Date()
 		let nextDate = this.requiredBy
@@ -121,25 +110,43 @@ export class Course {
 		const lastDate = Frequency.decrement(this.frequency, nextDate)
 		return [lastDate, nextDate]
 	}
+}
 
-	static create(data: any) {
-		const course = new Course(data.uid, data.type)
-		course.availability = (data.availability || []).map(
-			availability => new Date(availability)
-		)
-		course.description = data.description
-		course.duration = data.duration
-		course.frequency = data.frequency
-		course.learningOutcomes = data.learningOutcomes
-		course.location = data.location
-		course.price = data.price
-		course.productCode = data.productCode
-		course.requiredBy = data.requiredBy ? new Date(data.requiredBy) : null
-		course.shortDescription = data.shortDescription
-		course.tags = data.tags
-		course.title = data.title
-		course.uri = data.uri
-		return course
+export class Frequency {
+	static FiveYearly: 'five-yearly'
+	static ThreeYearly: 'two-yearly'
+	static Yearly: 'yearly'
+
+	static increment(frequency: string, date: Date) {
+		const step = this.getStep(frequency)
+		return new Date(date.getFullYear() + step, date.getMonth(), date.getDate())
+	}
+
+	static decrement(frequency: string, date: Date) {
+		const step = this.getStep(frequency)
+		return new Date(date.getFullYear() - step, date.getMonth(), date.getDate())
+	}
+
+	private static getStep(frequency: string) {
+		switch (frequency) {
+			case Frequency.FiveYearly:
+				return 5
+			case Frequency.ThreeYearly:
+				return 3
+			default:
+				return 1
+		}
+	}
+}
+
+export class TextSearchResult {
+	readonly uid: string
+	title: string
+	searchText: string
+	weight: number
+
+	constructor(uid: string) {
+		this.uid = uid
 	}
 }
 
@@ -150,10 +157,10 @@ export class User {
 	readonly nameIDFormat: string
 	readonly sessionIndex: string
 
-	public department: string
-	public profession: string
-	public givenName: string
-	public grade: string
+	department: string
+	profession: string
+	givenName: string
+	grade: string
 
 	constructor(
 		id: string,

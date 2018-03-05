@@ -1,21 +1,23 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
-import * as fileUpload from 'express-fileupload'
 import * as session from 'express-session'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as lusca from 'lusca'
+import * as path from 'path'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
-import * as path from 'path'
-import * as favicon from 'serve-favicon'
 
-import * as homeController from './controllers/home'
+import * as bookingsController from './controllers/bookings/index'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as resetCourseController from './controllers/course/reset'
-import * as bookingsController from './controllers/bookings/index'
+import * as homeController from './controllers/home'
+
+/* tslint:disable:no-var-requires */
+const favicon = require('serve-favicon')
+const fileUpload = require('express-fileupload')
 
 log4js.configure(config.LOGGING)
 

@@ -1,17 +1,17 @@
-import * as puppeteer from 'puppeteer'
+import * as config from 'extension/config'
 import * as helper from 'extension/helper'
-import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
+import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
 import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import * as xapi from 'extension/xapi'
-import {loginToCsl} from 'page/login'
 import {selectors} from 'page/learningPlan'
-import * as config from 'extension/config'
+import {loginToCsl} from 'page/login'
+import * as puppeteer from 'puppeteer'
 
 function genUserEmail() {
 	return `test${Date.now()}@c.gov.uk`
 }
 
-let TEST_USERNAME = genUserEmail()
+const TEST_USERNAME = genUserEmail()
 
 describe('recurring courses functionality', () => {
 	let page: puppeteer.Page
@@ -21,8 +21,8 @@ describe('recurring courses functionality', () => {
 		const session = await helper.getSession('recurring courses')
 		page = await session.newPage()
 		await page.authenticate({
-			username: config.BASIC_AUTH_USERNAME,
 			password: config.BASIC_AUTH_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
 		})
 		await page.goto(config.URL)
 		userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)

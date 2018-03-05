@@ -1,16 +1,16 @@
-import * as helper from 'extension/helper'
-import * as puppeteer from 'puppeteer'
-import {selectors, completeFeedback} from 'page/globals'
-import {loginToCsl} from 'page/login'
-import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
-import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
 import * as config from 'extension/config'
+import * as helper from 'extension/helper'
+import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
+import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
+import {completeFeedback, selectors} from 'page/globals'
+import {loginToCsl} from 'page/login'
+import * as puppeteer from 'puppeteer'
 
 function genUserEmail() {
 	return `test${Date.now()}@b.gov.uk`
 }
 
-let TEST_USERNAME = genUserEmail()
+const TEST_USERNAME = genUserEmail()
 
 describe('feedback form functionality', () => {
 	let page: puppeteer.Page
@@ -19,8 +19,8 @@ describe('feedback form functionality', () => {
 		const session = await helper.getSession('feedback form')
 		page = await session.newPage()
 		await page.authenticate({
-			username: config.BASIC_AUTH_USERNAME,
 			password: config.BASIC_AUTH_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
 		})
 		await page.goto(config.URL)
 		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)

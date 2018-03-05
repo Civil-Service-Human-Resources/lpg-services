@@ -7,12 +7,12 @@ import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
 import * as log4js from 'log4js'
 
-interface CourseDetail {
+export interface CourseDetail {
 	label: string
 	dataRows: DataRow[]
 }
 
-interface DataRow {
+export interface DataRow {
 	label: string
 	value: string
 }
@@ -152,9 +152,10 @@ export async function resetCourses(
 }
 
 export async function markCourseDeleted(
-	req: express.Request,
+	ireq: express.Request,
 	res: express.Response
 ) {
+	const req = ireq as extended.CourseRequest
 	await xapi.record(req, req.course, xapi.Verb.Terminated)
 	res.redirect('/')
 }

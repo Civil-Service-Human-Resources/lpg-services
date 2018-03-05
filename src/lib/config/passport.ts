@@ -5,6 +5,21 @@ import * as saml from 'passport-saml'
 
 let strategy: saml.Strategy
 
+function createUser(data: any) {
+	const user = new model.User(
+		data.id,
+		data.emailAddress,
+		data.nameID,
+		data.nameIDFormat,
+		data.sessionIndex
+	)
+	user.department = data.department
+	user.profession = data.profession
+	user.givenName = data.givenName
+	user.grade = data.grade
+	return user
+}
+
 export function configure(
 	issuer: string,
 	authenticationServiceUrl: string,
@@ -45,7 +60,7 @@ export function configure(
 		done(null, JSON.stringify(user))
 	})
 
-	passport.deserializeUser((data, done) => {
+	passport.deserializeUser<model.User, string>((data, done) => {
 		done(null, createUser(JSON.parse(data)))
 	})
 
@@ -56,16 +71,37 @@ export function configure(
 			failureRedirect: '/',
 		}),
 		(req: express.Request, res: express.Response) => {
-			let {redirectTo} = req.session
+			const session = req.session
+			if (!session) {
+				console.log('passport: session not present on express request')
+				res.sendStatus(500)
+				return
+			}
+			let {redirectTo} = session
 			if (!redirectTo) {
 				redirectTo = '/'
 			}
-			delete req.session.redirectTo
-			req.session.save(() => {
+			delete session.redirectTo
+			session.save(() => {
 				res.redirect(redirectTo)
 			})
 		}
 	)
+}
+
+export function isAuthenticated(
+	req: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) {
+	if (req.isAuthenticated()) {
+		return next()
+	}
+	const session = req.session!
+	session.redirectTo = req.originalUrl
+	session.save(() => {
+		res.redirect('/authenticate')
+	})
 }
 
 export function logout(req: express.Request, res: express.Response) {
@@ -77,35 +113,4 @@ export function logout(req: express.Request, res: express.Response) {
 			res.redirect(url)
 		}
 	})
-}
-
-export function isAuthenticated(
-	req: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) {
-	if (req.isAuthenticated()) {
-		return next()
-	}
-	req.session.redirectTo = req.originalUrl
-	req.session.save(() => {
-		res.redirect('/authenticate')
-	})
-}
-
-export {passport}
-
-function createUser(data: any) {
-	const user = new model.User(
-		data.id,
-		data.emailAddress,
-		data.nameID,
-		data.nameIDFormat,
-		data.sessionIndex
-	)
-	user.department = data.department
-	user.profession = data.profession
-	user.givenName = data.givenName
-	user.grade = data.grade
-	return user
 }

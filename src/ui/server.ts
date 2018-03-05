@@ -1,20 +1,19 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
-import * as cache from 'express-cache-response'
 import * as session from 'express-session'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as lusca from 'lusca'
+import * as path from 'path'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
-import * as path from 'path'
-import * as favicon from 'serve-favicon'
 
 import * as passport from 'lib/config/passport'
 import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
 
+import * as bookingController from './controllers/booking'
 import * as courseController from './controllers/course'
 import * as coursePlayerController from './controllers/course/player'
 import * as feedbackController from './controllers/feedback'
@@ -24,7 +23,10 @@ import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
-import * as bookingController from './controllers/booking'
+
+/* tslint:disable:no-var-requires */
+const cache = require('express-cache-response')
+const favicon = require('serve-favicon')
 
 log4js.configure(config.LOGGING)
 

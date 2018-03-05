@@ -1,11 +1,7 @@
 import * as es from 'elasticsearch'
-import * as fs from 'fs'
-import * as striptags from 'striptags'
 import * as catalog from 'lib/service/catalog'
-import * as api from 'lib/service/catalog/api'
-import * as model from 'lib/model'
 
-var client: es.Client
+let client: es.Client
 
 function connect() {
 	client = new es.Client({
@@ -15,7 +11,7 @@ function connect() {
 
 export function info() {
 	connect()
-	client.cluster.health({}, function(err, resp) {
+	client.cluster.health({}, (err, resp) => {
 		console.log('-- Client Health --', resp)
 	})
 }
@@ -28,29 +24,27 @@ export function deleteIndexes() {
 }
 
 export async function createIndex() {
-	var count: Number = 0
+	let count = 0
+	const bulkIndex = []
 
-	let bulkIndex = []
 	// query elastic search
-	let req: api.SearchRequest = {}
-	let searchResponse = await catalog.listAll(req)
-	let entry: model.Course
-	for (entry of searchResponse.entries) {
-		let data: any = {}
-		for (let prop in entry) {
+	const searchResponse = await catalog.listAll({})
+	for (const entry of searchResponse.entries) {
+		const data: any = {}
+		for (const prop of Object.keys(entry)) {
 			data[prop] = (entry as any)[prop]
 		}
-
 		bulkIndex.push({index: {}})
 		bulkIndex.push(data)
+		count++
 	}
 
 	try {
 		connect()
 		await client.bulk({
+			body: bulkIndex,
 			index: 'dgraph',
 			type: 'lpg',
-			body: bulkIndex,
 		})
 
 		console.log('indexed: ', count)
@@ -62,4 +56,5 @@ export async function createIndex() {
 	return 'Waiting ...'
 }
 
+/* tslint:disable:no-var-requires */
 require('make-runnable')

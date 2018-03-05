@@ -1,12 +1,12 @@
-import {Request, Response} from 'express'
-import {resetCourses} from 'lib/service/catalog'
+import * as express from 'express'
+import * as catalog from 'lib/service/catalog'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/course/reset')
 
-export async function reset(req: Request, res: Response) {
+export async function reset(req: express.Request, res: express.Response) {
 	logger.debug('Resetting course catalog')
 
-	await resetCourses()
+	await catalog.resetCourses()
 	res.redirect('/courses')
 }

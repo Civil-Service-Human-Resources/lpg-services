@@ -1,5 +1,5 @@
-import {Request, Response} from 'express'
+import * as express from 'express'
 
-export let index = (req: Request, res: Response) => {
+export function index(req: express.Request, res: express.Response) {
 	res.redirect('/courses')
 }
