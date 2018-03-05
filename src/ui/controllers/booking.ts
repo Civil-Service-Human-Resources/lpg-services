@@ -15,8 +15,8 @@ interface BookingBreadcrumb {
 }
 
 enum confirmedMessage {
-	Booked = 'Booking request submitted',
-	Cancelled = 'Booking request cancelled',
+	Booked = 'Booked',
+	Cancelled = 'Cancelled',
 }
 
 function getBreadcrumbs(req: express.Request): BookingBreadcrumb[] {
