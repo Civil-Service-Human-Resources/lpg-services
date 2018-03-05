@@ -10,13 +10,14 @@ import * as striptags from 'striptags'
 
 /* tslint:disable:no-var-requires */
 const parse: (data: string) => string[][] = require('csv-parse/lib/sync')
-
 const client = new dgraph.DgraphClient(
 	new dgraph.DgraphClientStub(
 		config.DGRAPH_ENDPOINT,
 		grpc.credentials.createInsecure()
 	)
 )
+
+let schemaSet: boolean = false
 
 const elasticConfig = [
 	{
@@ -114,7 +115,7 @@ async function getElasticClient() {
 	// check for existing index
 	const exists = await es.indices.exists({index: 'dgraph'})
 	if (!exists) {
-		es.indices.create({index: 'dgraph', body: elasticConfig[0]})
+		await es.indices.create({index: 'dgraph', body: elasticConfig[0]})
 	}
 	return es
 }
@@ -575,9 +576,12 @@ export async function search(
 }
 
 export async function setSchema(schema: string) {
-	const op = new dgraph.Operation()
-	op.setSchema(schema)
-	await client.alter(op)
+	if (!schemaSet) {
+		const op = new dgraph.Operation()
+		op.setSchema(schema)
+		await client.alter(op)
+		schemaSet = true
+	}
 }
 
 export async function wipe() {
