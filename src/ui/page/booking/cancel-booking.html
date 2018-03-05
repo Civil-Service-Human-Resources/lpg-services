@@ -21,10 +21,10 @@
                 <h3 class="heading-small">{{signedInUser.givenName}}</h3>
                 <ul class="cancel__list push-bottom">
                     <li>
-                        <span class="cancel__item--key">Requested Course:</span> <span class="bold-small">{{course.title}}</span>
+                        <span class="cancel__item--key">Requested Course:</span> <span class="bold-small">{{module.title || course.title}}</span>
                     </li>
                     <li>
-                        <span class="cancel__item--key">Requested Date:</span> <span class="bold-small">{{formatDate(selectedDate)}}</span>
+                        <span class="cancel__item--key">Requested Date:</span> <span class="bold-small">{{formatDate(event.date)}}</span>
                     </li>
                 </ul>
                 <form method="post" class="push-bottom">
@@ -34,9 +34,8 @@
                     </div>
                     <div class="form-group">
                         <input class="button" type="submit" value="Cancel Booking">
-                        <a href="/courses/{{ course.uid }}" class="cancel__return">Return</a>
+                        <a href="/courses/{{ course.id }}" class="cancel__return">Return</a>
                     </div>
-
                 </form>
             </div>
         </div>

@@ -4,7 +4,7 @@
         <div class="column-full">
             <h1 class="heading-large">
                 <span class="heading-secondary">Face to face learning</span>
-                {{course.title}}
+                {{module.title || course.title}}
             </h1>
         </div>
     </div>
@@ -27,17 +27,17 @@
         </div>
     </div>
 
-    {{#if course.selectedDate}}
+    {{#if course.record && course.record.eventId}}
         <div class="grid-row">
             <div class="column-two-thirds">
-                <p>You are already booked on this course. <a href="/book/{{course.uid}}/cancel">Do you wish to cancel your booking?</a></p>
+                <p>You are already booked on this course. <a href="/book/{{course.id}}/{{module.id}}/{{course.record.eventId}}/cancel">Do you wish to cancel your booking?</a></p>
             </div>
         </div>
     {{/if}}
 
     <div class="grid-row">
         <div class="column-full">
-            <a class="button" href="/book/{{course.uid}}/choose-date">Book this course</a>
+            <a class="button" href="/book/{{course.id}}/{{module.id}}/choose-date">Book this course</a>
         </div>
     </div>
 </div>

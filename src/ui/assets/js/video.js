@@ -1,6 +1,7 @@
 ;(function() {
 	var completed = false
 	var courseId
+	var moduleId
 	var duration
 	var maxDecile = 0
 	var played = false
@@ -19,6 +20,8 @@
 			'GET',
 			'/api/lrs.record?courseId=' +
 				encodeURIComponent(courseId) +
+				'&moduleId=' +
+				encodeURIComponent(moduleId) +
 				'&verb=' +
 				encodeURIComponent(verb) +
 				'&value=' +
@@ -76,6 +79,7 @@
 	}
 	window.addEventListener('DOMContentLoaded', function() {
 		courseId = document.getElementById('course-id').value
+		moduleId = document.getElementById('module-id').value
 		videoId = document.getElementById('video-id').value
 		var elem = document.createElement('script')
 		elem.src = 'https://www.youtube.com/iframe_api'

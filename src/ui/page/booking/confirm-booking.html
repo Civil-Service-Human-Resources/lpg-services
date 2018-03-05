@@ -16,15 +16,15 @@
                     <ul>
                         <li>
                             <span class="booking__key">Course title</span>
-                            <span>{{course.title}}</span>
+                            <span>{{module.title || course.title}}</span>
                         </li>
                         <li>
                             <span class="booking__key">Start date</span>
-                            <span>{{formatDate(dateSelected)}}</span>
+                            <span>{{formatDate(event.date)}}</span>
                         </li>
                         <li>
                             <span class="booking__key">Location</span>
-                            <span>{{course.location}}</span>
+                            <span>{{event.location}}</span>
                         </li>
                         <li class="push-bottom">
                             <span class="booking__key">Duration</span>
@@ -46,7 +46,6 @@
                         <li>
                             <span class="booking__key">Payment method</span>
                             <span> {{fap ? 'Financial approver' : 'Purchase order' }}</span>
-
                         </li>
                         <li>
                             <span class="booking__key">Amount</span>
@@ -62,7 +61,7 @@
 
         <div class="grid-row">
             <div class="column-full">
-                <a class="button" href="/book/{{course.uid}}/{{availabilityUid}}/complete">Complete booking</a>
+                <a class="button" href="/book/{{course.id}}/{{module.id}}/{{event.id}}/complete">Complete booking</a>
             </div>
         </div>
 

@@ -10,15 +10,15 @@
                         {{#each courses as course}}
                         <tr>
                             <td>
-                                <a href="/courses/{{ course.uid }}">{{ course.title }}</a>
+                                <a href="/courses/{{ course.id }}">{{ course.title }}</a>
                             </td>
-                            <td>{{ i18n(course.type) }}</td>
+                            <td>{{ i18n(course.getType()) }}</td>
                             <td>{{ course.shortDescription }}</td>
                             <td>
-                                <a class="button" href="/suggested-for-you/add/{{course.uid}}">Add</a>
+                                <a class="button" href="/suggested-for-you/add/{{course.id}}">Add</a>
                             </td>
                             <td>
-                                <a class="button" href="/suggested-for-you/remove/{{course.uid}}/">Remove</a>
+                                <a class="button" href="/suggested-for-you/remove/{{course.id}}/">Remove</a>
                             </td>
                         </tr>
                         {{/each}}

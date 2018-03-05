@@ -6,7 +6,7 @@
                     <h1 class="heading-xlarge">{{message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }}</h1>
                     <h3 class="lede">Course</h3>
                     <h2 class="heading-medium confirmed__heading confirmed__heading--caps">
-                        {{course.title}}
+                        {{module.title || course.title}}
                     </h2>
                 </div>
                 <h4 class="heading-small">What happens next?</h4>

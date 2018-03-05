@@ -81,9 +81,13 @@ user *${userName}* completed booking on *${courseTitle}*
 *Selected date*: ${date}`
 }
 
-export const DGRAPH_ENDPOINT = env.DGRAPH_ENDPOINT || 'localhost:9080'
-
-export const ELASTIC_ENDPOINT = env.ELASTIC_ENDPOINT || 'http://localhost:9200'
+export const COURSE_CATALOGUE = set({
+	auth: {
+		password: env.COURSE_CATALOGUE_PASS || 'password',
+		username: env.COURSE_CATALOGUE_USER || 'user',
+	},
+	url: env.COURSE_CATALOGUE_URL || 'http://localhost:9001',
+})
 
 export const FEEDBACK_RECIPIENTS = [
 	'max@cautionyourblast.com',
@@ -141,11 +145,13 @@ export const SESSION_SECRET =
 	'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
 
 export const XAPI = set({
-	activityBaseUri: 'http://cslearning.gov.uk/courses',
 	auth: {
 		password: env.XAPI_PASS || '1c0e1b6827606d7efed71e204939d048f94f842b',
 		username: env.XAPI_USER || '66f2b4fc001e3da992d23b57d8a7457655bea078',
 	},
+	courseBaseUri: 'http://cslearning.gov.uk/courses',
+	eventBaseUri: 'http://cslearning.gov.uk/events',
+	moduleBaseUri: 'http://cslearning.gov.uk/modules',
 	url: env.XAPI_URL || 'http://localhost:8083/data/xAPI',
 })
 

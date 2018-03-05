@@ -8,7 +8,6 @@ mkdir -p "$dist"
 
 cd "$dist"
 
-ln -s ../src/catalog
 ln -s ../src/locale
 
 mkdir management-ui

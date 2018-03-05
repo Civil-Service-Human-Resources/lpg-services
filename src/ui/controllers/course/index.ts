@@ -21,13 +21,15 @@ const logger = log4js.getLogger('controllers/course')
 
 export function getCourseDetails(
 	req: extended.CourseRequest,
-	course: model.Course
+	course: model.Course,
+	module: model.Module
 ): CourseDetail[] {
-	const levels = getTagValues(req, 'grade', course.tags)
-	const keyAreas = getTagValues(req, 'key-area', course.tags)
-	const duration = course.duration
-	const productCode = course.productCode
-	const location = course.location
+	const levels = course.getGrades().map(grade => req.__(grade))
+	const keyAreas = course.getAreasOfWork().map(areaOfWork => req.__(areaOfWork))
+
+	const duration = '' + (course.duration || '')
+	const productCode = module.productCode
+	const location = module.location
 	const price = course.price
 	const dataRows: DataRow[] = []
 
@@ -76,52 +78,75 @@ export function getCourseDetails(
 	]
 }
 
-function getTagValues(
-	req: extended.CourseRequest,
-	tagName: string,
-	tags: string[]
+export async function displayModule(
+	ireq: express.Request,
+	res: express.Response
 ) {
-	return tags
-		.filter(tag => tag.startsWith(tagName))
-		.map(tag => req.__(tag.replace(`${tagName}:`, '')))
-}
-export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
+
 	const course = req.course
-	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	switch (course.type) {
+	const module = req.module!
+
+	switch (module.type) {
 		case 'elearning':
-			res.send(
-				template.render(`course/${course.type}`, req, {
-					course,
-					courseDetails: getCourseDetails(req, course),
-				})
-			)
-			break
-		case 'link':
-			await xapi.record(req, req.course, xapi.Verb.Experienced)
-			res.redirect(course.uri)
-			break
-		case 'video':
-			await xapi.record(req, req.course, xapi.Verb.Initialised)
-			res.send(
-				template.render(`course/${course.type}`, req, {
-					course,
-					courseDetails: getCourseDetails(req, course),
-					video: await youtube.getBasicInfo(course.uri),
-				})
-			)
+			res.redirect(`/courses/${course.id}/${module.id}/do`)
 			break
 		case 'face-to-face':
+			res.redirect(`/book/${course.id}/${module.id}`)
+			break
+		case 'link':
+			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
+			res.redirect(module.location!)
+			break
+		case 'video':
+			await xapi.record(req, course, xapi.Verb.Initialised, undefined, module)
 			res.send(
-				template.render(`course/${course.type}`, req, {
+				template.render(`course/video`, req, {
 					course,
-					courseDetails: getCourseDetails(req, course),
+					courseDetails: getCourseDetails(req, course, module),
+					module,
+					video: await youtube.getBasicInfo(module.location!),
 				})
 			)
 			break
 		default:
-			logger.debug(`Unknown course type: (${course.type})`)
+			logger.debug(`Unknown module type: ${module.type}`)
+			res.sendStatus(500)
+	}
+}
+
+export async function display(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
+
+	const course = req.course
+	const module = course.modules[0]
+
+	logger.debug(
+		`Displaying course, courseId: ${req.params.courseId}, moduleId: ${
+			module.id
+		}`
+	)
+
+	const type = course.getType()
+
+	switch (type) {
+		case 'elearning':
+		case 'face-to-face':
+		case 'blended':
+			res.send(
+				template.render(`course/${type}`, req, {
+					course,
+					courseDetails: getCourseDetails(req, course, module),
+					module,
+				})
+			)
+			break
+		case 'link':
+		case 'video':
+			res.redirect(`/courses/${course.id}/${module.id}`)
+			break
+		default:
+			logger.debug(`Unknown course type: ${type}`)
 			res.sendStatus(500)
 	}
 }
@@ -142,19 +167,55 @@ export async function loadCourse(
 	}
 }
 
-export async function resetCourses(
-	req: express.Request,
-	res: express.Response
+export async function loadModule(
+	ireq: express.Request,
+	res: express.Response,
+	next: express.NextFunction
 ) {
-	await catalog.resetCourses()
-	res.redirect('/')
+	const req = ireq as extended.CourseRequest
+	const moduleId: string = req.params.moduleId
+	const course = req.course
+	if (course) {
+		const module = course.modules.find(m => m.id === moduleId)
+		if (module) {
+			req.module = module
+			return next()
+		}
+	}
+	res.sendStatus(404)
+}
+
+export async function loadEvent(
+	ireq: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) {
+	const req = ireq as extended.CourseRequest
+	const eventId: string = req.params.eventId
+	const module = req.module
+	if (module && module.events) {
+		const event = module.events!.find(a => a.id === eventId)
+		if (event) {
+			req.event = event
+			return next()
+		}
+	}
+	res.sendStatus(404)
 }
 
 export async function markCourseDeleted(
 	ireq: express.Request,
 	res: express.Response
 ) {
+	// TODO: don't use Terminated for delete
+	// TODO: lookup learner record before delete to get moduleId and eventId
 	const req = ireq as extended.CourseRequest
-	await xapi.record(req, req.course, xapi.Verb.Terminated)
+	await xapi.record(
+		req,
+		req.course,
+		xapi.Verb.Terminated,
+		undefined,
+		req.course.modules[0]
+	)
 	res.redirect('/')
 }

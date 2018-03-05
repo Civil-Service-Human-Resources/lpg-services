@@ -100,51 +100,63 @@ app.get(/.*close_methods\.js/, coursePlayerController.closeMethods)
 app.get(/.*tincan_wrapper\.js/, coursePlayerController.tincanWrapper)
 
 app.param('courseId', courseController.loadCourse)
+app.param('moduleId', courseController.loadModule)
+app.param('eventId', courseController.loadEvent)
 
-app.get('/courses/reset', courseController.resetCourses)
 app.get('/courses/:courseId', courseController.display)
-app.use('/courses/:courseId/do', cache(), coursePlayerController.play)
-app.use('/courses/:courseId/xapi', xApiController.proxy)
 app.use('/courses/:courseId/delete', courseController.markCourseDeleted)
+app.use('/courses/:courseId/:moduleId', courseController.displayModule)
+app.use('/courses/:courseId/:moduleId/do', cache(), coursePlayerController.play)
+app.use('/courses/:courseId/:moduleId/xapi', xApiController.proxy)
 
 app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
-app.get('/search', searchController.elasticSearch)
+app.get('/search', searchController.search)
 app.get('/suggested-for-you', suggestionController.suggestedForYou)
 app.get('/suggested-for-you/add/:courseId', suggestionController.addToPlan)
 app.get(
 	'/suggested-for-you/remove/:courseId',
 	suggestionController.removeFromSuggested
 )
-app.get('/suggested-for-you', searchController.suggestedForYou)
-app.get('/search', searchController.elasticSearch)
 
 app.get('/home', homeController.home)
 
-app.get('/book/:courseId/choose-date', bookingController.renderChooseDate)
-app.post('/book/:courseId/choose-date', bookingController.selectedDate)
-
-app.get('/book/:courseId/cancel', bookingController.renderCancelBookingPage)
-app.post('/book/:courseId/cancel', bookingController.tryCancelBooking)
+app.get(
+	'/book/:courseId/:moduleId/choose-date',
+	bookingController.renderChooseDate
+)
+app.post(
+	'/book/:courseId/:moduleId/choose-date',
+	bookingController.selectedDate
+)
 
 app.get(
-	'/book/:courseId/:availabilityUid',
+	'/book/:courseId/:moduleId/:eventId',
 	bookingController.renderPaymentOptions
 )
 app.post(
-	'/book/:courseId/:availabilityUid',
+	'/book/:courseId/:moduleId/:eventId',
 	bookingController.enteredPaymentDetails
 )
 
 app.get(
-	'/book/:courseId/:availabilityUid/confirm',
+	'/book/:courseId/:moduleId/:eventId/confirm',
 	bookingController.renderConfirmPayment
 )
 
 app.get(
-	'/book/:courseId/:availabilityUid/complete',
+	'/book/:courseId/:moduleId/:eventId/complete',
 	bookingController.tryCompleteBooking
+)
+
+app.get(
+	'/book/:courseId/:moduleId/:eventId/cancel',
+	bookingController.renderCancelBookingPage
+)
+app.post(
+	'/book/:courseId/:moduleId/:eventId/cancel',
+	bookingController.tryCancelBooking
 )
 
 app.use(

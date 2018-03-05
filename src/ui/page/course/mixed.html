@@ -4,7 +4,7 @@
             <div class="column-full">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Online learning</span>
-                    {{module.title || course.title}}
+                    {{course.title}}
                 </h1>
             </div>
         </div>
@@ -18,7 +18,13 @@
                 <div>{{{course.learningOutcomes }}}</div>
                 {{/if}}
 
-                <a class="button" href="/courses/{{course.id}}/{{module.id}}">Start this learning</a>
+                <ul>
+                    {{#each course.modules as module}}
+                    <li>
+                        <a href="/courses/{{course.id}}/{{module.id}}">{{ module.title }}</a>
+                    </li>
+                    {{/each}}
+                </ul>
             </div>
             <div class="column-one-third">
                 {{#if courseDetails.length}} {{#each courseDetails as dataRows}}

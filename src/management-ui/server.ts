@@ -15,7 +15,6 @@ import * as passport from 'lib/config/passport'
 import * as bookingsController from './controllers/bookings/index'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
-import * as resetCourseController from './controllers/course/reset'
 import * as homeController from './controllers/home'
 import * as loginController from './controllers/login'
 
@@ -71,13 +70,19 @@ app.get('/sign-out', loginController.signOut)
 
 app.get('/', homeController.index)
 app.get('/courses', displayCourseController.index)
-app.get('/courses/add', editCourseController.addCourse)
-app.post('/courses/add', editCourseController.doAddCourse)
-app.get('/courses/reset', resetCourseController.reset)
+
 app.param('courseId', editCourseController.loadCourse)
+app.param('moduleId', editCourseController.loadModule)
+
 app.get('/courses/:courseId/edit', editCourseController.editCourse)
 app.post('/courses/:courseId/edit', editCourseController.doEditCourse)
+app.get('/courses/:courseId/add-module', editCourseController.addModule)
+app.post('/courses/:courseId/add-module', editCourseController.doAddModule)
+app.get('/courses/:courseId/:moduleId/edit', editCourseController.editModule)
+app.post('/courses/:courseId/:moduleId/edit', editCourseController.doEditModule)
+
 app.get('/courses/:courseId', displayCourseController.displayCourse)
+
 app.get('/bookings', bookingsController.index)
 
 app.use(

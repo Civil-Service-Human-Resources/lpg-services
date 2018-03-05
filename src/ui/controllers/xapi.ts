@@ -26,7 +26,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			query.agent = JSON.stringify(agent)
 		}
 		if (query.hasOwnProperty('activityId')) {
-			query.activityId = req.course.uri
+			query.activityId = `${config.XAPI.moduleBaseUri}/${req.module!.id}`
 		}
 	}
 
@@ -39,9 +39,29 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			body.hasOwnProperty('object') &&
 			body.object.objectType === 'Activity'
 		) {
-			body.object.id = `${config.XAPI.activityBaseUri}/${req.course.uid}`
+			body.object.id = `${config.XAPI.moduleBaseUri}/${req.module!.id}`
 			if (body.object.definition) {
 				body.object.definition.type = xapi.Type.ELearning
+			}
+		}
+		if (
+			body.hasOwnProperty('context') &&
+			body.context.hasOwnProperty('contextActivities')
+		) {
+			body.context.contextActivities.parent = [
+				{
+					id: `${config.XAPI.courseBaseUri}/${req.course.id}`,
+				},
+			]
+		} else {
+			body.context = {
+				contextActivities: {
+					parent: [
+						{
+							id: `${config.XAPI.courseBaseUri}/${req.course.id}`,
+						},
+					],
+				},
 			}
 		}
 	}

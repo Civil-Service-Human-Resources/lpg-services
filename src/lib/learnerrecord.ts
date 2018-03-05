@@ -14,25 +14,33 @@ const logger = log4js.getLogger('learner-record')
 const http = axios.create({
 	auth: config.LEARNER_RECORD.auth,
 	baseURL: config.LEARNER_RECORD.url,
+	headers: {
+		'Content-Type': 'application/json',
+	},
+	timeout: 5000,
 })
 
-export async function getCourseRecord(user: model.User, course: model.Course) {
+export async function getCourseRecord(
+	user: model.User,
+	course: model.Course,
+	module?: model.Module,
+	event?: model.Event
+) {
+	let activityId = course.getActivityId()
+	if (event) {
+		activityId = event.getActivityId()
+	} else if (module) {
+		activityId = module.getActivityId()
+	}
+
 	const response = await http.get(`/records/${user.id}`, {
 		params: {
-			activityId: course.getActivityId(),
+			activityId,
 		},
 	})
 	if (response.data.records.length > 0) {
 		const record = response.data.records[0]
-		const uriParts = record.courseId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
-		const selectedDate = uriParts[3]
-		if (record.completionDate) {
-			record.completionDate = new Date(record.completionDate)
-		}
-		if (selectedDate) {
-			record.selectedDate = new Date(selectedDate)
-		}
-		return record
+		return convert(record)
 	}
 	return null
 }
@@ -47,32 +55,44 @@ export async function getLearningRecordOf(
 		},
 	})
 
-	const courses = []
-	for (const record of response.data.records) {
-		const activityId = record.courseId
-		const uriParts = activityId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
-		const courseId = uriParts[1]
-		const selectedDate = uriParts[3]
-		const course = await catalog.get(courseId)
+	const courses: model.Course[] = []
+	for (let record of response.data.records) {
+		record = convert(record)
+		const course = await catalog.get(record.courseId)
 		if (!course) {
 			logger.warn(
 				`LRS data for course that doesn't exist. User ID: ${
 					user.id
-				}, course URI: ${activityId}`
+				}, course : ${record.courseId}`
 			)
 			continue
 		}
-		course.completionDate = record.completionDate
-			? new Date(record.completionDate)
-			: null
-		course.selectedDate = selectedDate ? new Date(selectedDate) : null
-		course.result = record.result
-		course.preference = record.preference
-		course.score = record.score
-		course.state = record.state
+		course.record = record
 		courses.push(course)
 	}
 	return courses
+}
+
+function convert(record: LearnerRecord) {
+	if (record.completionDate) {
+		record.completionDate = new Date(record.completionDate)
+	}
+	record.courseId = uriToId('courses', record.courseId)!
+	if (record.moduleId) {
+		record.moduleId = uriToId('modules', record.moduleId)
+	}
+	if (record.eventId) {
+		record.eventId = uriToId('events', record.eventId)
+	}
+	return record
+}
+
+function uriToId(type: string, uri: string) {
+	const match = uri.match(new RegExp(`${type}/([^/]+)`))
+	if (match) {
+		return match[1]
+	}
+	return undefined
 }
 
 export async function getRegistrations() {
@@ -99,6 +119,16 @@ export async function getRegistrations() {
 		})
 	}
 	return registrations
+}
+
+export interface LearnerRecord {
+	completionDate: Date
+	courseId: string
+	eventId?: string
+	moduleId?: string
+	preference?: string
+	state?: string
+	userId: string
 }
 
 export interface Registration {

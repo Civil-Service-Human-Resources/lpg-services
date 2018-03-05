@@ -86,7 +86,6 @@ async function parseMetadata(entry: unzip.Entry) {
 				return {
 					identifier,
 					launchPage,
-					launchUrl: '',
 					title,
 				}
 			}
@@ -94,10 +93,14 @@ async function parseMetadata(entry: unzip.Entry) {
 		})
 }
 
-async function saveContent(uid: string, file: any) {
+async function saveContent(
+	course: model.Course,
+	module: model.Module,
+	file: any
+) {
 	let metadata: any = {}
 
-	const responses = await uploadEntries(uid, file)
+	const responses = await uploadEntries(`${course.id}/${module.id}`, file)
 	responses.forEach(response => {
 		if (response.metadata && response.metadata.identifier) {
 			metadata = response.metadata
@@ -107,20 +110,10 @@ async function saveContent(uid: string, file: any) {
 
 	if (!metadata || !metadata.launchPage) {
 		// 	// TODO: if no launch page...
-		throw new Error(`No launch page found for course ${uid}`)
+		throw new Error(
+			`No launch page found for course ${course.id} and module ${module.id}`
+		)
 	}
-
-	responses.forEach(response => {
-		if (
-			response.metadata &&
-			response.metadata.path &&
-			response.metadata.path.endsWith(metadata.launchPage)
-		) {
-			metadata.launchUrl = response.metadata.path
-			return
-		}
-	})
-
 	return metadata
 }
 
@@ -249,19 +242,23 @@ async function uploadEntries(uid: string, file: any) {
 	})
 }
 
-export function addCourse(req: express.Request, res: express.Response) {
-	res.send(template.render('courses/add', req, {}))
+export function addModule(req: express.Request, res: express.Response) {
+	res.send(template.render('courses/modules/add', req, {}))
 }
 
-export async function doAddCourse(req: express.Request, res: express.Response) {
+export async function doAddModule(
+	ireq: express.Request,
+	res: express.Response
+) {
+	const req = ireq as extended.CourseRequest
 	const session = req.session!
 	const type = req.body.type
 	session.course = {
 		type,
 	}
-	logger.debug(`Adding ${type} course`)
+	logger.debug(`Adding ${type} module`)
 	session.save(() => {
-		res.redirect('/courses/new/edit')
+		res.redirect(`/courses/${req.course.id}/new/edit`)
 	})
 }
 
@@ -269,13 +266,30 @@ export async function doEditCourse(
 	ireq: express.Request,
 	res: express.Response
 ) {
+	const req = ireq as extended.CourseRequest
+	const data = {
+		...req.body,
+		id: req.course.id,
+		requiredBy: req.body.requiredBy ? new Date(req.body.requiredBy) : null,
+		tags: ((req.body.tags as string) || '').split(/,/).map(tag => tag.trim()),
+	}
+
+	const id = await catalog.add(model.Course.create(data))
+
+	logger.debug(`Course ${id} updated`)
+	res.redirect(`/courses/${id}`)
+}
+
+export async function doEditModule(
+	ireq: express.Request,
+	res: express.Response
+) {
 	const req = ireq as extended.CourseRequest & {files: any}
 	const data = {
 		...req.body,
-		requiredBy: req.body.requiredBy ? new Date(req.body.requiredBy) : null,
-		tags: ((req.body.tags as string) || '').split(/,/).map(tag => tag.trim()),
-		type: req.course.type || req.body.type,
-		uid: req.course.uid,
+	}
+	if (req.module) {
+		data.id = req.module.id
 	}
 
 	const availability: string[] = []
@@ -289,53 +303,58 @@ export async function doEditCourse(
 	}
 	data.availability = availability
 
-	const entry = model.Course.create(data)
+	const module = model.Module.create(data)
 
 	if (req.body['add-availability']) {
 		const session = req.session!
-		session.course = entry
+		session.module = module
 		session.save(() => {
 			res.redirect(req.path)
 		})
 	} else {
-		const id = await catalog.add(entry)
-		entry.uid = id
+		const course = req.course
+		course.modules.push(module)
+
+		await catalog.add(course)
 
 		if (req.files && req.files.content) {
 			logger.debug('Uploading zip content')
-			const {launchUrl, title} = await saveContent(id, req.files.content)
-			if (!launchUrl) {
-				logger.error(`Unable to get the launchUrl for course ${id}`)
+			const {launchPage} = await saveContent(
+				req.course,
+				module,
+				req.files.content
+			)
+			if (!launchPage) {
+				logger.error(`Unable to get the launchUrl for course ${course.id}`)
 				res.sendStatus(500)
 				return
 			}
-			entry.uri = launchUrl
-			if (!entry.title) {
-				entry.title = title
-			}
-			await catalog.add(entry)
+			module.startPage = launchPage
+			await catalog.add(req.course)
 		}
-		if (entry.type === 'video') {
-			const info = await youtube.getBasicInfo(entry.uri)
+		if (module.type === 'video') {
+			const info = await youtube.getBasicInfo(module.location!)
 			if (!info) {
-				logger.error(`Unable to get info on course ${id} via the YouTube API`)
+				logger.error(
+					`Unable to get info on course ${course.id} via the YouTube API`
+				)
 				res.sendStatus(500)
 				return
 			}
 			const duration = await youtube.getDuration(info.id)
 			if (!duration) {
 				logger.error(
-					`Unable to get duration of course ${id} via the YouTube API`
+					`Unable to get duration of course ${course.id} via the YouTube API`
 				)
 				res.sendStatus(500)
 				return
 			}
-			entry.duration = duration
-			entry.title = entry.title || info.title
-			await catalog.add(entry)
+			req.course.duration = Number(duration)
+			module.title = module.title || info.title
+			await catalog.add(course)
 		}
 
-		logger.debug(`Course ${id} updated`)
+		logger.debug(`Course ${course.id} updated`)
 		res.redirect('/courses')
 	}
 }
@@ -343,10 +362,22 @@ export async function doEditCourse(
 export function editCourse(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const {course} = req
-	const page = `courses/edit/${course.type}`
+	const page = `courses/edit`
 	res.send(
 		template.render(page, req, {
 			course,
+		})
+	)
+}
+
+export function editModule(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
+	const {course, module} = req
+	const page = `courses/edit/${module!.type}`
+	res.send(
+		template.render(page, req, {
+			course,
+			module,
 		})
 	)
 }
@@ -363,12 +394,10 @@ export async function loadCourse(
 		if (session.course) {
 			req.course = model.Course.create(session.course)
 		} else {
-			// TODO(tav): Is this okay? Does code not rely on this being a
-			// fleshed out Course object?
 			req.course = {} as model.Course
 		}
 	} else {
-		if (session.course && session.course.uid === courseId) {
+		if (session.course && session.course.id === courseId) {
 			req.course = model.Course.create(session.course)
 		} else {
 			const course = await catalog.get(courseId)
@@ -377,6 +406,37 @@ export async function loadCourse(
 				return
 			}
 			req.course = course
+		}
+	}
+	next()
+}
+
+export async function loadModule(
+	ireq: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) {
+	const req = ireq as extended.CourseRequest
+	const moduleId: string = req.params.moduleId
+	const course = req.course
+	const session = req.session!
+
+	if (moduleId === 'new') {
+		if (session.module) {
+			req.module = model.Module.create(session.module)
+		} else {
+			req.module = {} as model.Module
+		}
+	} else {
+		if (session.module && session.module.id === moduleId) {
+			req.module = model.Module.create(session.module)
+		} else {
+			const module = course.modules.find(m => m.id === moduleId)
+			if (!module) {
+				res.sendStatus(404)
+				return
+			}
+			req.module = module
 		}
 	}
 	next()
