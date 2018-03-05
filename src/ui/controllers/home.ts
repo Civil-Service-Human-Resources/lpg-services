@@ -6,48 +6,56 @@ import * as template from 'lib/ui/template'
 import * as suggestionController from './suggestion'
 
 export async function home(req: express.Request, res: express.Response) {
-	const user = req.user as model.User
-	const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
-	const plannedLearning = []
-	const requiredLearning = (await catalog.findRequiredLearning(user)).entries
-	const suggestedLearning = (await suggestionController.suggestions(
-		user
-	)).slice(0, 6)
+	try {
+		const user = req.user as model.User
+		const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
+		const plannedLearning = []
+		const requiredLearning = (await catalog.findRequiredLearning(user)).entries
+		const suggestedLearning = (await suggestionController.suggestions(
+			user
+		)).slice(0, 6)
 
-	for (const record of learningRecord) {
-		let found = false
-		for (const [i, requiredCourse] of requiredLearning.entries()) {
-			if (requiredCourse.uid === record.uid) {
-				if (record.state === 'COMPLETED' && !record.shouldRepeat()) {
-					requiredLearning.splice(i, 1)
-				} else {
-					if (record.state === 'COMPLETED') {
-						record.state = undefined
+		for (const course of learningRecord) {
+			let found = false
+			const record = course.record!
+			for (const [i, requiredCourse] of requiredLearning.entries()) {
+				if (requiredCourse.id === course.id) {
+					if (
+						record.state === 'COMPLETED' &&
+						!course.shouldRepeat(req.user)
+					) {
+						requiredLearning.splice(i, 1)
+					} else {
+						if (record.state === 'COMPLETED') {
+							record.state = undefined
+						}
+						requiredLearning[i].record = course.record
 					}
-					requiredLearning[i] = record
+					found = true
+					break
 				}
-				found = true
-				break
+			}
+			if (
+				!found &&
+				record.state !== 'COMPLETED' &&
+				record.state !== 'UNREGISTERED' &&
+				record.state !== 'TERMINATED' &&
+				record.preference !== 'DISLIKED'
+			) {
+				plannedLearning.push(course)
 			}
 		}
-		if (
-			!found &&
-			record.state !== 'COMPLETED' &&
-			record.state !== 'UNREGISTERED' &&
-			record.state !== 'TERMINATED' &&
-			record.preference !== 'disliked'
-		) {
-			plannedLearning.push(record)
-		}
-	}
 
-	res.send(
-		template.render('home', req, {
-			plannedLearning,
-			requiredLearning,
-			suggestedLearning,
-		})
-	)
+		res.send(
+			template.render('home', req, {
+				plannedLearning,
+				requiredLearning,
+				suggestedLearning,
+			})
+		)
+	} catch (e) {
+		throw new Error(`Error building user's home page - ${e}`)
+	}
 }
 
 export function index(req: express.Request, res: express.Response) {

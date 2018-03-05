@@ -24,7 +24,7 @@ export async function courseResult(
 			req.course
 		)
 
-		if (!courseRecord || courseRecord.state !== 'completed') {
+		if (!courseRecord || courseRecord.state !== 'COMPLETED') {
 			res.redirect('/home')
 		} else {
 			res.send(
@@ -43,7 +43,7 @@ export async function courseResult(
 export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 
-	const courses = await learnerRecord.getLearningRecordOf(
+	const completedLearning = await learnerRecord.getLearningRecordOf(
 		learnerRecord.CourseState.Completed,
 		req.user
 	)
@@ -52,18 +52,17 @@ export async function display(req: express.Request, res: express.Response) {
 
 	const completedRequiredLearning = []
 
-	for (const [i, entry] of courses.entries()) {
-		const matches = entry.tags.filter(tag => tag.includes('mandatory'))
-		if (matches.length) {
-			completedRequiredLearning.push(entry)
-			courses.splice(i, 1)
+	for (const [i, course] of completedLearning.entries()) {
+		if (course.isRequired(req.user)) {
+			completedRequiredLearning.push(course)
+			completedLearning.splice(i, 1)
 		}
 	}
 
 	res.send(
 		template.render('learning-record', req, {
+			completedLearning,
 			completedRequiredLearning,
-			courses,
 			requiredLearningTotal,
 		})
 	)
@@ -73,12 +72,24 @@ export async function record(req: express.Request, res: express.Response) {
 	const courseId = req.query.courseId
 	if (!courseId) {
 		logger.error('Expected a course ID to be present in the query parameters')
-		res.sendStatus(500)
+		res.sendStatus(400)
 		return
 	}
 	const course = await catalog.get(courseId)
 	if (!course) {
 		logger.error(`No matching course found for course ID ${courseId}`)
+		res.sendStatus(400)
+		return
+	}
+	const moduleId = req.query.moduleId
+	if (!moduleId) {
+		logger.error('Expected a module ID to be present in the query parameters')
+		res.sendStatus(400)
+		return
+	}
+	const module = course.modules.find(m => m.id === moduleId)
+	if (!module) {
+		logger.error(`No matching module found for module ID ${moduleId}`)
 		res.sendStatus(400)
 		return
 	}
@@ -107,7 +118,7 @@ export async function record(req: express.Request, res: express.Response) {
 		}
 	}
 	try {
-		await xapi.record(req, course, verbId, extensions)
+		await xapi.record(req, course, verbId, extensions, module)
 	} catch (err) {
 		logger.error(err.toString())
 		res.sendStatus(500)

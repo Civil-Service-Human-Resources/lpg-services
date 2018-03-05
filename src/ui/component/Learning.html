@@ -1,51 +1,47 @@
 <div class="resource__item">
     <div class="resource__main">
-        {{#if course.type === 'link'}}
-            <a href="/courses/{{course.uid}}" class="resource__title" target="_blank">
+        {{#if course.getType() === 'link'}}
+            <a href="/courses/{{course.id}}" class="resource__title" target="_blank">
                 {{course.title}}
             </a>
         {{else}}
-            <a href="/courses/{{course.uid}}" class="learning__title">
+            <a href="/courses/{{course.id}}" class="learning__title">
                 {{course.title}}
             </a>
         {{/if}}
         <span class="resource__action">
-            {{#if course.type === 'face-to-face'}}
-                <a href="/book/{{course.uid}}/cancel">Cancel</a>
-            {{else}}
-                {{#if course.state }}
-                    <a href="/courses/{{course.uid}}/{{course.type === 'elearning' ? 'do' : ''}}">Resume</a>
-                {{/if}}
-                {{#if !course.isRequired(signedInUser)}}
-                    <a href="/courses/{{course.uid}}/delete">Delete</a>
+            {{#if course.record}}
+                {{#if course.record.eventId}}
+                    <a href="/book/{{course.id}}/{{course.record.moduleId}}/{{course.record.eventId}}/cancel">Cancel</a>
+                {{else}}
+                <a href="/courses/{{course.id}}/{{course.record.moduleId}}">Resume</a>
+                    {{#if !course.isRequired(signedInUser)}}
+                        <a href="/courses/{{course.id}}/delete">Delete</a>
+                    {{/if}}
                 {{/if}}
             {{/if}}
-
         </span>
     </div>
     <div class="resource__info">
         <span>
-            {{#if course.requiredBy && course.type === ('elearning' || 'face-to-face') }}
-                Required by {{formatDate(course.nextRequiredBy())}}
-            {{/if}}
-            {{#if course.selectedDate}}
-                Registered for {{formatDate(course.selectedDate)}}
+            {{#if course.nextRequiredBy(signedInUser)}}
+                Due by {{formatDate(course.nextRequiredBy(signedInUser))}}
             {{/if}}
         </span>
 
     </div>
     <div class="resource__duration">
         <span>
-        {{course.type === ('elearning' || 'face-to-face') ? '' : i18n(course.type) + (course.duration ? ', ' : '')}}
+        {{course.getType() === 'blended' ? '' : i18n(course.getType()) + (course.duration ? ', ' : '')}}
         {{course.duration}}
         </span>
     </div>
     <div class="resource__status">
-        {{#if course.state }}
-        <span class="badge badge--info badge--smaller">{{i18n(course.state)}}</span>
+        {{#if course.record && course.record.state }}
+        <span class="badge badge--info badge--smaller">{{i18n(course.record.state)}}</span>
         {{/if}}
-        {{#if course.requiredBy && course.type !== ('elearning' || 'face-to-face') }}
-            <span class="meta">{{formatDate(course.requiredBy)}}</span>
+        {{#if course.getSelectedDate()}}
+        <span class="meta">{{formatDate(course.getSelectedDate())}}</span>
         {{/if}}
     </div>
 </div>

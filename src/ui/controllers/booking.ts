@@ -3,11 +3,13 @@ import * as config from 'lib/config'
 import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import * as model from 'lib/model'
 import * as messaging from 'lib/service/messaging'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
+import * as log4js from 'log4js'
 import * as courseController from './course/index'
+
+const logger = log4js.getLogger('controllers/booking')
 
 interface BookingBreadcrumb {
 	url: string
@@ -19,31 +21,51 @@ enum confirmedMessage {
 	Cancelled = 'Cancelled',
 }
 
-function getBreadcrumbs(req: express.Request): BookingBreadcrumb[] {
-	const session = req.session!.bookingSession
+enum BookingStep {
+	ChooseDate = 3,
+	EnterPaymentDetails = 4,
+	Confirm = 5,
+}
+
+function getBreadcrumbs(
+	ireq: express.Request,
+	step: number
+): BookingBreadcrumb[] {
+	const req = ireq as extended.CourseRequest
+
+	const course = req.course
+	const module = req.module!
+	const event = req.event
+
 	const allBreadcrumbs: BookingBreadcrumb[] = [
 		{
-			name: 'home',
-			url: req.baseUrl,
+			name: 'Home',
+			url: '/',
 		},
 		{
-			name: session.courseTitle,
-			url: '/courses/' + session.courseId,
+			name: module.title || course.title,
+			url: `/courses/${course.id}`,
 		},
 		{
 			name: 'Choose Date',
-			url: `/book/${session.courseId}/choose-date`,
+			url: `/book/${course.id}/${module.id}/choose-date?event=${
+				event ? event.id : ''
+			}`,
 		},
 		{
 			name: 'Payment Options',
-			url: `/book/${session.courseId}/${session.dateSelected}`,
+			url: `/book/${course.id}/${module ? module.id : ''}/${
+				event ? event.id : ''
+			}`,
 		},
 		{
 			name: 'Confirm details',
-			url: `/book/${session.courseId}/${session.dateSelected}/confirm`,
+			url: `/book/${course.id}/${module ? module.id : ''}/${
+				event ? event.id : ''
+			}/confirm`,
 		},
 	]
-	return allBreadcrumbs.slice(0, session.bookingStep)
+	return allBreadcrumbs.slice(0, step)
 }
 
 export function enteredPaymentDetails(
@@ -51,8 +73,9 @@ export function enteredPaymentDetails(
 	res: express.Response
 ) {
 	const session = req.session!
+
 	if (req.body['purchase-order'] && /\S/.test(req.body['purchase-order'])) {
-		session.bookingSession.po = req.body['purchase-order']
+		session.po = req.body['purchase-order']
 		session.save(() => {
 			res.redirect(`${req.originalUrl}/confirm`)
 		})
@@ -60,14 +83,14 @@ export function enteredPaymentDetails(
 		req.body['financial-approver'] &&
 		/^\S+@\S+$/.test(req.body['financial-approver'])
 	) {
-		session.bookingSession.fap = req.body['financial-approver']
+		session.fap = req.body['financial-approver']
 		session.save(() => {
 			res.redirect(`${req.originalUrl}/confirm`)
 		})
 	} else {
 		res.send(
 			template.render('booking/payment-options', req, {
-				breadcrumbs: getBreadcrumbs(req),
+				breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
 				paymentOptionsFailed: true,
 			})
 		)
@@ -80,50 +103,61 @@ export async function renderCancelBookingPage(
 ) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
+	const module = req.module!
+	const event = req.event!
 
-	const record = await learnerRecord.getCourseRecord(req.user, course)
+	const record = await learnerRecord.getCourseRecord(
+		req.user,
+		course,
+		module,
+		event
+	)
+
+	if (!record) {
+		logger.warn(
+			`Attempt to cancel a booking when not registered. user: ${
+				req.user.id
+			}, course: ${course.id}, module: ${module.id}, event: ${event.id}`
+		)
+		res.sendStatus(400)
+		return
+	}
+
+	course.record = record
 
 	res.send(
 		template.render('booking/cancel-booking', req, {
 			cancelBookingFailed: false,
 			course,
-			selectedDate: record.selectedDate,
+			event,
+			module,
 		})
 	)
 }
 
 export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const courseId: string = req.params.courseId
-	const course: model.Course = req.course
-	const session = req.session!
 
-	session.bookingSession = {
-		bookingProgress: 3,
-		bookingStep: 3,
-		courseId,
-		courseTitle: course.title,
-		dateSelected: -1,
-	}
+	const course = req.course
+	const module = req.module!
+	const selectedEventId = req.query.eventId
 
-	session.save(() => {
-		const breadcrumbs = getBreadcrumbs(req)
-		const today = new Date()
-		const courseAvailability = (course.availability || [])
-			.map((availability, i) => ({id: i, date: availability}))
-			.filter(availability => availability.date > today)
-			.sort((a, b) => a.date.getTime() - b.date.getTime())
+	const today = new Date()
 
-		res.send(
-			template.render('booking/choose-date', req, {
-				breadcrumbs,
-				course,
-				courseAvailability,
-				courseDetails: courseController.getCourseDetails(req, course),
-				selectedDate: session.bookingSession.dateSelected,
-			})
-		)
-	})
+	const events = (module.events || [])
+		.filter(a => a.date > today)
+		.sort((a, b) => a.date.getTime() - b.date.getTime())
+
+	res.send(
+		template.render('booking/choose-date', req, {
+			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
+			course,
+			courseDetails: courseController.getCourseDetails(req, course, module),
+			events,
+			module,
+			selectedEventId,
+		})
+	)
 }
 
 export async function renderConfirmPayment(
@@ -131,29 +165,24 @@ export async function renderConfirmPayment(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	const session = req.session!
-	session.bookingSession.bookingStep = 5
-	const course = req.course
-	if (!course.availability) {
-		res.sendStatus(500)
-		return
-	}
-	const dateSelected = course.availability[session.bookingSession.dateSelected]
 
-	session.save(() => {
-		res.send(
-			template.render('booking/confirm-booking', req, {
-				availabilityUid: session.bookingSession.dateSelected,
-				breadcrumbs: getBreadcrumbs(req),
-				course,
-				courseDetails: courseController.getCourseDetails(req, course),
-				dateIndex: session.bookingSession.dateSelected,
-				dateSelected,
-				fap: session.bookingSession.fap,
-				po: session.bookingSession.po,
-			})
-		)
-	})
+	const course = req.course
+	const module = req.module!
+	const event = req.event!
+
+	const session = req.session!
+
+	res.send(
+		template.render('booking/confirm-booking', req, {
+			breadcrumbs: getBreadcrumbs(req, BookingStep.Confirm),
+			course,
+			courseDetails: courseController.getCourseDetails(req, course, module),
+			event,
+			fap: session.fap,
+			module,
+			po: session.po,
+		})
+	)
 }
 
 export function renderPaymentOptions(
@@ -161,30 +190,20 @@ export function renderPaymentOptions(
 	res: express.Response
 ) {
 	const session = req.session!
-	session.bookingSession.bookingStep = 4
 
-	const breadcrumbs = getBreadcrumbs(req)
-	const previouslyEntered = session.bookingSession.po
-		? session.bookingSession.po
-		: session.bookingSession.fap
-
-	session.save(() => {
-		res.send(
-			template.render('booking/payment-options', req, {
-				breadcrumbs,
-				previouslyEntered,
-			})
-		)
-	})
+	res.send(
+		template.render('booking/payment-options', req, {
+			breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
+			previouslyEntered: session.po || session.fap,
+		})
+	)
 }
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
-	const session = req.session!
-	session.bookingSession.dateSelected = selected
-	session.save(() => {
-		res.redirect(`/book/${req.params.courseId}/${selected}`)
-	})
+	res.redirect(
+		`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
+	)
 }
 
 export async function tryCancelBooking(
@@ -193,29 +212,52 @@ export async function tryCancelBooking(
 ) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
-	const record = await learnerRecord.getCourseRecord(req.user, course)
+	const module = req.module!
+	const event = req.event!
 
-	if (!record.selectedDate) {
-		res.redirect('/')
+	const record = await learnerRecord.getCourseRecord(
+		req.user,
+		course,
+		module,
+		event
+	)
+
+	if (!record) {
+		logger.warn(
+			`Attempt to cancel a booking when not registered. user: ${
+				req.user.id
+			}, course: ${course.id}, module: ${module.id}, event: ${event.id}`
+		)
+		res.sendStatus(400)
 		return
 	}
-	course.selectedDate = record.selectedDate
+
+	course.record = record
 
 	if (req.body['cancel-tc']) {
-		await xapi.record(req, course, xapi.Verb.Unregistered)
+		await xapi.record(
+			req,
+			course,
+			xapi.Verb.Unregistered,
+			undefined,
+			module,
+			event
+		)
 		await messaging.send(
 			config.BOOKING_CANCELLED_MSG(
 				req.user.givenName,
-				course.title,
+				module.title,
 				req.user.emailAddress,
-				dateTime.formatDate(record.selectedDate)
+				dateTime.formatDate(event.date)
 			)
 		)
 
 		res.send(
 			template.render('booking/confirmed', req, {
 				course,
+				event,
 				message: confirmedMessage.Cancelled,
+				module,
 			})
 		)
 	} else {
@@ -223,6 +265,8 @@ export async function tryCancelBooking(
 			template.render('booking/cancel-booking', req, {
 				cancelBookingFailed: true,
 				course,
+				event,
+				module,
 			})
 		)
 	}
@@ -233,42 +277,45 @@ export async function tryCompleteBooking(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	const session = req.session!
-	session.bookingSession.bookingStep = 6
 
 	const course = req.course
-	if (!course.availability) {
-		res.sendStatus(500)
-		return
-	}
+	const module = req.module!
+	const event = req.event!
 
-	course.selectedDate = course.availability[session.bookingSession.dateSelected]
+	const session = req.session!
 
 	const extensions: Record<string, any> = {}
-	if (session.bookingSession.po) {
-		extensions[xapi.Extension.PurchaseOrder] = session.bookingSession.po
+	if (session.po) {
+		extensions[xapi.Extension.PurchaseOrder] = session.po
 	}
-	if (session.bookingSession.fap) {
-		extensions[xapi.Extension.FinancialApprover] = session.bookingSession.fap
+	if (session.fap) {
+		extensions[xapi.Extension.FinancialApprover] = session.fap
 	}
 
-	await xapi.record(req, course, xapi.Verb.Registered, extensions)
+	await xapi.record(
+		req,
+		course,
+		xapi.Verb.Registered,
+		extensions,
+		module,
+		event
+	)
 
 	await messaging.send(
 		config.BOOKING_COMPLETE_MSG(
 			req.user.givenName,
-			course.title,
+			module.title,
 			req.user.emailAddress,
-			dateTime.formatDate(course.selectedDate)
+			dateTime.formatDate(event.date)
 		)
 	)
 
-	session.save(() => {
-		res.send(
-			template.render('booking/confirmed', req, {
-				course,
-				message: confirmedMessage.Booked,
-			})
-		)
-	})
+	res.send(
+		template.render('booking/confirmed', req, {
+			course,
+			event,
+			message: confirmedMessage.Booked,
+			module,
+		})
+	)
 }

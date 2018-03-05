@@ -5,16 +5,15 @@
             <th>Type</th>
             <th>Duration</th>
             <th>Completion date</th>
-
         </tr>
-   </thead>
+    </thead>
     <tbody>
     {{#each courses as course}}
         <tr>
-            <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
-            <td>{{i18n(course.type)}}</td>
+            <td><a href="/courses/{{course.id}}">{{course.title}} </a></td>
+            <td>{{i18n(course.getType())}}</td>
             <td>{{course.duration ? course.duration : '-'}}</td>
-            <td>{{formatDate(course.completionDate)}}</td>
+            <td>{{formatDate(course.record.completionDate)}}</td>
         </tr>
     {{/each}}
     </tbody>

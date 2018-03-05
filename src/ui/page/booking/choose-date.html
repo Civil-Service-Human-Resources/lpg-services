@@ -24,30 +24,30 @@
                             <div class="div-table__th">Price</div>
                             <div class="div-table__th"><span class="visually-hidden">Selected</span></div>
                         </div>
-                        {{#each courseAvailability as availability}}
+                        {{#each events as event}}
                         <div class="div-table__row u-clearfix">
-                            <div class="div-table__cell">{{formatDate(availability.date)}}</div>
+                            <div class="div-table__cell">{{formatDate(event.date)}}</div>
                             <div class="div-table__cell">{{course.duration}}</div>
-                            <div class="div-table__cell">{{course.location}}</div>
+                            <div class="div-table__cell">{{event.location}}</div>
                             <div class="div-table__cell">&pound;{{course.price}}</div>
                             <div class="div-table__cell  div-table__cell--action">
                                 <div class="course-radios">
-                                    {{#if availability.id == selectedDate}}
-                                    <input id="radio-{{availability.id}}"
-                                        type="radio"
-                                        name="selected-date"
-                                        class="booking__date"
-                                        value="{{availability.id}}"
-                                        checked >
+                                    {{#if event.id == selectedEventId}}
+                                    <input id="radio-{{event.id}}"
+                                           type="radio"
+                                           name="selected-date"
+                                           class="booking__date"
+                                           value="{{event.id}}"
+                                           checked >
                                     {{else}}
-                                    <input id="radio-{{availability.id}}"
-                                        type="radio"
-                                        name="selected-date"
-                                        class="booking__date"
-                                        value="{{availability.id}}"
-                                        >
+                                    <input id="radio-{{event.id}}"
+                                           type="radio"
+                                           name="selected-date"
+                                           class="booking__date"
+                                           value="{{event.id}}"
+                                    >
                                     {{/if}}
-                                    <label for="radio-{{availability.id}}" class="booking__select-container">
+                                    <label for="radio-{{event.id}}" class="booking__select-container">
                                         <span class="booking__select booking__select--select">Select</span>
                                         <span class="booking__select booking__select--selected">Selected</span>
                                     </label>
@@ -57,17 +57,17 @@
                         {{/each}}
                     </div>
 
-                <p>
-                    You are confirming that you have approval to book this course.
-                </p>
-                <p>
-                You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
-                </p>
-                <div class="panel panel-border-wide">
                     <p>
-                        By booking this course you are agreeing to the terms and conditions
+                        You are confirming that you have approval to book this course.
                     </p>
-                </div>
+                    <p>
+                        You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
+                    </p>
+                    <div class="panel panel-border-wide">
+                        <p>
+                            By booking this course you are agreeing to the terms and conditions
+                        </p>
+                    </div>
                     <input type="submit" class="button" value="Continue">
                 </form>
 

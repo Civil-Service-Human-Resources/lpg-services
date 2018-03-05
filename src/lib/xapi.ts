@@ -20,9 +20,7 @@ export interface Statement {
 	context?: {
 		contextActivities: {
 			category?: Array<{id: string}>
-			parent: {
-				id: string
-			}
+			parent?: Array<{id: string}>
 		}
 		extensions?: Record<string, any>
 	}
@@ -49,6 +47,7 @@ export interface Statement {
 }
 
 export enum Type {
+	Course = 'http://cslearning.gov.uk/activities/course',
 	Event = 'http://adlnet.gov/expapi/activities/event',
 	ELearning = 'http://cslearning.gov.uk/activities/elearning',
 	FaceToFace = 'http://cslearning.gov.uk/activities/face-to-face',
@@ -130,18 +129,26 @@ export async function record(
 	req: express.Request,
 	course: model.Course,
 	verb: string,
-	extensions?: Record<string, any>
+	extensions?: Record<string, any>,
+	module?: model.Module,
+	event?: model.Event
 ) {
 	if (!Labels[verb]) {
 		throw new Error(`Unknown xAPI verb: ${verb}`)
 	}
 	let type: Type
-	switch (course.type) {
+	switch (module ? module.type : course.getType()) {
+		case 'blended':
+			type = Type.Course
+			break
 		case 'elearning':
 			type = Type.ELearning
 			break
 		case 'face-to-face':
 			type = Type.FaceToFace
+			if (event) {
+				type = Type.Event
+			}
 			break
 		case 'link':
 			type = Type.Link
@@ -150,7 +157,7 @@ export async function record(
 			type = Type.Video
 			break
 		default:
-			throw new Error(`Unknown course type ${course.type}`)
+			throw new Error(`Unknown course type ${course.getType()}`)
 	}
 	const payload: Statement = {
 		actor: {
@@ -160,13 +167,6 @@ export async function record(
 			},
 			name: req.user.givenName,
 			objectType: 'Agent',
-		},
-		context: {
-			contextActivities: {
-				parent: {
-					id: course.getParentActivityId(),
-				},
-			},
 		},
 		object: {
 			definition: {
@@ -184,6 +184,28 @@ export async function record(
 			},
 			id: verb,
 		},
+	}
+	if (module) {
+		payload.context = {
+			contextActivities: {
+				parent: [
+					{
+						id: course.getActivityId(),
+					},
+				],
+			},
+		}
+		if (module.title) {
+			payload.object.definition!.name.en = module.title
+		}
+		if (event) {
+			payload.object.id = event.getActivityId()
+			payload.context!.contextActivities.parent!.push({
+				id: module!.getActivityId(),
+			})
+		} else {
+			payload.object.id = module!.getActivityId()
+		}
 	}
 	if (extensions) {
 		for (const extension of Object.keys(extensions)) {
@@ -212,7 +234,7 @@ export async function record(
 		}
 		// payload.object.definition!.extensions = extensions
 	}
-	switch (course.type) {
+	switch (course.getType()) {
 		case 'video':
 			payload.context!.contextActivities.category = [
 				{

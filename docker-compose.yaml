@@ -1,52 +1,27 @@
 version: "3.4"
 services:
+
+# ElasticSearch
   kibana:
+    container_name: kibana
     image: docker.elastic.co/kibana/kibana@sha256:0d2565286641d213fdbc26ffe29c33268d31e4820ea7af636ebc7d879d736895
     ports:
       - 5601:5601
     depends_on:
       - elasticsearch
-  elasticsearch: 
+
+  elasticsearch:
+    container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch@sha256:5b2bb3e91379f04a9da7c477314a24b2428fb1a4c20696991dff54b70d1b4ef3
     ports:
-      - "9200:9200"
-    command: "elasticsearch -E cluster.name=local -E discovery.type=single-node "
-  dgraph-server:
-    command: ["dgraph", "server", "--memory_mb", "2048", "--my", "dgraph-server:7080", "--zero", "dgraph-zero:5080"]
-    depends_on:
-      - dgraph-zero
-    image: dgraph/dgraph@sha256:435646c5fc42b7da3879203a6c1d8f246b4181843aed4df6e2afd9cdc11efa30
-    ports:
-      - 8080:8080
-      - 9080:9080
-    restart: on-failure
-  dgraph-viewer:
-    command: ["dgraph-ratel"]
-    depends_on:
-      - dgraph-server
-    image: dgraph/dgraph@sha256:435646c5fc42b7da3879203a6c1d8f246b4181843aed4df6e2afd9cdc11efa30
-    ports:
-      - 8081:8081
-  dgraph-zero:
-    command: ["dgraph", "zero", "--my", "dgraph-zero:5080", "--port_offset", "-2000"]
-    image: dgraph/dgraph@sha256:435646c5fc42b7da3879203a6c1d8f246b4181843aed4df6e2afd9cdc11efa30
-    ports:
-      - 5080:5080
-      - 6080:6080
-    restart: on-failure
-  learner-record-service:
-    environment:
-      AUTH_USER: user
-      AUTH_PASSWORD: password
-      XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
-      XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
-      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-    image: cshr/lpg-learner-record:37b8e6e205275c3d3c049069b87f280d0204017c
-    links:
-      - learning-locker-xapi
-    ports:
-      - 9000:9000
+      - 9200:9200
+      - 9300:9300
+    command: "elasticsearch -E cluster.name=local -E discovery.type=single-node"
+# /ElasticSearch
+
+# Learning Locker
   learning-locker-api-server:
+    container_name: learning-locker-api-server
     command: ["node", "/opt/learning-locker/api/dist/server"]
     depends_on:
       - mongodb
@@ -56,13 +31,17 @@ services:
     ports:
       - 8082:8082
     working_dir: /opt/learning-locker
+
   learning-locker-api-worker:
+    container_name: learning-locker-api-worker
     command: ["node", "/opt/learning-locker/worker/dist/server"]
     depends_on:
       - learning-locker-api-server
     image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     working_dir: /opt/learning-locker
+
   learning-locker-ui:
+    container_name: learning-locker-ui
     command: ["node", "/opt/learning-locker/ui/dist/server"]
     image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     ports:
@@ -70,7 +49,9 @@ services:
     depends_on:
       - learning-locker-api-server
     working_dir: /opt/learning-locker
+
   learning-locker-xapi:
+    container_name: learning-locker-xapi
     command: ["node", "/opt/xapi-service/dist/server"]
     depends_on:
       - mongodb
@@ -80,14 +61,21 @@ services:
     ports:
       - 8083:8083
     working_dir: /opt/xapi-service
+
   mailhog:
+    container_name: mailhog-locker-api-worker
     image: mailhog/mailhog@sha256:5be1ae7cf894b58fffbe48f84a0541a3595e53124d460d3fb71b3450a8d11189
     ports:
       - 8025:8025
+
   mongodb:
+    container_name: mongodb
     image: mongo@sha256:fbb95eaa5a0c84d0d2098775f166003c568a79f993d91309cee7cda4135bbbfd
+
   redis:
+    container_name: redis
     image: redis@sha256:3446883dfe13ab3db67433aace0e72d8cd669c528e60c617c42d6c697f0fa41f
+
   setup-learning-locker:
     command: ["/opt/learning-locker/./node_modules/.bin/babel-node", "/opt/learning-locker/mkadmin.js"]
     depends_on:
@@ -97,3 +85,37 @@ services:
       - NODE_PATH=/opt/learning-locker
     image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
     working_dir: /opt/learning-locker
+# /Learning Locker
+
+# CSHR
+
+  learner-record:
+    container_name: learner-record
+    environment:
+      AUTH_USER: user
+      AUTH_PASSWORD: password
+      XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
+      XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
+      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
+    image: cshr/lpg-learner-record:9ca1671da78ca7dfa68f6d1d2cf8d8d0bc6798bb
+    depends_on:
+      - learning-locker-xapi
+    ports:
+      - 9000:9000
+
+  learning-catalogue:
+    container_name: learning-catalogue
+    command: ["./wait-for-it.sh", "elasticsearch:9300", "--", "java", "-jar", "/data/app.jar"]
+    depends_on:
+      - elasticsearch
+    environment:
+      AUTH_USER: user
+      AUTH_PASSWORD: password
+      ELASTICSEARCH_CLUSTER: local
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9300
+    image: cshr/lpg-learning-catalogue:80aff817bb275ea692de84f3f6911f537ab19730
+    ports:
+      - 9001:9001
+
+# /CSHR

@@ -2,7 +2,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">
-                {{#if course.uid}}Edit{{else}}Add{{/if}} link
+                {{#if course.id}}Edit{{else}}Add{{/if}} link
             </h1>
 
             <form method="post" name="editCourseForm" class="push-bottom">
@@ -35,7 +35,7 @@
                 </div>
 
                 <div>
-                    {{#if course.uid}}
+                    {{#if course.id}}
                     <input type="submit" class="button" value="Update"> {{else}}
                     <input type="submit" class="button" value="Add"> {{/if}}
                 </div>

@@ -14,10 +14,10 @@
                     {{#each courses as course, i}}
                     <tr>
                         <th scope="row">
-                            <a href="/courses/{{course.uid}}/edit">{{course.title}}</a>
+                            <a href="/courses/{{course.id}}/edit">{{course.title}}</a>
                         </th>
                         <td>
-                            <a href="//{{config.LPG_UI_SERVER}}/courses/{{course.uid}}/">Review</a>
+                            <a href="//{{config.LPG_UI_SERVER}}/courses/{{course.id}}/">Review</a>
                         </td>
                     </tr>
                     {{/each}}

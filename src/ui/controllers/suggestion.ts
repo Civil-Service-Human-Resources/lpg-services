@@ -5,9 +5,9 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 
-function findCourseByUID(courses: model.Course[], uid: string) {
+function findCourseByUID(courses: model.Course[], id: string) {
 	for (const course of courses) {
-		if (course.uid === uid) {
+		if (course.id === id) {
 			return course
 		}
 	}
@@ -18,11 +18,10 @@ export async function addToPlan(req: express.Request, res: express.Response) {
 	const uid = req.params.courseId
 	const course = await catalog.get(uid)
 	const ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
-	const verb = xapi.lookup('Liked')
 
-	if (verb && course) {
+	if (course) {
 		try {
-			await xapi.record(req, course, verb)
+			await xapi.record(req, course, xapi.Verb.Liked)
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
@@ -40,11 +39,10 @@ export async function removeFromSuggested(
 	const uid = req.params.courseId
 	const course = await catalog.get(uid)
 	const ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
-	const verb = xapi.lookup('Disliked')
 
-	if (verb && course) {
+	if (course) {
 		try {
-			await xapi.record(req, course, verb)
+			await xapi.record(req, course, xapi.Verb.Disliked)
 		} catch (err) {
 			res.sendStatus(500)
 		} finally {
@@ -74,12 +72,12 @@ export async function suggestions(user: model.User) {
 	const modified: model.Course[] = []
 
 	for (const course of suggestedLearning) {
-		const matched = findCourseByUID(learningRecord, course.uid)
-		if (matched) {
+		const matched = findCourseByUID(learningRecord, course.id)
+		if (matched && matched.record) {
 			// there is a reference to the course in the learning record
 			if (
-				matched.preference !== xapi.Labels[xapi.Verb.Disliked] &&
-				matched.preference !== xapi.Labels[xapi.Verb.Liked]
+				matched.record.preference !== xapi.Labels[xapi.Verb.Disliked] &&
+				matched.record.preference !== xapi.Labels[xapi.Verb.Liked]
 			) {
 				modified.push(course)
 			}

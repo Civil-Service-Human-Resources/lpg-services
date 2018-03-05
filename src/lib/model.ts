@@ -1,104 +1,280 @@
 import * as config from 'lib/config'
+import * as learnerRecord from 'lib/learnerrecord'
 
 export class Course {
 	static create(data: any) {
-		const course = new Course(data.uid, data.type)
-		course.availability = ((data.availability as Date[]) || []).map(
-			availability => new Date(availability)
-		)
+		const course = new Course(data.id)
 		course.description = data.description
 		course.duration = data.duration
-		course.frequency = data.frequency
 		course.learningOutcomes = data.learningOutcomes
-		course.location = data.location
 		course.price = data.price
-		course.productCode = data.productCode
-		course.requiredBy = data.requiredBy ? new Date(data.requiredBy) : null
 		course.shortDescription = data.shortDescription
-		course.tags = data.tags
 		course.title = data.title
-		course.uri = data.uri
+
+		course.modules = (data.modules || []).map(Module.create)
+
 		return course
 	}
 
-	uid: string
-	type: string
-
+	id: string
 	title: string
-	tags: string[]
-	uri: string
 	shortDescription: string
 	description: string
 	learningOutcomes: string
-	duration: string
-	productCode: string
+	duration: number
+	price: number
 
-	availability?: Date[]
+	modules: Module[]
+
+	record?: learnerRecord.LearnerRecord
+
+	constructor(id: string) {
+		this.id = id
+	}
+
+	getActivityId() {
+		return `${config.XAPI.courseBaseUri}/${this.id}`
+	}
+
+	getType() {
+		if (!this.modules.length) {
+			return null
+		}
+		if (this.modules.length > 1) {
+			return 'blended'
+		}
+		return this.modules[0].type
+	}
+
+	getAreasOfWork() {
+		return this.modules
+			.map(module => module.audiences)
+			.reduce((p, c) => p.concat(c))
+			.map(audience => audience.areasOfWork)
+			.reduce((p, c) => p.concat(c))
+			.filter((v, i, a) => a.indexOf(v) === i)
+	}
+
+	getGrades() {
+		return this.modules
+			.map(module => module.audiences)
+			.reduce((p, c) => p.concat(c))
+			.map(audience => audience.grades)
+			.reduce((p, c) => p.concat(c))
+			.filter((v, i, a) => a.indexOf(v) === i)
+	}
+
+	getSelectedDate() {
+		if (this.record && this.record.eventId) {
+			for (const module of this.modules) {
+				const event = module.getEvent(this.record.eventId)
+				if (event) {
+					return event.date
+				}
+			}
+		}
+		return null
+	}
+
+	isRequired(user: User) {
+		return this.modules.find(module => module.isRequired(user)) != null
+	}
+
+	nextRequiredBy(user: User) {
+		let next = null
+		const completionDate = this.getCompletionDate()
+		for (const module of this.modules) {
+			const moduleNext = module.nextRequiredBy(user, completionDate)
+			if (!next) {
+				next = moduleNext
+			} else if (moduleNext && moduleNext.getTime() < next.getTime()) {
+				next = moduleNext
+			}
+		}
+		return next
+	}
+
+	getCompletionDate() {
+		return this.record ? this.record.completionDate : undefined
+	}
+
+	shouldRepeat(user: User) {
+		const completionDate = this.getCompletionDate()
+		for (const module of this.modules) {
+			const moduleShouldRepeat = module.shouldRepeat(user, completionDate)
+			if (moduleShouldRepeat) {
+				return true
+			}
+		}
+		return false
+	}
+}
+
+export class Module {
+	static create(data: any) {
+		const module = new Module(data.id, data.type)
+		module.duration = data.duration
+		module.price = data.price
+		module.productCode = data.productCode
+		module.location = data.location
+		module.startPage = data.startPage
+		module.title = data.title
+
+		module.audiences = (data.audiences || []).map(Audience.create)
+		module.events = (data.events || []).map(Event.create)
+
+		return module
+	}
+
+	id: string
+	type: string
+
+	title: string
+	duration: number
+
 	location?: string
 	price?: string
+	productCode?: string
+	startPage?: string
 
-	requiredBy?: Date | null
-	frequency?: string
+	audiences: Audience[]
+	events: Event[]
 
-	completionDate?: Date | null
-	result?: any
-	score?: string
-	preference?: string
-	selectedDate?: Date | null
-	state?: string
-
-	constructor(uid: string, type: string) {
-		this.uid = uid
+	constructor(id: string, type: string) {
+		this.id = id
 		this.type = type
 	}
 
 	getActivityId() {
-		let activityId = this.getParentActivityId()
-		if (this.selectedDate) {
-			activityId += `/${this.selectedDate.toISOString().slice(0, 10)}`
-		}
-		return activityId
+		return `${config.XAPI.moduleBaseUri}/${this.id}`
 	}
 
-	getParentActivityId() {
-		return `${config.XAPI.activityBaseUri}/${this.uid}`
+	getAudience(user: User) {
+		let matchedAudience = null
+		let matchedRelevance = -1
+		for (const audience of this.audiences) {
+			const relevance = audience.getRelevance(user)
+			if (relevance > matchedRelevance) {
+				matchedAudience = audience
+				matchedRelevance = relevance
+			}
+		}
+		return matchedAudience
+	}
+
+	getEvent(eventId: string) {
+		return this.events.find(event => event.id === eventId)
 	}
 
 	isRequired(user: User) {
-		return (
-			this.tags &&
-			(this.tags.indexOf('mandatory:all') > -1 ||
-				this.tags.indexOf(`mandatory:${user.department}`) > -1)
-		)
+		const audience = this.getAudience(user)
+		if (audience) {
+			return audience.mandatory
+		}
+		return false
 	}
 
-	nextRequiredBy() {
-		const [last, next] = this._currentRecurrencePeriod()
+	nextRequiredBy(user: User, completionDate?: Date) {
+		const audience = this.getAudience(user)
+		if (!audience) {
+			return null
+		}
+		return audience.nextRequiredBy(completionDate)
+	}
+
+	shouldRepeat(user: User, completionDate?: Date) {
+		const audience = this.getAudience(user)
+		if (!audience) {
+			return false
+		}
+		return audience.shouldRepeat(completionDate)
+	}
+}
+
+export class Event {
+	static create(data: any) {
+		const date = new Date(data.date)
+		return new Event(data.id, date, data.location)
+	}
+
+	id: string
+	date: Date
+	location: string
+
+	constructor(id: string, date: Date, location: string) {
+		this.id = id
+		this.date = date
+		this.location = location
+	}
+
+	getActivityId() {
+		return `${config.XAPI.eventBaseUri}/${this.id}`
+	}
+}
+
+export class Audience {
+	static create(data: any) {
+		const audience = new Audience()
+		audience.areasOfWork = data.areasOfWork || []
+		audience.departments = data.departments || []
+		audience.grades = data.grades || []
+		audience.mandatory = data.mandatory || false
+		audience.frequency = data.frequency
+		if (data.requiredBy) {
+			audience.requiredBy = new Date(data.requiredBy)
+		}
+		return audience
+	}
+
+	areasOfWork: string[]
+	departments: string[]
+	grades: string[]
+	mandatory: boolean
+
+	requiredBy?: Date | null
+	frequency?: string
+
+	getRelevance(user: User) {
+		let relevance = -1
+
+		if (this.areasOfWork.indexOf(user.profession)) {
+			relevance += 1
+		}
+		if (this.departments.indexOf(user.department)) {
+			relevance += 1
+		}
+		if (this.grades.indexOf(user.grade)) {
+			relevance += 1
+		}
+		return relevance
+	}
+
+	nextRequiredBy(completionDate?: Date) {
+		const [last, next] = this._getCurrentRecurrencePeriod()
 		if (!last || !next) {
 			return null
 		}
-
-		if (this.completionDate && this.completionDate > last) {
+		if (completionDate && completionDate > last) {
 			if (!this.frequency) {
-				throw new Error(`course.frequency not set for course ${this.uid}`)
+				return null
 			}
 			return Frequency.increment(this.frequency, next)
 		}
 		return next
 	}
 
-	shouldRepeat() {
-		const [last, next] = this._currentRecurrencePeriod()
+	shouldRepeat(completionDate?: Date) {
+		const [last, next] = this._getCurrentRecurrencePeriod()
 		if (!last || !next) {
-			return !this.completionDate
+			return !completionDate
 		}
-		if (!this.completionDate) {
-			throw new Error(`course.completionDate not set for course ${this.uid}`)
+		if (!completionDate) {
+			return true
 		}
-		return this.completionDate < last
+		return completionDate < last
 	}
 
-	_currentRecurrencePeriod() {
+	_getCurrentRecurrencePeriod() {
 		if (!this.requiredBy || !this.frequency) {
 			return [null, null]
 		}
@@ -113,9 +289,9 @@ export class Course {
 }
 
 export class Frequency {
-	static FiveYearly: 'five-yearly'
-	static ThreeYearly: 'two-yearly'
-	static Yearly: 'yearly'
+	static FiveYearly: 'FIVE_YEARLY'
+	static ThreeYearly: 'THREE_YEARLY'
+	static Yearly: 'YEARLY'
 
 	static increment(frequency: string, date: Date) {
 		const step = this.getStep(frequency)
@@ -140,13 +316,13 @@ export class Frequency {
 }
 
 export class TextSearchResult {
-	readonly uid: string
+	readonly id: string
 	title: string
 	searchText: string
 	weight: number
 
-	constructor(uid: string) {
-		this.uid = uid
+	constructor(id: string) {
+		this.id = id
 	}
 }
 

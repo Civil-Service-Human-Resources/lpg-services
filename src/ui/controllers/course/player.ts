@@ -5,43 +5,40 @@ import * as concat from 'lib/concat'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as log4js from 'log4js'
-import * as url from 'url'
 
 const logger = log4js.getLogger('controllers/course/player')
 const s3 = new aws.S3(config.AWS)
 
 export async function play(ireq: express.Request, res: express.Response) {
+	logger.debug(
+		`Loading course resource, courseId: ${ireq.params.courseId}, moduleId: ${
+			ireq.params.moduleId
+		}`
+	)
+
 	const req = ireq as extended.CourseRequest
 	const course = req.course
-	logger.debug(`Loading course resource, courseId: ${req.params.courseId}`)
+	const module = course.modules.find(m => m.id === req.params.moduleId)
 
-	if (!course || !course.uri) {
+	if (!module || !module.startPage) {
+		logger.debug(`module or module startPage not found - ${module}`)
 		res.sendStatus(404)
 	} else {
-		// TODO: If website content record completion and redirect to site
-
-		let location
-		const path = req.path
+		let path = req.path
 
 		if (path === '/') {
 			if (!req.originalUrl.endsWith('/')) {
 				return res.redirect(`${req.originalUrl}/`)
 			}
-			location = course.uri
+			path = `${course.id}/${module.id}/${module.startPage}`
 		} else {
-			location = course.uri.substring(0, course.uri.lastIndexOf('/')) + path
-		}
-
-		const parsedLocation = url.parse(location)
-		if (!parsedLocation.path) {
-			res.sendStatus(500)
-			return
+			path = path.substring(1)
 		}
 
 		s3.getObject(
 			{
 				Bucket: 'csl-learning-content',
-				Key: parsedLocation.path.substring(1),
+				Key: path,
 			},
 			(err, data) => {
 				if (err) {

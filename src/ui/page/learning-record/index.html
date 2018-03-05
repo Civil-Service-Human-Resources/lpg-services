@@ -18,13 +18,11 @@
                 <h2 class="heading heading--medium heading--red-top heading-medium lpg-other-learning">
                     Other learning
                 </h2>
-                {{#if courses.length}}
-                <LearningRecordTable courses={{courses}}/> {{else}}
+                {{#if completedLearning.length}}
+                <LearningRecordTable courses={{completedLearning}}/>
+                {{else}}
                 <p>You haven't completed any courses yet!</p>
                 {{/if}}
-
-
-
             </div>
         </div>
     </div>

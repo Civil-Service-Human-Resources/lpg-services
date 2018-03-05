@@ -2,7 +2,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">
-                {{#if course.uid}}Edit{{else}}Add{{/if}} course
+                {{#if course.id}}Edit{{else}}Add{{/if}} course
             </h1>
 
             <form method="post" name="editCourseForm" class="push-bottom" encType="multipart/form-data">
@@ -87,7 +87,7 @@
                 </div>
 
                 <div>
-                    {{#if course.uid}}
+                    {{#if course.id}}
                     <input type="submit" class="button" value="Update">
                     {{else}}
                     <input type="submit" class="button" value="Add">
