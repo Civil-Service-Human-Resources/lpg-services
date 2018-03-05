@@ -74,16 +74,20 @@ export function enteredPaymentDetails(
 	}
 }
 
-export function renderCancelBookingPage(
+export async function renderCancelBookingPage(
 	ireq: express.Request,
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
+
+	const record = await learnerRecord.getCourseRecord(req.user, course)
+
 	res.send(
 		template.render('booking/cancel-booking', req, {
 			cancelBookingFailed: false,
 			course,
+			selectedDate: record.selectedDate,
 		})
 	)
 }

@@ -3,7 +3,7 @@
         <div class="grid-row">
             <div class="column-full">
                 <div class="govuk-box-highlight">
-                    <h1 class="heading-xlarge">{{message === 'Booked' ? 'Booking request submitted' : 'Bookign request cancelled' }}</h1>
+                    <h1 class="heading-xlarge">{{message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }}</h1>
                     <h3 class="lede">Course</h3>
                     <h2 class="heading-medium confirmed__heading confirmed__heading--caps">
                         {{course.title}}
@@ -23,7 +23,7 @@
                 </p>
             {{else}}
                 <p>Your course booking has been cancelled.</p>
-                <p><a href="/profile">Visit your profile</a></p>
+                <p><a href="/home">You can now return to the home page</a></p>
             {{/if}}
             </div>
         </div>
