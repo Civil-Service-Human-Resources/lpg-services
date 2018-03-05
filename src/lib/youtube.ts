@@ -56,7 +56,7 @@ export async function getBasicInfo(
 
 export async function getDuration(
 	videoID: string
-): Promise<number | undefined> {
+): Promise<string | undefined> {
 	let resp
 	try {
 		resp = await axios.get(

@@ -11,20 +11,12 @@ declare var browser: PrivateBrowser
 
 const sessions: Record<string, Session> = {}
 
-export async function checkHidden(selector: string, page: puppeteer.Page) {
-	return page.evaluate(selector => {
-		const e = document.querySelector(selector)
-		const style = window.getComputedStyle(e)
-		return style.display
-	}, selector)
-}
-
 export async function checkElementIsPresent(
 	selector: string,
 	page: puppeteer.Page
 ): Promise<boolean> {
-	return page.evaluate(selector => {
-		const e = document.querySelector(selector)
+	return page.evaluate(sel => {
+		const e = document.querySelector(sel)
 		if (!e) {
 			return false
 		}
@@ -38,12 +30,39 @@ export async function checkElementIsPresent(
 	}, selector)
 }
 
+export async function checkHidden(selector: string, page: puppeteer.Page) {
+	return page.evaluate(sel => {
+		const e = document.querySelector(sel)
+		const style = window.getComputedStyle(e)
+		return style.display
+	}, selector)
+}
+
+export async function getSession(name?: string) {
+	if (name && sessions[name]) {
+		return sessions[name]
+	}
+	const {browserContextId} = await browser._connection.send(
+		'Target.createBrowserContext'
+	)
+	const {targetId} = await browser._connection.send('Target.createTarget', {
+		browserContextId,
+		url: 'about:blank',
+	})
+	const client = await browser._connection.createSession(targetId)
+	const session = new Session(browserContextId, client)
+	if (name) {
+		sessions[name] = session
+	}
+	return session
+}
+
 export async function getText(
 	selector: string,
 	page: puppeteer.Page
 ): Promise<boolean> {
-	return page.evaluate(selector => {
-		const e = document.querySelector(selector)
+	return page.evaluate(sel => {
+		const e = document.querySelector(sel)
 		if (!e) {
 			return false
 		}
@@ -58,28 +77,9 @@ export async function returnElementAttribute(
 ): Promise<string> {
 	return page.$eval(
 		selector,
-		(element, attri) => element.getAttribute(attri),
+		(element, attr) => element.getAttribute(attr),
 		attri
 	)
-}
-
-export async function getSession(name?: string) {
-	if (name && sessions[name]) {
-		return sessions[name]
-	}
-	const {browserContextId} = await browser._connection.send(
-		'Target.createBrowserContext'
-	)
-	const {targetId} = await browser._connection.send('Target.createTarget', {
-		url: 'about:blank',
-		browserContextId,
-	})
-	const client = await browser._connection.createSession(targetId)
-	const session = new Session(browserContextId, client)
-	if (name) {
-		sessions[name] = session
-	}
-	return session
 }
 
 export function xpath(locator: string) {

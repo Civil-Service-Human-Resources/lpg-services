@@ -1,10 +1,10 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as catalog from 'lib/service/catalog'
 import * as learnerRecord from 'lib/learnerrecord'
-import * as log4js from 'log4js'
+import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
+import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/learning-record')
 
@@ -19,15 +19,18 @@ export async function courseResult(
 		}`
 	)
 	try {
-		const record = await learnerRecord.getCourseRecord(req.user, req.course)
+		const courseRecord = await learnerRecord.getCourseRecord(
+			req.user,
+			req.course
+		)
 
-		if (!record || record.state !== 'completed') {
+		if (!courseRecord || courseRecord.state !== 'completed') {
 			res.redirect('/home')
 		} else {
 			res.send(
 				template.render('learning-record/course-result', req, {
 					course: req.course,
-					record,
+					record: courseRecord,
 				})
 			)
 		}
@@ -39,6 +42,7 @@ export async function courseResult(
 
 export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
+
 	const courses = await learnerRecord.getLearningRecordOf(
 		learnerRecord.CourseState.Completed,
 		req.user
@@ -48,19 +52,19 @@ export async function display(req: express.Request, res: express.Response) {
 
 	const completedRequiredLearning = []
 
-	for (const [i, record] of courses.entries()) {
-		const matches = record.tags.filter(tag => tag.includes('mandatory'))
+	for (const [i, entry] of courses.entries()) {
+		const matches = entry.tags.filter(tag => tag.includes('mandatory'))
 		if (matches.length) {
-			completedRequiredLearning.push(record)
+			completedRequiredLearning.push(entry)
 			courses.splice(i, 1)
 		}
 	}
 
 	res.send(
 		template.render('learning-record', req, {
-			requiredLearningTotal,
 			completedRequiredLearning,
 			courses,
+			requiredLearningTotal,
 		})
 	)
 }

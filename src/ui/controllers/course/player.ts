@@ -1,7 +1,7 @@
 import * as aws from 'aws-sdk'
-import * as concat from 'concat'
 import * as express from 'express'
 import * as fs from 'fs'
+import * as concat from 'lib/concat'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as log4js from 'log4js'
@@ -33,6 +33,10 @@ export async function play(ireq: express.Request, res: express.Response) {
 		}
 
 		const parsedLocation = url.parse(location)
+		if (!parsedLocation.path) {
+			res.sendStatus(500)
+			return
+		}
 
 		s3.getObject(
 			{
@@ -44,9 +48,15 @@ export async function play(ireq: express.Request, res: express.Response) {
 					logger.error('Error retrieving course content', err)
 					res.sendStatus(err.statusCode || 500)
 				} else {
-					res.setHeader('Content-Type', data.ContentType)
-					res.setHeader('ETag', data.ETag)
-					res.setHeader('Last-Modified', data.LastModified)
+					if (data.ContentType) {
+						res.setHeader('Content-Type', data.ContentType)
+					}
+					if (data.ETag) {
+						res.setHeader('ETag', data.ETag)
+					}
+					if (data.LastModified) {
+						res.setHeader('Last-Modified', data.LastModified.toUTCString())
+					}
 					res.send(data.Body)
 				}
 			}
@@ -54,17 +64,13 @@ export async function play(ireq: express.Request, res: express.Response) {
 	}
 }
 
-export async function scormApi(req: express.Request, res: express.Response) {
-	res.set('Content-Type', 'application/javascript')
+let scormJS = ''
 
-	const fileContent = await concat([
-		'assets/js/xapiwrapper.min.js',
-		'assets/js/APIWrapper.js',
-		'assets/js/SCORMToXApiFunctions.js',
-		'assets/js/Scorm.js',
-	])
-
-	res.send(`
+function getScormJS() {
+	if (scormJS) {
+		return scormJS
+	}
+	scormJS = `
 window.activity = document.location.protocol + "//" + document.location.host + document.location.pathname;
 
 window.xapiConfig = {
@@ -74,12 +80,23 @@ window.xapiConfig = {
 		password: ""
 	},
 	courseId: window.activity,
-	lmsHomePage: "http://localhost:3001/",
+	lmsHomePage: "https://cslearning.gov.uk/",
 	isScorm2004: false
 };
 
-${fileContent}
-`)
+${concat.files([
+		'assets/js/xapiwrapper.min.js',
+		'assets/js/APIWrapper.js',
+		'assets/js/SCORMToXApiFunctions.js',
+		'assets/js/Scorm.js',
+	])}
+`
+	return scormJS
+}
+
+export function scormApi(req: express.Request, res: express.Response) {
+	res.set('Content-Type', 'application/javascript')
+	res.send(getScormJS())
 }
 
 export function portalOverrides(req: express.Request, res: express.Response) {

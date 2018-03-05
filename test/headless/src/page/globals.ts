@@ -1,11 +1,11 @@
 import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
-	feedbackPrompt: '.feedback-prompt',
 	feedbackDetails: '.feedback-details',
 	feedbackDoingField: '#whatDoing',
-	feedbackWrongField: '#wentWrong',
+	feedbackPrompt: '.feedback-prompt',
 	feedbackSubmitButton: 'button[name="commit"]',
+	feedbackWrongField: '#wentWrong',
 	signoutButton: 'a[href="/sign-out"]',
 }
 

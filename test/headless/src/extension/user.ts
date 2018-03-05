@@ -1,6 +1,6 @@
-import {default as axios, AxiosResponse} from 'axios'
-import * as https from 'https'
+import {AxiosResponse, default as axios} from 'axios'
 import * as config from 'extension/config'
+import * as https from 'https'
 
 export interface QueryUser {
 	Resources: User[]
@@ -13,6 +13,11 @@ export interface User {
 	userName: string
 }
 
+const SCIM2_HEADERS: Record<string, string> = {
+	Accept: 'application/json',
+}
+SCIM2_HEADERS['Content-Type'] = 'application/json'
+
 const http = axios.create({
 	httpsAgent: new https.Agent({
 		rejectUnauthorized: false,
@@ -22,25 +27,25 @@ const http = axios.create({
 export async function createUser(username: string, password: string) {
 	const url = config.WSO2_URL + '/scim2/Users/'
 	const data = JSON.stringify({
-		userName: username,
-		password: password,
 		emails: [
 			{
 				primary: true,
-				value: username,
 				type: 'work',
+				value: username,
 			},
 		],
+		password,
+		userName: username,
 	})
 	let resp: AxiosResponse<User>
 	try {
 		resp = await http.post(url, data, {
-			method: 'POST',
-			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
 			auth: {
-				username: config.WSO2_ADMIN_USERNAME as string,
-				password: config.WSO2_ADMIN_PASSWORD as string,
+				password: config.WSO2_ADMIN_PASSWORD,
+				username: config.WSO2_ADMIN_USERNAME,
 			},
+			headers: SCIM2_HEADERS,
+			method: 'POST',
 		})
 	} catch (err) {
 		throw err
@@ -59,12 +64,12 @@ export async function deleteUser(userid: string) {
 	let resp: AxiosResponse<QueryUser>
 	try {
 		resp = await http.delete(url, {
-			method: 'DELETE',
-			headers: {Accept: 'application/json'},
 			auth: {
-				username: config.WSO2_ADMIN_USERNAME as string,
-				password: config.WSO2_ADMIN_PASSWORD as string,
+				password: config.WSO2_ADMIN_PASSWORD,
+				username: config.WSO2_ADMIN_USERNAME,
 			},
+			headers: {Accept: 'application/json'},
+			method: 'DELETE',
 		})
 	} catch (err) {
 		throw err
@@ -84,12 +89,12 @@ export async function getUser(username: string) {
 	let resp: AxiosResponse<QueryUser>
 	try {
 		resp = await http.get(url, {
-			method: 'GET',
-			headers: {Accept: 'application/json'},
 			auth: {
-				username: config.WSO2_ADMIN_USERNAME as string,
-				password: config.WSO2_ADMIN_PASSWORD as string,
+				password: config.WSO2_ADMIN_PASSWORD,
+				username: config.WSO2_ADMIN_USERNAME,
 			},
+			headers: {Accept: 'application/json'},
+			method: 'GET',
 		})
 	} catch (err) {
 		throw err
@@ -109,25 +114,25 @@ export async function updateUser(
 	userid: string,
 	username: string,
 	firstname: string,
-	dept: string,
-	prof: string,
+	department: string,
+	profession: string,
 	grade: string
 ) {
 	const url = config.WSO2_URL + '/scim2/Users/' + userid
 	const data = JSON.stringify({
-		userName: username,
-		CshrUser: {department: dept, profession: prof, grade: grade},
+		CshrUser: {department, grade, profession},
 		name: {givenName: firstname},
+		userName: username,
 	})
 	let resp: AxiosResponse<User>
 	try {
 		resp = await http.put(url, data, {
-			method: 'PUT',
-			headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
 			auth: {
-				username: config.WSO2_ADMIN_USERNAME as string,
-				password: config.WSO2_ADMIN_PASSWORD as string,
+				password: config.WSO2_ADMIN_PASSWORD,
+				username: config.WSO2_ADMIN_USERNAME,
 			},
+			headers: SCIM2_HEADERS,
+			method: 'PUT',
 		})
 	} catch (err) {
 		throw err

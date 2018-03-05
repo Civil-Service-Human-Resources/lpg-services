@@ -18,6 +18,23 @@ export interface SignIn {
 	authenticationServiceUrl: string
 }
 
+interface WSO2Profile {
+	CshrUser: {
+		department: string
+		grade: string
+		profession: string
+	}
+	name: {
+		givenName: string
+	}
+	userName: string
+}
+
+const SCIM2_HEADERS: Record<string, string> = {
+	Accept: 'application/json',
+}
+SCIM2_HEADERS['Content-Type'] = 'application/json'
+
 const http = axios.create({
 	httpsAgent: new https.Agent({
 		rejectUnauthorized: false,
@@ -34,7 +51,7 @@ function renderSignIn(req: express.Request, props: SignIn) {
 
 async function updateUserObject(
 	req: express.Request,
-	updatedProfile: model.User
+	updatedProfile: WSO2Profile
 ) {
 	const cshrUserObject = updatedProfile.CshrUser
 	const newUser = {
@@ -49,21 +66,15 @@ async function updateUserObject(
 
 function validateForm(req: express.Request) {
 	const form = req.body
-	const validInputs = {
-		department: form.department,
-		givenName: form.givenName,
-		grade: form.grade,
-		profession: form.profession,
-	}
 	let areErrors = false
-	for (const input in form) {
+	for (const input of Object.keys(form)) {
 		if (!/\S/.test(form[input])) {
-			validInputs[input] = false
+			form[input] = ''
 			areErrors = true
 		}
 	}
 	if (areErrors) {
-		return validInputs
+		return form
 	}
 }
 
@@ -123,7 +134,7 @@ export async function updateProfile(
 	req: express.Request,
 	res: express.Response
 ) {
-	const updateProfileObject = {
+	const updateProfileObject: WSO2Profile = {
 		CshrUser: {
 			department: req.body.department,
 			grade: req.body.grade,
@@ -138,10 +149,7 @@ export async function updateProfile(
 			username: config.AUTHENTICATION.serviceAdmin,
 		},
 		baseURL: config.AUTHENTICATION.serviceUrl,
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		},
+		headers: SCIM2_HEADERS,
 	}
 
 	try {

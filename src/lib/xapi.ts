@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios'
+import {AxiosResponse, default as axios} from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as model from 'lib/model'
@@ -9,7 +9,7 @@ export interface Statement {
 		name: string
 		objectType: 'Agent'
 	}
-	context: {
+	context?: {
 		contextActivities: {
 			parent: {
 				id: string
@@ -41,8 +41,10 @@ export const Extension = {
 
 export const Verb = {
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
+	Disliked: 'https://w3id.org/xapi/acrossx/verbs/disliked',
 	Failed: 'http://adlnet.gov/expapi/verbs/failed',
 	Initialised: 'http://adlnet.gov/expapi/verbs/initialized',
+	Liked: 'https://w3id.org/xapi/acrossx/verbs/liked',
 	Passed: 'http://adlnet.gov/expapi/verbs/passed',
 	PlayedVideo: 'https://w3id.org/xapi/video/verbs/played',
 	Progressed: 'http://adlnet.gov/expapi/verbs/progressed',
@@ -50,14 +52,14 @@ export const Verb = {
 	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
 	Unregistered: 'http://adlnet.gov/expapi/verbs/unregistered',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
-	Liked: 'https://w3id.org/xapi/acrossx/verbs/liked',
-	Disliked: 'https://w3id.org/xapi/acrossx/verbs/disliked',
 }
 
 export const Labels: Record<string, string> = {
 	[Verb.Completed]: 'completed',
+	[Verb.Disliked]: 'disliked',
 	[Verb.Failed]: 'failed',
 	[Verb.Initialised]: 'initialised',
+	[Verb.Liked]: 'liked',
 	[Verb.Passed]: 'passed',
 	[Verb.PlayedVideo]: 'played video',
 	[Verb.Progressed]: 'progressed',
@@ -65,8 +67,6 @@ export const Labels: Record<string, string> = {
 	[Verb.Terminated]: 'terminated',
 	[Verb.Unregistered]: 'unregistered',
 	[Verb.Viewed]: 'viewed',
-	[Verb.Liked]: 'liked',
-	[Verb.Disliked]: 'disliked',
 }
 
 for (const verb of Object.values(Verb)) {
@@ -130,9 +130,7 @@ export async function record(
 	return await send(payload)
 }
 
-export async function search() {}
-
-export async function send(statement: Statement) {
+export async function send(statement: Statement): Promise<AxiosResponse<any>> {
 	let resp
 	try {
 		resp = await axios.post(

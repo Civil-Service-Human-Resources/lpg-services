@@ -65,3 +65,7 @@ tsc.stdout.on('data', data => {
 tsc.stderr.on('data', data => {
 	process.stderr.write(data)
 })
+
+tsc.on('exit', code => {
+	process.exit(code)
+})

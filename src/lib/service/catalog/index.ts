@@ -1,20 +1,22 @@
-import * as parse from 'csv-parse/lib/sync'
 import * as dgraph from 'dgraph-js'
+import * as elastic from 'elasticsearch'
 import * as fs from 'fs'
-import * as path from 'path'
 import * as grpc from 'grpc'
+import * as config from 'lib/config'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
+import * as path from 'path'
 import * as striptags from 'striptags'
-import * as elastic from 'elasticsearch'
-import {isArray} from 'util'
 
-const {
-	DGRAPH_ENDPOINT = 'localhost:9080',
-	ELASTIC_ENDPOINT = 'http://127.0.01:9200',
-} = process.env
+/* tslint:disable:no-var-requires */
+const parse: (data: string) => string[][] = require('csv-parse/lib/sync')
 
-const suggestThreshold = 0.7
+const client = new dgraph.DgraphClient(
+	new dgraph.DgraphClientStub(
+		config.DGRAPH_ENDPOINT,
+		grpc.credentials.createInsecure()
+	)
+)
 
 const elasticConfig = [
 	{
@@ -22,57 +24,54 @@ const elasticConfig = [
 			lpg: {
 				properties: {
 					description: {
-						type: 'text',
 						copy_to: 'suggested_terms',
 						fields: {
 							keyword: {
 								type: 'keyword',
 							},
 						},
+						type: 'text',
 					},
 					learningOutcomes: {
-						type: 'text',
-
 						fields: {
 							keyword: {
 								type: 'keyword',
 							},
 						},
+						type: 'text',
 					},
 					shortDescription: {
-						type: 'text',
-
 						fields: {
 							keyword: {
 								type: 'keyword',
 							},
 						},
+						type: 'text',
+					},
+					suggested_terms: {
+						fields: {
+							keyword: {
+								type: 'keyword',
+							},
+						},
+						type: 'text',
 					},
 					tags: {
-						type: 'text',
-
 						fields: {
 							keyword: {
 								type: 'keyword',
 							},
 						},
+						type: 'text',
 					},
 					title: {
-						type: 'text',
 						copy_to: 'suggested_terms',
 						fields: {
 							keyword: {
 								type: 'keyword',
 							},
 						},
-					},
-					suggested_terms: {
 						type: 'text',
-						fields: {
-							keyword: {
-								type: 'keyword',
-							},
-						},
 					},
 				},
 			},
@@ -81,14 +80,16 @@ const elasticConfig = [
 			analysis: {
 				analyzer: {
 					default: {
-						type: 'standard',
 						stopwords: ['_english_'],
+						type: 'standard',
 					},
 				},
 			},
 		},
 	},
 ]
+
+const suggestThreshold = 0.7
 
 const SCHEMA = `tags: [string] @count @index(term) .
 title: string @index(fulltext) .
@@ -105,352 +106,155 @@ requiredBy: dateTime .
 frequency: string .
 productCode: string .
 `
-const maxCopyLength = 80
-
-const client = new dgraph.DgraphClient(
-	new dgraph.DgraphClientStub(
-		DGRAPH_ENDPOINT,
-		grpc.credentials.createInsecure()
-	)
-)
 
 async function getElasticClient() {
-	let client = new elastic.Client({
-		hosts: [ELASTIC_ENDPOINT],
+	const es = new elastic.Client({
+		hosts: [config.ELASTIC_ENDPOINT],
 	})
-
 	// check for existing index
-	await client.indices.exists({index: 'dgraph'}).then(function(res) {
-		let exists: boolean = res
-		if (!exists) {
-			client.indices.create({index: 'dgraph', body: elasticConfig[0]})
-		}
-	})
-
-	return client
+	const exists = await es.indices.exists({index: 'dgraph'})
+	if (!exists) {
+		es.indices.create({index: 'dgraph', body: elasticConfig[0]})
+	}
+	return es
 }
 
 export async function add(course: model.Course) {
-	const txn = client.newTxn()
 	const mu = new dgraph.Mutation()
-	let uid
-
-	try {
-		mu.setSetJson({
-			availability: course.availability || [],
-			description: course.description || '',
-			duration: course.duration || '',
-			frequency: course.frequency || '',
-			learningOutcomes: course.learningOutcomes || '',
-			location: course.location || '',
-			price: course.price || '',
-			productCode: course.productCode || '',
-			requiredBy: course.requiredBy,
-			shortDescription: course.shortDescription || '',
-			tags: course.tags || [],
-			title: course.title || '',
-			type: course.type || '',
-			uid: course.uid || null,
-			uri: course.uri || '',
-		})
-		mu.setCommitNow(true)
-		const assigned = await txn.mutate(mu)
-		uid = assigned.getUidsMap().get('blank-0') || course.uid
-		return uid
-	} finally {
-		// add to elastic search
-		let elasticClient = await getElasticClient()
-		let data: any = {}
-		let entry = mu.getSetJson()
-
-		for (let prop in entry) {
-			data[prop] = (entry as any)[prop]
-		}
-		data.uid = uid
-
-		await elasticClient.index({
-			index: 'dgraph',
-			type: 'lpg',
-			body: data,
-		})
-
-		await txn.discard()
-	}
-}
-
-export async function get(uid: string) {
-	await setSchema(SCHEMA)
-
+	mu.setSetJson({
+		availability: course.availability || [],
+		description: course.description || '',
+		duration: course.duration || '',
+		frequency: course.frequency || '',
+		learningOutcomes: course.learningOutcomes || '',
+		location: course.location || '',
+		price: course.price || '',
+		productCode: course.productCode || '',
+		requiredBy: course.requiredBy,
+		shortDescription: course.shortDescription || '',
+		tags: course.tags || [],
+		title: course.title || '',
+		type: course.type || '',
+		uid: course.uid || null,
+		uri: course.uri || '',
+	})
+	mu.setCommitNow(true)
 	const txn = client.newTxn()
-	try {
-		const query = `query all($id: string) {
-			entries(func: uid($id)) {
-				tags
-				title
-				type
-				uid
-				uri
-				shortDescription
-				description
-				learningOutcomes
-				duration
-				availability
-				location
-				price
-				requiredBy
-				frequency
-				productCode
-			}
-		}`
-		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
-		const entries = qresp.getJson().entries
-		if (entries.length) {
-			return model.Course.create(entries[0])
-		}
-		return null
-	} finally {
-		await txn.discard()
+	const assigned = await txn.mutate(mu)
+	const uid = assigned.getUidsMap().get('blank-0') || course.uid
+	await txn.discard()
+
+	// add to elastic search
+	const elasticClient = await getElasticClient()
+	const data: any = {}
+	const entry = mu.getSetJson()
+	for (const prop of Object.keys(entry)) {
+		data[prop] = entry[prop]
 	}
+	data.uid = uid
+	await elasticClient.index({
+		body: data,
+		index: 'dgraph',
+		type: 'lpg',
+	})
+	return uid
 }
 
 export async function elasticSearch(
 	searchTerm: string
-): Promise<api.textSearchResponse> {
-	let query = {
-		size: 100,
-		index: 'dgraph',
+): Promise<api.TextSearchResponse> {
+	const query = {
 		body: {
-			suggest: {
-				text: searchTerm,
-				suggest_description: {
-					term: {
-						field: 'suggested_terms',
-					},
+			highlight: {
+				fields: {
+					'*': {},
 				},
 			},
 			query: {
 				multi_match: {
-					query: searchTerm,
-					fuzziness: 'AUTO',
 					fields: [
 						'title^8',
 						'shortDescription^4',
 						'description^2',
 						'learningOutcomes^2',
 					],
+					fuzziness: 'AUTO',
+					query: searchTerm,
 				},
 			},
-			highlight: {
-				fields: {
-					'*': {},
+			suggest: {
+				suggest_description: {
+					term: {
+						field: 'suggested_terms',
+					},
 				},
+				text: searchTerm,
 			},
 		},
+		index: 'dgraph',
+		size: 100,
 	}
-	let elasticClient = await getElasticClient()
 
-	let search = await elasticClient.search(query).then(function(res) {
-		let suggestion = ''
-		let resp: model.textSearchResult[] = []
-		for (let suggest of Object.keys((res as any).suggest)
-			.sort()
-			.reverse()) {
-			for (let suggestObj of (res as any).suggest[suggest]) {
-				let replace = suggestObj.text
-				let options = suggestObj.options
-
-				if (
-					options &&
-					isArray(options) &&
-					options.length > 0 &&
-					options[0].score > suggestThreshold &&
-					options[0].freq > 1
-				) {
-					suggestion = searchTerm.replace(replace, options[0].text)
-					searchTerm = suggestion
-				}
-			}
+	interface SearchResponse<T> extends elastic.SearchResponse<T> {
+		suggest: {
+			[index: string]: Array<{
+				length: number
+				offset: number
+				options: Array<{
+					freq: number
+					score: number
+					text: string
+				}>
+				text: string
+			}>
 		}
-
-		for (let entry of res.hits.hits) {
-			// Don't show context if it's in the title
-			let searchText = striptags(
-				entry.highlight[Object.keys(entry.highlight)[0]][0],
-				'<em>'
-			)
-			let title = (entry._source as any).title
-			if (striptags(searchText) === title) {
-				title = searchText
-				searchText = ''
-			}
-			let searchResult: model.textSearchResult = {
-				uid: (entry._source as any).uid,
-				title,
-				searchText,
-				weight: entry._score,
-			}
-
-			resp.push(searchResult)
-		}
-		return {suggestion, resp}
-	})
-
-	return {suggestion: search.suggestion, entries: search.resp}
-}
-
-export async function search(
-	req: api.SearchRequest
-): Promise<api.SearchResponse> {
-	await setSchema(SCHEMA)
-
-	const map: Record<string, [number, number, model.Course]> = {}
-	const results = []
-	if (!req.tags || !req.tags.length) {
-		return {entries: []}
 	}
-	for (const tag of req.tags) {
-		const query = `query all($tag: string) {
-			entries(func: eq(tags, $tag)) {
-				tags
-				title
-				uid
-				uri
-			}
-		}`
-		const qresp = await client.newTxn().queryWithVars(query, {$tag: tag})
-		const entries = qresp.getJson().entries
-		for (const entry of entries) {
-			let info = map[entry.uid]
-			if (info) {
-				info[0] += 1
-			} else {
-				info = [1, parseInt(entry.uid, 16), entry]
-				map[entry.uid] = info
-				results.push(info)
+
+	const elasticClient = await getElasticClient()
+	const results = (await elasticClient.search(query)) as SearchResponse<{}>
+	const suggestions = results.suggest
+
+	let suggestion = ''
+	for (const key of Object.keys(suggestions)
+		.sort()
+		.reverse()) {
+		for (const suggestObj of suggestions[key]) {
+			const replace = suggestObj.text
+			const options = suggestObj.options
+			if (
+				options &&
+				Array.isArray(options) &&
+				options.length > 0 &&
+				options[0].score > suggestThreshold &&
+				options[0].freq > 1
+			) {
+				suggestion = searchTerm.replace(replace, options[0].text)
+				searchTerm = suggestion
 			}
 		}
 	}
-	results.sort(
-		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
-			if (b[0] > a[0]) {
-				return 1
-			} else if (b[0] < a[0]) {
-				return -1
-			}
-			if (b[1] > a[1]) {
-				return 1
-			} else if (b[1] < a[1]) {
-				return -1
-			}
-			return 0
+
+	const entries: model.TextSearchResult[] = []
+	for (const entry of results.hits.hits) {
+		// Don't show context if it's in the title
+		let searchText = striptags(
+			entry.highlight[Object.keys(entry.highlight)[0]][0],
+			'<em>'
+		)
+		let title = (entry._source as any).title
+		if (striptags(searchText) === title) {
+			title = searchText
+			searchText = ''
 		}
-	)
-	const {after, first} = req
-	const resp: model.Course[] = []
-	let count = 0
-	let include = true
-	if (after) {
-		include = false
+		entries.push({
+			searchText,
+			title,
+			uid: (entry._source as any).uid,
+			weight: entry._score,
+		})
 	}
-	for (const info of results) {
-		const entry = info[2]
-		if (include) {
-			resp.push(entry)
-		} else {
-			if (entry.uid === after) {
-				include = true
-			}
-			continue
-		}
-		if (first) {
-			count += 1
-			if (count === first) {
-				break
-			}
-		}
-	}
-	return {entries: resp}
-}
 
-export async function setSchema(schema: string) {
-	const op = new dgraph.Operation()
-	op.setSchema(schema)
-	await client.alter(op)
-}
-
-export async function wipe() {
-	const op = new dgraph.Operation()
-	op.setDropAll(true)
-	await client.alter(op)
-}
-
-export async function listAll(
-	req: api.SearchRequest
-): Promise<api.SearchResponse> {
-	await setSchema(SCHEMA)
-
-	const query = `{
-		entries(func: ge(count(tags), 1)) {
-			tags
-			title
-			type
-			uid
-			uri
-			shortDescription
-			description
-			learningOutcomes
-			duration
-			availability
-			location
-			price
-			requiredBy
-			frequency
-			productCode
-		}
-	}`
-	const qresp = await client.newTxn().query(query)
-	const results = qresp.getJson().entries
-
-	results.sort(
-		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
-			if (b[0] > a[0]) {
-				return 1
-			} else if (b[0] < a[0]) {
-				return -1
-			}
-			if (b[1] > a[1]) {
-				return 1
-			} else if (b[1] < a[1]) {
-				return -1
-			}
-			return 0
-		}
-	)
-
-	const {after, first} = req
-	const resp: model.Course[] = []
-	let count = 0
-	let include = true
-	if (after) {
-		include = false
-	}
-	for (const entry of results) {
-		if (include) {
-			resp.push(entry)
-		} else {
-			if (entry.uid === after) {
-				include = true
-			}
-			continue
-		}
-		if (first) {
-			count += 1
-			if (count === first) {
-				break
-			}
-		}
-	}
-	return {entries: resp}
+	return {entries, suggestion}
 }
 
 export async function findRequiredLearning(
@@ -549,6 +353,110 @@ export async function findSuggestedLearning(
 	return {entries: results.map(model.Course.create)}
 }
 
+export async function get(uid: string) {
+	await setSchema(SCHEMA)
+
+	const txn = client.newTxn()
+	try {
+		const query = `query all($id: string) {
+			entries(func: uid($id)) {
+				tags
+				title
+				type
+				uid
+				uri
+				shortDescription
+				description
+				learningOutcomes
+				duration
+				availability
+				location
+				price
+				requiredBy
+				frequency
+				productCode
+			}
+		}`
+		const qresp = await client.newTxn().queryWithVars(query, {$id: uid})
+		const entries = qresp.getJson().entries
+		if (entries.length) {
+			return model.Course.create(entries[0])
+		}
+		return null
+	} finally {
+		await txn.discard()
+	}
+}
+
+export async function listAll(
+	req: api.SearchRequest
+): Promise<api.SearchResponse> {
+	await setSchema(SCHEMA)
+
+	const query = `{
+		entries(func: ge(count(tags), 1)) {
+			tags
+			title
+			type
+			uid
+			uri
+			shortDescription
+			description
+			learningOutcomes
+			duration
+			availability
+			location
+			price
+			requiredBy
+			frequency
+			productCode
+		}
+	}`
+	const qresp = await client.newTxn().query(query)
+	const results = qresp.getJson().entries
+
+	results.sort(
+		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
+			if (b[0] > a[0]) {
+				return 1
+			} else if (b[0] < a[0]) {
+				return -1
+			}
+			if (b[1] > a[1]) {
+				return 1
+			} else if (b[1] < a[1]) {
+				return -1
+			}
+			return 0
+		}
+	)
+
+	const {after, first} = req
+	const resp: model.Course[] = []
+	let count = 0
+	let include = true
+	if (after) {
+		include = false
+	}
+	for (const entry of results) {
+		if (include) {
+			resp.push(entry)
+		} else {
+			if (entry.uid === after) {
+				include = true
+			}
+			continue
+		}
+		if (first) {
+			count += 1
+			if (count === first) {
+				break
+			}
+		}
+	}
+	return {entries: resp}
+}
+
 export async function resetCourses() {
 	await wipe()
 	await setSchema(SCHEMA)
@@ -556,21 +464,17 @@ export async function resetCourses() {
 		path.join(__dirname, '../../../..', 'catalog', 'data.csv')
 	)
 	const lines = parse(rawData.toString())
-	const attributes = lines.shift()
+	const attributes = lines.shift()!
 	const highestUid = Number(lines[lines.length - 1][0])
-
-	let currentUid = 0x0
-
-	let esClient = await getElasticClient()
+	const esClient = await getElasticClient()
 	// delete index for reset
 	await esClient.indices.delete({index: 'dgraph'})
-	/* tslint:disable */
+	let currentUid = 0
 	while (highestUid > currentUid) {
-		currentUid = Number(await add({title: 'placeholder'}))
+		currentUid = Number(await add({title: 'placeholder'} as model.Course))
 	}
-
 	for (const line of lines) {
-		const course: model.Course = {}
+		const course: any = {}
 		for (const i in attributes) {
 			if (attributes[i] === 'tags') {
 				course.tags = line[i].split(',').map(tag => tag.trim())
@@ -584,5 +488,90 @@ export async function resetCourses() {
 		}
 		await add(course)
 	}
-	/* tslint:enable */
+}
+
+export async function search(
+	req: api.SearchRequest
+): Promise<api.SearchResponse> {
+	await setSchema(SCHEMA)
+
+	const map: Record<string, [number, number, model.Course]> = {}
+	const results = []
+	if (!req.tags || !req.tags.length) {
+		return {entries: []}
+	}
+	for (const tag of req.tags) {
+		const query = `query all($tag: string) {
+			entries(func: eq(tags, $tag)) {
+				tags
+				title
+				uid
+				uri
+			}
+		}`
+		const qresp = await client.newTxn().queryWithVars(query, {$tag: tag})
+		const entries = qresp.getJson().entries
+		for (const entry of entries) {
+			let info = map[entry.uid]
+			if (info) {
+				info[0] += 1
+			} else {
+				info = [1, parseInt(entry.uid, 16), entry]
+				map[entry.uid] = info
+				results.push(info)
+			}
+		}
+	}
+	results.sort(
+		(a: [number, number, model.Course], b: [number, number, model.Course]) => {
+			if (b[0] > a[0]) {
+				return 1
+			} else if (b[0] < a[0]) {
+				return -1
+			}
+			if (b[1] > a[1]) {
+				return 1
+			} else if (b[1] < a[1]) {
+				return -1
+			}
+			return 0
+		}
+	)
+	const {after, first} = req
+	const resp: model.Course[] = []
+	let count = 0
+	let include = true
+	if (after) {
+		include = false
+	}
+	for (const info of results) {
+		const entry = info[2]
+		if (include) {
+			resp.push(entry)
+		} else {
+			if (entry.uid === after) {
+				include = true
+			}
+			continue
+		}
+		if (first) {
+			count += 1
+			if (count === first) {
+				break
+			}
+		}
+	}
+	return {entries: resp}
+}
+
+export async function setSchema(schema: string) {
+	const op = new dgraph.Operation()
+	op.setSchema(schema)
+	await client.alter(op)
+}
+
+export async function wipe() {
+	const op = new dgraph.Operation()
+	op.setDropAll(true)
+	await client.alter(op)
 }

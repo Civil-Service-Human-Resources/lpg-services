@@ -1,17 +1,9 @@
 import * as express from 'express'
+import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as learnerRecord from 'lib/learnerrecord'
 import * as suggestionController from './suggestion'
-
-export let index = (req: express.Request, res: express.Response) => {
-	if (req.isAuthenticated()) {
-		res.redirect('/home')
-	} else {
-		res.redirect('/sign-in')
-	}
-}
 
 export async function home(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
@@ -56,4 +48,12 @@ export async function home(req: express.Request, res: express.Response) {
 			suggestedLearning,
 		})
 	)
+}
+
+export function index(req: express.Request, res: express.Response) {
+	if (req.isAuthenticated()) {
+		res.redirect('/home')
+	} else {
+		res.redirect('/sign-in')
+	}
 }

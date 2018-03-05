@@ -1,8 +1,8 @@
+import * as config from 'extension/config'
 import * as helper from 'extension/helper'
+import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
 import {loginToCsl, selectors} from 'page/login'
 import * as puppeteer from 'puppeteer'
-import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
-import * as config from 'extension/config'
 
 const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
 
@@ -13,8 +13,8 @@ describe('login page functionality', () => {
 		const session = await helper.getSession('login')
 		page = await session.newPage()
 		await page.authenticate({
-			username: config.BASIC_AUTH_USERNAME,
 			password: config.BASIC_AUTH_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
 		})
 		await page.goto(config.URL)
 	})

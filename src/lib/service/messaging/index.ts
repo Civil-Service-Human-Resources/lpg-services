@@ -1,23 +1,9 @@
 import axios from 'axios'
+import * as config from 'lib/config'
 
-export class MessageDispatcher {
-	public api: Function
-
-	constructor(callback: Function) {
-		this.api = callback
+export async function send(message: string) {
+	if (!config.BOOKING_ALERT_WEBHOOK) {
+		return
 	}
-}
-
-export function slack(uri: string): MessageDispatcher {
-	return {
-		api: (message: string) => {
-			axios.post(uri, {
-				text: message,
-			})
-		},
-	}
-}
-
-export function send(message: string, dispatcher: MessageDispatcher) {
-	dispatcher.api(message)
+	await axios.post(config.BOOKING_ALERT_WEBHOOK, {text: message})
 }

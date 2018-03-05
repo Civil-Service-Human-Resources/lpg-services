@@ -10,7 +10,7 @@ export interface SearchResponse {
 	entries: model.Course[]
 }
 
-export interface textSearchResponse {
+export interface TextSearchResponse {
 	suggestion?: string
-	entries: model.textSearchResult[]
+	entries: model.TextSearchResult[]
 }

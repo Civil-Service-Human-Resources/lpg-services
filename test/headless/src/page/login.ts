@@ -1,17 +1,17 @@
 import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
-	usernameField: '#email-address',
-	passwordField: '#password',
+	feedbackLink: '#content > div.phase-banner > p > span > a',
+	getInTouchLink: '#content > div.main-content > div > div > p > a',
+	homeNavButton: '#proposition-links > li:nth-child(1) > a',
 	loginButton:
 		'#content > div.main-content > div > div > form > div:nth-child(4) > input',
 	loginFailure: '#error-summary-heading-example-1',
-	feedbackLink: '#content > div.phase-banner > p > span > a',
-	getInTouchLink: '#content > div.main-content > div > div > p > a',
-	signinButton: '#proposition-links > li > a',
+	passwordField: '#password',
 	profileUserName: '#userName',
-	homeNavButton: '#proposition-links > li:nth-child(1) > a',
+	signinButton: '#proposition-links > li > a',
 	signoutButton: 'a[href="/sign-out"]',
+	usernameField: '#email-address',
 }
 
 export async function loginToCsl(

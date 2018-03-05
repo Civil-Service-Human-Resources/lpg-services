@@ -1,15 +1,15 @@
+import * as config from 'extension/config'
 import * as helper from 'extension/helper'
+import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
+import {createUser, deleteUser, getUser} from 'extension/user'
+import {loginToCsl} from 'page/login'
 import {
-	selectors,
 	returnUserProfileDetails,
+	selectors,
 	setProfileFieldToEmptyAndSave,
 	setUserProfileDetails,
 } from 'page/profile'
-import {loginToCsl} from 'page/login'
-import {createUser, deleteUser, getUser} from 'extension/user'
-import {wrappedBeforeAll, wrappedAfterAll} from 'extension/testsetup'
 import * as puppeteer from 'puppeteer'
-import * as config from 'extension/config'
 
 const timeout = 10000
 
@@ -17,7 +17,7 @@ function genUserEmail() {
 	return `test${Date.now()}@c.gov.uk`
 }
 
-let TEST_USERNAME = genUserEmail()
+const TEST_USERNAME = genUserEmail()
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
@@ -26,8 +26,8 @@ describe('profile page functionality', () => {
 		const session = await helper.getSession('profile')
 		page = await session.newPage()
 		await page.authenticate({
-			username: config.BASIC_AUTH_USERNAME,
 			password: config.BASIC_AUTH_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
 		})
 		await page.goto(config.URL)
 		await createUser(TEST_USERNAME, config.TEST_PASSWORD)
