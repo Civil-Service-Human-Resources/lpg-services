@@ -43,7 +43,6 @@ describe('profile page functionality', () => {
 	})
 
 	it('Should display a feedback link with the correct email address', async () => {
-		// TODO(will): Implement correctly once logout in working
 		const feedbackUrl = await helper.returnElementAttribute(
 			selectors.feedbackLink,
 			'href',

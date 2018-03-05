@@ -1,11 +1,10 @@
 import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
-	feedbackLink: '#content > div.phase-banner > p > span > a',
-	getInTouchLink: '#content > div.main-content > div > div > p > a',
-	homeNavButton: '#proposition-links > li:nth-child(1) > a',
-	loginButton:
-		'#content > div.main-content > div > div > form > div:nth-child(4) > input',
+	//TODO:(Will) add classes to all
+	feedbackLink: '.lpg-feedback-link',
+	getInTouchLink: '.lpg-get-in-touch',
+	loginButton: 'input[value="Continue"]',
 	loginFailure: '#error-summary-heading-example-1',
 	passwordField: '#password',
 	profileUserName: '#userName',
@@ -22,4 +21,5 @@ export async function loginToCsl(
 	await page.type(selectors.usernameField, username)
 	await page.type(selectors.passwordField, password)
 	await page.click(selectors.loginButton)
+	await page.waitForNavigation
 }

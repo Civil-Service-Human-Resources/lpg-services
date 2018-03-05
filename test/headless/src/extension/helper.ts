@@ -11,12 +11,20 @@ declare var browser: PrivateBrowser
 
 const sessions: Record<string, Session> = {}
 
+export async function checkHidden(selector: string, page: puppeteer.Page) {
+	return page.evaluate(selector => {
+		const e = document.querySelector(selector)
+		const style = window.getComputedStyle(e)
+		return style.display
+	}, selector)
+}
+
 export async function checkElementIsPresent(
 	selector: string,
 	page: puppeteer.Page
 ): Promise<boolean> {
-	return page.evaluate(sel => {
-		const e = document.querySelector(sel)
+	return page.evaluate(selector => {
+		const e = document.querySelector(selector)
 		if (!e) {
 			return false
 		}
@@ -30,12 +38,29 @@ export async function checkElementIsPresent(
 	}, selector)
 }
 
-export async function checkHidden(selector: string, page: puppeteer.Page) {
-	return page.evaluate(sel => {
-		const e = document.querySelector(sel)
-		const style = window.getComputedStyle(e)
-		return style.display
+export async function getText(
+	selector: string,
+	page: puppeteer.Page
+): Promise<boolean> {
+	return page.evaluate(selector => {
+		const e = document.querySelector(selector)
+		if (!e) {
+			return false
+		}
+		return e.innerText
 	}, selector)
+}
+
+export async function returnElementAttribute(
+	selector: string,
+	attri: string,
+	page: puppeteer.Page
+): Promise<string> {
+	return page.$eval(
+		selector,
+		(element, attri) => element.getAttribute(attri),
+		attri
+	)
 }
 
 export async function getSession(name?: string) {
@@ -55,31 +80,6 @@ export async function getSession(name?: string) {
 		sessions[name] = session
 	}
 	return session
-}
-
-export async function getText(
-	selector: string,
-	page: puppeteer.Page
-): Promise<boolean> {
-	return page.evaluate(sel => {
-		const e = document.querySelector(sel)
-		if (!e) {
-			return false
-		}
-		return e.innerText
-	}, selector)
-}
-
-export async function returnElementAttribute(
-	selector: string,
-	attri: string,
-	page: puppeteer.Page
-): Promise<string> {
-	return page.$eval(
-		selector,
-		(element, attr) => element.getAttribute(attr),
-		attri
-	)
 }
 
 export function xpath(locator: string) {

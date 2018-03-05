@@ -65,10 +65,11 @@ describe('login page functionality', () => {
 		expect(feedbackUrl).toEqual(contactUsEmailAddress)
 	})
 
-	it('Should diplay a link to the user allowing them to get in touch to create account', async () => {
+	it('Should display a link to the user allowing them to get in touch to create account', async () => {
 		expect(
 			await helper.checkElementIsPresent(selectors.getInTouchLink, page)
 		).toBe(true)
+		await page.waitForSelector(selectors.getInTouchLink)
 		const contactUsLink = await helper.returnElementAttribute(
 			selectors.getInTouchLink,
 			'href',
@@ -87,9 +88,9 @@ describe('login page functionality', () => {
 
 	it('Should login to the CSL portal', async () => {
 		await loginToCsl(page, config.USERNAME, config.PASSWORD)
-		await page.waitFor(selectors.homeNavButton, {timeout: 11000})
+		await page.waitFor(selectors.signoutButton, {timeout: 11000})
 		expect(
-			await helper.checkElementIsPresent(selectors.homeNavButton, page)
+			await helper.checkElementIsPresent(selectors.signoutButton, page)
 		).toBe(true)
 	})
 })
