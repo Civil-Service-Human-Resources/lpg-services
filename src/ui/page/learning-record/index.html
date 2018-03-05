@@ -3,65 +3,24 @@
         <div class="grid-row">
             <div class="column-full">
                 <h1 class="heading-large">Learning record</h1>
-                        <h2 class="heading heading--medium heading--red-top heading-medium">
-                          Required learning
-                        </h2>
-                        {{#if completedRequiredLearning.length}}
-
-                            <table class="u-space-b30">
-                                <thead>
-                                    <tr>
-                                        <th class="table--fix-first">Course title</th>
-                                        <th>Type</th>
-                                        <th>Duration</th>
-                                        <th>Completion date</th>
-
-                                    </tr>
-                               </thead>
-                                <tbody>
-                                {{#each completedRequiredLearning as course}}
-                                    <tr>
-                                        <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
-                                        <td>{{course.type}}</td>
-                                        <td>{{course.duration ? course.duration : '-'}}</td>
-                                        <td>{{formatDate(course.completionDate)}}</td>
-                                    </tr>
-                                {{/each}}
-                                </tbody>
-                           </table>
-
-
+                    <h2 class="heading heading--medium heading--red-top heading-medium">
+                      Required learning
+                    </h2>
+                    {{#if completedRequiredLearning.length}}
+                        <LearningRecordTable courses={{completedRequiredLearning}}/>
                         <p>You have completed {{completedRequiredLearning.length}} out of {{requiredLearningTotal}} required learning courses.</p>
                     {{else}}
                         <p>You haven't completed any courses yet!</p>
                     {{/if}}
-                    {{#if completedRequiredLearning.length}}
-                        <h2 class="heading heading--medium heading--red-top heading-medium">
-                          Other learning
-                        </h2>
-                        <table class="u-space-b30">
-                            <thead>
-                                <tr>
-                                    <th class="table--fix-first">Course title</th>
-                                    <th>Type</th>
-                                    <th>Duration</th>
-                                    <th>Completion date</th>
-                                </tr>
-                           </thead>
-                            <tbody>
-                            {{#each courses as course}}
-                                <tr>
-                                    <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
-                                    <td>{{course.type}}</td>
-                                    <td>{{course.duration ? course.duration : '-'}}</td>
-                                    <td>{{formatDate(course.completionDate)}}</td>
-                                </tr>
-                            {{/each}}
-                            </tbody>
-                       </table>
-                   {{else}}
+
+                    <h2 class="heading heading--medium heading--red-top heading-medium">
+                      Other learning
+                    </h2>
+                    {{#if courses.length}}
+                       <LearningRecordTable courses={{courses}}/>
+                    {{else}}
                    <p>You haven't completed any courses yet!</p>
-                {{/if}}
+                    {{/if}}
 
 
 

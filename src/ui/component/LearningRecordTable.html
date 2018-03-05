@@ -1,0 +1,21 @@
+<table class="u-space-b30">
+    <thead>
+        <tr>
+            <th class="table--fix-first">Course title</th>
+            <th>Type</th>
+            <th>Duration</th>
+            <th>Completion date</th>
+
+        </tr>
+   </thead>
+    <tbody>
+    {{#each courses as course}}
+        <tr>
+            <td><a href="/courses/{{course.uid}}">{{course.title}} </a></td>
+            <td>{{i18n(course.type)}}</td>
+            <td>{{course.duration ? course.duration : '-'}}</td>
+            <td>{{formatDate(course.completionDate)}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>

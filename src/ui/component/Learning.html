@@ -34,12 +34,17 @@
 
     </div>
     <div class="resource__duration">
-        <span>{{course.type === ('elearning' || 'face-to-face') ? '' : course.type + ', '}}{{course.duration}}</span>
+        <span>
+        {{course.type === ('elearning' || 'face-to-face') ? '' : i18n(course.type) + (course.duration ? ', ' : '')}}
+        {{course.duration}}
+        </span>
     </div>
     <div class="resource__status">
-        <span class="badge badge--info badge--smaller">{{i18n(course.state || 'not started')}}</span>
+        {{#if course.state }}
+        <span class="badge badge--info badge--smaller">{{i18n(course.state)}}</span>
+        {{/if}}
         {{#if course.requiredBy && course.type !== ('elearning' || 'face-to-face') }}
-            <span class="meta">21 Aug 2018</span>
+            <span class="meta">{{formatDate(course.requiredBy)}}</span>
         {{/if}}
     </div>
 </div>
