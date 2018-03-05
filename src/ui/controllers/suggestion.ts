@@ -86,6 +86,5 @@ export async function suggestions(user: model.User) {
 			modified.push(course)
 		}
 	}
-
 	return modified
 }
