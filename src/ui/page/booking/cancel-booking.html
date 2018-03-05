@@ -24,7 +24,7 @@
                         <span class="cancel__item--key">Requested Course:</span> <span class="bold-small">{{course.title}}</span>
                     </li>
                     <li>
-                        <span class="cancel__item--key">Requested Date:</span> <span class="bold-small">{{new Date(course.availability[0]).toDateString()}}</span>
+                        <span class="cancel__item--key">Requested Date:</span> <span class="bold-small">{{formatDate(selectedDate)}}</span>
                     </li>
                 </ul>
                 <form method="post" class="push-bottom">
