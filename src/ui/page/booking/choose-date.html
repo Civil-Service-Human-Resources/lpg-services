@@ -38,7 +38,7 @@
                                 <td>{{course.location}}</td>
                                 <td>&pound;{{course.price}}</td>
                                 <td>
-                                    {{#if availability.id == selectedDate}}
+                                    {{#if availability.id == (selectedDate + 1)}}
                                     <input id="radio-{{availability.id}}"
                                         type="radio"
                                         name="selected-date"
