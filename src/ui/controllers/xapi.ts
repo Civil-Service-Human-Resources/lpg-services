@@ -40,6 +40,9 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			body.object.objectType === 'Activity'
 		) {
 			body.object.id = `${config.XAPI.activityBaseUri}/${req.course.uid}`
+			if (body.object.definition) {
+				body.object.definition.type = xapi.Type.ELearning
+			}
 		}
 	}
 
