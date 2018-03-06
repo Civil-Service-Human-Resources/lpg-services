@@ -138,7 +138,7 @@ export async function record(
 	let type: Type
 	switch (course.type) {
 		case 'elearning':
-			type = Type.Event
+			type = Type.ELearning
 			break
 		case 'face-to-face':
 			type = Type.FaceToFace
