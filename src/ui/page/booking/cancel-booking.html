@@ -21,10 +21,10 @@
                 <h3 class="heading-small">{{signedInUser.givenName}}</h3>
                 <ul class="cancel__list push-bottom">
                     <li>
-                        <span class="cancel__item--key">Requested course:</span> <span class="bold-small">{{course.title}}</span>
+                        <span class="cancel__item--key">Requested Course:</span> <span class="bold-small">{{course.title}}</span>
                     </li>
                     <li>
-                        <span class="cancel__item--key">Requested date:</span> <span class="bold-small">{{new Date(course.availability[0]).toDateString()}}</span>
+                        <span class="cancel__item--key">Requested Date:</span> <span class="bold-small">{{formatDate(selectedDate)}}</span>
                     </li>
                 </ul>
                 <form method="post" class="push-bottom">
