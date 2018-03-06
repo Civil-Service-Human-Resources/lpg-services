@@ -2,8 +2,8 @@ import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
-import * as log4js from 'log4js'
 import * as xapi from 'lib/xapi'
+import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/xapi')
 
