@@ -8,6 +8,8 @@
 # - Ensure package.json dependency listing, fixed versioning, etc.
 # - Speed up builds.
 
+set -e -o pipefail
+
 counter=0
 
 function stage {
@@ -16,7 +18,7 @@ function stage {
 }
 
 stage "Pulling the latest lpg-services docker image"
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
 docker pull cshr/lpg-services || true
 
 stage "Installing the top-level dependencies"
