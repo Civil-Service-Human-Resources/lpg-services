@@ -11,17 +11,20 @@ export enum CourseState {
 
 const logger = log4js.getLogger('learner-record')
 
+const http = axios.create({
+	auth: config.LEARNER_RECORD.auth,
+	baseURL: config.LEARNER_RECORD.url,
+})
+
 export async function getCourseRecord(user: model.User, course: model.Course) {
-	const response = await axios({
-		method: 'get',
+	const response = await http.get(`/records/${user.id}`, {
 		params: {
 			activityId: course.getActivityId(),
 		},
-		url: `${config.LEARNER_RECORD.url}/records/${user.id}`,
 	})
 	if (response.data.records.length > 0) {
 		const record = response.data.records[0]
-		const uriParts = record.activityId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
+		const uriParts = record.courseId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
 		const selectedDate = uriParts[3]
 		if (record.completionDate) {
 			record.completionDate = new Date(record.completionDate)
@@ -38,17 +41,15 @@ export async function getLearningRecordOf(
 	courseState: CourseState | null,
 	user: model.User
 ) {
-	const response = await axios({
-		method: 'get',
+	const response = await http.get(`/records/${user.id}`, {
 		params: {
 			state: courseState,
 		},
-		url: `${config.LEARNER_RECORD.url}/records/${user.id}`,
 	})
 
 	const courses = []
 	for (const record of response.data.records) {
-		const activityId = record.activityId
+		const activityId = record.courseId
 		const uriParts = activityId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
 		const courseId = uriParts[1]
 		const selectedDate = uriParts[3]
@@ -75,13 +76,10 @@ export async function getLearningRecordOf(
 }
 
 export async function getRegistrations() {
-	const response = await axios({
-		method: 'get',
-		url: `${config.LEARNER_RECORD.url}/registrations`,
-	})
+	const response = await http.get('/registrations')
 	const registrations: Registration[] = []
 	for (const data of response.data.registrations) {
-		const uriParts = data.activityId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
+		const uriParts = data.courseId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
 		const courseId = uriParts[1]
 		const selectedDate = uriParts[3]
 		const course = await catalog.get(courseId)
@@ -92,7 +90,7 @@ export async function getRegistrations() {
 			continue
 		}
 		registrations.push({
-			activityId: data.activityId,
+			activityId: data.courseId,
 			course,
 			lastUpdated: new Date(data.lastUpdated),
 			selectedDate: new Date(selectedDate),
