@@ -50,7 +50,8 @@ export interface Statement {
 
 export enum Type {
 	Event = 'http://adlnet.gov/expapi/activities/event',
-	Face2Face = 'https://cslearning.gov.uk/types/course/face2face',
+	ELearning = 'http://cslearning.gov.uk/activities/elearning',
+	FaceToFace = 'http://cslearning.gov.uk/activities/face-to-face',
 	Link = 'http://adlnet.gov/expapi/activities/link',
 	Video = 'https://w3id.org/xapi/acrossx/activities/video',
 }
@@ -140,7 +141,7 @@ export async function record(
 			type = Type.Event
 			break
 		case 'face-to-face':
-			type = Type.Face2Face
+			type = Type.FaceToFace
 			break
 		case 'link':
 			type = Type.Link
