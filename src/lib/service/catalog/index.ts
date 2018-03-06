@@ -580,7 +580,7 @@ export async function setSchema(schema: string) {
 		const op = new dgraph.Operation()
 		op.setSchema(schema)
 		await client.alter(op)
-		schemaSet = true
+		// schemaSet = true
 	}
 }
 
