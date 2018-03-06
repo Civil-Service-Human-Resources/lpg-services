@@ -32,6 +32,7 @@ export async function addToPlan(req: express.Request, res: express.Response) {
 		res.sendStatus(500)
 	}
 }
+
 export async function removeFromSuggested(
 	req: express.Request,
 	res: express.Response

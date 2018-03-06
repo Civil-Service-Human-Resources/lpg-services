@@ -13,8 +13,11 @@ export async function addStatement(
 ) {
 	const statement = {
 		actor: {
-			mbox: `mailto:noone@cslearning.gov.uk`,
-			name: userId,
+			account: {
+				homePage: 'https://cslearning.gov.uk/',
+				name: userId,
+			},
+			name: 'Test User',
 			objectType: 'Agent',
 		},
 		object: {

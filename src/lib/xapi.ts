@@ -3,28 +3,42 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as model from 'lib/model'
 
+export enum Placement {
+	Context,
+	Result,
+}
+
 export interface Statement {
 	actor: {
-		mbox: string
+		account: {
+			homePage: 'https://cslearning.gov.uk/'
+			name: string
+		}
 		name: string
 		objectType: 'Agent'
 	}
 	context?: {
 		contextActivities: {
+			category?: Array<{id: string}>
 			parent: {
 				id: string
 			}
 		}
+		extensions?: Record<string, any>
 	}
 	object: {
 		definition?: {
-			extensions: any
-			type: string
+			name: {
+				en: string
+			}
+			type: Type
 		}
 		id: string
 		objectType: 'Activity' | 'StatementRef'
 	}
-	result?: any
+	result?: {
+		extensions?: Record<string, any>
+	}
 	timestamp?: any
 	verb: {
 		display: {
@@ -34,39 +48,70 @@ export interface Statement {
 	}
 }
 
+export enum Type {
+	Event = 'http://adlnet.gov/expapi/activities/event',
+	Face2Face = 'https://cslearning.gov.uk/types/course/face2face',
+	Link = 'http://adlnet.gov/expapi/activities/link',
+	Video = 'https://w3id.org/xapi/acrossx/activities/video',
+}
+
+export const Category = {
+	Video: 'https://w3id.org/xapi/video',
+}
+
 export const Extension = {
 	FinancialApprover: 'http://cslearning.gov.uk/extension/finanacialApprover',
 	PurchaseOrder: 'http://cslearning.gov.uk/extension/purhaseOrder',
+	VideoLength: 'https://w3id.org/xapi/video/extensions/length',
+	VideoTime: 'https://w3id.org/xapi/video/extensions/time',
+	VideoTimeFrom: 'https://w3id.org/xapi/video/extensions/time-from',
+	VideoTimeTo: 'https://w3id.org/xapi/video/extensions/time-to',
 }
+
+export const ExtensionPlacement = {
+	[Extension.FinancialApprover]: Placement.Result,
+	[Extension.PurchaseOrder]: Placement.Result,
+	[Extension.VideoLength]: Placement.Context,
+}
+
+export const HomePage = 'https://cslearning.gov.uk/'
 
 export const Verb = {
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
 	Disliked: 'https://w3id.org/xapi/acrossx/verbs/disliked',
+	Experienced: 'http://adlnet.gov/expapi/verbs/experienced',
 	Failed: 'http://adlnet.gov/expapi/verbs/failed',
 	Initialised: 'http://adlnet.gov/expapi/verbs/initialized',
 	Liked: 'https://w3id.org/xapi/acrossx/verbs/liked',
 	Passed: 'http://adlnet.gov/expapi/verbs/passed',
+	PausedVideo: 'https://w3id.org/xapi/video/verbs/paused',
 	PlayedVideo: 'https://w3id.org/xapi/video/verbs/played',
 	Progressed: 'http://adlnet.gov/expapi/verbs/progressed',
 	Registered: 'http://adlnet.gov/expapi/verbs/registered',
+	Seeked: 'https://w3id.org/xapi/video/verbs/seeked',
 	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
 	Unregistered: 'http://adlnet.gov/expapi/verbs/unregistered',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
+	Voided: 'http://adlnet.gov/expapi/verbs/voided',
 }
 
 export const Labels: Record<string, string> = {
 	[Verb.Completed]: 'completed',
 	[Verb.Disliked]: 'disliked',
+	[Verb.Experienced]: 'experienced',
 	[Verb.Failed]: 'failed',
 	[Verb.Initialised]: 'initialised',
 	[Verb.Liked]: 'liked',
 	[Verb.Passed]: 'passed',
+	[Verb.PausedVideo]: 'paused video',
 	[Verb.PlayedVideo]: 'played video',
 	[Verb.Progressed]: 'progressed',
 	[Verb.Registered]: 'registered',
+	[Verb.Seeked]: 'seeked',
 	[Verb.Terminated]: 'terminated',
 	[Verb.Unregistered]: 'unregistered',
 	[Verb.Viewed]: 'viewed',
+	[Verb.Voided]: 'voided',
 }
 
 for (const verb of Object.values(Verb)) {
@@ -84,18 +129,51 @@ export async function record(
 	req: express.Request,
 	course: model.Course,
 	verb: string,
-	valueJSON = ''
+	extensions?: Record<string, any>
 ) {
 	if (!Labels[verb]) {
 		throw new Error(`Unknown xAPI verb: ${verb}`)
 	}
+	let type: Type
+	switch (course.type) {
+		case 'elearning':
+			type = Type.Event
+			break
+		case 'face-to-face':
+			type = Type.Face2Face
+			break
+		case 'link':
+			type = Type.Link
+			break
+		case 'video':
+			type = Type.Video
+			break
+		default:
+			throw new Error(`Unknown course type ${course.type}`)
+	}
 	const payload: Statement = {
 		actor: {
-			mbox: `mailto:noone@cslearning.gov.uk`,
-			name: req.user.id,
+			account: {
+				homePage: HomePage,
+				name: req.user.id,
+			},
+			name: req.user.givenName,
 			objectType: 'Agent',
 		},
+		context: {
+			contextActivities: {
+				parent: {
+					id: course.getParentActivityId(),
+				},
+			},
+		},
 		object: {
+			definition: {
+				name: {
+					en: course.title,
+				},
+				type,
+			},
 			id: course.getActivityId(),
 			objectType: 'Activity',
 		},
@@ -106,27 +184,63 @@ export async function record(
 			id: verb,
 		},
 	}
-	if (verb === Verb.Progressed) {
-		if (!valueJSON) {
-			throw new Error('Missing value for the xAPI Progressed statement')
+	if (extensions) {
+		for (const extension of Object.keys(extensions)) {
+			const placement = ExtensionPlacement[extension]
+			if (placement === undefined) {
+				throw new Error(
+					`Could not find placement location for the extension: ${extension}`
+				)
+			}
+			switch (placement) {
+				case Placement.Context:
+					if (!payload.context!.extensions) {
+						payload.context!.extensions = {}
+					}
+					payload.context!.extensions![extension] = extensions[extension]
+					break
+				case Placement.Result:
+					if (!payload.result) {
+						payload.result = {
+							extensions: {},
+						}
+					}
+					payload.result.extensions![extension] = extensions[extension]
+					break
+			}
 		}
-		const value = JSON.parse(valueJSON)
-		if (
-			typeof value !== 'number' ||
-			Math.floor(value) !== value ||
-			value > 100 ||
-			value < 0
-		) {
-			throw new Error(
-				`Invalid value for the xAPI Progressed statement: "${valueJSON}"`
-			)
-		}
-		payload.result = {
-			extensions: {
-				'https://w3id.org/xapi/cmi5/result/extensions/progress': value,
-			},
-		}
+		// payload.object.definition!.extensions = extensions
 	}
+	switch (course.type) {
+		case 'video':
+			payload.context!.contextActivities.category = [
+				{
+					id: Category.Video,
+				},
+			]
+			break
+	}
+	// if (verb === Verb.Progressed) {
+	// 	if (!valueJSON) {
+	// 		throw new Error('Missing value for the xAPI Progressed statement')
+	// 	}
+	// 	const value = JSON.parse(valueJSON)
+	// 	if (
+	// 		typeof value !== 'number' ||
+	// 		Math.floor(value) !== value ||
+	// 		value > 100 ||
+	// 		value < 0
+	// 	) {
+	// 		throw new Error(
+	// 			`Invalid value for the xAPI Progressed statement: "${valueJSON}"`
+	// 		)
+	// 	}
+	// 	payload.result = {
+	// 		extensions: {
+	// 			'https://w3id.org/xapi/cmi5/result/extensions/progress': value,
+	// 		},
+	// 	}
+	// }
 	return await send(payload)
 }
 
@@ -161,8 +275,11 @@ export async function send(statement: Statement): Promise<AxiosResponse<any>> {
 export async function voidify(req: express.Request, id: string) {
 	const payload: Statement = {
 		actor: {
-			mbox: `mailto:noone@cslearning.gov.uk`,
-			name: req.user.id,
+			account: {
+				homePage: HomePage,
+				name: req.user.id,
+			},
+			name: req.user.givenName,
 			objectType: 'Agent',
 		},
 		object: {
@@ -171,9 +288,9 @@ export async function voidify(req: express.Request, id: string) {
 		},
 		verb: {
 			display: {
-				en: 'voided',
+				en: Labels[Verb.Voided],
 			},
-			id: 'http://adlnet.gov/expapi/verbs/voided',
+			id: Verb.Voided,
 		},
 	}
 	await send(payload)

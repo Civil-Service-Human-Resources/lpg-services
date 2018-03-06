@@ -99,8 +99,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 			)
 			break
 		case 'link':
-			await xapi.record(req, req.course, xapi.Verb.Initialised)
-			await xapi.record(req, req.course, xapi.Verb.Completed)
+			await xapi.record(req, req.course, xapi.Verb.Experienced)
 			res.redirect(course.uri)
 			break
 		case 'video':

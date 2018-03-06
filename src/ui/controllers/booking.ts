@@ -244,7 +244,7 @@ export async function tryCompleteBooking(
 
 	course.selectedDate = course.availability[session.bookingSession.dateSelected]
 
-	const extensions: Record<string, string> = {}
+	const extensions: Record<string, any> = {}
 	if (session.bookingSession.po) {
 		extensions[xapi.Extension.PurchaseOrder] = session.bookingSession.po
 	}
@@ -252,34 +252,7 @@ export async function tryCompleteBooking(
 		extensions[xapi.Extension.FinancialApprover] = session.bookingSession.fap
 	}
 
-	await xapi.send({
-		actor: {
-			mbox: `mailto:noone@cslearning.gov.uk`,
-			name: req.user.id,
-			objectType: 'Agent',
-		},
-		context: {
-			contextActivities: {
-				parent: {
-					id: course.getParentActivityId(),
-				},
-			},
-		},
-		object: {
-			definition: {
-				extensions,
-				type: 'http://adlnet.gov/expapi/activities/event',
-			},
-			id: course.getActivityId(),
-			objectType: 'Activity',
-		},
-		verb: {
-			display: {
-				en: xapi.Labels[xapi.Verb.Registered],
-			},
-			id: xapi.Verb.Registered,
-		},
-	})
+	await xapi.record(req, course, xapi.Verb.Registered, extensions)
 
 	await messaging.send(
 		config.BOOKING_COMPLETE_MSG(
