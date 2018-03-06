@@ -2,7 +2,7 @@ import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
 	department: '#department',
-	departmentFieldError: 'lpg-department-error',
+	departmentFieldError: '.lpg-department-error',
 	feedbackLink: '.lpg-feedback-link',
 	firstName: '#givenName',
 	firstNameFieldError: '.lpg-name-error',
