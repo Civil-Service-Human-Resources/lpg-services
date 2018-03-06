@@ -71,7 +71,6 @@ export async function display(req: express.Request, res: express.Response) {
 
 export async function record(req: express.Request, res: express.Response) {
 	const courseId = req.query.courseId
-	const value = req.query.value
 	if (!courseId) {
 		logger.error('Expected a course ID to be present in the query parameters')
 		res.sendStatus(500)
@@ -95,8 +94,20 @@ export async function record(req: express.Request, res: express.Response) {
 		res.sendStatus(500)
 		return
 	}
+	let extensions = req.query.extensions
+	if (extensions) {
+		try {
+			extensions = JSON.parse(extensions)
+		} catch (err) {
+			logger.error(
+				`Error decoding extensions data from JSON: "${extensions}": ${err}`
+			)
+			res.sendStatus(500)
+			return
+		}
+	}
 	try {
-		await xapi.record(req, course, verbId, value)
+		await xapi.record(req, course, verbId, extensions)
 	} catch (err) {
 		logger.error(err.toString())
 		res.sendStatus(500)
