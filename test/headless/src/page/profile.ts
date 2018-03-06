@@ -2,26 +2,21 @@ import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
 	department: '#department',
-	departmentFieldError:
-		'#content > div.main-content > div > div > form > div:nth-child(3) > span',
-	feedbackLink: '#content > div.phase-banner > p > span > a',
+	departmentFieldError: 'lpg-department-error',
+	feedbackLink: '.lpg-feedback-link',
 	firstName: '#givenName',
-	firstNameFieldError:
-		'#content > div.main-content > div > div > form > div:nth-child(2) > span',
+	firstNameFieldError: '.lpg-name-error',
 	grade: '#grade',
-	gradeFieldError:
-		'#content > div.main-content > div > div > form > div:nth-child(5) > span',
-	incompleteProfileError: '#content > div.main-content > div > div > div',
+	gradeFieldError: '.lpg-grade-error',
+	incompleteProfileError: '.lpg-incomplete-profile',
 	profession: '#profession',
-	professionFieldError:
-		'#content > div.main-content > div > div > form > div:nth-child(4) > span',
+	professionFieldError: '.lpg-profession-error',
 	profileForm: '.form-control',
 	profilePageButton: '#proposition-links > li > a',
-	profileUpdatedMessage: '#content > div.main-content > div > div > div > h1',
-	saveProfileButton: '#content > div.main-content > div > div > form > input',
+	profileUpdatedMessage: '.lpg-profile-updated',
+	saveProfileButton: 'input[value="Continue"]',
 	signoutButton: 'a[href="/sign-out"]',
-	updateProfileError:
-		'#content > div.main-content > div > div > div > p:nth-child(2)',
+	updateProfileError: '#error-summary-heading-example-1',
 	userName: '#userName',
 }
 
