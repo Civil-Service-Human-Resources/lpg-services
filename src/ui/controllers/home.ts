@@ -32,9 +32,9 @@ export async function home(req: express.Request, res: express.Response) {
 		}
 		if (
 			!found &&
-			record.state !== 'completed' &&
-			record.state !== 'unregistered' &&
-			record.state !== 'terminated' &&
+			record.state !== 'COMPLETED' &&
+			record.state !== 'UNREGISTERED' &&
+			record.state !== 'TERMINATED' &&
 			record.preference !== 'disliked'
 		) {
 			plannedLearning.push(record)

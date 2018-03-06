@@ -3,6 +3,7 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as log4js from 'log4js'
+import * as xapi from 'lib/xapi'
 
 const logger = log4js.getLogger('controllers/xapi')
 
@@ -12,7 +13,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 
 	const agent = {
 		account: {
-			homePage: 'https://cslearning.gov.uk',
+			homePage: xapi.HomePage,
 			name: req.user.id,
 		},
 		name: req.user.givenName,

@@ -5,8 +5,8 @@ import * as model from './model'
 import * as catalog from './service/catalog'
 
 export enum CourseState {
-	Completed = 'completed',
-	InProgress = 'in-progress',
+	Completed = 'COMPLETED',
+	InProgress = 'IN_PROGRESS',
 }
 
 const logger = log4js.getLogger('learner-record')
