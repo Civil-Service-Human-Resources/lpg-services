@@ -26,7 +26,6 @@ describe('feedback form functionality', () => {
 		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
 		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commerical', 'g7')
 		await loginToCsl(page, config.USERNAME, config.PASSWORD)
-		await page.waitForSelector(selectors.signoutButton)
 	})
 
 	wrappedAfterAll(async () => {

@@ -41,9 +41,9 @@ describe('learning page functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display the learning plan section', async () => {
+	it('Should display the other learning section', async () => {
 		expect(
-			await helper.checkElementIsPresent(selectors.learningPlanSection, page)
+			await helper.checkElementIsPresent(selectors.otherSection, page)
 		).toBe(true)
 	})
 
@@ -53,9 +53,9 @@ describe('learning page functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display a suggested learning button within the heading section', async () => {
+	it('Should display grid for suggested learning courses', async () => {
 		expect(
-			await helper.checkElementIsPresent(selectors.suggestedButton, page)
+			await helper.checkElementIsPresent(selectors.suggestedGrid, page)
 		).toBe(true)
 	})
 

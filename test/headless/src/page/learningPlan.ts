@@ -4,19 +4,17 @@ import * as puppeteer from 'puppeteer'
 //declare var xpath: (locator: string) => HTMLElement[]
 
 export const selectors: Record<string, string> = {
-	counterFraudCourse: 'a[href="/courses/0x390"]',
-	courseTitle: 'h1.heading-large',
-	fireAwarenessCourse: 'a[href="/courses/0x394"]',
-	firstRequiredBy: '.learning__information-desc:first-child',
-	learningHeader: '.basket__heading',
-	learningPlanSection: 'h2.heading-small',
-	requiredCourseType: 'learning__information-list',
-	requiredDuration: 'learning__information-list',
-	requiredProgress: '.learning__progress',
-	requiredSection: 'h3.heading-small',
+	// counterFraudCourse: 'a[href="/courses/0x390"]',
+	courseTitle: '.learning__title',
+	// fireAwarenessCourse: 'a[href="/courses/0x394"]',
+	// firstRequiredBy: '.learning__information-desc:first-child',
+	otherSection: '.lpg-other-learning',
+	requiredDuration: '.resource__duration',
+	requiredProgress: '.resource__status',
+	requiredSection: '.lpg-required-learning',
 	signoutButton: 'a[href="/sign-out"]',
-	suggestedButton: 'p > a[href="/suggested-for-you"]',
-	suggestedSection: 'h2.heading-large',
+	suggestedGrid: '.grid-row--suggested',
+	suggestedSection: '.lpg-suggestions-section',
 }
 
 export async function returnXpathStr(

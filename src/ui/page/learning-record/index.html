@@ -3,24 +3,25 @@
         <div class="grid-row">
             <div class="column-full">
                 <h1 class="heading-large">Learning record</h1>
-                    <h2 class="heading heading--medium heading--red-top heading-medium">
-                      Required learning
-                    </h2>
-                    {{#if completedRequiredLearning.length}}
-                        <LearningRecordTable courses={{completedRequiredLearning}}/>
-                        <p>You have completed {{completedRequiredLearning.length}} out of {{requiredLearningTotal}} required learning courses.</p>
-                    {{else}}
-                        <p>You haven't completed any courses yet!</p>
-                    {{/if}}
+                <h2 class="heading heading--medium heading--red-top heading-medium lpg-required-learning">
+                    Required learning
+                </h2>
+                {{#if completedRequiredLearning.length}}
+                <LearningRecordTable courses={{completedRequiredLearning}}/>
+                <p>You have completed {{completedRequiredLearning.length}} out of {{requiredLearningTotal}} required learning
+                    courses.
+                </p>
+                {{else}}
+                <p>You haven't completed any courses yet!</p>
+                {{/if}}
 
-                    <h2 class="heading heading--medium heading--red-top heading-medium">
-                      Other learning
-                    </h2>
-                    {{#if courses.length}}
-                       <LearningRecordTable courses={{courses}}/>
-                    {{else}}
-                   <p>You haven't completed any courses yet!</p>
-                    {{/if}}
+                <h2 class="heading heading--medium heading--red-top heading-medium lpg-other-learning">
+                    Other learning
+                </h2>
+                {{#if courses.length}}
+                <LearningRecordTable courses={{courses}}/> {{else}}
+                <p>You haven't completed any courses yet!</p>
+                {{/if}}
 
 
 

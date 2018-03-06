@@ -12,8 +12,8 @@ declare var browser: PrivateBrowser
 const sessions: Record<string, Session> = {}
 
 export async function checkHidden(selector: string, page: puppeteer.Page) {
-	return page.evaluate(selector => {
-		const e = document.querySelector(selector)
+	return page.evaluate(sel => {
+		const e = document.querySelector(sel)
 		const style = window.getComputedStyle(e)
 		return style.display
 	}, selector)
@@ -23,8 +23,8 @@ export async function checkElementIsPresent(
 	selector: string,
 	page: puppeteer.Page
 ): Promise<boolean> {
-	return page.evaluate(selector => {
-		const e = document.querySelector(selector)
+	return page.evaluate(sel => {
+		const e = document.querySelector(sel)
 		if (!e) {
 			return false
 		}
@@ -42,8 +42,8 @@ export async function getText(
 	selector: string,
 	page: puppeteer.Page
 ): Promise<boolean> {
-	return page.evaluate(selector => {
-		const e = document.querySelector(selector)
+	return page.evaluate(sel => {
+		const e = document.querySelector(sel)
 		if (!e) {
 			return false
 		}
@@ -58,7 +58,7 @@ export async function returnElementAttribute(
 ): Promise<string> {
 	return page.$eval(
 		selector,
-		(element, attri) => element.getAttribute(attri),
+		(element, attr) => element.getAttribute(attr),
 		attri
 	)
 }
