@@ -68,9 +68,16 @@ export async function suggestedForYou(
 	)
 }
 
-export async function suggestions(user: model.User) {
+export async function suggestions(
+	user: model.User,
+	learningRecordIn: model.Course[] = []
+) {
 	const suggestedLearning = (await catalog.findSuggestedLearning(user)).entries
-	const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
+	const learningRecord =
+		learningRecordIn.length > 0
+			? learningRecordIn
+			: await learnerRecord.getLearningRecordOf(null, user)
+
 	const modified: model.Course[] = []
 
 	for (const course of suggestedLearning) {
