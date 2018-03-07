@@ -16,28 +16,22 @@
                     select a suitable option below.
                 </p>
                 <form method="post">
-                    <table>
-                    <caption class="heading-small">{{course.title}}</caption>
-                        <thead>
-
-                            <tr>
-                                <th scope="col">Course dates</th>
-                                <th scope="col">Duration</th>
-                                <th scope="col">Location</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">
-                                    <span class="visually-hidden">Selection</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each courseAvailability as availability}}
-                            <tr>
-                                <td>{{formatDate(availability.date)}}</td>
-                                <td>{{course.duration}}</td>
-                                <td>{{course.location}}</td>
-                                <td>&pound;{{course.price}}</td>
-                                <td>
+                    <div class="div-table div-table--5 ">
+                        <div class="div-table__row u-clearfix">
+                            <div class="div-table__th">Course dates</div>
+                            <div class="div-table__th">Duration</div>
+                            <div class="div-table__th">Location</div>
+                            <div class="div-table__th">Price</div>
+                            <div class="div-table__th"><span class="visually-hidden">Selected</span></div>
+                        </div>
+                        {{#each courseAvailability as availability}}
+                        <div class="div-table__row u-clearfix">
+                            <div class="div-table__cell">{{formatDate(availability.date)}}</div>
+                            <div class="div-table__cell">{{course.duration}}</div>
+                            <div class="div-table__cell">{{course.location}}</div>
+                            <div class="div-table__cell">&pound;{{course.price}}</div>
+                            <div class="div-table__cell  div-table__cell--action">
+                                <div class="course-radios">
                                     {{#if availability.id == selectedDate}}
                                     <input id="radio-{{availability.id}}"
                                         type="radio"
@@ -53,18 +47,15 @@
                                         value="{{availability.id}}"
                                         >
                                     {{/if}}
-
-
-                                    <label for="radio-{{availability.id}}">
+                                    <label for="radio-{{availability.id}}" class="booking__select-container">
                                         <span class="booking__select booking__select--select">Select</span>
                                         <span class="booking__select booking__select--selected">Selected</span>
                                     </label>
-                                </td>
-                                </tr>
-                            {{/each}}
-
-                        </tbody>
-                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
 
                 <p>
                     You are confirming that you have approval to book this course.
