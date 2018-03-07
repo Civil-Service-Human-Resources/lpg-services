@@ -3,6 +3,10 @@
 		padding: 10px 0;
 		border-top: 5px solid #000;
 	}
+	@include e(select-container) {
+		width: 88px;
+		display: block;
+	}
 	@include e(select) {
 		color: $turquoise;
 		border: 2px solid $turquoise;
@@ -10,6 +14,7 @@
 		padding: 2px 5px;
 		display: inline-block;
 		cursor: pointer;
+
 		@include m(selected) {
 			background-color: $turquoise;
 			color: #fff;
