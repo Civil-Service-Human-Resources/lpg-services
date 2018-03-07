@@ -1,50 +1,45 @@
-import * as aws from 'aws-sdk'
+import * as azure from 'azure-storage'
 import * as express from 'express'
-import * as config from 'lib/config'
+import * as fs from 'fs'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 import * as log4js from 'log4js'
+import * as path from 'path'
+import {Readable, Writable} from 'stream'
 import * as streamifier from 'streamifier'
 import * as unzip from 'unzip'
 import * as xml2js from 'xml2js'
 
 const logger = log4js.getLogger('controllers/course/edit')
-const s3 = new aws.S3(config.AWS)
+const blob = azure.createBlobService()
 
-function getContentType(path: string) {
-	switch (true) {
-		case /.*\.htm(l)?$/.test(path):
-			return 'text/html'
-		case /.*\.js$/.test(path):
-			return 'application/javascript'
-		case /.*\.css$/.test(path):
-			return 'text/css'
-		case /.*\.xml/.test(path):
-			return 'application/xml'
-		case /.*\.pdf/.test(path):
-			return 'application/pdf'
-		default:
-			return ''
-	}
+const filesToSubstitute: Record<string, {data: string | null; set: boolean}> = {
+	'close_methods.js': {
+		data: null,
+		set: false,
+	},
+	'player_overrides.js': {
+		data: null,
+		set: false,
+	},
 }
 
-async function parseMetadata(uploadResponse: aws.S3.ManagedUpload.SendData) {
+async function parseMetadata(entry: unzip.Entry) {
 	return new Promise((resolve, reject) => {
-		s3.getObject(
-			{
-				Bucket: 'csl-learning-content',
-				Key: uploadResponse.Key,
-			},
-			(err, data) => {
-				if (err) {
-					reject(err)
-				} else {
-					resolve(data.Body)
-				}
-			}
+		let content = ''
+		entry.pipe(
+			new Writable({
+				final: () => {
+					resolve(content)
+				},
+				write: (chunk: any, encoding: any, next: any) => {
+					content += chunk.toString()
+					next()
+				},
+			})
 		)
 	})
 		.then(content => {
@@ -63,7 +58,6 @@ async function parseMetadata(uploadResponse: aws.S3.ManagedUpload.SendData) {
 				let identifier
 				let title
 				let launchPage
-
 				if (data.manifest.organizations) {
 					for (const wrapper of data.manifest.organizations) {
 						const organization = wrapper.organization
@@ -76,7 +70,6 @@ async function parseMetadata(uploadResponse: aws.S3.ManagedUpload.SendData) {
 						}
 					}
 				}
-
 				if (data.manifest.resources) {
 					for (const wrapper of data.manifest.resources) {
 						const resource = wrapper.resource
@@ -102,51 +95,141 @@ async function parseMetadata(uploadResponse: aws.S3.ManagedUpload.SendData) {
 }
 
 async function saveContent(uid: string, file: any) {
-	let metadata
+	let metadata: any = {}
+
 	const responses = await uploadEntries(uid, file)
-	for (const response of responses) {
-		if (response.Key.endsWith('imsmanifest.xml')) {
-			metadata = await parseMetadata(response)
-			break
+	responses.forEach(response => {
+		if (response.metadata && response.metadata.identifier) {
+			metadata = response.metadata
+			return
 		}
-	}
+	})
+
 	if (!metadata || !metadata.launchPage) {
-		// TODO: if no launch page...
+		// 	// TODO: if no launch page...
 		throw new Error(`No launch page found for course ${uid}`)
 	}
-	for (const response of responses) {
-		if (response.Key.endsWith(`/${metadata.launchPage}`)) {
-			metadata.launchUrl = response.Location
-			break
+
+	responses.forEach(response => {
+		if (
+			response.metadata &&
+			response.metadata.path &&
+			response.metadata.path.endsWith(metadata.launchPage)
+		) {
+			metadata.launchUrl = response.metadata.path
+			return
 		}
-	}
+	})
+
 	return metadata
 }
 
-async function upload(uid: string, entry: unzip.Entry) {
-	return new Promise<aws.S3.ManagedUpload.SendData>((resolve, reject) => {
-		logger.debug(`Uploading ${uid}/${entry.path}`)
-		s3.upload(
-			{
-				Body: entry,
-				Bucket: 'csl-learning-content',
-				ContentType: getContentType(entry.path),
-				Key: `${uid}/${entry.path}`,
-			},
-			(err, data) => {
-				if (err) {
-					reject(err)
-				} else {
-					resolve(data)
-				}
+async function getFile(filename: string) {
+	const fpath = path.join(
+		__dirname,
+		'..',
+		'..',
+		'..',
+		'..',
+		'ui',
+		'assets',
+		'js',
+		filename
+	)
+
+	return new Promise(async (resolve, reject) => {
+		let readStream: fs.ReadStream
+		let data = ''
+		if (filesToSubstitute[filename].set) {
+			resolve(filesToSubstitute[filename].data as string)
+		} else {
+			try {
+				readStream = fs.createReadStream(fpath)
+				readStream
+					.on('data', chunk => {
+						data += chunk
+					})
+					.on('end', () => {
+						filesToSubstitute[filename].set = true
+						filesToSubstitute[filename].data = data
+						resolve(data)
+					})
+			} catch (e) {
+				reject(e)
 			}
-		)
+		}
+	})
+		.then(data => {
+			return new Readable({
+				read(size) {
+					this.push(filesToSubstitute[filename].data)
+					this.push(null)
+				},
+			})
+		})
+		.catch(data => {
+			throw new Error('Error reading data')
+		})
+}
+
+async function upload(uid: string, entry: unzip.Entry) {
+	return new Promise<azure.BlobService.BlobResult>(async (resolve, reject) => {
+		let metadata = {}
+		// have to parse data going in rather than coming back
+		// AFAIK type defs define return as azure.BlobService.BlobResult  which is
+		// rich data but api actualy just populates blockID
+
+		logger.debug(`uploading : ${entry.path}`)
+		const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
+
+		if (Object.keys(filesToSubstitute).indexOf(filename) >= 0) {
+			const fileData = (await getFile(filename)) as fs.ReadStream
+			fileData.pipe(
+				blob.createWriteStreamToBlockBlob(
+					'lpgdevcontent',
+					entry.path,
+					(err, blobData) => {
+						if (err) {
+							reject(err)
+						} else {
+							resolve(blobData)
+						}
+					}
+				)
+			)
+		} else {
+			// buisness as usual
+			if (entry.path.endsWith('imsmanifest.xml')) {
+				metadata = await parseMetadata(entry)
+			}
+
+			entry.pipe(
+				blob.createWriteStreamToBlockBlob(
+					'lpgdevcontent',
+					entry.path,
+					(err, blobData) => {
+						if (err) {
+							reject(err)
+						} else {
+							if (Object.keys(metadata).length > 0) {
+								blobData.metadata = metadata
+							} else {
+								blobData.metadata = {
+									path: entry.path,
+								}
+							}
+							resolve(blobData)
+						}
+					}
+				)
+			)
+		}
 	})
 }
 
 async function uploadEntries(uid: string, file: any) {
-	return new Promise<aws.S3.ManagedUpload.SendData[]>((resolve, reject) => {
-		const promises: Array<Promise<aws.S3.ManagedUpload.SendData>> = []
+	return new Promise<azure.BlobService.BlobResult[]>((resolve, reject) => {
+		const promises: any[] = []
 		streamifier
 			.createReadStream(file.data)
 			.pipe(unzip.Parse())
