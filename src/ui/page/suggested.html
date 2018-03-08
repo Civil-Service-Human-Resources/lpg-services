@@ -1,8 +1,8 @@
-<Page title="Suggested for you">
+<Page title="{{ i18n('suggestions_page_title') }} - {{ i18n('proposition_name') }}">
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large">Suggested for you</h1>
+                <h1 class="heading-large">{{ i18n('suggestions_page_title') }}</h1>
 
                 {{#if courses.length}}
 
@@ -16,7 +16,7 @@
                             <td>{{ i18n(course.type) }}</td>
                             <td>{{ course.shortDescription }}</td>
                             <td>
-                                <a class="button" href="/suggested-for-you/add/{{course.uid}}">Add</a>
+                                <a class="button" href="/suggested-for-you/add/{{course.uid}}">{{ i18n('item_control_add') }}</a>
                             </td>
                             <td>
                                 <a class="button" href="/suggested-for-you/remove/{{course.uid}}/">Remove</a>

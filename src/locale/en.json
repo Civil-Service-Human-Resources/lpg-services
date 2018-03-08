@@ -72,7 +72,7 @@
 	"register_email_error_label_no_match": "Enter a matching email address",
 	"register_name_page_title": "Your name",
 	"register_name_first_name_label": "First name",
-	"register_name_lastt_name_label": "Last name",
+	"register_name_last_name_label": "Last name",
 	"register_name_error_title": "There was a problem with your information",
 	"register_name_error_box_no_first": "Your first name does not appear to be valid",
 	"register_name_error_box_no_last": "Your last name does not appear to be valid",
@@ -121,7 +121,7 @@
 	"signin_page_error_title": "There was a problem with your sign-in details",
 	"signin_page_error_box_message": "Please try again",
 	"signin_page_button": "Sign in",
-	"time_hour_singluar": "hour",
+	"time_hour_singular": "hour",
 	"time_hour_plural": "hours",
 	"time_minute_plural": "minutes",
 	"banner_course_added_title": "Course successfully added",
@@ -132,7 +132,10 @@
 	"banner_course_remove_warning_no": "No, keep it",
 	"banner_course_removed_title": "Course successfully removed",
 	"banner_course_removed_text": "The course has successfully been removed from your learning plan",
-	"search_reults_page_title": "Search results",
+	"search_results_page_title": "Search results",
 	"search_results_page_intro": "There were X results for search_term",
-	"page_title_tag": "relevant_page_title - proposition_name"
+	"top_nav_suggestions_page": "Suggestions for you",
+	"top_nav_learning_record": "Learning record",
+	"top_nav_learning_plan": "Learning plan",
+	"top_nav_profile": "Profile"
 }
