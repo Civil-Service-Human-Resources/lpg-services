@@ -1,9 +1,9 @@
-<Page title="overview">
+<Page title="{{ i18n('home_page_title') }} - {{ i18n('proposition_name') }}">
     <div class="container container--main">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large">Your learning</h1>
-                <h2 class="heading-medium heading heading--medium heading--red-top lpg-required-learning">Required learning</h2>
+                <h1 class="heading-large">{{ i18n('home_page_title') }}</h1>
+                <h2 class="heading-medium heading heading--medium heading--red-top lpg-required-learning">{{ i18n('required_section_title') }}</h2>
 
                 {{#if requiredLearning.length}}
                 <ul class="resource__list">
@@ -14,11 +14,11 @@
                     {{/each}}
                 </ul>
                 {{else}}
-                <p>You have completed all your required learning.</p>
+                <p>{{ i18n('required_learning_done') }}</p>
                 {{/if}}
             </div>
             <div class="column-full">
-                <h2 class="heading-medium heading heading--medium heading--red-top lpg-other-learning">Other learning</h2>
+                <h2 class="heading-medium heading heading--medium heading--red-top lpg-other-learning">{{ i18n('other_section_title') }}</h2>
 
 
                 {{#if plannedLearning.length}}
@@ -30,7 +30,7 @@
                     {{/each}}
                 </ul>
                 {{else}}
-                <p>You don't have any planned learning yet.</p>
+                <p>{{ i18n('no_planned_learning_yet') }}</p>
                 {{/if}}
             </div>
         </div>
@@ -39,8 +39,8 @@
         <div class="container container--main">
             <div class="grid-row">
                 <div class="column-full">
-                    <h2 class="heading-medium u-space-t30 lpg-suggestions-section">Suggestions for you</h2>
-                    <p>Suggestions are tailored by the service or from colleague recommendations.</p>
+                    <h2 class="heading-medium u-space-t30 lpg-suggestions-section">{{ i18n('suggestions_page_title') }}</h2>
+                    <p>{{ i18n('home_page_suggestions', 'proposition_name') }}</p>
                 </div>
             </div>
             <div class="grid-row grid-row--suggested">
