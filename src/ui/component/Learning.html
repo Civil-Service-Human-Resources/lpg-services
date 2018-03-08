@@ -10,16 +10,17 @@
             </a>
         {{/if}}
         <span class="resource__action">
-            {{#if course.state}}
-                {{#if course.type === 'face-to-face'}}
-                    <a href="/book/{{course.uid}}/cancel">Cancel</a>
-                {{else}}
-                <a href="/courses/{{course.uid}}/{{course.type === 'elearning' ? 'do' : ''}}">Resume</a>
-                    {{#if !course.isRequired(signedInUser)}}
-                        <a href="/courses/{{course.uid}}/delete">Delete</a>
-                    {{/if}}
+            {{#if course.type === 'face-to-face'}}
+                <a href="/book/{{course.uid}}/cancel">Cancel</a>
+            {{else}}
+                {{#if course.state }}
+                    <a href="/courses/{{course.uid}}/{{course.type === 'elearning' ? 'do' : ''}}">Resume</a>
+                {{/if}}
+                {{#if !course.isRequired(signedInUser)}}
+                    <a href="/courses/{{course.uid}}/delete">Delete</a>
                 {{/if}}
             {{/if}}
+
         </span>
     </div>
     <div class="resource__info">
