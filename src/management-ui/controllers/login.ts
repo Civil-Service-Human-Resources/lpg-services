@@ -1,6 +1,7 @@
-import * as passport from 'lib/config/passport'
-import * as config from 'lib/config'
 import * as express from 'express'
+
+import * as config from 'lib/config'
+import * as passport from 'lib/config/passport'
 import * as template from 'lib/ui/template'
 
 export interface SignIn {
