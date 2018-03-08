@@ -1,11 +1,10 @@
-<Page title="Suggested for you">
+<Page title="{{i18n('suggestions_page_title')}}">
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large">Suggested for you</h1>
-
+                <h1 class="heading-large">{{i18n('suggestions_page_title')}}</h1>
+                <p>{{i18n('home_page_suggestions', i18n('proposition_name'))}}</p>
                 {{#if courses.length}}
-
                 <table>
                     <tbody>
                         {{#each courses as course}}
