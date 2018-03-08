@@ -63,3 +63,9 @@
 .column-full {
 	@include grid-column(1);
 }
+
+.u-clearfix:after,
+.u-clearfix:before {
+	content: '';
+	display: table;
+}
