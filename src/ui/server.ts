@@ -76,8 +76,10 @@ app.use(passport.isAuthenticated)
 
 app.get('/api/lrs.record', learningRecordController.record)
 
-app.get('/profile', userController.editProfile)
-app.post('/profile', userController.tryUpdateProfile)
+app.get('/profile', userController.viewProfile)
+
+app.get('/profile/:profileDetail', userController.renderEditPage)
+app.post('/profile/:profileDetail', userController.tryUpdateProfile)
 app.get('/profile-updated', userController.editProfileComplete)
 
 app.use(

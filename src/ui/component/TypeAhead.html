@@ -1,0 +1,6 @@
+<select class="form-control type-ahead" id="{{inputName}}" name="{{inputName}}">
+    {{#each options as option}}
+        <option value="{{option[0]}}">{{option[1]}}</option>
+    {{/each}}
+    <option value="other">Other</option>
+</select>

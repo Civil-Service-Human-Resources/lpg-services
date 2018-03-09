@@ -1,0 +1,12 @@
+<fieldset class="u-space-b30">
+    {{#each options as option}}
+        <div class="multiple-choice">
+            <input id="{{option[0]}}" type="checkbox" name="{{inputName}}" value="{{option[0]}}">
+            <label for="{{option[0]}}">{{option[1]}}</label>
+        </div>
+    {{/each}}
+    <div class="multiple-choice">
+        <input id="other" type="checkbox" name="{{inputName}}" value="other">
+        <label for="other">Other</label>
+    </div>
+</fieldset>
