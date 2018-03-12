@@ -12,7 +12,7 @@
         <tr>
             <td><a href="/courses/{{course.id}}">{{course.title}} </a></td>
             <td>{{i18n(course.getType())}}</td>
-            <td>{{course.duration ? course.duration : '-'}}</td>
+            <td>{{course.getDuration() || '-'}}</td>
             <td>{{formatDate(course.record.completionDate)}}</td>
         </tr>
     {{/each}}

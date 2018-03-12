@@ -33,7 +33,7 @@
     <div class="resource__duration">
         <span>
         {{course.getType() === 'blended' ? '' : i18n(course.getType()) + (course.duration ? ', ' : '')}}
-        {{course.duration}}
+        {{course.getDuration()}}
         </span>
     </div>
     <div class="resource__status">

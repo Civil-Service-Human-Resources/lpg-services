@@ -1,6 +1,7 @@
-import {AxiosResponse, default as axios} from 'axios'
+import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
+import * as datetime from 'lib/datetime'
 import * as model from 'lib/model'
 
 export enum Placement {
@@ -18,11 +19,12 @@ export interface Statement {
 		objectType: 'Agent'
 	}
 	context?: {
-		contextActivities: {
+		contextActivities?: {
 			category?: Array<{id: string}>
 			parent?: Array<{id: string}>
 		}
 		extensions?: Record<string, any>
+		registration?: string
 	}
 	object: {
 		definition?: {
@@ -35,6 +37,8 @@ export interface Statement {
 		objectType: 'Activity' | 'StatementRef'
 	}
 	result?: {
+		completion?: boolean
+		duration?: string
 		extensions?: Record<string, any>
 	}
 	timestamp?: any
@@ -63,18 +67,75 @@ export const Extension = {
 	FinancialApprover: 'http://cslearning.gov.uk/extension/finanacialApprover',
 	PurchaseOrder: 'http://cslearning.gov.uk/extension/purhaseOrder',
 	VideoLength: 'https://w3id.org/xapi/video/extensions/length',
+	VideoPlayedSegments: 'https://w3id.org/xapi/video/extensions/played-segments',
+	VideoProgress: 'https://w3id.org/xapi/video/extensions/progress',
+	VideoSessionID: 'https://w3id.org/xapi/video/extensions/session-id',
 	VideoTime: 'https://w3id.org/xapi/video/extensions/time',
 	VideoTimeFrom: 'https://w3id.org/xapi/video/extensions/time-from',
 	VideoTimeTo: 'https://w3id.org/xapi/video/extensions/time-to',
 }
 
-export const ExtensionPlacement = {
+export const ExtensionPlacements = {
 	[Extension.FinancialApprover]: Placement.Result,
 	[Extension.PurchaseOrder]: Placement.Result,
 	[Extension.VideoLength]: Placement.Context,
+	[Extension.VideoPlayedSegments]: Placement.Result,
+	[Extension.VideoProgress]: Placement.Result,
+	[Extension.VideoSessionID]: Placement.Context,
+	[Extension.VideoTime]: Placement.Result,
+	[Extension.VideoTimeFrom]: Placement.Result,
+	[Extension.VideoTimeTo]: Placement.Result,
+}
+
+export const ExtensionValidators = {
+	[Extension.VideoLength]: requireNumber('VideoLength'),
+	[Extension.VideoPlayedSegments]: requireString('VideoPlayedSegments'),
+	[Extension.VideoProgress]: (val: any) => {
+		if (typeof val !== 'number') {
+			throw new Error(
+				`xAPI VideoProgress extension value must be a number. received: ${val}`
+			)
+		}
+		if (val < 0 || val > 1) {
+			throw new Error(
+				`xAPI VideoProgress extension value must be within the range 0 to 1. received: ${val}`
+			)
+		}
+	},
+	[Extension.VideoSessionID]: requireString('VideoSessionID'),
+	[Extension.VideoTime]: requireNumber('VideoTime'),
+	[Extension.VideoTimeFrom]: requireNumber('VideoTimeFrom'),
+	[Extension.VideoTimeTo]: requireNumber('VideoTimeTo'),
 }
 
 export const HomePage = 'https://cslearning.gov.uk/'
+
+export const ResultValidators = {
+	completion: (val: any) => {
+		if (typeof val !== 'boolean') {
+			throw new Error(
+				`xAPI completion value must be a boolean. received: ${val}`
+			)
+		}
+		return val
+	},
+	duration: (val: any) => {
+		if (typeof val === 'string') {
+			if (!datetime.parseDuration(val)) {
+				throw new Error(
+					`xAPI duration value must be an ISO 8601 formatted duration. received: ${val}`
+				)
+			}
+			return val
+		}
+		if (typeof val === 'number') {
+			return datetime.formatDuration(val)
+		}
+		throw new Error(
+			`xAPI duration value must be an ISO 8601 formatted duration. received: ${val}`
+		)
+	},
+}
 
 export const Verb = {
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
@@ -86,9 +147,8 @@ export const Verb = {
 	Passed: 'http://adlnet.gov/expapi/verbs/passed',
 	PausedVideo: 'https://w3id.org/xapi/video/verbs/paused',
 	PlayedVideo: 'https://w3id.org/xapi/video/verbs/played',
-	Progressed: 'http://adlnet.gov/expapi/verbs/progressed',
 	Registered: 'http://adlnet.gov/expapi/verbs/registered',
-	Seeked: 'https://w3id.org/xapi/video/verbs/seeked',
+	SeekedVideo: 'https://w3id.org/xapi/video/verbs/seeked',
 	Terminated: 'http://adlnet.gov/expapi/verbs/terminated',
 	Unregistered: 'http://adlnet.gov/expapi/verbs/unregistered',
 	Viewed: 'http://id.tincanapi.com/verb/viewed',
@@ -105,18 +165,67 @@ export const Labels: Record<string, string> = {
 	[Verb.Passed]: 'passed',
 	[Verb.PausedVideo]: 'paused video',
 	[Verb.PlayedVideo]: 'played video',
-	[Verb.Progressed]: 'progressed',
 	[Verb.Registered]: 'registered',
-	[Verb.Seeked]: 'seeked',
+	[Verb.SeekedVideo]: 'seeked',
 	[Verb.Terminated]: 'terminated',
 	[Verb.Unregistered]: 'unregistered',
 	[Verb.Viewed]: 'viewed',
 	[Verb.Voided]: 'voided',
 }
 
+// Extensions required for each verb for the various profiles we are supporting.
+export const RequiredExtensions = {
+	video: {
+		[Verb.Completed]: [
+			Extension.VideoPlayedSegments,
+			Extension.VideoProgress,
+			Extension.VideoSessionID,
+			Extension.VideoTime,
+		],
+		[Verb.PausedVideo]: [
+			Extension.VideoPlayedSegments,
+			Extension.VideoProgress,
+			Extension.VideoSessionID,
+			Extension.VideoTime,
+		],
+		[Verb.PlayedVideo]: [Extension.VideoSessionID, Extension.VideoTime],
+		[Verb.Terminated]: [
+			Extension.VideoPlayedSegments,
+			Extension.VideoProgress,
+			Extension.VideoSessionID,
+			Extension.VideoTime,
+		],
+		[Verb.SeekedVideo]: [
+			Extension.VideoSessionID,
+			Extension.VideoTimeFrom,
+			Extension.VideoTimeTo,
+		],
+	},
+}
+
 for (const verb of Object.values(Verb)) {
 	if (!Labels[verb]) {
 		throw new Error(`Missing label for the xAPI verb: ${verb}`)
+	}
+}
+
+function requireNumber(extensionName: string) {
+	return (val: any) => {
+		if (typeof val !== 'number') {
+			throw new Error(
+				`xAPI ${extensionName} extension value must be a number. received: ${val}`
+			)
+		}
+	}
+}
+
+function requireString(extensionName: string) {
+	return (val: any) => {
+		if (typeof val !== 'string' || !val) {
+			throw new Error(
+				`xAPI ${extensionName} extension value must be a string. received: ${val}`
+			)
+		}
 	}
 }
 
@@ -131,7 +240,8 @@ export async function record(
 	verb: string,
 	extensions?: Record<string, any>,
 	module?: model.Module,
-	event?: model.Event
+	event?: model.Event,
+	resultData?: Record<string, any>
 ) {
 	if (!Labels[verb]) {
 		throw new Error(`Unknown xAPI verb: ${verb}`)
@@ -200,27 +310,44 @@ export async function record(
 		}
 		if (event) {
 			payload.object.id = event.getActivityId()
-			payload.context!.contextActivities.parent!.push({
-				id: module!.getActivityId(),
+			payload.context.contextActivities!.parent!.push({
+				id: module.getActivityId(),
 			})
 		} else {
-			payload.object.id = module!.getActivityId()
+			payload.object.id = module.getActivityId()
 		}
 	}
 	if (extensions) {
-		for (const extension of Object.keys(extensions)) {
-			const placement = ExtensionPlacement[extension]
+		const exts = Extension as Record<string, string | undefined>
+		const seen = new Set()
+		for (let extension of Object.keys(extensions)) {
+			if (!extension.startsWith('http')) {
+				if (!exts[extension]) {
+					throw new Error(
+						`Unable to find identifier for the "${extension}" extension`
+					)
+				}
+				extension = exts[extension]!
+			}
+			const placement = ExtensionPlacements[extension]
 			if (placement === undefined) {
 				throw new Error(
 					`Could not find placement location for the extension: ${extension}`
 				)
 			}
+			let value = extensions[extension]
+			const validator = ExtensionValidators[extension]
+			if (validator) {
+				value = validator(value)
+			}
 			switch (placement) {
 				case Placement.Context:
-					if (!payload.context!.extensions) {
-						payload.context!.extensions = {}
+					if (!payload.context) {
+						payload.context = {extensions: {}}
+					} else if (!payload.context.extensions) {
+						payload.context.extensions = {}
 					}
-					payload.context!.extensions![extension] = extensions[extension]
+					payload.context!.extensions![extension] = value
 					break
 				case Placement.Result:
 					if (!payload.result) {
@@ -228,46 +355,58 @@ export async function record(
 							extensions: {},
 						}
 					}
-					payload.result.extensions![extension] = extensions[extension]
+					payload.result.extensions![extension] = value
 					break
 			}
+			seen.add(extension)
 		}
-		// payload.object.definition!.extensions = extensions
+		// TODO(tav): Add profiles for other course types in future maybe.
+		if (type === Type.Video) {
+			const required = RequiredExtensions.video[verb]
+			if (required) {
+				for (const ext of required) {
+					if (!seen.has(ext)) {
+						throw new Error(`Missing extension <${ext}> for the video profile`)
+					}
+				}
+			}
+		}
 	}
-	switch (course.getType()) {
-		case 'video':
-			payload.context!.contextActivities.category = [
+	if (resultData) {
+		if (!payload.result) {
+			payload.result = {}
+		}
+		for (const [prop, value] of Object.entries(resultData)) {
+			switch (prop) {
+				case 'completion':
+					payload.result.completion = ResultValidators.completion(value)
+					break
+				case 'duration':
+					payload.result.duration = ResultValidators.duration(value)
+					break
+				default:
+					throw new Error(`Unknown xAPI result property "${prop}" received`)
+			}
+		}
+	}
+	switch (type) {
+		case Type.Video:
+			if (!payload.context) {
+				payload.context = {
+					contextActivities: {},
+				}
+			}
+			payload.context.contextActivities!.category = [
 				{
 					id: Category.Video,
 				},
 			]
 			break
 	}
-	// if (verb === Verb.Progressed) {
-	// 	if (!valueJSON) {
-	// 		throw new Error('Missing value for the xAPI Progressed statement')
-	// 	}
-	// 	const value = JSON.parse(valueJSON)
-	// 	if (
-	// 		typeof value !== 'number' ||
-	// 		Math.floor(value) !== value ||
-	// 		value > 100 ||
-	// 		value < 0
-	// 	) {
-	// 		throw new Error(
-	// 			`Invalid value for the xAPI Progressed statement: "${valueJSON}"`
-	// 		)
-	// 	}
-	// 	payload.result = {
-	// 		extensions: {
-	// 			'https://w3id.org/xapi/cmi5/result/extensions/progress': value,
-	// 		},
-	// 	}
-	// }
 	return await send(payload)
 }
 
-export async function send(statement: Statement): Promise<AxiosResponse<any>> {
+export async function send(statement: Statement): Promise<string> {
 	let resp
 	try {
 		resp = await axios.post(
@@ -291,8 +430,7 @@ export async function send(statement: Statement): Promise<AxiosResponse<any>> {
 	} catch (err) {
 		throw new Error(`Couldn't post to xAPI: ${err}`)
 	}
-	// probably good to return response to general transport
-	return resp
+	return resp.data[0]
 }
 
 export async function voidify(req: express.Request, id: string) {

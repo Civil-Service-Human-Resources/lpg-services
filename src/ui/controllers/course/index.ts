@@ -27,7 +27,7 @@ export function getCourseDetails(
 	const levels = course.getGrades().map(grade => req.__(grade))
 	const keyAreas = course.getAreasOfWork().map(areaOfWork => req.__(areaOfWork))
 
-	const duration = '' + (course.duration || '')
+	const duration = course.getDuration()
 	const productCode = module.productCode
 	const location = module.location
 	const price = course.price
@@ -99,12 +99,19 @@ export async function displayModule(
 			res.redirect(module.location!)
 			break
 		case 'video':
-			await xapi.record(req, course, xapi.Verb.Initialised, undefined, module)
+			const sessionId = await xapi.record(
+				req,
+				course,
+				xapi.Verb.Initialised,
+				undefined,
+				module
+			)
 			res.send(
 				template.render(`course/video`, req, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
+					sessionId,
 					video: await youtube.getBasicInfo(module.location!),
 				})
 			)

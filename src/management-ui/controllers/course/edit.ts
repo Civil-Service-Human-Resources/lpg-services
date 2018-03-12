@@ -341,7 +341,7 @@ export async function doEditModule(
 				res.sendStatus(500)
 				return
 			}
-			const duration = await youtube.getDuration(info.id)
+			const duration = (await youtube.getDuration(info.id)) || 0
 			if (!duration) {
 				logger.error(
 					`Unable to get duration of course ${course.id} via the YouTube API`
@@ -349,7 +349,7 @@ export async function doEditModule(
 				res.sendStatus(500)
 				return
 			}
-			req.course.duration = Number(duration)
+			req.course.duration = duration
 			module.title = module.title || info.title
 			await catalog.add(course)
 		}

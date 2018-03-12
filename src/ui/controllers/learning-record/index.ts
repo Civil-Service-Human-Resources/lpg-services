@@ -117,8 +117,28 @@ export async function record(req: express.Request, res: express.Response) {
 			return
 		}
 	}
+	let resultData = req.query.resultData
+	if (resultData) {
+		try {
+			resultData = JSON.parse(resultData)
+		} catch (err) {
+			logger.error(
+				`Error decoding resultData from JSON: "${resultData}": ${err}`
+			)
+			res.sendStatus(500)
+			return
+		}
+	}
 	try {
-		await xapi.record(req, course, verbId, extensions, module)
+		await xapi.record(
+			req,
+			course,
+			verbId,
+			extensions,
+			module,
+			undefined,
+			resultData
+		)
 	} catch (err) {
 		logger.error(err.toString())
 		res.sendStatus(500)

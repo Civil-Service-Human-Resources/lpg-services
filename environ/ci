@@ -31,6 +31,9 @@ npm run lint:headless
 stage "Building the main src"
 npm run build
 
+stage "Running the unit tests"
+npm test
+
 stage "Building the new lpg-services docker image"
 docker build --cache-from cshr/lpg-services:latest -t cshr/lpg-services:${TRAVIS_COMMIT} .
 

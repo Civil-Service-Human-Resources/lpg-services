@@ -1,4 +1,5 @@
 import * as config from 'lib/config'
+import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 
 export class Course {
@@ -36,16 +37,6 @@ export class Course {
 		return `${config.XAPI.courseBaseUri}/${this.id}`
 	}
 
-	getType() {
-		if (!this.modules.length) {
-			return null
-		}
-		if (this.modules.length > 1) {
-			return 'blended'
-		}
-		return this.modules[0].type
-	}
-
 	getAreasOfWork() {
 		return this.modules
 			.map(module => module.audiences)
@@ -53,6 +44,10 @@ export class Course {
 			.map(audience => audience.areasOfWork)
 			.reduce((p, c) => p.concat(c))
 			.filter((v, i, a) => a.indexOf(v) === i)
+	}
+
+	getDuration() {
+		return datetime.formatCourseDuration(this.duration)
 	}
 
 	getGrades() {
@@ -74,6 +69,16 @@ export class Course {
 			}
 		}
 		return null
+	}
+
+	getType() {
+		if (!this.modules.length) {
+			return null
+		}
+		if (this.modules.length > 1) {
+			return 'blended'
+		}
+		return this.modules[0].type
 	}
 
 	isRequired(user: User) {
