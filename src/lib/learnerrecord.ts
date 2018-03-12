@@ -88,6 +88,9 @@ function convert(record: LearnerRecord) {
 }
 
 function uriToId(type: string, uri: string) {
+	if (!uri) {
+		return undefined
+	}
 	const match = uri.match(new RegExp(`${type}/([^/]+)`))
 	if (match) {
 		return match[1]

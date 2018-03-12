@@ -20,10 +20,7 @@ export async function home(req: express.Request, res: express.Response) {
 			const record = course.record!
 			for (const [i, requiredCourse] of requiredLearning.entries()) {
 				if (requiredCourse.id === course.id) {
-					if (
-						record.state === 'COMPLETED' &&
-						!course.shouldRepeat(req.user)
-					) {
+					if (record.state === 'COMPLETED' && !course.shouldRepeat(req.user)) {
 						requiredLearning.splice(i, 1)
 					} else {
 						if (record.state === 'COMPLETED') {
