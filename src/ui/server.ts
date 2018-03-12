@@ -15,7 +15,6 @@ import * as i18n from 'lib/service/translation'
 
 import * as bookingController from './controllers/booking'
 import * as courseController from './controllers/course'
-import * as coursePlayerController from './controllers/course/player'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
@@ -25,7 +24,6 @@ import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
 /* tslint:disable:no-var-requires */
-const cache = require('express-cache-response')
 const favicon = require('serve-favicon')
 
 log4js.configure(config.LOGGING)
@@ -94,11 +92,6 @@ app.use(
 	}
 )
 
-app.get(/.*Scorm\.js/, coursePlayerController.scormApi)
-app.get(/.*portal_overrides\.js/, coursePlayerController.portalOverrides)
-app.get(/.*close_methods\.js/, coursePlayerController.closeMethods)
-app.get(/.*tincan_wrapper\.js/, coursePlayerController.tincanWrapper)
-
 app.param('courseId', courseController.loadCourse)
 app.param('moduleId', courseController.loadModule)
 app.param('eventId', courseController.loadEvent)
@@ -106,7 +99,6 @@ app.param('eventId', courseController.loadEvent)
 app.get('/courses/:courseId', courseController.display)
 app.use('/courses/:courseId/delete', courseController.markCourseDeleted)
 app.use('/courses/:courseId/:moduleId', courseController.displayModule)
-app.use('/courses/:courseId/:moduleId/do', cache(), coursePlayerController.play)
 app.use('/courses/:courseId/:moduleId/xapi', xApiController.proxy)
 
 app.get('/learning-record', learningRecordController.display)
