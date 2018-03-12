@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
@@ -14,42 +15,42 @@ function findCourseByUID(courses: model.Course[], id: string) {
 	return null
 }
 
-export async function addToPlan(req: express.Request, res: express.Response) {
-	const uid = req.params.courseId
-	const course = await catalog.get(uid)
+export async function addToPlan(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	const ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
+	const course = req.course
+	let module
+	if (course.modules.length === 1) {
+		module = course.modules[0]
+	}
 
-	if (course) {
-		try {
-			await xapi.record(req, course, xapi.Verb.Liked)
-		} catch (err) {
-			res.sendStatus(500)
-		} finally {
-			res.redirect(ref)
-		}
-	} else {
+	try {
+		await xapi.record(req, course, xapi.Verb.Liked, undefined, module)
+	} catch (err) {
 		res.sendStatus(500)
+	} finally {
+		res.redirect(ref)
 	}
 }
 
 export async function removeFromSuggested(
-	req: express.Request,
+	ireq: express.Request,
 	res: express.Response
 ) {
-	const uid = req.params.courseId
-	const course = await catalog.get(uid)
+	const req = ireq as extended.CourseRequest
 	const ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
+	const course = req.course
+	let module
+	if (course.modules.length === 1) {
+		module = course.modules[0]
+	}
 
-	if (course) {
-		try {
-			await xapi.record(req, course, xapi.Verb.Disliked)
-		} catch (err) {
-			res.sendStatus(500)
-		} finally {
-			res.redirect(ref)
-		}
-	} else {
+	try {
+		await xapi.record(req, course, xapi.Verb.Disliked, undefined, module)
+	} catch (err) {
 		res.sendStatus(500)
+	} finally {
+		res.redirect(ref)
 	}
 }
 

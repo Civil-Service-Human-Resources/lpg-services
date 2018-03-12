@@ -48,7 +48,7 @@ function getBreadcrumbs(
 		},
 		{
 			name: 'Choose Date',
-			url: `/book/${course.id}/${module.id}/choose-date?event=${
+			url: `/book/${course.id}/${module.id}/choose-date?eventId=${
 				event ? event.id : ''
 			}`,
 		},
@@ -141,6 +141,11 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const course = req.course
 	const module = req.module!
 	const selectedEventId = req.query.eventId
+
+	if (!selectedEventId && req.session) {
+		delete req.session!.po
+		delete req.session!.fap
+	}
 
 	const today = new Date()
 
