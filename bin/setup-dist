@@ -9,6 +9,7 @@ mkdir -p "$dist"
 cd "$dist"
 
 ln -s ../src/locale
+ln -s build node_modules
 
 mkdir management-ui
 mkdir management-ui/assets

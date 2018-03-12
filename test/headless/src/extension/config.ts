@@ -10,7 +10,7 @@ try {
 		dotenv.config({path: envFile})
 	}
 } catch (err) {
-	if (PROFILE === 'local') {
+	if (!process.env.CI) {
 		warn(`
 !!! Unable to load the env file at ${envFile} !!!
 

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import * as config from 'lib/config'
+import * as datetime from 'lib/datetime'
 
 export interface BasicInfo {
 	height: number
@@ -9,10 +10,6 @@ export interface BasicInfo {
 	thumbnail_width: string
 	title: string
 	width: number
-}
-
-function convertDuration(isoDuration: string): string {
-	return isoDuration.substr(2).toLowerCase()
 }
 
 // NOTE: Callers may want to retry in case of error with YouTube.
@@ -56,7 +53,7 @@ export async function getBasicInfo(
 
 export async function getDuration(
 	videoID: string
-): Promise<string | undefined> {
+): Promise<number | undefined> {
 	let resp
 	try {
 		resp = await axios.get(
@@ -68,6 +65,6 @@ export async function getDuration(
 		return
 	}
 	if (resp.data && resp.data.items && resp.data.items[0]) {
-		return convertDuration(resp.data.items[0].contentDetails.duration)
+		return datetime.parseDuration(resp.data.items[0].contentDetails.duration)
 	}
 }
