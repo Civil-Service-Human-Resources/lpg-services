@@ -3,7 +3,7 @@
         <div class="grid-row">
             <div class="column-full">
                 <h1 class="heading-large">{{i18n('home_page_title')}}</h1>
-                <h2 class="heading-medium heading heading--medium heading--red-top lpg-required-learning">
+                <h2 class="heading-medium heading heading--red-top lpg-required-learning">
                     {{i18n('required_section_title')}}
                 </h2>
 
@@ -19,8 +19,9 @@
                 <p>{{i18n('required_learning_done')}}</p>
                 {{/if}}
             </div>
+            <hr class="clear">
             <div class="column-full">
-                <h2 class="heading-medium heading heading--medium heading--red-top lpg-other-learning">
+                <h2 class="heading-medium heading heading--red-top lpg-other-learning">
                     {{i18n('other_section_title')}}
                 </h2>
                 {{#if plannedLearning.length}}
@@ -62,7 +63,7 @@
             </div>
             <div class="grid-row">
                 <div class="column-full">
-                    <p><a href="/suggested-for-you">{{i18n('home_page_suggestions_link')}}</a></p>
+                    <p><a href="/suggestions-for-you">{{i18n('home_page_suggestions_link')}}</a></p>
                 </div>
             </div>
 

@@ -85,8 +85,8 @@ describe('feedback form functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display feedback link on suggested for you page', async () => {
-		await page.goto(config.BASE_URL + '/suggested-for-you')
+	it('Should display feedback link on suggestions for you page', async () => {
+		await page.goto(config.BASE_URL + '/suggestions-for-you')
 		await page.waitForSelector(selectors.feedbackPrompt)
 		expect(
 			await helper.checkElementIsPresent(selectors.feedbackPrompt, page)

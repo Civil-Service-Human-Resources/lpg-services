@@ -17,7 +17,7 @@ function findCourseByUID(courses: model.Course[], id: string) {
 
 export async function addToPlan(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
+	const ref = req.query.ref === 'home' ? '/' : '/suggestions-for-you'
 	const course = req.course
 	let module
 	if (course.modules.length === 1) {
@@ -33,12 +33,12 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 	}
 }
 
-export async function removeFromSuggested(
+export async function removeFromSuggestions(
 	ireq: express.Request,
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	const ref = req.query.ref === 'home' ? '/' : '/suggested-for-you'
+	const ref = req.query.ref === 'home' ? '/' : '/suggestions-for-you'
 	const course = req.course
 	let module
 	if (course.modules.length === 1) {
@@ -54,7 +54,7 @@ export async function removeFromSuggested(
 	}
 }
 
-export async function suggestedForYou(
+export async function suggestionsForYou(
 	req: express.Request,
 	res: express.Response
 ) {
