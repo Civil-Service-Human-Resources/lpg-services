@@ -73,6 +73,7 @@ app.get('/reset-password', userController.resetPassword)
 app.post('/feedback.record', feedbackController.record)
 
 app.use(passport.isAuthenticated)
+app.use(passport.hasRole('learner'))
 
 app.get('/api/lrs.record', learningRecordController.record)
 

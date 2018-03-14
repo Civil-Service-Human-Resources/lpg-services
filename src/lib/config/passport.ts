@@ -11,7 +11,8 @@ function createUser(data: any) {
 		data.emailAddress,
 		data.nameID,
 		data.nameIDFormat,
-		data.sessionIndex
+		data.sessionIndex,
+		data.roles
 	)
 	user.department = data.department
 	user.profession = data.profession
@@ -102,6 +103,19 @@ export function isAuthenticated(
 	session.save(() => {
 		res.redirect('/authenticate')
 	})
+}
+
+export function hasRole(role: string) {
+	return (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction
+	) => {
+		if (req.user && req.user.hasRole(role)) {
+			return next()
+		}
+		res.sendStatus(401)
+	}
 }
 
 export function logout(req: express.Request, res: express.Response) {
