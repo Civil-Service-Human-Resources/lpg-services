@@ -1,0 +1,5 @@
+.home {
+	@include e(suggested) {
+		@include core-16;
+	}
+}

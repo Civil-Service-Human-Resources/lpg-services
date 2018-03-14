@@ -37,9 +37,6 @@
 		}
 	}
 
-	@include e(title) {
-	}
-
 	@include e(rating) {
 		@extend %li;
 		min-width: 148px;
