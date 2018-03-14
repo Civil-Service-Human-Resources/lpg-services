@@ -4,6 +4,7 @@ export const selectors: Record<string, string> = {
 	department: '.lpg-department',
 	departmentFieldError: '.lpg-department-error',
 	emailAddress: '.lpg-email-address',
+	emailAddressReadOnly: '.lpg-email-address-read-only',
 	feedbackLink: '.lpg-feedback-link',
 	firstName: '.lpg-first-name',
 	firstNameFieldError: '.lpg-name-error',
