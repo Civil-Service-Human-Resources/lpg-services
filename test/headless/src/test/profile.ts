@@ -46,11 +46,7 @@ describe('profile page functionality', () => {
 	})
 
 	it('Should display username field which matches email address', async () => {
-		const username = await helper.returnElementAttribute(
-			selectors.emailAddress,
-			'value',
-			page
-		)
+		const username = await helper.getText(selectors.emailAddress, page)
 		expect(username).toEqual(TEST_USERNAME)
 	})
 
@@ -90,11 +86,7 @@ describe('profile page functionality', () => {
 
 	it('Should display the username field as readonly', async () => {
 		expect(
-			await helper.returnElementAttribute(
-				selectors.emailAddress,
-				'readonly',
-				page
-			)
-		).toBeTruthy()
+			await helper.checkElementIsPresent(selectors.emailAddressReadOnly, page)
+		).toBe(true)
 	})
 })
