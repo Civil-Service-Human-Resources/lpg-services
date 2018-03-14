@@ -74,11 +74,10 @@
                                 {{#if signedInUser.profession.split(',').length }}
                                     {{#each (signedInUser.profession.split(',')) as aow}}
                                           <li>{{i18n('areas-of-work')[aow]}}</li>
-
                                     {{/each}}
                                 {{/if}}
-                            {{elseif signedInUser.profesion}}
-                                {{signedInUser.profession}}
+                            {{elseif signedInUser.profession}}
+                                {{signedInUser.profession === 'Other' ? 'Other' : i18n('areas-of-work')[signedInUser.profession]}}
                             {{/if}}
 
 

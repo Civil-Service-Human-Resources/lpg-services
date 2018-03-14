@@ -7,12 +7,23 @@
 
 	<p class="tile__attribution">Recommended by profession</p>
 	<ul class="tile__properties">
-		<li class="tile__property">{{course.getType()}}</li>
+            <li class="tile__property">
+                <span class="tile__key">Type</span>
+                <span class="tile__value">{{course.getType()}}</span>
+            </li>
 
-		<li class="tile__property">{{course.getDuration()}}</li>
+            <li class="tile__property">
+                <span class="tile__key">Duration</span>
+                <span class="tile__value">{{course.getDuration}}</span>
+            </li>
 
-		<li class="tile__property">{{course.price ? course.price : 'Free'}}</li>
-	</ul>
+
+            <li class="tile__property">
+                <span class="tile__key">Cost</span>
+                <span class="tile__value">{{course.price ? course.price : 'Free'}}</span>
+            </li>
+
+    </ul>
 	<p>
 		{{course.shortDescription}}
 	</p>
