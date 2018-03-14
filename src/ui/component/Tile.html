@@ -6,7 +6,14 @@
 		</a>
 	</h4>
 
-	<p class="tile__attribution">Recommended by profession</p>
+	<p class="tile__attribution">Work area:
+	{{#if course.getAreasOfWork().length}}
+	    {{#each course.getAreasOfWork() as aow, index}}
+
+	        {{i18n('areas-of-work')[aow]}}{{course.getAreasOfWork().length !== index + 1 ? ', ' : ''}}
+	    {{/each}}
+	{{/if}}
+	</p>
 	<ul class="tile__properties">
             <li class="tile__property">
                 <span class="tile__key">Type</span>
@@ -21,7 +28,7 @@
 
             <li class="tile__property">
                 <span class="tile__key">Cost</span>
-                <span class="tile__value">{{course.price ? course.price : 'Free'}}</span>
+                <span class="tile__value">&pound;{{course.price ? course.price : 'Free'}}</span>
             </li>
 
     </ul>
