@@ -48,6 +48,7 @@ export function configure(
 					nameID: profile.nameID,
 					nameIDFormat: profile.nameIDFormat,
 					profession: profile['http://wso2.org/claims/profession'],
+					roles: profile['http://wso2.org/claims/role'],
 					sessionIndex: profile.sessionIndex,
 				}),
 				{}
