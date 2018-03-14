@@ -26,11 +26,6 @@
 	}
 
 	@include e(actions) {
-		@include media($desktop-breakpoint) {
-			position: absolute;
-			bottom: 15px;
-		}
-
 		a {
 			display: inline-block;
 		}
@@ -45,16 +40,16 @@
 		text-align: left;
 	}
 
-	@include e(property) {
-		display: block;
-		width: 100%;
-		float: none;
+	@include e(value) {
 		@include bold-16;
+	}
+	@include e(key) {
+		display: block;
+		float: left;
+		margin-right: 10px;
 
 		@include media(desktop) {
-			display: inline-block;
-			width: 33%;
-			float: left;
+			width: 80px;
 		}
 	}
 }
