@@ -1,7 +1,7 @@
 import * as config from 'extension/config'
 import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
-import {createUser, deleteUser, getUser} from 'extension/user'
+import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import {loginToCsl} from 'page/login'
 import {
 	returnUserProfileDetails,
@@ -30,7 +30,8 @@ describe('profile page functionality', () => {
 			username: config.BASIC_AUTH_USERNAME,
 		})
 		await page.goto(config.URL)
-		await createUser(TEST_USERNAME, config.TEST_PASSWORD)
+		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
+		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commerical', 'G7')
 		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
 		await page.waitFor(selectors.signoutButton, {timeout: 10000})
 		await page.goto(config.BASE_URL + '/profile')
@@ -53,7 +54,7 @@ describe('profile page functionality', () => {
 
 	it('Should display username field which matches email address', async () => {
 		const username = await helper.returnElementAttribute(
-			selectors.userName,
+			selectors.emailAddress,
 			'value',
 			page
 		)
@@ -82,12 +83,6 @@ describe('profile page functionality', () => {
 		expect(await helper.checkElementIsPresent(selectors.grade, page)).toBe(true)
 	})
 
-	it('Should display the save profile changes button', async () => {
-		expect(
-			await helper.checkElementIsPresent(selectors.saveProfileButton, page)
-		).toBe(true)
-	})
-
 	it('Should display a sign-out button with correct url', async () => {
 		const signoutLink = await helper.returnElementAttribute(
 			selectors.signoutButton,
@@ -100,63 +95,13 @@ describe('profile page functionality', () => {
 		expect(signoutLink).toEqual('/sign-out')
 	})
 
-	it('Should display empty profession, department and grade fields on first login', async () => {
-		const profile = await returnUserProfileDetails(page)
-		expect(profile.userName).toBeTruthy()
-		for (const prop of ['department', 'profession', 'grade']) {
-			expect(profile[prop]).toBe('')
-		}
-	})
-
-	it('Should display an error message to the user if profile is incomplete', async () => {
-		await page.waitFor(selectors.incompleteProfileError, timeout)
-		expect(
-			await helper.checkElementIsPresent(selectors.incompleteProfileError, page)
-		).toBe(true)
-	})
-
 	it('Should display the username field as readonly', async () => {
 		expect(
-			await helper.returnElementAttribute(selectors.userName, 'readonly', page)
+			await helper.returnElementAttribute(
+				selectors.emailAddress,
+				'readonly',
+				page
+			)
 		).toBeTruthy()
-	})
-
-	it('Should display an error message for missing firstname entry', async () => {
-		await setProfileFieldToEmptyAndSave(selectors.firstName, page)
-		await page.waitFor(selectors.firstNameFieldError, timeout)
-		expect(
-			await helper.checkElementIsPresent(selectors.firstNameFieldError, page)
-		).toBe(true)
-	})
-
-	it('Should display an error message for missing department field entry', async () => {
-		await setProfileFieldToEmptyAndSave(selectors.department, page)
-		await page.waitFor(selectors.departmentFieldError, timeout)
-		expect(
-			await helper.checkElementIsPresent(selectors.departmentFieldError, page)
-		).toBe(true)
-	})
-
-	it('Should display an error message for missing professions field entry', async () => {
-		await setProfileFieldToEmptyAndSave(selectors.profession, page)
-		await page.waitFor(selectors.professionFieldError, timeout)
-		expect(
-			await helper.checkElementIsPresent(selectors.professionFieldError, page)
-		).toBe(true)
-	})
-
-	it('Should display an error message for missing grade field entry', async () => {
-		await setProfileFieldToEmptyAndSave(selectors.grade, page)
-		await page.waitFor(selectors.gradeFieldError, timeout)
-		expect(
-			await helper.checkElementIsPresent(selectors.gradeFieldError, page)
-		).toBe(true)
-	})
-
-	it('Should save profile details to the user account and display profile updated page', async () => {
-		await setUserProfileDetails(page)
-		expect(
-			await helper.checkElementIsPresent(selectors.profileUpdatedMessage, page)
-		).toBe(true)
 	})
 })

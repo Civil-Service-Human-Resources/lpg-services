@@ -1,23 +1,22 @@
 import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
-	department: '#department',
+	department: '.lpg-department',
 	departmentFieldError: '.lpg-department-error',
+	emailAddress: '.lpg-email-address',
 	feedbackLink: '.lpg-feedback-link',
-	firstName: '#givenName',
+	firstName: '.lpg-first-name',
 	firstNameFieldError: '.lpg-name-error',
-	grade: '#grade',
+	grade: '.lpg-grade',
 	gradeFieldError: '.lpg-grade-error',
 	incompleteProfileError: '.lpg-incomplete-profile',
-	profession: '#profession',
+	profession: '.lpg-profession',
 	professionFieldError: '.lpg-profession-error',
 	profileForm: '.form-control',
 	profilePageButton: '#proposition-links > li > a',
 	profileUpdatedMessage: '.lpg-profile-updated',
-	saveProfileButton: 'input[value="Continue"]',
 	signoutButton: 'a[href="/sign-out"]',
 	updateProfileError: '#error-summary-heading-example-1',
-	userName: '#userName',
 }
 
 export async function returnUserProfileDetails(page: puppeteer.Page) {
