@@ -361,11 +361,11 @@ export class User {
 	}
 
 	hasCompleteProfile() {
-		return this.department && this.profession && this.grade§2
+		return this.department && this.profession && this.grade
 	}
 
 	hasRole(role: string) {
-		if (this.roles.indexOf(role) > -1) {
+		if (this.roles && this.roles.indexOf(role) > -1) {
 			return true
 		} else {
 			return false

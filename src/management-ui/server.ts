@@ -65,6 +65,8 @@ passport.configure('lpg-management-ui', config.AUTHENTICATION.serviceUrl, app)
 i18n.configure(app)
 
 app.use(passport.isAuthenticated)
+app.use(passport.hasRole('management'))
+
 app.get('/sign-in', loginController.signIn)
 app.get('/sign-out', loginController.signOut)
 
