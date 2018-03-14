@@ -102,7 +102,7 @@ export const ExtensionValidators = {
 			)
 		}
 	},
-	[Extension.VideoSessionID]: requireString('VideoSessionID'),
+	[Extension.VideoSessionID]: requireString('VideoSessionID', true),
 	[Extension.VideoTime]: requireNumber('VideoTime'),
 	[Extension.VideoTimeFrom]: requireNumber('VideoTimeFrom'),
 	[Extension.VideoTimeTo]: requireNumber('VideoTimeTo'),
@@ -219,11 +219,16 @@ function requireNumber(extensionName: string) {
 	}
 }
 
-function requireString(extensionName: string) {
+function requireString(extensionName: string, required = false) {
 	return (val: any) => {
-		if (typeof val !== 'string' || !val) {
+		if (typeof val !== 'string') {
 			throw new Error(
 				`xAPI ${extensionName} extension value must be a string. received: ${val}`
+			)
+		}
+		if (required && !val) {
+			throw new Error(
+				`xAPI ${extensionName} extension value must not be an empty string.`
 			)
 		}
 	}
@@ -320,7 +325,7 @@ export async function record(
 	if (extensions) {
 		const exts = Extension as Record<string, string | undefined>
 		const seen = new Set()
-		for (let extension of Object.keys(extensions)) {
+		for (let [extension, value] of Object.entries(extensions)) {
 			if (!extension.startsWith('http')) {
 				if (!exts[extension]) {
 					throw new Error(
@@ -335,10 +340,9 @@ export async function record(
 					`Could not find placement location for the extension: ${extension}`
 				)
 			}
-			let value = extensions[extension]
-			const validator = ExtensionValidators[extension]
-			if (validator) {
-				value = validator(value)
+			const validate = ExtensionValidators[extension]
+			if (validate) {
+				validate(value)
 			}
 			switch (placement) {
 				case Placement.Context:
