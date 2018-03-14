@@ -36,7 +36,7 @@
 			extensions = {}
 		}
 		extensions.VideoLength = videoLength
-		extensions.VideoSessionId = sessionId
+		extensions.VideoSessionID = sessionId
 		var url =
 			'/api/lrs.record?courseId=' +
 			encodeURIComponent(courseId) +
@@ -53,17 +53,19 @@
 		}
 		var async = true
 		if (viaBeacon) {
-			if (navigator.sendBeacon) {
-				navigator.sendBeacon(url)
-				return
-			}
+			// TODO(tav): Technically, navigator.sendBeacon should make the HTTP call
+			// without having to block the user with a sync call or getting killed by
+			// the browser when the user closes the window. But for some reason this
+			// doesn't seem to be working as expected. Investigate and fix later.
+			//
+			// if (navigator.sendBeacon) {
+			// 	if (navigator.sendBeacon(url)) {
+			//     return
+			//   }
+			// }
 			async = false
 		}
 		var xhr = new XMLHttpRequest()
-		xhr.addEventListener('load', function() {
-			console.log('Received response for: ' + verb + ' (' + value + ')')
-			console.log(this.responseText)
-		})
 		xhr.open('GET', url, async)
 		xhr.send()
 	}
