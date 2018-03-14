@@ -3,15 +3,8 @@ import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
 import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import {loginToCsl} from 'page/login'
-import {
-	returnUserProfileDetails,
-	selectors,
-	setProfileFieldToEmptyAndSave,
-	setUserProfileDetails,
-} from 'page/profile'
+import {selectors} from 'page/profile'
 import * as puppeteer from 'puppeteer'
-
-const timeout = 10000
 
 function genUserEmail() {
 	return `test${Date.now()}@c.gov.uk`
