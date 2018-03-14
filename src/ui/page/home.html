@@ -39,36 +39,8 @@
         </div>
     </div>
     <div class="fullbleed fullbleed--grey home__suggested">
-        <div class="container container--main">
-            <div class="grid-row">
-                <div class="column-full">
-                    <h2 class="heading-medium u-space-t30 lpg-suggestions-section">{{i18n('suggestions_page_title')}}</h2>
-                    <p>{{i18n('home_page_suggestions', i18n('proposition_name'))}}</p>
-                </div>
-            </div>
-            <div class="grid-row grid-row--suggested">
-                {{#each suggestedLearning.slice(0,3) as course}}
-                <div class="column-third">
-                    <Tile :course/>
-                </div>
-                {{/each}}
-            </div>
+    <SuggestionsSection title="{{i18n('suggestions_page_title')}}" lede="{{i18n('home_page_suggestions', i18n('proposition_name'))}}" :suggestedLearning home={{true}}/>
 
-            <div class="grid-row grid-row--suggested">
-                {{#each suggestedLearning.slice(3,suggestedLearning.length) as course}}
-                <div class="column-third">
-                    <Tile :course/>
-                </div>
-                {{/each}}
-            </div>
-            <div class="grid-row">
-                <div class="column-full">
-                    <p><a href="/suggestions-for-you">{{i18n('home_page_suggestions_link')}}</a></p>
-                </div>
-            </div>
-
-
-        </div>
     </div>
 
 </Page>

@@ -1,0 +1,32 @@
+<div class="container container--main">
+  <div class="grid-row">
+      <div class="column-full">
+          <h2 class="heading-medium u-space-t30 lpg-suggestions-section">{{title}}</h2>
+          {{#if lede}}
+          <p>{{lede}}</p>
+          {{/if}}
+      </div>
+  </div>
+  <div class="grid-row grid-row--suggested">
+      {{#each suggestedLearning.slice(0,3) as course}}
+      <div class="column-third">
+          <Tile :course/>
+      </div>
+      {{/each}}
+  </div>
+
+  <div class="grid-row grid-row--suggested">
+      {{#each suggestedLearning.slice(3,suggestedLearning.length) as course}}
+      <div class="column-third">
+          <Tile :course/>
+      </div>
+      {{/each}}
+  </div>
+  {{#if home === true }}
+  <div class="grid-row">
+      <div class="column-full">
+          <p><a href="/suggestions-for-you">{{i18n('home_page_suggestions_link')}}</a></p>
+      </div>
+  </div>
+  {{/if}}
+</div>

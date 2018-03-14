@@ -4,28 +4,8 @@
             <div class="column-full">
                 <h1 class="heading-large">{{i18n('suggestions_page_title')}}</h1>
                 <p>{{i18n('home_page_suggestions', i18n('proposition_name'))}}</p>
-                {{#if courses.length}}
-                <table>
-                    <tbody>
-                        {{#each courses as course}}
-                        <tr>
-                            <td>
-                                <a href="/courses/{{ course.id }}">{{ course.title }}</a>
-                            </td>
-                            <td>{{ i18n(course.getType()) }}</td>
-                            <td>{{ course.shortDescription }}</td>
-                            <td>
-                                <a class="button" href="/suggestions-for-you/add/{{course.id}}">Add</a>
-                            </td>
-                            <td>
-                                <a class="button" href="/suggestions-for-you/remove/{{course.id}}/">Remove</a>
-                            </td>
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-                {{/if}}
             </div>
         </div>
     </div>
+    <SuggestionsSection title="From " suggestedLearning="{{courses}}" home={{true}}/>
 </Page>
