@@ -6,13 +6,13 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 
-function findCourseByUID(courses: model.Course[], id: string) {
-	for (const course of courses) {
-		if (course.id === id) {
-			return course
-		}
+export function hashArray(courses: model.Course[], key: string) {
+	const hash: Record<string, model.Course> = {}
+	for (const entry of courses) {
+		const hashIndex: string = (entry as any)[key]
+		hash[hashIndex] = entry
 	}
-	return null
+	return hash
 }
 
 export async function addToPlan(ireq: express.Request, res: express.Response) {
@@ -67,13 +67,24 @@ export async function suggestionsForYou(
 	)
 }
 
-export async function suggestions(user: model.User) {
+export async function suggestions(
+	user: model.User,
+	learningRecordIn: Record<string, model.Course> = {}
+) {
 	const suggestedLearning = (await catalog.findSuggestedLearning(user)).entries
-	const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
+	let learningRecord: Record<string, model.Course> = {}
+	if (Object.keys(learningRecordIn).length > 0) {
+		learningRecord = learningRecordIn
+	} else {
+		const records = await learnerRecord.getLearningRecordOf(null, user)
+		learningRecord = records.length ? hashArray(records, 'id') : {}
+	}
+
 	const modified: model.Course[] = []
 
 	for (const course of suggestedLearning) {
-		const matched = findCourseByUID(learningRecord, course.id)
+		const matched = learningRecord[course.id]
+
 		if (matched && matched.record) {
 			// there is a reference to the course in the learning record
 			if (
