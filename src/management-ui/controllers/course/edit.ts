@@ -174,13 +174,14 @@ async function upload(uid: string, entry: unzip.Entry) {
 
 		logger.debug(`uploading : ${entry.path}`)
 		const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
+		const storagePath = `${uid}/${entry.path}`
 
 		if (Object.keys(filesToSubstitute).indexOf(filename) >= 0) {
 			const fileData = (await getFile(filename)) as fs.ReadStream
 			fileData.pipe(
 				blob.createWriteStreamToBlockBlob(
 					'lpgdevcontent',
-					entry.path,
+					storagePath,
 					(err, blobData) => {
 						if (err) {
 							reject(err)
@@ -199,7 +200,7 @@ async function upload(uid: string, entry: unzip.Entry) {
 			entry.pipe(
 				blob.createWriteStreamToBlockBlob(
 					'lpgdevcontent',
-					entry.path,
+					storagePath,
 					(err, blobData) => {
 						if (err) {
 							reject(err)
