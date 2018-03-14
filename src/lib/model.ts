@@ -337,6 +337,7 @@ export class User {
 	readonly nameID: string
 	readonly nameIDFormat: string
 	readonly sessionIndex: string
+	readonly roles: string[]
 
 	department: string
 	profession: string
@@ -348,16 +349,26 @@ export class User {
 		emailAddress: string,
 		nameID: string,
 		nameIDFormat: string,
-		sessionIndex: string
+		sessionIndex: string,
+		roles: string[]
 	) {
 		this.id = id
 		this.emailAddress = emailAddress
 		this.nameID = nameID
 		this.nameIDFormat = nameIDFormat
 		this.sessionIndex = sessionIndex
+		this.roles = roles
 	}
 
 	hasCompleteProfile() {
-		return this.department && this.profession && this.grade
+		return this.department && this.profession && this.grade§2
+	}
+
+	hasRole(role: string) {
+		if (this.roles.indexOf(role) > -1) {
+			return true
+		} else {
+			return false
+		}
 	}
 }
