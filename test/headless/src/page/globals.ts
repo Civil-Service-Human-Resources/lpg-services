@@ -10,7 +10,7 @@ export const selectors: Record<string, string> = {
 	learningRecordMenuButton: 'a[href="/learning-record"]',
 	searchMenuButton: 'a[href="/search"]',
 	signoutMenuButton: 'a[href="/sign-out"]',
-	suggestedMenuButton: 'a[href="suggested-for-you"]',
+	suggestionsMenuButton: 'a[href="suggestions-for-you"]',
 }
 
 export async function completeFeedback(page: puppeteer.Page) {
