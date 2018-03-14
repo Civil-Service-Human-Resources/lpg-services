@@ -27,7 +27,7 @@
                         {{#each events as event}}
                         <div class="div-table__row u-clearfix">
                             <div class="div-table__cell">{{formatDate(event.date)}}</div>
-                            <div class="div-table__cell">{{course.duration}}</div>
+                            <div class="div-table__cell">{{course.getDuration()}}</div>
                             <div class="div-table__cell">{{event.location}}</div>
                             <div class="div-table__cell">&pound;{{course.price}}</div>
                             <div class="div-table__cell  div-table__cell--action">
