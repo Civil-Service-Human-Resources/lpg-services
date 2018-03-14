@@ -1,0 +1,110 @@
+<Page title="Profile">
+    <div class="container">
+        <h1 class="heading-large">
+        <span class="heading-secondary">Your profile</span>
+            {{i18n('profile_page_title', signedInUser.givenName) }}
+        </h1>
+        <div class="grid-row">
+            <div class="column-full">
+            <h2 class="heading heading-medium">
+                  Personal details
+            </h2>
+            <table class="key-value-list key-value-list--auto u-space-b30 table--top">
+                <thead class="visuallyhidden">
+                    <tr><th>Detail</th>
+                    <th>Your entered value</th>
+                    <th>Action</th>
+                </tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_name_label')}}</td>
+                        <td class="key-value-list__value key-value-list__value--auto">
+                                {{signedInUser.givenName}}
+                        </td>
+                        <td class="key-value-list__item-action">
+                            <a href="/profile/givenName">Change<span class="visuallyhidden"> your first name</span></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_email_label')}}</td>
+                        <td class="key-value-list__value key-value-list__value--auto">
+                                {{signedInUser.emailAddress}}
+                        </td>
+                        <td class="key-value-list__item-action">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_password_label')}}</td>
+                        <td class="key-value-list__value key-value-list__value--auto">••••••••</td>
+                        <td class="key-value-list__item-action">
+                            <a href="/profile/password">Change<span class="visuallyhidden"> your password</span></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h2 class="heading heading-medium ">
+                  Job details
+            </h2>
+            <table class="key-value-list key-value-list--auto u-space-b30 table--top">
+                <thead class="visuallyhidden">
+                    <tr>
+                        <th>Detail</th>
+                        <th>Your entered value</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_department_label')}}</td>
+                        <td class="key-value-list__value key-value-list__auto--auto">
+                            {{signedInUser.department === 'other' ? 'Other' : i18n('departments')[signedInUser.department] }}
+
+                        </td>
+                        <td class="key-value-list__item-action">
+                            <a href="/profile/department">Change<span class="visuallyhidden"> your job organisation</span></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_area_label')}}</td>
+                        <td class="key-value-list__value key-value-list__value--auto">
+                            <ul>
+                            {{#if signedInUser.profession.includes(',')}}
+                                {{#if signedInUser.profession.split(',').length }}
+                                    {{#each (signedInUser.profession.split(',')) as aow}}
+                                          <li>{{i18n('areas-of-work')[aow]}}</li>
+                                    {{/each}}
+                                {{/if}}
+                            {{elseif signedInUser.profession}}
+                                {{signedInUser.profession === 'Other' ? 'Other' : i18n('areas-of-work')[signedInUser.profession]}}
+                            {{/if}}
+
+
+                            </ul>
+
+                        </td>
+                        <td class="key-value-list__item-action">
+                            <a href="/profile/profession">Change<span class="visuallyhidden"> your area of work</span></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_grade_label')}}</td>
+                        <td class="key-value-list__value key-value-value--auto">
+                                {{signedInUser.grade === 'other' ? 'Other' : i18n('grades')[signedInUser.grade] }}
+
+                        </td>
+                        <td class="key-value-list__item-action">
+                            <a href="/profile/grade">Change<span class="visuallyhidden"> your job grade</span></a>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+
+            </div>
+        </div>
+    </div>
+</Page>

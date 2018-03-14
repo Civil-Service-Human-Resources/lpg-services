@@ -1,0 +1,7 @@
+{{#if optionType === 'typeahead'}}
+    <TypeAhead :options :inputName :script />
+{{elseif optionType === 'checkbox'}}
+    <Checkboxes :options :inputName :script />
+{{elseif optionType === 'radio'}}
+    <Radios :options :inputName :script />
+{{/if}}

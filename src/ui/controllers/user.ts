@@ -10,6 +10,7 @@ export interface Profile {
 	user: model.User
 	identityServerFailed?: boolean
 	validFields?: boolean
+	passwordConfirmedFailed?: boolean
 }
 
 export interface SignIn {
@@ -28,12 +29,22 @@ interface WSO2Profile {
 		givenName: string
 	}
 	userName: string
+	password?: string
 }
 
 const SCIM2_HEADERS: Record<string, string> = {
 	Accept: 'application/json',
 }
 SCIM2_HEADERS['Content-Type'] = 'application/json'
+
+export enum ProfileDetail {
+	givenName = 'profile_name_label',
+	emailAddress = 'profile_email_label',
+	password = 'profile_password_label',
+	department = 'profile_department_label',
+	profession = 'profile_area_label',
+	grade = 'profile_grade_label',
+}
 
 const http = axios.create({
 	httpsAgent: new https.Agent({
@@ -42,7 +53,7 @@ const http = axios.create({
 })
 
 function renderProfile(req: express.Request, props: Profile) {
-	return template.render('profile/edit', req, props)
+	return template.render('profile/view', req, props)
 }
 
 function renderSignIn(req: express.Request, props: SignIn) {
@@ -66,23 +77,70 @@ async function updateUserObject(
 
 function validateForm(req: express.Request) {
 	const form = req.body
-	let areErrors = false
+	let validFields = true
 	for (const input of Object.keys(form)) {
 		if (!/\S/.test(form[input])) {
 			form[input] = ''
-			areErrors = true
+			validFields = false
 		}
 	}
-	if (areErrors) {
-		return form
-	}
+	return validFields
 }
-
-export function editProfile(req: express.Request, res: express.Response) {
+export function viewProfile(req: express.Request, res: express.Response) {
 	res.send(
 		renderProfile(req, {
 			user: req.user,
 			validFields: true,
+		})
+	)
+}
+
+export enum OptionTypes {
+	Radio = 'radio',
+	Checkbox = 'checkbox',
+	Typeahead = 'typeahead',
+}
+
+export function renderEditPage(req: express.Request, res: express.Response) {
+	const inputName = req.params.profileDetail
+	const label = ProfileDetail[inputName]
+	let options = {}
+	let optionType: string = ''
+	let lede: string = ''
+	switch (inputName) {
+		case 'department':
+			options = req.__('departments')
+			optionType = OptionTypes.Typeahead
+			break
+		case 'profession':
+			options = req.__('areas-of-work')
+			optionType = OptionTypes.Checkbox
+			lede = req.__('register_area_page_intro')
+			break
+		case 'grade':
+			options = req.__('grades')
+			optionType = OptionTypes.Radio
+	}
+
+	const script = `
+	<script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
+	<script type="text/javascript">
+		var selectEl = document.querySelector('.type-ahead')
+		accessibleAutocomplete.enhanceSelectElement({
+			autoselect: true,
+			defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
+			minLength: 1,
+			selectElement: selectEl,
+		})
+    </script>`
+	res.send(
+		template.render('profile/profileEditPage', req, {
+			inputName,
+			label,
+			lede,
+			optionType,
+			options: Object.entries(options),
+			script,
 		})
 	)
 }
@@ -123,26 +181,38 @@ export function signOut(req: express.Request, res: express.Response) {
 
 export function tryUpdateProfile(req: express.Request, res: express.Response) {
 	const validFields = validateForm(req)
-	if (validFields) {
-		res.send(renderProfile(req, {user: validFields, validFields: false}))
+
+	if (!validFields) {
+		const inputName = req.params.profileDetail
+		const label = ProfileDetail[inputName]
+		res.send(
+			template.render('profile/profileEditPage', req, {
+				inputName,
+				label,
+				validFields,
+			})
+		)
 	} else {
 		updateProfile(req, res)
 	}
 }
-
 export async function updateProfile(
 	req: express.Request,
 	res: express.Response
 ) {
 	const updateProfileObject: WSO2Profile = {
 		CshrUser: {
-			department: req.body.department,
-			grade: req.body.grade,
-			profession: req.body.profession,
+			department: req.user.department,
+			grade: req.user.grade,
+			profession: req.user.profession,
 		},
-		name: {givenName: req.body.givenName},
-		userName: req.body.userName,
+		name: {givenName: req.user.givenName},
+		userName: req.user.emailAddress,
 	}
+
+	const inputName = req.params.profileDetail
+	const fieldValue = req.body[inputName]
+
 	const options = {
 		auth: {
 			password: config.AUTHENTICATION.servicePassword,
@@ -150,6 +220,47 @@ export async function updateProfile(
 		},
 		baseURL: config.AUTHENTICATION.serviceUrl,
 		headers: SCIM2_HEADERS,
+	}
+
+	switch (inputName) {
+		case 'givenName':
+			updateProfileObject.name.givenName = fieldValue
+			break
+		case 'emailAddress':
+			updateProfileObject.userName = fieldValue
+			break
+		case 'department':
+			updateProfileObject.CshrUser.department = fieldValue
+			break
+		case 'grade':
+			updateProfileObject.CshrUser.grade = fieldValue
+			break
+		case 'profession':
+			let joinedFieldValues = ''
+
+			if (Array.isArray(fieldValue)) {
+				joinedFieldValues = fieldValue.join()
+			} else if (fieldValue) {
+				joinedFieldValues = fieldValue
+			} else {
+				joinedFieldValues = 'Other'
+			}
+			updateProfileObject.CshrUser.profession = joinedFieldValues
+			break
+		case 'password':
+			updateProfileObject.password = fieldValue
+
+			if (fieldValue !== req.body.confirmPassword) {
+				res.send(
+					template.render('profile/profileEditPage', req, {
+						inputName,
+						label: ProfileDetail[inputName],
+						passwordConfirmedFailed: true,
+					})
+				)
+			}
+
+			break
 	}
 
 	try {
@@ -162,9 +273,10 @@ export async function updateProfile(
 		res.redirect('/profile-updated')
 	} catch (e) {
 		res.send(
-			renderProfile(req, {
+			template.render('profile/profileEditPage', req, {
 				identityServerFailed: true,
-				user: req.user,
+				inputName,
+				label: ProfileDetail[inputName],
 			})
 		)
 	}
