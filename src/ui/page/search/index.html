@@ -6,17 +6,18 @@
                     Search results
                 </h1>
                 <div class="search-box u-space-b30">
-                    <form name="searchLearning" method="POST" action="/prototypes/learner/v3/search">
+                    <form name="searchLearning" method="GET" action="/search">
                         <div class="form-group search-box__group">
                             <label class="visuallyhidden">Search all available learning</label>
-                            <input class="form-control search-box__input" id="searchInput" type="search" name="searchInput" value="{{ query }}" placeholder="Search CSL">
+                            <input class="form-control search-box__input" id="q" type="search" name="q" value="{{ query }}" placeholder="Search CSL">
                             <button type="submit" class="search-box__submit">Search</button>
                         </div>
                     </form>
                 </div>
                 {{#if searchResults && query}}
                 <p class="lede">There were
-                    <strong>{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{/if}}</strong>
+                    <strong>{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{else
+                        }} no {{/if}}</strong>
                     results for
                     <strong>{{ query }}</strong>
                 </p>
@@ -34,15 +35,16 @@
                                 <a class="resource__title" href="/courses/{{course.uid}}">
                                     <strong>{{{course.title}}}</strong>
                                 </a>
-                                <a class="resource__info">
-                                    <span>{{course.type ? i18n(course.type) : '' }} {{#if course.type}}, {{/if}} {{course.duration
-                                        ? course.duration : '' }}</span>
+                                <a class="resource__info resource__search__info">
+                                    <span>{{course.type ? i18n(course.type) : '' }} {{#if course.type && course.duration }}, {{/if}}
+                                        {{course.duration ? course.duration : '' }}</span>
                                 </a>
                                 <p class="resource__description">
                                     {{ course.shortDescription }}
                                 </p>
                                 <span class="resource__action">
-                                    <a href="/book/{{course.uid}}/choose-date">Book now</a>
+                                    {{#if course.type === 'face-to-face'}}
+                                    <a href="/book/{{course.uid}}/choose-date">Book now</a>{{/if}}
                                     <a href="/suggested-for-you/add/{{course.uid}}?ref=home">Add to learning plan</a>
                                 </span>
                             </li>
