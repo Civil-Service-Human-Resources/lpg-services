@@ -16,7 +16,7 @@
                 </div>
                 {{#if searchResults && query}}
                 <p class="lede">There were
-                    <strong>{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{else
+                    <strong>{{#if searchResults.totalResults}} {{searchResults.totalResults}} {{else
                         }} no {{/if}}</strong>
                     results for
                     <strong>{{ query }}</strong>
@@ -28,29 +28,25 @@
         <div class="grid-row ">
             <div class="column-full ">
                 <div class="resources">
-                    {{#if searchResults.entries && searchResults.entries.length}} {{#each searchResults.entries as course}}
-                    <div class="resource resouce__search">
+                    {{#if searchResults.results.length}} {{#each searchResults.results as course}}
+                    <div class="resource resource__search">
                         <ul class="resource__item u-clearfix">
                             <li>
-                                <a class="resource__title" href="/courses/{{course.uid}}">
+                                <a class="resource__title" href="/courses/{{course.id}}">
                                     <strong>{{{course.title}}}</strong>
                                 </a>
                                 <a class="resource__info resource__search__info">
-                                    <span>{{course.type ? i18n(course.type) : '' }} {{#if course.type && course.duration }}, {{/if}}
-                                        {{course.duration ? course.duration : '' }}</span>
+                                    <span>{{i18n(course.getType())}}{{#if course.getDuration() }}, {{course.getDuration()}}{{/if}}</span>
                                 </a>
                                 <p class="resource__description">
                                     {{ course.shortDescription }}
                                 </p>
                                 <span class="resource__action">
-                                    {{#if course.type === 'face-to-face'}}
-                                    <a href="/book/{{course.uid}}/choose-date">Book now</a>{{/if}}
-                                    <a href="/suggested-for-you/add/{{course.uid}}?ref=home">Add to learning plan</a>
+                                    {{#if course.getType() === 'face-to-face'}}
+                                    <a href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book now</a>{{/if}}
+                                    <a href="/suggested-for-you/add/{{course.id}}?ref=search">Add to learning plan</a>
                                 </span>
                             </li>
-
-
-
                         </ul>
                     </div>
                     {{/each}} {{/if}}

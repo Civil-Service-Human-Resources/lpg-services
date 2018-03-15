@@ -1,10 +1,12 @@
 import * as model from 'lib/model'
 
-export interface SearchResponse {
-	entries: model.Course[]
+export interface PageResults {
+	page: number
+	results: model.Course[]
+	size: number
+	totalResults: number
 }
 
-export interface TextSearchResponse {
+export interface SearchResults extends PageResults {
 	suggestion?: string
-	entries: model.TextSearchResult[]
 }

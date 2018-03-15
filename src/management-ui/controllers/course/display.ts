@@ -10,7 +10,7 @@ export async function index(req: express.Request, res: express.Response) {
 	const result = await catalog.listAll()
 	res.send(
 		template.render('courses/list', req, {
-			courses: result.entries,
+			courses: result.results,
 		})
 	)
 }

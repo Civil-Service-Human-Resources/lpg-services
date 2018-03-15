@@ -99,7 +99,7 @@ export async function suggestions(
 		}
 		const suggestedGroup = (await catalog.findSuggestedLearningWithParameters(
 			baseParams.serialize()
-		)).entries
+		)).results
 
 		courseSuggestions.push(modifyCourses(suggestedGroup, learningRecord, user))
 	}
@@ -109,7 +109,7 @@ export async function suggestions(
 		modifyCourses(
 			(await catalog.findSuggestedLearningWithParameters(
 				baseParams.serialize()
-			)).entries,
+			)).results,
 			learningRecord,
 			user
 		)
@@ -138,9 +138,9 @@ export async function homeSuggestions(
 
 	const suggestedLearning = [
 		...(await catalog.findSuggestedLearningWithParameters(areaOfWorkParams))
-			.entries,
+			.results,
 		...(await catalog.findSuggestedLearningWithParameters(departmentParams))
-			.entries,
+			.results,
 	]
 
 	let learningRecord: Record<string, model.Course> = {}

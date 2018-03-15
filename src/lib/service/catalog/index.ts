@@ -30,10 +30,10 @@ export async function add(course: model.Course) {
 	}
 }
 
-export async function search(query: string): Promise<api.TextSearchResponse> {
+export async function search(query: string): Promise<api.SearchResults> {
 	try {
 		const response = await http.get(`/search?query=${query}`)
-		return response.data as api.TextSearchResponse
+		return convert(response.data) as api.SearchResults
 	} catch (e) {
 		throw new Error(`Error searching for courses - ${e}`)
 	}
@@ -41,12 +41,14 @@ export async function search(query: string): Promise<api.TextSearchResponse> {
 
 export async function findRequiredLearning(
 	user: model.User
-): Promise<api.SearchResponse> {
+): Promise<api.PageResults> {
 	try {
 		const response = await http.get(
 			`/courses?mandatory=true&department=${user.department}`
 		)
-		return {entries: response.data.results.map(model.Course.create)}
+		const data = response.data
+		data.results = data.results.map(model.Course.create)
+		return data as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
 	}
@@ -66,10 +68,10 @@ export class ApiParameters {
 
 export async function findSuggestedLearningWithParameters(
 	parameters: string
-): Promise<api.SearchResponse> {
+): Promise<api.PageResults> {
 	try {
 		const response = await http.get(`/courses?${parameters}`)
-		return {entries: response.data.results.map(model.Course.create)}
+		return convert(response.data) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding suggested learning - ${e}`)
 	}
@@ -87,11 +89,18 @@ export async function get(id: string) {
 	}
 }
 
-export async function listAll(): Promise<api.SearchResponse> {
+export async function listAll(): Promise<api.PageResults> {
 	try {
 		const response = await http.get(`/courses`)
-		return {entries: response.data.results.map(model.Course.create)}
+		return convert(response.data) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error listing all courses - ${e}`)
 	}
+}
+
+function convert(data: any) {
+	if (data.results) {
+		data.results = data.results.map(model.Course.create)
+	}
+	return data
 }

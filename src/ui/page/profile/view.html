@@ -2,7 +2,7 @@
     <div class="container">
         <h1 class="heading-large">
             <span class="heading-secondary">Your profile</span>
-            {{i18n('profile_page_title', signedInUser.givenName) }}
+            {{i18n('profile_page_title', signedInUser.givenName || '') }}
         </h1>
         <div class="grid-row">
             <div class="column-full">
@@ -21,7 +21,7 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_name_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-first-name">
-                                {{signedInUser.givenName}}
+                                {{signedInUser.givenName || ''}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/givenName">Change
@@ -65,8 +65,9 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_department_label')}}</td>
                             <td class="key-value-list__value key-value-list__auto--auto lpg-department">
-                                {{signedInUser.department === 'other' ? 'Other' : i18n('departments')[signedInUser.department] }}
-
+                                {{#if signedInUser.department}}
+                                    {{signedInUser.department === 'other' ? 'Other' : i18n('departments')[signedInUser.department] }}
+                                {{/if}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/department">Change
@@ -80,17 +81,12 @@
                                 <ul>
                                     {{#if signedInUser.profession}}
                                         {{#each signedInUser.areasOfWorkArr() as aow}}
-                                        <li>
-                                        {{aow === 'other' || aow === 'Other' || aow === ''  ? 'Other' :  i18n('areas-of-work')[aow]}}
-
-                                        </li>
-
+                                            <li>
+                                                {{aow === 'other' || aow === 'Other' || aow === ''  ? 'Other' :  i18n('areas-of-work')[aow]}}
+                                            </li>
                                         {{/each}}
-                                    {{else}}
-                                        Other
                                     {{/if}}
                                 </ul>
-
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/profession">Change
@@ -101,8 +97,9 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_grade_label')}}</td>
                             <td class="key-value-list__value key-value-value--auto lpg-grade">
-                                {{signedInUser.grade === 'other' ? 'Other' : i18n('grades')[signedInUser.grade] }}
-
+                                {{#if signedInUser.grade}}
+                                    {{signedInUser.grade === 'other' ? 'Other' : i18n('grades')[signedInUser.grade] }}
+                                {{/if}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/grade">Change
