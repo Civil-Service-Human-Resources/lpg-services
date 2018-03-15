@@ -35,7 +35,7 @@ export async function home(req: express.Request, res: express.Response) {
 				}
 				delete learningHash[requiredCourse.id]
 			}
-			delete learningHash[requiredCourse.uid]
+			delete learningHash[requiredCourse.id]
 		}
 		/// learninghash is now a collection that do not have items in requiredLearning
 		Object.entries(learningHash).forEach((entry, key) => {

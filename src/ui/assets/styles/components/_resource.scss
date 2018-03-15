@@ -112,6 +112,13 @@
 		padding-left: 20px;
 		padding-right: 20px;
 	}
+
+	@include e(search) {
+		@include e(info) {
+			float: right;
+			padding: 0;
+		}
+	}
 }
 
 .resources {
