@@ -7,5 +7,7 @@
             </div>
         </div>
     </div>
-    <SuggestionsSection title="From " suggestedLearning="{{courses}}" home={{false}}/>
+    {{#each courses as coursesGroup, index}}
+        <SuggestionsSection title="From {{areasOfWork[index]}}" suggestedLearning="{{coursesGroup}}" home={{false}}/>
+    {{/each}}
 </Page>

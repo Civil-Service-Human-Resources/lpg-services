@@ -19,10 +19,10 @@ export async function home(req: express.Request, res: express.Response) {
 		const plannedLearning: model.Course[] = []
 		const requiredLearning = (await catalog.findRequiredLearning(user)).entries
 
-		const suggestedLearning = (await suggestionController.suggestions(
+		const suggestedLearning = await suggestionController.homeSuggestions(
 			user,
 			learningHash
-		)).slice(0, 6)
+		)
 
 		for (const [i, requiredCourse] of requiredLearning.entries()) {
 			if (learningHash[requiredCourse.id]) {

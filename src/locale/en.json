@@ -25,8 +25,7 @@
 	"home_page_title": "Your learning",
 	"required_section_title": "Required learning",
 	"other_section_title": "Other learning",
-	"home_page_suggestions":
-		"Tailored suggestions from %s, your area of work or your organisation.",
+	"home_page_suggestions": "Tailored suggestions from %s, your area of work or your organisation.",
 	"home_page_learning_plan_link": "See more learning in your Learning plan",
 	"home_page_suggestions_link": "See more suggestions for you",
 	"required_learning_done": "You have completed all your required learning.",
@@ -47,12 +46,9 @@
 	"learning_record_page_title": "Learning record",
 	"learning_page_feedback_intro": "You can leave feedback on X item(s).",
 	"feedback_thumbs_prompt": "Did you find this learning_type useful?",
-	"learning_record_page_required_all_done":
-		"You have completed all of your required learning courses.",
-	"learning_record_page_required_none_done":
-		"You have completed none of your required learning courses and have X to do.",
-	"learning_record_page_required_some_done":
-		"You have completed X of your required learning courses and have X to do",
+	"learning_record_page_required_all_done": "You have completed all of your required learning courses.",
+	"learning_record_page_required_none_done": "You have completed none of your required learning courses and have X to do.",
+	"learning_record_page_required_some_done": "You have completed X of your required learning courses and have X to do",
 	"learning_record_column_course_title": "Course",
 	"learning_record_column_course_type": "Type",
 	"learning_record_column_course_duration": "Duration",
@@ -66,8 +62,7 @@
 	"profile_grade_label": "Grade",
 	"register_for_account_link": "Register for an account",
 	"register_start_page_title": "Register for an account",
-	"register_start_page_intro":
-		"You need to create an account before using the proposition_name. This should take 5 minutes.",
+	"register_start_page_intro": "You need to create an account before using the proposition_name. This should take 5 minutes.",
 	"register_email_address_label": "Email address",
 	"register_email_address_confirm_label": "Confirm email address",
 	"register_email_error_title": "There was a problem with your email address",
@@ -79,27 +74,20 @@
 	"register_name_first_name_label": "First name",
 	"register_name_last_name_label": "Last name",
 	"register_name_error_title": "There was a problem with your information",
-	"register_name_error_box_no_first":
-		"Your first name does not appear to be valid",
-	"register_name_error_box_no_last":
-		"Your last name does not appear to be valid",
+	"register_name_error_box_no_first": "Your first name does not appear to be valid",
+	"register_name_error_box_no_last": "Your last name does not appear to be valid",
 	"register_name_error_label_no_first": "Enter a valid first name",
 	"register_name_error_label_no_last": "Enter a valid first name",
 	"register_organisation_title": "Your organisation",
 	"register_organisation_label": "Organisation",
-	"register_organisation_label_hint":
-		"Start typing to find your organisation name",
-	"register_organisation_error_title":
-		"There was a problem with your information",
-	"register_organisation_error_none_selected":
-		"Your organisation does not appear to be valid",
+	"register_organisation_label_hint": "Start typing to find your organisation name",
+	"register_organisation_error_title": "There was a problem with your information",
+	"register_organisation_error_none_selected": "Your organisation does not appear to be valid",
 	"register_organisation_error_label": "Select your organisation",
 	"register_area_page_title": "Your area of work",
-	"register_area_page_intro":
-		"Select all the areas of work that are relevant to your job.",
+	"register_area_page_intro": "Select all the areas of work that are relevant to your job.",
 	"register_area_error_title": "There was a problem with your information",
-	"register_area_error_none_selected":
-		"You must select at least one area of work",
+	"register_area_error_none_selected": "You must select at least one area of work",
 	"register_area_other_label": "Please clarify",
 	"register_grade_page_title": "Your grade",
 	"register_grade_error_title": "There was a problem with your information",
@@ -117,22 +105,18 @@
 	"register_password_error_title": "There was a problem with your password",
 	"register_password_error_box_none_entered": "Your password is too short",
 	"register_password_error_label_none_entered": "Enter a valid password",
-	"register_password_error_box_too_simple":
-		"Your password is not complex enough",
+	"register_password_error_box_too_simple": "Your password is not complex enough",
 	"register_password_error_label_too_simple": "Enter a valid password",
 	"register_password_error_box_no_match": "Your passwords do not match",
 	"register_password_error_label_no_match": "Enter a matching password",
 	"register_review_page_title": "Your registration details",
-	"register_review_page_intro":
-		"Check your details are correct before completing registration.",
+	"register_review_page_intro": "Check your details are correct before completing registration.",
 	"register_review_page_cta": "Complete registration",
 	"register_complete_title": "Registration complete",
-	"register_complete_intro":
-		"Your account with proposition_name has been created",
+	"register_complete_intro": "Your account with proposition_name has been created",
 	"register_complete_sub_title": "What happens next?",
 	"register_complete_p1": "We have sent you a confirmation email.",
-	"register_complete_p2":
-		"You can now (sign into the proposition_name)[/path/to/sign/in/page].",
+	"register_complete_p2": "You can now (sign into the proposition_name)[/path/to/sign/in/page].",
 	"register_process_cta": "Continue",
 	"register_process_cta_edit": "Save changes",
 	"signin_page_title": "Sign in",
@@ -145,17 +129,13 @@
 	"time_hour_plural": "hours",
 	"time_minute_plural": "minutes",
 	"banner_course_added_title": "Course successfully added",
-	"banner_course_added_text":
-		"This course has successfully been added to your learning plan",
-	"banner_course_remove_warning_title":
-		"Are you sure you want to remove this course?",
-	"banner_course_remove_warning_text":
-		"You have already started this course and your progress may be lost.",
+	"banner_course_added_text": "This course has successfully been added to your learning plan",
+	"banner_course_remove_warning_title": "Are you sure you want to remove this course?",
+	"banner_course_remove_warning_text": "You have already started this course and your progress may be lost.",
 	"banner_course_remove_warning_yes": "Yes, remove this course",
 	"banner_course_remove_warning_no": "No, keep it",
 	"banner_course_removed_title": "Course successfully removed",
-	"banner_course_removed_text":
-		"The course has successfully been removed from your learning plan",
+	"banner_course_removed_text": "The course has successfully been removed from your learning plan",
 	"search_results_page_title": "Search results",
 	"search_results_page_intro": "There were X results for search_term",
 	"top_nav_suggestions_page": "Suggestions for you",
@@ -198,5 +178,6 @@
 		"property": "Property"
 	},
 	"responsibility-for-information": "responsibility-for-information",
-	"digital": "digital"
+	"digital": "digital",
+	"commercial": "commercial"
 }
