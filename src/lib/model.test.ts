@@ -18,7 +18,7 @@ describe('Should test User roles logic', () => {
 		expect(user.hasRole('learner')).toBe(true)
 	})
 
-	it('User have role if was created with it and other roles', () => {
+	it('User should have role if was created with it and other roles', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
