@@ -17,7 +17,7 @@ export async function home(req: express.Request, res: express.Response) {
 			? suggestionController.hashArray(learningRecord, 'id')
 			: {}
 		const plannedLearning: model.Course[] = []
-		const requiredLearning = (await catalog.findRequiredLearning(user)).entries
+		const requiredLearning = (await catalog.findRequiredLearning(user)).results
 
 		const suggestedLearning = await suggestionController.homeSuggestions(
 			user,

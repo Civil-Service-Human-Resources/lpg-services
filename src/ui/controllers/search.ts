@@ -6,7 +6,12 @@ import * as striptags from 'striptags'
 
 export async function search(req: express.Request, res: express.Response) {
 	let query = ''
-	let searchResults: api.TextSearchResponse = {entries: []}
+	let searchResults: api.SearchResults = {
+		page: 0,
+		results: [],
+		size: 20,
+		totalResults: 0,
+	}
 	const start = new Date()
 	if (req.query.q) {
 		query = striptags(req.query.q)
