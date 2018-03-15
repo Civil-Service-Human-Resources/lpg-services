@@ -18,7 +18,7 @@
                 <tbody>
                     <tr>
                         <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_name_label')}}</td>
-                        <td class="key-value-list__value key-value-list__value--auto">
+                        <td class="key-value-list__value key-value-list__value--auto lpg-first-name">
                                 {{signedInUser.givenName}}
                         </td>
                         <td class="key-value-list__item-action">
@@ -30,14 +30,14 @@
                         <td class="key-value-list__value key-value-list__value--auto">
                                 {{signedInUser.emailAddress}}
                         </td>
-                        <td class="key-value-list__item-action">
+                        <td class="key-value-list__item-action lpg-email-address-read-only">
 
                         </td>
                     </tr>
 
                     <tr>
                         <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_password_label')}}</td>
-                        <td class="key-value-list__value key-value-list__value--auto">••••••••</td>
+                        <td class="key-value-list__value key-value-list__value--auto lpg-password">••••••••</td>
                         <td class="key-value-list__item-action">
                             <a href="/profile/password">Change<span class="visuallyhidden"> your password</span></a>
                         </td>
@@ -58,7 +58,7 @@
                 <tbody>
                     <tr>
                         <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_department_label')}}</td>
-                        <td class="key-value-list__value key-value-list__auto--auto">
+                        <td class="key-value-list__value key-value-list__auto--auto lpg-department">
                             {{signedInUser.department === 'other' ? 'Other' : i18n('departments')[signedInUser.department] }}
 
                         </td>
@@ -68,7 +68,7 @@
                     </tr>
                     <tr>
                         <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_area_label')}}</td>
-                        <td class="key-value-list__value key-value-list__value--auto">
+                        <td class="key-value-list__value key-value-list__value--auto lpg-profession">
                             <ul>
                             {{#if signedInUser.profession && signedInUser.profession.includes(',')}}
                                 {{#if signedInUser.profession.split(',').length }}
@@ -90,7 +90,7 @@
                     </tr>
                     <tr>
                         <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_grade_label')}}</td>
-                        <td class="key-value-list__value key-value-value--auto">
+                        <td class="key-value-list__value key-value-value--auto lpg-grade">
                                 {{signedInUser.grade === 'other' ? 'Other' : i18n('grades')[signedInUser.grade] }}
 
                         </td>
