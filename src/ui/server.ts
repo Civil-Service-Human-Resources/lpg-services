@@ -108,7 +108,7 @@ app.get('/learning-record', learningRecordController.display)
 app.get('/learning-record/:courseId', learningRecordController.courseResult)
 
 app.get('/search', searchController.search)
-app.get('/suggestions-for-you', suggestionController.suggestionsForYou)
+app.get('/suggestions-for-you', suggestionController.suggestionsPage)
 app.get('/suggestions-for-you/add/:courseId', suggestionController.addToPlan)
 app.get(
 	'/suggestions-for-you/remove/:courseId',

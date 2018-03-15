@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as config from 'lib/config'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
+import * as query from 'querystring'
 
 const http = axios.create({
 	auth: config.COURSE_CATALOGUE.auth,
@@ -51,13 +52,23 @@ export async function findRequiredLearning(
 	}
 }
 
-export async function findSuggestedLearning(
-	user: model.User
+export class ApiParameters {
+	constructor(
+		public areasOfWork: string[],
+		public department: string,
+		public page: number = 0,
+		public size: number = 6
+	) {}
+	serialize(): string {
+		return query.stringify(this)
+	}
+}
+
+export async function findSuggestedLearningWithParameters(
+	parameters: string
 ): Promise<api.SearchResponse> {
 	try {
-		const response = await http.get(
-			`/courses?&department=${user.department}&areaOfWork=${user.profession}`
-		)
+		const response = await http.get(`/courses?${parameters}`)
 		return {entries: response.data.results.map(model.Course.create)}
 	} catch (e) {
 		throw new Error(`Error finding suggested learning - ${e}`)

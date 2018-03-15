@@ -54,7 +54,7 @@ export async function removeFromSuggestions(
 	}
 }
 
-export async function suggestionsForYou(
+export async function suggestionsPage(
 	req: express.Request,
 	res: express.Response
 ) {
@@ -62,6 +62,7 @@ export async function suggestionsForYou(
 	const modified = await suggestions(user)
 	res.send(
 		template.render('suggested', req, {
+			areasOfWork: user.profession.split(','),
 			courses: modified,
 		})
 	)
@@ -71,8 +72,9 @@ export async function suggestions(
 	user: model.User,
 	learningRecordIn: Record<string, model.Course> = {}
 ) {
-	const suggestedLearning = (await catalog.findSuggestedLearning(user)).entries
 	let learningRecord: Record<string, model.Course> = {}
+	let suggestions = []
+
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
 	} else {
@@ -80,9 +82,60 @@ export async function suggestions(
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
 
-	const modified: model.Course[] = []
+	const areasOfWork = user.profession.split(',')
 
-	for (const course of suggestedLearning) {
+	const baseParams = new catalog.ApiParameters([], '', 0, 6)
+	for (const aow of areasOfWork) {
+		baseParams.areasOfWork = [`${aow}`]
+		const suggestedGroup = (await catalog.findSuggestedLearningWithParameters(
+			baseParams.serialize()
+		)).entries
+		suggestions.push(modifyCourses(suggestedGroup, learningRecord))
+	}
+	return suggestions
+}
+
+export async function homeSuggestions(
+	user: model.User,
+	learningRecordIn: Record<string, model.Course> = {}
+) {
+	const areaOfWorkParams = new catalog.ApiParameters(
+		user.profession.split(','),
+		'',
+		0,
+		5
+	).serialize()
+
+	const departmentParams = new catalog.ApiParameters(
+		[],
+		user.department,
+		0,
+		1
+	).serialize()
+
+	const suggestedLearning = [
+		...(await catalog.findSuggestedLearningWithParameters(areaOfWorkParams))
+			.entries,
+		...(await catalog.findSuggestedLearningWithParameters(departmentParams))
+			.entries,
+	]
+
+	let learningRecord: Record<string, model.Course> = {}
+	if (Object.keys(learningRecordIn).length > 0) {
+		learningRecord = learningRecordIn
+	} else {
+		const records = await learnerRecord.getLearningRecordOf(null, user)
+		learningRecord = records.length ? hashArray(records, 'id') : {}
+	}
+	return modifyCourses(suggestedLearning, learningRecord)
+}
+
+export function modifyCourses(
+	courses: model.Course[],
+	learningRecord: Record<string, model.Course>
+) {
+	const modified: model.Course[] = []
+	for (const course of courses) {
 		const matched = learningRecord[course.id]
 
 		if (matched && matched.record) {
