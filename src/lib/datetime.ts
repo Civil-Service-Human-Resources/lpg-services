@@ -63,7 +63,14 @@ export function formatDate(d: number | Date) {
 	if (!(d instanceof Date)) {
 		d = new Date(d)
 	}
-	return dateFormat.format(d)
+	let formatted
+	try {
+		formatted = dateFormat.format(d)
+	} catch (e) {
+		formatted = ''
+	}
+
+	return formatted
 }
 
 // Convert duration in seconds to an ISO 8601 format duration string. Used to

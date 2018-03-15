@@ -37,6 +37,16 @@
 		}
 	}
 
+	@include e(title) {
+		em {
+			font-style: normal;
+		}
+	}
+
+	@include e(description) {
+		clear: both;
+	}
+
 	@include e(rating) {
 		@extend %li;
 		min-width: 148px;

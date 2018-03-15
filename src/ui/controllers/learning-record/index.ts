@@ -51,6 +51,8 @@ export async function display(req: express.Request, res: express.Response) {
 	const completedLearning = learningRecord.filter(course =>
 		course.isComplete(req.user)
 	)
+	const allCompleted = []
+
 	const requiredLearningTotal = (await catalog.findRequiredLearning(req.user))
 		.entries.length
 
