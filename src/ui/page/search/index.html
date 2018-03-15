@@ -1,44 +1,59 @@
 <Page title="Search">
-    <div class="grid-row">
-        <div class="column-full">
-            <h1 class="heading-large">Search</h1>
-
-            <form method="GET">
-                <div class="search-container">
-                    <label for="search-main">
-                        Search Civil Service Learning
-                    </label>
-                    <div class="search-wrapper">
-                        <input class="form-control" id="q" type="text" name="q" value="{{ query }}">
-                        <div class="submit-wrapper">
-                            <button type="submit" class="button">Search</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            {{#if searchResults && query}}
-            <div class="search-results">
-                <h1 class="heading-large">{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{/if}} Search
-                    Results
+    <div class="container container--main">
+        <div class="grid-row ">
+            <div class="column-full ">
+                <h1 class="heading-xlarge heading heading--page-heading ">
+                    Search results
                 </h1>
-                <span class="time"> In {{end }} seconds</span>
-                {{#if searchResults.suggestion}}
-                <span class="suggest">Did you mean
-                    <a href="search?q={{ searchResults.suggestion }}">{{ searchResults.suggestion }}</a>?
-                </span>
-                {{/if}}
-                <ol>
-                    {{#if searchResults.entries && searchResults.entries.length}} {{#each searchResults.entries as course}}
-                    <li>
-                        <a href="/courses/{{course.id}}">{{{course.title}}}</a>
-                        <div>
-                            {{{course.searchText}}}
+                <div class="search-box u-space-b30">
+                    <form name="searchLearning" method="POST" action="/prototypes/learner/v3/search">
+                        <div class="form-group search-box__group">
+                            <label class="visuallyhidden">Search all available learning</label>
+                            <input class="form-control search-box__input" id="searchInput" type="search" name="searchInput" value="{{ query }}" placeholder="Search CSL">
+                            <button type="submit" class="search-box__submit">Search</button>
                         </div>
-                    </li>
-                    {{/each}} {{/if}}
-                </ol>
+                    </form>
+                </div>
+                {{#if searchResults && query}}
+                <p class="lede">There were
+                    <strong>{{#if searchResults.entries && searchResults.entries.length}} {{searchResults.entries.length}} {{/if}}</strong>
+                    results for
+                    <strong>{{ query }}</strong>
+                </p>
+                {{/if}}
             </div>
-            {{/if}}
+        </div>
+
+        <div class="grid-row ">
+            <div class="column-full ">
+                <div class="resources">
+                    {{#if searchResults.entries && searchResults.entries.length}} {{#each searchResults.entries as course}}
+                    <div class="resource resouce__search">
+                        <ul class="resource__item u-clearfix">
+                            <li>
+                                <a class="resource__title" href="/courses/{{course.uid}}">
+                                    <strong>{{{course.title}}}</strong>
+                                </a>
+                                <a class="resource__info">
+                                    <span>{{course.type ? i18n(course.type) : '' }} {{#if course.type}}, {{/if}} {{course.duration
+                                        ? course.duration : '' }}</span>
+                                </a>
+                                <p class="resource__description">
+                                    {{ course.shortDescription }}
+                                </p>
+                                <span class="resource__action">
+                                    <a href="/book/{{course.uid}}/choose-date">Book now</a>
+                                    <a href="/suggested-for-you/add/{{course.uid}}?ref=home">Add to learning plan</a>
+                                </span>
+                            </li>
+
+
+
+                        </ul>
+                    </div>
+                    {{/each}} {{/if}}
+                </div>
+            </div>
         </div>
     </div>
 </Page>

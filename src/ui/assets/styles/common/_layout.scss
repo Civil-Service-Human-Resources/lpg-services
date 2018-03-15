@@ -69,3 +69,17 @@
 	content: '';
 	display: table;
 }
+
+.u {
+	@include m(space) {
+		@include m(y30) {
+			margin-top: 30px !important;
+		}
+	}
+
+	@include m(border) {
+		@include m(bgrey2) {
+			border-bottom: 1px solid #bfc1c3;
+		}
+	}
+}

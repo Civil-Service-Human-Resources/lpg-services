@@ -1,0 +1,18 @@
+<div class="u--space--y30 u--border--bgrey2">
+    <div class="grid-row ">
+        <div class="column-one-half ">
+            <slot></slot>
+        </div>
+        <div class="column-one-half ">
+            <div class="search-box">
+                <form name="searchLearning" method="GET" action="/search">
+                    <div class="form-group search-box__group ">
+                        <label class="visuallyhidden">Search all available learning</label>
+                        <input class="form-control search-box__input" id="q" type="search" name="q" value="" placeholder="Search CSL">
+                        <button type="submit" class="search-box__submit">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

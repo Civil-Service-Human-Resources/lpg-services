@@ -114,6 +114,18 @@ async function saveContent(
 			`No launch page found for course ${course.id} and module ${module.id}`
 		)
 	}
+
+	responses.forEach(response => {
+		if (
+			response.metadata &&
+			response.metadata.path &&
+			response.metadata.path.endsWith(metadata.launchPage)
+		) {
+			metadata.launchUrl = response.metadata.path
+			return
+		}
+	})
+
 	return metadata
 }
 
