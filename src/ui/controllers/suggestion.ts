@@ -73,7 +73,7 @@ export async function expandedSuggestionsPage(
 	res: express.Response
 ) {
 	const user = req.user as model.User
-	let areaOfWorktoExpand = req.params.expandedAow
+	const areaOfWorktoExpand = req.params.expandedAow
 	console.log(req.params)
 	const modified = await suggestions(user, {}, areaOfWorktoExpand)
 	res.send(
@@ -90,7 +90,7 @@ export async function suggestions(
 	expand?: string
 ) {
 	let learningRecord: Record<string, model.Course> = {}
-	let suggestions: model.Course[][] = []
+	const courseSuggestions: model.Course[][] = []
 
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
@@ -109,11 +109,11 @@ export async function suggestions(
 			baseParams.serialize()
 		)).entries
 
-		suggestions.push(modifyCourses(suggestedGroup, learningRecord))
+		courseSuggestions.push(modifyCourses(suggestedGroup, learningRecord))
 	}
 	baseParams.areaOfWork = []
 	baseParams.department = user.department
-	suggestions.push(
+	courseSuggestions.push(
 		modifyCourses(
 			(await catalog.findSuggestedLearningWithParameters(
 				baseParams.serialize()
@@ -122,7 +122,7 @@ export async function suggestions(
 		)
 	)
 
-	return suggestions
+	return courseSuggestions
 }
 
 export async function homeSuggestions(
