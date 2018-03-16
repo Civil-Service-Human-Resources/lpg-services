@@ -54,7 +54,7 @@ export async function findRequiredLearning(
 
 export class ApiParameters {
 	constructor(
-		public areasOfWork: string[],
+		public areaOfWork: string[],
 		public department: string,
 		public page: number = 0,
 		public size: number = 6

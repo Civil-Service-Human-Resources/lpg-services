@@ -8,6 +8,6 @@
         </div>
     </div>
     {{#each courses as coursesGroup, index}}
-        <SuggestionsSection title="From {{areasOfWork[index]}}" suggestedLearning="{{coursesGroup}}" home={{false}}/>
+        <SuggestionsSection title="{{i18n('areas-of-work')[areasOfWork[index]]}}" suggestedLearning="{{coursesGroup}}" home={{false}}/>
     {{/each}}
 </Page>
