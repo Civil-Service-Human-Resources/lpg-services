@@ -373,10 +373,11 @@ export class User {
 		if (this.profession.includes(',')) {
 			if (this.profession.split(',')) {
 				professionArray = this.profession.split(',')
-			} else {
-				professionArray.push(this.profession)
 			}
+		} else {
+			professionArray.push(this.profession)
 		}
+
 		return professionArray
 	}
 }
