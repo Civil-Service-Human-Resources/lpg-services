@@ -7,8 +7,18 @@ if(OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-settings"] && OBJ_NAV_BUTTONS["extr
 if(OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-search"] && OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-search"].booDefaultDisplayButton = false;
 if(OBJ_NAV_BUTTONS && OBJ_NAV_BUTTONS["extra-jlr-menu"] && OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton) OBJ_NAV_BUTTONS["extra-jlr-menu"].booDefaultDisplayButton = false;
 
-var host = window.location.origin;
-var path = window.location.pathname.replace('/do/', '/xapi');
+var match = window.location.toString().match(/(https?):\/\/([^-]+)-cdn\.cshr\.digital\/.*\/([^/]+)\/([^/]+)\/.*$/);
+if (!match) {
+    throw new Error('Content being accessed on invalid domain');
+}
+var scheme = match[1];
+var host = 'lpg.' + match[2] + '.cshr.digital/';
+var path = match[3] + '/' + match[4] + '/xapi';
+
+if (match[2] === 'local') {
+    scheme = 'http';
+    host = 'lpg.local.cshr.digital:3001/';
+}
 
 BOO_INCLUDE_EXIT_ON_NAV = false;
 BOO_INCLUDE_ACCESSIBLE_ON_NAV = false;
@@ -21,7 +31,7 @@ var CONTENT_TRACKING_CONFIG = {
         {
             adapter: 'tincan',
             version: '1.0',
-            endpoint: host + path
+            endpoint: scheme + '://' + host + path
         }
     ]
 }

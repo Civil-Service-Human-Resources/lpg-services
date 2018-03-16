@@ -1,12 +1,19 @@
 
-const fs = require('fs')
-const path = require('path')
-const slugid = require('slugid')
-const parse= require('csv-parse/lib/sync')
+const azure = require('azure-storage');
+const fs = require('fs');
+const mime = require('mime-types');
+const parse = require('csv-parse/lib/sync');
+const path = require('path');
+const slugid = require('slugid');
+const xml2js = require('xml2js');
+const unzip = require('unzip');
 
-const coursesFile = process.argv[2]
-const modulesFile = process.argv[3]
-const eventsFile = process.argv[4]
+const { Writable } = require('stream');
+
+const coursesFile = process.argv[2];
+const modulesFile = process.argv[3];
+const eventsFile = process.argv[4];
+const scormLocation = process.argv[5];
 
 const ALL_GRADES = [
     "AA",
@@ -19,15 +26,19 @@ const ALL_GRADES = [
     "SCS"
 ];
 
-function parseCourses(file) {
+const blob = azure.createBlobService();
+
+const filesToSubstitute = [ 'close_methods.js', 'portal_overrides.js' ];
+
+async function parseCourses(file) {
     const rawData = fs.readFileSync(file);
     const lines = parse(rawData.toString());
 
     lines.shift();
 
-    var courses = [];
-    var currentCourse;
-    var areaOfWork;
+    let courses = [];
+    let currentCourse;
+    let courseAudience;
 
     for (const line of lines) {
         if (line[1]) {
@@ -41,40 +52,51 @@ function parseCourses(file) {
                 modules: []
             };
             currentCourse.title = line[1];
-            currentCourse.duration = Number(line[6]) * 60;
-            currentCourse.shortDescription = line[8];
-            currentCourse.description = line[9];
-            currentCourse.learningOutcomes = line[10];
-            currentCourse.price = line[12] === 'Free' ? 0 : Number(line[12].replace('£', ''));
+            currentCourse.duration = Number(line[7]) * 60;
+            currentCourse.shortDescription = line[9];
+            currentCourse.description = line[10];
+            currentCourse.learningOutcomes = line[11];
+            currentCourse.price = line[13] === 'Free' ? 0 : Number(line[12].replace('£', ''));
 
-            areaOfWork = tag(line[11]);
+            let areaOfWork = tag(line[12]);
+            let departments = !!line[16] ? line[16].toLowerCase().split('\n') : null;
+            let grades = !!line[17] ? line[17].split('\n') : null;
+
+            courseAudience = createAudience(departments, false, grades, false, null, !!areaOfWork ? [areaOfWork] : null);
         } else if (currentCourse) {
             // Module of course
-            var module = {
+            let module = {
                 id: slugid.nice(),
                 audiences: [],
                 title: line[5],
-                type: 'elearning',
-                startPage: 'fixme.html'
+                type: getType(line[2])
             };
 
-            if (areaOfWork) {
-                module.audiences.push({ areasOfWork: [areaOfWork] });
+            const location = line[6];
+            if (location) {
+                switch (module.type) {
+                    case 'elearning':
+                        module.startPage = await uploadScorm(`${currentCourse.id}/${module.id}`, location);
+                        break;
+                    case 'video':
+                    case 'link':
+                        module.location = location;
+                        break;
+                }
             }
 
-            var audience = createAudience(['co'], line[13], line[14], line[15], line[16]);
-            if (audience) {
-                module.audiences.push(audience);
+            if (courseAudience) {
+                module.audiences.push(courseAudience);
             }
 
-            audience = createAudience(['dh'], line[17], line[18], line[19], line[20]);
-            if (audience) {
-                module.audiences.push(audience);
+            if (line[19] === 'Yes') {
+                module.audiences.push(createAudience(['co'], line[19], line[20], line[21], line[22]));
             }
-
-            audience = createAudience(['hmrc'], line[21], line[22], line[23], line[24]);
-            if (audience) {
-                module.audiences.push(audience);
+            if (line[23] === 'Yes') {
+                module.audiences.push(createAudience(['dh'], line[23], line[24], line[25], line[26]));
+            }
+            if (line[27] === 'Yes') {
+                module.audiences.push(createAudience(['hmrc'], line[27], line[28], line[29], line[30]));
             }
 
             currentCourse.modules.push(module);
@@ -87,6 +109,19 @@ function parseCourses(file) {
     return courses;
 }
 
+function getType(type) {
+    switch (type.toLowerCase()) {
+        case 'online':
+            return 'elearning';
+        case 'pdf':
+        case 'link':
+            return 'link';
+        case 'video':
+            // TODO: ideally video, but only support youtube
+            return 'link';
+    }
+}
+
 function parseEvents(file) {
 
     const rawData = fs.readFileSync(file);
@@ -94,13 +129,13 @@ function parseEvents(file) {
 
     lines.shift();
 
-    var events = {};
+    let events = {};
 
     for (const line of lines) {
         if (!Date.parse(line[2])) {
             continue;
         }
-        var event = {
+        let event = {
             id: slugid.nice(),
             location: line[3],
             date: new Date(Date.parse(line[2] + ' UTC'))
@@ -122,11 +157,11 @@ function parseModules(file, eventsFile) {
 
     lines.shift();
 
-    var courses = [];
+    let courses = [];
 
     for (const line of lines) {
         // Has title, new course
-        var course = {
+        let course = {
             _class: 'uk.gov.cslearning.catalogue.domain.Course',
             id: slugid.nice(),
             modules: []
@@ -140,7 +175,7 @@ function parseModules(file, eventsFile) {
         course.price = line[12] === 'Free' ? 0 : Number(line[12].replace('£', ''));
 
         // Module of course
-        var module = {
+        let module = {
             id: slugid.nice(),
             productCode: line[11],
             audiences: []
@@ -168,14 +203,12 @@ function parseModules(file, eventsFile) {
 
 function createAudience(departments, required, grades, repeat, requiredBy, areasOfWork) {
 
-    var mandatory = required === 'Yes';
-
-    if (departments && !mandatory) {
+    if (!departments && !grades && !areasOfWork) {
         return null;
     }
 
-    var audience = {
-        mandatory: mandatory
+    let audience = {
+        mandatory: required === 'Yes'
     };
 
     if (departments) {
@@ -189,8 +222,8 @@ function createAudience(departments, required, grades, repeat, requiredBy, areas
         audience.grades = ALL_GRADES;
     } else if (grades) {
         audience.grades = [];
-        for (var i = 0; i < grades.length; i++) {
-            var grade = grades[i];
+        for (let i = 0; i < grades.length; i++) {
+            let grade = grades[i];
             if (grade.indexOf('Administrative') > -1) {
                 audience.grades.push('AA');
                 audience.grades.push('AO');
@@ -220,7 +253,161 @@ function tag(val) {
     return val.toLowerCase().replace(/\s/g, '-');
 }
 
-var courses = parseCourses(coursesFile);
-courses = courses.concat(parseModules(modulesFile, eventsFile));
+async function run() {
+    let courses = await parseCourses(coursesFile);
+    courses = courses.concat(parseModules(modulesFile, eventsFile));
+    fs.writeFileSync(path.join(__dirname, 'data.json'), JSON.stringify(courses));
+}
 
-fs.writeFileSync(path.join(__dirname, 'data.json'), JSON.stringify(courses));
+run()
+    .then(() => console.log('Done'))
+    .catch(e => console.log(e));
+
+
+
+async function uploadScorm(id, location) {
+
+    console.log(`Uploading ${location} for ${id}`);
+
+    const filePath = path.join(scormLocation, location);
+
+    const results = await new Promise((resolve, reject) => {
+        const promises = [];
+        fs.createReadStream(filePath)
+            .pipe(unzip.Parse())
+            .on('entry', entry => {
+                if (entry.type.toLowerCase() === 'directory') {
+                    entry.autodrain();
+                } else {
+                    promises.push(upload(id, entry))
+                }
+            })
+            .on('close', () => {
+                Promise.all(promises)
+                    .then(resolve)
+                    .catch(reject)
+            })
+            .on('error', reject)
+    });
+
+    const metadata = results.find(result => !!result);
+    return metadata.launchPage;
+}
+
+async function upload(id, entry) {
+
+    let metadata = null;
+
+    const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
+    const storagePath = `${id}/${entry.path}`
+
+    try {
+        if (filesToSubstitute.indexOf(filename) > -1) {
+            const fileData = await getFile(filename);
+            await doUpload(storagePath, fileData);
+        } else {
+            if (entry.path.endsWith('imsmanifest.xml')) {
+                metadata = await parseMetadata(entry)
+            }
+            await doUpload(storagePath, entry);
+        }
+    } catch (e) {
+        console.log(`Error uploading ${entry.path}`, e);
+    }
+    return metadata;
+}
+
+async function getFile(filename) {
+    const filePath = path.join(
+        __dirname,
+        '..',
+        'ui',
+        'assets',
+        'js',
+        filename
+    );
+    return fs.createReadStream(filePath);
+}
+
+async function doUpload(storagePath, entry) {
+    await new Promise((resolve, reject) => {
+        entry.pipe(
+            blob.createWriteStreamToBlockBlob(
+                'lpgdevcontent',
+                storagePath,
+                { contentSettings: { contentType: mime.lookup(entry.path) || 'application/octet-stream' } },
+                (err, blobData) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(blobData)
+                    }
+                }
+            )
+        )
+    });
+}
+
+async function parseMetadata(entry) {
+	const content = await new Promise(resolve => {
+		let content = '';
+		entry.pipe(
+			new Writable({
+				final: () => {
+					resolve(content)
+				},
+				write: (chunk, encoding, next) => {
+					content += chunk.toString()
+					next()
+				},
+			})
+		)
+	});
+
+	const data = await new Promise((resolve, reject) => {
+        xml2js.parseString(content, (err, data) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(data)
+            }
+        })
+    });
+
+    if (data.manifest) {
+        let identifier;
+        let title;
+        let launchPage;
+        if (data.manifest.organizations) {
+            for (const wrapper of data.manifest.organizations) {
+                const organization = wrapper.organization;
+                if (organization.length) {
+                    identifier = organization[0].$.identifier;
+                    if (organization[0].title && organization[0].title.length) {
+                        title = organization[0].title[0];
+                    }
+                    break;
+                }
+            }
+        }
+        if (data.manifest.resources) {
+            for (const wrapper of data.manifest.resources) {
+                const resource = wrapper.resource;
+                if (resource.length) {
+                    const type = resource[0].$['adlcp:scormtype'];
+                    const href = resource[0].$.href;
+                    if (type === 'sco') {
+                        launchPage = href;
+                        break;
+                    }
+                }
+            }
+        }
+        return {
+            identifier,
+            launchPage,
+            title,
+        }
+    }
+    return {};
+}
