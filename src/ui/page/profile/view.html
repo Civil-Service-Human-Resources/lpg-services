@@ -81,7 +81,7 @@
                                     {{#if signedInUser.profession}}
                                         {{#each signedInUser.areasOfWorkArr() as aow}}
                                         <li>
-                                        {{aow === ('other' || '')  ? 'Other' :  i18n('areas-of-work')[aow]}}
+                                        {{aow === ('other' || 'Other' || '')  ? 'Other' :  i18n('areas-of-work')[aow]}}
 
                                         </li>
 
