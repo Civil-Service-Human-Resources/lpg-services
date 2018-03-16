@@ -73,7 +73,7 @@ export async function suggestions(
 	learningRecordIn: Record<string, model.Course> = {}
 ) {
 	let learningRecord: Record<string, model.Course> = {}
-	let suggestions: model.Course[] = []
+	let suggestions: model.Course[][] = []
 
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
