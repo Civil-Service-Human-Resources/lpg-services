@@ -5,7 +5,7 @@
 			{{course.title}}
 		</a>
 	</h4>
-
+	{{#if home}}
 	<p class="tile__attribution">{{isLast ? 'Department:' : 'Work area: '}}
 	{{#if isLast}}
      {{i18n('departments')[signedInUser.department]}}
@@ -15,6 +15,7 @@
 	    {{/each}}
     {{/if}}
 	</p>
+	{{/if}}
 	<ul class="tile__properties">
             <li class="tile__property">
                 <span class="tile__key">Type</span>

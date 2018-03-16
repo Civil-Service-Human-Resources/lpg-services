@@ -73,7 +73,7 @@ export async function suggestions(
 	learningRecordIn: Record<string, model.Course> = {}
 ) {
 	let learningRecord: Record<string, model.Course> = {}
-	let suggestions = []
+	let suggestions: model.Course[] = []
 
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
@@ -84,12 +84,14 @@ export async function suggestions(
 
 	const baseParams = new catalog.ApiParameters([], '', 0, 6)
 	for (const aow of user.areasOfWorkArr()) {
-		baseParams.areasOfWork = [`${aow}`]
+		baseParams.areaOfWork = [`${aow}`]
 		const suggestedGroup = (await catalog.findSuggestedLearningWithParameters(
 			baseParams.serialize()
 		)).entries
+
 		suggestions.push(modifyCourses(suggestedGroup, learningRecord))
 	}
+
 	return suggestions
 }
 

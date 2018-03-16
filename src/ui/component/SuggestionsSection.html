@@ -1,7 +1,9 @@
 <div class="container container--main">
   <div class="grid-row">
       <div class="column-full">
-          <h2 class="heading-medium u-space-t30 {{home ? '': 'heading--red-top'}} lpg-suggestions-section">{{title}}</h2>
+          <h2 class="heading-medium u-space-t30 {{home ? '': 'heading--red-top'}} lpg-suggestions-section">
+            {{home ? '' : 'From '}}{{title}}
+          </h2>
           {{#if lede}}
           <p>{{lede}}</p>
           {{/if}}
@@ -10,7 +12,7 @@
   <div class="grid-row grid-row--suggested">
       {{#each suggestedLearning.slice(0,3) as course}}
       <div class="column-third">
-          <Tile :course/>
+          <Tile :course :isHome/>
       </div>
       {{/each}}
   </div>
@@ -18,7 +20,7 @@
   <div class="grid-row grid-row--suggested">
       {{#each suggestedLearning.slice(3,suggestedLearning.length) as course, index}}
       <div class="column-third">
-          <Tile :course isLast="{{home && suggestedLearning.length === (index + 4)}}"/>
+          <Tile :home :course isLast="{{home && suggestedLearning.length === (index + 4)}}"/>
       </div>
       {{/each}}
   </div>
