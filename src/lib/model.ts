@@ -368,7 +368,7 @@ export class User {
 		return this.roles && this.roles.indexOf(role) > -1
 	}
 
-	areasOfWorkArr() {
+	areasOfWorkArr(): string[] {
 		let professionArray: string[] = []
 		if (this.profession.includes(',')) {
 			if (this.profession.split(',')) {
@@ -376,8 +376,6 @@ export class User {
 			} else {
 				professionArray.push(this.profession)
 			}
-		} else {
-			return this.profession
 		}
 		return professionArray
 	}
