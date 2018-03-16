@@ -111,6 +111,16 @@ export async function suggestions(
 
 		suggestions.push(modifyCourses(suggestedGroup, learningRecord))
 	}
+	baseParams.areaOfWork = []
+	baseParams.department = user.department
+	suggestions.push(
+		modifyCourses(
+			(await catalog.findSuggestedLearningWithParameters(
+				baseParams.serialize()
+			)).entries,
+			learningRecord
+		)
+	)
 
 	return suggestions
 }
