@@ -38,7 +38,7 @@
 		{{course.shortDescription}}
 	</p>
 	<p class="tile__actions">
-		<a href="/suggestions-for-you/add/{{course.id}}?ref=home">
+		<a href="/suggestions-for-you/add/{{course.id}}{{home ? '?ref=home' :'?ref=suggestions-for-you'}}">
 			Add to learning plan
 		</a>
 		<a href="/suggestions-for-you/remove/{{course.id}}?ref=home">
