@@ -12,7 +12,7 @@
   <div class="grid-row grid-row--suggested">
       {{#each suggestedLearning.slice(0,3) as course}}
       <div class="column-third">
-          <Tile :course :isHome/>
+          <Tile :home :course :isHome/>
       </div>
       {{/each}}
   </div>

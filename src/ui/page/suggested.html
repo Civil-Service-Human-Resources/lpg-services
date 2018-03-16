@@ -10,7 +10,7 @@
     {{#each courses as coursesGroup, index}}
         {{#if (index+1) === courses.length}}
         <SuggestionsSection title="{{i18n('departments')[signedInUser.department]}}" suggestedLearning="{{coursesGroup}}" home={{false}}/>
-        {{else}}
+        {{elseif coursesGroup.length}}
         <SuggestionsSection title="{{i18n('areas-of-work')[areasOfWork[index]]}}" suggestedLearning="{{coursesGroup}}" home={{false}}/>
         {{/if}}
     {{/each}}
