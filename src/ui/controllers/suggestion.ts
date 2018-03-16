@@ -68,9 +68,26 @@ export async function suggestionsPage(
 	)
 }
 
+export async function expandedSuggestionsPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const user = req.user as model.User
+	let areaOfWorktoExpand = req.params.expandedAow
+	console.log(req.params)
+	const modified = await suggestions(user, {}, areaOfWorktoExpand)
+	res.send(
+		template.render('suggested', req, {
+			areasOfWork: user.areasOfWorkArr(),
+			courses: modified,
+		})
+	)
+}
+
 export async function suggestions(
 	user: model.User,
-	learningRecordIn: Record<string, model.Course> = {}
+	learningRecordIn: Record<string, model.Course> = {},
+	expand?: string
 ) {
 	let learningRecord: Record<string, model.Course> = {}
 	let suggestions: model.Course[][] = []
@@ -85,6 +102,9 @@ export async function suggestions(
 	const baseParams = new catalog.ApiParameters([], '', 0, 6)
 	for (const aow of user.areasOfWorkArr()) {
 		baseParams.areaOfWork = [`${aow}`]
+		if (aow[0] === expand) {
+			baseParams.size = 10
+		}
 		const suggestedGroup = (await catalog.findSuggestedLearningWithParameters(
 			baseParams.serialize()
 		)).entries
