@@ -365,10 +365,18 @@ export class User {
 	}
 
 	hasRole(role: string) {
-		if (this.roles && this.roles.indexOf(role) > -1) {
-			return true
-		} else {
-			return false
+		return this.roles && this.roles.indexOf(role) > -1
+	}
+
+	professionsArray() {
+		let professionArray: string[] = []
+		if (this.profession) {
+			if (this.profession.includes(',')) {
+				return this.profession.split(',')
+			} else if (this.profession) {
+				professionArray.push(this.profession)
+			}
 		}
+		return professionArray
 	}
 }
