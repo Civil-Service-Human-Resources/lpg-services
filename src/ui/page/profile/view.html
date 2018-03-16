@@ -78,19 +78,13 @@
                             <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_area_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-profession">
                                 <ul>
-
                                     {{#if signedInUser.profession}}
-                                        {{#if signedInUser.profession.includes(',')}}
-
-                                            {{#each (signedInUser.profession.split(',')) as aow}}
-                                            <li>{{i18n('areas-of-work')[aow]}}</li>
-                                            {{/each}}
-                                        {{else}}
-                                         {{signedInUser.profession === 'other' ? 'Other' : i18n('areas-of-work')[signedInUser.profession]}}
-                                         {{/if}}
+                                        {{#each signedInUser.areasOfWorkArr() as aow}}
+                                        <li>{{i18n('areas-of-work')[aow]}}</li>
+                                        {{/each}}
+                                    {{else}}
+                                        Other
                                     {{/if}}
-
-
                                 </ul>
 
                             </td>

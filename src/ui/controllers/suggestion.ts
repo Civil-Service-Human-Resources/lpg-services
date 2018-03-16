@@ -62,7 +62,7 @@ export async function suggestionsPage(
 	const modified = await suggestions(user)
 	res.send(
 		template.render('suggested', req, {
-			areasOfWork: user.profession.split(','),
+			areasOfWork: user.areasOfWorkArr(),
 			courses: modified,
 		})
 	)
@@ -82,10 +82,8 @@ export async function suggestions(
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
 
-	const areasOfWork = user.profession.split(',')
-
 	const baseParams = new catalog.ApiParameters([], '', 0, 6)
-	for (const aow of areasOfWork) {
+	for (const aow of user.areasOfWorkArr()) {
 		baseParams.areasOfWork = [`${aow}`]
 		const suggestedGroup = (await catalog.findSuggestedLearningWithParameters(
 			baseParams.serialize()
@@ -100,7 +98,7 @@ export async function homeSuggestions(
 	learningRecordIn: Record<string, model.Course> = {}
 ) {
 	const areaOfWorkParams = new catalog.ApiParameters(
-		user.profession.split(','),
+		user.areasOfWorkArr(),
 		'',
 		0,
 		5
