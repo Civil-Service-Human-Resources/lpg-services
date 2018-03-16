@@ -32,7 +32,7 @@
                 <form method="post" class="push-bottom">
                     <div class="form-group">
                         {{#if options && options.length }}
-                            <Selects :options :optionType :inputName/>
+                            <Selects :options :optionType :inputName :label/>
                         {{else}}
                             <input class="form-control" id="{{inputName}}" name="{{inputName}}" value="{{signedInUser[inputName] ? signedInUser[inputName] : ''}}" type="{{inputName === 'password' ? 'password' :'text'}}">
                         {{/if}}
