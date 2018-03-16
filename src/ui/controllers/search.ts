@@ -1,5 +1,4 @@
 import * as express from 'express'
-import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as api from 'lib/service/catalog/api'
 import * as template from 'lib/ui/template'
