@@ -65,7 +65,7 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_department_label')}}</td>
                             <td class="key-value-list__value key-value-list__auto--auto lpg-department">
-                                {{signedInUser.department === ('other' || 'select') ? 'Other' : i18n('departments')[signedInUser.department] }}
+                                {{signedInUser.department === 'other' ? 'Other' : i18n('departments')[signedInUser.department] }}
 
                             </td>
                             <td class="key-value-list__item-action">
@@ -81,7 +81,7 @@
                                     {{#if signedInUser.profession}}
                                         {{#each signedInUser.areasOfWorkArr() as aow}}
                                         <li>
-                                        {{aow === ('other' || 'Other' || '')  ? 'Other' :  i18n('areas-of-work')[aow]}}
+                                        {{aow === 'other' || aow === 'Other' || aow === ''  ? 'Other' :  i18n('areas-of-work')[aow]}}
 
                                         </li>
 
