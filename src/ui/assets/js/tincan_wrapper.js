@@ -6953,6 +6953,7 @@ TinCan client library
 
         if (typeof XMLHttpRequest !== "undefined") {
             xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
         }
         else {
             //
@@ -7096,6 +7097,8 @@ TinCan client library
         //
         xhr.onprogress = function () {};
         xhr.timeout = 0;
+
+        xhr.withCredentials = true;
 
         //
         // research indicates that IE is known to just throw exceptions

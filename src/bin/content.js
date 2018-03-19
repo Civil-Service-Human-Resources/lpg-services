@@ -28,7 +28,7 @@ const ALL_GRADES = [
 
 const blob = azure.createBlobService();
 
-const filesToSubstitute = [ 'close_methods.js', 'portal_overrides.js' ];
+const filesToSubstitute = [ 'close_methods.js', 'portal_overrides.js', 'tincan_wrapper.js' ];
 
 async function parseCourses(file) {
     const rawData = fs.readFileSync(file);
@@ -271,7 +271,7 @@ async function uploadScorm(id, location) {
 
     const filePath = path.join(scormLocation, location);
 
-    const results = await new Promise((resolve, reject) => {
+    const doUpload = async () => await new Promise((resolve, reject) => {
         const promises = [];
         fs.createReadStream(filePath)
             .pipe(unzip.Parse())
@@ -290,8 +290,15 @@ async function uploadScorm(id, location) {
             .on('error', reject)
     });
 
-    const metadata = results.find(result => !!result);
-    return metadata.launchPage;
+    while (true) {
+        try {
+            const results = await doUpload();
+            const metadata = results.find(result => !!result);
+            return metadata.launchPage;
+        } catch (e) {
+            console.log('Error uploading, retrying.', e);
+        }
+    }
 }
 
 async function upload(id, entry) {
@@ -313,6 +320,7 @@ async function upload(id, entry) {
         }
     } catch (e) {
         console.log(`Error uploading ${entry.path}`, e);
+        throw e;
     }
     return metadata;
 }
@@ -344,7 +352,7 @@ async function doUpload(storagePath, entry) {
                     }
                 }
             )
-        )
+        ).on('error', reject);
     });
 }
 
