@@ -1,9 +1,8 @@
 import * as express from 'express'
-import * as config from 'lib/config'
 import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import * as messaging from 'lib/service/messaging'
+import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
@@ -248,14 +247,12 @@ export async function tryCancelBooking(
 			module,
 			event
 		)
-		await messaging.send(
-			config.BOOKING_CANCELLED_MSG(
-				req.user.givenName,
-				module.title,
-				req.user.emailAddress,
-				dateTime.formatDate(event.date)
-			)
-		)
+		await notify.bookingCancelled({
+			courseDate: dateTime.formatDate(event.date),
+			courseTitle: module.title,
+			email: req.user.emailAddress,
+			name: req.user.givenName,
+		})
 
 		res.send(
 			template.render('booking/confirmed', req, {
@@ -282,19 +279,21 @@ export async function tryCompleteBooking(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
-
 	const session = req.session!
 
 	const extensions: Record<string, any> = {}
+	let paymentOption = '-'
+
 	if (session.po) {
 		extensions[xapi.Extension.PurchaseOrder] = session.po
+		paymentOption = `Purchase Order: ${session.po}`
 	}
 	if (session.fap) {
 		extensions[xapi.Extension.FinancialApprover] = session.fap
+		paymentOption = `Financial Approver: ${session.fap}`
 	}
 
 	await xapi.record(
@@ -306,14 +305,14 @@ export async function tryCompleteBooking(
 		event
 	)
 
-	await messaging.send(
-		config.BOOKING_COMPLETE_MSG(
-			req.user.givenName,
-			module.title,
-			req.user.emailAddress,
-			dateTime.formatDate(event.date)
-		)
-	)
+	await notify.bookingConfirmed({
+		accessibility: '-',
+		courseDate: dateTime.formatDate(event.date),
+		courseTitle: module.title,
+		email: req.user.emailAddress,
+		name: req.user.givenName,
+		paymentOption,
+	})
 
 	res.send(
 		template.render('booking/confirmed', req, {

@@ -134,7 +134,7 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 		})
     </script>`
 	res.send(
-		template.render('profile/profileEditPage', req, {
+		template.render('profile/edit', req, {
 			inputName,
 			label,
 			lede,
@@ -186,7 +186,7 @@ export function tryUpdateProfile(req: express.Request, res: express.Response) {
 		const inputName = req.params.profileDetail
 		const label = ProfileDetail[inputName]
 		res.send(
-			template.render('profile/profileEditPage', req, {
+			template.render('profile/edit', req, {
 				inputName,
 				label,
 				validFields,
@@ -252,7 +252,7 @@ export async function updateProfile(
 
 			if (fieldValue !== req.body.confirmPassword) {
 				res.send(
-					template.render('profile/profileEditPage', req, {
+					template.render('profile/edit', req, {
 						inputName,
 						label: ProfileDetail[inputName],
 						passwordConfirmedFailed: true,
@@ -273,7 +273,7 @@ export async function updateProfile(
 		res.redirect('/profile-updated')
 	} catch (e) {
 		res.send(
-			template.render('profile/profileEditPage', req, {
+			template.render('profile/edit', req, {
 				identityServerFailed: true,
 				inputName,
 				label: ProfileDetail[inputName],

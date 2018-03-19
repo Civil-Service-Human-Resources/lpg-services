@@ -105,7 +105,7 @@ services:
 
   learning-catalogue:
     container_name: learning-catalogue
-    command: ["./wait-for-it.sh", "elasticsearch:9300", "--", "java", "-jar", "/data/app.jar"]
+    command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
     depends_on:
       - elasticsearch
     environment:

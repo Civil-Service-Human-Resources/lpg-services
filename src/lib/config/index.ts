@@ -55,31 +55,13 @@ export const AUTHENTICATION = set({
 		'https://identity.local.cshr.digital:9443',
 })
 
-export const BOOKING_ALERT_WEBHOOK = env.BOOKING_ALERT_WEBHOOK
+export const BOOKING_CANCELLED_NOTIFY_TEMPLATE_ID =
+	'cc525c34-1a31-4fa1-ab19-862fd223caab'
 
-export function BOOKING_CANCELLED_MSG(
-	userName: string,
-	courseTitle: string,
-	emailAddress: string,
-	date: string
-) {
-	return `*BOOKING CANCELLED*
-user *${userName}* cancelled booking on *${courseTitle}*
-*User Email*: ${emailAddress}
-*Selected date*: ${date}`
-}
+export const BOOKING_CONFIRMED_NOTIFY_TEMPLATE_ID =
+	'8efb52bd-9ada-402e-8fab-84a751bf4a71'
 
-export function BOOKING_COMPLETE_MSG(
-	userName: string,
-	courseTitle: string,
-	emailAddress: string,
-	date: string
-) {
-	return `*BOOKING COMPLETE*
-user *${userName}* completed booking on *${courseTitle}*
-*User Email*: ${emailAddress}
-*Selected date*: ${date}`
-}
+export const BOOKING_NOTIFY_RECIPIENTS = ['tav@kainos.com']
 
 export const COURSE_CATALOGUE = set({
 	auth: {
