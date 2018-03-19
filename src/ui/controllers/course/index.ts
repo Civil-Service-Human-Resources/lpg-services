@@ -90,7 +90,9 @@ export async function displayModule(
 
 	switch (module.type) {
 		case 'elearning':
-			res.redirect(`${config.CONTENT_URL}/${course.id}/${module.id}/${module.startPage}`)
+			res.redirect(
+				`${config.CONTENT_URL}/${course.id}/${module.id}/${module.startPage}`
+			)
 			break
 		case 'face-to-face':
 			res.redirect(`/book/${course.id}/${module.id}`)

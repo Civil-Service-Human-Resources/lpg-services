@@ -1,5 +1,6 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
+import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
@@ -36,9 +37,18 @@ const logger = log4js.getLogger('server')
 const app = express()
 const FileStore = sessionFileStore(session)
 
+const corsOptions = {
+	allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
+	credentials: true,
+	origin: /\.cshr\.digital$/,
+}
+app.options('*', cors(corsOptions))
+
 app.use(
 	session({
 		cookie: {
+			domain: '.cshr.digital',
+            httpOnly: false,
 			maxAge: 31536000,
 		},
 		resave: true,
@@ -74,7 +84,7 @@ app.get('/reset-password', userController.resetPassword)
 app.post('/feedback.record', asyncHandler(feedbackController.record))
 
 app.use(passport.isAuthenticated)
-// app.use(passport.hasRole('learner'))
+app.use(passport.hasRole('learner'))
 
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
@@ -105,11 +115,11 @@ app.use(
 	'/courses/:courseId/delete',
 	asyncHandler(courseController.markCourseDeleted)
 )
-app.use(
-	'/courses/:courseId/:moduleId',
-	asyncHandler(courseController.displayModule)
-)
 app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
+app.use(
+    '/courses/:courseId/:moduleId',
+    asyncHandler(courseController.displayModule)
+)
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
 app.get(
