@@ -249,9 +249,9 @@ export async function tryCancelBooking(
 		)
 		await notify.bookingCancelled({
 			courseDate: dateTime.formatDate(event.date),
-			courseTitle: module.title,
+			courseTitle: module.title || course.title,
 			email: req.user.emailAddress,
-			name: req.user.givenName,
+			name: req.user.givenName || req.user.emailAddress,
 		})
 
 		res.send(
@@ -308,9 +308,9 @@ export async function tryCompleteBooking(
 	await notify.bookingConfirmed({
 		accessibility: '-',
 		courseDate: dateTime.formatDate(event.date),
-		courseTitle: module.title,
+		courseTitle: module.title || course.title,
 		email: req.user.emailAddress,
-		name: req.user.givenName,
+		name: req.user.givenName || req.user.emailAddress,
 		paymentOption,
 	})
 
