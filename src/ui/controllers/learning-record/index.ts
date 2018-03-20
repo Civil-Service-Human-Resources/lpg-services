@@ -16,21 +16,25 @@ export async function courseResult(
 	logger.debug(
 		`Displaying course record for ${req.user.id}, courseId = ${
 			req.params.courseId
-		}`
+		}, moduleId = ${req.params.moduleId}`
 	)
 	try {
-		const courseRecord = await learnerRecord.getCourseRecord(
-			req.user,
-			req.course
-		)
+		const course = req.course
+		const module = req.module!
+		const courseRecord = await learnerRecord.getRecord(req.user, course, module)
+		let moduleRecord = null
 
-		if (!courseRecord || courseRecord.state !== 'COMPLETED') {
+		if (courseRecord && courseRecord.modules) {
+			moduleRecord = courseRecord.modules.find(mr => module.id === mr.moduleId)
+		}
+		if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
 			res.redirect('/home')
 		} else {
 			res.send(
 				template.render('learning-record/course-result', req, {
-					course: req.course,
-					record: courseRecord,
+					course,
+					module,
+					record: moduleRecord,
 				})
 			)
 		}
@@ -43,9 +47,9 @@ export async function courseResult(
 export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 
-	const completedLearning = await learnerRecord.getLearningRecordOf(
-		learnerRecord.CourseState.Completed,
-		req.user
+	const learningRecord = await learnerRecord.getLearningRecord(req.user)
+	const completedLearning = learningRecord.filter(course =>
+		course.isComplete(req.user)
 	)
 	const requiredLearningTotal = (await catalog.findRequiredLearning(req.user))
 		.entries.length

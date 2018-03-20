@@ -217,15 +217,7 @@ export async function markCourseDeleted(
 	ireq: express.Request,
 	res: express.Response
 ) {
-	// TODO: don't use Terminated for delete
-	// TODO: lookup learner record before delete to get moduleId and eventId
 	const req = ireq as extended.CourseRequest
-	await xapi.record(
-		req,
-		req.course,
-		xapi.Verb.Terminated,
-		undefined,
-		req.course.modules[0]
-	)
+	await xapi.record(req, req.course, xapi.Verb.Archived)
 	res.redirect('/')
 }

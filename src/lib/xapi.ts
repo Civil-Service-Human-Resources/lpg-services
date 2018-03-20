@@ -51,7 +51,7 @@ export interface Statement {
 }
 
 export enum Type {
-	Course = 'http://cslearning.gov.uk/activities/course',
+	Course = 'http://adlnet.gov/expapi/activities/course',
 	Event = 'http://adlnet.gov/expapi/activities/event',
 	ELearning = 'http://cslearning.gov.uk/activities/elearning',
 	FaceToFace = 'http://cslearning.gov.uk/activities/face-to-face',
@@ -138,6 +138,7 @@ export const ResultValidators = {
 }
 
 export const Verb = {
+	Archived: 'https://w3id.org/xapi/dod-isd/verbs/archived',
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
 	Disliked: 'https://w3id.org/xapi/acrossx/verbs/disliked',
 	Experienced: 'http://adlnet.gov/expapi/verbs/experienced',
@@ -156,6 +157,7 @@ export const Verb = {
 }
 
 export const Labels: Record<string, string> = {
+	[Verb.Archived]: 'archived',
 	[Verb.Completed]: 'completed',
 	[Verb.Disliked]: 'disliked',
 	[Verb.Experienced]: 'experienced',
@@ -252,27 +254,28 @@ export async function record(
 		throw new Error(`Unknown xAPI verb: ${verb}`)
 	}
 	let type: Type
-	switch (module ? module.type : course.getType()) {
-		case 'blended':
-			type = Type.Course
-			break
-		case 'elearning':
-			type = Type.ELearning
-			break
-		case 'face-to-face':
-			type = Type.FaceToFace
-			if (event) {
-				type = Type.Event
-			}
-			break
-		case 'link':
-			type = Type.Link
-			break
-		case 'video':
-			type = Type.Video
-			break
-		default:
-			throw new Error(`Unknown course type ${course.getType()}`)
+	if (module) {
+		switch (module.type) {
+			case 'elearning':
+				type = Type.ELearning
+				break
+			case 'face-to-face':
+				type = Type.FaceToFace
+				if (event) {
+					type = Type.Event
+				}
+				break
+			case 'link':
+				type = Type.Link
+				break
+			case 'video':
+				type = Type.Video
+				break
+			default:
+				throw new Error(`Unknown course type ${course.getType()}`)
+		}
+	} else {
+		type = Type.Course
 	}
 	const payload: Statement = {
 		actor: {
