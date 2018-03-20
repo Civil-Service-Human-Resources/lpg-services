@@ -8,7 +8,7 @@
                     </h1>
                     <div>{{ formatDate(record.completionDate) }}</div>
                     <div>
-                        <strong>{{ course.title }}</strong>
+                        <strong>{{ module.title || course.title }}</strong>
                     </div>
                     {{#if record.score}}
                     <div>Your score</div>

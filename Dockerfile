@@ -39,8 +39,8 @@ ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
   PORT=3001 \
   SESSION_SECRET=topsecret
 
-# TODO(tav): Create an actual user so that we don't run this as root
-RUN npm install --unsafe-perm
+RUN npm install -g yarn
+RUN yarn
 
 COPY dist dist
 

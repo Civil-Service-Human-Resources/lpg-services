@@ -20,7 +20,7 @@ const http = axios.create({
 	timeout: 5000,
 })
 
-export async function getCourseRecord(
+export async function getRecord(
 	user: model.User,
 	course: model.Course,
 	module?: model.Module,
@@ -45,15 +45,8 @@ export async function getCourseRecord(
 	return null
 }
 
-export async function getLearningRecordOf(
-	courseState: CourseState | null,
-	user: model.User
-) {
-	const response = await http.get(`/records/${user.id}`, {
-		params: {
-			state: courseState,
-		},
-	})
+export async function getLearningRecord(user: model.User) {
+	const response = await http.get(`/records/${user.id}`)
 
 	const courses: model.Course[] = []
 	for (let record of response.data.records) {
@@ -73,16 +66,16 @@ export async function getLearningRecordOf(
 	return courses
 }
 
-function convert(record: LearnerRecord) {
-	if (record.completionDate) {
-		record.completionDate = new Date(record.completionDate)
-	}
+function convert(record: CourseRecord) {
 	record.courseId = uriToId('courses', record.courseId)!
-	if (record.moduleId) {
-		record.moduleId = uriToId('modules', record.moduleId)
-	}
-	if (record.eventId) {
-		record.eventId = uriToId('events', record.eventId)
+	for (const module of record.modules) {
+		module.moduleId = uriToId('modules', module.moduleId)!
+		if (module.completionDate) {
+			module.completionDate = new Date(module.completionDate)
+		}
+		if (module.eventId) {
+			module.eventId = uriToId('events', module.eventId)
+		}
 	}
 	return record
 }
@@ -124,14 +117,19 @@ export async function getRegistrations() {
 	return registrations
 }
 
-export interface LearnerRecord {
-	completionDate: Date
+export interface CourseRecord {
 	courseId: string
-	eventId?: string
-	moduleId?: string
+	userId: string
+	modules: ModuleRecord[]
 	preference?: string
 	state?: string
-	userId: string
+}
+
+export interface ModuleRecord {
+	completionDate?: Date
+	eventId?: string
+	moduleId: string
+	state?: string
 }
 
 export interface Registration {

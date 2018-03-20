@@ -12,7 +12,7 @@ export async function home(req: express.Request, res: express.Response) {
 	logger.debug(`Getting  learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
-		const learningRecord = await learnerRecord.getLearningRecordOf(null, user)
+		const learningRecord = await learnerRecord.getLearningRecord(user)
 		const learningHash = learningRecord.length
 			? suggestionController.hashArray(learningRecord, 'id')
 			: {}
@@ -28,12 +28,9 @@ export async function home(req: express.Request, res: express.Response) {
 			if (learningHash[requiredCourse.id]) {
 				const course = learningHash[requiredCourse.id]
 				const record = course.record!
-				if (record.state === 'COMPLETED' && !course.shouldRepeat(user)) {
+				if (course.isComplete(user) && !course.shouldRepeat(user)) {
 					requiredLearning.splice(i, 1)
 				} else {
-					if (record.state === 'COMPLETED') {
-						record.state = undefined
-					}
 					requiredLearning[i].record = record
 				}
 				delete learningHash[requiredCourse.id]
@@ -44,9 +41,9 @@ export async function home(req: express.Request, res: express.Response) {
 			const course = entry[1] as model.Course
 			const record = course.record!
 			if (
-				record.state !== 'COMPLETED' &&
+				!course.isComplete(user) &&
+				record.state !== 'ARCHIVED' &&
 				record.state !== 'UNREGISTERED' &&
-				record.state !== 'TERMINATED' &&
 				record.preference !== 'DISLIKED'
 			) {
 				plannedLearning.push(course)

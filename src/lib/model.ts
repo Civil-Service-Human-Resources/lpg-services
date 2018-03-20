@@ -27,10 +27,40 @@ export class Course {
 
 	modules: Module[]
 
-	record?: learnerRecord.LearnerRecord
+	record?: learnerRecord.CourseRecord
 
 	constructor(id: string) {
 		this.id = id
+	}
+
+	isComplete(user: User) {
+		if (this.record) {
+			const modules = this.getModules(user)
+			for (const module of modules) {
+				const moduleRecord = this.record.modules.find(
+					mr => mr.moduleId === module.id
+				)
+				if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
+					return false
+				}
+			}
+			return true
+		}
+		return false
+	}
+
+	hasPreference() {
+		return this.record && this.record.preference
+	}
+
+	getModules(user: User) {
+		const modules = []
+		for (const module of this.modules) {
+			if (module.getAudience(user) !== null) {
+				modules.push(module)
+			}
+		}
+		return modules
 	}
 
 	getActivityId() {
@@ -60,11 +90,17 @@ export class Course {
 	}
 
 	getSelectedDate() {
-		if (this.record && this.record.eventId) {
-			for (const module of this.modules) {
-				const event = module.getEvent(this.record.eventId)
-				if (event) {
-					return event.date
+		if (this.record) {
+			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId)
+			if (bookedModuleRecord) {
+				const bookedModule = this.modules.find(
+					m => m.id === bookedModuleRecord.moduleId
+				)
+				if (bookedModule) {
+					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
+					if (event) {
+						return event.date
+					}
 				}
 			}
 		}
@@ -87,7 +123,7 @@ export class Course {
 
 	nextRequiredBy(user: User) {
 		let next = null
-		const completionDate = this.getCompletionDate()
+		const completionDate = this.getCompletionDate(user)
 		for (const module of this.modules) {
 			const moduleNext = module.nextRequiredBy(user, completionDate)
 			if (!next) {
@@ -99,12 +135,25 @@ export class Course {
 		return next
 	}
 
-	getCompletionDate() {
-		return this.record ? this.record.completionDate : undefined
+	getCompletionDate(user: User) {
+		if (this.isComplete(user)) {
+			let completionDate: Date | undefined
+			for (const moduleRecord of this.record!.modules) {
+				if (!completionDate) {
+					completionDate = moduleRecord.completionDate
+				} else if (
+					moduleRecord.completionDate &&
+					moduleRecord.completionDate > completionDate
+				) {
+					completionDate = moduleRecord.completionDate
+				}
+			}
+		}
+		return undefined
 	}
 
 	shouldRepeat(user: User) {
-		const completionDate = this.getCompletionDate()
+		const completionDate = this.getCompletionDate(user)
 		for (const module of this.modules) {
 			const moduleShouldRepeat = module.shouldRepeat(user, completionDate)
 			if (moduleShouldRepeat) {

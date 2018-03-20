@@ -105,12 +105,7 @@ export async function renderCancelBookingPage(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getCourseRecord(
-		req.user,
-		course,
-		module,
-		event
-	)
+	const record = await learnerRecord.getRecord(req.user, course, module, event)
 
 	if (!record) {
 		logger.warn(
@@ -219,12 +214,7 @@ export async function tryCancelBooking(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getCourseRecord(
-		req.user,
-		course,
-		module,
-		event
-	)
+	const record = await learnerRecord.getRecord(req.user, course, module, event)
 
 	if (!record) {
 		logger.warn(
