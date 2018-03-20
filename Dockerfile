@@ -47,4 +47,7 @@ COPY dist dist
 # This needs to be specified after the `npm install`
 ENV NODE_ICU_DATA=/var/www/app/node_modules/full-icu
 
-CMD [ "bash", "-c", "cd dist/ui && node ../node_modules/ui/server.js" ]
+ARG service
+ENV service ${service}
+
+CMD [ "bash", "-c", "cd dist/${service} && node ../node_modules/${service}/server.js" ]
