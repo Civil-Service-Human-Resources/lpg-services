@@ -86,6 +86,7 @@ function validateForm(req: express.Request) {
 	}
 	return validFields
 }
+
 export function viewProfile(req: express.Request, res: express.Response) {
 	res.send(
 		renderProfile(req, {
