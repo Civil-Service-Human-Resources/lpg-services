@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
@@ -89,7 +90,9 @@ export async function displayModule(
 
 	switch (module.type) {
 		case 'elearning':
-			res.redirect(`/courses/${course.id}/${module.id}/do`)
+			res.redirect(
+				`${config.CONTENT_URL}/${course.id}/${module.id}/${module.startPage}`
+			)
 			break
 		case 'face-to-face':
 			res.redirect(`/book/${course.id}/${module.id}`)

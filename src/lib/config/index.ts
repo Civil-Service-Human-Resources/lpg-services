@@ -63,6 +63,9 @@ export const BOOKING_CONFIRMED_NOTIFY_TEMPLATE_ID =
 
 export const BOOKING_NOTIFY_RECIPIENTS = ['tav@kainos.com']
 
+export const CONTENT_URL =
+	env.CONTENT_URL || 'http://local-cdn.cshr.digital/lpgdevcontent'
+
 export const COURSE_CATALOGUE = set({
 	auth: {
 		password: env.COURSE_CATALOGUE_PASS || 'password',
