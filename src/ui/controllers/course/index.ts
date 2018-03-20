@@ -95,7 +95,7 @@ export async function displayModule(
 			)
 			break
 		case 'face-to-face':
-			res.redirect(`/book/${course.id}/${module.id}`)
+			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 			break
 		case 'link':
 			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
