@@ -310,6 +310,7 @@ async function upload(id, entry) {
 
     try {
         if (filesToSubstitute.indexOf(filename) > -1) {
+            entry.autodrain();
             const fileData = await getFile(filename);
             await doUpload(storagePath, fileData);
         } else {
@@ -352,7 +353,9 @@ async function doUpload(storagePath, entry) {
                     }
                 }
             )
-        ).on('error', reject);
+        ).on('error', e => {
+            reject(e);
+        });
     });
 }
 
