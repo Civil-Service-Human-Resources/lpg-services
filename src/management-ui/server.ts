@@ -1,6 +1,7 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
+import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
@@ -71,21 +72,30 @@ app.get('/sign-in', loginController.signIn)
 app.get('/sign-out', loginController.signOut)
 
 app.get('/', homeController.index)
-app.get('/courses', displayCourseController.index)
+app.get('/courses', asyncHandler(displayCourseController.index))
 
-app.param('courseId', editCourseController.loadCourse)
-app.param('moduleId', editCourseController.loadModule)
+app.param('courseId', asyncHandler(editCourseController.loadCourse))
+app.param('moduleId', asyncHandler(editCourseController.loadModule))
 
 app.get('/courses/:courseId/edit', editCourseController.editCourse)
-app.post('/courses/:courseId/edit', editCourseController.doEditCourse)
+app.post(
+	'/courses/:courseId/edit',
+	asyncHandler(editCourseController.doEditCourse)
+)
 app.get('/courses/:courseId/add-module', editCourseController.addModule)
-app.post('/courses/:courseId/add-module', editCourseController.doAddModule)
+app.post(
+	'/courses/:courseId/add-module',
+	asyncHandler(editCourseController.doAddModule)
+)
 app.get('/courses/:courseId/:moduleId/edit', editCourseController.editModule)
-app.post('/courses/:courseId/:moduleId/edit', editCourseController.doEditModule)
+app.post(
+	'/courses/:courseId/:moduleId/edit',
+	asyncHandler(editCourseController.doEditModule)
+)
 
 app.get('/courses/:courseId', displayCourseController.displayCourse)
 
-app.get('/bookings', bookingsController.index)
+app.get('/bookings', asyncHandler(bookingsController.index))
 
 app.use(
 	(

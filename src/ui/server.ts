@@ -1,6 +1,7 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
+import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
@@ -70,12 +71,12 @@ app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
 
-app.post('/feedback.record', feedbackController.record)
+app.post('/feedback.record', asyncHandler(feedbackController.record))
 
 app.use(passport.isAuthenticated)
 app.use(passport.hasRole('learner'))
 
-app.get('/api/lrs.record', learningRecordController.record)
+app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
 
@@ -95,31 +96,46 @@ app.use(
 	}
 )
 
-app.param('courseId', courseController.loadCourse)
-app.param('moduleId', courseController.loadModule)
-app.param('eventId', courseController.loadEvent)
+app.param('courseId', asyncHandler(courseController.loadCourse))
+app.param('moduleId', asyncHandler(courseController.loadModule))
+app.param('eventId', asyncHandler(courseController.loadEvent))
 
-app.get('/courses/:courseId', courseController.display)
-app.use('/courses/:courseId/delete', courseController.markCourseDeleted)
-app.use('/courses/:courseId/:moduleId', courseController.displayModule)
-app.use('/courses/:courseId/:moduleId/xapi', xApiController.proxy)
+app.get('/courses/:courseId', asyncHandler(courseController.display))
+app.use(
+	'/courses/:courseId/delete',
+	asyncHandler(courseController.markCourseDeleted)
+)
+app.use(
+	'/courses/:courseId/:moduleId',
+	asyncHandler(courseController.displayModule)
+)
+app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
 
-app.get('/learning-record', learningRecordController.display)
-app.get('/learning-record/:courseId', learningRecordController.courseResult)
+app.get('/learning-record', asyncHandler(learningRecordController.display))
+app.get(
+	'/learning-record/:courseId',
+	asyncHandler(learningRecordController.courseResult)
+)
 
-app.get('/search', searchController.search)
-app.get('/suggestions-for-you', suggestionController.suggestionsPage)
+app.get('/search', asyncHandler(searchController.search))
+app.get(
+	'/suggestions-for-you',
+	asyncHandler(suggestionController.suggestionsPage)
+)
 app.get(
 	'/suggestions-for-you/:expandedAow',
-	suggestionController.expandedSuggestionsPage
+	asyncHandler(suggestionController.expandedSuggestionsPage)
 )
-app.get('/suggestions-for-you/add/:courseId', suggestionController.addToPlan)
+app.get(
+	'/suggestions-for-you/add/:courseId',
+	asyncHandler(suggestionController.addToPlan)
+)
 app.get(
 	'/suggestions-for-you/remove/:courseId',
-	suggestionController.removeFromSuggestions
+	asyncHandler(suggestionController.removeFromSuggestions)
 )
 
-app.get('/home', homeController.home)
+app.get('/home', asyncHandler(homeController.home))
 
 app.get(
 	'/book/:courseId/:moduleId/choose-date',
@@ -141,21 +157,21 @@ app.post(
 
 app.get(
 	'/book/:courseId/:moduleId/:eventId/confirm',
-	bookingController.renderConfirmPayment
+	asyncHandler(bookingController.renderConfirmPayment)
 )
 
 app.get(
 	'/book/:courseId/:moduleId/:eventId/complete',
-	bookingController.tryCompleteBooking
+	asyncHandler(bookingController.tryCompleteBooking)
 )
 
 app.get(
 	'/book/:courseId/:moduleId/:eventId/cancel',
-	bookingController.renderCancelBookingPage
+	asyncHandler(bookingController.renderCancelBookingPage)
 )
 app.post(
 	'/book/:courseId/:moduleId/:eventId/cancel',
-	bookingController.tryCancelBooking
+	asyncHandler(bookingController.tryCancelBooking)
 )
 
 app.use(
