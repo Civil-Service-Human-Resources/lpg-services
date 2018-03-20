@@ -22,45 +22,37 @@ services:
 # Learning Locker
   learning-locker-api-server:
     container_name: learning-locker-api-server
-    command: ["node", "/opt/learning-locker/api/dist/server"]
     depends_on:
       - mongodb
       - redis
       - mailhog
-    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
+    image: cshr/lpg-learning-locker-api-server:latest
     ports:
       - 8082:8082
-    working_dir: /opt/learning-locker
 
   learning-locker-api-worker:
     container_name: learning-locker-api-worker
-    command: ["node", "/opt/learning-locker/worker/dist/server"]
     depends_on:
       - learning-locker-api-server
     image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
-    working_dir: /opt/learning-locker
 
   learning-locker-ui:
     container_name: learning-locker-ui
-    command: ["node", "/opt/learning-locker/ui/dist/server"]
-    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
+    image: cshr/lpg-learning-locker-ui:latest
     ports:
       - 3000:3000
     depends_on:
       - learning-locker-api-server
-    working_dir: /opt/learning-locker
 
   learning-locker-xapi:
     container_name: learning-locker-xapi
-    command: ["node", "/opt/xapi-service/dist/server"]
     depends_on:
       - mongodb
       - redis
       - learning-locker-api-worker
-    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
+    image: cshr/lpg-learning-locker-xapi:latest
     ports:
       - 8083:8083
-    working_dir: /opt/xapi-service
 
   mailhog:
     container_name: mailhog-locker-api-worker
@@ -82,9 +74,9 @@ services:
       - mailhog
       - mongodb
     environment:
-      - NODE_PATH=/opt/learning-locker
+      - NODE_PATH=/opt/learning-locker/setup
     image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
-    working_dir: /opt/learning-locker
+    working_dir: /opt/learning-locker/setup
 # /Learning Locker
 
 # CSHR
