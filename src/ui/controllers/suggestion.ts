@@ -19,13 +19,9 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const ref = req.query.ref === 'home' ? '/' : '/suggestions-for-you'
 	const course = req.course
-	let module
-	if (course.modules.length === 1) {
-		module = course.modules[0]
-	}
 
 	try {
-		await xapi.record(req, course, xapi.Verb.Liked, undefined, module)
+		await xapi.record(req, course, xapi.Verb.Liked)
 	} catch (err) {
 		res.sendStatus(500)
 	} finally {
@@ -40,13 +36,9 @@ export async function removeFromSuggestions(
 	const req = ireq as extended.CourseRequest
 	const ref = req.query.ref === 'home' ? '/' : '/suggestions-for-you'
 	const course = req.course
-	let module
-	if (course.modules.length === 1) {
-		module = course.modules[0]
-	}
 
 	try {
-		await xapi.record(req, course, xapi.Verb.Disliked, undefined, module)
+		await xapi.record(req, course, xapi.Verb.Disliked)
 	} catch (err) {
 		res.sendStatus(500)
 	} finally {
@@ -95,7 +87,7 @@ export async function suggestions(
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
 	} else {
-		const records = await learnerRecord.getLearningRecordOf(null, user)
+		const records = await learnerRecord.getLearningRecord(user)
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
 
@@ -109,7 +101,7 @@ export async function suggestions(
 			baseParams.serialize()
 		)).entries
 
-		courseSuggestions.push(modifyCourses(suggestedGroup, learningRecord))
+		courseSuggestions.push(modifyCourses(suggestedGroup, learningRecord, user))
 	}
 	baseParams.areaOfWork = []
 	baseParams.department = user.department
@@ -118,7 +110,8 @@ export async function suggestions(
 			(await catalog.findSuggestedLearningWithParameters(
 				baseParams.serialize()
 			)).entries,
-			learningRecord
+			learningRecord,
+			user
 		)
 	)
 
@@ -154,29 +147,21 @@ export async function homeSuggestions(
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
 	} else {
-		const records = await learnerRecord.getLearningRecordOf(null, user)
+		const records = await learnerRecord.getLearningRecord(user)
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
-	return modifyCourses(suggestedLearning, learningRecord)
+	return modifyCourses(suggestedLearning, learningRecord, user)
 }
 
 export function modifyCourses(
 	courses: model.Course[],
-	learningRecord: Record<string, model.Course>
+	learningRecord: Record<string, model.Course>,
+	user: model.User
 ) {
 	const modified: model.Course[] = []
 	for (const course of courses) {
 		const matched = learningRecord[course.id]
-
-		if (matched && matched.record) {
-			// there is a reference to the course in the learning record
-			if (
-				matched.record.preference !== xapi.Labels[xapi.Verb.Disliked] &&
-				matched.record.preference !== xapi.Labels[xapi.Verb.Liked]
-			) {
-				modified.push(course)
-			}
-		} else {
+		if (!matched || (!matched.hasPreference() && !matched.isComplete(user))) {
 			modified.push(course)
 		}
 	}
