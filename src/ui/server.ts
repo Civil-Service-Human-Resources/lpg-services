@@ -123,7 +123,7 @@ app.use(
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
 app.get(
-	'/learning-record/:courseId',
+	'/learning-record/:courseId/:moduleId',
 	asyncHandler(learningRecordController.courseResult)
 )
 
