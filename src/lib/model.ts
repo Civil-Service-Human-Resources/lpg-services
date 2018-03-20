@@ -34,7 +34,19 @@ export class Course {
 	}
 
 	isComplete(user: User) {
-		return this.record && this.record.state === 'COMPLETED'
+		if (this.record) {
+			const modules = this.getModules(user)
+			for (const module of modules) {
+				const moduleRecord = this.record.modules.find(
+					mr => mr.moduleId === module.id
+				)
+				if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
+					return false
+				}
+			}
+			return true
+		}
+		return false
 	}
 
 	hasPreference() {
@@ -126,7 +138,7 @@ export class Course {
 	getCompletionDate(user: User) {
 		if (this.isComplete(user)) {
 			let completionDate: Date | undefined
-			for (const moduleRecord of this.record.modules) {
+			for (const moduleRecord of this.record!.modules) {
 				if (!completionDate) {
 					completionDate = moduleRecord.completionDate
 				} else if (

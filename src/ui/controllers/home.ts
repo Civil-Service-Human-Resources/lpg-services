@@ -29,7 +29,6 @@ export async function home(req: express.Request, res: express.Response) {
 				const course = learningHash[requiredCourse.id]
 				const record = course.record!
 				if (course.isComplete(user) && !course.shouldRepeat(user)) {
-					console.log('course complete, removing from learning plan')
 					requiredLearning.splice(i, 1)
 				} else {
 					requiredLearning[i].record = record
@@ -41,7 +40,6 @@ export async function home(req: express.Request, res: express.Response) {
 		Object.entries(learningHash).forEach((entry, key) => {
 			const course = entry[1] as model.Course
 			const record = course.record!
-			console.log(course, record)
 			if (
 				!course.isComplete(user) &&
 				record.state !== 'ARCHIVED' &&
