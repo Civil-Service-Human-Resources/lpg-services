@@ -106,7 +106,6 @@ app.use(
 	}
 )
 
-<<<<<<< HEAD
 app.param('courseId', asyncHandler(courseController.loadCourse))
 app.param('moduleId', asyncHandler(courseController.loadModule))
 app.param('eventId', asyncHandler(courseController.loadEvent))
@@ -118,8 +117,8 @@ app.use(
 )
 app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
 app.use(
-    '/courses/:courseId/:moduleId',
-    asyncHandler(courseController.displayModule)
+	'/courses/:courseId/:moduleId',
+	asyncHandler(courseController.displayModule)
 )
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
@@ -127,19 +126,6 @@ app.get(
 	'/learning-record/:courseId',
 	asyncHandler(learningRecordController.courseResult)
 )
-=======
-app.param('courseId', courseController.loadCourse)
-app.param('moduleId', courseController.loadModule)
-app.param('eventId', courseController.loadEvent)
-
-app.get('/courses/:courseId', courseController.display)
-app.use('/courses/:courseId/delete', courseController.markCourseDeleted)
-app.use('/courses/:courseId/:moduleId/xapi', xApiController.proxy)
-app.use('/courses/:courseId/:moduleId', courseController.displayModule)
-
-app.get('/learning-record', learningRecordController.display)
-app.get('/learning-record/:courseId', learningRecordController.courseResult)
->>>>>>> Add moduleId to close_methods.
 
 app.get('/search', asyncHandler(searchController.search))
 app.get(
