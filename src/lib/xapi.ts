@@ -272,7 +272,7 @@ export async function record(
 				type = Type.Video
 				break
 			default:
-				throw new Error(`Unknown course type ${course.getType()}`)
+				throw new Error(`Unknown module type ${module.type}`)
 		}
 	} else {
 		type = Type.Course
