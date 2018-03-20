@@ -32,6 +32,7 @@
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
+		"@types/cors": "2.8.3",
 		"@types/dotenv": "4.0.2",
 		"@types/express-session": "1.15.6",
 		"@types/google-protobuf": "3.2.7",
