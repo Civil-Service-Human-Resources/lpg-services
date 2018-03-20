@@ -26,7 +26,7 @@ services:
       - mongodb
       - redis
       - mailhog
-    image: cshr/lpg-learning-locker-api-server:latest
+    image: cshr/lpg-learning-locker-api-server:988cb07eb553b13d90ea7a48d9da247ca74c74b8b3a0e5e91f837976b2a0fb3b579
     ports:
       - 8082:8082
 
@@ -34,11 +34,11 @@ services:
     container_name: learning-locker-api-worker
     depends_on:
       - learning-locker-api-server
-    image: cshr/lpg-learning-locker:d29392f370a186af9d9338fbe796e7d60c32fcd91bf23824c0fd86b6237fcd96
+    image: cshr/lpg-learning-locker-api-worker:cd954f2c7cf423ce3c20223e4e3e73899246b96f9efdecc84770ac6b77d0ffe1
 
   learning-locker-ui:
     container_name: learning-locker-ui
-    image: cshr/lpg-learning-locker-ui:latest
+    image: cshr/lpg-learning-locker-ui:b5cddb229c58e961b96b4566e99e8971ac2b56ee31189f14e7b510b029be89ee
     ports:
       - 3000:3000
     depends_on:
@@ -50,7 +50,7 @@ services:
       - mongodb
       - redis
       - learning-locker-api-worker
-    image: cshr/lpg-learning-locker-xapi:latest
+    image: cshr/lpg-learning-locker-xapi:7e6b19d6d8bf99ce9d4c322b449a6744b7a33c23071e653bef827d0277b83441
     ports:
       - 8083:8083
 
@@ -74,7 +74,7 @@ services:
       - mongodb
     environment:
       - NODE_PATH=/opt/learning-locker/setup
-    image: cshr/lpg-learning-locker-setup:latest
+    image: cshr/lpg-learning-locker-setup:fc53b8729e706154b33f384081e0f3664d7ad9e7d8a3e9ddb3fd21e9dd10e556
 # /Learning Locker
 
 # CSHR
