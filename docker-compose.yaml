@@ -26,7 +26,7 @@ services:
       - mongodb
       - redis
       - mailhog
-    image: cshr/lpg-learning-locker-api-server:988cb07eb553b13d90ea7a48d9da247ca74c74b8b3a0e5e91f837976b2a0fb3b579
+    image: cshr/lpg-learning-locker-api-server:988cb07eb553b13d90ea7a48d9da247ca74c74b8b3a0e5e91f837976b2a0fb3b
     ports:
       - 8082:8082
 
