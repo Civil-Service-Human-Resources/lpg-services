@@ -26,7 +26,7 @@ services:
       - mongodb
       - redis
       - mailhog
-    image: cshr/lpg-learning-locker-api-server:988cb07eb553b13d90ea7a48d9da247ca74c74b8b3a0e5e91f837976b2a0fb3b579
+    image: cshr/lpg-learning-locker-api-server:988cb07eb553b13d90ea7a48d9da247ca74c74b8b3a0e5e91f837976b2a0fb3b
     ports:
       - 8082:8082
 
@@ -79,33 +79,33 @@ services:
 
 # CSHR
 
-#  learner-record:
-#    container_name: learner-record
-#    environment:
-#      AUTH_USER: user
-#      AUTH_PASSWORD: password
-#      XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
-#      XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
-#      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-#    image: cshr/lpg-learner-record:5233e657354e9c9dee06f6e7a291a1409b00eb6a
-#    depends_on:
-#      - learning-locker-xapi
-#    ports:
-#      - 9000:9000
-#
-#  learning-catalogue:
-#    container_name: learning-catalogue
-#    command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
-#    depends_on:
-#      - elasticsearch
-#    environment:
-#      AUTH_USER: user
-#      AUTH_PASSWORD: password
-#      ELASTICSEARCH_CLUSTER: local
-#      ELASTICSEARCH_HOST: elasticsearch
-#      ELASTICSEARCH_PORT: 9300
-#    image: cshr/lpg-learning-catalogue:80aff817bb275ea692de84f3f6911f537ab19730
-#    ports:
-#      - 9001:9001
+  learner-record:
+    container_name: learner-record
+    environment:
+      AUTH_USER: user
+      AUTH_PASSWORD: password
+      XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
+      XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
+      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
+    image: cshr/lpg-learner-record:dc31695e7d0f68725105cbc82f07d51b22777b9e
+    depends_on:
+      - learning-locker-xapi
+    ports:
+      - 9000:9000
+
+  learning-catalogue:
+    container_name: learning-catalogue
+    command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
+    depends_on:
+      - elasticsearch
+    environment:
+      AUTH_USER: user
+      AUTH_PASSWORD: password
+      ELASTICSEARCH_CLUSTER: local
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9300
+    image: cshr/lpg-learning-catalogue:f25043c75a1de17614f78e145fe481f22132ef41
+    ports:
+      - 9001:9001
 
 # /CSHR
