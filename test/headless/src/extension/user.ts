@@ -13,6 +13,10 @@ export interface User {
 	userName: string
 }
 
+export interface UserGroups {
+	id: string
+}
+
 const SCIM2_HEADERS: Record<string, string> = {
 	Accept: 'application/json',
 }
@@ -133,6 +137,38 @@ export async function updateUser(
 			},
 			headers: SCIM2_HEADERS,
 			method: 'PUT',
+		})
+	} catch (err) {
+		throw err
+	}
+	if (resp.status !== 200) {
+		throw new Error(
+			`Received response code ${resp.status} when expecting a 200`
+		)
+	}
+}
+
+export async function updateUserGroups(
+	username: string,
+	userid: string
+	//groupid: string
+) {
+	const url =
+		config.WSO2_URL + '/scim2/Groups/f750323b-d72f-48db-b045-73810cb5f96e'
+	const data = JSON.stringify({
+		Operations: [
+			{op: 'add', value: {members: [{display: username, value: userid}]}},
+		],
+	})
+	let resp: AxiosResponse<UserGroups>
+	try {
+		resp = await http.patch(url, data, {
+			auth: {
+				password: config.WSO2_ADMIN_PASSWORD,
+				username: config.WSO2_ADMIN_USERNAME,
+			},
+			headers: SCIM2_HEADERS,
+			method: 'PATCH',
 		})
 	} catch (err) {
 		throw err

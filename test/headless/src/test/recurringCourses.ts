@@ -26,7 +26,7 @@ describe('recurring courses functionality', () => {
 		})
 		await page.goto(config.URL)
 		userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
-		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G7')
+		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
 		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
 		await page.waitFor(selectors.signoutButton)
 	})

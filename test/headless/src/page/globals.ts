@@ -8,6 +8,7 @@ export const selectors: Record<string, string> = {
 	feedbackWrongField: '#wentWrong',
 	homeMenuButton: 'a[href="/home"]',
 	learningRecordMenuButton: 'a[href="/learning-record"]',
+	profileMenuButton: 'a[href="/profile"]',
 	searchMenuButton: 'a[href="/search"]',
 	signoutMenuButton: 'a[href="/sign-out"]',
 	suggestionsMenuButton: 'a[href="suggestions-for-you"]',

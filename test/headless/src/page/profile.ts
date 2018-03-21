@@ -1,23 +1,27 @@
 import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
+	areasOfWork: '.lpg-areas-of-work',
+	continueButton: 'input[value="Continue"]',
 	department: '.lpg-department',
 	departmentFieldError: '.lpg-department-error',
+	editDepartmentField: '#department',
+	editNameField: '#given-name',
 	emailAddress: '.lpg-email-address',
 	emailAddressReadOnly: '.lpg-email-address-read-only',
 	feedbackLink: '.lpg-feedback-link',
-	firstName: '.lpg-first-name',
-	firstNameFieldError: '.lpg-name-error',
+	givenName: '.lpg-given-name',
+	givenNameFieldError: '.lpg-name-error',
 	grade: '.lpg-grade',
 	gradeFieldError: '.lpg-grade-error',
 	incompleteProfileError: '.lpg-incomplete-profile',
-	profession: '.lpg-profession',
-	professionFieldError: '.lpg-profession-error',
 	profileForm: '.form-control',
 	profilePageButton: '#proposition-links > li > a',
-	profileUpdatedMessage: '.lpg-profile-updated',
+	profileUpdatedBanner: '.banner--confirmation',
 	signoutButton: 'a[href="/sign-out"]',
-	updateProfileError: '#error-summary-heading-example-1',
+	updateAreasOfWork: 'a[href="/profile/areas-of-work"]',
+	updateDepartment: 'a[href="/profile/department"]',
+	updateGivenName: 'a[href="/profile/given-name"]',
 }
 
 export async function returnUserProfileDetails(page: puppeteer.Page) {
@@ -33,19 +37,20 @@ export async function returnUserProfileDetails(page: puppeteer.Page) {
 	})
 }
 
-export async function setProfileFieldToEmptyAndSave(
-	selector: string,
-	page: puppeteer.Page
-) {
-	await page.type(selector, ' ')
-	await page.click(selectors.saveProfileButton)
+export async function editAreaOfWork(page: puppeteer.Page) {
+	await page.click(selectors.updateAreasOfWork)
 }
 
-export async function setUserProfileDetails(page: puppeteer.Page) {
-	await page.type(selectors.firstName, 'Name')
-	await page.type(selectors.department, 'co')
-	await page.type(selectors.profession, 'HR')
-	await page.type(selectors.grade, 'G7')
-	await page.click(selectors.saveProfileButton)
-	await page.waitFor(selectors.profileUpdatedMessage)
+export async function editProfileInfo(
+	profileField: string,
+	selector: string,
+	updateValue: string,
+	page: puppeteer.Page
+) {
+	await page.click(profileField)
+	await page.waitForSelector(selector)
+	await page.$eval(selector, (input: any) => (input.value = ''))
+	await page.type(selector, updateValue)
+	await page.click(selectors.continueButton)
+	await page.waitForSelector(selectors.profileUpdatedBanner)
 }
