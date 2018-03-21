@@ -149,7 +149,9 @@ export async function renderCancelledBookingPage(
 		res.sendStatus(400)
 		return
 	}
-	const moduleRecord = record.modules.find(rm => rm.moduleId === module.id && rm.eventId === event.id)
+	const moduleRecord = record.modules.find(
+		rm => rm.moduleId === module.id && rm.eventId === event.id
+	)
 	if (!moduleRecord || moduleRecord.state !== 'UNREGISTERED') {
 		res.redirect(`/book/${course.id}/${module.id}/cancel`)
 	} else {
