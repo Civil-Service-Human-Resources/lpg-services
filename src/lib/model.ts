@@ -148,6 +148,7 @@ export class Course {
 					completionDate = moduleRecord.completionDate
 				}
 			}
+			return completionDate
 		}
 		return undefined
 	}
