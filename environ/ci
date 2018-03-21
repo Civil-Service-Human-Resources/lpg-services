@@ -19,7 +19,7 @@ function stage {
 
 stage "Pulling the latest lpg-services docker image"
 docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-docker pull cshr/lpg-services || true
+docker pull cshr/lpg-services-ui || true
 
 stage "Installing the top-level dependencies"
 npm install
@@ -35,11 +35,17 @@ stage "Running the unit tests"
 npm test
 
 stage "Building the new lpg-services docker image"
-docker build --cache-from cshr/lpg-services:latest -t cshr/lpg-services:${TRAVIS_COMMIT} .
+docker build --build-arg service=ui --cache-from cshr/lpg-services-ui:latest -t cshr/lpg-services-ui:${TRAVIS_COMMIT} .
 
-stage "Pushing the lpg-services:${TRAVIS_COMMIT} docker image"
-docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
-docker push cshr/lpg-services
+stage "Pushing the lpg-services-ui:${TRAVIS_COMMIT} docker image"
+docker tag cshr/lpg-services-ui:${TRAVIS_COMMIT} cshr/lpg-services-ui:latest
+docker push cshr/lpg-services-ui
+
+docker build --build-arg service=management-ui --cache-from cshr/lpg-services-ui:latest -t cshr/lpg-services-management-ui:${TRAVIS_COMMIT} .
+
+stage "Pushing the lpg-services-management-ui:${TRAVIS_COMMIT} docker image"
+docker tag cshr/lpg-services-management-ui:${TRAVIS_COMMIT} cshr/lpg-services-management-ui:latest
+docker push cshr/lpg-services-management-ui
 
 stage "Installing ansible if necessary"
 export PATH="`pwd`/pyhome/bin:${PATH}"
