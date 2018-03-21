@@ -1,45 +1,27 @@
 import * as config from 'extension/config'
 import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
-import {
-	createUser,
-	deleteUser,
-	getUser,
-	updateUser,
-	updateUserGroups,
-} from 'extension/user'
 import {loginToCsl} from 'page/login'
 import {editProfileInfo, selectors} from 'page/profile'
 import * as puppeteer from 'puppeteer'
-
-function genUserEmail() {
-	return `test${Date.now()}@c.gov.uk`
-}
-
-const TEST_USERNAME = genUserEmail()
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
 
 	wrappedBeforeAll(async () => {
-		const session = await helper.getSession('profile')
+		const session = await helper.getSession('update profile')
 		page = await session.newPage()
 		await page.authenticate({
 			password: config.BASIC_AUTH_PASSWORD,
 			username: config.BASIC_AUTH_USERNAME,
 		})
 		await page.goto(config.URL)
-		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
-		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
-		await updateUserGroups(TEST_USERNAME, userId)
-		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
+		await loginToCsl(page, 'test@lpg.dev.cshr.digital', '1337h4x0r')
 		await page.waitFor(selectors.signoutButton, {timeout: 10000})
 		await page.goto(config.BASE_URL + '/profile')
 	})
 
 	wrappedAfterAll(async () => {
-		const userInfo = await getUser(TEST_USERNAME)
-		await deleteUser(userInfo.id)
 		await page.close()
 	})
 
@@ -54,11 +36,11 @@ describe('profile page functionality', () => {
 
 	it('Should display username field which matches email address', async () => {
 		const username = await helper.getText(selectors.emailAddress, page)
-		expect(username).toEqual(TEST_USERNAME)
+		expect(username).toEqual('test@lpg.dev.cshr.digital')
 	})
 
 	it('Should display the first name field', async () => {
-		expect(await helper.checkElementIsPresent(selectors.firstName, page)).toBe(
+		expect(await helper.checkElementIsPresent(selectors.givenName, page)).toBe(
 			true
 		)
 	})
@@ -70,9 +52,9 @@ describe('profile page functionality', () => {
 	})
 
 	it('Should display the profession field', async () => {
-		expect(await helper.checkElementIsPresent(selectors.profession, page)).toBe(
-			true
-		)
+		expect(
+			await helper.checkElementIsPresent(selectors.areasOfWork, page)
+		).toBe(true)
 	})
 
 	it('Should display the grade field', async () => {
@@ -100,12 +82,15 @@ describe('profile page functionality', () => {
 	it('Should be able to update users name from the profile section', async () => {
 		const name = 'John'
 		await editProfileInfo(
-			selectors.updateProfileName,
+			selectors.updateGivenName,
 			selectors.editNameField,
 			name,
 			page
 		)
-		const updatedName = await helper.getText(selectors.firstName, page)
+		expect(
+			await helper.checkElementIsPresent(selectors.profileUpdatedBanner, page)
+		).toBe(true)
+		const updatedName = await helper.getText(selectors.givenName, page)
 		expect(updatedName).toEqual(name)
 	})
 
@@ -117,6 +102,9 @@ describe('profile page functionality', () => {
 			dept,
 			page
 		)
+		expect(
+			await helper.checkElementIsPresent(selectors.profileUpdatedBanner, page)
+		).toBe(true)
 		const updatedDept = await helper.getText(selectors.department, page)
 		expect(updatedDept).toEqual(dept)
 	})

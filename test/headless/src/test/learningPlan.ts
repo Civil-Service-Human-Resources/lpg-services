@@ -24,7 +24,7 @@ describe('learning page functionality', () => {
 		})
 		await page.goto(config.URL)
 		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
-		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commerical', 'G7')
+		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
 		await loginToCsl(page, config.USERNAME, config.PASSWORD)
 		await page.waitFor(selectors.signoutButton)
 	})
