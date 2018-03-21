@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
+import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
@@ -143,11 +144,23 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'elearning':
 		case 'face-to-face':
 		case 'blended':
+			const record = await learnerRecord.getRecord(req.user, course)
+			const modules = course.modules.map(cm => {
+				const moduleRecord = record
+					? (record.modules || []).find(m => m.moduleId === cm.id)
+					: null
+				return {
+					...cm,
+                    duration: '',
+					state: moduleRecord ? moduleRecord.state : null,
+				}
+			})
 			res.send(
 				template.render(`course/${type}`, req, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
+					modules,
 				})
 			)
 			break
