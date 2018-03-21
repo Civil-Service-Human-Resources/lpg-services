@@ -99,24 +99,33 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-export function renderEditPage(req: express.Request, res: express.Response) {
+export function renderEditPage(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	const inputName = req.params.profileDetail
 	let options = {}
 	let optionType: string = ''
+	let value = null
 	let lede: string = ''
 	switch (inputName) {
+		case 'given-name':
+			value = req.user.givenName
+			break
 		case 'department':
 			options = req.__('departments')
 			optionType = OptionTypes.Typeahead
+			value = req.user.department
 			break
 		case 'areas-of-work':
 			options = req.__('areas-of-work')
 			optionType = OptionTypes.Checkbox
 			lede = req.__('register_area_page_intro')
+			value = req.user.areasOfWork
 			break
 		case 'grade':
 			options = req.__('grades')
 			optionType = OptionTypes.Radio
+			value = req.user.grade
+			break
 	}
 
 	const script = `
@@ -137,6 +146,7 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			optionType,
 			options: Object.entries(options),
 			script,
+			value,
 		})
 	)
 }

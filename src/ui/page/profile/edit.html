@@ -32,10 +32,10 @@
                 <form method="post" class="push-bottom">
                     <div class="form-group">
                         {{#if options && options.length }}
-                            <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" />
+                            <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value />
                         {{else}}
                             <label class="form-label" for="{{inputName}}">New {{i18n('profile_' + inputName + '_label')}}</label>
-                            <input class="form-control" id="{{inputName}}" name="{{inputName}}" value="{{signedInUser[inputName] ? signedInUser[inputName] : ''}}" type="{{inputName === 'password' ? 'password' :'text'}}">
+                            <input class="form-control" id="{{inputName}}" name="{{inputName}}" value="{{value || ''}}" type="{{inputName === 'password' ? 'password' :'text'}}">
                         {{/if}}
                     </div>
                     <div class="form-group">
