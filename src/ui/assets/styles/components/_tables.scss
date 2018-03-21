@@ -96,3 +96,29 @@
 		}
 	}
 }
+
+
+.table--top {
+	td,
+	th {
+		vertical-align: top;
+	}
+}
+
+.table {
+	margin-bottom: 30px;
+}
+
+.table-simple {
+
+	th {
+		font-weight: bold;
+	}
+
+}
+
+.table--fix-first {
+	@include media(desktop) {
+		width: 460px;
+	}
+}
