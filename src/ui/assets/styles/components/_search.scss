@@ -62,3 +62,14 @@
 		margin-bottom: 0;
 	}
 }
+
+.search {
+	@include e(suggestion) {
+		top: -20px;
+		position: relative;
+
+		a {
+			font-style: italic;
+		}
+	}
+}
