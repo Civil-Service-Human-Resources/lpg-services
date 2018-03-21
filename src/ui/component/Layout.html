@@ -6,11 +6,6 @@
 <!--</div>-->
 
 <main class="elements-index" id="content" role="main">
-	{{#if currentReq.session.flash}}
-	<div class="flash-message">
-		{{currentReq.session.flash}} {{(delete currentReq.session.flash) && ''}}
-	</div>
-	{{/if}}
 	<div class="main-content">
 		<slot></slot>
 	</div>

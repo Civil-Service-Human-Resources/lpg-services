@@ -1,0 +1,60 @@
+.banner {
+
+  color: $white;
+  text-align: left;
+  padding: 15px;
+  margin-top: 0;
+  margin-bottom: 30px;
+
+  // Default
+  background-color: $light-blue;
+
+  a {
+    &:link, &:visited, &:hover, &:active {
+      color: #fff;
+    }
+  }
+
+  // Modifiers
+  &--error {
+    background-color: $red;
+  }
+
+  &--confirmation {
+    background-color: $turquoise;
+  }
+
+  &--info {
+    background: $govuk-blue;
+  }
+
+  &--warning {
+    background: $yellow;
+    color: $black;
+
+    a {
+      &:link, &:visited, &:active {
+        color: darken($govuk-blue, 10%);
+      }
+
+      &:hover {
+        color: $black;
+      }
+    }
+  }
+
+  &--content {
+    margin-top: $gutter * 2;
+  }
+
+  // Elements
+  &__heading {
+    @include bold-19;
+    margin-bottom: 0;
+    &-large {
+      @include bold-24;
+      display: block;
+    }
+  }
+
+}

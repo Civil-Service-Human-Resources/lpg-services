@@ -4,6 +4,9 @@
             <span class="heading-secondary">Your profile</span>
             {{i18n('profile_page_title', signedInUser.givenName || '') }}
         </h1>
+        {{#if updateSuccessful}}
+            <Banner type="confirmation" message={{i18n('profile_updated')}} />
+        {{/if}}
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading heading-medium">
@@ -19,18 +22,18 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_name_label')}}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_given-name_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-first-name">
                                 {{signedInUser.givenName || ''}}
                             </td>
                             <td class="key-value-list__item-action">
-                                <a href="/profile/givenName">Change
+                                <a href="/profile/given-name">Change
                                     <span class="visuallyhidden"> your first name</span>
                                 </a>
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_email_label')}}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_email-address_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-email-address">
                                 {{signedInUser.emailAddress}}
                             </td>
@@ -76,20 +79,20 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_area_label')}}</td>
-                            <td class="key-value-list__value key-value-list__value--auto lpg-profession">
+                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_areas-of-work_label')}}</td>
+                            <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
                                 <ul>
-                                    {{#if signedInUser.profession}}
-                                        {{#each signedInUser.areasOfWorkArr() as aow}}
+                                    {{#if signedInUser.areasOfWork}}
+                                        {{#each signedInUser.areasOfWork as aow}}
                                             <li>
-                                                {{aow === 'other' || aow === 'Other' || aow === ''  ? 'Other' :  i18n('areas-of-work')[aow]}}
+                                                {{aow === 'other' ? 'Other' :  i18n('areas-of-work')[aow]}}
                                             </li>
                                         {{/each}}
                                     {{/if}}
                                 </ul>
                             </td>
                             <td class="key-value-list__item-action">
-                                <a href="/profile/profession">Change
+                                <a href="/profile/areas-of-work">Change
                                     <span class="visuallyhidden"> your area of work</span>
                                 </a>
                             </td>

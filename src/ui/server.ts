@@ -27,6 +27,8 @@ import * as xApiController from './controllers/xapi'
 
 /* tslint:disable:no-var-requires */
 const favicon = require('serve-favicon')
+/* tslint:disable:no-var-requires */
+const flash = require('connect-flash')
 
 log4js.configure(config.LOGGING)
 
@@ -36,6 +38,10 @@ const logger = log4js.getLogger('server')
 
 const app = express()
 const FileStore = sessionFileStore(session)
+
+app.disable('x-powered-by')
+app.disable('etag')
+app.enable('trust proxy')
 
 const corsOptions = {
 	allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
@@ -59,8 +65,7 @@ app.use(
 		}),
 	})
 )
-
-app.enable('trust proxy')
+app.use(flash())
 
 app.use(lusca.xframe('SAMEORIGIN'))
 app.use(lusca.xssProtection(true))
@@ -91,8 +96,10 @@ app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 app.get('/profile', userController.viewProfile)
 
 app.get('/profile/:profileDetail', userController.renderEditPage)
-app.post('/profile/:profileDetail', userController.tryUpdateProfile)
-app.get('/profile-updated', userController.editProfileComplete)
+app.post(
+	'/profile/:profileDetail',
+	asyncHandler(userController.tryUpdateProfile)
+)
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {

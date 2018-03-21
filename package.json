@@ -25,6 +25,7 @@
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
+		"@types/connect-flash": "0.0.34",
 		"@types/cors": "2.8.3",
 		"@types/dotenv": "4.0.2",
 		"@types/express-session": "1.15.6",
@@ -53,6 +54,7 @@
 		"axios": "0.17.1",
 		"azure-storage": "2.8.1",
 		"compression": "1.7.1",
+		"connect-flash": "^0.1.1",
 		"cors": "2.8.4",
 		"dotenv": "5.0.0",
 		"express": "4.16.2",
