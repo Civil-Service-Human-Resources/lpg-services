@@ -1,21 +1,15 @@
 <Page title="Course">
     <div class="container">
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class="heading-large">
-                    <span class="heading-secondary">Course</span>
-                    {{course.title}}
-                </h1>
-            </div>
-        </div>
+        <h1 class="heading-xlarge heading heading--page-heading ">
+            {{course.title}}
+        </h1>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <h2 class="heading-medium">Description</h2>
-                <div>{{{course.description}}}</div>
+                <div>{{{toHtml(course.description)}}}</div>
 
                 {{#if course.learningOutcomes}}
-                <h2 class="heading-medium">Learning Outcomes</h2>
-                <div>{{{course.learningOutcomes }}}</div>
+                <h2 class="heading-medium">Learning outcomes</h2>
+                <div>{{{toHtml(course.learningOutcomes)}}}</div>
                 {{/if}}
 
                 <ul>
