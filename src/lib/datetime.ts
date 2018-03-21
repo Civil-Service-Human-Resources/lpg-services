@@ -47,21 +47,21 @@ export function formatCourseDuration(d: number) {
 	const [hours, hourSeconds] = divmod(daySeconds, 3600)
 	if (hours) {
 		if (out) {
-            out += ' '
+			out += ' '
 		}
 		out += `${hours} hour${hours > 1 ? 's' : ''}`
 	}
 	const [minutes, seconds] = divmod(hourSeconds, 60)
 	if (minutes) {
-        if (out) {
-            out += ' '
-        }
+		if (out) {
+			out += ' '
+		}
 		out += `${minutes} minute${minutes > 1 ? 's' : ''}`
 	}
 	if (seconds) {
-        if (out) {
-            out += ' '
-        }
+		if (out) {
+			out += ' '
+		}
 		out += `${seconds} second${seconds > 1 ? 's' : ''}`
 	}
 	return out
