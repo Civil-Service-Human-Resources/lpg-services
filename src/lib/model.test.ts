@@ -11,7 +11,7 @@ describe('Should test User roles logic', () => {
 			['learner']
 		)
 		user.department = 'commercial'
-		user.profession = 'co'
+		user.areasOfWork = ['co']
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
@@ -28,7 +28,7 @@ describe('Should test User roles logic', () => {
 			['learner', 'management', 'other']
 		)
 		user.department = 'commercial'
-		user.profession = 'co'
+		user.areasOfWork = ['co']
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
@@ -45,7 +45,7 @@ describe('Should test User roles logic', () => {
 			['management']
 		)
 		user.department = 'commercial'
-		user.profession = 'co'
+		user.areasOfWork = ['co']
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
@@ -62,7 +62,7 @@ describe('Should test User roles logic', () => {
 			[]
 		)
 		user.department = 'commercial'
-		user.profession = 'co'
+		user.areasOfWork = ['co']
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
@@ -80,7 +80,7 @@ describe('Should test User roles logic', () => {
 			['Learner']
 		)
 		user.department = 'commercial'
-		user.profession = 'co'
+		user.areasOfWork = ['co']
 		user.givenName = 'Test'
 		user.grade = 'Test'
 

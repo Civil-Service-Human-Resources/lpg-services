@@ -1,10 +1,10 @@
-<Page title="Edit your {{i18n(label)}}" :script>
+<Page title="Edit your {{i18n('profile_' + inputName + '_label')}}" :script>
     <div class="container">
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Your profile</span>
-                    Change your {{i18n(label)}}
+                    Change your {{i18n('profile_' + inputName + '_label').toLowerCase()}}
                 </h1>
                 {{#if lede}}
                     <p class="lede">
@@ -22,7 +22,7 @@
                         {{#if identityServerFailed}} Server error. Update failed, please try again or contact the
                         <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>
                         {{elseif validFields === false}}
-                            Form error. {{i18n(label)}} field cannot be empty.
+                            Form error. {{i18n('profile_' + inputName + '_label')}} field cannot be empty.
                         {{elseif passwordConfirmedFailed}}
                             Password does not match the confirm password.
                         {{/if}}
@@ -32,8 +32,9 @@
                 <form method="post" class="push-bottom">
                     <div class="form-group">
                         {{#if options && options.length }}
-                            <Selects :options :optionType :inputName :label/>
+                            <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" />
                         {{else}}
+                            <label class="form-label" for="{{inputName}}">New {{i18n('profile_' + inputName + '_label')}}</label>
                             <input class="form-control" id="{{inputName}}" name="{{inputName}}" value="{{signedInUser[inputName] ? signedInUser[inputName] : ''}}" type="{{inputName === 'password' ? 'password' :'text'}}">
                         {{/if}}
                     </div>

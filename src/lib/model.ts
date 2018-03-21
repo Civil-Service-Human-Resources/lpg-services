@@ -291,13 +291,18 @@ export class Audience {
 	getRelevance(user: User) {
 		let relevance = -1
 
-		if (this.areasOfWork.indexOf(user.profession)) {
+		if (
+			user.areasOfWork &&
+			this.areasOfWork.filter(
+				areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1
+			).length
+		) {
 			relevance += 1
 		}
-		if (this.departments.indexOf(user.department)) {
+		if (user.department && this.departments.indexOf(user.department)) {
 			relevance += 1
 		}
-		if (this.grades.indexOf(user.grade)) {
+		if (user.grade && this.grades.indexOf(user.grade)) {
 			relevance += 1
 		}
 		return relevance
@@ -369,18 +374,32 @@ export class Frequency {
 	}
 }
 
-export class TextSearchResult {
-	readonly id: string
-	title: string
-	searchText: string
-	weight: number
-
-	constructor(id: string) {
-		this.id = id
-	}
-}
-
 export class User {
+	static create(data: any) {
+		const user = new User(
+			data.id,
+			data.emailAddress,
+			data.nameID,
+			data.nameIDFormat,
+			data.sessionIndex,
+			Array.isArray(data.roles) ? data.roles : [data.roles]
+		)
+		user.department = data.department
+		user.givenName = data.givenName
+		user.grade = data.grade
+
+		const areasOfWork = data.profession || data.areasOfWork
+		if (areasOfWork) {
+			user.areasOfWork = Array.isArray(areasOfWork)
+				? areasOfWork
+				: areasOfWork.split(',')
+		} else {
+			user.areasOfWork = []
+		}
+
+		return user
+	}
+
 	readonly id: string
 	readonly emailAddress: string
 	readonly nameID: string
@@ -388,10 +407,10 @@ export class User {
 	readonly sessionIndex: string
 	readonly roles: string[]
 
-	department: string
-	profession: string
-	givenName: string
-	grade: string
+	department?: string
+	areasOfWork?: string[]
+	givenName?: string
+	grade?: string
 
 	constructor(
 		id: string,
@@ -410,23 +429,10 @@ export class User {
 	}
 
 	hasCompleteProfile() {
-		return this.department && this.profession && this.grade
+		return this.department && this.areasOfWork && this.grade
 	}
 
 	hasRole(role: string) {
 		return this.roles && this.roles.indexOf(role) > -1
-	}
-
-	areasOfWorkArr(): string[] {
-		let professionArray: string[] = []
-		if (this.profession.includes(',')) {
-			if (this.profession.split(',')) {
-				professionArray = this.profession.split(',')
-			}
-		} else {
-			professionArray.push(this.profession)
-		}
-
-		return professionArray
 	}
 }

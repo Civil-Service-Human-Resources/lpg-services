@@ -3,10 +3,12 @@ import * as express from 'express'
 import * as https from 'https'
 import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
+import * as extended from 'lib/extended'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
 
 export interface Profile {
+	updateSuccessful: boolean
 	user: model.User
 	identityServerFailed?: boolean
 	validFields?: boolean
@@ -37,15 +39,6 @@ const SCIM2_HEADERS: Record<string, string> = {
 }
 SCIM2_HEADERS['Content-Type'] = 'application/json'
 
-export enum ProfileDetail {
-	givenName = 'profile_name_label',
-	emailAddress = 'profile_email_label',
-	password = 'profile_password_label',
-	department = 'profile_department_label',
-	profession = 'profile_area_label',
-	grade = 'profile_grade_label',
-}
-
 const http = axios.create({
 	httpsAgent: new https.Agent({
 		rejectUnauthorized: false,
@@ -65,13 +58,15 @@ async function updateUserObject(
 	updatedProfile: WSO2Profile
 ) {
 	const cshrUserObject = updatedProfile.CshrUser
-	const newUser = {
+	const newUser = model.User.create({
 		...req.user,
 		givenName: updatedProfile.name.givenName,
 		...cshrUserObject,
-	}
+	})
 	await new Promise(resolve => {
-		req.login(newUser, resolve)
+		req.login(newUser, () => {
+			req.session!.save(resolve)
+		})
 	})
 }
 
@@ -87,9 +82,11 @@ function validateForm(req: express.Request) {
 	return validFields
 }
 
-export function viewProfile(req: express.Request, res: express.Response) {
+export function viewProfile(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	res.send(
 		renderProfile(req, {
+			updateSuccessful: req.flash('profile-updated').length > 0,
 			user: req.user,
 			validFields: true,
 		})
@@ -104,7 +101,6 @@ export enum OptionTypes {
 
 export function renderEditPage(req: express.Request, res: express.Response) {
 	const inputName = req.params.profileDetail
-	const label = ProfileDetail[inputName]
 	let options = {}
 	let optionType: string = ''
 	let lede: string = ''
@@ -113,7 +109,7 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			options = req.__('departments')
 			optionType = OptionTypes.Typeahead
 			break
-		case 'profession':
+		case 'areas-of-work':
 			options = req.__('areas-of-work')
 			optionType = OptionTypes.Checkbox
 			lede = req.__('register_area_page_intro')
@@ -137,20 +133,12 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 	res.send(
 		template.render('profile/edit', req, {
 			inputName,
-			label,
 			lede,
 			optionType,
 			options: Object.entries(options),
 			script,
 		})
 	)
-}
-
-export function editProfileComplete(
-	req: express.Request,
-	res: express.Response
-) {
-	res.send(template.render('profile/edit-success', req))
 }
 
 export function resetPassword(req: express.Request, res: express.Response) {
@@ -180,27 +168,29 @@ export function signOut(req: express.Request, res: express.Response) {
 	passport.logout(req, res)
 }
 
-export function tryUpdateProfile(req: express.Request, res: express.Response) {
+export async function tryUpdateProfile(
+	req: express.Request,
+	res: express.Response
+) {
 	const validFields = validateForm(req)
 
 	if (!validFields) {
 		const inputName = req.params.profileDetail
-		const label = ProfileDetail[inputName]
 		res.send(
 			template.render('profile/edit', req, {
 				inputName,
-				label,
 				validFields,
 			})
 		)
 	} else {
-		updateProfile(req, res)
+		await updateProfile(req, res)
 	}
 }
 export async function updateProfile(
-	req: express.Request,
+	ireq: express.Request,
 	res: express.Response
 ) {
+	const req = ireq as extended.CourseRequest
 	const updateProfileObject: WSO2Profile = {
 		CshrUser: {
 			department: req.user.department,
@@ -224,10 +214,10 @@ export async function updateProfile(
 	}
 
 	switch (inputName) {
-		case 'givenName':
+		case 'given-name':
 			updateProfileObject.name.givenName = fieldValue
 			break
-		case 'emailAddress':
+		case 'email-address':
 			updateProfileObject.userName = fieldValue
 			break
 		case 'department':
@@ -236,17 +226,18 @@ export async function updateProfile(
 		case 'grade':
 			updateProfileObject.CshrUser.grade = fieldValue
 			break
-		case 'profession':
-			let joinedFieldValues = ''
-
+		case 'areas-of-work':
+			let joinedFieldValues
 			if (Array.isArray(fieldValue)) {
-				joinedFieldValues = fieldValue.join()
+				joinedFieldValues = fieldValue.join(',')
 			} else if (fieldValue) {
 				joinedFieldValues = fieldValue
-			} else {
-				joinedFieldValues = 'Other'
 			}
-			updateProfileObject.CshrUser.profession = joinedFieldValues
+			if (joinedFieldValues) {
+				updateProfileObject.CshrUser.profession = joinedFieldValues
+			} else {
+				delete updateProfileObject.CshrUser.profession
+			}
 			break
 		case 'password':
 			updateProfileObject.password = fieldValue
@@ -255,7 +246,6 @@ export async function updateProfile(
 				res.send(
 					template.render('profile/edit', req, {
 						inputName,
-						label: ProfileDetail[inputName],
 						passwordConfirmedFailed: true,
 					})
 				)
@@ -271,13 +261,15 @@ export async function updateProfile(
 			options
 		)
 		await updateUserObject(req, JSON.parse(response.config.data))
-		res.redirect('/profile-updated')
+		req.flash('profile-updated', 'profile-updated')
+		req.session!.save(() => {
+			res.redirect('/profile')
+		})
 	} catch (e) {
 		res.send(
 			template.render('profile/edit', req, {
 				identityServerFailed: true,
 				inputName,
-				label: ProfileDetail[inputName],
 			})
 		)
 	}

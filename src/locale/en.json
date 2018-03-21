@@ -54,12 +54,13 @@
 	"learning_record_column_course_duration": "Duration",
 	"learning_record_column_course_date": "Completion date",
 	"profile_page_title": "Hello, %s",
-	"profile_name_label": "Name",
-	"profile_email_label": "Email",
+	"profile_given-name_label": "Name",
+	"profile_email-address_label": "Email",
 	"profile_password_label": "Password",
 	"profile_department_label": "Organisation",
-	"profile_area_label": "Area of work",
+	"profile_areas-of-work_label": "Area of work",
 	"profile_grade_label": "Grade",
+	"profile_updated": "Profile successfully updated",
 	"register_for_account_link": "Register for an account",
 	"register_start_page_title": "Register for an account",
 	"register_start_page_intro": "You need to create an account before using the proposition_name. This should take 5 minutes.",
@@ -179,5 +180,9 @@
 	},
 	"responsibility-for-information": "responsibility-for-information",
 	"digital": "digital",
-	"commercial": "commercial"
+	"commercial": "commercial",
+	"profile_name_label": "profile_name_label",
+	"profile_email_label": "profile_email_label",
+	"profile_area_label": "profile_area_label",
+	"Organisation": "Organisation"
 }

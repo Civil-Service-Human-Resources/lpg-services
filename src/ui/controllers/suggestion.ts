@@ -54,7 +54,7 @@ export async function suggestionsPage(
 	const modified = await suggestions(user)
 	res.send(
 		template.render('suggested', req, {
-			areasOfWork: user.areasOfWorkArr(),
+			areasOfWork: user.areasOfWork,
 			courses: modified,
 		})
 	)
@@ -70,7 +70,7 @@ export async function expandedSuggestionsPage(
 	const modified = await suggestions(user, {}, areaOfWorktoExpand)
 	res.send(
 		template.render('suggested', req, {
-			areasOfWork: user.areasOfWorkArr(),
+			areasOfWork: user.areasOfWork,
 			courses: modified,
 		})
 	)
@@ -92,7 +92,7 @@ export async function suggestions(
 	}
 
 	const baseParams = new catalog.ApiParameters([], '', 0, 6)
-	for (const aow of user.areasOfWorkArr()) {
+	for (const aow of user.areasOfWork || []) {
 		baseParams.areaOfWork = [`${aow}`]
 		if (aow[0] === expand) {
 			baseParams.size = 10
@@ -104,7 +104,7 @@ export async function suggestions(
 		courseSuggestions.push(modifyCourses(suggestedGroup, learningRecord, user))
 	}
 	baseParams.areaOfWork = []
-	baseParams.department = user.department
+	baseParams.department = user.department!
 	courseSuggestions.push(
 		modifyCourses(
 			(await catalog.findSuggestedLearningWithParameters(
@@ -123,7 +123,7 @@ export async function homeSuggestions(
 	learningRecordIn: Record<string, model.Course> = {}
 ) {
 	const areaOfWorkParams = new catalog.ApiParameters(
-		user.areasOfWorkArr(),
+		user.areasOfWork || [],
 		'',
 		0,
 		5
@@ -131,7 +131,7 @@ export async function homeSuggestions(
 
 	const departmentParams = new catalog.ApiParameters(
 		[],
-		user.department,
+		user.department!,
 		0,
 		1
 	).serialize()

@@ -5,22 +5,6 @@ import * as saml from 'passport-saml'
 
 let strategy: saml.Strategy
 
-function createUser(data: any) {
-	const user = new model.User(
-		data.id,
-		data.emailAddress,
-		data.nameID,
-		data.nameIDFormat,
-		data.sessionIndex,
-		data.roles
-	)
-	user.department = data.department
-	user.profession = data.profession
-	user.givenName = data.givenName
-	user.grade = data.grade
-	return user
-}
-
 export function configure(
 	issuer: string,
 	authenticationServiceUrl: string,
@@ -39,7 +23,8 @@ export function configure(
 		(profile: any, done: saml.VerifiedCallback) => {
 			done(
 				null,
-				createUser({
+				model.User.create({
+					areasOfWork: profile['http://wso2.org/claims/profession'],
 					department: profile['http://wso2.org/claims/department'],
 					emailAddress: profile.nameID,
 					givenName: profile['http://wso2.org/claims/givenname'],
@@ -47,7 +32,6 @@ export function configure(
 					id: profile['http://wso2.org/claims/userid'],
 					nameID: profile.nameID,
 					nameIDFormat: profile.nameIDFormat,
-					profession: profile['http://wso2.org/claims/profession'],
 					roles: profile['http://wso2.org/claims/role'],
 					sessionIndex: profile.sessionIndex,
 				}),
@@ -63,7 +47,7 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>((data, done) => {
-		done(null, createUser(JSON.parse(data)))
+		done(null, model.User.create(JSON.parse(data)))
 	})
 
 	app.all(
