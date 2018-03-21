@@ -14,6 +14,10 @@
                         </div>
                     </form>
                 </div>
+                {{#if searchResults && searchResults.suggestion}}
+                <span class="search__suggestion">Did you mean <a href="/search?q={{searchResults.suggestion}}">{{searchResults.suggestion}}</a></span>
+                {{/if}}
+
                 {{#if searchResults && query}}
                 <p class="lede">There were
                     <strong>{{#if searchResults.totalResults}} {{searchResults.totalResults}} {{else
