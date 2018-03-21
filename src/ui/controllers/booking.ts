@@ -129,6 +129,39 @@ export async function renderCancelBookingPage(
 	)
 }
 
+export async function renderCancelBookingPage(
+	ireq: express.Request,
+	res: express.Response
+) {
+	const req = ireq as extended.CourseRequest
+	const course = req.course
+	const module = req.module!
+	const event = req.event!
+
+	const record = await learnerRecord.getRecord(req.user, course, module, event)
+
+	if (!record) {
+		logger.warn(
+			`Attempt to cancel a booking when not registered. user: ${
+				req.user.id
+			}, course: ${course.id}, module: ${module.id}, event: ${event.id}`
+		)
+		res.sendStatus(400)
+		return
+	}
+
+	course.record = record
+
+	res.send(
+		template.render('booking/cancel-booking', req, {
+			cancelBookingFailed: false,
+			course,
+			event,
+			module,
+		})
+	)
+}
+
 export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 

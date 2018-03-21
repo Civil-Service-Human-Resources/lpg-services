@@ -190,6 +190,10 @@ app.post(
 	'/book/:courseId/:moduleId/:eventId/cancel',
 	asyncHandler(bookingController.tryCancelBooking)
 )
+app.get(
+	'/book/:courseId/:moduleId/:eventId/cancelled',
+	asyncHandler(bookingController.renderCancelledBookingPage)
+)
 
 app.use(
 	(
