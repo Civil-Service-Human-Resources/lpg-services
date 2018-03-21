@@ -2,6 +2,10 @@ import * as puppeteer from 'puppeteer'
 
 export const selectors: Record<string, string> = {
 	areasOfWork: '.lpg-areas-of-work',
+	changeAreasOfWork: 'a[href="/profile/areas-of-work"]',
+	changeDepartment: 'a[href="/profile/department"]',
+	changeGivenName: 'a[href="/profile/given-name"]',
+	changeGrade: 'a[href="/profile/grade"]',
 	continueButton: 'input[value="Continue"]',
 	department: '.lpg-department',
 	departmentFieldError: '.lpg-department-error',
@@ -19,9 +23,6 @@ export const selectors: Record<string, string> = {
 	profilePageButton: '#proposition-links > li > a',
 	profileUpdatedBanner: '.banner--confirmation',
 	signoutButton: 'a[href="/sign-out"]',
-	updateAreasOfWork: 'a[href="/profile/areas-of-work"]',
-	updateDepartment: 'a[href="/profile/department"]',
-	updateGivenName: 'a[href="/profile/given-name"]',
 }
 
 export async function returnUserProfileDetails(page: puppeteer.Page) {

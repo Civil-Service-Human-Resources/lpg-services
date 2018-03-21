@@ -82,7 +82,7 @@ describe('profile page functionality', () => {
 	it('Should be able to update users name from the profile section', async () => {
 		const name = 'John'
 		await editProfileInfo(
-			selectors.updateGivenName,
+			selectors.changeGivenName,
 			selectors.editNameField,
 			name,
 			page
@@ -97,7 +97,7 @@ describe('profile page functionality', () => {
 	it('Should be able to update users department from the profile page', async () => {
 		const dept = 'Home Office'
 		await editProfileInfo(
-			selectors.updateDepartment,
+			selectors.changeDepartment,
 			selectors.editDepartmentField,
 			dept,
 			page
@@ -107,5 +107,24 @@ describe('profile page functionality', () => {
 		).toBe(true)
 		const updatedDept = await helper.getText(selectors.department, page)
 		expect(updatedDept).toEqual(dept)
+	})
+
+	it('Should update the users grade from the profile page', async () => {
+		const map = new Map()
+		map.set('#AA', 'Administrative level')
+		map.set('#EO', 'First line manager')
+		map.set('#HEO', 'Middle manager')
+		map.set('#G6', 'Senior manager')
+		map.set('#SCS', 'Director')
+		map.set('#other', 'Other')
+		for (const [code, gradeName] of map.entries()) {
+			await page.click(selectors.changeGrade)
+			await page.waitForSelector(code)
+			await page.click(code)
+			await page.click(selectors.continueButton)
+			await page.waitForSelector(selectors.profileUpdatedBanner)
+			const profilegrade = await helper.getText(selectors.grade, page)
+			expect(profilegrade).toEqual(gradeName)
+		}
 	})
 })
