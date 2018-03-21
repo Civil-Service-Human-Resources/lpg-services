@@ -129,7 +129,7 @@ export async function renderCancelBookingPage(
 	)
 }
 
-export async function renderCancelBookingPage(
+export async function renderCancelledBookingPage(
 	ireq: express.Request,
 	res: express.Response
 ) {
@@ -149,17 +149,19 @@ export async function renderCancelBookingPage(
 		res.sendStatus(400)
 		return
 	}
-
-	course.record = record
-
-	res.send(
-		template.render('booking/cancel-booking', req, {
-			cancelBookingFailed: false,
-			course,
-			event,
-			module,
-		})
-	)
+	const moduleRecord = record.modules.find(rm => rm.moduleId === module.id && rm.eventId === event.id)
+	if (!moduleRecord || moduleRecord.state !== 'UNREGISTERED') {
+		res.redirect(`/book/${course.id}/${module.id}/cancel`)
+	} else {
+		res.send(
+			template.render('booking/confirmed', req, {
+				course,
+				event,
+				message: confirmedMessage.Cancelled,
+				module,
+			})
+		)
+	}
 }
 
 export function renderChooseDate(ireq: express.Request, res: express.Response) {
@@ -276,15 +278,7 @@ export async function tryCancelBooking(
 			email: req.user.emailAddress,
 			name: req.user.givenName || req.user.emailAddress,
 		})
-
-		res.send(
-			template.render('booking/confirmed', req, {
-				course,
-				event,
-				message: confirmedMessage.Cancelled,
-				module,
-			})
-		)
+		res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
 	} else {
 		res.send(
 			template.render('booking/cancel-booking', req, {
