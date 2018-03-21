@@ -205,7 +205,7 @@ export async function updateProfile(
 		CshrUser: {
 			department: req.user.department,
 			grade: req.user.grade,
-			profession: req.user.profession,
+			profession: (req.user.areasOfWork || []).join(','),
 		},
 		name: {givenName: req.user.givenName},
 		userName: req.user.emailAddress,
@@ -240,7 +240,7 @@ export async function updateProfile(
 			let joinedFieldValues
 			if (Array.isArray(fieldValue)) {
 				joinedFieldValues = fieldValue.join(',')
-			} else if (fieldValue) {
+			} else {
 				joinedFieldValues = fieldValue
 			}
 			if (joinedFieldValues) {
