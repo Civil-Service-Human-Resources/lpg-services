@@ -11,6 +11,7 @@
         </div>
         <div class="grid-row">
             <div class="column-full">
+                {{#if events && events.length}}
                 <p>
                     Check on which dates you can attend and in which locations, then
                     select a suitable option below.
@@ -70,7 +71,9 @@
                     </div>
                     <input type="submit" class="button" value="Continue">
                 </form>
-
+                {{else}}
+                <p>Unfortunately this course is not currently available.</p>
+                {{/if}}
             </div>
         </div>
     </div>
