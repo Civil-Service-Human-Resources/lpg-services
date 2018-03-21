@@ -17,15 +17,22 @@ export function hashArray(courses: model.Course[], key: string) {
 
 export async function addToPlan(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const ref = req.query.ref === 'home' ? '/' : '/suggestions-for-you'
+	const ref = req.query.ref
 	const course = req.course
 
+	let redirectTo = '/suggestions-for-you'
+	switch (ref) {
+		case 'home':
+		case 'search':
+			redirectTo = '/'
+			break
+	}
 	try {
 		await xapi.record(req, course, xapi.Verb.Liked)
 	} catch (err) {
 		res.sendStatus(500)
 	} finally {
-		res.redirect(ref)
+		res.redirect(redirectTo)
 	}
 }
 
