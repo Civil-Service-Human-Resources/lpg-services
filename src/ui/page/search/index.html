@@ -49,7 +49,11 @@
                             </li>
                         </ul>
                     </div>
-                    {{/each}} {{/if}}
+                    {{/each}}
+                    {{elseif searchResults.suggestion}}
+                    <p class="lede">Did you mean:
+                        <a href="/search?q={{searchResults.suggestion}}">{{searchResults.suggestion}}</a>?</p>
+                    {{/if}}
                 </div>
             </div>
         </div>
