@@ -73,6 +73,7 @@ data() {
         formatDate: dateTimeModule.formatDate,
         i18n: req.__ ? req.__.bind(req) : null,
         signedInUser: req.user,
+        toHtml: toHtml,
     }
 }
 }
@@ -101,7 +102,7 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, configModule, dateTimeModule) {
+		`(function(module, exports, require, components, getCurrentRequest, configModule, dateTimeModule, toHtml) {
 const {${componentNames}} = components
 ${code}
 });`,
@@ -114,7 +115,8 @@ ${code}
 		components,
 		getCurrentRequest,
 		config,
-		dateTime
+		dateTime,
+		toHtml
 	)
 	return module.exports
 }
@@ -159,6 +161,40 @@ function isFile(path: string) {
 	} catch (err) {
 		return false
 	}
+}
+
+function toHtml(text: string) {
+	if (text) {
+		const lines = text
+			.split('\n')
+			.filter(line => !!line)
+			.map(line => line.trim())
+
+		let output = ''
+		let inList = false
+		for (const line of lines) {
+			if (line.startsWith('•')) {
+				if (!inList) {
+					inList = true
+					output += '<ul class="list-bullet u-space-b30">'
+				}
+				output += `<li>${line.substr(1).trim()}</li>`
+			} else {
+				if (inList) {
+					inList = false
+					output += '</ul>'
+				}
+				output += `<p>${line}</p>`
+			}
+		}
+		return output
+
+		//
+		// .filter(part => !!part)
+		// .map(part => `<p>${part}</p>`)
+		// .join()
+	}
+	return ''
 }
 
 function logParseError(path: string, err: ParseError) {

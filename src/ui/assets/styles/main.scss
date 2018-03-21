@@ -1,10 +1,13 @@
 @import 'common/utils';
 @import 'custom';
+@import 'variables';
 
 @import 'common/variables';
 @import 'common/fonts';
 @import 'common/global';
 @import 'common/typography';
+
+@import 'utils/u-space';
 
 @import 'components/banner';
 @import 'components/header';
@@ -14,6 +17,7 @@
 @import 'components/rightbox';
 @import 'components/basket';
 @import 'components/feedback';
+@import 'components/govuk-related-items';
 
 @import 'components/results';
 @import 'components/booking';
