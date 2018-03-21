@@ -1,7 +1,7 @@
 {{#if optionType === 'typeahead'}}
-    <TypeAhead :options :inputName :script :label/>
+    <TypeAhead :options :inputName :script :label :value />
 {{elseif optionType === 'checkbox'}}
-    <Checkboxes :options :inputName :script />
+    <Checkboxes :options :inputName :script :value />
 {{elseif optionType === 'radio'}}
-    <Radios :options :inputName :script />
+    <Radios :options :inputName :script :value />
 {{/if}}
