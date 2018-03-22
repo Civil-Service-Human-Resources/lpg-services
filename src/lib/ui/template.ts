@@ -188,11 +188,6 @@ function toHtml(text: string) {
 			}
 		}
 		return output
-
-		//
-		// .filter(part => !!part)
-		// .map(part => `<p>${part}</p>`)
-		// .join()
 	}
 	return ''
 }
