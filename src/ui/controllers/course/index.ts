@@ -111,7 +111,7 @@ export async function displayModule(
 				module
 			)
 			res.send(
-				template.render(`course/video`, req, {
+				template.render(`course/video`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
@@ -156,7 +156,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				}
 			})
 			res.send(
-				template.render(`course/${type}`, req, {
+				template.render(`course/${type}`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,

@@ -244,7 +244,7 @@ async function uploadEntries(uid: string, file: any) {
 }
 
 export function addModule(req: express.Request, res: express.Response) {
-	res.send(template.render('courses/modules/add', req, {}))
+	res.send(template.render('courses/modules/add', req, res, {}))
 }
 
 export async function doAddModule(
@@ -365,7 +365,7 @@ export function editCourse(ireq: express.Request, res: express.Response) {
 	const {course} = req
 	const page = `courses/edit`
 	res.send(
-		template.render(page, req, {
+		template.render(page, req, res, {
 			course,
 		})
 	)
@@ -376,7 +376,7 @@ export function editModule(ireq: express.Request, res: express.Response) {
 	const {course, module} = req
 	const page = `courses/edit/${module!.type}`
 	res.send(
-		template.render(page, req, {
+		template.render(page, req, res, {
 			course,
 			module,
 		})

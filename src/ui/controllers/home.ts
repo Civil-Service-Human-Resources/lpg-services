@@ -54,7 +54,7 @@ export async function home(req: express.Request, res: express.Response) {
 			}
 		})
 		res.send(
-			template.render('home', req, {
+			template.render('home', req, res, {
 				plannedLearning,
 				requiredLearning,
 				success: req.flash('success')[0],
