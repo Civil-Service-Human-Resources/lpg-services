@@ -70,7 +70,8 @@ export async function suggestionsPage(
 		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
 			courses: modified,
-			success: req.flash('success')[0],
+			successMessage: req.flash('successMessage')[0],
+			successTitle: req.flash('successTitle')[0],
 		})
 	)
 }
