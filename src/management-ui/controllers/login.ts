@@ -10,8 +10,12 @@ export interface SignIn {
 	authenticationServiceUrl: string
 }
 
-function renderSignIn(req: express.Request, props: SignIn) {
-	return template.render('account/sign-in', req, props)
+function renderSignIn(
+	req: express.Request,
+	res: express.Response,
+	props: SignIn
+) {
+	return template.render('account/sign-in', req, res, props)
 }
 
 export function signIn(req: express.Request, res: express.Response) {
@@ -24,7 +28,7 @@ export function signIn(req: express.Request, res: express.Response) {
 		res.redirect('/authenticate')
 	} else {
 		res.send(
-			renderSignIn(req, {
+			renderSignIn(req, res, {
 				authenticationServiceUrl: config.AUTHENTICATION.serviceUrl,
 				loginFailed,
 				sessionDataKey,

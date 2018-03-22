@@ -29,12 +29,12 @@
                     </p>
                 </div>
                 {{/if}}
-                <form method="post" class="push-bottom">
+                <form method="post" class="push-bottom" action="/profile/{{inputName}}">
                     <div class="form-group">
                         {{#if options && options.length }}
                             <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value />
                         {{else}}
-                            <label class="form-label" for="{{inputName}}">New {{i18n('profile_' + inputName + '_label')}}</label>
+                            <label class="form-label" for="{{inputName}}">New {{i18n('profile_' + inputName + '_label').toLowerCase()}}</label>
                             <input class="form-control" id="{{inputName}}" name="{{inputName}}" value="{{value || ''}}" type="{{inputName === 'password' ? 'password' :'text'}}">
                         {{/if}}
                     </div>
@@ -44,6 +44,7 @@
                             <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
                         {{/if}}
                     </div>
+                    <input type="hidden" name="_csrf" value="{{_csrf}}">
                     <input type="submit" class="button" value="Continue">
                 </form>
             </div>

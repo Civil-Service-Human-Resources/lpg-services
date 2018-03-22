@@ -189,5 +189,6 @@
 	"action_IN_PROGRESS": "Resume",
 	"action_NOT_STARTED": "Start",
 	"NOT_STARTED": "NOT_STARTED",
-	"learning_added_to_plan": "Your learning plan has been updated."
+	"learning_added_to_plan_title": "Course successfully added",
+	"learning_added_to_plan_message": "This course has successfully been added to your learning plan"
 }

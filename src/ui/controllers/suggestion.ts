@@ -32,7 +32,8 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 	}
 	try {
 		await xapi.record(req, course, xapi.Verb.Liked)
-		req.flash('success', 'learning_added_to_plan')
+		req.flash('successTitle', 'learning_added_to_plan_title')
+		req.flash('successMessage', 'learning_added_to_plan_message')
 		req.session!.save(() => {
 			res.redirect(redirectTo)
 		})
@@ -66,10 +67,11 @@ export async function suggestionsPage(
 	const user = req.user as model.User
 	const modified = await suggestions(user)
 	res.send(
-		template.render('suggested', req, {
+		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
 			courses: modified,
-			success: req.flash('success')[0],
+			successMessage: req.flash('successMessage')[0],
+			successTitle: req.flash('successTitle')[0],
 		})
 	)
 }
@@ -83,7 +85,7 @@ export async function expandedSuggestionsPage(
 	console.log(req.params)
 	const modified = await suggestions(user, {}, areaOfWorktoExpand)
 	res.send(
-		template.render('suggested', req, {
+		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
 			courses: modified,
 		})
