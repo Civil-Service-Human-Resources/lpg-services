@@ -50,9 +50,6 @@ export async function home(req: express.Request, res: express.Response) {
 				record.state !== 'UNREGISTERED' &&
 				record.preference !== 'DISLIKED'
 			) {
-				if (!record.state) {
-					record.state = 'IN_PROGRESS'
-				}
 				plannedLearning.push(course)
 			}
 		})
