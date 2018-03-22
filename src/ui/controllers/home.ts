@@ -54,6 +54,7 @@ export async function home(req: express.Request, res: express.Response) {
 			template.render('home', req, {
 				plannedLearning,
 				requiredLearning,
+				success: req.flash('success')[0],
 				suggestedLearning,
 			})
 		)

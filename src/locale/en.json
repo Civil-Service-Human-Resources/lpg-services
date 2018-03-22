@@ -188,5 +188,6 @@
 	"action_COMPLETED": "Retake",
 	"action_IN_PROGRESS": "Resume",
 	"action_NOT_STARTED": "Start",
-	"NOT_STARTED": "NOT_STARTED"
+	"NOT_STARTED": "NOT_STARTED",
+	"learning_added_to_plan": "Your learning plan has been updated."
 }

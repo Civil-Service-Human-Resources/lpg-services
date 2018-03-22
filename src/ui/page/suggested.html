@@ -8,6 +8,10 @@
                     </h1>
                     <p>{{i18n('home_page_suggestions', i18n('proposition_name'))}}</p>
                 </Search>
+
+                {{#if success}}
+                <Banner type="confirmation" message={{i18n(success)}} />
+                {{/if}}
             </div>
         </div>
     </div>

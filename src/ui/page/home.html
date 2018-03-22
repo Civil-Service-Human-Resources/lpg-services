@@ -2,13 +2,16 @@
     <div class="container container--main">
         <div class="grid-row">
             <div class="column-full">
-
                 <Search>
                     <h1 class="heading heading-large heading--flush">
                         {{i18n('home_page_title')}}
                     </h1>
                     <p></p>
                 </Search>
+
+                {{#if success}}
+                <Banner type="confirmation" message={{i18n(success)}} />
+                {{/if}}
 
                 <h2 class="heading-medium heading heading--red-top lpg-required-learning">
                     {{i18n('required_section_title')}}
