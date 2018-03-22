@@ -31,7 +31,7 @@ export async function courseResult(
 			res.redirect('/home')
 		} else {
 			res.send(
-				template.render('learning-record/course-result', req, {
+				template.render('learning-record/course-result', req, res, {
 					course,
 					module,
 					record: moduleRecord,
@@ -65,7 +65,7 @@ export async function display(req: express.Request, res: express.Response) {
 	}
 
 	res.send(
-		template.render('learning-record', req, {
+		template.render('learning-record', req, res, {
 			completedLearning,
 			completedRequiredLearning,
 			requiredLearningTotal,

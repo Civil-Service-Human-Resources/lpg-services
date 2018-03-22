@@ -88,7 +88,7 @@ export function enteredPaymentDetails(
 		})
 	} else {
 		res.send(
-			template.render('booking/payment-options', req, {
+			template.render('booking/payment-options', req, res, {
 				breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
 				paymentOptionsFailed: true,
 			})
@@ -120,7 +120,7 @@ export async function renderCancelBookingPage(
 	course.record = record
 
 	res.send(
-		template.render('booking/cancel-booking', req, {
+		template.render('booking/cancel-booking', req, res, {
 			cancelBookingFailed: false,
 			course,
 			event,
@@ -156,7 +156,7 @@ export async function renderCancelledBookingPage(
 		res.redirect(`/book/${course.id}/${module.id}/cancel`)
 	} else {
 		res.send(
-			template.render('booking/confirmed', req, {
+			template.render('booking/confirmed', req, res, {
 				course,
 				event,
 				message: confirmedMessage.Cancelled,
@@ -185,7 +185,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 		.sort((a, b) => a.date.getTime() - b.date.getTime())
 
 	res.send(
-		template.render('booking/choose-date', req, {
+		template.render('booking/choose-date', req, res, {
 			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -209,7 +209,7 @@ export async function renderConfirmPayment(
 	const session = req.session!
 
 	res.send(
-		template.render('booking/confirm-booking', req, {
+		template.render('booking/confirm-booking', req, res, {
 			breadcrumbs: getBreadcrumbs(req, BookingStep.Confirm),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -228,7 +228,7 @@ export function renderPaymentOptions(
 	const session = req.session!
 
 	res.send(
-		template.render('booking/payment-options', req, {
+		template.render('booking/payment-options', req, res, {
 			breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
 			previouslyEntered: session.po || session.fap,
 		})
@@ -283,7 +283,7 @@ export async function tryCancelBooking(
 		res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
 	} else {
 		res.send(
-			template.render('booking/cancel-booking', req, {
+			template.render('booking/cancel-booking', req, res, {
 				cancelBookingFailed: true,
 				course,
 				event,
@@ -334,7 +334,7 @@ export async function tryCompleteBooking(
 	})
 
 	res.send(
-		template.render('booking/confirmed', req, {
+		template.render('booking/confirmed', req, res, {
 			course,
 			event,
 			message: confirmedMessage.Booked,
