@@ -14,7 +14,7 @@
                 {{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}}
                     <a href="/book/{{course.id}}/{{course.record.modules[0].moduleId}}/{{course.record.modules[0].eventId}}/cancel">Cancel</a>
                 {{else}}
-                    {{#if course.getType() !== 'blended'}}
+                    {{#if course.getType() !== 'blended' && course.getType() !== 'face-to-face'}}
                         <a href="/courses/{{course.id}}/{{course.modules[0].id}}">Resume</a>
                     {{/if}}
                     {{#if !course.isRequired(signedInUser)}}
