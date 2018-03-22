@@ -18,5 +18,5 @@ export async function search(req: express.Request, res: express.Response) {
 		searchResults = await catalog.search(query)
 	}
 	const end: string = (((new Date() as any) - (start as any)) / 1000).toFixed(2)
-	res.send(template.render('search', req, {end, query, searchResults}))
+	res.send(template.render('search', req, res, {end, query, searchResults}))
 }

@@ -67,7 +67,7 @@ export async function suggestionsPage(
 	const user = req.user as model.User
 	const modified = await suggestions(user)
 	res.send(
-		template.render('suggested', req, {
+		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
 			courses: modified,
 			success: req.flash('success')[0],
@@ -84,7 +84,7 @@ export async function expandedSuggestionsPage(
 	console.log(req.params)
 	const modified = await suggestions(user, {}, areaOfWorktoExpand)
 	res.send(
-		template.render('suggested', req, {
+		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
 			courses: modified,
 		})
