@@ -50,6 +50,9 @@ export async function home(req: express.Request, res: express.Response) {
 				record.state !== 'UNREGISTERED' &&
 				record.preference !== 'DISLIKED'
 			) {
+				if (!record.state && record.modules && record.modules.length) {
+					record.state = 'IN_PROGRESS'
+				}
 				plannedLearning.push(course)
 			}
 		})
@@ -57,7 +60,8 @@ export async function home(req: express.Request, res: express.Response) {
 			template.render('home', req, res, {
 				plannedLearning,
 				requiredLearning,
-				success: req.flash('success')[0],
+				successMessage: req.flash('successMessage')[0],
+				successTitle: req.flash('successTitle')[0],
 				suggestedLearning,
 			})
 		)
