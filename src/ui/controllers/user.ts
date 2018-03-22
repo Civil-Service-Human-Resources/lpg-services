@@ -132,12 +132,14 @@ export function renderEditPage(ireq: express.Request, res: express.Response) {
 	<script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
 	<script type="text/javascript">
 		var selectEl = document.querySelector('.type-ahead')
-		accessibleAutocomplete.enhanceSelectElement({
-			autoselect: true,
-			defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
-			minLength: 1,
-			selectElement: selectEl,
-		})
+		if (selectEl) {
+			accessibleAutocomplete.enhanceSelectElement({
+				autoselect: true,
+				defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
+				minLength: 1,
+				selectElement: selectEl,
+			})
+		}
     </script>`
 	res.send(
 		template.render('profile/edit', req, {

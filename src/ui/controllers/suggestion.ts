@@ -32,7 +32,8 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 	}
 	try {
 		await xapi.record(req, course, xapi.Verb.Liked)
-		req.flash('success', 'learning_added_to_plan')
+		req.flash('successTitle', 'learning_added_to_plan_title')
+		req.flash('successMessage', 'learning_added_to_plan_message')
 		req.session!.save(() => {
 			res.redirect(redirectTo)
 		})
