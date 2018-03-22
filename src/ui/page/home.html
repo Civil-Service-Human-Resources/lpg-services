@@ -9,8 +9,8 @@
                     <p></p>
                 </Search>
 
-                {{#if success}}
-                <Banner type="confirmation" message={{i18n(success)}} />
+                {{#if successTitle}}
+                <Banner type="confirmation" title={{i18n(successTitle)}} message={{i18n(successMessage)}} />
                 {{/if}}
 
                 <h2 class="heading-medium heading heading--red-top lpg-required-learning">

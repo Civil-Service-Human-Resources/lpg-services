@@ -196,6 +196,20 @@ app.get(
 )
 
 app.use(
+	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+		res.status(404)
+
+		if (req.accepts('html')) {
+			res.sendFile(path.join(process.cwd(), 'page/error/404.html'))
+		} else if (req.accepts('json')) {
+			res.send({error: 'Not found'})
+		} else {
+			res.type('txt').send('Not found')
+		}
+	}
+)
+
+app.use(
 	(
 		err: Error,
 		req: express.Request,
@@ -210,7 +224,14 @@ app.use(
 			'\n',
 			err.stack
 		)
-		res.sendStatus(500)
+		res.status(500)
+		if (req.accepts('html')) {
+			res.sendFile(path.join(process.cwd(), 'page/error/500.html'))
+		} else if (req.accepts('json')) {
+			res.send({error: err.message})
+		} else {
+			res.type('txt').send(`Internal error: ${err.message}`)
+		}
 	}
 )
 
