@@ -9,7 +9,7 @@ import {
 	updateUserGroups,
 } from 'extension/user'
 import {loginToCsl} from 'page/login'
-import {editProfileInfo, selectors} from 'page/profile'
+import {arrMod, editAreaOfWork, editProfileInfo, selectors} from 'page/profile'
 import * as puppeteer from 'puppeteer'
 
 function genUserEmail() {
@@ -17,7 +17,7 @@ function genUserEmail() {
 }
 
 const TEST_USERNAME = genUserEmail()
-const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
+//const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
@@ -44,14 +44,14 @@ describe('profile page functionality', () => {
 		await page.close()
 	})
 
-	it('Should display a feedback link with the correct email address', async () => {
-		const feedbackUrl = await helper.returnElementAttribute(
-			selectors.feedbackLink,
-			'href',
-			page
-		)
-		expect(feedbackUrl).toEqual(smartSurveyLink)
-	})
+	// it('Should display a feedback link with the correct email address', async () => {
+	// 	const feedbackUrl = await helper.returnElementAttribute(
+	// 		selectors.feedbackLink,
+	// 		'href',
+	// 		page
+	// 	)
+	// 	expect(feedbackUrl).toEqual(smartSurveyLink)
+	// })
 
 	it('Should display username field which matches email address', async () => {
 		const username = await helper.getText(selectors.emailAddress, page)
@@ -114,7 +114,7 @@ describe('profile page functionality', () => {
 	})
 
 	it('Should be able to update users department from the profile page', async () => {
-		const dept = 'Home Office'
+		const dept = 'HM Revenue & Customs'
 		await editProfileInfo(
 			selectors.changeDepartment,
 			selectors.editDepartmentField,
@@ -134,11 +134,11 @@ describe('profile page functionality', () => {
 	})
 
 	it('Should change the users profession value', async () => {
-		await page.click(selectors.changeAreasOfWork)
-		await page.waitForSelector(selectors.commercialAreaOfWork)
-		await page.click(selectors.commercialAreaOfWork)
-		await page.click(selectors.digitalAreaOfWork)
-		await page.click(selectors.continueButton)
+		await editAreaOfWork(
+			selectors.commercialAreaOfWork,
+			arrMod(['Digital']),
+			page
+		)
 		await page.waitForSelector(selectors.profileUpdatedBanner)
 		const current = await helper.getText(selectors.currentAreaOfWork, page)
 		expect(current).toEqual('Digital')
