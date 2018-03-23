@@ -6,7 +6,6 @@ export class Course {
 	static create(data: any) {
 		const course = new Course(data.id)
 		course.description = data.description
-		course.duration = data.duration
 		course.learningOutcomes = data.learningOutcomes
 		course.price = data.price
 		course.shortDescription = data.shortDescription
@@ -22,7 +21,6 @@ export class Course {
 	shortDescription: string
 	description: string
 	learningOutcomes: string
-	duration: number
 	price: number
 
 	modules: Module[]
@@ -77,7 +75,9 @@ export class Course {
 	}
 
 	getDuration() {
-		return datetime.formatCourseDuration(this.duration)
+		return datetime.formatCourseDuration(
+			this.modules.map(m => m.duration).reduce((p, c) => p + c)
+		)
 	}
 
 	getGrades() {
@@ -202,6 +202,10 @@ export class Module {
 
 	getActivityId() {
 		return `${config.XAPI.moduleBaseUri}/${this.id}`
+	}
+
+	getDuration() {
+		return datetime.formatCourseDuration(this.duration)
 	}
 
 	getAudience(user: User) {
