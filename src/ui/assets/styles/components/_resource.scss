@@ -1,59 +1,44 @@
 // starter class for <li>
+
 %li {
-	display: inline-block;
-	float: left;
+	@include box-sizing(border-box);
+	position: relative;
+	display:inline-block;
+	float:left;
 	vertical-align: top;
-	padding: 10px 8px 10px 0;
+	padding:10px 8px 10px 0;
+}
+
+.resources {
+	// wrapper
 }
 
 .resource {
 	margin-bottom: 10px;
 	border-bottom: 1px solid $grey-2;
-	float: left;
-	width: 100%;
-	clear: both;
-	&:last-child {
-		border-bottom: none;
-	}
 
-	@include e(list) {
-		width: 100%;
-		float: left;
-	}
-
-	@include e(item) {
-		float: left;
-		width: 100%;
+	&__item {
 		position: relative;
 		text-align: left;
 	}
 
-	@include e(main) {
+	&__main {
 		@extend %li;
 		width: 100%;
+		max-width: auto;
 
 		@include media(desktop) {
 			width: 320px;
 		}
 	}
 
-	@include e(title) {
-		em {
-			font-style: normal;
-		}
-	}
-
-	@include e(description) {
-		clear: both;
-	}
-
-	@include e(rating) {
+	&__rating {
 		@extend %li;
 		min-width: 148px;
 		display: none;
 	}
 
-	@include e(info) {
+	&__info {
 		@extend %li;
 		padding-right: 20px;
 
@@ -62,14 +47,14 @@
 		}
 	}
 
-	@include e(duration) {
+	&__duration {
 		@extend %li;
 	}
 
-	@include e(status) {
+	&__status {
 		@extend %li;
 		position: relative;
-		right: auto;
+		right:auto;
 
 		min-width: 100px;
 		padding-right: 0;
@@ -81,7 +66,7 @@
 		}
 	}
 
-	@include e(action) {
+	&__action {
 		position: relative;
 		display: block;
 		margin-top: 10px;
@@ -95,11 +80,22 @@
 			margin-left: 8px;
 		}
 	}
+
+	&__property {
+		@extend %li;
+
+		&-item {
+			display: block;
+
+		}
+
+	}
+
 	.meta {
 		margin-top: 4px;
 	}
 
-	@include e(long) {
+	&__long {
 		@extend %li;
 
 		@include media(desktop) {
@@ -107,16 +103,45 @@
 		}
 	}
 
-	@include m(feedback) {
+	&--feedback {
 		background-color: $grey-4;
 		padding-left: 20px;
 		padding-right: 20px;
 	}
 
-	@include e(search) {
-		@include e(info) {
+	&__leave {
+		display: block;
+		padding: 0 0 10px 0;
+		clear: both;
+
+		@include media(desktop) {
 			float: right;
-			padding: 0;
+			clear: none;
+			width: 220px;
+			text-align: right;
+			padding:10px 8px 10px 0;
+		}
+	}
+
+	&__cancel-feedback {
+		position: absolute;
+		right:-31px;
+		top: 4px;
+		display: inline-block;
+		margin-left:20px;
+		width: 25px;
+		height: 25px;
+		border: 1px solid $grey-2;
+		background-color: $grey-3;
+		background-image: url("../img/close.png");
+		background-repeat: no-repeat;
+		background-position: 8px 8px;
+		border-radius: 20px;
+		overflow: hidden;
+		text-indent: 100px;
+
+		&:hover {
+			background-color: $white;
 		}
 	}
 }
@@ -124,5 +149,22 @@
 .resources {
 	.resource:last-of-type {
 		border-bottom: 0;
+	}
+
+	&--modules {
+
+		.resource__main {
+
+			@include media(desktop) {
+				width: 400px;
+			}
+		}
+
+		.resource__action {
+
+			a {
+				@include core-19;
+			}
+		}
 	}
 }

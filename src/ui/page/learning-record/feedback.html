@@ -1,0 +1,81 @@
+<Page title="Learning record">
+    <div class="container">
+        <h1 class="heading-xlarge">Leave feedback</h1>
+
+        <form name="feedbackForm" method="post" action="/courses/{{course.id}}/{{module.id}}/feedback">
+            <div class="grid-row ">
+                <div class="column-full ">
+                    <p class="lede">Leave your feedback for {{ module.title || course.title }}</p>
+                </div>
+            </div>
+
+            <div class="grid-row ">
+                <div class="column-one-half ">
+                    <fieldset class="bar-rating u-space-b30">
+                        <legend class="heading-small">Presentation</legend>
+                        <p>Did you like the way the course was delivered?</p>
+
+                        <div class="bar-rating__scale" aria-hidden="true">
+                            <span class="u-float-left">Not for me</span>
+                            <span class="u-float-right">Loved it</span>
+                        </div>
+
+                        <div class="bar-rating__wrapper">
+
+                            <input class="bar-rating__input" type="radio" id="starPresentation5" name="ratingPresentation" aria-label="5 out of 5 stars" value="5">
+                            <label for="starPresentation5" title="I loved it - 5 stars">I loved it - 5 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="starPresentation4" name="ratingPresentation" aria-label="4 out of 5 stars" value="4">
+                            <label for="starPresentation4" title="It was pretty good - 4 stars">It was pretty good - 4 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="starPresentation3" name="ratingPresentation" aria-label="3 out of 5 stars" value="3">
+                            <label for="starPresentation3" title="It was OK - 3 stars">It was OK - 3 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="starPresentation2" name="ratingPresentation" aria-label="2 out of 5 stars" value="2">
+                            <label for="starPresentation2" title="I didn't enjoy it - 2 stars">I didn't enjoy it - 2 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="starPresentation1" name="ratingPresentation" aria-label="1 out of 5 stars" value="1">
+                            <label for="starPresentation1" title="This was definitely not for me - 1 star">This was definitely not for me - 1 star</label>
+                        </div>
+
+                        <div class="bar-rating__1to5" aria-hidden="true">
+                            <ul>
+                                <li>1</li>
+                                <li>2</li>
+                                <li>3</li>
+                                <li>4</li>
+                                <li>5</li>
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="grid-row ">
+                <div class="column-full ">
+                    <fieldset>
+                        <legend class="heading-small">Comments</legend>
+                        <div class="form-group">
+                            <label class="form-label  " for="feedbackComments">
+                                Share your thoughts on this course (optional)
+                            </label>
+                            <textarea class="form-control " name="feedbackComments" id="feedbackComments" rows="5"></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="grid-row ">
+                <div class="column-full ">
+                    <div class="form-group">
+                        <button type="submit" class="button">Leave feedback</button>
+                    </div>
+                    <p>
+                        <a href="/learning-record">Back</a>
+                    </p>
+                </div>
+            </div>
+            <input type="hidden" name="_csrf" value="{{_csrf}}">
+        </form>
+    </div>
+</Page>

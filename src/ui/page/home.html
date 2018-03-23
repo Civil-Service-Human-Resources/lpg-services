@@ -6,42 +6,46 @@
                     <h1 class="heading heading-large heading--flush">
                         {{i18n('home_page_title')}}
                     </h1>
-                    <p></p>
+                    {{#if readyForFeedback.length}}
+                    <p class="u-space-b5">You can <a href="/learning-record">leave feedback on {{readyForFeedback.length}} item{{readyForFeedback.length === 1 ? '' : 's'}}</a>.</p>
+                    {{/if}}
                 </Search>
+            </div>
+        </div>
 
+        <div class="grid-row">
+            <div class="column-full">
                 {{#if successTitle}}
                 <Banner type="confirmation" title={{i18n(successTitle)}} message={{i18n(successMessage)}} />
                 {{/if}}
+            </div>
+        </div>
 
+        <div class="grid-row">
+            <div class="column-full">
                 <h2 class="heading-medium heading heading--red-top lpg-required-learning">
                     {{i18n('required_section_title')}}
                 </h2>
 
                 {{#if requiredLearning.length}}
-                <ul class="resource__list">
-                    {{#each requiredLearning as course}}
-                    <li class="resource">
-                        <Learning :course />
-                    </li>
-                    {{/each}}
-                </ul>
+                    <div class="resources">
+                        {{#each requiredLearning as course}}
+                            <Learning :course />
+                        {{/each}}
+                    </div>
                 {{else}}
                 <p>{{i18n('required_learning_done')}}</p>
                 {{/if}}
-            </div>
-            <hr class="clear">
-            <div class="column-full">
+
                 <h2 class="heading-medium heading heading--red-top lpg-other-learning">
                     {{i18n('other_section_title')}}
                 </h2>
                 {{#if plannedLearning.length}}
-                <ul class="resource__list">
+                    <div class="resources">
                     {{#each plannedLearning as course}}
-                    <li class="resource">
                         <Learning :course />
-                    </li>
                     {{/each}}
-                </ul>
+                </div>
                 {{else}}
                 <p>{{i18n('no_planned_learning_yet')}}</p>
                 {{/if}}
@@ -49,7 +53,6 @@
         </div>
     </div>
     <div class="fullbleed fullbleed--grey home__suggested">
-        <SuggestionsSection title="{{i18n('suggestions_page_title')}}" lede="{{i18n('home_page_suggestions', i18n('proposition_name'))}}" :suggestedLearning home={{true}}/>
+        <SuggestionsSection title="{{i18n('suggestions_page_title')}}" lede="{{i18n('home_page_suggestions', i18n('proposition_name'))}}" :suggestedLearning home={{true}} />
     </div>
-
 </Page>

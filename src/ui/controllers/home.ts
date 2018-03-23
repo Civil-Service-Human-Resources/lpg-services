@@ -24,6 +24,8 @@ export async function home(req: express.Request, res: express.Response) {
 			learningHash
 		)
 
+        const readyForFeedback = await learnerRecord.getReadyForFeedback(learningRecord)
+
 		for (const [i, requiredCourse] of requiredLearning.entries()) {
 			if (learningHash[requiredCourse.id]) {
 				const course = learningHash[requiredCourse.id]
@@ -59,6 +61,7 @@ export async function home(req: express.Request, res: express.Response) {
 		res.send(
 			template.render('home', req, res, {
 				plannedLearning,
+                readyForFeedback,
 				requiredLearning,
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],

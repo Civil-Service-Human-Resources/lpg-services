@@ -105,11 +105,7 @@ export function hasRole(role: string) {
 
 export function logout(req: express.Request, res: express.Response) {
 	strategy.logout(req, (err, url) => {
-		if (err) {
-			res.sendStatus(500)
-		} else {
-			req.logout()
-			res.redirect(url)
-		}
+		req.logout()
+		res.redirect(url)
 	})
 }
