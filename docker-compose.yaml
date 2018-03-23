@@ -79,19 +79,19 @@ services:
 
 # CSHR
 
-#  learner-record:
-#    container_name: learner-record
-#    environment:
-#      AUTH_USER: user
-#      AUTH_PASSWORD: password
-#      XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
-#      XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
-#      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-#    image: cshr/lpg-learner-record:dc31695e7d0f68725105cbc82f07d51b22777b9e
-#    depends_on:
-#      - learning-locker-xapi
-#    ports:
-#      - 9000:9000
+  learner-record:
+    container_name: learner-record
+    environment:
+      AUTH_USER: user
+      AUTH_PASSWORD: password
+      XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
+      XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
+      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
+    image: cshr/lpg-learner-record:5afa7580f7fa836011746aad30bd42cb94952624
+    depends_on:
+      - learning-locker-xapi
+    ports:
+      - 9000:9000
 
   learning-catalogue:
     container_name: learning-catalogue
