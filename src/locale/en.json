@@ -210,5 +210,13 @@
 	"action_NOT_STARTED": "Start",
 	"NOT_STARTED": "NOT_STARTED",
 	"learning_added_to_plan_title": "Course successfully added",
-	"learning_added_to_plan_message": "This course has successfully been added to your learning plan"
+	"learning_added_to_plan_message": "This course has successfully been added to your learning plan",
+	"feedback_content_title": "Content",
+	"feedback_content_description": "Was the course content comprehensive enough for you?",
+	"feedback_relevance_title": "Relevance",
+	"feedback_relevance_description": "Do you think the course delivered the learning outcomes?",
+	"feedback_presentation_title": "Presentation",
+	"feedback_presentation_description": "Did you like the way the course was delivered?",
+	"feedback_interactivity_title": "Interactivity",
+	"feedback_interactivity_description": "Was the course easy to open and use?"
 }

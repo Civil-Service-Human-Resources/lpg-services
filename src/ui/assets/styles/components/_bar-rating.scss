@@ -1,0 +1,79 @@
+$bar-width: 49px;
+$bar-height: 16px;
+$wrapper-width: 275px;
+
+.bar-rating {
+  float: left;
+
+  &__scale {
+    height: 24px;
+    clear: both;
+    max-width: $wrapper-width;
+  }
+
+  &__1to5 {
+    height: 24px;
+    clear: both;
+    max-width: $wrapper-width;
+
+    ul {
+      text-align: center;
+    }
+
+    li {
+      width: 18%;
+      display: inline-block;
+      text-align: center;
+    }
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  &__wrapper {
+    width: $wrapper-width;
+    height: $bar-height;
+    clear: both;
+    padding:10px 0;
+
+    & > label {
+      position: relative;
+      width: $bar-width;
+      height: $bar-height;
+      margin-right:4px;
+      background-color: #f3f3f3;
+      float: right;
+      overflow: hidden;
+      text-indent: 100px;
+      border: 1px solid #333;
+      border-radius: 1px;
+      cursor: pointer;
+
+      &:before {
+        position: absolute;
+        display: inline-block;
+        content: " ";
+        width: $bar-width - 2;
+        height: $bar-height - 2;
+        cursor: pointer;
+      }
+    }
+
+    & > input:checked ~ label, /* show gold block when clicked */
+    &:not(:checked) > label:hover, /* hover current block */
+    &:not(:checked) > label:hover ~ label {
+      color: #FFD700;
+      background-color: #FFD700;
+    }
+
+    & > input:checked + label:hover, /* hover current block when changing rating */
+    & > input:checked ~ label:hover,
+    & > label:hover ~ input:checked ~ label, /* lighten current selection */
+    & > input:checked ~ label:hover ~ label {
+      color: #FFED85;
+      background-color: #FFED85;
+    }
+  }
+}

@@ -56,7 +56,9 @@ export async function display(req: express.Request, res: express.Response) {
 		.totalResults
 
 	const completedRequiredLearning = []
-	const readyForFeedback = await learnerRecord.getReadyForFeedback(learningRecord)
+	const readyForFeedback = await learnerRecord.getReadyForFeedback(
+		learningRecord
+	)
 
 	for (const [i, course] of completedLearning.entries()) {
 		if (course.isRequired(req.user)) {
@@ -71,8 +73,8 @@ export async function display(req: express.Request, res: express.Response) {
 			completedRequiredLearning,
 			readyForFeedback,
 			requiredLearningTotal,
-            successMessage: req.flash('successMessage')[0],
-            successTitle: req.flash('successTitle')[0],
+			successMessage: req.flash('successMessage')[0],
+			successTitle: req.flash('successTitle')[0],
 		})
 	)
 }
