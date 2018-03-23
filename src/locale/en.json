@@ -200,5 +200,7 @@
 	"feedback_interactivity_title": "Interactivity",
 	"feedback_interactivity_description": "Was the course easy to open and use?",
 	"learning_feedback_submitted_title": "Thank you for your feedback",
-	"learning_feedback_submitted_message": "Leaving feedback helps us improve our service."
+	"learning_feedback_submitted_message": "Leaving feedback helps us improve our service.",
+	"booking_must_select_date_title": "No date selected",
+	"booking_must_select_date_message": "Please select the date you would like to attend this course."
 }

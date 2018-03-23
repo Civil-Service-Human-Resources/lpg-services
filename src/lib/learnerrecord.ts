@@ -130,7 +130,9 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 			}
 		}
 	}
-	return readyForFeedback.sort((a, b) => b.completionDate!.getTime() - a.completionDate!.getTime())
+	return readyForFeedback.sort(
+		(a, b) => b.completionDate!.getTime() - a.completionDate!.getTime()
+	)
 }
 
 export interface CourseRecord {
