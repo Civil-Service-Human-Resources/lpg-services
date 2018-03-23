@@ -21,6 +21,6 @@ export async function loginToCsl(
 	await page.type(selectors.usernameField, username)
 	await page.type(selectors.passwordField, password)
 	await page.click(selectors.loginButton)
-	await page.waitForNavigation
-	await page.waitFor(selectors.signoutButton, {timeout: 10000})
+	//await page.waitForNavigation
+	//await page.waitFor(selectors.signoutButton, {timeout: 10000})
 }
