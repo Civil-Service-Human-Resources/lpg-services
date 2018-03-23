@@ -89,7 +89,7 @@ describe('login page functionality', () => {
 
 	it('Should login to the CSL portal', async () => {
 		await loginToCsl(page, config.USERNAME, config.PASSWORD)
-		await page.waitFor(selectors.signoutButton, {timeout: 11000})
+		await page.waitFor(selectors.signoutButton)
 		expect(
 			await helper.checkElementIsPresent(selectors.signoutButton, page)
 		).toBe(true)

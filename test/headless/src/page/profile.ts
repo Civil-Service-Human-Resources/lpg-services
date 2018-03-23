@@ -43,15 +43,15 @@ export async function returnUserProfileDetails(page: puppeteer.Page) {
 
 export async function editAreaOfWork(
 	uncheck: string,
-	checked: string,
+	checked: string[],
 	page: puppeteer.Page
 ) {
-	const profUncheck = '#' + uncheck.toLowerCase()
-	const profCheck = '#' + checked.toLowerCase()
 	await page.click(selectors.changeAreasOfWork)
 	await page.waitForSelector(selectors.commercialAreaOfWork)
-	await page.click(profUncheck)
-	await page.click(profCheck)
+	await page.click(uncheck)
+	for (const ele of arrMod(checked)) {
+		await page.click(ele)
+	}
 	await page.click(selectors.continueButton)
 	await page.waitForSelector(selectors.profileUpdatedBanner)
 }
@@ -68,4 +68,20 @@ export async function editProfileInfo(
 	await page.type(selector, updateValue)
 	await page.click(selectors.continueButton)
 	await page.waitForSelector(selectors.profileUpdatedBanner)
+}
+
+export async function getProfs(page: puppeteer.Page): Promise<string> {
+	return await page.$$eval(selectors.currentAreaOfWork, nodes => {
+		const res = []
+		for (const el of nodes) {
+			res.push(el.innerHTML.trim())
+		}
+		return res
+	})
+}
+
+export function arrMod(str: string[]) {
+	return str.map(e => {
+		return '#' + e.toLowerCase()
+	})
 }
