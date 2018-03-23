@@ -44,8 +44,18 @@
                             <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
                         {{/if}}
                     </div>
+
+                    <div class="grid-row ">
+                        <div class="column-full">
+                            <div class="form-group">
+                                <button type="submit" class="button">Continue</button>
+                            </div>
+                            <p>
+                                <a href="/profile">Back</a>
+                            </p>
+                        </div>
+                    </div>
                     <input type="hidden" name="_csrf" value="{{_csrf}}">
-                    <input type="submit" class="button" value="Continue">
                 </form>
             </div>
         </div>
