@@ -28,8 +28,18 @@ export async function displayFeedback(
 		logger.debug(
 			`Displaying feedback for course ${course.id} and module ${module.id}`
 		)
+
+		let categories
+
+		if (module.type === 'elearning' || module.type === 'face-to-face') {
+			categories = ['presentation', 'content', 'relevance', 'interactivity']
+		} else {
+			categories = ['content', 'relevance']
+		}
+
 		res.send(
 			template.render('learning-record/feedback', req, res, {
+				categories,
 				course,
 				module,
 			})
@@ -49,8 +59,8 @@ export async function submitFeedback(
 
 	await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
 
-	req.flash('successTitle', 'learning_feedback_submitted_title')
-	req.flash('successMessage', 'learning_feedback_submitted_message')
+	req.flash('successTitle', 'learning_feedback_submitted_title') // Thank you for your feedback
+	req.flash('successMessage', 'learning_feedback_submitted_message') // Leaving feedback helps us improve our service.
 	req.session!.save(() => {
 		res.redirect('/learning-record')
 	})
