@@ -147,7 +147,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 					: null
 				return {
 					...cm,
-					duration: '',
+					duration: cm.getDuration(),
 					state: moduleRecord ? moduleRecord.state : null,
 				}
 			})
