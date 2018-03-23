@@ -83,7 +83,7 @@ app.use(
 				'font-src': 'data:',
 				'img-src': "'self' data: https://www.google-analytics.com",
 				'script-src':
-					"'self' https://www.googletagmanager.com https://www.google-analytics.com " +
+					"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
 					"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
 				'style-src': "'self' 'unsafe-inline'",
 			},
