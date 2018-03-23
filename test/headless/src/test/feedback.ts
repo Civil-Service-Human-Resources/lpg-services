@@ -93,9 +93,8 @@ describe('feedback form functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display feedback link on the course overview page', async () => {
-		await page.goto(config.BASE_URL + '/home')
-		await page.click('.learning__title')
+	it('Should display feedback link on the search page', async () => {
+		await page.goto(config.BASE_URL + '/search')
 		await page.waitForSelector(selectors.feedbackPrompt)
 		expect(
 			await helper.checkElementIsPresent(selectors.feedbackPrompt, page)

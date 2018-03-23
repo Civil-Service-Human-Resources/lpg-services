@@ -4,6 +4,7 @@ import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
 import {loginToCsl, selectors} from 'page/login'
 import * as puppeteer from 'puppeteer'
 
+const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
 const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
 
 describe('login page functionality', () => {
@@ -53,7 +54,7 @@ describe('login page functionality', () => {
 		).toBe(true)
 	})
 
-	it('Should display a feedback link with the correct email address', async () => {
+	it('Should display a feedback link with the correct survey link', async () => {
 		expect(
 			await helper.checkElementIsPresent(selectors.feedbackLink, page)
 		).toBe(true)
@@ -62,7 +63,7 @@ describe('login page functionality', () => {
 			'href',
 			page
 		)
-		expect(feedbackUrl).toEqual(contactUsEmailAddress)
+		expect(feedbackUrl).toEqual(smartSurveyLink)
 	})
 
 	it('Should display a link to the user allowing them to get in touch to create account', async () => {
@@ -80,7 +81,7 @@ describe('login page functionality', () => {
 
 	it('Should display login failure message when credentials are incorrect', async () => {
 		await loginToCsl(page, 'username@test.com', 'failed')
-		await page.waitFor(selectors.loginFailure, {timeout: 5000})
+		await page.waitForSelector(selectors.loginFailure)
 		expect(
 			await helper.checkElementIsPresent(selectors.loginFailure, page)
 		).toBe(true)

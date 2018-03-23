@@ -6,9 +6,12 @@ export const selectors: Record<string, string> = {
 	changeDepartment: 'a[href="/profile/department"]',
 	changeGivenName: 'a[href="/profile/given-name"]',
 	changeGrade: 'a[href="/profile/grade"]',
+	commercialAreaOfWork: '#commercial',
 	continueButton: 'input[value="Continue"]',
+	currentAreaOfWork: '.lpg-areas-of-work > ul > li',
 	department: '.lpg-department',
 	departmentFieldError: '.lpg-department-error',
+	digitalAreaOfWork: '#digital',
 	editDepartmentField: '#department',
 	editNameField: '#given-name',
 	emailAddress: '.lpg-email-address',
@@ -38,8 +41,19 @@ export async function returnUserProfileDetails(page: puppeteer.Page) {
 	})
 }
 
-export async function editAreaOfWork(page: puppeteer.Page) {
-	await page.click(selectors.updateAreasOfWork)
+export async function editAreaOfWork(
+	uncheck: string,
+	checked: string,
+	page: puppeteer.Page
+) {
+	const profUncheck = '#' + uncheck.toLowerCase()
+	const profCheck = '#' + checked.toLowerCase()
+	await page.click(selectors.changeAreasOfWork)
+	await page.waitForSelector(selectors.commercialAreaOfWork)
+	await page.click(profUncheck)
+	await page.click(profCheck)
+	await page.click(selectors.continueButton)
+	await page.waitForSelector(selectors.profileUpdatedBanner)
 }
 
 export async function editProfileInfo(

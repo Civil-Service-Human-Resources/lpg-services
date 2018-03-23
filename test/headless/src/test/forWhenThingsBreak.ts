@@ -109,6 +109,10 @@ describe('profile page functionality', () => {
 		expect(updatedDept).toEqual(dept)
 	})
 
+	// it('Should update the users area of work from the profile page', async () => {
+
+	// })
+
 	it('Should update the users grade from the profile page', async () => {
 		const map = new Map()
 		map.set('#AA', 'Administrative level')
