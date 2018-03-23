@@ -31,7 +31,11 @@ export async function displayFeedback(
 
 		let categories
 
-		if (module.type === 'elearning' || module.type === 'face-to-face') {
+		if (
+			course.getType() === 'blended' ||
+			module.type === 'elearning' ||
+			module.type === 'face-to-face'
+		) {
 			categories = ['presentation', 'content', 'relevance', 'interactivity']
 		} else {
 			categories = ['content', 'relevance']
@@ -41,6 +45,7 @@ export async function displayFeedback(
 			template.render('learning-record/feedback', req, res, {
 				categories,
 				course,
+				invalidFeedback: req.flash('invalidFeedback')[0],
 				module,
 			})
 		)
@@ -55,13 +60,30 @@ export async function submitFeedback(
 	const course = req.course
 	const module = req.module!
 
-	// TODO validate
+	const feedback = req.body
 
-	await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
+	if (
+		!(
+			feedback.comments ||
+			feedback.presentation ||
+			feedback.content ||
+			feedback.relevance ||
+			feedback.interactivity
+		)
+	) {
+		req.flash('invalidFeedback', 'true')
+		req.session!.save(() => {
+			res.redirect(`/learning-record/${course.id}/${module.id}/feedback`)
+		})
+	} else {
+		// TODO submit feedback
 
-	req.flash('successTitle', 'learning_feedback_submitted_title') // Thank you for your feedback
-	req.flash('successMessage', 'learning_feedback_submitted_message') // Leaving feedback helps us improve our service.
-	req.session!.save(() => {
-		res.redirect('/learning-record')
-	})
+		await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
+
+		req.flash('successTitle', 'learning_feedback_submitted_title')
+		req.flash('successMessage', 'learning_feedback_submitted_message')
+		req.session!.save(() => {
+			res.redirect('/learning-record')
+		})
+	}
 }

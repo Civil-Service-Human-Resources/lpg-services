@@ -27,11 +27,19 @@
         </li>
         <li class="resource__info">
             <span>
-            {{course.getType() === 'blended' ? '' : i18n(course.getType()) + (course.duration ? '<br>' : '')}}
-            {{course.getDuration()}}
-            {{#if course.price}}
-                <br>&pound;{{course.price}}
-            {{/if}}
+                {{#if course.getType() !== 'blended'}}
+                    {{i18n(course.getType())}}
+                    {{#if course.duration}}
+                        <br>
+                    {{/if}}
+                {{/if}}
+                {{course.getDuration()}}
+                {{#if course.price}}
+                    {{#if course.duration || course.getType() !== 'blended'}}
+                        <br>
+                    {{/if}}
+                    &pound;{{course.price}}
+                {{/if}}
             </span>
         </li>
         <li class="resource__info">
