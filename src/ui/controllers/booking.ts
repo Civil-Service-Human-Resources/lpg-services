@@ -189,6 +189,8 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
+			errorMessage: req.flash('errorMessage')[0],
+			errorTitle: req.flash('errorTitle')[0],
 			events,
 			module,
 			selectedEventId,
@@ -237,9 +239,19 @@ export function renderPaymentOptions(
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
-	res.redirect(
-		`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
-	)
+	if (!selected) {
+		req.flash('errorTitle', 'booking_must_select_date_title')
+		req.flash('errorMessage', 'booking_must_select_date_message')
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
+			)
+		})
+	} else {
+		res.redirect(
+			`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
+		)
+	}
 }
 
 export async function tryCancelBooking(

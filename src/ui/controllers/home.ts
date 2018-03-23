@@ -60,6 +60,7 @@ export async function home(req: express.Request, res: express.Response) {
 				plannedLearning.push(course)
 			}
 		})
+
 		res.send(
 			template.render('home', req, res, {
 				plannedLearning,

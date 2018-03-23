@@ -20,6 +20,7 @@ export class Course {
 	title: string
 	shortDescription: string
 	description: string
+	duration: number
 	learningOutcomes: string
 	price: number
 
