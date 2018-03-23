@@ -14,6 +14,10 @@
                         </div>
                     </form>
                 </div>
+                {{#if searchResults && searchResults.suggestion}}
+                <span class="search__suggestion">Did you mean <a href="/search?q={{searchResults.suggestion}}">{{searchResults.suggestion}}</a></span>
+                {{/if}}
+
                 {{#if searchResults && query}}
                 <p class="lede">There were
                     <strong>{{#if searchResults.totalResults}} {{searchResults.totalResults}} {{else
@@ -29,25 +33,26 @@
             <div class="column-full ">
                 <div class="resources">
                     {{#if searchResults.results.length}} {{#each searchResults.results as course}}
-                    <div class="resource resource__search">
-                        <ul class="resource__item u-clearfix">
-                            <li>
-                                <a class="resource__title" href="/courses/{{course.id}}">
-                                    <strong>{{{course.title}}}</strong>
-                                </a>
-                                <a class="resource__info resource__search__info">
-                                    <span>{{i18n(course.getType())}}{{#if course.getDuration() }}, {{course.getDuration()}}{{/if}}</span>
-                                </a>
-                                <p class="resource__description">
-                                    {{ course.shortDescription }}
-                                </p>
-                                <span class="resource__action">
-                                    {{#if course.getType() === 'face-to-face'}}
-                                    <a href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book now</a>{{/if}}
-                                    <a href="/suggested-for-you/add/{{course.id}}?ref=search">Add to learning plan</a>
-                                </span>
-                            </li>
-                        </ul>
+                    <div class="result">
+                        <div class="result__main">
+                            <a class="result__title" href="/courses/{{course.id}}"><strong>{{course.title}}</strong></a>
+                        </div>
+                        <div class="result__info">
+                        <span>
+                            {{i18n(course.getType())}}
+                            {{#if course.getDuration() }}<br>{{course.getDuration()}}{{/if}}
+                            <!--<br>Work area: Digital-->
+                        </span>
+                        </div>
+                        <p class="result__description">{{ course.shortDescription }}</p>
+                        <div class="result__action">
+                            {{#if course.getType() === 'face-to-face'}}
+                            <a href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book now</a>
+                            {{elseif course.getType() !== 'blended'}}
+                            <a href="/courses/{{course.id}}/{{course.modules[0].id}}">Start</a>
+                            {{/if}}
+                            <a href="/suggestions-for-you/add/{{course.id}}?ref=search">Add to learning plan</a>
+                        </div>
                     </div>
                     {{/each}} {{/if}}
                 </div>

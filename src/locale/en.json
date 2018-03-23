@@ -13,7 +13,7 @@
 	"courseResult.complete": "Course complete",
 	"face-to-face": "Classroom",
 	"link": "Link",
-	"REGISTERED": "Registered",
+	"REGISTERED": "Booked",
 	"Duration": "Duration",
 	"Price": "Price",
 	"all": "all",
@@ -184,5 +184,10 @@
 	"profile_name_label": "profile_name_label",
 	"profile_email_label": "profile_email_label",
 	"profile_area_label": "profile_area_label",
-	"Organisation": "Organisation"
+	"Organisation": "Organisation",
+	"action_COMPLETED": "Retake",
+	"action_IN_PROGRESS": "Resume",
+	"action_NOT_STARTED": "Start",
+	"NOT_STARTED": "NOT_STARTED",
+	"learning_added_to_plan": "Your learning plan has been updated."
 }

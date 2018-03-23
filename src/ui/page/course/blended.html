@@ -1,30 +1,43 @@
 <Page title="Course">
     <div class="container">
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class="heading-large">
-                    <span class="heading-secondary">Course</span>
-                    {{course.title}}
-                </h1>
-            </div>
-        </div>
+        <h1 class="heading-xlarge heading heading--page-heading ">
+            {{course.title}}
+        </h1>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <h2 class="heading-medium">Description</h2>
-                <div>{{{course.description}}}</div>
+                <div>{{{toHtml(course.description)}}}</div>
 
                 {{#if course.learningOutcomes}}
-                <h2 class="heading-medium">Learning Outcomes</h2>
-                <div>{{{course.learningOutcomes }}}</div>
+                <h2 class="heading-medium">Learning outcomes</h2>
+                <div>{{{toHtml(course.learningOutcomes)}}}</div>
                 {{/if}}
 
-                <ul>
-                    {{#each course.modules as module}}
-                    <li>
-                        <a href="/courses/{{course.id}}/{{module.id}}">{{ module.title }}</a>
-                    </li>
+                <p>
+                    <strong>You must complete all {{modules.length}} learning modules to finish this topic.</strong>
+                </p>
+
+                <div class="resources resources--modules">
+                    {{#each modules as module, index}}
+                    <div class="resource">
+                        <ul class="resource__item u-clearfix">
+                            <li class="resource__main">
+                                <h3 class="heading  heading--text">
+                                    {{index + 1}}. {{module.title}}
+                                </h3>
+                                <span class="resource__action">
+                                    <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
+                                </span>
+                            </li>
+                            <li class="resource__duration">
+                                <span>{{module.duration}}</span>
+                            </li>
+                            <li class="resource__status">
+                                <span class="badge badge--info ">{{module.state ? i18n(module.state) : ''}}</span>
+                            </li>
+                        </ul>
+                    </div>
                     {{/each}}
-                </ul>
+                </div>
             </div>
             <div class="column-one-third">
                 {{#if courseDetails.length}} {{#each courseDetails as dataRows}}

@@ -5,6 +5,9 @@ import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
+import * as log4js from 'log4js'
+
+const logger = log4js.getLogger('controllers/suggestion')
 
 export function hashArray(courses: model.Course[], key: string) {
 	const hash: Record<string, model.Course> = {}
@@ -17,15 +20,25 @@ export function hashArray(courses: model.Course[], key: string) {
 
 export async function addToPlan(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const ref = req.query.ref === 'home' ? '/' : '/suggestions-for-you'
+	const ref = req.query.ref
 	const course = req.course
 
+	let redirectTo = '/suggestions-for-you'
+	switch (ref) {
+		case 'home':
+		case 'search':
+			redirectTo = '/'
+			break
+	}
 	try {
 		await xapi.record(req, course, xapi.Verb.Liked)
+		req.flash('success', 'learning_added_to_plan')
+		req.session!.save(() => {
+			res.redirect(redirectTo)
+		})
 	} catch (err) {
+		logger.error('Error recording xAPI statement', err)
 		res.sendStatus(500)
-	} finally {
-		res.redirect(ref)
 	}
 }
 
@@ -56,6 +69,7 @@ export async function suggestionsPage(
 		template.render('suggested', req, {
 			areasOfWork: user.areasOfWork,
 			courses: modified,
+			success: req.flash('success')[0],
 		})
 	)
 }

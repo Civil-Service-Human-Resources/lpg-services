@@ -31,6 +31,9 @@ export async function home(req: express.Request, res: express.Response) {
 				if (course.isComplete(user) && !course.shouldRepeat(user)) {
 					requiredLearning.splice(i, 1)
 				} else {
+					if (!record.state && record.modules && record.modules.length) {
+						record.state = 'IN_PROGRESS'
+					}
 					requiredLearning[i].record = record
 				}
 				delete learningHash[requiredCourse.id]
@@ -47,6 +50,9 @@ export async function home(req: express.Request, res: express.Response) {
 				record.state !== 'UNREGISTERED' &&
 				record.preference !== 'DISLIKED'
 			) {
+				if (!record.state) {
+					record.state = 'IN_PROGRESS'
+				}
 				plannedLearning.push(course)
 			}
 		})
@@ -54,6 +60,7 @@ export async function home(req: express.Request, res: express.Response) {
 			template.render('home', req, {
 				plannedLearning,
 				requiredLearning,
+				success: req.flash('success')[0],
 				suggestedLearning,
 			})
 		)

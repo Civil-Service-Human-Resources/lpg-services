@@ -1,15 +1,16 @@
-<div class="right-box">
-    <h1>{{ dataRows.label}}</h1>
-    <table>
+<aside class="govuk-related-items govuk-related-items--flush govuk-related-items--keylined" role="complementary">
+    <h2 class="heading-small">{{ dataRows.label}}</h2>
+    <table class="table-simple table--top u-space-b30">
+        <caption class="visuallyhidden">Details about the course</caption>
         <tbody>
         {{#if dataRows.dataRows.length}}
         {{#each dataRows.dataRows as row}}
         <tr>
-            <td>{{row.label}}</td>
+            <th>{{row.label}}</th>
             <td>{{row.value}}</td>
         </tr>
         {{/each}}
         {{/if}}
         </tbody>
     </table>
-</div>
+</aside>

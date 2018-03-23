@@ -33,28 +33,36 @@ function ensureFullICU() {
 		)
 	}
 }
-// TODO(tav): This may end up having more logic, e.g. approximating anything
-// over 8 hours to be represented as a day, using more explicit wording, e.g. 2
-// days and 4 hours, etc.
+
 export function formatCourseDuration(d: number) {
 	if (!d) {
 		return '-'
 	}
 	let out = ''
-	const [days, daySeconds] = divmod(d, 86400)
+	// treat a day as 8 hours
+	const [days, daySeconds] = divmod(d, 28800)
 	if (days) {
-		out += `${days}D`
+		out += `${days} day${days > 1 ? 's' : ''}`
 	}
 	const [hours, hourSeconds] = divmod(daySeconds, 3600)
 	if (hours) {
-		out += `${hours}H`
+		if (out) {
+			out += ' '
+		}
+		out += `${hours} hour${hours > 1 ? 's' : ''}`
 	}
 	const [minutes, seconds] = divmod(hourSeconds, 60)
 	if (minutes) {
-		out += `${minutes}M`
+		if (out) {
+			out += ' '
+		}
+		out += `${minutes} minute${minutes > 1 ? 's' : ''}`
 	}
 	if (seconds) {
-		out += `${seconds}S`
+		if (out) {
+			out += ' '
+		}
+		out += `${seconds} second${seconds > 1 ? 's' : ''}`
 	}
 	return out
 }

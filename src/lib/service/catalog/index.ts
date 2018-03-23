@@ -35,6 +35,14 @@ export async function search(query: string): Promise<api.SearchResults> {
 		const response = await http.get(`/search?query=${query}`)
 		return convert(response.data) as api.SearchResults
 	} catch (e) {
+		if (e.response.status === 400) {
+			return {
+				page: 0,
+				results: [],
+				size: 0,
+				totalResults: 0,
+			}
+		}
 		throw new Error(`Error searching for courses - ${e}`)
 	}
 }
