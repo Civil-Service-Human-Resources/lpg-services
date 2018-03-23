@@ -123,13 +123,14 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 		for (const moduleRecord of course.record!.modules) {
 			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
 				readyForFeedback.push({
+					completionDate: moduleRecord.completionDate,
 					course,
 					module: course.modules.find(m => m.id === moduleRecord.moduleId),
 				})
 			}
 		}
 	}
-	return readyForFeedback
+	return readyForFeedback.sort((a, b) => b.completionDate!.getTime() - a.completionDate!.getTime())
 }
 
 export interface CourseRecord {
