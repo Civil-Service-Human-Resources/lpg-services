@@ -117,6 +117,21 @@ export async function getRegistrations() {
 	return registrations
 }
 
+export async function getReadyForFeedback(learningRecord: model.Course[]) {
+	const readyForFeedback = []
+	for (const course of learningRecord) {
+		for (const moduleRecord of course.record!.modules) {
+			if (!moduleRecord.rated) {
+				readyForFeedback.push({
+					course,
+					module: course.modules.find(m => m.id === moduleRecord.moduleId),
+				})
+			}
+		}
+	}
+	return readyForFeedback
+}
+
 export interface CourseRecord {
 	courseId: string
 	userId: string
@@ -129,6 +144,7 @@ export interface ModuleRecord {
 	completionDate?: Date
 	eventId?: string
 	moduleId: string
+	rated?: boolean
 	state?: string
 }
 

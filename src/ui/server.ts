@@ -20,6 +20,7 @@ import * as courseController from './controllers/course'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
+import * as learningRecordFeedbackController from './controllers/learning-record/feedback'
 import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
@@ -162,6 +163,15 @@ app.use(
 )
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
+app.get(
+	'/learning-record/:courseId/:moduleId/feedback',
+	asyncHandler(learningRecordFeedbackController.displayFeedback)
+)
+app.post(
+	'/learning-record/:courseId/:moduleId/feedback',
+	asyncHandler(learningRecordFeedbackController.submitFeedback)
+)
+
 app.get(
 	'/learning-record/:courseId/:moduleId',
 	asyncHandler(learningRecordController.courseResult)
