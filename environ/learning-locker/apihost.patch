@@ -1,13 +1,12 @@
 diff --git a/ui/src/server.js b/ui/src/server.js
-index 51b3505e..429a1564 100644
+index 51b3505e..b15744b4 100644
 --- a/ui/src/server.js
 +++ b/ui/src/server.js
-@@ -18,7 +18,19 @@ process.on('SIGINT', () => {
+@@ -18,7 +18,17 @@ process.on('SIGINT', () => {
    process.exit(0);
  });
  
 -const targetUrl = `http://${config.apiHost}:${config.apiPort}`;
-+let secure = false;
 +let targetUrl;
 +if (process.env.API_HTTPS) {
 +  if (config.apiPort === 443) {
@@ -15,7 +14,6 @@ index 51b3505e..429a1564 100644
 +  } else {
 +    targetUrl = `https://${config.apiHost}:${config.apiPort}`;
 +  }
-+  secure = true;
 +} else {
 +  targetUrl = `http://${config.apiHost}:${config.apiPort}`;
 +}
@@ -23,11 +21,18 @@ index 51b3505e..429a1564 100644
  const app = new Express();
  
  app.use(helmet({
-@@ -27,6 +39,7 @@ app.use(helmet({
+@@ -84,12 +94,13 @@ app.use('/dashboards/:dashboardId', renderDashboard);
+ app.use('*', renderApp);
  
- const server = new http.Server(app);
- const proxy = httpProxy.createProxyServer({
-+  secure: secure,
-   target: targetUrl
- });
- 
+ if (config.port) {
+-  server.listen(config.port, (err) => {
++  server.listen(3000, (err) => {
+     if (err) {
+       logger.error(err);
+     }
+     logger.info(
+       '\n --- \n',
++      '==> ✅  Running on port 3000.', '\n',
+       `==> ✅  ${config.app.title} is running, talking to API server on ${config.apiPort}.`, '\n',
+       `==> 💻  Open ${process.env.SITE_URL} in a browser to view the app.`, '\n',
+       '--- \n'
