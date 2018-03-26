@@ -1,0 +1,33 @@
+diff --git a/ui/src/server.js b/ui/src/server.js
+index 51b3505e..429a1564 100644
+--- a/ui/src/server.js
++++ b/ui/src/server.js
+@@ -18,7 +18,19 @@ process.on('SIGINT', () => {
+   process.exit(0);
+ });
+ 
+-const targetUrl = `http://${config.apiHost}:${config.apiPort}`;
++let secure = false;
++let targetUrl;
++if (process.env.API_HTTPS) {
++  if (config.apiPort === 443) {
++    targetUrl = `https://${config.apiHost}`;
++  } else {
++    targetUrl = `https://${config.apiHost}:${config.apiPort}`;
++  }
++  secure = true;
++} else {
++  targetUrl = `http://${config.apiHost}:${config.apiPort}`;
++}
++
+ const app = new Express();
+ 
+ app.use(helmet({
+@@ -27,6 +39,7 @@ app.use(helmet({
+ 
+ const server = new http.Server(app);
+ const proxy = httpProxy.createProxyServer({
++  secure: secure,
+   target: targetUrl
+ });
+ 

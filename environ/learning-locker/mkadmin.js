@@ -4,6 +4,11 @@ import LRS from 'lib/models/lrs'
 import Organisation from 'lib/models/organisation'
 import User from 'lib/models/user'
 
+const adminUser = process.env.LEARNING_LOCKER_ADMIN_USER || 'admin@cslearning.gov.uk'
+const adminPassword = process.env.LEARNING_LOCKER_ADMIN_PASSWORD || 'admin'
+const apiKey = process.env.LEARNING_LOCKER_API_KEY || '66f2b4fc001e3da992d23b57d8a7457655bea078'
+const apiSecret = process.env.LEARNING_LOCKER_API_SECRET || '1c0e1b6827606d7efed71e204939d048f94f842b'
+
 async function createAdmin(email, password, orgName) {
 	let user = await User.findOne({email})
 	if (!user) {
@@ -42,13 +47,13 @@ async function createAdmin(email, password, orgName) {
 
 	const client = await Client.findOne({lrs_id: lrs._id})
 	client.api = {
-		basic_key: '66f2b4fc001e3da992d23b57d8a7457655bea078',
-		basic_secret: '1c0e1b6827606d7efed71e204939d048f94f842b',
+		basic_key: apiKey,
+		basic_secret: apiSecret,
 	}
 	await client.save()
 }
 
-createAdmin('admin@cslearning.gov.uk', 'admin', 'LPG')
+createAdmin(adminUser, adminPassword, 'LPG')
 	.then(() => {
 		console.log('>> Successfully created admin user')
 		process.exit(0)

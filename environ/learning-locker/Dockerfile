@@ -7,6 +7,12 @@ RUN apt-get update && apt-get install -y git apt-transport-https && \
 
 RUN git clone --branch v2.1.3 --depth 1 https://github.com/LearningLocker/learninglocker.git /opt/learning-locker
 
+COPY bull.patch /opt/learning-locker/
+COPY apihost.patch /opt/learning-locker/
+
+RUN cd /opt/learning-locker && patch -p1 < bull.patch
+RUN cd /opt/learning-locker && patch -p1 < apihost.patch
+
 # NOTE: We use `npm` here instead of `yarn` because yarn enforces engine version
 # requirements and dependencies have mismatching requirements.
 RUN cd /opt/learning-locker && \
@@ -26,6 +32,9 @@ RUN cd /opt/xapi-service && \
     npm run build
 
 COPY mkadmin.js /opt/learning-locker/
+
+ADD https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas/releases/download/hammer-0.1/hammer /bin/hammer
+RUN chmod +x /bin/hammer && echo "Hammer v0.1 Added"
 
 ENV API_HOST=learning-locker-api-server \
     API_PORT=8082 \
