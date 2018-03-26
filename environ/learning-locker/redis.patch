@@ -1,0 +1,11 @@
+--- node_modules/redis/lib/createClient.js	2017-08-08 06:16:01.000000000 +0100
++++ node_modules/redis/lib/createClient.new.js	2018-03-26 14:54:07.000000000 +0100
+@@ -76,5 +76,8 @@
+         throw new TypeError('Unknown type of connection in createClient()');
+     }
+ 
++    if (process.env.REDIS_USE_TLS) {
++        options.tls = true;
++    }
+     return options;
+ };
