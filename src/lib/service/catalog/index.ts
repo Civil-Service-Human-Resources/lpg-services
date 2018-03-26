@@ -45,7 +45,6 @@ export async function postFeedback(feedback: model.Feedback) {
 
 export async function search(query: string, page: number, size: number): Promise<api.SearchResults> {
 	try {
-		// const response = await http.get(`/search?query=${query}`)
 		const response = await http.get(`/search?query=${query}&page=${page}&size=${size}`)
 		return convert(response.data) as api.SearchResults
 	} catch (e) {
