@@ -36,10 +36,10 @@ export async function search(req: express.Request, res: express.Response) {
 		totalResults: 0,
 	}
 	const start = new Date()
-	if (req.query.p){
+	if (req.query.p) {
 		page = req.query.p
 	}
-	if (req.query.s){
+	if (req.query.s) {
 		size = req.query.s
 	}
 	if (req.query.q) {
@@ -47,5 +47,7 @@ export async function search(req: express.Request, res: express.Response) {
 		searchResults = await catalog.search(query, page, size)
 	}
 	const end: string = (((new Date() as any) - (start as any)) / 1000).toFixed(2)
-	res.send(template.render('search', req, res, {end, query, searchResults, range}))
+	res.send(
+		template.render('search', req, res, {end, query, searchResults, range})
+	)
 }
