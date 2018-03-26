@@ -93,19 +93,19 @@ services:
     ports:
       - 9000:9000
 
-  learning-catalogue:
-    container_name: learning-catalogue
-    command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
-    depends_on:
-      - elasticsearch
-    environment:
-      AUTH_USER: user
-      AUTH_PASSWORD: password
-      ELASTICSEARCH_CLUSTER: local
-      ELASTICSEARCH_HOST: elasticsearch
-      ELASTICSEARCH_PORT: 9300
-    image: cshr/lpg-learning-catalogue:7d48424205c1eedd061f3bd267ac0f412f8cba1b
-    ports:
-      - 9001:9001
+#  learning-catalogue:
+#    container_name: learning-catalogue
+#    command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
+#    depends_on:
+#      - elasticsearch
+#    environment:
+#      AUTH_USER: user
+#      AUTH_PASSWORD: password
+#      ELASTICSEARCH_CLUSTER: local
+#      ELASTICSEARCH_HOST: elasticsearch
+#      ELASTICSEARCH_PORT: 9300
+#    image: cshr/lpg-learning-catalogue:7d48424205c1eedd061f3bd267ac0f412f8cba1b
+#    ports:
+#      - 9001:9001
 
 # /CSHR
