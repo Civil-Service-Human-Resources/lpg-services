@@ -32,8 +32,14 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 	}
 	try {
 		await xapi.record(req, course, xapi.Verb.Liked)
-		req.flash('successTitle', req.__('learning_added_to_plan_title', course.title))
-		req.flash('successMessage', req.__('learning_added_to_plan_message', course.title))
+		req.flash(
+			'successTitle',
+			req.__('learning_added_to_plan_title', course.title)
+		)
+		req.flash(
+			'successMessage',
+			req.__('learning_added_to_plan_message', course.title)
+		)
 		req.session!.save(() => {
 			res.redirect(redirectTo)
 		})
@@ -107,28 +113,19 @@ export async function suggestions(
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
 
-	const baseParams = new catalog.ApiParameters([], '', 0, 6)
 	for (const aow of user.areasOfWork || []) {
-		baseParams.areaOfWork = [`${aow}`]
-		if (aow[0] === expand) {
-			baseParams.size = 10
-		}
-		const suggestedGroup = (await catalog.findSuggestedLearningWithParameters(
-			baseParams.serialize()
-		)).results
-
-		courseSuggestions.push(modifyCourses(suggestedGroup, learningRecord, user))
-	}
-	baseParams.areaOfWork = []
-	baseParams.department = user.department!
-	courseSuggestions.push(
-		modifyCourses(
-			(await catalog.findSuggestedLearningWithParameters(
-				baseParams.serialize()
-			)).results,
-			learningRecord,
-			user
+		courseSuggestions.push(
+			await getSuggestions(
+				'',
+				[aow],
+				aow === expand ? 10 : 6,
+				learningRecord,
+				user
+			)
 		)
+	}
+	courseSuggestions.push(
+		await getSuggestions(user.department!, [], 6, learningRecord, user)
 	)
 
 	return courseSuggestions
@@ -138,27 +135,6 @@ export async function homeSuggestions(
 	user: model.User,
 	learningRecordIn: Record<string, model.Course> = {}
 ) {
-	const areaOfWorkParams = new catalog.ApiParameters(
-		user.areasOfWork || [],
-		'',
-		0,
-		5
-	).serialize()
-
-	const departmentParams = new catalog.ApiParameters(
-		[],
-		user.department!,
-		0,
-		1
-	).serialize()
-
-	const suggestedLearning = [
-		...(await catalog.findSuggestedLearningWithParameters(areaOfWorkParams))
-			.results,
-		...(await catalog.findSuggestedLearningWithParameters(departmentParams))
-			.results,
-	]
-
 	let learningRecord: Record<string, model.Course> = {}
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
@@ -166,10 +142,77 @@ export async function homeSuggestions(
 		const records = await learnerRecord.getLearningRecord(user)
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
-	return modifyCourses(suggestedLearning, learningRecord, user)
+
+	let areaOfWorkSuggestions = await getSuggestions(
+		user.department!,
+		[],
+		1,
+		learningRecord,
+		user
+	)
+	let departmentSuggestions = await getSuggestions(
+		'',
+		user.areasOfWork || [],
+		5,
+		learningRecord,
+		user
+	)
+
+	// If either set of suggestions is too small, try and fill up with other suggestions.
+	if (areaOfWorkSuggestions.length < 1) {
+		departmentSuggestions = [
+			...departmentSuggestions,
+			...(await getSuggestions(
+				'',
+				user.areasOfWork || [],
+				1,
+				learningRecord,
+				user
+			)),
+		]
+	} else if (departmentSuggestions.length < 5) {
+		areaOfWorkSuggestions = [
+			...areaOfWorkSuggestions,
+			...(await getSuggestions(
+				user.department!,
+				[],
+				5 - departmentSuggestions.length,
+				learningRecord,
+				user
+			)),
+		]
+	}
+
+	return [...areaOfWorkSuggestions, ...departmentSuggestions]
 }
 
-export function modifyCourses(
+async function getSuggestions(
+	department: string,
+	areasOfWork: string[],
+	count: number,
+	learningRecord: Record<string, model.Course>,
+	user: model.User
+): Promise<model.Course[]> {
+	const params = new catalog.ApiParameters(areasOfWork, department, 0, count)
+
+	let newSuggestions: model.Course[] = []
+	let hasMore = true
+
+	while (newSuggestions.length < count && hasMore) {
+		const page = await catalog.findSuggestedLearningWithParameters(
+			params.serialize()
+		)
+		newSuggestions = newSuggestions.concat(
+			modifyCourses(page.results, learningRecord, user)
+		)
+		hasMore = page.totalResults > page.size * (page.page + 1)
+		params.page += 1
+	}
+
+	return newSuggestions.slice(0, count)
+}
+
+function modifyCourses(
 	courses: model.Course[],
 	learningRecord: Record<string, model.Course>,
 	user: model.User
