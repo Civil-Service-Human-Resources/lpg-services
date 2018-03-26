@@ -2,6 +2,14 @@
     <div class="container">
         <h1 class="heading-xlarge">Learning record</h1>
 
+        <div class="grid-row">
+            <div class="column-full">
+                {{#if successTitle}}
+                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} />
+                {{/if}}
+            </div>
+        </div>
+
         {{#if readyForFeedback.length}}
         <div class="grid-row">
             <div class="column-full">
@@ -11,14 +19,6 @@
             </div>
         </div>
         {{/if}}
-
-        <div class="grid-row">
-            <div class="column-full">
-                {{#if successTitle}}
-                <Banner type="confirmation" title={{i18n(successTitle)}} message={{i18n(successMessage)}} />
-                {{/if}}
-            </div>
-        </div>
 
         <div class="grid-row">
             <div class="column-full">
