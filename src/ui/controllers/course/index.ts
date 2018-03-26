@@ -228,5 +228,16 @@ export async function markCourseDeleted(
 ) {
 	const req = ireq as extended.CourseRequest
 	await xapi.record(req, req.course, xapi.Verb.Archived)
-	res.redirect('/')
+
+	req.flash(
+		'successTitle',
+		req.__('learning_removed_from_plan_title', req.course.title)
+	)
+	req.flash(
+		'successMessage',
+		req.__('learning_removed_from_plan_message', req.course.title)
+	)
+	req.session!.save(() => {
+		res.redirect('/')
+	})
 }
