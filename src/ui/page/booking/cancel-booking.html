@@ -21,10 +21,10 @@
                 <h3 class="heading-small">{{signedInUser.givenName}}</h3>
                 <ul class="cancel__list push-bottom">
                     <li>
-                        <span class="cancel__item--key">Requested Course:</span> <span class="bold-small">{{module.title || course.title}}</span>
+                        <span class="cancel__item">Requested Course:</span> <span class="bold-small cancel__item">{{module.title || course.title}}</span>
                     </li>
                     <li>
-                        <span class="cancel__item--key">Requested Date:</span> <span class="bold-small">{{formatDate(event.date)}}</span>
+                        <span class="cancel__item">Requested Date:</span> <span class="bold-small cancel__item">{{formatDate(event.date)}}</span>
                     </li>
                 </ul>
                 <form method="post" class="push-bottom">

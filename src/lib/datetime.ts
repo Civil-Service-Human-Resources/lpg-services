@@ -1,6 +1,6 @@
 const dateFormat = new Intl.DateTimeFormat('en-GB', {
 	day: '2-digit',
-	month: '2-digit',
+	month: 'short',
 	timeZone: 'Europe/London',
 	year: 'numeric',
 })
@@ -16,7 +16,7 @@ const timeFormat = new Intl.DateTimeFormat('en-GB', {
 	day: '2-digit',
 	hour: 'numeric',
 	minute: '2-digit',
-	month: '2-digit',
+	month: 'short',
 	timeZone: 'Europe/London',
 	year: 'numeric',
 })

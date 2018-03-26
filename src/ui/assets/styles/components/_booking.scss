@@ -90,13 +90,16 @@
 }
 
 .cancel {
+	@include e(list) {
+		float: left;
+		width: 100%;
+	}
 	@include e(return) {
 		float: right;
 	}
 	@include e(item) {
-		@include m(key) {
-			width: 50%;
-			display: inline-block;
-		}
+		width: 50%;
+		display: inline-block;
+		float: left;
 	}
 }
