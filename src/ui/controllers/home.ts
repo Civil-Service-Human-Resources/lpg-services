@@ -13,9 +13,7 @@ export async function home(req: express.Request, res: express.Response) {
 	try {
 		const user = req.user as model.User
 		const learningRecord = await learnerRecord.getLearningRecord(user)
-		const learningHash = learningRecord.length
-			? suggestionController.hashArray(learningRecord, 'id')
-			: {}
+		const learningHash = suggestionController.hashArray(learningRecord, 'id')
 		const plannedLearning: model.Course[] = []
 		const requiredLearning = (await catalog.findRequiredLearning(user)).results
 
@@ -28,21 +26,21 @@ export async function home(req: express.Request, res: express.Response) {
 			learningRecord
 		)
 
-		for (const [i, requiredCourse] of requiredLearning.entries()) {
+		for (let i = 0; i < requiredLearning.length; i++) {
+			const requiredCourse = requiredLearning[i]
 			if (learningHash[requiredCourse.id]) {
 				const course = learningHash[requiredCourse.id]
 				const record = course.record!
 				if (course.isComplete(user) && !course.shouldRepeat(user)) {
 					requiredLearning.splice(i, 1)
+					i -= 1
 				} else {
 					if (!record.state && record.modules && record.modules.length) {
 						record.state = 'IN_PROGRESS'
 					}
 					requiredLearning[i].record = record
 				}
-				delete learningHash[requiredCourse.id]
 			}
-			delete learningHash[requiredCourse.id]
 		}
 		/// learninghash is now a collection that do not have items in requiredLearning
 		Object.entries(learningHash).forEach((entry, key) => {
