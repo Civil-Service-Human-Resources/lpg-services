@@ -58,5 +58,50 @@
                 </div>
             </div>
         </div>
+        <div class="pager">
+            <div class="pager__controls">
+                <a class="pager__prev" href="#">Prev</a>
+                <ul class="pager__list">
+                    <li>
+                        <a href="#">
+                            1
+                        </a>
+                    </li>
+                    <li>
+                        2
+                    </li>
+                    <li>
+                        <a href="#">
+                            3
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            4
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            5
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            6
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            7
+                        </a>
+                    </li>
+                </ul>
+                <a class="pager__next" href="#">Next</a>
+            </div>
+            <p>{{searchResults.size}}</p>
+            <p>{{(searchResults.page+1)}}</p>
+            <p>{{searchResults.totalResults}}</p>
+            <div class="pager__summary">Showing {{(searchResults.page+1)}} – 20 of {{searchResults.totalResults}} items</div>
+        </div>
     </div>
 </Page>
