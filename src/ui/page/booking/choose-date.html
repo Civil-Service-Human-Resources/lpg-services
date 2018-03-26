@@ -71,12 +71,9 @@
                         {{/each}}
                     </div>
 
-                    <p>
-                        You are confirming that you have approval to book this course.
-                    </p>
-                    <p>
-                        You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
-                    </p>
+                    <div class="tabbed-section">
+                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}"/>
+                    </div>
                     <div class="panel panel-border-wide">
                         <p>
                             By booking this course you are agreeing to the terms and conditions
