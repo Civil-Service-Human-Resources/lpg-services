@@ -1,0 +1,82 @@
+<div class="js-tabs nav-tabs">
+    <ul>
+        <li class="{{tab === 'before-you-book' ? 'active' : ''}}"><a href="{{url}}?tab=before-you-book">Before you book</a></li>
+        <li class="{{tab === 'terms-and-conditions' ? 'active' : ''}}"><a href="{{url}}?tab=terms-and-conditions">Terms and Conditions</a></li>
+        <li class="{{tab === 'refund-policy' ? 'active' : ''}}"><a href="{{url}}?tab=refund-policy">Refund policy</a></li>
+        <li class="{{tab === 'accessibility' ? 'active' : ''}}"><a href="{{url}}?tab=accessibility">Accessibility</a></li>
+    </ul>
+</div>
+<div class="js-tab-content tab-content u-space-b30">
+	<div class="js-tab-pane tab-pane">
+		{{#if tab === 'before-you-book'}}
+            <p>You are confirming that you have approval to book this course.</p>
+            <p>You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.</p>
+
+        {{elseif tab === 'terms-and-conditions'}}
+
+            <p>If you wish to cancel your participation in a course, you may have to pay a cancellation charge. The ‘days’ referred to in the cancellation policy are actual days rather than working days.  The commencement of the course is the date on which any digital learning or pre-workshop work is released and made available to you.</p>
+
+            <p>Please ensure that the information you provide for your booking is valid and accurate. Inaccurate booking information may result in your booking being cancelled or may result in your department incurring costs.</p>
+
+            <p>The cancellation policy is:</p>
+            <ul class="list list-bullet">
+                <li class="bold-small">22 days or more before the commencement of a course - no charge</li>
+                <li class="bold-small">14 to 21 days before the commencement of a  course – you will be charged 30% of the total course cost</li>
+                <li class="bold-small">Less than 14 days before the commencement of a course you will be charged 100% of the of the total course cost.</li>
+            </ul>
+            <p> We reserve the right to cancel a course if minimum delegate numbers have not been reached. </p>
+
+            <p> You may not: </p>
+            <ul class="list list-bullet">
+                <li>distribute any materials (whether digital or printed) that you access as part of this course to anyone else; or</li>
+                <li>permit anyone else to access this course using the access details that we provide to you; or</li>
+                <li>circulate the access details that you are sent to anyone else.</li>
+                <li>You may access the digital course materials yourself as many times as you wish.</li>
+            </ul>
+
+            <h4 class="bold-small">Technical requirements</h4>
+
+            <p>Browsers approved to access the digital parts of this course:</p>
+
+            <table class="u-space-b30">
+                <tr>
+                <td class="bold-small">Windows</td>
+                <td>
+                    <ul>
+
+                        <li>Windows</li>
+                        <li>Internet Explorer 8+</li>
+                        <li>Edge (latest version)</li>
+                        <li>Google Chrome (latest version)</li>
+                        <li>Mozilla Firefox (latest version)</li>
+                    </ul>
+                </td>
+                </tr>
+                <tr>
+                    <td class="bold-small">Mac OS</td>
+                    <td>
+                        <ul>
+                            <li>X Safari 8+</li>
+                            <li>Google Chrome (latest version)</li>
+                            <li>Mozilla Firefox (latest version)</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <p>If you have the correct computing requirements but experience problems accessing the digital material in this topic please try to use an alternative device or browser (e.g. Chrome) in the first instance. Please also ensure that you have enabled javascript and popups before you start.</p>
+
+
+        {{elseif tab === 'refund-policy'}}
+            <p>If you wish to cancel your participation in a course, you may have to pay a cancellation charge. The ‘days’ referred to in the cancellation policy are actual days rather than working days.  The commencement of the course is the date on which any digital learning or pre-workshop work is released and made available to you.</p>
+            <p>Please ensure that the information you provide for your booking is valid and accurate. Inaccurate booking information may result in your booking being cancelled or may result in your department incurring costs.</p>
+            <p>The refund policy is in keeping with the terms and conditions of the course. By booking this course you are agreeing to the terms and conditions.</p>
+
+        {{elseif tab === 'accessibility'}}
+            <p>All our venues are wheelchair accessible</p>
+            <strong>If you have additional accessibility requirements, you can specify these below. Someone from our helpdesk may contact you to confirm your requirements.</strong>
+            <AccessibilityOptions/>
+
+        {{/if}}
+
+	</div>
+</div>
