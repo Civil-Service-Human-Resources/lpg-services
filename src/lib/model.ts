@@ -380,6 +380,19 @@ export class Frequency {
 	}
 }
 
+export class Feedback {
+	id: string
+	courseId: string
+	moduleId: string
+	userId: string
+
+	comments: string
+	content: number
+	interactivity: number
+	presentation: number
+	relevance: number
+}
+
 export class User {
 	static create(data: any) {
 		const user = new User(

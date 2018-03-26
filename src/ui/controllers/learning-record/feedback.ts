@@ -1,5 +1,6 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
+import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
@@ -76,8 +77,12 @@ export async function submitFeedback(
 			res.redirect(`/learning-record/${course.id}/${module.id}/feedback`)
 		})
 	} else {
-		// TODO submit feedback
-
+		await catalog.postFeedback({
+			...feedback,
+			courseId: course.id,
+			moduleId: module.id,
+			userId: req.user.id,
+		})
 		await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
 
 		req.flash('successTitle', 'learning_feedback_submitted_title')
