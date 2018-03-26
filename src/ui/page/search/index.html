@@ -58,50 +58,31 @@
                 </div>
             </div>
         </div>
+        {{#if searchResults.totalResults !== 0}}
         <div class="pager">
             <div class="pager__controls">
-                <a class="pager__prev" href="#">Prev</a>
+                {{#if searchResults.page > 0}}
+                <a class="pager__prev" href="/search?q={{query}}&s={{searchResults.size}}&p={{searchResults.page - 1}}">Prev</a>
+                {{/if}}
                 <ul class="pager__list">
+                    {{#each range(Math.ceil(searchResults.totalResults/searchResults.size)) as x}}
                     <li>
-                        <a href="#">
-                            1
-                        </a>
+                        {{#if x === searchResults.page}}
+                        {{x+1}}
+                        {{else}}
+                        <a href="/search?q={{query}}&s={{searchResults.size}}&p={{x}}">{{x+1}}</a>
+                        {{/if}}
                     </li>
-                    <li>
-                        2
-                    </li>
-                    <li>
-                        <a href="#">
-                            3
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            4
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            5
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            6
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            7
-                        </a>
-                    </li>
+                    {{/each}}
                 </ul>
-                <a class="pager__next" href="#">Next</a>
+                {{#if searchResults.page != (Math.ceil(searchResults.totalResults/searchResults.size)-1)}}
+                <a class="pager__next" href="/search?q={{query}}&s={{searchResults.size}}&p={{searchResults.page + 1}}">Next</a>
+                {{/if}}
             </div>
-            <p>{{searchResults.size}}</p>
-            <p>{{(searchResults.page+1)}}</p>
-            <p>{{searchResults.totalResults}}</p>
-            <div class="pager__summary">Showing {{(searchResults.page+1)}} – 20 of {{searchResults.totalResults}} items</div>
+            <div class="pager__summary">Showing {{((searchResults.page*searchResults.size)+1)}} – {{((searchResults.page*searchResults.size)+searchResults.results.length)}} of {{searchResults.totalResults}} items</div>
         </div>
+        {{/if}}
     </div>
+    <script>
+    </script>
 </Page>
