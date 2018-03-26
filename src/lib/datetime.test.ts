@@ -2,22 +2,24 @@ import * as datetime from 'lib/datetime'
 
 describe('Should return formatted the date', () => {
 	it('Should return a formatted date', () => {
-		expect(datetime.formatDate(new Date(2018, 0, 1))).toBe('01/01/2018')
-		expect(datetime.formatDate(new Date(2018, 5, 1))).toBe('01/06/2018')
-		expect(datetime.formatDate(new Date(2018, 11, 1))).toBe('01/12/2018')
+		expect(datetime.formatDate(new Date(2018, 0, 1))).toBe('01 Jan 2018')
+		expect(datetime.formatDate(new Date(2018, 5, 1))).toBe('01 Jun 2018')
+		expect(datetime.formatDate(new Date(2018, 11, 1))).toBe('01 Dec 2018')
 	})
 
 	it('Should return formated date and time', () => {
-		expect(datetime.formatTime(new Date(2018, 0, 1))).toBe('01/01/2018, 00:00')
-		expect(datetime.formatTime(new Date(2018, 11, 1))).toBe('01/12/2018, 00:00')
+		expect(datetime.formatTime(new Date(2018, 0, 1))).toBe('01 Jan 2018, 00:00')
+		expect(datetime.formatTime(new Date(2018, 11, 1))).toBe(
+			'01 Dec 2018, 00:00'
+		)
 		expect(datetime.formatTime(new Date(2018, 11, 1, 12, 0, 0))).toBe(
-			'01/12/2018, 12:00'
+			'01 Dec 2018, 12:00'
 		)
 		expect(datetime.formatTime(new Date(2018, 11, 1, 11, 59, 59))).toBe(
-			'01/12/2018, 11:59'
+			'01 Dec 2018, 11:59'
 		)
 		expect(datetime.formatTime(new Date(2018, 11, 1, 23, 59, 59))).toBe(
-			'01/12/2018, 23:59'
+			'01 Dec 2018, 23:59'
 		)
 	})
 
