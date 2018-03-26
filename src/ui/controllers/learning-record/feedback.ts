@@ -85,8 +85,8 @@ export async function submitFeedback(
 		})
 		await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
 
-		req.flash('successTitle', 'learning_feedback_submitted_title')
-		req.flash('successMessage', 'learning_feedback_submitted_message')
+		req.flash('successTitle', req.__('learning_feedback_submitted_title'))
+		req.flash('successMessage', req.__('learning_feedback_submitted_message'))
 		req.session!.save(() => {
 			res.redirect('/learning-record')
 		})
