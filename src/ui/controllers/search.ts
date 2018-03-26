@@ -39,7 +39,7 @@ export async function search(req: express.Request, res: express.Response) {
 	if (req.query.p){
 		page = req.query.p
 	}
-	if (req.query.p){
+	if (req.query.s){
 		size = req.query.s
 	}
 	if (req.query.q) {
