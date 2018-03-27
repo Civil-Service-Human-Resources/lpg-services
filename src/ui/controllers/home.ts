@@ -42,9 +42,8 @@ export async function home(req: express.Request, res: express.Response) {
 				}
 			}
 		}
-		/// learninghash is now a collection that do not have items in requiredLearning
-		Object.entries(learningHash).forEach((entry, key) => {
-			const course = entry[1] as model.Course
+
+		for (const course of learningRecord) {
 			const record = course.record!
 			if (
 				!course.isComplete(user) &&
@@ -57,7 +56,7 @@ export async function home(req: express.Request, res: express.Response) {
 				}
 				plannedLearning.push(course)
 			}
-		})
+		}
 
 		res.send(
 			template.render('home', req, res, {
