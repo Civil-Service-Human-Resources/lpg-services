@@ -91,10 +91,15 @@
 		}
 		@include m(centre) {
 			@include media($tablet-breakpoint) {
-				top: 50%;
 				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 25%;
 			}
 		}
+	}
+	@include e(tr) {
+		position: relative;
 	}
 	@include e(value) {
 		@extend .bold-small;
