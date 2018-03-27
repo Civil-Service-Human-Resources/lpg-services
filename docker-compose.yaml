@@ -104,7 +104,7 @@ services:
       ELASTICSEARCH_CLUSTER: local
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9300
-    image: cshr/lpg-learning-catalogue:58f0a61a99ef88224e958e6954462a0e4e40fe8a
+    image: cshr/lpg-learning-catalogue:03d48af2d6017cab00dbfb48f90c722c52b5d954
     ports:
       - 9001:9001
 
