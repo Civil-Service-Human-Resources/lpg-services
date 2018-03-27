@@ -47,6 +47,7 @@ export async function home(req: express.Request, res: express.Response) {
 			const record = course.record!
 			if (
 				!course.isComplete(user) &&
+				!course.isRequired(user) &&
 				record.state !== 'ARCHIVED' &&
 				record.state !== 'UNREGISTERED' &&
 				record.preference !== 'DISLIKED'
