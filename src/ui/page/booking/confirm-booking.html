@@ -16,19 +16,19 @@
                     <ul>
                         <li>
                             <span class="booking__key">Course title</span>
-                            <span>{{module.title || course.title}}</span>
+                            <span class="booking__value">{{module.title || course.title}}</span>
                         </li>
                         <li>
                             <span class="booking__key">Start date</span>
-                            <span>{{formatDate(event.date)}}</span>
+                            <span class="booking__value">{{formatDate(event.date)}}</span>
                         </li>
                         <li>
                             <span class="booking__key">Location</span>
-                            <span>{{event.location}}</span>
+                            <span class="booking__value">{{event.location}}</span>
                         </li>
                         <li class="push-bottom">
                             <span class="booking__key">Duration</span>
-                            <span>{{course.getDuration()}}</span>
+                            <span class="booking__value">{{course.getDuration()}}</span>
                         </li>
                         <li>
                             <a href="{{breadcrumbs[2].url}}" class="booking__change">Change</a>
@@ -45,11 +45,11 @@
                     <ul>
                         <li>
                             <span class="booking__key">Payment method</span>
-                            <span> {{fap ? 'Financial approver' : 'Purchase order' }}</span>
+                            <span class="booking__value"> {{fap ? 'Financial approver' : 'Purchase order' }}</span>
                         </li>
                         <li>
                             <span class="booking__key">Amount</span>
-                            <span>&pound;{{course.price}}</span>
+                            <span class="booking__value">&pound;{{course.price}}</span>
                         </li>
                         <li>
                             <a href="{{breadcrumbs[3].url}}" class="booking__change">Change</a>
@@ -58,6 +58,27 @@
                 </div>
             </div>
         </div>
+        <div class="grid-row">
+            <div class="column-full">
+                <div class="booking__panel">
+                    <h3 class="heading-small">Accessibility details</h3>
+                    <div class="booking__tr">
+                        <span class="booking__key"><span class="booking__key--centre">Accessibility needs</span></span>
+                        <ul class="booking__values">
+                            {{#if accessibilityReqs && accessibilityReqs.length}}
+                                {{#each accessibilityReqs as requirement }}
+                                <li class="booking__value booking__value--li">{{requirement === 'other' ? 'Other' : i18n('accessibility-requirements')[requirement]}}</li>
+                                {{/each}}
+                            {{/if}}
+                            <li>
+                                <a href="{{breadcrumbs[2].url}}&tab=accessibility" class="booking__change">Change</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="grid-row">
             <div class="column-full">
