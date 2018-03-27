@@ -3,7 +3,7 @@ import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
 import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import {loginToCsl} from 'page/login'
-import {selectors} from 'page/search'
+import {search, searchResults, selectors} from 'page/search'
 import * as puppeteer from 'puppeteer'
 
 function genUserEmail() {
@@ -12,7 +12,7 @@ function genUserEmail() {
 
 const TEST_USERNAME = genUserEmail()
 
-describe('feedback form functionality', () => {
+describe('search functionality', () => {
 	let page: puppeteer.Page
 
 	wrappedBeforeAll(async () => {
@@ -49,5 +49,41 @@ describe('feedback form functionality', () => {
 
 	it('Should allow the user to search for a valid term and return results', async () => {
 		const searchTerm = 'something'
+		search(searchTerm, page)
+		const termSearched = await helper.getText(selectors.termSearched, page)
+		expect(termSearched).toEqual(searchTerm)
 	})
+
+	it('Should display pagination for a search term which returns > 10 results', async () => {
+		search('the', page)
+		const amount = searchResults(page)
+		expect(amount).toBeGreaterThan(10)
+		expect(
+			await helper.checkElementIsPresent(selectors.searchPagination, page)
+		).toBe(true)
+	})
+
+	it('Should allow the user to page through the search results', async () => {
+		search('the', page)
+		await page.click(selectors.searchNextPage)
+		const pageSummary = await helper.getText(selectors.searchSummary, page)
+		expect(pageSummary).toContain('11')
+	})
+
+	it('Should allow the user to search via query string', async () => {
+		const searchTerm = 'the'
+		await page.goto(config.BASE_URL + '/search?q=' + searchTerm)
+		const termSearched = await helper.getText(selectors.termSearched, page)
+		expect(termSearched).toEqual(searchTerm)
+	})
+
+	it('Should display no search results for an invalid search term', async () => {
+		search('sometermthatdoesntexist', page)
+		const amount = searchResults(page)
+		expect(amount).toEqual('no')
+	})
+
+	// it('Should display add to learning plan option for all listed results', async () => {
+
+	// })
 })

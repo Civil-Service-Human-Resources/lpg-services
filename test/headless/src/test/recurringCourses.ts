@@ -3,7 +3,7 @@ import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
 import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
 import * as xapi from 'extension/xapi'
-import {selectors} from 'page/learningPlan'
+import {selectors} from 'page/home'
 import {loginToCsl} from 'page/login'
 import * as puppeteer from 'puppeteer'
 
