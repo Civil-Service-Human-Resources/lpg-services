@@ -113,11 +113,7 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-export function renderEditPage(
-	ireq: express.Request,
-	res: express.Response,
-	validFields?: boolean
-) {
+export function renderEditPage(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const inputName = req.params.profileDetail
 	let options = {}
@@ -167,7 +163,6 @@ export function renderEditPage(
 			optionType,
 			options: Object.entries(options),
 			script,
-			validFields,
 			value,
 		})
 	)
@@ -207,7 +202,8 @@ export async function tryUpdateProfile(
 	const validFields = validateForm(req)
 
 	if (!validFields) {
-		renderEditPage(req, res, validFields)
+		res.locals.validFields = validFields
+		renderEditPage(req, res)
 	} else {
 		await updateProfile(req, res)
 	}
