@@ -17,7 +17,7 @@ function genUserEmail() {
 }
 
 const TEST_USERNAME = genUserEmail()
-//const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
+const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
 
 describe('profile page functionality', () => {
 	let page: puppeteer.Page
@@ -44,14 +44,14 @@ describe('profile page functionality', () => {
 		await page.close()
 	})
 
-	// it('Should display a feedback link with the correct email address', async () => {
-	// 	const feedbackUrl = await helper.returnElementAttribute(
-	// 		selectors.feedbackLink,
-	// 		'href',
-	// 		page
-	// 	)
-	// 	expect(feedbackUrl).toEqual(smartSurveyLink)
-	// })
+	it('Should display a feedback link with the correct email address', async () => {
+		const feedbackUrl = await helper.returnElementAttribute(
+			selectors.feedbackLink,
+			'href',
+			page
+		)
+		expect(feedbackUrl).toEqual(smartSurveyLink)
+	})
 
 	it('Should display username field which matches email address', async () => {
 		const username = await helper.getText(selectors.emailAddress, page)
