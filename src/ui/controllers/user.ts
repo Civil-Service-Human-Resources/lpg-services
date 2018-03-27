@@ -80,12 +80,18 @@ async function updateUserObject(
 
 function validateForm(req: express.Request) {
 	const form = req.body
+	delete form._csrf
+
 	let validFields = true
+
 	for (const input of Object.keys(form)) {
 		if (!/\S/.test(form[input])) {
 			form[input] = ''
 			validFields = false
 		}
+	}
+	if (Object.keys(form).length === 0) {
+		validFields = false
 	}
 	return validFields
 }
@@ -107,7 +113,11 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-export function renderEditPage(ireq: express.Request, res: express.Response) {
+export function renderEditPage(
+	ireq: express.Request,
+	res: express.Response,
+	validFields?: boolean
+) {
 	const req = ireq as extended.CourseRequest
 	const inputName = req.params.profileDetail
 	let options = {}
@@ -157,6 +167,7 @@ export function renderEditPage(ireq: express.Request, res: express.Response) {
 			optionType,
 			options: Object.entries(options),
 			script,
+			validFields,
 			value,
 		})
 	)
@@ -196,13 +207,7 @@ export async function tryUpdateProfile(
 	const validFields = validateForm(req)
 
 	if (!validFields) {
-		const inputName = req.params.profileDetail
-		res.send(
-			template.render('profile/edit', req, res, {
-				inputName,
-				validFields,
-			})
-		)
+		renderEditPage(req, res, validFields)
 	} else {
 		await updateProfile(req, res)
 	}
