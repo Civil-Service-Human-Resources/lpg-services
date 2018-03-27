@@ -20,10 +20,10 @@
                 {{/if}}
                 <h3 class="heading-small">{{signedInUser.givenName}}</h3>
                 <ul class="cancel__list push-bottom">
-                    <li>
+                    <li class="cancel__row">
                         <span class="cancel__item">Requested Course:</span> <span class="bold-small cancel__item">{{module.title || course.title}}</span>
                     </li>
-                    <li>
+                    <li class="cancel__row">
                         <span class="cancel__item">Requested Date:</span> <span class="bold-small cancel__item">{{formatDate(event.date)}}</span>
                     </li>
                 </ul>
