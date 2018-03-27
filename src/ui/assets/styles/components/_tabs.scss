@@ -60,10 +60,15 @@
 	}
 }
 
-.nav-tabs li a,
-.nav-tabs .tabs-nav li a {
+.nav-tabs li .tab,
+.nav-tabs .tabs-nav li .tab {
+	@extend .link;
+	@extend .font-small;
+	&:visited {
+		color: $link-colour;
+	}
 	border: solid 1px #fff;
-	border-bottom: none;
+	border-bottom: 1px solid #bfc1c3;
 	float: left;
 	height: 2.25em;
 	line-height: 2.25em;
@@ -75,8 +80,8 @@
 }
 
 @media (max-width: 640px) {
-	.nav-tabs li a,
-	.nav-tabs .tabs-nav li a {
+	.nav-tabs li .tab,
+	.nav-tabs .tabs-nav li .tab {
 		display: block;
 		position: static;
 		float: none;
@@ -89,13 +94,14 @@
 	}
 }
 
-.nav-tabs li a:hover,
-.nav-tabs .tabs-nav li a:hover {
+.nav-tabs li .tab:hover,
+.nav-tabs .tabs-nav li .tab:hover {
+	cursor: pointer;
 	background-color: #bfc1c3;
 }
 
-.nav-tabs li.active a,
-.nav-tabs .tabs-nav li.active a {
+.nav-tabs li.active .tab,
+.nav-tabs .tabs-nav li.active .tab {
 	background-color: #fff;
 	border: solid 1px #bfc1c3;
 	border-bottom: solid 1px #fff;
@@ -106,26 +112,26 @@
 }
 
 @media (max-width: 640px) {
-	.nav-tabs li.active a,
-	.nav-tabs .tabs-nav li.active a {
+	.nav-tabs li.active .tab,
+	.nav-tabs .tabs-nav li.active .tab {
 		border: none;
 		border-bottom: 1px solid #bfc1c3;
 	}
 }
 
-.nav-tabs li.active a:hover,
-.nav-tabs .tabs-nav li.active a:hover {
+.nav-tabs li.active .tab:hover,
+.nav-tabs .tabs-nav li.active .tab:hover {
 	color: inherit;
 }
 
-.nav-tabs li:first-child a,
-.nav-tabs .tabs-nav li:first-child a {
+.nav-tabs li:first-child .tab,
+.nav-tabs .tabs-nav li:first-child .tab {
 	margin-left: 0;
 }
 
 @media (max-width: 640px) {
-	.nav-tabs li:first-child a,
-	.nav-tabs .tabs-nav li:first-child a {
+	.nav-tabs li:first-child .tab,
+	.nav-tabs .tabs-nav li:first-child .tab {
 		border-left: none;
 		border-top: 1px solid #bfc1c3;
 	}
@@ -223,7 +229,7 @@
 	}
 }
 
-.js-tab-content .js-heading-tab a:hover,
+.js-tab-content .js-heading-tab .tab:hover,
 .js-tab-content .js-heading-tab h1:hover {
 	background-color: #dee0e2;
 }
@@ -232,7 +238,7 @@
 	text-decoration: none;
 }
 
-.js-tab-content .js-heading-tab.active a,
+.js-tab-content .js-heading-tab.active .tab,
 .js-tab-content .js-heading-tab.active h1 {
 	background-position: 100% -48px;
 	background-color: #dee0e2;
