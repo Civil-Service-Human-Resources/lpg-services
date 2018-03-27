@@ -171,9 +171,9 @@ export function saveAccessibilityOptions(
 	res: express.Response
 ) {
 	if (Array.isArray(req.body.accessibilityreqs)) {
-		req.session!.accessibility = [...req.body.accessibilityreqs]
+		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
 	} else {
-		req.session!.accessibility = [req.body.accessibilityreqs]
+		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
 	}
 	const eventId = req.body['selected-date']
 
@@ -207,6 +207,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	if (!selectedEventId && req.session) {
 		delete req.session!.po
 		delete req.session!.fap
+		delete req.session!.accessibilityReqs
 	}
 
 	const today = new Date()
@@ -217,7 +218,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 
 	res.send(
 		template.render('booking/choose-date', req, res, {
-			accessibilityReqs: req.session!.accessibility,
+			accessibilityReqs: req.session!.accessibilityReqs,
 			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -245,7 +246,7 @@ export async function renderConfirmPayment(
 
 	res.send(
 		template.render('booking/confirm-booking', req, res, {
-			accessibilityReqs: session.accessibility,
+			accessibilityReqs: session.accessibilityReqs,
 			breadcrumbs: getBreadcrumbs(req, BookingStep.Confirm),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -274,9 +275,9 @@ export function renderPaymentOptions(
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
 	if (Array.isArray(req.body.accessibilityreqs)) {
-		req.session!.accessibility = [...req.body.accessibilityreqs]
+		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
 	} else {
-		req.session!.accessibility = [req.body.accessibilityreqs]
+		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
 	}
 
 	if (!selected) {
@@ -375,9 +376,22 @@ export async function tryCompleteBooking(
 		module,
 		event
 	)
+	const accessibilityArray: string[] = []
+	for (const i in session.accessibilityReqs) {
+		if (i) {
+			const requirement = session.accessibilityReqs[i]
+			if (requirement === 'other') {
+				accessibilityArray.push('Other')
+			} else {
+				accessibilityArray.push(
+					res.__(`accessibility-requirements`)[requirement]
+				)
+			}
+		}
+	}
 
 	await notify.bookingConfirmed({
-		accessibility: '-',
+		accessibility: accessibilityArray.join(', '),
 		courseDate: dateTime.formatDate(event.date),
 		courseTitle: module.title || course.title,
 		email: req.user.emailAddress,
