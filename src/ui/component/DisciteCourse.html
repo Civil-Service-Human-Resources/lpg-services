@@ -21,7 +21,12 @@
             {{/if}}
         </ul>
         {{#if course.record && course.record.state }}
-            <div class="discite__status"><span class="badge badge--info">{{i18n(course.record.state)}}</span></div>
+            <div class="discite__status">
+                <span class="badge badge--info">{{i18n(course.record.state)}}</span>
+                {{#if course.getSelectedDate()}}
+                <span class="meta">{{formatDate(course.getSelectedDate())}}</span>
+                {{/if}}
+            </div>
         {{/if}}
     </div>
     {{#if course.shortDescription}}
@@ -33,7 +38,7 @@
         {{#if course.nextRequiredBy(signedInUser)}}
             Due by: {{formatDate(course.nextRequiredBy(signedInUser))}}
         {{elseif course.getAreasOfWork().length}}
-            Work area: {{course.getAreasOfWork().map(function(aow) { return i18n(aow); }).join(', ')}}
+            Work area: {{course.getAreasOfWork().map(function(aow) { return i18n('areas-of-work')[aow]; }).join(', ')}}
         {{/if}}
     </div>
     <div class="discite__action discite__action--{{modifier || ''}}">
