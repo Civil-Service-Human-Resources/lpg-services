@@ -269,6 +269,8 @@ export function renderPaymentOptions(
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
+	req.session!.accessibility = req.body.accessibilityreqs
+
 	if (!selected) {
 		req.flash('errorTitle', 'booking_must_select_date_title')
 		req.flash('errorMessage', 'booking_must_select_date_message')
