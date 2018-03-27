@@ -1,0 +1,115 @@
+import * as express from 'express'
+import * as extended from 'lib/extended'
+import * as model from 'lib/model'
+import * as template from 'lib/ui/template'
+import {storeModule} from '../module/edit'
+
+export enum OptionTypes {
+	Radio = 'radio',
+	Checkbox = 'checkbox',
+	Date = 'date',
+}
+
+export enum nodeDetails {
+	department = 'audience_department_label',
+	profession = 'audience_area_label',
+	grade = 'audience_grade_label',
+	mandatory = 'audience_mandatory_label',
+	frequency = 'audience_frequency_label',
+	required = 'audience_required-by_label',
+}
+
+export enum pluralizer {
+	profession = 'areas-of-work',
+	department = 'departments',
+	grade = 'grades',
+	mandatory = 'mandatory',
+	frequency = 'frequency',
+	required = 'required-by',
+}
+
+const Singular: string[] = ['frequency', 'manatory', 'required']
+
+function isDateType(term: string) {
+	return term === 'required-by'
+}
+
+function isSingular(term: string) {
+	return Singular.indexOf(term) > -1
+}
+
+export function pascalToCamel(pascal: string) {
+	return pascal.replace(/-([a-z])/g, (m: string, w: string) => {
+		return w.toUpperCase()
+	})
+}
+
+export async function setAudienceNode(
+	ireq: express.Request,
+	res: express.Response
+) {
+	const req = ireq as extended.CourseRequest
+	const {course, module} = req
+	const node = req.params.profileDetail
+	const audienceNumber = req.params.audienceNumber
+
+	const fieldValue = req.body[node]
+	if (!module!.audiences[audienceNumber]) {
+		module!.audiences[audienceNumber] = model.Audience.create({})
+	}
+
+	const nodePlural: any = pascalToCamel(pluralizer[node])
+
+	let collection = (module!.audiences[audienceNumber] as any)[nodePlural]
+
+	if (Array.isArray(fieldValue)) {
+		collection = fieldValue
+	} else if (fieldValue) {
+		if (!isSingular(nodePlural)) {
+			collection = [fieldValue]
+		} else {
+			collection = fieldValue
+		}
+	}
+	console.log('fieldvalue ', fieldValue)
+
+	const extend = module!.audiences[audienceNumber] as any
+	extend[nodePlural] = collection
+
+	module!.audiences[audienceNumber] = extend
+
+	console.log('moduleis', module!.audiences[0])
+	await storeModule(ireq, module!)
+	res.redirect(`/courses/${course.id}/${module!.id}/${module!.type}`)
+}
+
+export function getAudienceNode(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
+	const {module} = req
+	const node = ireq.params.profileDetail
+	const audienceNumber = req.params.audienceNumber
+	const label = nodeDetails[node]
+	const nodePlural: any = pluralizer[node]
+	const values =
+		(module!.audiences[audienceNumber] as any)[pascalToCamel(nodePlural)] || []
+	let options = {}
+	let optionType: string = ''
+
+	options = ireq.__(nodePlural)
+	if (isDateType(nodePlural)) {
+		optionType = OptionTypes.Date
+	} else {
+		optionType = isSingular(nodePlural)
+			? OptionTypes.Radio
+			: OptionTypes.Checkbox
+	}
+	res.send(
+		template.render('audience/edit', ireq, res, {
+			label,
+			node,
+			optionType,
+			options: Object.entries(options),
+			values,
+		})
+	)
+}

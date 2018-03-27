@@ -1,0 +1,15 @@
+.audience {
+	@include e(select) {
+		width: 220px;
+	}
+
+	@include e(item) {
+		display: inline;
+	}
+}
+.audience__item:last-child::after {
+	content: ' ';
+}
+.audience__item::after {
+	content: ', ';
+}
