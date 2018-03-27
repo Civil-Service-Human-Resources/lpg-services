@@ -30,7 +30,7 @@
                 {{#if requiredLearning.length}}
                     <div class="resources">
                         {{#each requiredLearning as course}}
-                            <Learning :course />
+                            <DisciteCourse course={{course}} modifier="home" />
                         {{/each}}
                     </div>
                 {{else}}
@@ -43,7 +43,7 @@
                 {{#if plannedLearning.length}}
                     <div class="resources">
                     {{#each plannedLearning as course}}
-                        <Learning :course />
+                        <DisciteCourse course={{course}} modifier="home" />
                     {{/each}}
                 </div>
                 {{else}}

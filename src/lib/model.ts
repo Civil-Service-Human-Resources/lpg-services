@@ -75,6 +75,12 @@ export class Course {
 			.filter((v, i, a) => a.indexOf(v) === i)
 	}
 
+	getCost() {
+		return this.modules
+			.map(module => module.price)
+			.reduce((p, c) => (p || 0) + (c || 0))
+	}
+
 	getDuration() {
 		return datetime.formatCourseDuration(
 			this.modules.map(m => m.duration).reduce((p, c) => p + c)
@@ -189,7 +195,7 @@ export class Module {
 	duration: number
 
 	location?: string
-	price?: string
+	price?: number
 	productCode?: string
 	startPage?: string
 
