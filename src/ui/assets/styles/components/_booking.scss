@@ -119,6 +119,12 @@
 }
 
 .cancel {
+	@include e(row) {
+		@extend %clearfix;
+		@extend %p;
+		width: 100%;
+	}
+
 	@include e(list) {
 		float: left;
 		width: 100%;
