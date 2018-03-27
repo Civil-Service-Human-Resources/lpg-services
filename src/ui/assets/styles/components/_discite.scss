@@ -108,6 +108,10 @@ $module: 'discite';
       top: 0;
       right: 0;
     }
+
+    &> .meta {
+      margin-top: 4px;
+    }
   }
 
   &__area {

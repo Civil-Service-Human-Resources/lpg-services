@@ -207,8 +207,6 @@
 		"assistant": "An assistant will accompany me"
 	},
 	"responsibility-for-information": "responsibility-for-information",
-	"digital": "digital",
-	"commercial": "commercial",
 	"profile_name_label": "profile_name_label",
 	"profile_email_label": "profile_email_label",
 	"profile_area_label": "profile_area_label",
@@ -238,6 +236,5 @@
 		"Leaving feedback helps us improve our service.",
 	"booking_must_select_date_title": "No date selected",
 	"booking_must_select_date_message":
-		"Please select the date you would like to attend this course.",
-	"project-delivery": "project-delivery"
+		"Please select the date you would like to attend this course."
 }
