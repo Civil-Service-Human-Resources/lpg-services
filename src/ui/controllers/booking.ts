@@ -170,7 +170,11 @@ export function saveAccessibilityOptions(
 	req: express.Request,
 	res: express.Response
 ) {
-	req.session!.accessibility = req.body.accessibilityreqs
+	if (Array.isArray(req.body.accessibilityreqs)) {
+		req.session!.accessibility = [...req.body.accessibilityreqs]
+	} else {
+		req.session!.accessibility = [req.body.accessibilityreqs]
+	}
 	const eventId = req.body['selected-date']
 
 	if (eventId || req.session!.selectedEventId) {
@@ -269,7 +273,11 @@ export function renderPaymentOptions(
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
-	req.session!.accessibility = req.body.accessibilityreqs
+	if (Array.isArray(req.body.accessibilityreqs)) {
+		req.session!.accessibility = [...req.body.accessibilityreqs]
+	} else {
+		req.session!.accessibility = [req.body.accessibilityreqs]
+	}
 
 	if (!selected) {
 		req.flash('errorTitle', 'booking_must_select_date_title')
