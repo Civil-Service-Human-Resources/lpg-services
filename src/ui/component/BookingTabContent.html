@@ -1,9 +1,9 @@
 <div class="js-tabs nav-tabs">
     <ul>
-        <li class="{{tab === 'before-you-book' ? 'active' : ''}}"><a href="{{url}}?tab=before-you-book">Before you book</a></li>
-        <li class="{{tab === 'terms-and-conditions' ? 'active' : ''}}"><a href="{{url}}?tab=terms-and-conditions">Terms and Conditions</a></li>
-        <li class="{{tab === 'refund-policy' ? 'active' : ''}}"><a href="{{url}}?tab=refund-policy">Refund policy</a></li>
-        <li class="{{tab === 'accessibility' ? 'active' : ''}}"><a href="{{url}}?tab=accessibility">Accessibility</a></li>
+        <li class="{{tab === 'before-you-book' ? 'active' : ''}}"><button class="booking__tab" type="submit" formaction="{{url}}/save?tab=before-you-book">Before you book</button></li>
+        <li class="{{tab === 'terms-and-conditions' ? 'active' : ''}}"><button class="booking__tab" type="submit" formaction="{{url}}/save?tab=terms-and-conditions">Terms and Conditions</button></li>
+        <li class="{{tab === 'refund-policy' ? 'active' : ''}}"><button class="booking__tab" type="submit" formaction="{{url}}/save?tab=refund-policy">Refund policy</button></li>
+        <li class="{{tab === 'accessibility' ? 'active' : ''}}"><button class="booking__tab" type="submit" formaction="{{url}}/save?tab=accessibility">Accessibility</button></li>
     </ul>
 </div>
 <div class="js-tab-content tab-content u-space-b30">
@@ -74,7 +74,7 @@
         {{elseif tab === 'accessibility'}}
             <p>All our venues are wheelchair accessible</p>
             <strong>If you have additional accessibility requirements, you can specify these below. Someone from our helpdesk may contact you to confirm your requirements.</strong>
-            <AccessibilityOptions/>
+            <AccessibilityOptions :accessibility/>
 
         {{/if}}
 

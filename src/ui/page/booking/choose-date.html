@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="tabbed-section">
-                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}"/>
+                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}" :accessibility :selectedEventId/>
                     </div>
                     <div class="panel panel-border-wide">
                         <p>
@@ -80,12 +80,16 @@
                         </p>
                     </div>
                     <input type="hidden" name="_csrf" value="{{_csrf}}">
-                    <input type="submit" class="button" value="Continue">
+                    <input type="submit" class="button" value="Continue" formaction="/book/{{course.id}}/{{module.id}}/choose-date">
                 </form>
+
+
+
                 {{else}}
                 <p>Unfortunately this course is not currently available.</p>
                 {{/if}}
             </div>
         </div>
     </div>
+
 </Page>
