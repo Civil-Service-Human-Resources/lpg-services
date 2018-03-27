@@ -289,9 +289,11 @@ export function selectedDate(req: express.Request, res: express.Response) {
 			)
 		})
 	} else {
-		res.redirect(
-			`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
-		)
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
+			)
+		})
 	}
 }
 
