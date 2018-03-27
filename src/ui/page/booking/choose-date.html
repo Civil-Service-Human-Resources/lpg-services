@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="tabbed-section">
-                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}" :accessibility :selectedEventId/>
+                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}" accessibilityReqs="{{accessibilityReqs ? accessibilityReqs : []}}" :selectedEventId/>
                     </div>
                     <div class="panel panel-border-wide">
                         <p>

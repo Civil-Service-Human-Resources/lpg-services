@@ -170,10 +170,7 @@ export function saveAccessibilityOptions(
 	req: express.Request,
 	res: express.Response
 ) {
-	if (req.body.accessibilityreqs) {
-		req.session!.accessibility = req.body.accessibilityreqs
-	}
-
+	req.session!.accessibility = req.body.accessibilityreqs
 	const eventId = req.body['selected-date']
 
 	if (eventId || req.session!.selectedEventId) {
@@ -216,7 +213,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 
 	res.send(
 		template.render('booking/choose-date', req, res, {
-			accessibility: req.session!.accessibility,
+			accessibilityReqs: req.session!.accessibility,
 			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -244,6 +241,7 @@ export async function renderConfirmPayment(
 
 	res.send(
 		template.render('booking/confirm-booking', req, res, {
+			accessibilityReqs: session.accessibility,
 			breadcrumbs: getBreadcrumbs(req, BookingStep.Confirm),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
