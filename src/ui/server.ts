@@ -201,6 +201,12 @@ app.get(
 	'/book/:courseId/:moduleId/choose-date',
 	bookingController.renderChooseDate
 )
+
+app.post(
+	'/book/:courseId/:moduleId/choose-date/save',
+	bookingController.saveAccessibilityOptions
+)
+
 app.post(
 	'/book/:courseId/:moduleId/choose-date',
 	bookingController.selectedDate

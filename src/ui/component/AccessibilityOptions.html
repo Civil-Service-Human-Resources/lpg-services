@@ -4,33 +4,35 @@
     </legend>
 
     <div class="multiple-choice">
-        <input id="accessibility-req-1" name="accessibility-reqs" type="checkbox" value="sign-language">
+
+        <input id="accessibility-req-1" checked="{{ accessibility.indexOf('sign-language') > -1 ? 'checked' : '' }}" name="accessibilityreqs" type="checkbox" value="sign-language">
         <label for="accessibility-req-1">Sign language interpreter</label>
     </div>
-
     <div class="multiple-choice">
-        <input id="accessibility-req-2" name="accessibility-reqs" type="checkbox" value="cart">
+        <input id="accessibility-req-2" checked="{{ accessibility.indexOf('cart') > -1 ? 'checked' : '' }}" name="accessibilityreqs" type="checkbox" value="cart">
         <label for="accessibility-req-2">CART (communication access real-time translation) services</label>
     </div>
     <div class="multiple-choice">
-        <input id="accessibility-req-3" name="accessibility-reqs" type="checkbox" value="large-print">
+        <input id="accessibility-req-3" checked="{{ accessibility.indexOf('large-print') > -1 ? 'checked' : '' }}" name="accessibilityreqs" type="checkbox" value="large-print">
         <label for="accessibility-req-3">Large print</label>
     </div>
     <div class="multiple-choice">
-        <input id="accessibility-req-4" name="accessibility-reqs" type="checkbox" value="braille">
+        <input id="accessibility-req-4" checked="{{ accessibility.indexOf('braille') > -1 ? 'checked' : '' }}" name="accessibilityreqs" type="checkbox" value="braille">
         <label for="accessibility-req-4">Braille</label>
+
     </div>
     <div class="multiple-choice">
-        <input id="accessibility-req-5" name="accessibility-reqs" type="checkbox" value="assistive-listening">
+        <input id="accessibility-req-5" checked="{{ accessibility.indexOf('assistive-listening') > -1 ? 'checked' : '' }}" name="accessibilityreqs" type="checkbox" value="assistive-listening">
         <label for="accessibility-req-5">Assistive listening device</label>
+
     </div>
     <div class="multiple-choice">
-        <input id="accessibility-req-6" name="accessibility-reqs" type="checkbox" value="assistant">
+        <input id="accessibility-req-6" checked="{{ accessibility.indexOf('assistant') > -1 ? 'checked' : '' }}" name="accessibilityreqs" type="checkbox" value="assistant">
         <label for="accessibility-req-6">An assistant will accompany me</label>
     </div>
 
     <div class="multiple-choice">
-        <input id="accessibility-req-7" name="accessibility-reqs" type="checkbox" value="other">
+        <input id="accessibility-req-7" checked="{{ accessibility.indexOf('other') > -1 ? 'checked' : '' }}" name="accessibilityreqs" type="checkbox" value="other">
         <label for="accessibility-req-7">Other</label>
     </div>
 </fieldset>

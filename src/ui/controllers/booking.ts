@@ -166,12 +166,42 @@ export async function renderCancelledBookingPage(
 	}
 }
 
+export function saveAccessibilityOptions(
+	req: express.Request,
+	res: express.Response
+) {
+	if (req.body.accessibilityreqs) {
+		req.session!.accessibility = req.body.accessibilityreqs
+	}
+
+	const eventId = req.body['selected-date']
+
+	if (eventId || req.session!.selectedEventId) {
+		res.redirect(
+			`/book/${req.params.courseId}/${req.params.moduleId}/choose-date/?tab=${
+				req.query.tab
+			}&eventId=${eventId ? eventId : req.session!.selectedEventId}`
+		)
+	} else {
+		res.redirect(
+			`/book/${req.params.courseId}/${req.params.moduleId}/choose-date?tab=${
+				req.query.tab
+			}`
+		)
+	}
+}
+
 export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
+
+	const tab = req.query.tab
 
 	const course = req.course
 	const module = req.module!
 	const selectedEventId = req.query.eventId
+	if (req.session!.selectedEventId) {
+		req.session!.selectedEventId = selectedEventId
+	}
 
 	if (!selectedEventId && req.session) {
 		delete req.session!.po
@@ -186,6 +216,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 
 	res.send(
 		template.render('booking/choose-date', req, res, {
+			accessibility: req.session!.accessibility,
 			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -194,6 +225,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 			events,
 			module,
 			selectedEventId,
+			tab,
 		})
 	)
 }
