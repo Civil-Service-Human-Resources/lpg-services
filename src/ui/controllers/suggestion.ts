@@ -54,7 +54,10 @@ export async function removeFromSuggestions(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	const ref = (req.query.ref === 'home' || req.query.ref === 'search') ? '/' : '/suggestions-for-you'
+	const ref =
+		req.query.ref === 'home' || req.query.ref === 'search'
+			? '/'
+			: '/suggestions-for-you'
 	const course = req.course
 
 	try {
