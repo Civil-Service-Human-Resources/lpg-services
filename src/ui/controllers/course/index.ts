@@ -32,7 +32,7 @@ export function getCourseDetails(
 	const duration = course.getDuration()
 	const productCode = module ? module.productCode : null
 	const location = module ? module.location : null
-	const price = course.price
+	const cost = course.getCost()
 	const dataRows: DataRow[] = []
 
 	if (levels.length) {
@@ -65,10 +65,10 @@ export function getCourseDetails(
 			value: location,
 		})
 	}
-	if (price) {
+	if (cost) {
 		dataRows.push({
 			label: req.__('Price'),
-			value: `£${price}`,
+			value: `£${cost}`,
 		})
 	}
 

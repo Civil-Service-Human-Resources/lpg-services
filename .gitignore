@@ -11,3 +11,6 @@ pyhome/
 src/management-ui/assets/styles/main.css
 src/ui/assets/styles/main.css
 yarn.lock
+files
+data.json
+modules.json

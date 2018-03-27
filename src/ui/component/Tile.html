@@ -30,7 +30,7 @@
 
             <li class="tile__property">
                 <span class="tile__key">Cost</span>
-                <span class="tile__value">&pound;{{course.price ? course.price : 'Free'}}</span>
+                <span class="tile__value">&pound;{{course.getCost() || 'Free'}}</span>
             </li>
 
     </ul>
