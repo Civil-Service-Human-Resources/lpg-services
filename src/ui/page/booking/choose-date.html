@@ -1,21 +1,34 @@
-<Page title="Choose Date">
+<Page title="Select course date">
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
                 <Breadcrumb :breadcrumbs/>
-                <h1 class="heading-large">
+                <h1 class="heading-xlarge">
                     <span class="heading-secondary">Booking a course</span>
-                    Choose Date
+                    Select course date
                 </h1>
             </div>
         </div>
         <div class="grid-row">
             <div class="column-full">
+
+                {{#if errorTitle}}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        {{i18n(errorTitle)}}
+                    </h2>
+                    <p>
+                        {{i18n(errorMessage)}}
+                    </p>
+                </div>
+                {{/if}}
+
                 {{#if events && events.length}}
-                <p>
+                <p class="lede">
                     Check on which dates you can attend and in which locations, then
                     select a suitable option below.
                 </p>
+                <h2 class="heading-small">{{ module.title || course.title }}</h2>
                 <form method="post">
                     <div class="div-table div-table--5 ">
                         <div class="div-table__row u-clearfix">
@@ -58,23 +71,25 @@
                         {{/each}}
                     </div>
 
-                    <p>
-                        You are confirming that you have approval to book this course.
-                    </p>
-                    <p>
-                        You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name and cost from the course description.
-                    </p>
+                    <div class="tabbed-section">
+                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}" accessibilityReqs="{{accessibilityReqs ? accessibilityReqs : []}}" :selectedEventId/>
+                    </div>
                     <div class="panel panel-border-wide">
                         <p>
                             By booking this course you are agreeing to the terms and conditions
                         </p>
                     </div>
-                    <input type="submit" class="button" value="Continue">
+                    <input type="hidden" name="_csrf" value="{{_csrf}}">
+                    <input type="submit" class="button" value="Continue" formaction="/book/{{course.id}}/{{module.id}}/choose-date">
                 </form>
+
+
+
                 {{else}}
                 <p>Unfortunately this course is not currently available.</p>
                 {{/if}}
             </div>
         </div>
     </div>
+
 </Page>

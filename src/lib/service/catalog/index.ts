@@ -30,9 +30,28 @@ export async function add(course: model.Course) {
 	}
 }
 
-export async function search(query: string): Promise<api.SearchResults> {
+export async function postFeedback(feedback: model.Feedback) {
 	try {
-		const response = await http.get(`/search?query=${query}`)
+		const response = await http.post(`/feedback`, feedback)
+		return response.headers.location.match(/.*feedback\/([^/]+)/)[1]
+	} catch (e) {
+		throw new Error(
+			`Error adding or updating feedback (${
+				feedback.id
+			}) to course catalogue - ${e}`
+		)
+	}
+}
+
+export async function search(
+	query: string,
+	page: number,
+	size: number
+): Promise<api.SearchResults> {
+	try {
+		const response = await http.get(
+			`/search?query=${query}&page=${page}&size=${size}`
+		)
 		return convert(response.data) as api.SearchResults
 	} catch (e) {
 		if (e.response.status === 400) {

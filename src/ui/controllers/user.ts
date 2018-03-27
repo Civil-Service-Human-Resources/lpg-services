@@ -45,12 +45,20 @@ const http = axios.create({
 	}),
 })
 
-function renderProfile(req: express.Request, props: Profile) {
-	return template.render('profile/view', req, props)
+function renderProfile(
+	req: express.Request,
+	res: express.Response,
+	props: Profile
+) {
+	return template.render('profile/view', req, res, props)
 }
 
-function renderSignIn(req: express.Request, props: SignIn) {
-	return template.render('account/sign-in', req, props)
+function renderSignIn(
+	req: express.Request,
+	res: express.Response,
+	props: SignIn
+) {
+	return template.render('account/sign-in', req, res, props)
 }
 
 async function updateUserObject(
@@ -85,7 +93,7 @@ function validateForm(req: express.Request) {
 export function viewProfile(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	res.send(
-		renderProfile(req, {
+		renderProfile(req, res, {
 			updateSuccessful: req.flash('profile-updated').length > 0,
 			user: req.user,
 			validFields: true,
@@ -132,15 +140,18 @@ export function renderEditPage(ireq: express.Request, res: express.Response) {
 	<script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
 	<script type="text/javascript">
 		var selectEl = document.querySelector('.type-ahead')
-		accessibleAutocomplete.enhanceSelectElement({
-			autoselect: true,
-			defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
-			minLength: 1,
-			selectElement: selectEl,
-		})
+		if (selectEl) {
+			accessibleAutocomplete.enhanceSelectElement({
+				autoselect: true,
+				defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
+				minLength: 1,
+				selectElement: selectEl,
+			})
+		}
     </script>`
 	res.send(
-		template.render('profile/edit', req, {
+		template.render('profile/edit', req, res, {
+			...res.locals,
 			inputName,
 			lede,
 			optionType,
@@ -152,7 +163,7 @@ export function renderEditPage(ireq: express.Request, res: express.Response) {
 }
 
 export function resetPassword(req: express.Request, res: express.Response) {
-	res.send(template.render('account/reset-password', req))
+	res.send(template.render('account/reset-password', req, res))
 }
 
 export function signIn(req: express.Request, res: express.Response) {
@@ -165,7 +176,7 @@ export function signIn(req: express.Request, res: express.Response) {
 		res.redirect('/authenticate')
 	} else {
 		res.send(
-			renderSignIn(req, {
+			renderSignIn(req, res, {
 				authenticationServiceUrl: config.AUTHENTICATION.serviceUrl,
 				loginFailed,
 				sessionDataKey,
@@ -187,7 +198,7 @@ export async function tryUpdateProfile(
 	if (!validFields) {
 		const inputName = req.params.profileDetail
 		res.send(
-			template.render('profile/edit', req, {
+			template.render('profile/edit', req, res, {
 				inputName,
 				validFields,
 			})
@@ -254,7 +265,7 @@ export async function updateProfile(
 
 			if (fieldValue !== req.body.confirmPassword) {
 				res.send(
-					template.render('profile/edit', req, {
+					template.render('profile/edit', req, res, {
 						inputName,
 						passwordConfirmedFailed: true,
 					})
@@ -277,7 +288,7 @@ export async function updateProfile(
 		})
 	} catch (e) {
 		res.send(
-			template.render('profile/edit', req, {
+			template.render('profile/edit', req, res, {
 				identityServerFailed: true,
 				inputName,
 			})

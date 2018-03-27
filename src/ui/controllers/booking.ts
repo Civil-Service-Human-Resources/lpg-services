@@ -88,7 +88,7 @@ export function enteredPaymentDetails(
 		})
 	} else {
 		res.send(
-			template.render('booking/payment-options', req, {
+			template.render('booking/payment-options', req, res, {
 				breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
 				paymentOptionsFailed: true,
 			})
@@ -120,7 +120,7 @@ export async function renderCancelBookingPage(
 	course.record = record
 
 	res.send(
-		template.render('booking/cancel-booking', req, {
+		template.render('booking/cancel-booking', req, res, {
 			cancelBookingFailed: false,
 			course,
 			event,
@@ -156,7 +156,7 @@ export async function renderCancelledBookingPage(
 		res.redirect(`/book/${course.id}/${module.id}/cancel`)
 	} else {
 		res.send(
-			template.render('booking/confirmed', req, {
+			template.render('booking/confirmed', req, res, {
 				course,
 				event,
 				message: confirmedMessage.Cancelled,
@@ -166,16 +166,48 @@ export async function renderCancelledBookingPage(
 	}
 }
 
+export function saveAccessibilityOptions(
+	req: express.Request,
+	res: express.Response
+) {
+	if (Array.isArray(req.body.accessibilityreqs)) {
+		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
+	} else {
+		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
+	}
+	const eventId = req.body['selected-date']
+
+	if (eventId || req.session!.selectedEventId) {
+		res.redirect(
+			`/book/${req.params.courseId}/${req.params.moduleId}/choose-date/?tab=${
+				req.query.tab
+			}&eventId=${eventId ? eventId : req.session!.selectedEventId}`
+		)
+	} else {
+		res.redirect(
+			`/book/${req.params.courseId}/${req.params.moduleId}/choose-date?tab=${
+				req.query.tab
+			}`
+		)
+	}
+}
+
 export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
+
+	const tab = req.query.tab
 
 	const course = req.course
 	const module = req.module!
 	const selectedEventId = req.query.eventId
+	if (req.session!.selectedEventId) {
+		req.session!.selectedEventId = selectedEventId
+	}
 
 	if (!selectedEventId && req.session) {
 		delete req.session!.po
 		delete req.session!.fap
+		delete req.session!.accessibilityReqs
 	}
 
 	const today = new Date()
@@ -185,13 +217,17 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 		.sort((a, b) => a.date.getTime() - b.date.getTime())
 
 	res.send(
-		template.render('booking/choose-date', req, {
+		template.render('booking/choose-date', req, res, {
+			accessibilityReqs: req.session!.accessibilityReqs,
 			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
+			errorMessage: req.flash('errorMessage')[0],
+			errorTitle: req.flash('errorTitle')[0],
 			events,
 			module,
 			selectedEventId,
+			tab,
 		})
 	)
 }
@@ -209,7 +245,8 @@ export async function renderConfirmPayment(
 	const session = req.session!
 
 	res.send(
-		template.render('booking/confirm-booking', req, {
+		template.render('booking/confirm-booking', req, res, {
+			accessibilityReqs: session.accessibilityReqs,
 			breadcrumbs: getBreadcrumbs(req, BookingStep.Confirm),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -228,7 +265,7 @@ export function renderPaymentOptions(
 	const session = req.session!
 
 	res.send(
-		template.render('booking/payment-options', req, {
+		template.render('booking/payment-options', req, res, {
 			breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
 			previouslyEntered: session.po || session.fap,
 		})
@@ -237,9 +274,25 @@ export function renderPaymentOptions(
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
-	res.redirect(
-		`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
-	)
+	if (Array.isArray(req.body.accessibilityreqs)) {
+		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
+	} else {
+		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
+	}
+
+	if (!selected) {
+		req.flash('errorTitle', 'booking_must_select_date_title')
+		req.flash('errorMessage', 'booking_must_select_date_message')
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
+			)
+		})
+	} else {
+		res.redirect(
+			`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
+		)
+	}
 }
 
 export async function tryCancelBooking(
@@ -283,7 +336,7 @@ export async function tryCancelBooking(
 		res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
 	} else {
 		res.send(
-			template.render('booking/cancel-booking', req, {
+			template.render('booking/cancel-booking', req, res, {
 				cancelBookingFailed: true,
 				course,
 				event,
@@ -323,9 +376,22 @@ export async function tryCompleteBooking(
 		module,
 		event
 	)
+	const accessibilityArray: string[] = []
+	for (const i in session.accessibilityReqs) {
+		if (i) {
+			const requirement = session.accessibilityReqs[i]
+			if (requirement === 'other') {
+				accessibilityArray.push('Other')
+			} else {
+				accessibilityArray.push(
+					res.__(`accessibility-requirements`)[requirement]
+				)
+			}
+		}
+	}
 
 	await notify.bookingConfirmed({
-		accessibility: '-',
+		accessibility: accessibilityArray.join(', '),
 		courseDate: dateTime.formatDate(event.date),
 		courseTitle: module.title || course.title,
 		email: req.user.emailAddress,
@@ -334,7 +400,7 @@ export async function tryCompleteBooking(
 	})
 
 	res.send(
-		template.render('booking/confirmed', req, {
+		template.render('booking/confirmed', req, res, {
 			course,
 			event,
 			message: confirmedMessage.Booked,

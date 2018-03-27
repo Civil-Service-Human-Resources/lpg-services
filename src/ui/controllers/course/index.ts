@@ -24,14 +24,14 @@ const logger = log4js.getLogger('controllers/course')
 export function getCourseDetails(
 	req: extended.CourseRequest,
 	course: model.Course,
-	module: model.Module
+	module?: model.Module
 ): CourseDetail[] {
 	const levels = course.getGrades().map(grade => req.__(grade))
 	const keyAreas = course.getAreasOfWork().map(areaOfWork => req.__(areaOfWork))
 
 	const duration = course.getDuration()
-	const productCode = module.productCode
-	const location = module.location
+	const productCode = module ? module.productCode : null
+	const location = module ? module.location : null
 	const price = course.price
 	const dataRows: DataRow[] = []
 
@@ -111,7 +111,7 @@ export async function displayModule(
 				module
 			)
 			res.send(
-				template.render(`course/video`, req, {
+				template.render(`course/video`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
@@ -130,13 +130,9 @@ export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	const course = req.course
-	const module = course.modules[0]
+	const module = course.modules.length === 1 ? course.modules[0] : undefined
 
-	logger.debug(
-		`Displaying course, courseId: ${req.params.courseId}, moduleId: ${
-			module.id
-		}`
-	)
+	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 
 	const type = course.getType()
 
@@ -151,12 +147,12 @@ export async function display(ireq: express.Request, res: express.Response) {
 					: null
 				return {
 					...cm,
-					duration: '',
+					duration: cm.getDuration(),
 					state: moduleRecord ? moduleRecord.state : null,
 				}
 			})
 			res.send(
-				template.render(`course/${type}`, req, {
+				template.render(`course/${type}`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
@@ -166,7 +162,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 			break
 		case 'link':
 		case 'video':
-			res.redirect(`/courses/${course.id}/${module.id}`)
+			res.redirect(`/courses/${course.id}/${module!.id}`)
 			break
 		default:
 			logger.debug(`Unknown course type: ${type}`)
@@ -232,5 +228,16 @@ export async function markCourseDeleted(
 ) {
 	const req = ireq as extended.CourseRequest
 	await xapi.record(req, req.course, xapi.Verb.Archived)
-	res.redirect('/')
+
+	req.flash(
+		'successTitle',
+		req.__('learning_removed_from_plan_title', req.course.title)
+	)
+	req.flash(
+		'successMessage',
+		req.__('learning_removed_from_plan_message', req.course.title)
+	)
+	req.session!.save(() => {
+		res.redirect('/')
+	})
 }

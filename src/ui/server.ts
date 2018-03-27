@@ -20,6 +20,7 @@ import * as courseController from './controllers/course'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
+import * as learningRecordFeedbackController from './controllers/learning-record/feedback'
 import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
@@ -54,8 +55,9 @@ app.use(
 	session({
 		cookie: {
 			domain: '.cshr.digital',
-			httpOnly: false,
 			maxAge: 31536000,
+			sameSite: 'lax',
+			secure: config.PRODUCTION_ENV,
 		},
 		resave: true,
 		saveUninitialized: true,
@@ -67,19 +69,55 @@ app.use(
 )
 app.use(flash())
 
-app.use(lusca.xframe('SAMEORIGIN'))
-app.use(lusca.xssProtection(true))
-
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(compression({threshold: 0}))
+
+app.use(
+	lusca({
+		csp: {
+			policy: {
+				'child-src': 'https://youtube.com https://www.youtube.com',
+				'default-src': "'self'",
+				'font-src': 'data:',
+				'img-src': "'self' data: https://www.google-analytics.com",
+				'script-src':
+					"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
+					"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
+				'style-src': "'self' 'unsafe-inline'",
+			},
+		},
+		hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
+		nosniff: true,
+		referrerPolicy: 'same-origin',
+		xframe: 'SAMEORIGIN',
+		xssProtection: true,
+	})
+)
+
+app.use(
+	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+		res.setHeader('Cache-Control', 'private, no-cache, no-store, max-age=0')
+		res.setHeader('Pragma', 'no-cache')
+		res.setHeader('Expires', '0')
+		next()
+	}
+)
 
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
 passport.configure('lpg-ui', config.AUTHENTICATION.serviceUrl, app)
 i18n.configure(app)
+
+app.param('courseId', asyncHandler(courseController.loadCourse))
+app.param('moduleId', asyncHandler(courseController.loadModule))
+app.param('eventId', asyncHandler(courseController.loadEvent))
+
+app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
+
+app.use(lusca.csrf())
 
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
@@ -113,22 +151,27 @@ app.use(
 	}
 )
 
-app.param('courseId', asyncHandler(courseController.loadCourse))
-app.param('moduleId', asyncHandler(courseController.loadModule))
-app.param('eventId', asyncHandler(courseController.loadEvent))
-
 app.get('/courses/:courseId', asyncHandler(courseController.display))
 app.use(
 	'/courses/:courseId/delete',
 	asyncHandler(courseController.markCourseDeleted)
 )
-app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
+
 app.use(
 	'/courses/:courseId/:moduleId',
 	asyncHandler(courseController.displayModule)
 )
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
+app.get(
+	'/learning-record/:courseId/:moduleId/feedback',
+	asyncHandler(learningRecordFeedbackController.displayFeedback)
+)
+app.post(
+	'/learning-record/:courseId/:moduleId/feedback',
+	asyncHandler(learningRecordFeedbackController.submitFeedback)
+)
+
 app.get(
 	'/learning-record/:courseId/:moduleId',
 	asyncHandler(learningRecordController.courseResult)
@@ -158,6 +201,12 @@ app.get(
 	'/book/:courseId/:moduleId/choose-date',
 	bookingController.renderChooseDate
 )
+
+app.post(
+	'/book/:courseId/:moduleId/choose-date/save',
+	bookingController.saveAccessibilityOptions
+)
+
 app.post(
 	'/book/:courseId/:moduleId/choose-date',
 	bookingController.selectedDate
@@ -196,6 +245,20 @@ app.get(
 )
 
 app.use(
+	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+		res.status(404)
+
+		if (req.accepts('html')) {
+			res.sendFile(path.join(process.cwd(), 'page/error/404.html'))
+		} else if (req.accepts('json')) {
+			res.send({error: 'Not found'})
+		} else {
+			res.type('txt').send('Not found')
+		}
+	}
+)
+
+app.use(
 	(
 		err: Error,
 		req: express.Request,
@@ -210,7 +273,14 @@ app.use(
 			'\n',
 			err.stack
 		)
-		res.sendStatus(500)
+		res.status(500)
+		if (req.accepts('html')) {
+			res.sendFile(path.join(process.cwd(), 'page/error/500.html'))
+		} else if (req.accepts('json')) {
+			res.send({error: err.message})
+		} else {
+			res.type('txt').send(`Internal error: ${err.message}`)
+		}
 	}
 )
 

@@ -1,0 +1,19 @@
+diff --git a/lib/connections/redis.js b/lib/connections/redis.js
+index e8ea9d99..53a8505d 100644
+--- a/lib/connections/redis.js
++++ b/lib/connections/redis.js
+@@ -9,7 +9,13 @@ export const getOptions = () => {
+   const options = {};
+ 
+   // these options should only be set in the config if present (even defaults shouldnt be provided)
+-  if (process.env.REDIS_PASSWORD) options.auth_pass = process.env.REDIS_PASSWORD;
++  if (process.env.REDIS_PASSWORD) {
++    options.auth_pass = process.env.REDIS_PASSWORD;
++    options.password = options.auth_pass;
++  }
++  if (process.env.REDIS_USE_TLS) {
++    options.tls = true;
++  }
+   if (process.env.REDIS_DB) options.db = process.env.REDIS_DB;
+ 
+   return options;

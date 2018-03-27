@@ -73,7 +73,7 @@ services:
       - mailhog
       - mongodb
     environment:
-      - NODE_PATH=/opt/learning-locker/setup
+      - NODE_PATH=/opt/learning-locker
     image: cshr/lpg-learning-locker-setup:fc53b8729e706154b33f384081e0f3664d7ad9e7d8a3e9ddb3fd21e9dd10e556
 # /Learning Locker
 
@@ -87,7 +87,7 @@ services:
       XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
       XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
       XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-    image: cshr/lpg-learner-record:dc31695e7d0f68725105cbc82f07d51b22777b9e
+    image: cshr/lpg-learner-record:0a44bda01502cfa1cfc603a79b99da2620830d58
     depends_on:
       - learning-locker-xapi
     ports:
@@ -104,7 +104,7 @@ services:
       ELASTICSEARCH_CLUSTER: local
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9300
-    image: cshr/lpg-learning-catalogue:7d48424205c1eedd061f3bd267ac0f412f8cba1b
+    image: cshr/lpg-learning-catalogue:48f088c2b87a626f357cba198a29e6584ababab7
     ports:
       - 9001:9001
 

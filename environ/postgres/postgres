@@ -1,5 +1,0 @@
-#! /usr/bin/env bash
-
-if [ "$1" != "noop" ]; then
-    /usr/lib/postgresql/9.6/bin/postgres
-fi

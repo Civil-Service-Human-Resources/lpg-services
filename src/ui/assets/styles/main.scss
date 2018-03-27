@@ -7,9 +7,11 @@
 @import 'common/global';
 @import 'common/typography';
 
-@import 'utils/u-space';
+@import 'utils/utils';
 
 @import 'components/banner';
+@import 'components/bar-rating';
+@import 'components/discite';
 @import 'components/header';
 @import 'components/footer';
 @import 'components/home';
@@ -29,6 +31,7 @@
 @import 'components/home-tile';
 @import 'components/tables';
 @import 'components/accessible-auto-complete';
+@import 'components/tabs';
 
 .phase-banner {
 	@extend %site-width-container;

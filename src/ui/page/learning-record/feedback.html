@@ -1,0 +1,94 @@
+<Page title="Leave details feedback">
+    <div class="container">
+        <h1 class="heading-xlarge">Leave feedback</h1>
+
+        {{#if invalidFeedback}}
+        <div class="error-summary" role="alert" aria-labelledby="error-summary" tabindex="-1">
+            <h2 class="heading-medium error-summary-heading" id="error-summary">
+                Invalid feedback
+            </h2>
+            <p>
+                Please rate this learning in at least one category or provide a comment.
+            </p>
+        </div>
+        {{/if}}
+
+        <form name="feedbackForm" method="post" action="/learning-record/{{course.id}}/{{module.id}}/feedback">
+            <div class="grid-row ">
+                <div class="column-full ">
+                    <p class="lede">Leave your feedback for {{ module.title || course.title }}</p>
+                </div>
+            </div>
+
+            {{#each categories as category}}
+            <div class="grid-row ">
+                <div class="column-one-half ">
+                    <fieldset class="bar-rating u-space-b30">
+                        <legend class="heading-small">{{i18n('feedback_' + category + '_title')}}</legend>
+                        <p>{{i18n('feedback_' + category + '_description', i18n(module.type).toLowerCase())}}</p>
+
+                        <div class="bar-rating__scale" aria-hidden="true">
+                            <span class="u-float-left">Not for me</span>
+                            <span class="u-float-right">Loved it</span>
+                        </div>
+
+                        <div class="bar-rating__wrapper">
+
+                            <input class="bar-rating__input" type="radio" id="star{{category}}5" name="{{category}}" aria-label="5 out of 5 stars" value="5">
+                            <label for="star{{category}}5" title="I loved it - 5 stars">I loved it - 5 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="star{{category}}4" name="{{category}}" aria-label="4 out of 5 stars" value="4">
+                            <label for="star{{category}}4" title="It was pretty good - 4 stars">It was pretty good - 4 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="star{{category}}3" name="{{category}}" aria-label="3 out of 5 stars" value="3">
+                            <label for="star{{category}}3" title="It was OK - 3 stars">It was OK - 3 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="star{{category}}2" name="{{category}}" aria-label="2 out of 5 stars" value="2">
+                            <label for="star{{category}}2" title="I didn't enjoy it - 2 stars">I didn't enjoy it - 2 stars</label>
+
+                            <input class="bar-rating__input" type="radio" id="star{{category}}1" name="{{category}}" aria-label="1 out of 5 stars" value="1">
+                            <label for="star{{category}}1" title="This was definitely not for me - 1 star">This was definitely not for me - 1 star</label>
+                        </div>
+
+                        <div class="bar-rating__1to5" aria-hidden="true">
+                            <ul>
+                                <li>1</li>
+                                <li>2</li>
+                                <li>3</li>
+                                <li>4</li>
+                                <li>5</li>
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            {{/each}}
+
+            <div class="grid-row ">
+                <div class="column-full ">
+                    <fieldset>
+                        <legend class="heading-small">Comments</legend>
+                        <div class="form-group">
+                            <label class="form-label  " for="feedbackComments">
+                                Share your thoughts on this course (optional)
+                            </label>
+                            <textarea class="form-control" name="comments" id="feedbackComments" rows="5"></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="grid-row ">
+                <div class="column-full ">
+                    <div class="form-group">
+                        <button type="submit" class="button">Leave feedback</button>
+                    </div>
+                    <p>
+                        <a class="link-back" href="/learning-record">Back</a>
+                    </p>
+                </div>
+            </div>
+            <input type="hidden" name="_csrf" value="{{_csrf}}">
+        </form>
+    </div>
+</Page>

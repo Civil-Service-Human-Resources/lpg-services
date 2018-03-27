@@ -31,7 +31,7 @@ export async function courseResult(
 			res.redirect('/home')
 		} else {
 			res.send(
-				template.render('learning-record/course-result', req, {
+				template.render('learning-record/course-result', req, res, {
 					course,
 					module,
 					record: moduleRecord,
@@ -48,27 +48,39 @@ export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 
 	const learningRecord = await learnerRecord.getLearningRecord(req.user)
-	const completedLearning = learningRecord.filter(course =>
-		course.isComplete(req.user)
-	)
+	const completedLearning = learningRecord
+		.filter(course => course.isComplete(req.user))
+		.sort(
+			(a, b) =>
+				b.getCompletionDate(req.user)!.getTime() -
+				a.getCompletionDate(req.user)!.getTime()
+		)
 
 	const requiredLearningTotal = (await catalog.findRequiredLearning(req.user))
 		.totalResults
 
 	const completedRequiredLearning = []
+	const readyForFeedback = await learnerRecord.getReadyForFeedback(
+		learningRecord
+	)
 
-	for (const [i, course] of completedLearning.entries()) {
+	for (let i = 0; i < completedLearning.length; i++) {
+		const course = completedLearning[i]
 		if (course.isRequired(req.user)) {
 			completedRequiredLearning.push(course)
 			completedLearning.splice(i, 1)
+			i -= 1
 		}
 	}
 
 	res.send(
-		template.render('learning-record', req, {
+		template.render('learning-record', req, res, {
 			completedLearning,
 			completedRequiredLearning,
+			readyForFeedback,
 			requiredLearningTotal,
+			successMessage: req.flash('successMessage')[0],
+			successTitle: req.flash('successTitle')[0],
 		})
 	)
 }
