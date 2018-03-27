@@ -4,6 +4,7 @@ import * as fs from 'fs'
 export const ENV = process.env.NODE_ENV || 'development'
 export const PRODUCTION_ENV = ENV === 'production'
 export const PROFILE = process.env.ENV_PROFILE || 'local'
+export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
 	const envFile = '/keybase/team/lpg/dev/dotenv'
