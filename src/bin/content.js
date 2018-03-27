@@ -52,11 +52,9 @@ async function parseCourses(file) {
                 modules: []
             };
             currentCourse.title = line[1];
-            currentCourse.duration = Number(line[7]) * 60;
             currentCourse.shortDescription = line[9];
             currentCourse.description = line[10];
             currentCourse.learningOutcomes = line[11];
-            currentCourse.price = line[13] === 'Free' ? 0 : Number(line[12].replace('£', ''));
 
             let areaOfWork = tag(line[12]);
             let departments = !!line[16] ? line[16].toLowerCase().split('\n') : null;
@@ -71,6 +69,9 @@ async function parseCourses(file) {
                 title: line[5],
                 type: getType(line[2])
             };
+
+            module.duration = Number(line[7]);
+            module.price = (line[13] === 'Free' || !line[13]) ? 0 : Number(line[12].replace('£', ''));
 
             const location = line[6];
             if (location) {
@@ -113,12 +114,13 @@ function getType(type) {
     switch (type.toLowerCase()) {
         case 'online':
             return 'elearning';
+        case 'classroom':
+            return 'face-to-face';
         case 'pdf':
         case 'link':
             return 'link';
         case 'video':
-            // TODO: ideally video, but only support youtube
-            return 'link';
+            return 'video';
     }
 }
 
@@ -132,13 +134,13 @@ function parseEvents(file) {
     let events = {};
 
     for (const line of lines) {
-        if (!Date.parse(line[2])) {
+        if (!Date.parse(line[1])) {
             continue;
         }
         let event = {
             id: slugid.nice(),
-            location: line[3],
-            date: new Date(Date.parse(line[2] + ' UTC'))
+            location: line[2],
+            date: new Date(Date.parse(line[1] + ' UTC'))
         };
         if (!events[line[0]]) {
             events[line[0]] = [];
@@ -168,11 +170,9 @@ function parseModules(file, eventsFile) {
         };
 
         course.title = line[1];
-        course.duration = Number(line[4]) * 60;
         course.shortDescription = line[6];
         course.description = line[7];
         course.learningOutcomes = line[8];
-        course.price = line[12] === 'Free' ? 0 : Number(line[12].replace('£', ''));
 
         // Module of course
         let module = {
@@ -181,11 +181,15 @@ function parseModules(file, eventsFile) {
             audiences: []
         };
 
-        if (line[2].indexOf('Classroom') > -1) {
-            module.type = 'face-to-face';
-        } else if (line[2].indexOf('video') > -1) {
-            module.type = 'video';
+        module.duration = Number(line[4]) * 60;
+        module.price = line[12] === 'Free' ? 0 : Number(line[12].replace('£', ''));
+        module.type = getType(line[2]);
+
+        if (module.type === 'video' || module.type === 'link') {
             module.location = line[3];
+            if (!module.location) {
+                continue;
+            }
         }
 
         module.audiences.push(createAudience(null, false, line[9].split(/\n/), null, null, line[10].split(/\n/).map(tag)));
@@ -254,9 +258,12 @@ function tag(val) {
 }
 
 async function run() {
-    let courses = await parseCourses(coursesFile);
-    courses = courses.concat(parseModules(modulesFile, eventsFile));
-    fs.writeFileSync(path.join(__dirname, 'data.json'), JSON.stringify(courses));
+    // let courses = await parseCourses(coursesFile);
+    // courses = courses.concat(parseModules(modulesFile, eventsFile));
+    // fs.writeFileSync(path.join(__dirname, 'data.json'), JSON.stringify(courses));
+
+    let courses = parseModules(modulesFile, eventsFile);
+    fs.writeFileSync(path.join(__dirname, 'modules.json'), JSON.stringify(courses));
 }
 
 run()

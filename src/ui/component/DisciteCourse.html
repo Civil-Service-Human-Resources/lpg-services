@@ -62,7 +62,7 @@
                 {{#if course.getType() !== 'face-to-face'}}
                     <a href="/courses/{{course.id}}/{{course.modules[0].id}}">Start <span class="visuallyhidden"> this module</span></a>
                 {{else}}
-                    <a href="/book/{{course.id}}/{{course.modules[0].id}}/select-date">Book <span class="visuallyhidden"> this module</span></a>
+                    <a href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book <span class="visuallyhidden"> this module</span></a>
                 {{/if}}
                 <a href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
             {{/if}}
