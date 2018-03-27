@@ -15,15 +15,14 @@
                     </form>
                 </div>
                 {{#if searchResults && searchResults.suggestion}}
-                <span class="search__suggestion">Did you mean <a href="/search?q={{searchResults.suggestion}}">{{searchResults.suggestion}}</a></span>
-                {{/if}}
-
-                {{#if searchResults && query}}
+                <span class="search__suggestion">Did you mean
+                    <a href="/search?q={{searchResults.suggestion}}">{{searchResults.suggestion}}</a>
+                </span>
+                {{/if}} {{#if searchResults && query}}
                 <p class="lede">There were
-                    <strong>{{#if searchResults.totalResults}} {{searchResults.totalResults}} {{else
-                        }} no {{/if}}</strong>
+                    <strong class="lpg-search-amount">{{#if searchResults.totalResults}} {{searchResults.totalResults}} {{else }} no {{/if}}</strong>
                     results for
-                    <strong>{{ query }}</strong>
+                    <strong class="lpg-search-query">{{ query }}</strong>
                 </p>
                 {{/if}}
             </div>
@@ -35,14 +34,16 @@
                     {{#if searchResults.results.length}} {{#each searchResults.results as course}}
                     <div class="result">
                         <div class="result__main">
-                            <a class="result__title" href="/courses/{{course.id}}"><strong>{{course.title}}</strong></a>
+                            <a class="result__title" href="/courses/{{course.id}}">
+                                <strong>{{course.title}}</strong>
+                            </a>
                         </div>
                         <div class="result__info">
-                        <span>
-                            {{i18n(course.getType())}}
-                            {{#if course.getDuration() }}<br>{{course.getDuration()}}{{/if}}
-                            <!--<br>Work area: Digital-->
-                        </span>
+                            <span>
+                                {{i18n(course.getType())}} {{#if course.getDuration() }}
+                                <br>{{course.getDuration()}}{{/if}}
+                                <!--<br>Work area: Digital-->
+                            </span>
                         </div>
                         <p class="result__description">{{ course.shortDescription }}</p>
                         <div class="result__action">
