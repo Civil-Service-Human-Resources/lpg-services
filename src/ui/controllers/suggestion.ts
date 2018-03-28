@@ -63,6 +63,7 @@ export async function removeFromSuggestions(
 	try {
 		await xapi.record(req, course, xapi.Verb.Disliked)
 	} catch (err) {
+		logger.error('Error recording xAPI statement', err)
 		res.sendStatus(500)
 	} finally {
 		res.redirect(ref)
@@ -91,7 +92,6 @@ export async function expandedSuggestionsPage(
 ) {
 	const user = req.user as model.User
 	const areaOfWorktoExpand = req.params.expandedAow
-	console.log(req.params)
 	const modified = await suggestions(user, {}, areaOfWorktoExpand)
 	res.send(
 		template.render('suggested', req, res, {

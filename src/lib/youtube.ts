@@ -24,6 +24,7 @@ export async function getBasicInfo(
 			)}&format=json&key=${config.YOUTUBE_API_KEY}`
 		)
 	} catch (err) {
+		console.error(`Error fetching basic info from YouTube: ${err}`)
 		return
 	}
 	if (resp.status !== 200) {
@@ -62,6 +63,7 @@ export async function getDuration(
 			}`
 		)
 	} catch (err) {
+		console.error(`Error fetching metadata from YouTube: ${err}`)
 		return
 	}
 	if (resp.data && resp.data.items && resp.data.items[0]) {

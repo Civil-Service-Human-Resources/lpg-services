@@ -199,12 +199,12 @@ function logParseError(path: string, err: ParseError) {
 	if (err.name !== 'ParseError') {
 		throw err
 	}
-	console.log(`Error parsing ${path}:${err.loc.line}:${err.loc.column}`)
-	console.log()
-	console.log(err.frame)
-	console.log()
-	console.log(err.message)
-	console.log()
+	console.error(`Error parsing ${path}:${err.loc.line}:${err.loc.column}`)
+	console.error()
+	console.error(err.frame)
+	console.error()
+	console.error(err.message)
+	console.error()
 }
 
 function resetCache() {

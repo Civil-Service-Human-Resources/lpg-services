@@ -3,6 +3,7 @@ import * as fs from 'fs'
 
 export const ENV = process.env.NODE_ENV || 'development'
 export const PRODUCTION_ENV = ENV === 'production'
+export const PROFILE = process.env.ENV_PROFILE || 'local'
 
 if (ENV === 'development') {
 	const envFile = '/keybase/team/lpg/dev/dotenv'
@@ -40,12 +41,6 @@ function warn(msg: string) {
 }
 
 const env: Record<string, string> = new Proxy({}, {get: getEnv})
-
-export const AWS = set({
-	accessKeyId: env.AWS_ACCESS_KEY_ID,
-	region: env.REGION || 'eu-west-2',
-	secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-})
 
 export const AUTHENTICATION = set({
 	serviceAdmin: 'admin@cslearning.gov.uk',
