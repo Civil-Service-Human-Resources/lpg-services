@@ -73,28 +73,29 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(compression({threshold: 0}))
-
-app.use(
-	lusca({
-		csp: {
-			policy: {
-				'child-src': 'https://youtube.com https://www.youtube.com',
-				'default-src': "'self'",
-				'font-src': 'data:',
-				'img-src': "'self' data: https://www.google-analytics.com",
-				'script-src':
-					"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
-					"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
-				'style-src': "'self' 'unsafe-inline'",
+if (config.ENV === 'production') {
+	app.use(
+		lusca({
+			csp: {
+				policy: {
+					'child-src': 'https://youtube.com https://www.youtube.com',
+					'default-src': "'self'",
+					'font-src': 'data:',
+					'img-src': "'self' data: https://www.google-analytics.com",
+					'script-src':
+						"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
+						"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
+					'style-src': "'self' 'unsafe-inline'",
+				},
 			},
-		},
-		hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
-		nosniff: true,
-		referrerPolicy: 'same-origin',
-		xframe: 'SAMEORIGIN',
-		xssProtection: true,
-	})
-)
+			hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
+			nosniff: true,
+			referrerPolicy: 'same-origin',
+			xframe: 'SAMEORIGIN',
+			xssProtection: true,
+		})
+	)
+}
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -117,7 +118,9 @@ app.param('eventId', asyncHandler(courseController.loadEvent))
 
 app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
 
-app.use(lusca.csrf())
+if (config.ENV === 'production') {
+	app.use(lusca.csrf())
+}
 
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
