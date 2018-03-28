@@ -64,7 +64,9 @@
                 {{else}}
                     <a href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book <span class="visuallyhidden"> this module</span></a>
                 {{/if}}
-                <a href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                {{#if !course.isRequired(signedInUser)}}
+                    <a href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                {{/if}}
             {{/if}}
         {{else}}
             {{#if !course.isRequired(signedInUser)}}

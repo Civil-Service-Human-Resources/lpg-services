@@ -101,9 +101,9 @@ services:
     environment:
       AUTH_USER: user
       AUTH_PASSWORD: password
-      ELASTICSEARCH_CLUSTER: local
-      ELASTICSEARCH_HOST: elasticsearch
-      ELASTICSEARCH_PORT: 9300
+      ELASTICSEARCH_URI: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: elastic
+      ELASTICSEARCH_PASSWORD: changeme
     image: cshr/lpg-learning-catalogue:03d48af2d6017cab00dbfb48f90c722c52b5d954
     ports:
       - 9001:9001
