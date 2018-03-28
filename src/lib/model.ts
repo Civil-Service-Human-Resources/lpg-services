@@ -259,7 +259,7 @@ export class Module {
 
 export class Event {
 	static create(data: any) {
-		const date = new Date(data.date)
+		const date = data.date ? new Date(data.date) : new Date()
 		return new Event(data.id, date, data.location)
 	}
 

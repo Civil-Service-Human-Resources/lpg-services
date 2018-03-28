@@ -1,0 +1,108 @@
+<Page title="Edit course">
+    <div class="grid-row">
+        <div class="column">
+            <h1 class="heading-large">
+                {{#if course.id}}Edit{{else}}Add{{/if}} course
+            </h1>
+
+            <form method="post" name="editCourseForm" class="push-bottom">
+                <input name="id" type="hidden" value="{{ course.id || '' }}">
+                <input name="uri" type="hidden" value="{{ course.uri || '' }}">
+
+                <div class="form-group">
+                    <label for="title" class="form-label">
+                        Title
+                    </label>
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="short-description" class="form-label">
+                        Short description
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="short-description" class="form-label">
+                        Description
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ course.description || '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="short-description" class="form-label">
+                        Learning outcomes
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="learning-outcomes" name="learningOutcomes" rows="3">{{ course.learningOutcomes || '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration" class="form-label">
+                        Duration
+                    </label>
+                    <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{{ course.duration || '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Modules
+                    </label>
+                    <div class="resource resouce__modules">
+                        <ul class="resource__item u-clearfix">
+                            {{#each (course.modules || []) as module, i}}
+
+                            <li>
+                                {{#if course.id != 'add-course' && module.id }}
+                                <a class="resource__info resource__modules__title" href="/courses/{{course.id}}/{{module.id}}">
+                                    <strong>{{{module.title}}}</strong>
+                                </a>
+                                {{else}}
+                                <strong class="resource__info resource__modules__title">{{{module.title}}}</strong>
+                                {{/if}}
+
+                                <span class="resource__info resource__modules__info">{{i18n(module.type || '')}}</span>
+                                <button type="submit" class="button" name="submit" value="edit_module/{{module.id}}">Edit</button>
+                                <button type="submit" class="button" name="submit" value="remove_module/{{module.id}}">Remove</button>
+                            </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="content-zip" class="form-label">
+                        <input name="submit" type="submit" class="button" value="Add Module">
+                    </label>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="required-by" class="form-label">
+                        Required by
+                    </label>
+                    <input class="form-control form-control-2-3" id="required-by" name="requiredBy" type="date" value="{{ (course.requiredBy || '').slice(0,10) }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="frequency" class="form-label">
+                        Frequency
+                    </label>
+                    <select class="form-control" id="frequency" name="frequency">
+                        <option value=""></option>
+                        <option value="yearly" selected="{{ course.frequency === 'yearly' ? 'selected' : '' }}">Yearly</option>
+                        <option value="three-yearly" selected="{{ course.frequency === 'three-yearly' ? 'selected' : '' }}">Three yearly</option>
+                        <option value="five-yearly" selected="{{ course.frequency === 'five-yearly' ? 'selected' : '' }}">Five yearly</option>
+                    </select>
+                </div>
+
+                <div>
+                    {{#if course.id}}
+                    <input type="submit" name="submit" class="button" value="Update"> {{else}}
+                    <input type="submit" name="submit" class="button" value="Add"> {{/if}}
+                </div>
+            </form>
+        </div>
+    </div>
+</Page>

@@ -74,6 +74,23 @@ export function formatDate(d: number | Date) {
 	return dateFormat.format(d)
 }
 
+export function HTMLFormatDate(d: number | Date) {
+	if (!(d instanceof Date)) {
+		d = new Date(d)
+	}
+
+	const HTMLDateFormat = new Intl.DateTimeFormat('en-GB', {
+		day: '2-digit',
+		month: '2-digit',
+		timeZone: 'Europe/London',
+		year: 'numeric',
+	})
+
+	const arrDate = HTMLDateFormat.format(d).split('/')
+	const formatted = `${arrDate[2]}-${arrDate[1]}-${arrDate[0]}`
+	return formatted
+}
+
 // Convert duration in seconds to an ISO 8601 format duration string. Used to
 // send appropriately formatted values to APIs like xAPI.
 export function formatDuration(d: number) {

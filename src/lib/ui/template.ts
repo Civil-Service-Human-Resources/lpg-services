@@ -70,7 +70,8 @@ data() {
     return {
         config: configModule,
         currentReq: req,
-        formatDate: dateTimeModule.formatDate,
+		formatDate: dateTimeModule.formatDate,
+		HTMLFormatDate: dateTimeModule.HTMLFormatDate,
         i18n: req.__ ? req.__.bind(req) : null,
         signedInUser: req.user,
         toHtml: toHtml,
