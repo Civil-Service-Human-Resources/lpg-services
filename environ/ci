@@ -35,17 +35,11 @@ stage "Running the unit tests"
 npm test
 
 stage "Building the new lpg-services docker image"
-docker build --build-arg service=ui --cache-from cshr/lpg-services-ui:latest -t cshr/lpg-services-ui:${TRAVIS_COMMIT} .
+docker build --cache-from cshr/lpg-services-ui:latest -t cshr/lpg-services:${TRAVIS_COMMIT} .
 
-stage "Pushing the lpg-services-ui:${TRAVIS_COMMIT} docker image"
-docker tag cshr/lpg-services-ui:${TRAVIS_COMMIT} cshr/lpg-services-ui:latest
-docker push cshr/lpg-services-ui
-
-docker build --build-arg service=management-ui --cache-from cshr/lpg-services-ui:latest -t cshr/lpg-services-management-ui:${TRAVIS_COMMIT} .
-
-stage "Pushing the lpg-services-management-ui:${TRAVIS_COMMIT} docker image"
-docker tag cshr/lpg-services-management-ui:${TRAVIS_COMMIT} cshr/lpg-services-management-ui:latest
-docker push cshr/lpg-services-management-ui
+stage "Pushing the lpg-services-ui ${TRAVIS_COMMIT} docker image"
+docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
+docker push cshr/lpg-services
 
 stage "Installing ansible if necessary"
 export PATH="`pwd`/pyhome/bin:${PATH}"

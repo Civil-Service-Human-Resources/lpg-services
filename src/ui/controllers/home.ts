@@ -70,6 +70,7 @@ export async function home(req: express.Request, res: express.Response) {
 			})
 		)
 	} catch (e) {
+		console.error("Error building user's home page", e)
 		throw new Error(`Error building user's home page - ${e}`)
 	}
 }

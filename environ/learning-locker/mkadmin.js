@@ -59,6 +59,6 @@ createAdmin(adminUser, adminPassword, 'LPG')
 		process.exit(0)
 	})
 	.catch(err => {
-		console.log('>> ERROR:', err)
+		console.error('>> ERROR:', err)
 		process.exit(1)
 	})
