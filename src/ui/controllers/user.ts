@@ -6,6 +6,7 @@ import * as passport from 'lib/config/passport'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
+import * as log4js from 'log4js'
 
 export interface Profile {
 	updateSuccessful: boolean
@@ -33,6 +34,8 @@ interface WSO2Profile {
 	userName: string
 	password?: string
 }
+
+const logger = log4js.getLogger('controllers/user')
 
 const SCIM2_HEADERS: Record<string, string> = {
 	Accept: 'application/json',
@@ -288,6 +291,7 @@ export async function updateProfile(
 			res.redirect('/profile')
 		})
 	} catch (e) {
+		logger.error('Could not update user profile', e)
 		res.send(
 			template.render('profile/edit', req, res, {
 				identityServerFailed: true,

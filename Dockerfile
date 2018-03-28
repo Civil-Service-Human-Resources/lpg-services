@@ -29,7 +29,6 @@ COPY src src
 
 # Runtime environment variables
 ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
-  BOOKING_ALERT_WEBHOOK="" \
   CONTENT_URL=http://local-cdn.cshr.digital/lpgdevcontent \
   LEARNER_RECORD_URL=http://localhost:9000 \
   LEARNER_RECORD_USER=user \
@@ -47,7 +46,5 @@ COPY dist dist
 # This needs to be specified after the `npm install`
 ENV NODE_ICU_DATA=/var/www/app/node_modules/full-icu
 
-ARG service
-ENV service ${service}
-
-CMD [ "bash", "-c", "cd dist/${service} && node ../node_modules/${service}/server.js" ]
+ADD https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas/releases/download/hammer-0.1/hammer /bin/hammer
+RUN chmod +x /bin/hammer && echo "Hammer v0.1 Added"

@@ -63,5 +63,6 @@ ENV API_HOST=localhost \
     SMTP_SECURED=false \
     SMTP_USER= \
     STORAGE_REPO=local \
+    TESTING=1 \
     UI_HOST=learning-locker-ui \
     UI_PORT=3000

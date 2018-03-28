@@ -2,14 +2,6 @@ version: "3.4"
 services:
 
 # ElasticSearch
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana@sha256:0d2565286641d213fdbc26ffe29c33268d31e4820ea7af636ebc7d879d736895
-    ports:
-      - 5601:5601
-    depends_on:
-      - elasticsearch
-
   elasticsearch:
     container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch@sha256:5b2bb3e91379f04a9da7c477314a24b2428fb1a4c20696991dff54b70d1b4ef3
@@ -21,44 +13,45 @@ services:
 
 # Learning Locker
   learning-locker-api-server:
+    command: ["node", "/opt/learning-locker/api/dist/server"]
     container_name: learning-locker-api-server
     depends_on:
       - mongodb
       - redis
-      - mailhog
-    image: cshr/lpg-learning-locker-api-server:988cb07eb553b13d90ea7a48d9da247ca74c74b8b3a0e5e91f837976b2a0fb3b
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     ports:
       - 8082:8082
+    working_dir: /opt/learning-locker
 
   learning-locker-api-worker:
+    command: ["node", "/opt/learning-locker/worker/dist/server"]
     container_name: learning-locker-api-worker
     depends_on:
       - learning-locker-api-server
-    image: cshr/lpg-learning-locker-api-worker:cd954f2c7cf423ce3c20223e4e3e73899246b96f9efdecc84770ac6b77d0ffe1
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
+    working_dir: /opt/learning-locker
 
   learning-locker-ui:
+    command: ["node", "/opt/learning-locker/ui/dist/server"]
     container_name: learning-locker-ui
-    image: cshr/lpg-learning-locker-ui:b5cddb229c58e961b96b4566e99e8971ac2b56ee31189f14e7b510b029be89ee
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     ports:
       - 3000:3000
     depends_on:
       - learning-locker-api-server
+    working_dir: /opt/learning-locker
 
   learning-locker-xapi:
+    command: ["node", "/opt/xapi-service/dist/server"]
     container_name: learning-locker-xapi
     depends_on:
       - mongodb
       - redis
       - learning-locker-api-worker
-    image: cshr/lpg-learning-locker-xapi:7e6b19d6d8bf99ce9d4c322b449a6744b7a33c23071e653bef827d0277b83441
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     ports:
       - 8083:8083
-
-  mailhog:
-    container_name: mailhog-locker-api-worker
-    image: mailhog/mailhog@sha256:5be1ae7cf894b58fffbe48f84a0541a3595e53124d460d3fb71b3450a8d11189
-    ports:
-      - 8025:8025
+    working_dir: /opt/xapi-service
 
   mongodb:
     container_name: mongodb
@@ -70,11 +63,10 @@ services:
 
   setup-learning-locker:
     depends_on:
-      - mailhog
       - mongodb
     environment:
       - NODE_PATH=/opt/learning-locker
-    image: cshr/lpg-learning-locker-setup:fc53b8729e706154b33f384081e0f3664d7ad9e7d8a3e9ddb3fd21e9dd10e556
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
 # /Learning Locker
 
 # CSHR
