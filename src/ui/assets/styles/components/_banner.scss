@@ -1,60 +1,63 @@
 .banner {
+	color: $white;
+	text-align: left;
+	padding: 15px;
+	margin-top: 0;
+	margin-bottom: 30px;
 
-  color: $white;
-  text-align: left;
-  padding: 15px;
-  margin-top: 0;
-  margin-bottom: 30px;
+	// Default
+	background-color: $light-blue;
 
-  // Default
-  background-color: $light-blue;
+	a {
+		&:link,
+		&:visited,
+		&:hover,
+		&:active {
+			color: #fff;
+		}
+	}
 
-  a {
-    &:link, &:visited, &:hover, &:active {
-      color: #fff;
-    }
-  }
+	// Modifiers
+	@include m(error) {
+		background-color: $red;
+	}
 
-  // Modifiers
-  &--error {
-    background-color: $red;
-  }
+	@include m(confirmation) {
+		background-color: $turquoise;
+	}
 
-  &--confirmation {
-    background-color: $turquoise;
-  }
+	@include m(info) {
+		background: $govuk-blue;
+	}
 
-  &--info {
-    background: $govuk-blue;
-  }
+	@include m(warning) {
+		background: $yellow;
+		color: $black;
 
-  &--warning {
-    background: $yellow;
-    color: $black;
+		a {
+			&:link,
+			&:visited,
+			&:active {
+				color: darken($govuk-blue, 10%);
+			}
 
-    a {
-      &:link, &:visited, &:active {
-        color: darken($govuk-blue, 10%);
-      }
+			&:hover {
+				color: $black;
+			}
+		}
+	}
 
-      &:hover {
-        color: $black;
-      }
-    }
-  }
+	@include m(content) {
+		margin-top: $gutter * 2;
+	}
 
-  &--content {
-    margin-top: $gutter * 2;
-  }
-
-  // Elements
-  &__heading {
-    @include bold-19;
-    margin-bottom: 0;
-    &-large {
-      @include bold-24;
-      display: block;
-    }
-  }
-
+	// Elements
+	@include e(heading) {
+		@include bold-19;
+		margin-bottom: 0;
+		&-large {
+			@include bold-24;
+			display: block;
+		}
+	}
 }
