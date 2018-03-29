@@ -1,53 +1,17 @@
-<Page title="Edit course">
+<Page title="Edit elearning">
     <div class="grid-row">
-        <div class="column-two-thirds">
+        <div class="column">
             <h1 class="heading-large">
-                {{#if course.id}}Edit{{else}}Add{{/if}} course
+                {{#if module.id}}Edit{{else}}Add{{/if}} Elearning course
             </h1>
 
-            <form method="post" name="editCourseForm" class="push-bottom" encType="multipart/form-data">
-                <input name="uri" type="hidden" value="{{ course.uri || '' }}">
-
+            <form method="post" name="editCourseForm" class="push-bottom module--form" enctype="multipart/form-data">
+                <input name="type" type="hidden" value="elearning">
                 <div class="form-group">
                     <label for="title" class="form-label">
                         Title
                     </label>
-                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="short-description" class="form-label">
-                        Short description
-                    </label>
-                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="short-description" class="form-label">
-                        Description
-                    </label>
-                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ course.description || '' }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="short-description" class="form-label">
-                        Learning outcomes
-                    </label>
-                    <textarea class="form-control form-control-2-3" id="learning-outcomes" name="learningOutcomes" rows="3">{{ course.learningOutcomes || '' }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="duration" class="form-label">
-                        Duration
-                    </label>
-                    <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{{ course.duration || '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="tags" class="form-label">
-                        Tags
-                    </label>
-                    <input class="form-control form-control-2-3" id="tags" name="tags" type="text" value="{{ (course.tags || []).join(', ') }}">
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ module.title || '' }}">
                 </div>
 
                 <div class="form-group">
@@ -58,33 +22,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="required-by" class="form-label">
-                        Required by
-                    </label>
-                    <input class="form-control form-control-2-3" id="required-by" name="requiredBy" type="date" value="{{ (course.requiredBy || '').slice(0,10) }}">
+                    <Audience :audienceLists :audiences :course :module />
                 </div>
-
-                <div class="form-group">
-                    <label for="frequency" class="form-label">
-                        Frequency
-                    </label>
-                    <select class="form-control" id="frequency" name="frequency">
-                        <option value=""></option>
-                        <option value="yearly" selected="{{ course.frequency === 'yearly' ? 'selected' : '' }}">Yearly</option>
-                        <option value="three-yearly" selected="{{ course.frequency === 'three-yearly' ? 'selected' : '' }}">Three yearly</option>
-                        <option value="five-yearly" selected="{{ course.frequency === 'five-yearly' ? 'selected' : '' }}">Five yearly</option>
-                    </select>
-                </div>
-
                 <div>
-                    {{#if course.id}}
-                    <input type="submit" class="button" value="Update">
-                    {{else}}
-                    <input type="submit" class="button" value="Add">
-                    {{/if}}
+                    <input name="submit" type="submit" class="button" value="Back"> {{#if module.id}}
+                    <input name="submit" type="submit" class="button" value="Update"> {{else}}
+                    <input name="submit" type="submit" class="button" value="Add"> {{/if}}
                 </div>
             </form>
         </div>
     </div>
 </Page>
-

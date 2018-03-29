@@ -1,0 +1,8 @@
+<fieldset class="u-space-b30">
+    {{#each options as option}}
+    <div class="multiple-choice">
+        <input id="{{option[0]}}" type="radio" name="{{node}}" value="{{option[0]}}" checked="{{ values.indexOf(option[0]) >=0 ? 'checked' : '' }}">
+        <label for="{{option[0]}}">{{option[1]}}</label>
+    </div>
+    {{/each}}
+</fieldset>

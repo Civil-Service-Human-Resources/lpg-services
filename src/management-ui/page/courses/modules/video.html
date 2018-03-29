@@ -1,42 +1,32 @@
 <Page title="Edit video">
     <div class="grid-row">
-        <div class="column-two-thirds">
+        <div class="column">
             <h1 class="heading-large">
-                {{#if course.id}}Edit{{else}}Add{{/if}} video
+                {{#if module.id}}Edit{{else}}Add{{/if}} Video
             </h1>
 
             <form method="post" name="editCourseForm" class="push-bottom">
+                <input name="type" type="hidden" value="video">
                 <div class="form-group">
                     <label for="title" class="form-label">
                         Title
                     </label>
-                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ module.title || '' }}">
                 </div>
+
                 <div class="form-group">
                     <label for="uri" class="form-label">
                         URL
                     </label>
-                    <input class="form-control form-control-2-3" id="uri" name="uri" type="text" value="{{ course.uri || '' }}">
+                    <input class="form-control form-control-2-3" id="location" name="location" type="text" value="{{ module.location || '' }}">
                 </div>
-
                 <div class="form-group">
-                    <label for="short-description" class="form-label">
-                        Short description
-                    </label>
-                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
+                    <Audience :audienceLists :audiences :course :module />
                 </div>
-
-                <div class="form-group">
-                    <label for="tags" class="form-label">
-                        Tags
-                    </label>
-                    <input class="form-control form-control-2-3" id="tags" name="tags" type="text" value="{{ (course.tags || []).join(', ') }}">
-                </div>
-
                 <div>
-                    {{#if course.id}}
-                    <input type="submit" class="button" value="Update"> {{else}}
-                    <input type="submit" class="button" value="Add"> {{/if}}
+                    <input name="submit" type="submit" class="button" value="Back"> {{#if module.id}}
+                    <input name="submit" type="submit" class="button" value="Update"> {{else}}
+                    <input name="submit" type="submit" class="button" value="Add"> {{/if}}
                 </div>
             </form>
         </div>

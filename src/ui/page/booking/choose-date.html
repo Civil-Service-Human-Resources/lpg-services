@@ -21,12 +21,9 @@
                         {{i18n(errorMessage)}}
                     </p>
                 </div>
-                {{/if}}
-
-                {{#if events && events.length}}
+                {{/if}} {{#if events && events.length}}
                 <p class="lede">
-                    Check on which dates you can attend and in which locations, then
-                    select a suitable option below.
+                    Check on which dates you can attend and in which locations, then select a suitable option below.
                 </p>
                 <h2 class="heading-small">{{ module.title || course.title }}</h2>
                 <form method="post">
@@ -36,31 +33,21 @@
                             <div class="div-table__th">Duration</div>
                             <div class="div-table__th">Location</div>
                             <div class="div-table__th">Price</div>
-                            <div class="div-table__th"><span class="visually-hidden">Selected</span></div>
+                            <div class="div-table__th">
+                                <span class="visually-hidden">Selected</span>
+                            </div>
                         </div>
                         {{#each events as event}}
                         <div class="div-table__row u-clearfix">
-                            <div class="div-table__cell">{{formatDate(event.date)}}</div>
+                            <div class="div-table__cell">{{datetime.formatDate(event.date)}}</div>
                             <div class="div-table__cell">{{course.getDuration()}}</div>
                             <div class="div-table__cell">{{event.location}}</div>
                             <div class="div-table__cell">&pound;{{module.price}}</div>
                             <div class="div-table__cell  div-table__cell--action">
                                 <div class="course-radios">
                                     {{#if event.id == selectedEventId}}
-                                    <input id="radio-{{event.id}}"
-                                           type="radio"
-                                           name="selected-date"
-                                           class="booking__date"
-                                           value="{{event.id}}"
-                                           checked >
-                                    {{else}}
-                                    <input id="radio-{{event.id}}"
-                                           type="radio"
-                                           name="selected-date"
-                                           class="booking__date"
-                                           value="{{event.id}}"
-                                    >
-                                    {{/if}}
+                                    <input id="radio-{{event.id}}" type="radio" name="selected-date" class="booking__date" value="{{event.id}}" checked> {{else}}
+                                    <input id="radio-{{event.id}}" type="radio" name="selected-date" class="booking__date" value="{{event.id}}"> {{/if}}
                                     <label for="radio-{{event.id}}" class="booking__select-container">
                                         <span class="booking__select booking__select--select">Select</span>
                                         <span class="booking__select booking__select--selected">Selected</span>
@@ -72,7 +59,8 @@
                     </div>
 
                     <div class="tabbed-section">
-                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}" accessibilityReqs="{{accessibilityReqs ? accessibilityReqs : []}}" :selectedEventId/>
+                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}" accessibilityReqs="{{accessibilityReqs ? accessibilityReqs : []}}"
+                            :selectedEventId/>
                     </div>
                     <div class="panel panel-border-wide">
                         <p>
