@@ -240,5 +240,9 @@
 	"%s result": {
 		"one": "%s result",
 		"other": "%s results"
+	},
+	"was": {
+		"one": "was",
+		"other": "were"
 	}
 }
