@@ -20,8 +20,8 @@
                 </span>
                 {{/if}} {{#if searchResults && query}}
                 <p class="lede">There were
-                    <strong class="lpg-search-amount">{{#if searchResults.totalResults}} {{searchResults.totalResults}} {{else }} no {{/if}}</strong>
-                    {{currentReq.__n('%s result', searchResults.totalResults)}} for
+                        <strong class="lpg-search-amount">{{searchResults.totalResults ? currentReq.__n('%s result', searchResults.totalResults) : 'no results '}}</strong>
+                    for
                     <strong class="lpg-search-query">{{ query }}</strong>
                 </p>
                 {{/if}}
