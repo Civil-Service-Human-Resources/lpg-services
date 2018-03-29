@@ -1,8 +1,10 @@
 import * as express from 'express'
+import * as extended from 'lib/extended'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 
-export function displayCourse(req: express.Request, res: express.Response) {
+export function displayCourse(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	res.send(template.render('courses/display', req, res, {}))
 }
 

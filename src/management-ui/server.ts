@@ -13,10 +13,13 @@ import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
 
+import * as audienceController from './controllers/audience/index'
 import * as bookingsController from './controllers/bookings/index'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as homeController from './controllers/home'
+import * as editModuleController from './controllers/module/edit'
+
 import * as loginController from './controllers/login'
 
 import * as i18n from 'lib/service/translation'
@@ -75,28 +78,57 @@ app.get('/sign-out', loginController.signOut)
 app.get('/', homeController.index)
 app.get('/courses', asyncHandler(displayCourseController.index))
 
-app.param('courseId', asyncHandler(editCourseController.loadCourse))
-app.param('moduleId', asyncHandler(editCourseController.loadModule))
+app.param('courseId', asyncHandler(editCourseController.loadCourseStub))
+app.param('moduleId', asyncHandler(editModuleController.loadModule))
 
-app.get('/courses/:courseId/edit', editCourseController.editCourse)
-app.post(
-	'/courses/:courseId/edit',
-	asyncHandler(editCourseController.doEditCourse)
+// *** new stuff **
+
+app.get('/courses/:courseId/add-module', editModuleController.getModuleType)
+app.post('/courses/:courseId/add-module', editModuleController.setModuleType)
+
+app.get('/courses/:courseId/:moduleId/edit', editModuleController.getModule)
+app.post('/courses/:courseId/:moduleId/edit', editModuleController.setModule)
+
+app.get(
+	'/courses/:courseId/:moduleId/remove',
+	editModuleController.removeModule
 )
-app.get('/courses/:courseId/add-module', editCourseController.addModule)
-app.post(
-	'/courses/:courseId/add-module',
-	asyncHandler(editCourseController.doAddModule)
+
+app.get(
+	'/courses/:courseId/:moduleId/:moduleType',
+	editModuleController.getModule
 )
-app.get('/courses/:courseId/:moduleId/edit', editCourseController.editModule)
+
 app.post(
-	'/courses/:courseId/:moduleId/edit',
-	asyncHandler(editCourseController.doEditModule)
+	'/courses/:courseId/:moduleId/:moduleType',
+	editModuleController.setModule
 )
+
+app.get(
+	'/courses/:courseId/:moduleId/audience/:audienceNumber/:profileDetail',
+	audienceController.getAudienceNode
+)
+
+app.post(
+	'/courses/:courseId/:moduleId/audience/:audienceNumber/:profileDetail',
+	audienceController.setAudienceNode
+)
+
+app.post('/audience/:profileDetail', audienceController.setAudienceNode)
+
+app.get('/courses/:courseId/:moduleId', editModuleController.getModule)
+app.post('/courses/:courseId/:moduleId', editModuleController.setModule)
+app.get('/courses/:courseId', editCourseController.getCourse)
+app.post('/courses/:courseId', editCourseController.setCourse)
+// end new
+
+app.get('/bookings', asyncHandler(bookingsController.index))
+
+//** end new stuff */
 
 app.get('/courses/:courseId', displayCourseController.displayCourse)
 
-app.get('/bookings', asyncHandler(bookingsController.index))
+app.get('/bookings', bookingsController.index)
 
 app.use(
 	(

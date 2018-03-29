@@ -1,5 +1,11 @@
 {
-	"elearning": "Online",
+	"audience_department_label": "Organisation(s)",
+	"audience_area_label": "Area(s) of work",
+	"audience_grade_label": "Grade(s)",
+	"audience_mandatory_label": "Mandatory",
+	"audience_frequency_label": "Frequency",
+	"audience_required-by_label": "Required By",
+	"elearning": "Online course",
 	"video": "Video",
 	"website": "Website",
 	"COMPLETED": "Completed",
@@ -11,9 +17,9 @@
 	"courseResult.passed": "Passed",
 	"courseResult.failed": "Failed",
 	"courseResult.complete": "Course complete",
-	"face-to-face": "Classroom",
+	"face-to-face": "Face to face",
 	"link": "Link",
-	"REGISTERED": "Booked",
+	"REGISTERED": "Registered",
 	"Duration": "Duration",
 	"Price": "Price",
 	"all": "all",
@@ -58,13 +64,12 @@
 	"learning_record_column_course_duration": "Duration",
 	"learning_record_column_course_date": "Completion date",
 	"profile_page_title": "Hello, %s",
-	"profile_given-name_label": "Name",
-	"profile_email-address_label": "Email",
+	"profile_name_label": "Name",
+	"profile_email_label": "Email",
 	"profile_password_label": "Password",
 	"profile_department_label": "Organisation",
-	"profile_areas-of-work_label": "Area of work",
+	"profile_area_label": "Area of work",
 	"profile_grade_label": "Grade",
-	"profile_updated": "Profile successfully updated",
 	"register_for_account_link": "Register for an account",
 	"register_start_page_title": "Register for an account",
 	"register_start_page_intro":
@@ -163,7 +168,7 @@
 	"top_nav_learning_record": "Learning record",
 	"top_nav_learning_plan": "Learning plan",
 	"top_nav_profile": "Profile",
-	"blended": "Mixed",
+	"blended": "Blended",
 	"BOOKED": "BOOKED",
 	"AA": "AA",
 	"G7": "G7",
@@ -181,8 +186,8 @@
 		"SCS": "Director"
 	},
 	"departments": {
-		"hmrc": "HM Revenue & Customs",
-		"dh": "Department of Health & Social Care",
+		"ho": "Home Office",
+		"dh": "Department of Health",
 		"co": "Cabinet Office"
 	},
 	"areas-of-work": {
@@ -198,18 +203,16 @@
 		"legal": "Legal",
 		"property": "Property"
 	},
-	"accessibility-requirements": {
-		"sign-language": "Sign language interpreter",
-		"cart": "CART (communication access real-time translation) services",
-		"large-print": "Large print",
-		"braille": "Braille",
-		"assistive-listening": "Assistive listening device",
-		"assistant": "An assistant will accompany me"
+	"mandatory": {
+		"true": "True",
+		"false": "False"
+	},
+	"frequency": {
+		"YEARLY": "Yearly",
+		"THREE_YEARLY": "Three Yearly",
+		"FIVE_YEARLY": "Five Yearly"
 	},
 	"responsibility-for-information": "responsibility-for-information",
-	"profile_name_label": "profile_name_label",
-	"profile_email_label": "profile_email_label",
-	"profile_area_label": "profile_area_label",
 	"Organisation": "Organisation",
 	"action_COMPLETED": "Retake",
 	"action_IN_PROGRESS": "Resume",
@@ -244,5 +247,14 @@
 	"was": {
 		"one": "was",
 		"other": "were"
-	}
+	},
+	"digital": "digital",
+	"inclusion-and-diversity": "inclusion-and-diversity",
+	"project-delivery": "project-delivery",
+	"commercial": "commercial",
+	"departmentprofile_department_label": "departmentprofile_department_label",
+	"areasOfWork": "areasOfWork",
+	"audience_undefined_label": "audience_undefined_label",
+	"audience_profile_grade_label_label": "audience_profile_grade_label_label",
+	"required-by": "required-by"
 }

@@ -1,100 +1,30 @@
-<Page title="Edit course">
+<Page title="Edit face-to-face">
     <div class="grid-row">
-        <div class="column-two-thirds">
+        <div class="column">
             <h1 class="heading-large">
-                {{#if course.id}}Edit{{else}}Add{{/if}} course
+                {{#if module.id}}Edit{{else}}Add{{/if}} Face-to-face course
             </h1>
 
-            <form method="post" name="editCourseForm" class="push-bottom" encType="multipart/form-data">
-                <input name="uri" type="hidden" value="{{ course.uri || '' }}">
-
+            <form method="post" name="editCourseForm" class="push-bottom module--form" enctype="multipart/form-data">
+                <input name="type" type="hidden" value="face-to-face">
                 <div class="form-group">
                     <label for="title" class="form-label">
                         Title
                     </label>
-                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ module.title || '' }}">
                 </div>
-
                 <div class="form-group">
-                    <label for="short-description" class="form-label">
-                        Short description
-                    </label>
-                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
+                    <Event :events />
                 </div>
-
                 <div class="form-group">
-                    <label for="short-description" class="form-label">
-                        Description
-                    </label>
-                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ course.description || '' }}</textarea>
+                    <Audience :audienceLists :audiences :course :module />
                 </div>
-
-                <div class="form-group">
-                    <label for="short-description" class="form-label">
-                        Learning outcomes
-                    </label>
-                    <textarea class="form-control form-control-2-3" id="learning-outcomes" name="learningOutcomes" rows="3">{{ course.learningOutcomes || '' }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="duration" class="form-label">
-                        Duration
-                    </label>
-                    <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{{ course.duration || '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="tags" class="form-label">
-                        Tags
-                    </label>
-                    <input class="form-control form-control-2-3" id="tags" name="tags" type="text" value="{{ (course.tags || []).join(', ') }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="location" class="form-label">
-                        Location
-                    </label>
-                    <input class="form-control form-control-2-3" id="location" name="location" type="text" value="{{ course.location || '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="product-code" class="form-label">
-                        Product code
-                    </label>
-                    <input class="form-control form-control-2-3" id="product-code" name="productCode" type="text" value="{{ course.productCode || '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="price" class="form-label">
-                        Price
-                    </label>
-                    <input class="form-control form-control-2-3" id="price" name="price" type="number" value="{{ course.price || '' }}">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">
-                        Availability
-                    </label>
-                    {{#each (course.availability || []) as availability, i}}
-                    <div class="availability">
-                        <input class="form-control form-control-2-3" name="availability.{{i}}" type="date" value="{{ new Date(availability).toISOString().slice(0,10) }}">
-                    </div>
-                    {{/each}}
-                    <div class="availability">
-                        <input class="form-control form-control-2-3" name="availability.{{(course.availability || []).length}}" type="date" value="">
-                        <button type="submit" class="button" name="add-availability" value="true">Add</button>
-                    </div>
-                </div>
-
                 <div>
-                    {{#if course.id}}
-                    <input type="submit" class="button" value="Update">
-                    {{else}}
-                    <input type="submit" class="button" value="Add">
-                    {{/if}}
+                    <input name="submit" type="submit" class="button" value="Back"> {{#if module.id}}
+                    <input name="submit" type="submit" class="button" value="Update"> {{else}}
+                    <input name="submit" type="submit" class="button" value="Add"> {{/if}}
                 </div>
             </form>
         </div>
     </div>
 </Page>
-
