@@ -12,33 +12,18 @@ services:
 # /ElasticSearch
 
 # Learning Locker
-  learning-locker-api-server:
-    command: ["node", "/opt/learning-locker/api/dist/server"]
-    container_name: learning-locker-api-server
-    depends_on:
-      - mongodb
-      - redis
-    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
-    ports:
-      - 8082:8082
-    working_dir: /opt/learning-locker
-
   learning-locker-api-worker:
     command: ["node", "/opt/learning-locker/worker/dist/server"]
     container_name: learning-locker-api-worker
-    depends_on:
-      - learning-locker-api-server
     image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     working_dir: /opt/learning-locker
 
   learning-locker-ui:
-    command: ["node", "/opt/learning-locker/ui/dist/server"]
+    command: ["/opt/learning-locker/run-ui.sh"]
     container_name: learning-locker-ui
     image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     ports:
       - 3000:3000
-    depends_on:
-      - learning-locker-api-server
     working_dir: /opt/learning-locker
 
   learning-locker-xapi:
@@ -62,11 +47,13 @@ services:
     image: redis@sha256:3446883dfe13ab3db67433aace0e72d8cd669c528e60c617c42d6c697f0fa41f
 
   setup-learning-locker:
+    command: ["/opt/learning-locker/./node_modules/.bin/babel-node", "/opt/learning-locker/mkadmin.js"]
     depends_on:
       - mongodb
     environment:
       - NODE_PATH=/opt/learning-locker
     image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
+    working_dir: /opt/learning-locker
 # /Learning Locker
 
 # CSHR
