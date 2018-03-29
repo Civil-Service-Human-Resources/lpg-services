@@ -59,6 +59,7 @@ app.use(
 			sameSite: 'lax',
 			secure: config.PRODUCTION_ENV,
 		},
+		name: 'lpg-ui',
 		resave: true,
 		saveUninitialized: true,
 		secret: config.SESSION_SECRET,
