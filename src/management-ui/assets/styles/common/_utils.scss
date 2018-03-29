@@ -1,3 +1,21 @@
 /*
 * Mixins, includes.. cool .scss stuff :)
 */
+
+/*
+* Mixins, includes.. cool .scss stuff :)
+*/
+
+//element selector
+@mixin e($element) {
+	&__#{$element} {
+		@content;
+	}
+}
+
+//modifier selector
+@mixin m($modifier) {
+	&--#{$modifier} {
+		@content;
+	}
+}

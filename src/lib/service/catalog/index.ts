@@ -118,7 +118,7 @@ export async function get(id: string) {
 
 export async function listAll(): Promise<api.PageResults> {
 	try {
-		const response = await http.get(`/courses`)
+		const response = await http.get(`/courses?size=999&page=0`)
 		return convert(response.data) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error listing all courses - ${e}`)

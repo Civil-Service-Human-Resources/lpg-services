@@ -20,7 +20,7 @@
                         </li>
                         <li>
                             <span class="booking__key">Start date</span>
-                            <span class="booking__value">{{formatDate(event.date)}}</span>
+                            <span class="booking__value">{{datetime.formatDate(event.date)}}</span>
                         </li>
                         <li>
                             <span class="booking__key">Location</span>
@@ -63,18 +63,16 @@
                 <div class="booking__panel">
                     <h3 class="heading-small">Accessibility details</h3>
                     <div class="booking__tr">
-                        <span class="booking__key"><span class="booking__key--centre">Accessibility needs</span></span>
+                        <span class="booking__key">
+                            <span class="booking__key--centre">Accessibility needs</span>
+                        </span>
                         <ul class="booking__values">
 
-                            {{#if accessibilityReqs && accessibilityReqs.length}}
-                                {{#each accessibilityReqs as requirement }}
-                                    {{#if requirement}}
-                                        <li class="booking__value booking__value--li">{{requirement === 'other' ? 'Other' : i18n('accessibility-requirements')[requirement]}}</li>
-                                    {{else}}
-                                        <li class="booking__value booking__value--li">None</li>
-                                    {{/if}}
-                                {{/each}}
-                            {{/if}}
+                            {{#if accessibilityReqs && accessibilityReqs.length}} {{#each accessibilityReqs as requirement }} {{#if requirement}}
+                            <li class="booking__value booking__value--li">{{requirement === 'other' ? 'Other' : i18n('accessibility-requirements')[requirement]}}</li>
+                            {{else}}
+                            <li class="booking__value booking__value--li">None</li>
+                            {{/if}} {{/each}} {{/if}}
                         </ul>
                     </div>
                     <a href="{{breadcrumbs[2].url}}&tab=accessibility" class="booking__change">Change</a>

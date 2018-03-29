@@ -11,26 +11,28 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 {{#if cancelBookingFailed }}
-                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
-                            Error
-                        </h2>
-                        <p>You must enter agree to the Terms &amp; Conditions to cancel this booking</p>
-                    </div>
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                        Error
+                    </h2>
+                    <p>You must enter agree to the Terms &amp; Conditions to cancel this booking</p>
+                </div>
                 {{/if}}
                 <h3 class="heading-small">{{signedInUser.givenName}}</h3>
                 <ul class="cancel__list push-bottom">
                     <li class="cancel__row">
-                        <span class="cancel__item">Requested Course:</span> <span class="bold-small cancel__item">{{module.title || course.title}}</span>
+                        <span class="cancel__item">Requested Course:</span>
+                        <span class="bold-small cancel__item">{{module.title || course.title}}</span>
                     </li>
                     <li class="cancel__row">
-                        <span class="cancel__item">Requested Date:</span> <span class="bold-small cancel__item">{{formatDate(event.date)}}</span>
+                        <span class="cancel__item">Requested Date:</span>
+                        <span class="bold-small cancel__item">{{datetime.formatDate(event.date)}}</span>
                     </li>
                 </ul>
                 <form method="post" class="push-bottom">
                     <div class="multiple-choice form-group">
-                      <input id="cancel-tc" name="cancel-tc" type="checkbox">
-                      <label for="cancel-tc">I agree to the Terms &amp; Conditions and wish to continue with the cancellation of this Course</label>
+                        <input id="cancel-tc" name="cancel-tc" type="checkbox">
+                        <label for="cancel-tc">I agree to the Terms &amp; Conditions and wish to continue with the cancellation of this Course</label>
                     </div>
                     <div class="form-group">
                         <input class="button" type="submit" value="Cancel Booking">

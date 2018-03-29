@@ -6,7 +6,7 @@
                     <h1 class="heading-xlarge">
                         {{#if record.result}} {{ i18n('courseResult.' + record.result) }} {{else}} {{ i18n('courseResult.complete') }} {{/if}}
                     </h1>
-                    <div>{{ formatDate(record.completionDate) }}</div>
+                    <div>{{ datetime.formatDate(record.completionDate) }}</div>
                     <div>
                         <strong>{{ module.title || course.title }}</strong>
                     </div>

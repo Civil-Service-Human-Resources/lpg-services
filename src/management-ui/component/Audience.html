@@ -1,0 +1,87 @@
+<h2 class="heading heading-medium ">
+    Audiences
+</h2>
+
+<table class="key-value-list key-value-list--auto u-space-b30 table--top">
+    <thead class="visuallyhidden">
+        <tr>
+            <th>Detail</th>
+            <th>Your entered value</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    {{#each audiences as audience, i}}
+    <tbody>
+        <tr>
+            <td class="key-value-list__key key-value-list__key--auto">{{i18n('audience_department_label')}}</td>
+            <td class="key-value-list__value key-value-list__auto--auto lpg-department">
+                <ul>
+                    {{#each audience.departments as department}}
+                    <li class="audience__item">{{ i18n('departments')[department]}}</li> {{/each}}
+                </ul>
+            </td>
+            <td class="key-value-list__item-action">
+                <button name="submit" type="submit" class="button" value="change_{{i}}_department">Change</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('audience_area_label')}}</td>
+            <td class="key-value-list__value key-value-list__value--auto lpg-profession">
+                <ul>
+                    {{#each audience.areasOfWork as aow}}
+                    <li class="audience__item">{{ i18n('areas-of-work')[aow]}}</li> {{/each}}
+                </ul>
+            </td>
+            <td class="key-value-list__item-action">
+                <button name="submit" type="submit" class="button" value="change_{{i}}_profession">Change</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="key-value-list__key key-value-list__key--auto">{{i18n('audience_grade_label')}}</td>
+            <td class="key-value-list__value key-value-value--auto lpg-grade">
+                {{#each audience.grades as grade}}
+                <li class="audience__item">{{ i18n('grades')[grade]}}</li> {{/each}}
+            </td>
+            <td class="key-value-list__item-action">
+                <button name="submit" type="submit" class="button" value="change_{{i}}_grade">Change</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="key-value-list__key key-value-list__key--auto">{{i18n('audience_mandatory_label')}}</td>
+            <td class="key-value-list__value key-value-value--auto lpg-mandatory">
+                <input id="mandatory" type="checkbox" name="mandatory" value="true" checked="{{ audience.mandatory ? 'checked' : '' }}">
+            </td>
+            <td class="key-value-list__item-action">
+                <button name="submit" type="submit" class="button" value="change_{{i}}_mandatory">Change</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="key-value-list__key key-value-list__key--auto">{{i18n('audience_frequency_label')}}</td>
+            <td class="key-value-list__value key-value-value--auto lpg-frequency">
+                {{audience.frequency? i18n('frequency')[audience.frequency] : '' }}</td>
+            <td class="key-value-list__item-action">
+                <button name="submit" type="submit" class="button" value="change_{{i}}_frequency">Change</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="key-value-list__key key-value-list__key--auto">{{i18n('audience_required-by_label')}}</td>
+            <td class="key-value-list__value key-value-value--auto lpg-required-by">
+                {{ audience.requiredBy ? datetime.formatDate(audience.requiredBy) : ''}}</td>
+            <td class="key-value-list__item-action">
+                <button name="submit" type="submit" class="button" value="change_{{i}}_required">Change</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="key-value-list__item-action" colspan="4">
+                {{#if i !== 0 }}
+                <button name="submit" type="submit" class="button audience__button--remove" value="remove_audience_{{i}}">Remove this Audience</button>{{/if}} {{#if i === audiences.length-1 }}
+                <button name="submit" type="submit"
+                    class="button" value="add_audience">Add Audience</button>{{/if}}
+            </td>
+        </tr>
+    </tbody>
+    {{/each}}
+</table>
+<p>
+
+</p>
