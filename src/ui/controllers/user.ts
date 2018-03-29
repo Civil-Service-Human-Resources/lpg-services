@@ -13,7 +13,6 @@ export interface Profile {
 	user: model.User
 	identityServerFailed?: boolean
 	validFields?: boolean
-	passwordConfirmedFailed?: boolean
 }
 
 export interface SignIn {
@@ -97,6 +96,34 @@ function validateForm(req: express.Request) {
 		validFields = false
 	}
 	return validFields
+}
+
+function test(condition: boolean, message: string) {
+	return !condition ? message : null
+}
+
+enum characters {
+	uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+	lowercase = 'abcdefghijklmnopqrstuvwxyz',
+	number = '0123456789',
+	symbol = '!"#$%&()*+,-.:;<=>?@[]^_`{|}~\'',
+}
+
+function classCount(data: string) {
+	const lists = ['uppercase', 'lowercase', 'number', 'symbol']
+	let boolCount = 0
+
+	lists.forEach((list: any) => {
+		const chars: string = characters[list]
+		chars.split('').forEach((item: any) => {
+			if (data.indexOf(item) >= 0) {
+				boolCount++
+				return
+			}
+		})
+	})
+
+	return boolCount > 3
 }
 
 export function viewProfile(ireq: express.Request, res: express.Response) {
@@ -237,6 +264,7 @@ export async function updateProfile(
 		baseURL: config.AUTHENTICATION.serviceUrl,
 		headers: SCIM2_HEADERS,
 	}
+	let messages: string[] | null = []
 
 	switch (inputName) {
 		case 'given-name':
@@ -267,36 +295,70 @@ export async function updateProfile(
 		case 'password':
 			updateProfileObject.password = fieldValue
 
-			if (fieldValue !== req.body.confirmPassword) {
+			let result
+
+			result = test(
+				fieldValue === req.body.confirmPassword,
+				'Password does not match the confirm password.'
+			)
+
+			if (result) {
+				messages.push(result)
+			}
+
+			result = test(
+				fieldValue.length > 7,
+				'Password length should be at least 8 characters.'
+			)
+
+			if (result) {
+				messages.push(result)
+			}
+
+			result = test(
+				classCount(fieldValue),
+				`Password should contain at least one from 3 of the following groups: upper case,
+					 lower case, number, symbol (eg 6 lower case, 1 number, 1 symbol).`
+			)
+
+			if (result) {
+				messages.push(result)
+			}
+			if (messages.length === 0) {
+				messages = null
+			}
+
+			if (messages) {
 				res.send(
 					template.render('profile/edit', req, res, {
 						inputName,
-						passwordConfirmedFailed: true,
+						messages,
 					})
 				)
 			}
 
 			break
 	}
-
-	try {
-		const response = await http.put(
-			`/scim2/Users/${req.user.id}`,
-			updateProfileObject,
-			options
-		)
-		await updateUserObject(req, JSON.parse(response.config.data))
-		req.flash('profile-updated', 'profile-updated')
-		req.session!.save(() => {
-			res.redirect('/profile')
-		})
-	} catch (e) {
-		logger.error('Could not update user profile', e)
-		res.send(
-			template.render('profile/edit', req, res, {
-				identityServerFailed: true,
-				inputName,
+	if (!messages) {
+		try {
+			const response = await http.put(
+				`/scim2/Users/${req.user.id}`,
+				updateProfileObject,
+				options
+			)
+			await updateUserObject(req, JSON.parse(response.config.data))
+			req.flash('profile-updated', 'profile-updated')
+			req.session!.save(() => {
+				res.redirect('/profile')
 			})
-		)
+		} catch (e) {
+			logger.error('Could not update user profile', e)
+			res.send(
+				template.render('profile/edit', req, res, {
+					identityServerFailed: true,
+					inputName,
+				})
+			)
+		}
 	}
 }
