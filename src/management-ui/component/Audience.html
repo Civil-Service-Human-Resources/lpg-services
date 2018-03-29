@@ -49,7 +49,8 @@
         <tr>
             <td class="key-value-list__key key-value-list__key--auto">{{i18n('audience_mandatory_label')}}</td>
             <td class="key-value-list__value key-value-value--auto lpg-mandatory">
-                <input id="mandatory" type="checkbox" name="mandatory" value="true" checked="{{ audience.mandatory ? 'checked' : '' }}">
+                <input id="mandatory" type="checkbox" name="mandatory" value="true" checked="{{ audience.mandatory=== 'true'  ? 'checked' : '' }}"
+                    disabled="disabled">
             </td>
             <td class="key-value-list__item-action">
                 <button name="submit" type="submit" class="button" value="change_{{i}}_mandatory">Change</button>
@@ -75,8 +76,7 @@
             <td class="key-value-list__item-action" colspan="4">
                 {{#if i !== 0 }}
                 <button name="submit" type="submit" class="button audience__button--remove" value="remove_audience_{{i}}">Remove this Audience</button>{{/if}} {{#if i === audiences.length-1 }}
-                <button name="submit" type="submit"
-                    class="button" value="add_audience">Add Audience</button>{{/if}}
+                <button name="submit" type="submit" class="button" value="add_audience">Add Audience</button>{{/if}}
             </td>
         </tr>
     </tbody>
