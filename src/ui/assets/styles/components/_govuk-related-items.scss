@@ -1,30 +1,27 @@
 .govuk-related-items {
+	margin-top: $gutter;
+	border-top: 10px solid $govuk-blue;
+	padding-top: 5px;
 
-    margin-top: $gutter;
-    border-top: 10px solid $govuk-blue;
-    padding-top: 5px;
+	.heading-medium {
+		margin-top: 0.3em;
+		margin-bottom: 0.5em;
+	}
 
-    .heading-medium {
-        margin-top: .3em;
-        margin-bottom: .5em;
-    }
+	li {
+		margin-bottom: 10px;
+		list-style-type: none;
+	}
 
-    li {
-        margin-bottom: 10px;
-        list-style-type: none;
-    }
+	@include m(flush) {
+		margin-top: 8px;
+	}
 
-    &--flush {
-        margin-top: 8px;
-    }
-
-    &--keylined {
-        // For LPG
-        border: 1px solid $grey-2;
-        border-top: 10px solid $civil-service;
-        padding-left: 8px;
-        padding-right: 8px;
-    }
+	@include m(keylined) {
+		// For LPG
+		border: 1px solid $grey-2;
+		border-top: 10px solid $civil-service;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
 }
-
-
