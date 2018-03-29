@@ -19,10 +19,10 @@
                     <a href="/search?q={{searchResults.suggestion}}">{{searchResults.suggestion}}</a>
                 </span>
                 {{/if}} {{#if searchResults && query}}
-                <p class="lede">There were
-                        <strong class="lpg-search-amount">{{searchResults.totalResults ? currentReq.__n('%s result', searchResults.totalResults) : 'no results '}}</strong>
+                <p class="lede">There {{ currentReq.__n('was', searchResults.totalResults)}}
+                        <strong class="lpg-search-amount">{{ currentReq.__n('%s result', searchResults.totalResults) }}</strong>
                     for
-                    <strong class="lpg-search-query">{{ query }}</strong>
+                    <strong class="lpg-search-query"> {{ query }}</strong>
                 </p>
                 {{/if}}
             </div>
