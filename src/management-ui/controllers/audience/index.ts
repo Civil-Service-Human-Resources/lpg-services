@@ -28,7 +28,7 @@ export enum pluralizer {
 	required = 'required-by',
 }
 
-const Singular: string[] = ['frequency', 'manatory', 'required']
+const Singular: string[] = ['frequency', 'mandatory', 'required']
 
 function isDateType(term: string) {
 	return term === 'required-by'
@@ -88,7 +88,7 @@ export function getAudienceNode(ireq: express.Request, res: express.Response) {
 	const audienceNumber = req.params.audienceNumber
 	const label = nodeDetails[node]
 	const nodePlural: any = pluralizer[node]
-	const values =
+	let values =
 		(module!.audiences[audienceNumber] as any)[pascalToCamel(nodePlural)] || []
 	let options = {}
 	let optionType: string = ''
@@ -96,6 +96,9 @@ export function getAudienceNode(ireq: express.Request, res: express.Response) {
 	options = ireq.__(nodePlural)
 	if (isDateType(nodePlural)) {
 		optionType = OptionTypes.Date
+		values =
+			(module!.audiences[audienceNumber] as any)[pascalToCamel(nodePlural)] ||
+			new Date()
 	} else {
 		optionType = isSingular(nodePlural)
 			? OptionTypes.Radio

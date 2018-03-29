@@ -124,7 +124,7 @@ export async function getCourse(ireq: express.Request, res: express.Response) {
 
 	if (!session.squash_session_clear) {
 		// clear sessions unless explicitly told not to
-
+		logger.debug('clearing session')
 		delete session.course
 		delete session.pendingFiles
 		if (course.id === 'add-course') {
@@ -133,6 +133,7 @@ export async function getCourse(ireq: express.Request, res: express.Response) {
 			course = model.Course.create({id})
 		}
 	} else {
+		logger.debug('clearing squash')
 		delete session.squash_session_clear
 	}
 
