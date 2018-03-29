@@ -42,6 +42,7 @@ app.use(
 		cookie: {
 			maxAge: 31536000,
 		},
+		name: 'lpg-management-ui',
 		resave: true,
 		saveUninitialized: true,
 		secret: config.SESSION_SECRET,
