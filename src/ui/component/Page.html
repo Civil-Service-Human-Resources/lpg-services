@@ -15,8 +15,8 @@
 </head>
 <body>
     <Header />
-    <Layout>
-        <slot></slot>
+    <Layout :_csrf>
+        <slot ></slot>
     </Layout>
     <script>document.body.className = document.body.className.replace('', 'js-enabled');</script>
     <script src="/js/govuk_frontend_toolkit/govuk/show-hide-content.js"></script>
