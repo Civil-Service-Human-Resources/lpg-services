@@ -239,7 +239,7 @@
 		"Please select the date you would like to attend this course.",
 	"%s result": {
 		"one": "%s result",
-		"other": "%s results"
+		"other": "[0] no results | %s results"
 	},
 	"was": {
 		"one": "was",
