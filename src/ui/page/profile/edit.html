@@ -7,13 +7,10 @@
                     Change your {{i18n('profile_' + inputName + '_label').toLowerCase()}}
                 </h1>
                 {{#if lede}}
-                    <p class="lede">
-                        {{lede}}
-                    </p>
-                {{/if}}
-
-                {{#if identityServerFailed || passwordConfirmedFailed || validFields === false }}
-
+                <p class="lede">
+                    {{lede}}
+                </p>
+                {{/if}} {{#if identityServerFailed || messages || validFields === false }}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                         Update failed
@@ -21,28 +18,23 @@
                     <p>
                         {{#if identityServerFailed}} Server error. Update failed, please try again or contact the
                         <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>
-                        {{elseif validFields === false}}
-                            Form error. {{i18n('profile_' + inputName + '_label')}} field cannot be empty.
-                        {{elseif passwordConfirmedFailed}}
-                            Password does not match the confirm password.
-                        {{/if}}
+                        {{elseif validFields === false}} Form error. {{i18n('profile_' + inputName + '_label')}} field cannot be empty. {{elseif
+                        messages}} {{#each messages as msg}} {{#if msg}}
+                        <p>{{msg}}</p> {{/if}} {{/each}} {{/if}}
                     </p>
                 </div>
                 {{/if}}
                 <form method="post" class="push-bottom" action="/profile/{{inputName}}">
                     <div class="form-group">
                         {{#if options && options.length }}
-                            <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value />
-                        {{else}}
-                            <label class="form-label" for="{{inputName}}">New {{i18n('profile_' + inputName + '_label').toLowerCase()}}</label>
-                            <input class="form-control" id="{{inputName}}" name="{{inputName}}" value="{{value || ''}}" type="{{inputName === 'password' ? 'password' :'text'}}">
-                        {{/if}}
+                        <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value /> {{else}}
+                        <label class="form-label" for="{{inputName}}">New {{i18n('profile_' + inputName + '_label').toLowerCase()}}</label>
+                        <input class="form-control" id="{{inputName}}" name="{{inputName}}" value="{{value || ''}}" type="{{inputName === 'password' ? 'password' :'text'}}"> {{/if}}
                     </div>
                     <div class="form-group">
                         {{#if inputName === 'password'}}
-                            <label class="form-label" for="confirmPassword">Confirm Password</label>
-                            <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
-                        {{/if}}
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input class="form-control" id="confirmPassword" name="confirmPassword" type="password"> {{/if}}
                     </div>
 
                     <div class="grid-row ">
