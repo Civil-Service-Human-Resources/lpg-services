@@ -2,6 +2,7 @@ import * as azure from 'azure-storage'
 import * as fs from 'fs'
 import * as model from 'lib/model'
 import * as log4js from 'log4js'
+import * as mime from 'mime-types'
 import * as path from 'path'
 import {Readable, Writable} from 'stream'
 import * as streamifier from 'streamifier'
@@ -116,9 +117,13 @@ export async function saveContent(
 			if (response.metadata && response.metadata.path) {
 				if (response.metadata.path.indexOf('/' + tempPage) >= 0) {
 					// found file
-					metadata.launchPage = `${course.id}/${module.id}/${
-						response.metadata.path
-					}`
+					const lastIndex = response.metadata.path.lastIndexOf('/')
+					const startPage: string =
+						lastIndex > 0 // dont want it to just start with /
+							? response.metadata.path.substring(lastIndex + 1)
+							: response.metadata.path
+					metadata.launchPage = `${startPage}`
+					console.log(response)
 				}
 			}
 		})
@@ -130,20 +135,12 @@ export async function saveContent(
 			`No launch page found for course ${course.id} and module ${module.id}`
 		)
 	}
+
 	return metadata
 }
 
 async function getFile(filename: string) {
-	const fpath = path.join(
-		__dirname,
-		'..',
-		'..',
-		'..',
-		'ui',
-		'assets',
-		'js',
-		filename
-	)
+	const fpath = path.join(__dirname, '..', '..', 'ui', 'assets', 'js', filename)
 
 	return new Promise(async (resolve, reject) => {
 		let readStream: fs.ReadStream
@@ -196,6 +193,12 @@ async function upload(uid: string, entry: unzip.Entry) {
 				blob.createWriteStreamToBlockBlob(
 					'lpgdevcontent',
 					storagePath,
+					{
+						contentSettings: {
+							contentType:
+								mime.lookup(entry.path) || 'application/octet-stream',
+						},
+					},
 					(err, blobData) => {
 						if (err) {
 							reject(err)
@@ -211,10 +214,16 @@ async function upload(uid: string, entry: unzip.Entry) {
 				metadata = await parseMetadata(entry)
 			}
 
+			const mimeType = mime.lookup(entry.path) || 'application/octet-stream'
 			entry.pipe(
 				blob.createWriteStreamToBlockBlob(
 					'lpgdevcontent',
 					storagePath,
+					{
+						contentSettings: {
+							contentType: mimeType,
+						},
+					},
 					(err, blobData) => {
 						if (err) {
 							reject(err)
@@ -223,6 +232,7 @@ async function upload(uid: string, entry: unzip.Entry) {
 								blobData.metadata = metadata
 							} else {
 								blobData.metadata = {
+									mimeType: mimeType as string,
 									path: storagePath,
 								}
 							}
