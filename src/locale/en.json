@@ -247,5 +247,15 @@
 	"was": {
 		"one": "was",
 		"other": "were"
-	}
+	},
+	"digital": "digital",
+	"inclusion-and-diversity": "inclusion-and-diversity",
+	"project-delivery": "project-delivery",
+	"commercial": "commercial",
+	"departmentprofile_department_label": "departmentprofile_department_label",
+	"areasOfWork": "areasOfWork",
+	"audience_undefined_label": "audience_undefined_label",
+	"audience_profile_grade_label_label": "audience_profile_grade_label_label",
+	"required-by": "required-by",
+	"communications": "communications"
 }
