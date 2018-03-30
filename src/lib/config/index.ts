@@ -57,7 +57,13 @@ export const BOOKING_CANCELLED_NOTIFY_TEMPLATE_ID =
 export const BOOKING_CONFIRMED_NOTIFY_TEMPLATE_ID =
 	'8efb52bd-9ada-402e-8fab-84a751bf4a71'
 
-export const BOOKING_NOTIFY_RECIPIENTS = ['tav@kainos.com']
+export const BOOKING_NOTIFY_RECIPIENTS = [
+	// 'david.acquet@cabinetoffice.gov.uk',
+	// 'julie.shroff@cabinetoffice.gov.uk',
+	'r.vaughan@kainos.com',
+	'richard@cautionyourblast.com',
+	// 'saadia.chaudry@cslearning.gov.uk',
+]
 
 export const CONTENT_URL =
 	env.CONTENT_URL || 'http://local-cdn.cshr.digital/lpgdevcontent'
@@ -73,6 +79,7 @@ export const COURSE_CATALOGUE = set({
 export const FEEDBACK_RECIPIENTS = [
 	'max@cautionyourblast.com',
 	'richard@cautionyourblast.com',
+	'r.vaughan@kainos.com',
 ]
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
