@@ -37,6 +37,12 @@ interface WSO2Profile {
 
 const logger = log4js.getLogger('controllers/user')
 
+// This super slick regex is by Andrew Clark from:
+// https://stackoverflow.com/questions/6739676/regular-expression-matching-at-least-n-of-m-groups
+//
+// Keep it in sync with the regex on WSO2.
+const validPassword = /(?!([a-zA-Z]*|[a-z\d]*|[^A-Z\d]*|[A-Z\d]*|[^a-z\d]*|[^a-zA-Z]*)$).{8,}/
+
 const SCIM2_HEADERS: Record<string, string> = {
 	Accept: 'application/json',
 }
@@ -266,14 +272,24 @@ export async function updateProfile(
 			break
 		case 'password':
 			updateProfileObject.password = fieldValue
+			let passwordFailed = ''
 
 			if (fieldValue !== req.body.confirmPassword) {
+				passwordFailed = 'Password does not match the confirmation.'
+			} else if (fieldValue.length < 8) {
+				passwordFailed = 'Password length should be at least 8 characters.'
+			} else if (!validPassword.exec(fieldValue)) {
+				passwordFailed = 'Password did not meet requirements'
+			}
+
+			if (passwordFailed) {
 				res.send(
 					template.render('profile/edit', req, res, {
 						inputName,
-						passwordConfirmedFailed: true,
+						passwordFailed,
 					})
 				)
+				return
 			}
 
 			break
