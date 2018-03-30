@@ -11,10 +11,12 @@ describe('profile page functionality', () => {
 	wrappedBeforeAll(async () => {
 		const session = await helper.getSession('update profile')
 		page = await session.newPage()
-		await page.authenticate({
-			password: config.BASIC_AUTH_PASSWORD,
-			username: config.BASIC_AUTH_USERNAME,
-		})
+		if (config.PROFILE !== 'local') {
+			await page.authenticate({
+				password: config.BASIC_AUTH_PASSWORD,
+				username: config.BASIC_AUTH_USERNAME,
+			})
+		}
 		await page.goto(config.URL)
 		await loginToCsl(page, 'test@lpg.dev.cshr.digital', '1337h4x0r')
 		await page.waitFor(selectors.signoutButton)
