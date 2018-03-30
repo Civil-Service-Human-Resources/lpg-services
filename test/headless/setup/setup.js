@@ -7,18 +7,15 @@ const path = require('path')
 const dotenv = require('dotenv')
 dotenv.load()
 
+const config = require('extension/config')
+
 const DIR = path.join(os.tmpdir(), 'jest_puppeteer_global_setup')
 
 module.exports = async function() {
 	console.log(chalk.green('Setup Puppeteer'))
 	const b = await puppeteer.launch({
-		//ignoreHTTPSErrors: true,
-		args: [
-			'--ignore-certificate-errors',
-			'--ignore-certificate-errors-spki-list ',
-			'--disk-cache-size=0',
-		],
-		headless: true,
+		args: ['--disk-cache-size=0'],
+		headless: config.PROFILE !== 'local',
 	})
 	global.browser = b
 	mkdirp.sync(DIR)

@@ -20,10 +20,12 @@ describe('recurring courses functionality', () => {
 	wrappedBeforeAll(async () => {
 		const session = await helper.getSession('recurring courses')
 		page = await session.newPage()
-		await page.authenticate({
-			password: config.BASIC_AUTH_PASSWORD,
-			username: config.BASIC_AUTH_USERNAME,
-		})
+		if (config.PROFILE !== 'local') {
+			await page.authenticate({
+				password: config.BASIC_AUTH_PASSWORD,
+				username: config.BASIC_AUTH_USERNAME,
+			})
+		}
 		await page.goto(config.URL)
 		userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
 		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')

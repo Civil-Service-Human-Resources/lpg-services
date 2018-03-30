@@ -1,7 +1,8 @@
+import * as config from 'extension/config'
 import * as puppeteer from 'puppeteer'
 import * as Page from 'puppeteer/lib/Page'
 
-interface PrivateBrowser {
+export interface PrivateBrowser extends puppeteer.Browser {
 	_connection: any
 	_ignoreHTTPSErrors: any
 	_screenshotTaskQueue: any
@@ -64,6 +65,9 @@ export async function returnElementAttribute(
 }
 
 export async function getSession(name?: string) {
+	if (config.PROFILE === 'local') {
+		return browser
+	}
 	if (name && sessions[name]) {
 		return sessions[name]
 	}

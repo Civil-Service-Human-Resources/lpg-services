@@ -13,10 +13,12 @@ describe('login page functionality', () => {
 	wrappedBeforeAll(async () => {
 		const session = await helper.getSession('login')
 		page = await session.newPage()
-		await page.authenticate({
-			password: config.BASIC_AUTH_PASSWORD,
-			username: config.BASIC_AUTH_USERNAME,
-		})
+		if (config.PROFILE !== 'local') {
+			await page.authenticate({
+				password: config.BASIC_AUTH_PASSWORD,
+				username: config.BASIC_AUTH_USERNAME,
+			})
+		}
 		await page.goto(config.URL)
 	})
 
