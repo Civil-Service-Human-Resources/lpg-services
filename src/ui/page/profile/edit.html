@@ -12,7 +12,7 @@
                     </p>
                 {{/if}}
 
-                {{#if identityServerFailed || passwordConfirmedFailed || validFields === false }}
+                {{#if identityServerFailed || passwordFailed || validFields === false }}
 
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
@@ -23,13 +23,19 @@
                         <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>
                         {{elseif validFields === false}}
                             Form error. {{i18n('profile_' + inputName + '_label')}} field cannot be empty.
-                        {{elseif passwordConfirmedFailed}}
-                            Password does not match the confirm password.
+                        {{elseif passwordFailed}}
+                            {{passwordFailed}}
                         {{/if}}
                     </p>
                 </div>
                 {{/if}}
                 <form method="post" class="push-bottom" action="/profile/{{inputName}}">
+                    {{#if inputName === 'password'}}
+                    <p>
+                        Password should be at least 8 characters long and contain at least one from 3 of the
+                        following groups: upper case, lower case, number, symbol (e.g. 6 lower case, 1 number, 1 symbol).
+                    </p>
+                    {{/if}}
                     <div class="form-group">
                         {{#if options && options.length }}
                             <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value />
