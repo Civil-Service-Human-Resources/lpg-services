@@ -1,4 +1,6 @@
 import * as express from 'express'
+import * as learnerRecord from 'lib/learnerrecord'
+import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as api from 'lib/service/catalog/api'
 import * as template from 'lib/ui/template'
@@ -45,7 +47,20 @@ export async function search(req: express.Request, res: express.Response) {
 	if (req.query.q) {
 		query = striptags(req.query.q)
 		searchResults = await catalog.search(query, page, size)
+
+		// lets pull get course record
+		// rather than polling for each course lets get the learning record for the user
+		const user = req.user as model.User
+		const courseRecords = await learnerRecord.getLearningRecord(user)
+		searchResults.results.forEach(result => {
+			const course = courseRecords.find(record => record.id === result.id)
+			if (course) {
+				//we have a course record add it to the course
+				result.record = course.record
+			}
+		})
 	}
+
 	const end: string = (((new Date() as any) - (start as any)) / 1000).toFixed(2)
 	res.send(
 		template.render('search', req, res, {end, query, searchResults, range})

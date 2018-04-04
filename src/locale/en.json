@@ -251,5 +251,9 @@
 	"was": {
 		"one": "was",
 		"other": "were"
-	}
+	},
+	"digital": "digital",
+	"commercial": "commercial",
+	"communications": "communications",
+	"project-delivery": "project-delivery"
 }
