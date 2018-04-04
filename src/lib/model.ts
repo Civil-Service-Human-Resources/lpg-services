@@ -7,7 +7,6 @@ export class Course {
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
-		course.price = data.price
 		course.shortDescription = data.shortDescription
 		course.title = data.title
 
@@ -22,7 +21,7 @@ export class Course {
 	description: string
 	duration: number
 	learningOutcomes: string
-	price: number
+	price: number | string = this.collatePrice() || 'Free'
 
 	modules: Module[]
 
@@ -162,6 +161,7 @@ export class Course {
 		}
 		return false
 	}
+
 	/** musthave: allmodules must have state or any module has */
 	private checkModuleStates(user: User, states: string, mustHave: boolean) {
 		const arrStates: string[] = states.split(',')
@@ -185,6 +185,18 @@ export class Course {
 			return true
 		}
 		return false
+	}
+
+	private collatePrice() {
+		let price = 0
+		if (this.modules) {
+			this.modules.forEach(module => {
+				if (module.price) {
+					price += module.price
+				}
+			})
+		}
+		return price
 	}
 }
 
