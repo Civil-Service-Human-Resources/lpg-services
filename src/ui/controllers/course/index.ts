@@ -180,6 +180,7 @@ export async function loadCourse(
 	const course = await catalog.get(courseId)
 	if (course) {
 		req.course = course
+		console.log(course)
 		next()
 	} else {
 		res.sendStatus(404)
