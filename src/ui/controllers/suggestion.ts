@@ -223,7 +223,12 @@ function modifyCourses(
 	const modified: model.Course[] = []
 	for (const course of courses) {
 		const matched = learningRecord[course.id]
-		if (!matched || (!matched.hasPreference() && !matched.isComplete(user))) {
+		if (
+			!matched ||
+			(!matched.hasPreference() &&
+				!matched.isComplete(user) &&
+				!matched.isStarted(user))
+		) {
 			modified.push(course)
 		}
 	}
