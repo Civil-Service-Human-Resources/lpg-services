@@ -7,7 +7,7 @@ export const selectors: Record<string, string> = {
 	changeGivenName: 'a[href="/profile/given-name"]',
 	changeGrade: 'a[href="/profile/grade"]',
 	commercialAreaOfWork: '#commercial',
-	continueButton: 'input[value="Continue"]',
+	continueButton: 'button[type="submit"]',
 	currentAreaOfWork: '.lpg-areas-of-work > ul > li',
 	department: '.lpg-department',
 	departmentFieldError: '.lpg-department-error',
