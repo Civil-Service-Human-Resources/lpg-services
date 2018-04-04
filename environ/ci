@@ -45,11 +45,8 @@ stage "Installing ansible if necessary"
 export PATH="`pwd`/pyhome/bin:${PATH}"
 export PYTHONPATH="`pwd`/pyhome/lib/python/site-packages:${PYTHONPATH}"
 export PYTHONPATH="`pwd`/pyhome/lib/python2.7/site-packages:${PYTHONPATH}"
-python -c "import ansible, sys; sys.exit(0) if ansible.__version__ == '2.4.3.0' else sys.exit(1)"
-if [ $? -ne 0 ]; then
-  rm -rf pyhome
-  PYTHONUSERBASE=pyhome pip install --user ansible==2.4.3.0
-fi
+
+PYTHONUSERBASE=pyhome pip install --user ansible==2.4.3.0
 
 stage "Deploying to the dev environment"
 ./environ/deploy dev ${TRAVIS_COMMIT}
