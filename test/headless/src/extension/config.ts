@@ -50,9 +50,9 @@ export const WSO2_ADMIN_USERNAME = env.WSO2_ADMIN_USERNAME
 export const BASIC_AUTH_PASSWORD = env.BASIC_AUTH_PASSWORD
 export const BASIC_AUTH_USERNAME = env.BASIC_AUTH_USERNAME
 
-export const PASSWORD = '1337h4x0r'
+export const PASSWORD = 'changeme!12'
 
-export const TEST_PASSWORD = 'password123'
+export const TEST_PASSWORD = 'changeme!12'
 
 export const URL = set(
 	'http://lpg.local.cshr.digital:3001/sign-in',
