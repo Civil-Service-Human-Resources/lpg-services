@@ -49,7 +49,7 @@ export async function editAreaOfWork(
 	await page.click(selectors.changeAreasOfWork)
 	await page.waitForSelector(selectors.commercialAreaOfWork)
 	await page.click(uncheck)
-	for (const ele of arrMod(checked)) {
+	for (const ele of checked) {
 		await page.click(ele)
 	}
 	await page.click(selectors.continueButton)
