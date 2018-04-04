@@ -1,7 +1,13 @@
 import * as config from 'extension/config'
 import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
-import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
+import {
+	createUser,
+	deleteUser,
+	getUser,
+	updateUser,
+	updateUserGroups,
+} from 'extension/user'
 import {loginToCsl} from 'page/login'
 import {search, searchResults, selectors} from 'page/search'
 import * as puppeteer from 'puppeteer'
@@ -26,6 +32,7 @@ describe('search functionality', () => {
 		}
 		await page.goto(config.URL)
 		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
+		await updateUserGroups(TEST_USERNAME, userId)
 		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
 		await loginToCsl(page, config.USERNAME, config.PASSWORD)
 		await page.waitFor(selectors.signoutButton)
@@ -51,23 +58,22 @@ describe('search functionality', () => {
 
 	it('Should allow the user to search for a valid term and return results', async () => {
 		const searchTerm = 'something'
-		search(searchTerm, page)
+		await search(searchTerm, page)
 		const termSearched = await helper.getText(selectors.termSearched, page)
 		expect(termSearched).toEqual(searchTerm)
 	})
 
 	it('Should display pagination for a search term which returns > 10 results', async () => {
-		search('the', page)
-		const amount = searchResults(page)
-		expect(amount).toBeGreaterThan(10)
+		await search('the', page)
 		expect(
 			await helper.checkElementIsPresent(selectors.searchPagination, page)
 		).toBe(true)
 	})
 
 	it('Should allow the user to page through the search results', async () => {
-		search('the', page)
+		await search('the', page)
 		await page.click(selectors.searchNextPage)
+		await page.waitForSelector(selectors.searchSummary)
 		const pageSummary = await helper.getText(selectors.searchSummary, page)
 		expect(pageSummary).toContain('11')
 	})
@@ -80,12 +86,38 @@ describe('search functionality', () => {
 	})
 
 	it('Should display no search results for an invalid search term', async () => {
-		search('sometermthatdoesntexist', page)
-		const amount = searchResults(page)
-		expect(amount).toEqual('no')
+		await search('sometermthatdoesntexist', page)
+		const amount = await searchResults(page)
+		expect(amount).toContain('no')
 	})
 
-	// it('Should display add to learning plan option for all listed results', async () => {
+	it('Should display add to learning plan option from the results', async () => {
+		await search('the', page)
+		expect(await helper.checkElementIsPresent(selectors.addToPlan, page)).toBe(
+			true
+		)
+	})
 
-	// })
+	it('Should display book button for classroom courses', async () => {
+		await search('qualification', page)
+		const bookUrl = await helper.returnElementAttribute(
+			selectors.bookCourse,
+			'href',
+			page
+		)
+		expect(await helper.checkElementIsPresent(selectors.bookCourse, page)).toBe(
+			true
+		)
+		expect(bookUrl).toContain('book')
+		expect(bookUrl).toContain('choose-date')
+	})
+
+	it('Should add to learning plan from search', async () => {
+		await search('the', page)
+		const courseName = await helper.getText(selectors.courseName, page)
+		await page.click(selectors.addToPlan)
+		await page.waitForSelector(selectors.addedNotification)
+		const addedCourse = await helper.getText(selectors.addedNotification, page)
+		expect(addedCourse).toEqual(courseName)
+	})
 })

@@ -1,7 +1,7 @@
 <div class="discite__item u-clearfix discite__item--{{modifier || ''}}">
     <div class="discite__main discite__main--{{modifier}}">
-        <a href="/courses/{{course.id}}">
-            <h3 class="heading discite__heading">
+        <a class="lpg-course-link" href="/courses/{{course.id}}">
+            <h3 class="heading discite__heading lpg-course-name">
                 {{course.title}}
             </h3>
         </a>
@@ -9,7 +9,8 @@
     <div class="discite__properties discite__properties--{{modifier || ''}} u-clearfix">
         <ul class="discite__property discite__property--{{modifier || ''}}">
             <li class="discite__property-item">
-                <span class="visuallyhidden">Type:</span> {{i18n(course.getType())}}
+                <span class="visuallyhidden">Type:</span>
+                <span class="lpg-course-type">{{i18n(course.getType())}}</span>
             </li>
             <li class="discite__property-item">
                 <span class="visuallyhidden">Duration:</span> {{course.getDuration()}}
@@ -60,11 +61,11 @@
             <span class="visuallyhidden"> this module</span>
         </a>
         {{else}}
-        <a href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book
+        <a class="lpg-book-course" href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book
             <span class="visuallyhidden"> this module</span>
         </a>
         {{/if}} {{#if !course.isRequired(signedInUser)}}
-        <a href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+        <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
         {{/if}} {{/if}} {{else}} {{#if !course.isRequired(signedInUser)}}
         <a href="/courses/{{course.id}}/delete">Remove
             <span class="visuallyhidden"> this module</span>
