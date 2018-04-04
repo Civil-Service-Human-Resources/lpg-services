@@ -33,19 +33,11 @@ export class Course {
 	}
 
 	isComplete(user: User) {
-		if (this.record) {
-			const modules = this.getModules(user)
-			for (const module of modules) {
-				const moduleRecord = this.record.modules.find(
-					mr => mr.moduleId === module.id
-				)
-				if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
-					return false
-				}
-			}
-			return true
-		}
-		return false
+		return this.checkModuleStates(user, 'COMPLETED', true)
+	}
+
+	isStarted(user: User) {
+		return this.checkModuleStates(user, 'IN_PROGRESS', false)
 	}
 
 	hasPreference() {
@@ -167,6 +159,30 @@ export class Course {
 			if (moduleShouldRepeat) {
 				return true
 			}
+		}
+		return false
+	}
+	/** musthave: allmodules must have state or any module has */
+	private checkModuleStates(user: User, states: string, mustHave: boolean) {
+		const arrStates: string[] = states.split(',')
+
+		if (this.record) {
+			const modules = this.getModules(user)
+			for (const module of modules) {
+				const moduleRecord = this.record.modules.find(
+					mr => mr.moduleId === module.id
+				)
+				if (moduleRecord && moduleRecord.state) {
+					if (arrStates.indexOf(moduleRecord.state) < 0 && mustHave) {
+						return false
+					} else if (arrStates.indexOf(moduleRecord.state) >= 0) {
+						return true
+					}
+				} else {
+					return false
+				}
+			}
+			return true
 		}
 		return false
 	}
