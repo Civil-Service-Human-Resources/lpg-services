@@ -32,6 +32,7 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 	}
 	try {
 		await xapi.record(req, course, xapi.Verb.Liked)
+
 		req.flash(
 			'successTitle',
 			req.__('learning_added_to_plan_title', course.title)
