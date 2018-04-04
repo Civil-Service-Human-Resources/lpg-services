@@ -1,0 +1,10 @@
+{
+	"name": "lpg-performance-test",
+	"version": "0.0.1",
+	"scripts": {
+		"smoke": "artillery run src/smoke.yml"
+	},
+	"dependencies": {
+		"artillery": "1.6.0-15"
+	}
+}
