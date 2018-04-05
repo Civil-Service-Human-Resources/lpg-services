@@ -1,8 +1,8 @@
 config:
-  target: 'https://lpg.test.cshr.digital'
+  target: 'https://lpg.demo.cshr.digital'
   phases:
     - duration: 60
-      arrivalRate: 1
+      arrivalRate: 20
   processor: "./artilleryfunc.js"
   defaults:
   payload:
