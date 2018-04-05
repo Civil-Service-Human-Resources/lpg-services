@@ -109,6 +109,9 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 
 		session.save(() => {
 			delete session.squash_session_clear
+			delete session.course
+			delete session.pendingFiles
+
 			res.redirect(`/courses`)
 		})
 	}
