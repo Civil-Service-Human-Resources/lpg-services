@@ -1,12 +1,22 @@
 config:
-  target: 'https://artillery.io'
+  target: 'https://lpg.test.cshr.digital'
   phases:
     - duration: 60
-      arrivalRate: 20
+      arrivalRate: 1
+  processor: "./artilleryfunc.js"
   defaults:
-    headers:
-      x-my-service-auth: '987401838271002188298567'
+  payload:
+    # path is relative to the location of the test script
 scenarios:
   - flow:
     - get:
-        url: "/docs"
+        url: "/sign-in"
+        beforeRequest: "setAuthHeader"
+        afterResponse: "sessionDataKey"
+    - post:
+        url: "https://identity.test.cshr.digital/commonauth"
+        beforeRequest: "setLoginBody"
+    - get:
+        url: "/home"
+        beforeRequest: "setAuthHeader"
+        afterResponse: "sessionDataKey"
