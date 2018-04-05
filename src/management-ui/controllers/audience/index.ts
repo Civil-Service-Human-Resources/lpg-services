@@ -64,17 +64,14 @@ export async function setAudienceNode(
 
 	if (Array.isArray(fieldValue)) {
 		collection = fieldValue
-	} else if (fieldValue) {
-		if (!isSingular(nodePlural)) {
-			collection = [fieldValue]
-		} else {
-			collection = fieldValue
-		}
+	} else if (fieldValue && !isSingular(nodePlural)) {
+		collection = [fieldValue]
+	} else {
+		collection = fieldValue
 	}
 
 	const extend = module!.audiences[audienceNumber] as any
 	extend[nodePlural] = collection
-
 	module!.audiences[audienceNumber] = extend
 
 	await storeModule(ireq, module!)
