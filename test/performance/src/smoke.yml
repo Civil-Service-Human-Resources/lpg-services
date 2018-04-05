@@ -19,4 +19,9 @@ scenarios:
     - get:
         url: "/home"
         beforeRequest: "setAuthHeader"
-        afterResponse: "sessionDataKey"
+    - get:
+        url: "/search?q=commercial"
+        beforeRequest: "setAuthHeader"
+    - get:
+        url: "/suggestions-for-you/add/I1Uf3KPkSTmirf5DN5b08Q?ref=search"
+        beforeRequest: "setAuthHeader"
