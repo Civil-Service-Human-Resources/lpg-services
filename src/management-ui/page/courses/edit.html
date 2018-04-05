@@ -78,25 +78,6 @@
 
                 </div>
 
-                <div class="form-group">
-                    <label for="required-by" class="form-label">
-                        Required by
-                    </label>
-                    <input class="form-control form-control-2-3" id="required-by" name="requiredBy" type="date" value="{{ (course.requiredBy || '').slice(0,10) }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="frequency" class="form-label">
-                        Frequency
-                    </label>
-                    <select class="form-control" id="frequency" name="frequency">
-                        <option value=""></option>
-                        <option value="yearly" selected="{{ course.frequency === 'yearly' ? 'selected' : '' }}">Yearly</option>
-                        <option value="three-yearly" selected="{{ course.frequency === 'three-yearly' ? 'selected' : '' }}">Three yearly</option>
-                        <option value="five-yearly" selected="{{ course.frequency === 'five-yearly' ? 'selected' : '' }}">Five yearly</option>
-                    </select>
-                </div>
-
                 <div>
                     {{#if course.id}}
                     <input type="submit" name="submit" class="button" value="Update"> {{else}}
