@@ -22,7 +22,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_given-name_label')}}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_name_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-given-name">
                                 {{signedInUser.givenName || ''}}
                             </td>
@@ -33,7 +33,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_email-address_label')}}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_email_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-email-address">
                                 {{signedInUser.emailAddress}}
                             </td>
@@ -79,7 +79,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_areas-of-work_label')}}</td>
+                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_area_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
                                 <ul>
                                     {{#if signedInUser.areasOfWork}}
