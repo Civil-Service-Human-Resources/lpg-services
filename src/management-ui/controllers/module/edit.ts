@@ -284,7 +284,7 @@ export function setModuleType(ireq: express.Request, res: express.Response) {
 
 	if (req.body.submit === 'Back') {
 		session.squash_session_clear = true
-		res.redirect(`/courses/${course.id}/edit`)
+		res.redirect(`/courses/${course.id}/`)
 	} else {
 		res.redirect(`/courses/${course.id}/add-module/` + moduleType)
 	}
