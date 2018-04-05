@@ -5,6 +5,7 @@
 		"smoke": "artillery run src/smoke.yml"
 	},
 	"dependencies": {
-		"artillery": "1.6.0-15"
+		"artillery": "1.6.0-15",
+		"dotenv": "4.0.0"
 	}
 }
