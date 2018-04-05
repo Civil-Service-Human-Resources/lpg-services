@@ -2,7 +2,7 @@ const config = require('./config')
 
 module.exports = {
 	setLoginBody: setLoginBody,
-	logReq: logReq,
+	logAfterResponse: logAfterResponse,
 	authLogin: authLogin,
 	setAuthHeader: setAuthHeader,
 	sessionDataKey: sessionDataKey,
@@ -27,9 +27,8 @@ function sessionDataKey(requestParams, response, context, ee, next) {
 	next()
 }
 
-function logReq(requestParams, response, context, ee, next) {
-	console.log(response)
-
+function logAfterResponse(requestParams, response, context, ee, next) {
+	//use this to log things after a response
 	return next()
 }
 
