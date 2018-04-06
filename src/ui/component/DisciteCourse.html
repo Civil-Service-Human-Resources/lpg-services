@@ -21,7 +21,7 @@
             </li>
             {{/if}}
         </ul>
-        {{#if course.record && course.record.state }}
+        {{#if course.record && course.record.state && course.record.state !== 'RETRIEVED' }}
         <div class="discite__status">
             <span class="badge badge--info">{{i18n(course.record.state)}}</span>
             {{#if course.getSelectedDate()}}
