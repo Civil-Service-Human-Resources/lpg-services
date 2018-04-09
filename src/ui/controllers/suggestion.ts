@@ -36,9 +36,9 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 		const user = req.user as model.User
 		const record = await learnerRecord.getRecord(user, course) // check record for archived state
 		// need someway to indicate 'unarchived' state retrieved seems to be closest verb
-		if ((record as learnerRecord.CourseRecord).state === 'ARCHIVED')
-			console.log('seting unarchived')
-		await xapi.record(req, course, xapi.Verb.Retrieved)
+		if ((record as learnerRecord.CourseRecord).state === 'ARCHIVED') {
+			await xapi.record(req, course, xapi.Verb.Retrieved)
+		}
 
 		req.flash(
 			'successTitle',
