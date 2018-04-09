@@ -52,11 +52,11 @@
         <a href="/courses/{{course.id}}/{{course.modules[0].id}}">{{ i18n('action_NOT_STARTED') }}
             <span class="visuallyhidden"> this module</span>
         </a>
-        {{/if}} {{/if}} {{#if !course.isRequired(signedInUser)}}
-        <a href="/courses/{{course.id}}/delete">Remove
-            <span class="visuallyhidden"> this module</span>
-        </a>
-        {{/if}} {{/if}} {{else}} {{#if course.getType() !== 'face-to-face'}}
+        {{/if}} {{/if}} {{#if !course.isRequired(signedInUser)}} {{#if course.record.state != 'ARCHIVED'}}
+        <a href="/courses/{{course.id}}/delete">Remove from learning plan</a>
+        {{else }}
+        <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+        {{/if}} {{/if}} {{/if}} {{else}} {{#if course.getType() !== 'face-to-face'}}
         <a href="/courses/{{course.id}}/{{course.modules[0].id}}">Start
             <span class="visuallyhidden"> this module</span>
         </a>
