@@ -45,10 +45,9 @@ const env: Record<string, string> = new Proxy({}, {get: getEnv})
 
 export const AUTHENTICATION = set({
 	serviceAdmin: 'admin@cslearning.gov.uk',
-	servicePassword: 'changeme!12',
+	servicePassword: 'admin',
 	serviceUrl:
-		env.AUTHENTICATION_SERVICE_URL ||
-		'https://local-identity.cshr.digital',
+		env.AUTHENTICATION_SERVICE_URL || 'https://local-identity.cshr.digital',
 })
 
 export const BOOKING_CANCELLED_NOTIFY_TEMPLATE_ID =
@@ -117,7 +116,7 @@ export const LOGGING = set(
 				out: {type: 'console'},
 			},
 			categories: {
-				default: {appenders: ['out'], level: 'debug'},
+				default: {appenders: ['out'], level: 'all'},
 			},
 		},
 	}

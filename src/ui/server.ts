@@ -52,6 +52,14 @@ const corsOptions = {
 app.options('*', cors(corsOptions))
 
 app.use(
+	log4js.connectLogger(logger, {
+		format: ':method :url',
+		level: 'trace',
+		nolog: '\\.js|\\.css|\\.gif|\\.jpg|\\.png$',
+	})
+)
+
+app.use(
 	session({
 		cookie: {
 			domain: '.cshr.digital',

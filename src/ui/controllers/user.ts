@@ -54,6 +54,38 @@ const http = axios.create({
 	}),
 })
 
+// Add a request interceptor
+http.interceptors.request.use(
+	config => {
+		// Do something before request is sent
+		logger.debug(
+			`Outgoing ${config.method} request`,
+			`to: ${config.baseURL}${config.url}`,
+			`data:${JSON.stringify(config.data)}`
+		)
+		return config
+	},
+	error => {
+		// Do something with request error
+		logger.error(`Error with request:`, error)
+		return Promise.reject(error)
+	}
+)
+
+// Add a response interceptor
+http.interceptors.response.use(
+	response => {
+		logger.info('response data:', `status: ${response.status}`, response)
+		return response
+	},
+	error => {
+		// Do something with response error
+		logger.error('Could not update user profile:', error)
+
+		return Promise.reject(error)
+	}
+)
+
 function renderProfile(
 	req: express.Request,
 	res: express.Response,
@@ -307,7 +339,6 @@ export async function updateProfile(
 			res.redirect('/profile')
 		})
 	} catch (e) {
-		logger.error('Could not update user profile', e)
 		res.send(
 			template.render('profile/edit', req, res, {
 				identityServerFailed: true,
