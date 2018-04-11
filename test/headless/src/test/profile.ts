@@ -36,7 +36,7 @@ describe('profile page functionality', () => {
 		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
 		await updateUserGroups(TEST_USERNAME, userId)
 		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
-		await page.waitFor(selectors.signoutButton, {timeout: 10000})
+		await page.waitFor(selectors.signoutButton)
 		await page.goto(config.BASE_URL + '/profile')
 	})
 

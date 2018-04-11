@@ -1,7 +1,13 @@
 import * as config from 'extension/config'
 import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
-import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
+import {
+	createUser,
+	deleteUser,
+	getUser,
+	updateUser,
+	updateUserGroups,
+} from 'extension/user'
 import * as xapi from 'extension/xapi'
 import {selectors} from 'page/home'
 import {loginToCsl} from 'page/login'
@@ -29,6 +35,7 @@ describe('recurring courses functionality', () => {
 		await page.goto(config.URL)
 		userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
 		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
+		await updateUserGroups(TEST_USERNAME, userId)
 		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
 		await page.waitFor(selectors.signoutButton)
 	})

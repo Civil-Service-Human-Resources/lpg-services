@@ -13,7 +13,8 @@
                 <span class="lpg-course-type">{{i18n(course.getType())}}</span>
             </li>
             <li class="discite__property-item">
-                <span class="visuallyhidden">Duration:</span> {{course.getDuration()}}
+                <span class="visuallyhidden">Duration:</span>
+                <span class="lpg-course-duration">{{course.getDuration()}}</span>
             </li>
             {{#if !course.isRequired(signedInUser)}}
             <li class="discite__property-item">

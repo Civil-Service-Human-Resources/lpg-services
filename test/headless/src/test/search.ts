@@ -112,7 +112,7 @@ describe('search functionality', () => {
 		expect(bookUrl).toContain('choose-date')
 	})
 
-	it('Should add to learning plan from search', async () => {
+	it('Should add to learning plan from search and display notification ', async () => {
 		await search('the', page)
 		const courseName = await helper.getText(selectors.courseName, page)
 		await page.click(selectors.addToPlan)

@@ -1,7 +1,13 @@
 import * as config from 'extension/config'
 import * as helper from 'extension/helper'
 import {wrappedAfterAll, wrappedBeforeAll} from 'extension/testsetup'
-import {createUser, deleteUser, getUser, updateUser} from 'extension/user'
+import {
+	createUser,
+	deleteUser,
+	getUser,
+	updateUser,
+	updateUserGroups,
+} from 'extension/user'
 import {completeFeedback, selectors} from 'page/globals'
 import {loginToCsl} from 'page/login'
 import * as puppeteer from 'puppeteer'
@@ -27,7 +33,9 @@ describe('feedback form functionality', () => {
 		await page.goto(config.URL)
 		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
 		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
-		await loginToCsl(page, config.USERNAME, config.PASSWORD)
+		await updateUserGroups(TEST_USERNAME, userId)
+		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
+		await page.waitFor(selectors.signoutButton)
 	})
 
 	wrappedAfterAll(async () => {
