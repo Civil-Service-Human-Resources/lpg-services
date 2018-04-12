@@ -1,10 +1,10 @@
-import axios from 'axios'
+import axios, {AxiosInstance} from 'axios'
 import * as config from 'lib/config'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
 import * as query from 'querystring'
 
-const http = axios.create({
+export const http: AxiosInstance = axios.create({
 	auth: config.COURSE_CATALOGUE.auth,
 	baseURL: config.COURSE_CATALOGUE.url,
 	headers: {

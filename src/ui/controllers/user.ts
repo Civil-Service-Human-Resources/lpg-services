@@ -1,4 +1,5 @@
 import axios from 'axios'
+import * as axiosLogger from 'lib/axiosLogger'
 import * as express from 'express'
 import * as https from 'https'
 import * as config from 'lib/config'
@@ -53,38 +54,8 @@ const http = axios.create({
 		rejectUnauthorized: false,
 	}),
 })
-
-// Add a request interceptor
-http.interceptors.request.use(
-	config => {
-		// Do something before request is sent
-		logger.debug(
-			`Outgoing ${config.method} request`,
-			`to: ${config.baseURL}${config.url}`,
-			`data:${JSON.stringify(config.data)}`
-		)
-		return config
-	},
-	error => {
-		// Do something with request error
-		logger.error(`Error with request:`, error)
-		return Promise.reject(error)
-	}
-)
-
-// Add a response interceptor
-http.interceptors.response.use(
-	response => {
-		logger.info('response data:', `status: ${response.status}`, response)
-		return response
-	},
-	error => {
-		// Do something with response error
-		logger.error('Could not update user profile:', error)
-
-		return Promise.reject(error)
-	}
-)
+axiosLogger.axiosRequestLogger(http, logger)
+axiosLogger.axiosResponseLogger(http, logger)
 
 function renderProfile(
 	req: express.Request,

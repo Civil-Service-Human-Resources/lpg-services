@@ -1,3 +1,5 @@
+import * as axiosLogger from 'lib/axiosLogger'
+
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -8,6 +10,9 @@ import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/suggestion')
+
+axiosLogger.axiosRequestLogger(catalog.http, logger)
+axiosLogger.axiosResponseLogger(catalog.http, logger)
 
 export function hashArray(courses: model.Course[], key: string) {
 	const hash: Record<string, model.Course> = {}
