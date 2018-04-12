@@ -3,8 +3,12 @@ import * as config from 'lib/config'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
 import * as query from 'querystring'
+import * as axiosLogger from 'lib/axiosLogger'
+import * as log4js from 'log4js'
 
-export const http: AxiosInstance = axios.create({
+const logger = log4js.getLogger('catalog')
+
+const http: AxiosInstance = axios.create({
 	auth: config.COURSE_CATALOGUE.auth,
 	baseURL: config.COURSE_CATALOGUE.url,
 	headers: {
@@ -12,6 +16,9 @@ export const http: AxiosInstance = axios.create({
 	},
 	timeout: 5000,
 })
+
+axiosLogger.axiosRequestLogger(http, logger)
+axiosLogger.axiosResponseLogger(http, logger)
 
 export async function add(course: model.Course) {
 	try {
