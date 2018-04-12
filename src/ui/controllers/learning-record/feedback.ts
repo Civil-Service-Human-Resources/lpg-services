@@ -1,5 +1,3 @@
-import * as axiosLogger from 'lib/axiosLogger'
-
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as catalog from 'lib/service/catalog'
@@ -8,8 +6,6 @@ import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/learning-record/feedback')
-axiosLogger.axiosRequestLogger(catalog.http, logger)
-axiosLogger.axiosResponseLogger(catalog.http, logger)
 
 export async function displayFeedback(
 	ireq: express.Request,
