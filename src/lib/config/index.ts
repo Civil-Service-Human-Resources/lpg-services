@@ -45,7 +45,7 @@ const env: Record<string, string> = new Proxy({}, {get: getEnv})
 
 export const AUTHENTICATION = set({
 	serviceAdmin: 'admin@cslearning.gov.uk',
-	servicePassword: 'admin',
+	servicePassword: 'changeme!12',
 	serviceUrl:
 		env.AUTHENTICATION_SERVICE_URL || 'https://local-identity.cshr.digital',
 })
