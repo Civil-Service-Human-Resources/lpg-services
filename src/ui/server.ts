@@ -55,7 +55,7 @@ app.use(
 	log4js.connectLogger(logger, {
 		format: ':method :url',
 		level: 'trace',
-		nolog: '\\.js|\\.css|\\.gif|\\.jpg|\\.png$',
+		nolog: '\\.js|\\.css|\\.gif|\\.jpg|\\.png|\\.ico$',
 	})
 )
 

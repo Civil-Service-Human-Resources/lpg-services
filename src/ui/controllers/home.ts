@@ -1,3 +1,5 @@
+import * as axiosLogger from 'lib/axiosLogger'
+
 import * as express from 'express'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
@@ -8,8 +10,11 @@ import * as suggestionController from './suggestion'
 
 const logger = log4js.getLogger('controllers/home')
 
+axiosLogger.axiosRequestLogger(catalog.http, logger)
+axiosLogger.axiosResponseLogger(catalog.http, logger)
+
 export async function home(req: express.Request, res: express.Response) {
-	logger.debug(`Getting  learning record for ${req.user.id}`)
+	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
 		const learningRecord = await learnerRecord.getLearningRecord(user)

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import * as axiosLogger from 'lib/axiosLogger'
 import * as log4js from 'log4js'
 import * as config from './config'
 import * as model from './model'
@@ -19,6 +20,9 @@ const http = axios.create({
 	},
 	timeout: 5000,
 })
+
+axiosLogger.axiosRequestLogger(http, logger)
+axiosLogger.axiosResponseLogger(http, logger)
 
 export async function getRecord(
 	user: model.User,
