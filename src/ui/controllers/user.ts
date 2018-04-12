@@ -1,13 +1,15 @@
 import axios from 'axios'
-import * as axiosLogger from 'lib/axiosLogger'
 import * as express from 'express'
 import * as https from 'https'
-import * as config from 'lib/config'
-import * as passport from 'lib/config/passport'
+import * as log4js from 'log4js'
+
+import * as axiosLogger from 'lib/axiosLogger'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
-import * as log4js from 'log4js'
+
+import * as config from 'lib/config'
+import * as passport from 'lib/config/passport'
 
 export interface Profile {
 	updateSuccessful: boolean
