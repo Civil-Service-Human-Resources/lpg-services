@@ -34,7 +34,7 @@ describe('home page functionality', () => {
 		const userId = await createUser(TEST_USERNAME, config.TEST_PASSWORD)
 		await updateUser(userId, TEST_USERNAME, 'Test', 'co', 'commercial', 'G6')
 		await updateUserGroups(TEST_USERNAME, userId)
-		await loginToCsl(page, TEST_USERNAME, config.TEST_PASSWORD)
+		await loginToCsl(page, config.USERNAME, config.TEST_PASSWORD)
 		await page.waitFor(selectors.signoutButton)
 	})
 
