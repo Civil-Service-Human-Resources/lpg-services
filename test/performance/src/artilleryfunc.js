@@ -1,19 +1,22 @@
-const config = require('./config')
+import {
+	USERNAME,
+	PASSWORD,
+	BASIC_AUTH_USERNAME,
+	BASIC_AUTH_PASSWORD,
+} from './config'
 
-module.exports = {
-	setLoginBody: setLoginBody,
-	logAfterResponse: logAfterResponse,
-	authLogin: authLogin,
-	setAuthHeader: setAuthHeader,
-	sessionDataKey: sessionDataKey,
-}
+export const setLoginBody = setLoginBody
+export const logAfterResponse = logAfterResponse
+export const authLogin = authLogin
+export const setAuthHeader = setAuthHeader
+export const sessionDataKey = sessionDataKey
 
 function setLoginBody(requestParams, context, ee, next) {
 	requestParams.headers['Authorization'] = authLogin()
 	requestParams.headers['Content-Type'] = 'application/json'
 	requestParams.json = {
-		emailAddress: config.USERNAME,
-		password: config.PASSWORD,
+		emailAddress: USERNAME,
+		password: PASSWORD,
 		sessionDateKey: context.vars.sessionDataKey,
 	}
 
@@ -34,7 +37,7 @@ function logAfterResponse(requestParams, response, context, ee, next) {
 
 function authLogin() {
 	let auth = new Buffer(
-		config.BASIC_AUTH_USERNAME + ':' + config.BASIC_AUTH_PASSWORD
+		BASIC_AUTH_USERNAME + ':' + BASIC_AUTH_PASSWORD
 	).toString('base64')
 
 	return 'Basic ' + auth

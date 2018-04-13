@@ -10,11 +10,12 @@ describe('login page functionality', () => {
 
 	wrappedBeforeAll(async () => {
 		page = await browser.newPage()
-		// await page.authenticate({
-		// 	password: config.BASIC_AUTH_PASSWORD,
-		// 	username: config.BASIC_AUTH_USERNAME,
-		// })
+		await page.authenticate({
+			password: config.BASIC_AUTH_PASSWORD,
+			username: config.BASIC_AUTH_USERNAME,
+		})
 		await page.goto(config.URL)
+		console.log('NAVIGATING>>>>>>>>>>>>>>>...')
 	})
 
 	wrappedAfterAll(async () => {
