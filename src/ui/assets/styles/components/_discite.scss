@@ -74,8 +74,15 @@ $module: 'discite';
 
 	@include e(property) {
 		// ul.discite__property the actual data about the discite thing
-		width: 50%;
+		width: 100%;
 		float: left;
+
+		.badge {
+			//this should not be here, .badge is being imported too late in main.scss
+			@include m(discite) {
+				margin-bottom: 0;
+			}
+		}
 
 		@include m(search) {
 			@include media(desktop) {
@@ -101,10 +108,11 @@ $module: 'discite';
 		padding-top: 6px;
 
 		@include media(desktop) {
-			position: absolute;
+			width: 100%;
 			display: block;
 			float: none;
 			padding-top: 16px;
+			padding-bottom: 0;
 			top: 0;
 			right: 0;
 		}
