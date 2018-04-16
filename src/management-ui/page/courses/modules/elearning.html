@@ -1,10 +1,9 @@
 <Page title="Edit elearning">
     <div class="grid-row">
-        <div class="column">
+        <div class="column-two-thirds">
             <h1 class="heading-large">
                 {{#if module.id}}Edit{{else}}Add{{/if}} Elearning course
             </h1>
-
             <form method="post" name="editCourseForm" class="push-bottom module--form" enctype="multipart/form-data">
                 <input name="type" type="hidden" value="elearning">
                 <div class="form-group">
@@ -12,6 +11,13 @@
                         Title
                     </label>
                     <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ module.title || '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">
+                        Description
+                    </label>
+                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ module.description || '' }}</textarea>
                 </div>
 
                 <div class="form-group">

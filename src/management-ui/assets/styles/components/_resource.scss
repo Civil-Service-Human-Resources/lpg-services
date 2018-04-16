@@ -115,6 +115,20 @@
 			width: 230px;
 		}
 	}
+
+	@include e(description) {
+		@include m(module) {
+			float: left;
+			width: 100%;
+			display: block;
+		}
+	}
+
+	@include e(module) {
+		border-bottom: 1px solid $grey-2;
+		padding: 15px 0;
+		float: left;
+	}
 }
 
 .resources {
