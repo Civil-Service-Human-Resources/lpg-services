@@ -209,6 +209,7 @@ export class Module {
 		module.location = data.location
 		module.startPage = data.startPage
 		module.title = data.title
+		module.description = data.description
 
 		module.audiences = (data.audiences || []).map(Audience.create)
 		module.events = (data.events || []).map(Event.create)
@@ -220,6 +221,8 @@ export class Module {
 	type: string
 
 	title: string
+	description: string
+
 	duration: number
 
 	location?: string

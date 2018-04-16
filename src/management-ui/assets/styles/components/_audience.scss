@@ -13,3 +13,9 @@
 .audience__item::after {
 	content: ', ';
 }
+
+.audience {
+	@include e(button) {
+		float: right;
+	}
+}
