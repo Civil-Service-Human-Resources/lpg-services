@@ -62,9 +62,7 @@
                         {{/if}}
                     {{/if}}
                     {{#if !course.isRequired(signedInUser)}}
-                        {{#if course.record.state != 'ARCHIVED'}}
-                            <a href="/courses/{{course.id}}/delete">Remove from learning plan</a>
-                        {{else }}
+                        {{#if course.record.state === 'ARCHIVED'}}
                             <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
                         {{/if}}
                     {{/if}}
