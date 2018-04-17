@@ -153,4 +153,8 @@ $module: 'discite';
 			float: none;
 		}
 	}
+
+	@include e(description) {
+		margin-bottom: 0;
+	}
 }
