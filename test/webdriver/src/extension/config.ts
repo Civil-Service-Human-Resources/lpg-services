@@ -54,6 +54,9 @@ export const PASSWORD = 'changeme!12'
 
 export const TEST_PASSWORD = 'changeme!12'
 
+export const SAUCE_PASSWORD = env.SAUCE_PASSWORD
+export const SAUCE_USERNAME = env.SAUCE_USERNAME
+
 export const URL = set(
 	'http://lpg.local.cshr.digital:3001/sign-in',
 	`https://lpg.${PROFILE}.cshr.digital/sign-in`

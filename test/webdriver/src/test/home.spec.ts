@@ -8,6 +8,8 @@ describe('Login page funtionality', () => {
 	it('Login to the LPG site', () => {
 		loginPage.login(config.USERNAME, config.TEST_PASSWORD)
 		browser.waitForVisible(selectors.signoutButton)
-		//expect()
+		//const signedIn = browser.isExisting(selectors.signoutButton)
+		// expect(signedIn).toBe(true)
+		//expect(browser.isExisting(selectors.signoutButton)).toBe(true)
 	})
 })
