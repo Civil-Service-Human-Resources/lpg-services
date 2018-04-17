@@ -43,7 +43,7 @@
                     </label>
                     <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{{ course.duration || '' }}">
                 </div>
-
+                
                 <div class="form-group">
                     <label class="form-label heading-small">
                         Modules
@@ -53,21 +53,21 @@
                             {{#each (course.modules || []) as module, i}}
 
                             <li class="resource__module">
+                                <div class="module__top-info">
+                                    {{#if course.id != 'add-course' && module.id }}
+                                        <a class="resource__info resource__modules__title" href="/courses/{{course.id}}/{{module.id}}">
+                                            <strong>{{{module.title}}}</strong>
+                                        </a>
+                                    {{else}}
+                                        <strong class="resource__info resource__modules__title">{{{module.title}}}</strong>
+                                    {{/if}}
 
-                                {{#if course.id != 'add-course' && module.id }}
-                                    <a class="resource__info resource__modules__title" href="/courses/{{course.id}}/{{module.id}}">
-                                        <strong>{{{module.title}}}</strong>
-                                    </a>
-                                {{else}}
-                                    <strong class="resource__info resource__modules__title">{{{module.title}}}</strong>
-                                {{/if}}
-
-                                <span class="resource__info resource__modules__info">{{i18n(module.type || '')}}</span>
-                                <button type="submit" class="button" name="submit" value="edit_module/{{module.id}}">Edit</button>
-                                <button type="submit" class="button" name="submit" value="remove_module/{{module.id}}">Remove</button>
-
+                                    <span class="resource__info resource__modules__info">{{i18n(module.type || '')}}</span>
+                                    <button type="submit" class="button" name="submit" value="edit_module/{{module.id}}">Edit</button>
+                                    <button type="submit" class="button" name="submit" value="remove_module/{{module.id}}">Remove</button>
+                                </div>
                                     {{#if module.description }}
-                                        <div class="resource__description--module"><h3 class="heading-xsmall">Description</h3>{{{module.description}}}</div>
+                                        <div class="resource__description--module"><h3 class="bold-small">Description</h3>{{{module.description}}}</div>
                                     {{/if}}
                             </li>
                             {{/each}}
