@@ -168,6 +168,20 @@ export class Course {
 
 		if (this.record) {
 			const modules = this.getModules(user)
+
+			if (states === 'COMPLETED') {
+				const completedModulesCount = modules.filter(module => {
+					const moduleRecord = this.record!.modules.find(
+						mr => mr.moduleId === module.id
+					)
+					if (moduleRecord && moduleRecord.state === 'COMPLETED') {
+						return moduleRecord
+					}
+				}).length
+
+				return completedModulesCount === modules.length
+			}
+
 			for (const module of modules) {
 				const moduleRecord = this.record.modules.find(
 					mr => mr.moduleId === module.id
