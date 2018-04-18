@@ -87,12 +87,15 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 					//TODO if replacing elearning files remove old files!
 
 					// Fire and forget to avoid timeout issues in browser
-					filestore.saveContent(
-						saved!,
-						saved!.modules[moduleIndex],
-						file.name,
-						true
-					)
+					try {
+						filestore.saveContent(
+							saved!,
+							saved!.modules[moduleIndex],
+							file.name
+						)
+					} catch (e) {
+						logger.error(`Error uploading file ${file.name}`, e)
+					}
 				}
 			}
 		}
