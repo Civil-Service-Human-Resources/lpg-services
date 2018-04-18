@@ -1,11 +1,12 @@
 import * as azure from 'azure-storage'
 import * as fs from 'fs'
+import * as config from 'lib/config'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as log4js from 'log4js'
 import * as mime from 'mime-types'
 import * as path from 'path'
-import {Readable, Writable} from 'stream'
+import {Writable} from 'stream'
 import * as streamifier from 'streamifier'
 import * as unzip from 'unzip'
 import * as xml2js from 'xml2js'
@@ -13,20 +14,11 @@ import * as xml2js from 'xml2js'
 const blob = azure.createBlobService()
 const logger = log4js.getLogger('lib/management-ui/fileStore')
 
-const filesToSubstitute: Record<string, {data: string | null; set: boolean}> = {
-	'close_methods.js': {
-		data: null,
-		set: false,
-	},
-	'player_overrides.js': {
-		data: null,
-		set: false,
-	},
-	'tincan_wrapper.js': {
-		data: null,
-		set: false,
-	},
-}
+const filesToSubstitute = [
+	'close_methods.js',
+	'portal_overrides.js',
+	'tincan_wrapper.js',
+]
 
 async function parseMetadata(entry: unzip.Entry) {
 	return new Promise((resolve, reject) => {
@@ -129,98 +121,63 @@ export async function saveContent(
 	logger.info(`${fileName} removed`)
 }
 
-async function getFile(filename: string) {
-	const fpath = path.join(__dirname, '..', '..', 'ui', 'assets', 'js', filename)
+async function upload(uid: string, entry: unzip.Entry) {
+	let metadata: any = null
+	const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
+	const storagePath = `${uid}/${entry.path}`
+	logger.debug(`uploading to: ${storagePath}`)
 
-	return new Promise(async (resolve, reject) => {
-		let readStream: fs.ReadStream
-		let data = ''
-		if (filesToSubstitute[filename].set) {
-			resolve(filesToSubstitute[filename].data as string)
-		} else {
-			try {
-				readStream = fs.createReadStream(fpath)
-				readStream
-					.on('data', chunk => {
-						data += chunk
-					})
-					.on('end', () => {
-						filesToSubstitute[filename].set = true
-						filesToSubstitute[filename].data = data
-						resolve(data)
-					})
-			} catch (e) {
-				reject(e)
-			}
+	if (filesToSubstitute.indexOf(filename) > -1) {
+		entry.autodrain()
+		const fileData = getFile(filename)
+		await doUpload(storagePath, fileData)
+	} else {
+		if (entry.path.endsWith('imsmanifest.xml')) {
+			metadata = await parseMetadata(entry)
 		}
-	})
-		.then(data => {
-			return new Readable({
-				read(size) {
-					this.push(filesToSubstitute[filename].data)
-					this.push(null)
-				},
-			})
-		})
-		.catch(data => {
-			throw new Error('Error reading data')
-		})
+		await doUpload(storagePath, entry)
+	}
+	return metadata
 }
 
-async function upload(uid: string, entry: unzip.Entry) {
-	return new Promise<any>(async (resolve, reject) => {
-		let metadata = {}
+function getFile(filename: string) {
+	const filePath = path.join(
+		__dirname,
+		'..',
+		'..',
+		'ui',
+		'assets',
+		'js',
+		filename
+	)
+	return fs.createReadStream(filePath)
+}
 
-		const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
-		const storagePath = `${uid}/${entry.path}`
-		logger.debug(`uploading to: ${storagePath}`)
-		if (Object.keys(filesToSubstitute).indexOf(filename) >= 0) {
-			const fileData = (await getFile(filename)) as fs.ReadStream
-			fileData.pipe(
+async function doUpload(storagePath: string, entry: any) {
+	await new Promise((resolve, reject) => {
+		entry
+			.pipe(
 				blob.createWriteStreamToBlockBlob(
-					'lpgdevcontent',
+					config.CONTENT_CONTAINER,
 					storagePath,
 					{
 						contentSettings: {
 							contentType:
-								mime.lookup(entry.path) || 'application/octet-stream',
+								mime.lookup(storagePath) || 'application/octet-stream',
 						},
 					},
-					err => {
+					(err, blobData) => {
 						if (err) {
 							reject(err)
 						} else {
-							resolve(null)
+							resolve(blobData)
 						}
 					}
 				)
 			)
-		} else {
-			// buisness as usual
-			if (entry.path.endsWith('imsmanifest.xml')) {
-				metadata = await parseMetadata(entry)
-			}
-
-			const mimeType = mime.lookup(entry.path) || 'application/octet-stream'
-			entry.pipe(
-				blob.createWriteStreamToBlockBlob(
-					'lpgdevcontent',
-					storagePath,
-					{
-						contentSettings: {
-							contentType: mimeType,
-						},
-					},
-					err => {
-						if (err) {
-							reject(err)
-						} else {
-							resolve(metadata)
-						}
-					}
-				)
-			)
-		}
+			.on('error', (e: Error) => {
+				reject(e)
+			})
 	})
 }
 

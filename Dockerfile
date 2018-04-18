@@ -29,6 +29,7 @@ COPY src src
 
 # Runtime environment variables
 ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
+  CONTENT_CONTAINER=lpgdevcontent \
   CONTENT_URL=http://local-cdn.cshr.digital/lpgdevcontent \
   LEARNER_RECORD_URL=http://localhost:9000 \
   LEARNER_RECORD_USER=user \
