@@ -1,8 +1,8 @@
 config:
-  target: 'https://lpg.demo.cshr.digital'
+  target: 'https://lpg.cshr.digital'
   phases:
     - duration: 60
-      arrivalRate: 20
+      arrivalRate: 1
   processor: "./artilleryfunc.js"
   defaults:
   payload:
@@ -11,17 +11,13 @@ scenarios:
   - flow:
     - get:
         url: "/sign-in"
-        beforeRequest: "setAuthHeader"
         afterResponse: "sessionDataKey"
     - post:
-        url: "https://identity.test.cshr.digital/commonauth"
+        url: "https://identity.cshr.digital/commonauth"
         beforeRequest: "setLoginBody"
     - get:
         url: "/home"
-        beforeRequest: "setAuthHeader"
     - get:
         url: "/search?q=commercial"
-        beforeRequest: "setAuthHeader"
     - get:
         url: "/suggestions-for-you/add/I1Uf3KPkSTmirf5DN5b08Q?ref=search"
-        beforeRequest: "setAuthHeader"
