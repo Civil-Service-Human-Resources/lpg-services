@@ -43,7 +43,7 @@
                         </label>
                         <div class="resource resource__modules">
                             {{#each (course.modules || []) as module, i}}
-                             <DisciteModule :module/>
+                             <DisciteModule :module :dateTime/>
                             {{/each}}
 
                         </div>

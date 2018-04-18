@@ -12,11 +12,14 @@
             <li class="discite__property-item">
                 <span class="visuallyhidden">Type:</span> {{i18n(module.type)}}
             </li>
-            {{#if module.duration}}
+
+            {{#if module.duration }}
                 <li class="discite__property-item">
-                    <span class="visuallyhidden">Duration:</span> {{module.getDuration()}}
+                    <span class="visuallyhidden">Duration:</span> {{datetime.formatCourseDuration(module.duration)}}
                 </li>
             {{/if}}
+
+
         </ul>
     </div>
     <div class="discite__action discite__action--module">
