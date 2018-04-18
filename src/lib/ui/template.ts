@@ -137,10 +137,7 @@ function getCurrentRequest() {
 }
 
 function getName(ident: string) {
-	ident = ident
-		.split('/')
-		.pop()!
-		.replace(/-/g, '')
+	ident = ident.split('/').pop()!.replace(/-/g, '')
 	return ident.charAt(0).toUpperCase() + ident.slice(1)
 }
 
