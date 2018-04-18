@@ -97,15 +97,14 @@ async function parseMetadata(entry: unzip.Entry) {
 export async function saveContent(
 	course: model.Course,
 	module: model.Module,
-	file: any,
-	isFileName: boolean = false
+	fileName: string
 ) {
-	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
+	logger.info(`Starting upload of ${fileName} to ${course.id}/${module.id}`)
 
 	const responses = await uploadEntries(
 		`${course.id}/${module.id}`,
-		file,
-		isFileName
+		fileName,
+		true
 	)
 
 	const metadata = responses.find(result => !!result)
@@ -122,12 +121,12 @@ export async function saveContent(
 	currentModule!.startPage = metadata.launchPage
 
 	logger.info(
-		`Upload of ${file.name} complete, startPage set to ${metadata.launchPage}`
+		`Upload of ${fileName} complete, startPage set to ${metadata.launchPage}`
 	)
 	await catalog.add(currentCourse!)
 
-	fs.unlinkSync(file.name)
-	logger.info(`${file.name} removed`)
+	fs.unlinkSync(fileName)
+	logger.info(`${fileName} removed`)
 }
 
 async function getFile(filename: string) {
