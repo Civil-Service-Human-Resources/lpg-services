@@ -100,6 +100,8 @@ export async function saveContent(
 	file: any,
 	isFileName: boolean = false
 ) {
+	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
+
 	const responses = await uploadEntries(
 		`${course.id}/${module.id}`,
 		file,
@@ -119,9 +121,13 @@ export async function saveContent(
 	const currentModule = currentCourse!.modules.find(m => m.id === module.id)
 	currentModule!.startPage = metadata.launchPage
 
+	logger.info(
+		`Upload of ${file.name} complete, startPage set to ${metadata.launchPage}`
+	)
 	await catalog.add(currentCourse!)
 
 	fs.unlinkSync(file.name)
+	logger.info(`${file.name} removed`)
 }
 
 async function getFile(filename: string) {
