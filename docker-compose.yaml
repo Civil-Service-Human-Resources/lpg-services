@@ -83,7 +83,7 @@ services:
       ELASTICSEARCH_URI: http://elasticsearch:9200
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: changeme
-    image: cshr/lpg-learning-catalogue:64dd818ca991
+    image: cshr/lpg-learning-catalogue:4f57b43db7b170e628f9dd4a8563846765b9c4eb
     ports:
       - 9001:9001
 

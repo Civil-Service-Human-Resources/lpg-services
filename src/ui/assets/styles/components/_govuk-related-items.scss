@@ -23,5 +23,12 @@
 		border-top: 10px solid $civil-service;
 		padding-left: 8px;
 		padding-right: 8px;
+
+		@include m(search) {
+			border: 5px solid $grey-2;
+			padding:0px;
+			padding-left: 0px;
+			padding-right: 0px;
+		}
 	}
 }
