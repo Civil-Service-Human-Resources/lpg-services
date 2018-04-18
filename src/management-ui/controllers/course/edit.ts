@@ -86,22 +86,14 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 					}
 					//TODO if replacing elearning files remove old files!
 
-					const {launchPage} = await filestore.saveContent(
+					// Fire and forget to avoid timeout issues in browser
+					filestore.saveContent(
 						saved!,
 						saved!.modules[moduleIndex],
 						file.name,
 						true
 					)
-					if (!launchPage) {
-						logger.error(`Unable to get the launchUrl for course ${course.id}`)
-						res.sendStatus(500)
-						return
-					}
-					fs.unlinkSync(file.name)
-					saved!.modules[moduleIndex].startPage = launchPage
 				}
-				// now save it again
-				await catalog.add(saved!)
 			}
 		}
 
