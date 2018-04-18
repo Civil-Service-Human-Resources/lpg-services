@@ -32,11 +32,13 @@
             {{/if}}
         </ul>
     </div>
-    <div class="discite__area">
-        <p class="font-small">
-            This course comprises of {{ currentReq.__n('%s module', course.modules.length) }}
-        </p>
-    </div>
+    {{#if course.modules.length > 1 }}
+        <div class="discite__area">
+            <p class="font-small">
+                This course comprises of {{course.modules.length}} modules
+            </p>
+        </div>
+    {{/if}}
     {{#if course.shortDescription}}
     <div class="discite__desc">
         {{course.shortDescription}}
