@@ -9,7 +9,7 @@ module.exports = {
 }
 
 function setLoginBody(requestParams, context, ee, next) {
-	requestParams.headers['Authorization'] = authLogin()
+	// requestParams.headers['Authorization'] = authLogin()
 	requestParams.headers['Content-Type'] = 'application/json'
 	requestParams.json = {
 		emailAddress: config.USERNAME,
