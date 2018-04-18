@@ -1,0 +1,26 @@
+<div class="discite__item u-clearfix discite__item--module">
+    <div class="discite__main discite__main--module">
+        <h3 class="heading bold-small heading--text">
+            {{module.title}}
+        </h3>
+        {{#if module.description}}
+            <p class="discite__description">{{module.description}}</p>
+        {{/if}}
+    </div>
+    <div class="discite__properties discite__properties--module u-clearfix">
+        <ul class="discite__property discite__property--module">
+            <li class="discite__property-item">
+                <span class="visuallyhidden">Type:</span> {{i18n(module.type)}}
+            </li>
+            {{#if module.duration}}
+                <li class="discite__property-item">
+                    <span class="visuallyhidden">Duration:</span> {{module.getDuration()}}
+                </li>
+            {{/if}}
+        </ul>
+    </div>
+    <div class="discite__action discite__action--module">
+        <button type="submit" class="discite__button" name="submit" value="edit_module/{{module.id}}"><span class="link">Edit</span></button>
+        <button type="submit" class="discite__button" name="submit" value="remove_module/{{module.id}}"><span class="link">Remove</span></button>
+    </div>
+</div>
