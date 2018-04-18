@@ -47,7 +47,8 @@ export const AUTHENTICATION = set({
 	serviceAdmin: 'admin@cslearning.gov.uk',
 	servicePassword: 'changeme!12',
 	serviceUrl:
-		env.AUTHENTICATION_SERVICE_URL || 'https://local-identity.cshr.digital',
+		env.AUTHENTICATION_SERVICE_URL ||
+		'https://local-identity.cshr.digital',
 })
 
 export const BOOKING_CANCELLED_NOTIFY_TEMPLATE_ID =
@@ -63,6 +64,8 @@ export const BOOKING_NOTIFY_RECIPIENTS = [
 
 export const CONTENT_URL =
 	env.CONTENT_URL || 'http://local-cdn.cshr.digital/lpgdevcontent'
+
+export const CONTENT_CONTAINER = env.CONTENT_CONTAINER || 'lpgdevcontent'
 
 export const COURSE_CATALOGUE = set({
 	auth: {
