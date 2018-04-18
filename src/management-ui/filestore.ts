@@ -1,6 +1,7 @@
 import * as azure from 'azure-storage'
 import * as fs from 'fs'
 import * as model from 'lib/model'
+import * as catalog from 'lib/service/catalog'
 import * as log4js from 'log4js'
 import * as mime from 'mime-types'
 import * as path from 'path'
@@ -18,6 +19,10 @@ const filesToSubstitute: Record<string, {data: string | null; set: boolean}> = {
 		set: false,
 	},
 	'player_overrides.js': {
+		data: null,
+		set: false,
+	},
+	'tincan_wrapper.js': {
 		data: null,
 		set: false,
 	},
@@ -95,39 +100,13 @@ export async function saveContent(
 	file: any,
 	isFileName: boolean = false
 ) {
-	let metadata: any = {}
-
 	const responses = await uploadEntries(
 		`${course.id}/${module.id}`,
 		file,
 		isFileName
 	)
-	responses.forEach(response => {
-		if (response.metadata && response.metadata.identifier) {
-			metadata = response.metadata
-			return
-		}
-	})
 
-	// loop through to get full path pf startpage
-	if (metadata) {
-		const tempPage = metadata.launchPage
-		metadata.launchPage = null
-		responses.forEach(response => {
-			if (response.metadata && response.metadata.path) {
-				if (response.metadata.path.indexOf('/' + tempPage) >= 0) {
-					// found file
-					const lastIndex = response.metadata.path.lastIndexOf('/')
-					const startPage: string =
-						lastIndex > 0 // dont want it to just start with /
-							? response.metadata.path.substring(lastIndex + 1)
-							: response.metadata.path
-					metadata.launchPage = `${startPage}`
-					console.log(response)
-				}
-			}
-		})
-	}
+	const metadata = responses.find(result => !!result)
 
 	if (!metadata || !metadata.launchPage) {
 		// 	// TODO: if no launch page...
@@ -136,7 +115,13 @@ export async function saveContent(
 		)
 	}
 
-	return metadata
+	const currentCourse = await catalog.get(course.id)
+	const currentModule = currentCourse!.modules.find(m => m.id === module.id)
+	currentModule!.startPage = metadata.launchPage
+
+	await catalog.add(currentCourse!)
+
+	fs.unlinkSync(file.name)
 }
 
 async function getFile(filename: string) {
@@ -178,11 +163,8 @@ async function getFile(filename: string) {
 }
 
 async function upload(uid: string, entry: unzip.Entry) {
-	return new Promise<azure.BlobService.BlobResult>(async (resolve, reject) => {
+	return new Promise<any>(async (resolve, reject) => {
 		let metadata = {}
-		// have to parse data going in rather than coming back
-		// AFAIK type defs define return as azure.BlobService.BlobResult  which is
-		// rich data but api actualy just populates blockID
 
 		const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
 		const storagePath = `${uid}/${entry.path}`
@@ -199,11 +181,11 @@ async function upload(uid: string, entry: unzip.Entry) {
 								mime.lookup(entry.path) || 'application/octet-stream',
 						},
 					},
-					(err, blobData) => {
+					err => {
 						if (err) {
 							reject(err)
 						} else {
-							resolve(blobData)
+							resolve(null)
 						}
 					}
 				)
@@ -224,19 +206,11 @@ async function upload(uid: string, entry: unzip.Entry) {
 							contentType: mimeType,
 						},
 					},
-					(err, blobData) => {
+					err => {
 						if (err) {
 							reject(err)
 						} else {
-							if (Object.keys(metadata).length > 0) {
-								blobData.metadata = metadata
-							} else {
-								blobData.metadata = {
-									mimeType: mimeType as string,
-									path: storagePath,
-								}
-							}
-							resolve(blobData)
+							resolve(metadata)
 						}
 					}
 				)
@@ -250,7 +224,7 @@ async function uploadEntries(
 	file: any,
 	isFileName: boolean = false
 ) {
-	return new Promise<azure.BlobService.BlobResult[]>((resolve, reject) => {
+	return new Promise<any[]>((resolve, reject) => {
 		const promises: any[] = []
 		const stream = isFileName
 			? fs.createReadStream(file)
