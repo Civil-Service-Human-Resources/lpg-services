@@ -263,9 +263,5 @@
 		"braille": "Braille",
 		"assistive-listening": "Assistive listening device",
 		"assistant": "An assistant will accompany me"
-	},
-	"%s module": {
-		"one": "%s module",
-		"other": "%s modules"
 	}
 }
