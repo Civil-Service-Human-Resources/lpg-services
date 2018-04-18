@@ -5,6 +5,17 @@ import * as catalog from 'lib/service/catalog'
 import * as api from 'lib/service/catalog/api'
 import * as template from 'lib/ui/template'
 import * as striptags from 'striptags'
+import { isArray } from 'util'
+
+export interface SearchFilter {
+	label: string
+	dataRows: DataRow[]
+}
+
+export interface DataRow {
+	label: string
+	value: string
+}
 
 function range(start: number, stop?: number, step?: number) {
 	const out = []
@@ -30,6 +41,8 @@ export async function search(req: express.Request, res: express.Response) {
 	let query = ''
 	let page = 0
 	let size = 10
+	let courseType = ''
+	let cost = ''
 
 	let searchResults: api.SearchResults = {
 		page: 0,
@@ -44,9 +57,18 @@ export async function search(req: express.Request, res: express.Response) {
 	if (req.query.s) {
 		size = req.query.s
 	}
+
+	if (req.query.courseType) {
+		courseType = isArray(req.query.courseType) ? req.query.courseType.join() : req.query.courseType
+	}
+
+	if (req.query.cost) {
+		cost = req.query.cost
+	}
+
 	if (req.query.q) {
 		query = striptags(req.query.q)
-		searchResults = await catalog.search(query, page, size)
+		searchResults = await catalog.search(query, page, size, courseType, cost)
 
 		// lets pull get course record
 		// rather than polling for each course lets get the learning record for the user
@@ -62,7 +84,11 @@ export async function search(req: express.Request, res: express.Response) {
 	}
 
 	const end: string = (((new Date() as any) - (start as any)) / 1000).toFixed(2)
+
+	// let filters: SearchFilter[] = []
+
+	// let learningFilter : SearchFilter =
 	res.send(
-		template.render('search', req, res, {end, query, searchResults, range})
+		template.render('search', req, res, { end, query, searchResults, range, courseType, cost })
 	)
 }

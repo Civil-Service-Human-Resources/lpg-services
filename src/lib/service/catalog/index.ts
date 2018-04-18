@@ -1,4 +1,4 @@
-import axios, {AxiosInstance} from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import * as log4js from 'log4js'
 import * as query from 'querystring'
 
@@ -32,7 +32,7 @@ export async function add(course: model.Course) {
 	} catch (e) {
 		throw new Error(
 			`Error adding or updating course (${
-				course.id
+			course.id
 			}) to course catalogue - ${e}`
 		)
 	}
@@ -45,7 +45,7 @@ export async function postFeedback(feedback: model.Feedback) {
 	} catch (e) {
 		throw new Error(
 			`Error adding or updating feedback (${
-				feedback.id
+			feedback.id
 			}) to course catalogue - ${e}`
 		)
 	}
@@ -54,11 +54,13 @@ export async function postFeedback(feedback: model.Feedback) {
 export async function search(
 	query: string,
 	page: number,
-	size: number
+	size: number,
+	courseType?: string,
+	cost?: string
 ): Promise<api.SearchResults> {
 	try {
 		const response = await http.get(
-			`/search?query=${query}&page=${page}&size=${size}`
+			`/search?query=${query}&page=${page}&size=${size}&type=${courseType}&cost=${cost}`
 		)
 		return convert(response.data) as api.SearchResults
 	} catch (e) {
@@ -95,7 +97,7 @@ export class ApiParameters {
 		public department: string,
 		public page: number = 0,
 		public size: number = 6
-	) {}
+	) { }
 	serialize(): string {
 		return query.stringify(this)
 	}
