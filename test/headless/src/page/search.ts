@@ -4,6 +4,7 @@ export const selectors: Record<string, string> = {
 	addToPlan: '.lpg-add-from-search',
 	addedNotification: '.banner__heading-large',
 	bookCourse: '.lpg-book-course',
+	course: '.discite__item',
 	courseName: '.lpg-course-name',
 	searchAction: '.result__action',
 	searchBox: '#q',

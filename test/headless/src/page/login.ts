@@ -7,7 +7,7 @@ export const selectors: Record<string, string> = {
 	loginButton: 'input[value="Continue"]',
 	loginFailure: '#error-summary-heading-example-1',
 	passwordField: '#password',
-	profileUserName: '#userName',
+	profileUserName: '#email-address',
 	signinButton: '#proposition-links > li > a',
 	signoutButton: 'a[href="/sign-out"]',
 	usernameField: '#email-address',
@@ -18,7 +18,7 @@ export async function loginToCsl(
 	username: string,
 	password: string
 ) {
-	await page.type(selectors.usernameField, username)
+	await page.type(selectors.profileUserName, username)
 	await page.type(selectors.passwordField, password)
 	await page.click(selectors.loginButton)
 	//await page.waitForNavigation
