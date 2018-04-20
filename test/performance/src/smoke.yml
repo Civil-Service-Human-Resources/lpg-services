@@ -1,8 +1,11 @@
 config:
   target: 'https://lpg.cshr.digital'
   phases:
-    - duration: 60
+    - duration: 3
       arrivalRate: 1
+    - pause: 5
+    - duration: 60
+      arrivalRate: 20
   processor: "./artilleryfunc.js"
   defaults:
   payload:
@@ -10,14 +13,12 @@ config:
 scenarios:
   - flow:
     - get:
-        url: "/sign-in"
-        afterResponse: "sessionDataKey"
-    - post:
-        url: "https://identity.cshr.digital/commonauth"
-        beforeRequest: "setLoginBody"
-    - get:
         url: "/home"
+        afterResponse: [sessionDataKey, loginToWso2]
     - get:
         url: "/search?q=commercial"
+        beforeRequest: "useCookie"
     - get:
         url: "/suggestions-for-you/add/I1Uf3KPkSTmirf5DN5b08Q?ref=search"
+        beforeRequest: "useCookie"
+
