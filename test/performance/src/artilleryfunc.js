@@ -17,7 +17,7 @@ let triedLogin = false
 
 function useCookie(requestParams, context, ee, next) {
 	if (Object.keys(testCookie).length !== 0) {
-		requestParams.headers.cookie = testCookie
+		requestParams.headers.cookie = {'lpg-ui': testCookie}
 	}
 	next()
 }
@@ -47,7 +47,10 @@ function loginToWso2(requestParams, response, context, ee, next) {
 				.post(url, axiosOptions)
 				.then(response => {
 					console.log('logged in')
-					testCookie = response.headers['set-cookie']
+					const regex = /lpg-ui=(.*?);/g
+
+					testCookie = {'lpg-ui': regex.exec(response.headers['set-cookie'])[1]}
+
 					next()
 				})
 				.catch(error => {
@@ -58,7 +61,8 @@ function loginToWso2(requestParams, response, context, ee, next) {
 
 		loginMethod()
 	} else {
-		requestParams.headers['set-cookie'] = testCookie
+		requestParams.headers.cookie = testCookie
+
 		next()
 	}
 }
