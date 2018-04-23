@@ -81,6 +81,8 @@ $module: 'discite';
 			//this should not be here, .badge is being imported too late in main.scss
 			@include m(discite) {
 				margin-bottom: 0;
+				position: absolute;
+				right: 0;
 			}
 		}
 
