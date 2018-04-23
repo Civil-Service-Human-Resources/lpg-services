@@ -1,7 +1,7 @@
 config:
   target: 'https://lpg.cshr.digital'
   phases:
-    - duration: 3
+    - duration: 0
       arrivalRate: 1
     - pause: 5
     - duration: 60
@@ -19,6 +19,5 @@ scenarios:
         url: "/search?q=commercial"
         beforeRequest: "useCookie"
     - get:
-        url: "/suggestions-for-you/add/I1Uf3KPkSTmirf5DN5b08Q?ref=search"
+        url: "/suggestions-for-you/add/e0HNfmkTSMiRPHVJ9ljnxA?ref=search"
         beforeRequest: "useCookie"
-
