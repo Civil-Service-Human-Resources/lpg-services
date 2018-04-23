@@ -17,7 +17,7 @@ let triedLogin = false
 
 function useCookie(requestParams, context, ee, next) {
 	if (Object.keys(testCookie).length !== 0) {
-		requestParams.headers.cookie = {'lpg-ui': testCookie}
+		requestParams.headers.cookie = testCookie
 	}
 	next()
 }
