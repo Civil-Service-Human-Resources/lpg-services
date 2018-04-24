@@ -5,7 +5,6 @@ import * as model from 'lib/model'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
 
-
 let strategy: oauth2.Strategy
 export function configure(
 	clientID: string,
@@ -15,7 +14,7 @@ export function configure(
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
-	strategy = new  oauth2.Strategy(
+	strategy = new oauth2.Strategy(
 		{
 			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
 			callbackURL: `${config.LPG_UI_SERVER}/authenticate`,
@@ -23,7 +22,7 @@ export function configure(
 			clientSecret,
 			tokenURL: `${authenticationServiceUrl}/oauth/token`,
 		},
-		async (
+		(
 			accessToken: string,
 			refreshToken: string,
 			profile: any,
@@ -36,7 +35,7 @@ export function configure(
 				...profile,
 				...userDetails,
 			}
-			const user = await  model.User.create(profile)
+			const user = model.User.create(combined)
 			return cb(null, user)
 		}
 	)
