@@ -46,8 +46,7 @@ const env: Record<string, string> = new Proxy({}, {get: getEnv})
 export const AUTHENTICATION = set({
 	serviceAdmin: 'admin@cslearning.gov.uk',
 	servicePassword: 'changeme!12',
-	serviceUrl:
-		env.AUTHENTICATION_SERVICE_URL || 'https://local-identity.cshr.digital',
+	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 
 export const BOOKING_CANCELLED_NOTIFY_TEMPLATE_ID =
@@ -124,7 +123,8 @@ export const LOGGING = set(
 	}
 )
 
-export const LPG_UI_SERVER = env.LPG_UI_SERVER || 'lpg.local.cshr.digital:3001'
+export const LPG_UI_SERVER =
+	env.LPG_UI_SERVER || 'http://lpg.local.cshr.digital:3001'
 
 export const SESSION_SECRET =
 	env.SESSION_SECRET ||
