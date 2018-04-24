@@ -24,6 +24,7 @@
             </li>
             <li class="discite__property-item">
                 <span class="visuallyhidden">Duration:</span> {{course.getDuration()}}
+
             </li>
             {{#if !course.isRequired(signedInUser)}}
             <li class="discite__property-item">
@@ -34,7 +35,7 @@
     </div>
     {{#if course.modules.length > 1 }}
         <div class="discite__area">
-            <p class="font-small">
+            <p class="font-small discite__counter">
                 This course comprises of {{course.modules.length}} modules
             </p>
         </div>
