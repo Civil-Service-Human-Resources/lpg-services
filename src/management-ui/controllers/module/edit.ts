@@ -208,7 +208,8 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 				res.sendStatus(500)
 				return
 			}
-			req.course.duration = duration
+			// req.course.duration = duration
+			data.duration = duration
 			data.title = data.title || info.title
 		}
 
