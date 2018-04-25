@@ -12,11 +12,10 @@
                 <div>{{{toHtml(course.learningOutcomes)}}}</div>
                 {{/if}}
 
-                <p>
-                    <strong>You must complete all {{modules.length}} learning modules to finish this topic.</strong>
-                </p>
-
-                <div class="discite">
+                <div class="discite" id="modules">
+                    <p>
+                        <strong>You must complete all {{modules.length}} learning modules to finish this topic.</strong>
+                    </p>
                     {{#each modules as module}}
                     <DisciteModule course={{course}} module={{module}} />
                     {{/each}}
