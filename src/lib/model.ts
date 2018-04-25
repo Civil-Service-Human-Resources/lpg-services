@@ -68,16 +68,15 @@ export class Course {
 
 	getCost() {
 		const costArray = this.modules.map(module => module.price)
-		return costArray.length
-			? costArray.reduce((p, c) => (p || 0) + (c || 0))
-			: null
+		return costArray.length ? costArray
+			.reduce((p, c) => (p || 0) + (c || 0)) : null
 	}
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
-		return durationArray.length
-			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c))
-			: null
+		return durationArray.length ? datetime.formatCourseDuration(
+			durationArray.reduce((p, c) => p + c)
+		) : null
 	}
 
 	getGrades() {
