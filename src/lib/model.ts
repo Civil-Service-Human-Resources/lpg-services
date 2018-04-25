@@ -67,15 +67,16 @@ export class Course {
 	}
 
 	getCost() {
-		return this.modules
-			.map(module => module.price)
-			.reduce((p, c) => (p || 0) + (c || 0))
+		const costArray = this.modules.map(module => module.price)
+		return costArray.length ? costArray
+			.reduce((p, c) => (p || 0) + (c || 0)) : null
 	}
 
 	getDuration() {
-		return datetime.formatCourseDuration(
-			this.modules.map(m => m.duration).reduce((p, c) => p + c)
-		)
+		const durationArray = this.modules.map(m => m.duration)
+		return durationArray.length ? datetime.formatCourseDuration(
+			durationArray.reduce((p, c) => p + c)
+		) : null
 	}
 
 	getGrades() {
@@ -211,6 +212,33 @@ export class Course {
 			})
 		}
 		return price
+	}
+}
+
+export class Resource {
+	static create(data: any) {
+		const resource = new Resource(data.id)
+		resource.courseId = data.courseId
+		resource.description = data.description
+		resource.learningOutcomes = data.learningOutcomes
+		resource.shortDescription = data.shortDescription
+		resource.title = data.title
+
+		resource.modules = (data.modules || []).map(Module.create)
+
+		return resource
+	}
+
+	id: string
+	courseId: string
+	title: string
+	shortDescription: string
+	description: string
+	learningOutcomes: string
+	modules: Module[]
+
+	constructor(id: string) {
+		this.id = id
 	}
 }
 

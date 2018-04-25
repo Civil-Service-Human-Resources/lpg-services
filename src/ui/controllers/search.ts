@@ -75,11 +75,16 @@ export async function search(req: express.Request, res: express.Response) {
 		const user = req.user as model.User
 		const courseRecords = await learnerRecord.getLearningRecord(user)
 		searchResults.results.forEach(result => {
-			const course = courseRecords.find(record => record.id === result.id)
-			if (course) {
-				//we have a course record add it to the course
-				result.record = course.record
+			console.log(result)
+			if (!result.courseId) { // a course
+				const resultAsCourse = model.Course.create(result)
+				const course = courseRecords.find(record => resultAsCourse.id === resultAsCourse.id)
+				if (course) {
+					//we have a course record add it to the course
+					resultAsCourse.record = course.record
+				}
 			}
+
 		})
 	}
 
