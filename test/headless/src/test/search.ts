@@ -120,4 +120,10 @@ describe('search functionality', () => {
 		const addedCourse = await helper.getText(selectors.addedNotification, page)
 		expect(addedCourse).toEqual(courseName)
 	})
+
+	it('Should show the number of modules a course comprises of', async () => {
+		await search('fire', page)
+		const course = await helper.getText(selectors.course, page)
+		expect(course).toContain('This course comprises of')
+	})
 })

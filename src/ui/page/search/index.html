@@ -1,7 +1,7 @@
 <Page title="Search" :_csrf>
     <div class="container container--main">
         <div class="grid-row ">
-            <div class="column-full ">
+            <div class="column-full">
                 <h1 class="heading-xlarge heading heading--page-heading ">
                     Search results
                 </h1>
@@ -29,7 +29,12 @@
         </div>
 
         <div class="grid-row ">
-            <div class="column-full ">
+            <div class="column-one-third">
+                {{#if searchResults.results.length}} 
+                <LeftSearchBox :query :courseType :cost />
+                {{/if}}
+            </div>
+            <div class="column-two-thirds">
                 <div class="resources">
                     {{#if searchResults.results.length}} {{#each searchResults.results as course}}
                     <DisciteCourse course={{course}} modifier="search" /> {{/each}} {{/if}}

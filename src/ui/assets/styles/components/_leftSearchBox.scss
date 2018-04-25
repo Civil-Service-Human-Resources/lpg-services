@@ -1,0 +1,34 @@
+.leftSearchBox {
+
+    legend {
+        padding-left: 8px;
+        padding-right: 8px;
+        font-weight:bold;
+        background: $grey-2;
+        width: 100%;
+    }
+
+    div.multiple-choice {
+        padding:2px 0px 2px 0px;
+        margin-top:8px;
+
+        margin-bottom:0px;
+        border-bottom: 1px  solid $grey-2;
+        width: 100%;
+
+        input {
+            margin-left:8px;
+        }
+
+        label {
+            margin-left:45px;
+            &:before {
+                left:8px;
+            }
+            &:after {
+                left:16px;
+            }
+        }
+
+    }
+}

@@ -13,7 +13,8 @@ const { Writable } = require('stream');
 const coursesFile = process.argv[2];
 const modulesFile = process.argv[3];
 const eventsFile = process.argv[4];
-const scormLocation = process.argv[5];
+const scormIdsFile = process.argv[5];
+const scormLocation = process.argv[6];
 
 const ALL_GRADES = [
     "AA",
@@ -29,6 +30,18 @@ const ALL_GRADES = [
 const blob = azure.createBlobService();
 
 const filesToSubstitute = [ 'close_methods.js', 'portal_overrides.js', 'tincan_wrapper.js' ];
+
+
+async function uploadScormIds(file) {
+  const rawData = fs.readFileSync(file);
+  const lines = parse(rawData.toString());
+
+  for (const line of lines) {
+      const id = line[1];
+      const location = line[2];
+      await uploadScorm(id, location);
+  }
+}
 
 async function parseCourses(file) {
     const rawData = fs.readFileSync(file);
@@ -262,15 +275,15 @@ async function run() {
     // courses = courses.concat(parseModules(modulesFile, eventsFile));
     // fs.writeFileSync(path.join(__dirname, 'data.json'), JSON.stringify(courses));
 
-    let courses = parseModules(modulesFile, eventsFile);
-    fs.writeFileSync(path.join(__dirname, 'modules.json'), JSON.stringify(courses));
+    // let courses = parseModules(modulesFile, eventsFile);
+    // fs.writeFileSync(path.join(__dirname, 'modules.json'), JSON.stringify(courses));
+
+  await uploadScormIds(scormIdsFile);
 }
 
 run()
     .then(() => console.log('Done'))
     .catch(e => console.log(e));
-
-
 
 async function uploadScorm(id, location) {
 

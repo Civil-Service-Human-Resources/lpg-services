@@ -1,10 +1,15 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
+import * as log4js from 'log4js'
+import * as query from 'querystring'
+
+import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
-import * as query from 'querystring'
 
-const http = axios.create({
+const logger = log4js.getLogger('catalog')
+
+const http: AxiosInstance = axios.create({
 	auth: config.COURSE_CATALOGUE.auth,
 	baseURL: config.COURSE_CATALOGUE.url,
 	headers: {
@@ -12,6 +17,9 @@ const http = axios.create({
 	},
 	timeout: 5000,
 })
+
+axiosLogger.axiosRequestLogger(http, logger)
+axiosLogger.axiosResponseLogger(http, logger)
 
 export async function add(course: model.Course) {
 	try {
@@ -24,7 +32,7 @@ export async function add(course: model.Course) {
 	} catch (e) {
 		throw new Error(
 			`Error adding or updating course (${
-				course.id
+			course.id
 			}) to course catalogue - ${e}`
 		)
 	}
@@ -37,7 +45,7 @@ export async function postFeedback(feedback: model.Feedback) {
 	} catch (e) {
 		throw new Error(
 			`Error adding or updating feedback (${
-				feedback.id
+			feedback.id
 			}) to course catalogue - ${e}`
 		)
 	}
@@ -46,11 +54,13 @@ export async function postFeedback(feedback: model.Feedback) {
 export async function search(
 	query: string,
 	page: number,
-	size: number
+	size: number,
+	courseType?: string,
+	cost?: string
 ): Promise<api.SearchResults> {
 	try {
 		const response = await http.get(
-			`/search?query=${query}&page=${page}&size=${size}`
+			`/search?query=${query}&page=${page}&size=${size}&type=${courseType}&cost=${cost}`
 		)
 		return convert(response.data) as api.SearchResults
 	} catch (e) {
@@ -87,7 +97,7 @@ export class ApiParameters {
 		public department: string,
 		public page: number = 0,
 		public size: number = 6
-	) {}
+	) { }
 	serialize(): string {
 		return query.stringify(this)
 	}

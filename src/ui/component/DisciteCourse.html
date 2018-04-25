@@ -9,12 +9,22 @@
     <div class="discite__properties discite__properties--{{modifier || ''}} u-clearfix">
         <ul class="discite__property discite__property--{{modifier || ''}}">
             <li class="discite__property-item">
+                {{#if course.record && course.record.state && course.record.state !== 'RETRIEVED' && course.record.state !== 'ARCHIVED' }}
+                <div class="discite__status">
+                    <span class="badge badge--discite badge--info">{{i18n(course.record.state)}}</span>
+                    {{#if course.getSelectedDate()}}
+                    <span class="meta">{{datetime.formatDate(course.getSelectedDate())}}</span>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </li>
+            <li class="discite__property-item">
                 <span class="visuallyhidden">Type:</span>
                 <span class="lpg-course-type">{{i18n(course.getType())}}</span>
             </li>
             <li class="discite__property-item">
-                <span class="visuallyhidden">Duration:</span>
-                <span class="lpg-course-duration">{{course.getDuration()}}</span>
+                <span class="visuallyhidden">Duration:</span> {{course.getDuration()}}
+
             </li>
             {{#if !course.isRequired(signedInUser)}}
             <li class="discite__property-item">
@@ -22,55 +32,69 @@
             </li>
             {{/if}}
         </ul>
-        {{#if course.record && course.record.state && course.record.state !== 'RETRIEVED' && course.record.state !== 'ARCHIVED' }}
-        <div class="discite__status">
-            <span class="badge badge--info">{{i18n(course.record.state)}}</span>
-            {{#if course.getSelectedDate()}}
-            <span class="meta">{{datetime.formatDate(course.getSelectedDate())}}</span>
-            {{/if}}
-        </div>
-        {{/if}}
     </div>
+    {{#if course.modules.length > 1 }}
+        <div class="discite__area">
+            <p class="font-small discite__counter">
+                This course comprises of {{course.modules.length}} modules
+            </p>
+        </div>
+    {{/if}}
     {{#if course.shortDescription}}
     <div class="discite__desc">
         {{course.shortDescription}}
     </div>
     {{/if}}
     <div class="discite__area">
-        {{#if course.nextRequiredBy(signedInUser)}} Due by: {{datetime.formatDate(course.nextRequiredBy(signedInUser))}} {{elseif
-        course.getAreasOfWork().length}} Work area: {{course.getAreasOfWork().map(function(aow) { return i18n('areas-of-work')[aow];
-        }).join(', ')}} {{/if}}
+        {{#if course.nextRequiredBy(signedInUser)}}
+            Due by: {{datetime.formatDate(course.nextRequiredBy(signedInUser))}}
+        {{elseif course.getAreasOfWork().length}}
+            Work area: {{course.getAreasOfWork().map(function(aow) { return i18n('areas-of-work')[aow];}).join(', ')}}
+        {{/if}}
     </div>
     <div class="discite__action discite__action--{{modifier || ''}}">
-        {{#if course.getType() !== 'blended'}} {{#if course.record}} {{#if course.record.modules && course.record.modules.length
-        && course.record.modules[0].eventId}}
-        <a href="/book/{{course.id}}/{{course.record.modules[0].moduleId}}/{{course.record.modules[0].eventId}}/cancel">Cancel</a>
-        {{else}} {{#if course.getType() !== 'face-to-face'}} {{#if course.record.modules.length}}
-        <a href="/courses/{{course.id}}/{{course.record.modules[0].moduleId}}">{{ i18n('action_' + (course.record.modules[0].state || 'NOT_STARTED' )) }}
-            <span class="visuallyhidden"> this module</span>
-        </a>
-        {{else}}
-        <a href="/courses/{{course.id}}/{{course.modules[0].id}}">{{ i18n('action_NOT_STARTED') }}
-            <span class="visuallyhidden"> this module</span>
-        </a>
-        {{/if}} {{/if}} {{#if !course.isRequired(signedInUser)}} {{#if course.record.state != 'ARCHIVED'}}
-        <a href="/courses/{{course.id}}/delete">Remove from learning plan</a>
-        {{else }}
-        <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
-        {{/if}} {{/if}} {{/if}} {{else}} {{#if course.getType() !== 'face-to-face'}}
-        <a href="/courses/{{course.id}}/{{course.modules[0].id}}">Start
-            <span class="visuallyhidden"> this module</span>
-        </a>
-        {{else}}
-        <a class="lpg-book-course" href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book
-            <span class="visuallyhidden"> this module</span>
-        </a>
-        {{/if}} {{#if !course.isRequired(signedInUser)}}
-        <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
-        {{/if}} {{/if}} {{else}} {{#if !course.isRequired(signedInUser)}}
-        <a href="/courses/{{course.id}}/delete">Remove
-            <span class="visuallyhidden"> this module</span>
-        </a>
-        {{/if}} {{/if}}
+        {{#if course.getType() !== 'blended'}}
+            {{#if course.record}}
+                {{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}}
+                    <a href="/book/{{course.id}}/{{course.record.modules[0].moduleId}}/{{course.record.modules[0].eventId}}/cancel">Cancel</a>
+                {{else}}
+                    {{#if course.getType() !== 'face-to-face'}}
+                        {{#if course.record.modules.length}}
+                            <a href="/courses/{{course.id}}/{{course.record.modules[0].moduleId}}">{{ i18n('action_' + (course.record.modules[0].state || 'NOT_STARTED' )) }}
+                                <span class="visuallyhidden"> this module</span>
+                            </a>
+                        {{else}}
+                            <a href="/courses/{{course.id}}/{{course.modules[0].id}}">{{ i18n('action_NOT_STARTED') }}
+                                <span class="visuallyhidden"> this module</span>
+                            </a>
+                        {{/if}}
+                    {{/if}}
+                    {{#if !course.isRequired(signedInUser)}}
+                        {{#if course.record.state === 'ARCHIVED'}}
+                            <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                        {{/if}}
+                    {{/if}}
+                {{/if}}
+                {{else}}
+                    {{#if course.getType() !== 'face-to-face'}}
+                        <a href="/courses/{{course.id}}/{{course.modules[0].id}}">Start
+                            <span class="visuallyhidden"> this module</span>
+                        </a>
+                    {{else}}
+                        <a class="lpg-book-course" href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book
+                            <span class="visuallyhidden"> this module</span>
+                        </a>
+                    {{/if}}
+                    {{#if !course.isRequired(signedInUser)}}
+                        <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                    {{/if}}
+                {{/if}}
+                {{else}}
+                    {{#if !course.isRequired(signedInUser)}}
+                    <a href="/courses/{{course.id}}/delete">Remove
+                        <span class="visuallyhidden"> this module</span>
+                    </a>
+                    {{/if}}
+                {{/if}}
     </div>
 </div>

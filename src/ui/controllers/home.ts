@@ -9,7 +9,7 @@ import * as suggestionController from './suggestion'
 const logger = log4js.getLogger('controllers/home')
 
 export async function home(req: express.Request, res: express.Response) {
-	logger.debug(`Getting  learning record for ${req.user.id}`)
+	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
 		const learningRecord = await learnerRecord.getLearningRecord(user)
@@ -31,9 +31,13 @@ export async function home(req: express.Request, res: express.Response) {
 			if (learningHash[requiredCourse.id]) {
 				const course = learningHash[requiredCourse.id]
 				const record = course.record!
-				if (course.isComplete(user) && !course.shouldRepeat(user)) {
-					requiredLearning.splice(i, 1)
-					i -= 1
+				if (course.isComplete(user)) {
+					if (course.shouldRepeat(user)) {
+						requiredLearning[i].record = record
+					} else {
+						requiredLearning.splice(i, 1)
+						i -= 1
+					}
 				} else {
 					if (!record.state && record.modules && record.modules.length) {
 						record.state = 'IN_PROGRESS'

@@ -255,5 +255,13 @@
 	"digital": "digital",
 	"commercial": "commercial",
 	"communications": "communications",
-	"project-delivery": "project-delivery"
+	"project-delivery": "project-delivery",
+	"accessibility-requirements": {
+		"sign-language": "Sign language interpreter",
+		"cart": "CART (communication access real-time translation) services",
+		"large-print": "Large print",
+		"braille": "Braille",
+		"assistive-listening": "Assistive listening device",
+		"assistant": "An assistant will accompany me"
+	}
 }

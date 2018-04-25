@@ -41,7 +41,7 @@ exports.WSO2_ADMIN_PASSWORD = env.WSO2_ADMIN_PASSWORD
 exports.WSO2_ADMIN_USERNAME = env.WSO2_ADMIN_USERNAME
 exports.BASIC_AUTH_PASSWORD = env.BASIC_AUTH_PASSWORD
 exports.BASIC_AUTH_USERNAME = env.BASIC_AUTH_USERNAME
-exports.PASSWORD = '1337h4x0r'
+exports.PASSWORD = 'changeme!12'
 exports.TEST_PASSWORD = 'password123'
 exports.URL = set(
 	'http://lpg.local.cshr.digital:3001/sign-in',
@@ -51,7 +51,7 @@ exports.BASE_URL = set(
 	'http://lpg.local.cshr.digital:3001',
 	`https://lpg.${exports.PROFILE}.cshr.digital`
 )
-exports.USERNAME = 'test@lpg.dev.cshr.digital'
+exports.USERNAME = 'load@lpg.dev.cshr.digital'
 exports.XAPI_URL = env.XAPI_URL || 'http://localhost:8083/data/xAPI'
 exports.XAPI_PASS = '66f2b4fc001e3da992d23b57d8a7457655bea078'
 exports.XAPI_USER = '1c0e1b6827606d7efed71e204939d048f94f842b'

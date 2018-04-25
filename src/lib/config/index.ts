@@ -65,6 +65,8 @@ export const BOOKING_NOTIFY_RECIPIENTS = [
 export const CONTENT_URL =
 	env.CONTENT_URL || 'http://local-cdn.cshr.digital/lpgdevcontent'
 
+export const CONTENT_CONTAINER = env.CONTENT_CONTAINER || 'lpgdevcontent'
+
 export const COURSE_CATALOGUE = set({
 	auth: {
 		password: env.COURSE_CATALOGUE_PASS || 'password',
@@ -117,7 +119,7 @@ export const LOGGING = set(
 				out: {type: 'console'},
 			},
 			categories: {
-				default: {appenders: ['out'], level: 'debug'},
+				default: {appenders: ['out'], level: 'all'},
 			},
 		},
 	}

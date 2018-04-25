@@ -168,6 +168,20 @@ export class Course {
 
 		if (this.record) {
 			const modules = this.getModules(user)
+
+			if (states === 'COMPLETED') {
+				const completedModulesCount = modules.filter(module => {
+					const moduleRecord = this.record!.modules.find(
+						mr => mr.moduleId === module.id
+					)
+					if (moduleRecord && moduleRecord.state === 'COMPLETED') {
+						return moduleRecord
+					}
+				}).length
+
+				return completedModulesCount === modules.length
+			}
+
 			for (const module of modules) {
 				const moduleRecord = this.record.modules.find(
 					mr => mr.moduleId === module.id
@@ -209,6 +223,7 @@ export class Module {
 		module.location = data.location
 		module.startPage = data.startPage
 		module.title = data.title
+		module.description = data.description
 
 		module.audiences = (data.audiences || []).map(Audience.create)
 		module.events = (data.events || []).map(Event.create)
@@ -220,6 +235,8 @@ export class Module {
 	type: string
 
 	title: string
+	description: string
+
 	duration: number
 
 	location?: string

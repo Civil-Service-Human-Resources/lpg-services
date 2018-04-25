@@ -46,74 +46,73 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 
 		if (course.id === 'add-course') {
 			delete course.id // delete fake id
-			let moduleIndex = 0
-			course.modules.forEach(module => {
-				if (module.id.indexOf('new_') === 0) {
-					if (session.pendingFiles) {
-						// lets update any pending files with the position of the module in the course
-						const index = (session.pendingFiles as Array<{}>).findIndex(
-							(m: any) => m.moduleIndex === module!.id
-						)
-
-						session.pendingFiles[index].moduleIndex = moduleIndex
-					}
-					delete module.id
-				}
-				moduleIndex++
-			})
 		}
+
+		course.modules.forEach((module, i) => {
+			if (module.id.indexOf('new_') === 0) {
+				if (session.pendingFiles) {
+					// lets update any pending files with the position of the module in the course
+					const index = (session.pendingFiles as Array<{}>).findIndex(
+						(m: any) => m.moduleIndex === module!.id
+					)
+
+					session.pendingFiles[index].moduleIndex = i
+				}
+				delete module.id
+			}
+		})
+
 		const id = await catalog.add(course)
 
 		// now lets upload any files
-
 		if (session.pendingFiles && session.pendingFiles.length) {
-			// get the course again to get ids
-			// remove all temp ids from modules
-			const saved = await catalog.get(id)
-			for (const file of session.pendingFiles) {
-				if (file) {
-					logger.debug(`Uploading zip content from ${file.name}`)
-
-					await fs.readFileSync(file.name)
-					let moduleIndex = null
-
-					if (saved!.modules.length) {
-						// first try and get module by  id property
-						const index = (saved!.modules as Array<{}>).findIndex(
-							(m: any) => m.id === file.moduleIndex
-						)
-						moduleIndex = index > -1 ? index : file.moduleIndex
-					}
-					//TODO if replacing elearning files remove old files!
-
-					const {launchPage} = await filestore.saveContent(
-						saved!,
-						saved!.modules[moduleIndex],
-						file.name,
-						true
-					)
-					if (!launchPage) {
-						logger.error(`Unable to get the launchUrl for course ${course.id}`)
-						res.sendStatus(500)
-						return
-					}
-					fs.unlinkSync(file.name)
-					saved!.modules[moduleIndex].startPage = launchPage
-				}
-				// now save it again
-				await catalog.add(saved!)
-			}
+			// Fire and forget to avoid timeout issues in browser
+			uploadPendingFiles(id, session.pendingFiles)
+				.catch(err => {
+					logger.error('Error uploading ', err)
+				})
 		}
 
 		logger.debug(`Course ${id} updated`)
 
-		session.save(() => {
-			delete session.squash_session_clear
-			delete session.course
-			delete session.pendingFiles
+		delete session.squash_session_clear
+		delete session.course
+		delete session.pendingFiles
 
+		session.save(() => {
 			res.redirect(`/courses`)
 		})
+	}
+}
+
+async function uploadPendingFiles(courseId: string, pendingFiles: any[]) {
+	const course = await catalog.get(courseId)
+	for (const file of pendingFiles) {
+		if (file) {
+			logger.debug(`Uploading zip content from ${file.name}`)
+
+			await fs.readFileSync(file.name)
+			let moduleIndex = null
+
+			if (course!.modules.length) {
+				// first try and get module by  id property
+				const index = (course!.modules as Array<{}>).findIndex(
+					(m: any) => m.id === file.moduleIndex
+				)
+				moduleIndex = index > -1 ? index : file.moduleIndex
+			}
+			//TODO if replacing elearning files remove old files!
+
+			try {
+				await filestore.saveContent(
+					course!,
+					course!.modules[moduleIndex],
+					file.name
+				)
+			} catch (e) {
+				logger.error(`Error uploading file ${file.name}`, e)
+			}
+		}
 	}
 }
 

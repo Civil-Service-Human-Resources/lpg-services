@@ -1,10 +1,12 @@
 import * as azure from 'azure-storage'
 import * as fs from 'fs'
+import * as config from 'lib/config'
 import * as model from 'lib/model'
+import * as catalog from 'lib/service/catalog'
 import * as log4js from 'log4js'
 import * as mime from 'mime-types'
 import * as path from 'path'
-import {Readable, Writable} from 'stream'
+import {Writable} from 'stream'
 import * as streamifier from 'streamifier'
 import * as unzip from 'unzip'
 import * as xml2js from 'xml2js'
@@ -12,16 +14,11 @@ import * as xml2js from 'xml2js'
 const blob = azure.createBlobService()
 const logger = log4js.getLogger('lib/management-ui/fileStore')
 
-const filesToSubstitute: Record<string, {data: string | null; set: boolean}> = {
-	'close_methods.js': {
-		data: null,
-		set: false,
-	},
-	'player_overrides.js': {
-		data: null,
-		set: false,
-	},
-}
+const filesToSubstitute = [
+	'close_methods.js',
+	'portal_overrides.js',
+	'tincan_wrapper.js',
+]
 
 async function parseMetadata(entry: unzip.Entry) {
 	return new Promise((resolve, reject) => {
@@ -92,42 +89,17 @@ async function parseMetadata(entry: unzip.Entry) {
 export async function saveContent(
 	course: model.Course,
 	module: model.Module,
-	file: any,
-	isFileName: boolean = false
+	fileName: string
 ) {
-	let metadata: any = {}
+	logger.info(`Starting upload of ${fileName} to ${course.id}/${module.id}`)
 
 	const responses = await uploadEntries(
 		`${course.id}/${module.id}`,
-		file,
-		isFileName
+		fileName,
+		true
 	)
-	responses.forEach(response => {
-		if (response.metadata && response.metadata.identifier) {
-			metadata = response.metadata
-			return
-		}
-	})
 
-	// loop through to get full path pf startpage
-	if (metadata) {
-		const tempPage = metadata.launchPage
-		metadata.launchPage = null
-		responses.forEach(response => {
-			if (response.metadata && response.metadata.path) {
-				if (response.metadata.path.indexOf('/' + tempPage) >= 0) {
-					// found file
-					const lastIndex = response.metadata.path.lastIndexOf('/')
-					const startPage: string =
-						lastIndex > 0 // dont want it to just start with /
-							? response.metadata.path.substring(lastIndex + 1)
-							: response.metadata.path
-					metadata.launchPage = `${startPage}`
-					console.log(response)
-				}
-			}
-		})
-	}
+	const metadata = responses.find(result => !!result)
 
 	if (!metadata || !metadata.launchPage) {
 		// 	// TODO: if no launch page...
@@ -136,67 +108,62 @@ export async function saveContent(
 		)
 	}
 
-	return metadata
-}
+	const currentCourse = await catalog.get(course.id)
+	const currentModule = currentCourse!.modules.find(m => m.id === module.id)
+	currentModule!.startPage = metadata.launchPage
 
-async function getFile(filename: string) {
-	const fpath = path.join(__dirname, '..', '..', 'ui', 'assets', 'js', filename)
+	logger.info(
+		`Upload of ${fileName} complete, startPage set to ${metadata.launchPage}`
+	)
+	await catalog.add(currentCourse!)
 
-	return new Promise(async (resolve, reject) => {
-		let readStream: fs.ReadStream
-		let data = ''
-		if (filesToSubstitute[filename].set) {
-			resolve(filesToSubstitute[filename].data as string)
-		} else {
-			try {
-				readStream = fs.createReadStream(fpath)
-				readStream
-					.on('data', chunk => {
-						data += chunk
-					})
-					.on('end', () => {
-						filesToSubstitute[filename].set = true
-						filesToSubstitute[filename].data = data
-						resolve(data)
-					})
-			} catch (e) {
-				reject(e)
-			}
-		}
-	})
-		.then(data => {
-			return new Readable({
-				read(size) {
-					this.push(filesToSubstitute[filename].data)
-					this.push(null)
-				},
-			})
-		})
-		.catch(data => {
-			throw new Error('Error reading data')
-		})
+	fs.unlinkSync(fileName)
+	logger.info(`${fileName} removed`)
 }
 
 async function upload(uid: string, entry: unzip.Entry) {
-	return new Promise<azure.BlobService.BlobResult>(async (resolve, reject) => {
-		let metadata = {}
-		// have to parse data going in rather than coming back
-		// AFAIK type defs define return as azure.BlobService.BlobResult  which is
-		// rich data but api actualy just populates blockID
+	let metadata: any = null
+	const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
+	const storagePath = `${uid}/${entry.path}`
+	logger.debug(`uploading to: ${storagePath}`)
 
-		const filename = entry.path.substring(entry.path.lastIndexOf('/') + 1)
-		const storagePath = `${uid}/${entry.path}`
-		logger.debug(`uploading to: ${storagePath}`)
-		if (Object.keys(filesToSubstitute).indexOf(filename) >= 0) {
-			const fileData = (await getFile(filename)) as fs.ReadStream
-			fileData.pipe(
+	if (filesToSubstitute.indexOf(filename) > -1) {
+		entry.autodrain()
+		const fileData = getFile(filename)
+		await doUpload(storagePath, fileData)
+	} else {
+		if (entry.path.endsWith('imsmanifest.xml')) {
+			metadata = await parseMetadata(entry)
+		}
+		await doUpload(storagePath, entry)
+	}
+	return metadata
+}
+
+function getFile(filename: string) {
+	const filePath = path.join(
+		__dirname,
+		'..',
+		'..',
+		'ui',
+		'assets',
+		'js',
+		filename
+	)
+	return fs.createReadStream(filePath)
+}
+
+async function doUpload(storagePath: string, entry: any) {
+	await new Promise((resolve, reject) => {
+		entry
+			.pipe(
 				blob.createWriteStreamToBlockBlob(
-					'lpgdevcontent',
+					config.CONTENT_CONTAINER,
 					storagePath,
 					{
 						contentSettings: {
 							contentType:
-								mime.lookup(entry.path) || 'application/octet-stream',
+								mime.lookup(storagePath) || 'application/octet-stream',
 						},
 					},
 					(err, blobData) => {
@@ -208,40 +175,9 @@ async function upload(uid: string, entry: unzip.Entry) {
 					}
 				)
 			)
-		} else {
-			// buisness as usual
-			if (entry.path.endsWith('imsmanifest.xml')) {
-				metadata = await parseMetadata(entry)
-			}
-
-			const mimeType = mime.lookup(entry.path) || 'application/octet-stream'
-			entry.pipe(
-				blob.createWriteStreamToBlockBlob(
-					'lpgdevcontent',
-					storagePath,
-					{
-						contentSettings: {
-							contentType: mimeType,
-						},
-					},
-					(err, blobData) => {
-						if (err) {
-							reject(err)
-						} else {
-							if (Object.keys(metadata).length > 0) {
-								blobData.metadata = metadata
-							} else {
-								blobData.metadata = {
-									mimeType: mimeType as string,
-									path: storagePath,
-								}
-							}
-							resolve(blobData)
-						}
-					}
-				)
-			)
-		}
+			.on('error', (e: Error) => {
+				reject(e)
+			})
 	})
 }
 
@@ -250,7 +186,7 @@ async function uploadEntries(
 	file: any,
 	isFileName: boolean = false
 ) {
-	return new Promise<azure.BlobService.BlobResult[]>((resolve, reject) => {
+	return new Promise<any[]>((resolve, reject) => {
 		const promises: any[] = []
 		const stream = isFileName
 			? fs.createReadStream(file)

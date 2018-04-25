@@ -115,10 +115,31 @@
 			width: 230px;
 		}
 	}
+
+	@include e(description) {
+		@include m(module) {
+			float: left;
+			display: block;
+		}
+	}
+
+	@include e(module) {
+		border-bottom: 1px solid $grey-2;
+		padding: 15px 0;
+		float: left;
+	}
 }
 
 .resources {
 	.resource:last-of-type {
 		border-bottom: 0;
+	}
+}
+
+.module {
+	@include e(top-info) {
+		display: block;
+		float: left;
+		width: 100%;
 	}
 }

@@ -2,10 +2,6 @@
 * Mixins, includes.. cool .scss stuff :)
 */
 
-/*
-* Mixins, includes.. cool .scss stuff :)
-*/
-
 //element selector
 @mixin e($element) {
 	&__#{$element} {

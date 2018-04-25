@@ -1,0 +1,50 @@
+<aside role="complementary">
+    <form name="searchLearning" method="get" action="/search">
+        <input type="hidden" id="q" name="q" value="{{ query }}" />
+        <div class="govuk-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+            <fieldset>
+              
+                <legend>
+                    <h2 class="heading-medium">Learning type</h2>
+                </legend>
+              
+                <div class="multiple-choice">
+                    <input type="checkbox" value="blog" name="courseType" id="blog"  checked="{{(courseType || []).indexOf('blog') > -1 ? 'checked' : ''}}" >
+                    <label for"blog">Blog</label>
+                </div>
+                <div class="multiple-choice">
+                    <input type="checkbox" name="courseType" value="face to face" checked="{{(courseType || []).indexOf('face to face') > -1 ? 'checked' : ''}}">
+                    <label for"classroom">Face to face</label>
+                </div>
+                <div class="multiple-choice">
+                        <input type="checkbox" name="courseType" value="link" checked="{{(courseType || []).indexOf('link') > -1 ? 'checked' : ''}}" >
+                        <label for"video">Link</label>
+                    </div>
+                <div class="multiple-choice">
+                    <input type="checkbox" name="courseType" value="online" checked="{{(courseType || []).indexOf('online') > -1 ? 'checked' : ''}}" >
+                    <label for"video">Online</label>
+                </div>
+                <div class="multiple-choice">
+                    <input type="checkbox" name="courseType" value="video" checked="{{(courseType || []).indexOf('video') > -1 ? 'checked' : ''}}" >
+                    <label for"video">Video</label>
+                </div>
+            </fieldset>
+        </div>
+        
+        <div class="govuk-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+            <fieldset>
+
+                <legend>
+                    <h3 class="heading-medium">Cost</h3>
+                </legend>
+
+                <div class="multiple-choice">
+                        <input type="checkbox" name="cost" value="free" checked="{{(cost || []).indexOf('free') > -1 ? 'checked' : ''}}"  >
+                        <label for"cost">Show only free</label>
+                    </div>
+            </fieldset>
+        </div>
+
+        <button type="submit" class="button" >Apply search filters</button>
+    </form>
+</aside>
