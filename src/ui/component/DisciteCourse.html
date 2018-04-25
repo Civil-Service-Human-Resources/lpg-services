@@ -96,10 +96,10 @@
 
             {{#if !course.isRequired(signedInUser) && !(course.record && course.record.modules && course.record.modules.length && course.record.modules[0].eventId)}}
 
-                    <a href="/courses/{{course.id}}/delete">Remove
+                    <a href="/home?delete={{course.id}}">Remove
                         <span class="visuallyhidden"> this module</span>
                     </a>
-                
+
             {{/if}}
 
     </div>

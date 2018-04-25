@@ -1,8 +1,11 @@
 <div class="banner {{!!type ? 'banner--' + type : ''}}">
-  {{#if title}}
-  <span class="banner__heading-large">{{title}}</span>
-  {{/if}}
-  {{#if message}}
-  <span>{{message}}</span>
-  {{/if}}
+    {{#if title}}
+        <span class="banner__heading-large">{{title}}</span>
+    {{/if}}
+    {{#if message}}
+        <p>{{message}}</p>
+    {{/if}}
+
+    <slot></slot>
+
 </div>
