@@ -7,6 +7,13 @@ export interface PageResults {
 	totalResults: number
 }
 
-export interface SearchResults extends PageResults {
+export interface ResourceResults {
+	page: number
+	results: model.Resource[]
+	size: number
+	totalResults: number
+}
+
+export interface SearchResults extends ResourceResults {
 	suggestion?: string
 }
