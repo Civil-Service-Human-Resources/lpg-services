@@ -4,8 +4,7 @@
 	"scripts": {
 		"build": "../../bin/tsc",
 		"clean": "rm -rf dist",
-		"postinstall":
-			"(test -e node_modules/extension || ln -s ../dist/extension node_modules/extension) && (test -e node_modules/test || ln -s ../dist/page node_modules/page) && (test -e node_modules/test || ln -s ../dist/test node_modules/test)",
+		"postinstall": "(test -e node_modules/extension || ln -s ../dist/extension node_modules/extension) && (test -e node_modules/test || ln -s ../dist/page node_modules/page) && (test -e node_modules/test || ln -s ../dist/test node_modules/test)",
 		"test": "jest",
 		"watch": "../../bin/tsc --watch"
 	},
@@ -13,7 +12,7 @@
 		"@types/node": "8.0.58",
 		"@types/puppeteer": "1.0.0",
 		"dotenv": "4.0.0",
-		"puppeteer": "1.0.0"
+		"puppeteer": "^1.0.0"
 	},
 	"devDependencies": {
 		"jest-cli": "22.4.0",
