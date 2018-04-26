@@ -13,7 +13,7 @@ cache:
     - environ/lpg-ansible-mvp
     - node_modules
     - pyhome
-    - test/headless/node_modules
+    - test/webdriver/node_modules
 
 env:
   - ENV_PROFILE=dev
