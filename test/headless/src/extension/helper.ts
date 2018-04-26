@@ -39,6 +39,18 @@ export async function checkElementIsPresent(
 	}, selector)
 }
 
+export async function getAllText(
+	selector: string,
+	page: puppeteer.Page
+): Promise<string> {
+	return await page.$$eval(selector, nodes => {
+		const res = []
+		for (const el of nodes) {
+			res.push(el.innerHTML.trim())
+		}
+		return res
+	})
+}
 export async function getText(
 	selector: string,
 	page: puppeteer.Page
