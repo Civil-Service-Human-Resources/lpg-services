@@ -63,28 +63,27 @@ export async function home(req: express.Request, res: express.Response) {
 			}
 		}
 
+		let removeCourseId
+		let confirmTitle
+		let confirmMessage
+
 		if (req.query.delete) {
 			const courseToDelete = await catalog.get(req.query.delete)
-			req.flash(
-				'confirmTitle',
-				req.__('learning_confirm_removal_plan_title', courseToDelete!.title)
+			confirmTitle = req.__(
+				'learning_confirm_removal_plan_title',
+				courseToDelete!.title
 			)
-
-			req.flash(
-				'confirmMessage',
-				req.__('learning_confirm_removal_plan_message')
-			)
-
-			req.flash('removeCourseId', courseToDelete!.id)
+			removeCourseId = courseToDelete!.id
+			confirmMessage = req.__('learning_confirm_removal_plan_message')
 		}
 
 		res.send(
 			template.render('home', req, res, {
-				confirmMessage: req.flash('confirmMessage')[0],
-				confirmTitle: req.flash('confirmTitle')[0],
+				confirmMessage,
+				confirmTitle,
 				plannedLearning,
 				readyForFeedback,
-				removeCourseId: req.flash('removeCourseId')[0],
+				removeCourseId,
 				requiredLearning,
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],
