@@ -127,13 +127,46 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-export function renderEditPage(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+export function renderAreasOfWorkPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const lede = req.__('register_area_page_intro')
+	const selected = ['commercial']
+	/*tslint:disable*/
+	const levels = [
+		{
+			commercial: 'Commercial',
+			digital: 'Digital',
+			'project-delivery': 'Project Delivery',
+			communications: 'Communications',
+			'corporate-finance': 'Corporate finance',
+			finance: 'Finance',
+			'fraud-error-debt-grants': 'Fraud, error, debt and grants',
+			'human-resources': 'Human Resources',
+			'internal-audit': 'Internal audit',
+			legal: 'Legal',
+			property: 'Property',
+		},
+	]
+	/*tslint:enable*/
+
+	res.send(
+		template.render('profile/edit', req, res, {
+			inputName: 'areas-of-work',
+			lede,
+			levels,
+			...res.locals,
+			selected,
+		})
+	)
+}
+
+export function renderEditPage(req: express.Request, res: express.Response) {
 	const inputName = req.params.profileDetail
 	let options = {}
 	let optionType: string = ''
 	let value = null
-	let lede: string = ''
 	switch (inputName) {
 		case 'given-name':
 			value = req.user.givenName
@@ -142,12 +175,6 @@ export function renderEditPage(ireq: express.Request, res: express.Response) {
 			options = req.__('departments')
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
-			break
-		case 'areas-of-work':
-			options = req.__('areas-of-work')
-			optionType = OptionTypes.Checkbox
-			lede = req.__('register_area_page_intro')
-			value = req.user.areasOfWork
 			break
 		case 'grade':
 			options = req.__('grades')
@@ -169,11 +196,11 @@ export function renderEditPage(ireq: express.Request, res: express.Response) {
 			})
 		}
     </script>`
+
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
 			inputName,
-			lede,
 			optionType,
 			options: Object.entries(options),
 			script,
@@ -320,3 +347,5 @@ export async function updateProfile(
 		)
 	}
 }
+
+export function selectLevel(req: express.Request, res: express.Response) {}
