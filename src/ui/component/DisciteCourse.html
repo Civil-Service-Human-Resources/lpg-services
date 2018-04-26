@@ -53,21 +53,25 @@
         {{/if}}
     </div>
     <div class="discite__action discite__action--{{modifier || ''}}">
-        {{#if course.getType() !== 'blended'}}
+
             {{#if course.record}}
                 {{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}}
                     <a href="/book/{{course.id}}/{{course.record.modules[0].moduleId}}/{{course.record.modules[0].eventId}}/cancel">Cancel</a>
                 {{else}}
                     {{#if course.getType() !== 'face-to-face'}}
                         {{#if course.record.modules.length}}
-                            <a href="/courses/{{course.id}}/{{course.record.modules[0].moduleId}}">{{ i18n('action_' + (course.record.modules[0].state || 'NOT_STARTED' )) }}
-                                <span class="visuallyhidden"> this module</span>
+                            <a href="/courses/{{course.id}}#modules">{{ i18n('action_' + (course.record.modules[0].state || 'NOT_STARTED' )) }}
+                                <span class="visuallyhidden"> this course</span>
                             </a>
                         {{else}}
-                            <a href="/courses/{{course.id}}/{{course.modules[0].id}}">{{ i18n('action_NOT_STARTED') }}
-                                <span class="visuallyhidden"> this module</span>
+                            <a href="/courses/{{course.id}}#modules">{{ i18n('action_NOT_STARTED') }}
+                                <span class="visuallyhidden"> this course</span>
                             </a>
                         {{/if}}
+                    {{else}}
+                        <a class="lpg-book-course" href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book
+                            <span class="visuallyhidden"> this module</span>
+                        </a>
                     {{/if}}
                     {{#if !course.isRequired(signedInUser)}}
                         {{#if course.record.state === 'ARCHIVED'}}
@@ -75,26 +79,28 @@
                         {{/if}}
                     {{/if}}
                 {{/if}}
+            {{else}}
+                {{#if course.getType() !== 'face-to-face'}}
+                    <a href="/courses/{{course.id}}#modules">Start
+                        <span class="visuallyhidden"> this course</span>
+                    </a>
                 {{else}}
-                    {{#if course.getType() !== 'face-to-face'}}
-                        <a href="/courses/{{course.id}}/{{course.modules[0].id}}">Start
-                            <span class="visuallyhidden"> this module</span>
-                        </a>
-                    {{else}}
-                        <a class="lpg-book-course" href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book
-                            <span class="visuallyhidden"> this module</span>
-                        </a>
-                    {{/if}}
-                    {{#if !course.isRequired(signedInUser)}}
-                        <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
-                    {{/if}}
-                {{/if}}
-                {{else}}
-                    {{#if !course.isRequired(signedInUser)}}
-                    <a href="/courses/{{course.id}}/delete">Remove
+                    <a class="lpg-book-course" href="/book/{{course.id}}/{{course.modules[0].id}}/choose-date">Book
                         <span class="visuallyhidden"> this module</span>
                     </a>
-                    {{/if}}
                 {{/if}}
+                {{#if !course.isRequired(signedInUser)}}
+                    <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                {{/if}}
+            {{/if}}
+
+            {{#if !course.isRequired(signedInUser) && !(course.record && course.record.modules && course.record.modules.length && course.record.modules[0].eventId)}}
+
+                    <a href="/home?delete={{course.id}}">Remove
+                        <span class="visuallyhidden"> this module</span>
+                    </a>
+
+            {{/if}}
+
     </div>
 </div>

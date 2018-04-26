@@ -17,7 +17,17 @@
         <div class="grid-row">
             <div class="column-full">
                 {{#if successTitle}}
-                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} /> {{/if}}
+                    <Banner type="confirmation" title={{successTitle}} message={{successMessage}} />
+                {{/if}}
+
+                {{#if confirmTitle}}
+                    <Banner type="warning" title={{confirmTitle}} message={{confirmMessage}}>
+
+                        <a class="banner__action" href="courses/{{removeCourseId}}/delete">Yes, remove course now.</a>
+                        <a class="banner__action" href="/">No, keep it.</a>
+
+                    </Banner>
+                {{/if}}
             </div>
         </div>
 

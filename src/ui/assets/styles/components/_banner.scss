@@ -8,6 +8,11 @@
 	// Default
 	background-color: $light-blue;
 
+	@include e(action) {
+		display: inline-block;
+		margin-right: 10px;
+	}
+
 	a {
 		&:link,
 		&:visited,
