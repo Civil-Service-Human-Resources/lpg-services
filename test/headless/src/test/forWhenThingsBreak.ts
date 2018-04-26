@@ -39,6 +39,6 @@ describe('profile page functionality', () => {
 			await helper.checkElementIsPresent(selectors.profileUpdatedBanner, page)
 		).toBe(true)
 		const updatedName = await helper.getText(selectors.givenName, page)
-		expect(updatedName).toEqual(name)
+		expect(updatedName).toContain(name)
 	})
 })

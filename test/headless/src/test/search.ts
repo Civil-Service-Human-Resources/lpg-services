@@ -60,7 +60,7 @@ describe('search functionality', () => {
 		const searchTerm = 'something'
 		await search(searchTerm, page)
 		const termSearched = await helper.getText(selectors.termSearched, page)
-		expect(termSearched).toEqual(searchTerm)
+		expect(termSearched).toContain(searchTerm)
 	})
 
 	it('Should display pagination for a search term which returns > 10 results', async () => {
@@ -82,7 +82,7 @@ describe('search functionality', () => {
 		const searchTerm = 'the'
 		await page.goto(config.BASE_URL + '/search?q=' + searchTerm)
 		const termSearched = await helper.getText(selectors.termSearched, page)
-		expect(termSearched).toEqual(searchTerm)
+		expect(termSearched).toContain(searchTerm)
 	})
 
 	it('Should display no search results for an invalid search term', async () => {

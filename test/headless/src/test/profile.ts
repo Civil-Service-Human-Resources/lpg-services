@@ -57,7 +57,7 @@ describe('profile page functionality', () => {
 
 	it('Should display username field which matches email address', async () => {
 		const username = await helper.getText(selectors.emailAddress, page)
-		expect(username).toEqual(TEST_USERNAME)
+		expect(username).toContain(TEST_USERNAME)
 	})
 
 	it('Should display the first name field', async () => {
@@ -112,7 +112,7 @@ describe('profile page functionality', () => {
 			await helper.checkElementIsPresent(selectors.profileUpdatedBanner, page)
 		).toBe(true)
 		const updatedName = await helper.getText(selectors.givenName, page)
-		expect(updatedName).toEqual(name)
+		expect(updatedName).toContain(name)
 	})
 
 	it('Should be able to update users department from the profile page', async () => {
@@ -127,12 +127,12 @@ describe('profile page functionality', () => {
 			await helper.checkElementIsPresent(selectors.profileUpdatedBanner, page)
 		).toBe(true)
 		const updatedDept = await helper.getText(selectors.department, page)
-		expect(updatedDept).toEqual(dept)
+		expect(updatedDept).toContain(dept)
 	})
 
 	it('Should display users profession as commercial', async () => {
 		const current = await helper.getText(selectors.currentAreaOfWork, page)
-		expect(current).toEqual('Commercial')
+		expect(current).toContain('Commercial')
 	})
 
 	it('Should change the users profession value', async () => {
@@ -143,7 +143,7 @@ describe('profile page functionality', () => {
 		)
 		await page.waitForSelector(selectors.profileUpdatedBanner)
 		const current = await helper.getText(selectors.currentAreaOfWork, page)
-		expect(current).toEqual('Digital')
+		expect(current).toContain('Digital')
 	})
 
 	it('Should update the users grade from the profile page', async () => {

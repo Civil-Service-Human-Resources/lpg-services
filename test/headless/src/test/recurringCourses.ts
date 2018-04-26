@@ -41,7 +41,7 @@ describe('recurring courses functionality', () => {
 
 	xit('Should display recurring courses with a required by date', async () => {
 		const requiredByText = await helper.getText(selectors.firstRequiredBy, page)
-		expect(requiredByText).toEqual('Required by 31/03/2018')
+		expect(requiredByText).toContain('Required by 31/03/2018')
 	})
 
 	xit('Should hide completed course before required by date', async () => {
