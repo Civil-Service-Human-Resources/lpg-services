@@ -1,3 +1,5 @@
+const conf = require('extension/config')
+
 exports.config = {
 	specs: ['dist/test/*.spec.js'],
 	exclude: [
@@ -20,7 +22,12 @@ exports.config = {
 	waitforTimeout: 20000,
 	connectionRetryTimeout: 90000,
 	connectionRetryCount: 3,
-	services: ['selenium-standalone', 'screenshots-cleanup'],
+	services: ['selenium-standalone', 'screenshots-cleanup', 'sauce'],
+	user: conf.SAUCE_USERNAME,
+	key: conf.SAUCE_ACCESS_KEY,
+	//TODO(Will):Clean this up
+	//Enable to run against SauceLabs
+	//sauceConnect: true,
 	screenshotRoot: 'my-shots',
 	framework: 'jasmine',
 	jasmineNodeOpts: {
