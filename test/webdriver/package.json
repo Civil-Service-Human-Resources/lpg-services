@@ -2,17 +2,17 @@
 	"name": "lpg-wdio-tests",
 	"version": "0.0.1",
 	"scripts": {
-		"build": "../../bin/tsc",
+		"build": "tsc",
 		"clean": "rm -rf dist",
-		"postinstall": "(test -e node_modules/extension || ln -s ../dist/extension node_modules/extension) && (test -e node_modules/test || ln -s ../dist/page node_modules/page) && (test -e node_modules/test || ln -s ../dist/test node_modules/test)",
+		"postinstall":
+			"(test -e node_modules/extension || ln -s ../dist/extension node_modules/extension) && (test -e node_modules/test || ln -s ../dist/page node_modules/page) && (test -e node_modules/test || ln -s ../dist/test node_modules/test)",
 		"test": "npm run build && wdio ./build/wdio.conf.js"
 	},
 	"license": "MIT",
 	"devDependencies": {
-		"@types/jasmine": "2.8.6",
+		"@types/jasmine": "2.5.38",
 		"@types/node": "7.0.14",
 		"@types/webdriverio": "4.7.0",
-		"typescript": "2.3.2",
 		"wdio-firefox-profile-service": "0.0.3",
 		"wdio-jasmine-framework": "0.3.2",
 		"wdio-screenshots-cleanup-service": "0.0.6",
