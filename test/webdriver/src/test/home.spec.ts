@@ -1,5 +1,5 @@
-import * as config from 'extension/config'
-import loginPage, {selectors} from 'page/login'
+import * as config from '../extension/config'
+import loginPage, {selectors} from '../page/login'
 
 describe('Login page funtionality', () => {
 	beforeAll(done => {

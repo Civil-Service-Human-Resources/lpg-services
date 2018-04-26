@@ -10,6 +10,7 @@
 		"dev:ui": "npm run watch & npm run watch-sass:ui & npm run start:ui & wait",
 		"lint": "tslint --project tsconfig.json",
 		"lint:headless": "tslint --project test/headless/tsconfig.json",
+		"lint:webdriver": "tslint --project test/webdriver/tsconfig.json",
 		"nuke": "rm -rf dist node_modules",
 		"postinstall": "./bin/setup-dist",
 		"sass:all": "npm run sass:management & npm run sass:ui",
