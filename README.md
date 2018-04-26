@@ -11,8 +11,8 @@ To start the services, most of what you need will be in this repo. You will also
 
 **In the root dir of this repo, run**
 
-1. `npm install`
-2. `docker-compose up`
+1.  `npm install`
+2.  `docker-compose up`
 
 **To build and run the services**
 
@@ -20,8 +20,7 @@ There are several npm scripts. Find them in [package.json](package.json)
 
 * `npm run build`
 * to start the ui: `npm run start:ui`, to start management: `npm run start:management`
-* for dev, you can run `npm run dev:ui` to watch typescript files, sass files and start  the server.
- 
+* for dev, you can run `npm run dev:ui` to watch typescript files, sass files and start the server.
 
 **Services**
 
@@ -32,4 +31,16 @@ There are several npm scripts. Find them in [package.json](package.json)
 
 **Testing**
 
-* [Headless](test/headless)
+* [WebdriverIO](test/webdriver)
+
+All the services required to run this are npm dependancies. To run against different environments locally you need to set the appropriate environment variable.
+
+**In the webdriver dir of this repo, run**
+
+1.  `npm install`
+2.  `npm run build`
+3.  `npm run test`
+
+**Configure WebdriverIO capabilities**
+
+Browser type, timeouts, services and browser instances can be configured within [wdio.conf.js](test/webdriver/wdio.conf.js)
