@@ -51,15 +51,15 @@ PYTHONUSERBASE=pyhome pip install --user ansible==2.4.3.0
 stage "Deploying to the dev environment"
 ./environ/deploy dev ${TRAVIS_COMMIT}
 
-stage "Installing the headless test dependencies"
-cd test/headless
+stage "Installing the wdio test dependencies"
+cd test/webdriver
 rm -f node_modules/extension node_modules/page node_modules/test
 npm install
 
-stage "Building the headless test code"
+stage "Building the wdio test code"
 npm run build
 
-stage "Running the headless tests"
+stage "Running the wdio tests"
 npm test || true
 
 echo "Total run time: ${SECONDS}s"
