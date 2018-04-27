@@ -10,14 +10,9 @@ exports.config = {
 		{
 			maxInstances: 5,
 			browserName: 'chrome',
-			// chromeOptions: {
-			// 	args: [
-			// 		'--headless',
-			// 		'--disable-gpu',
-			// 		'--window-size=1280,800',
-			// 		'--no-sandbox',
-			// 	],
-			// },
+			chromeOptions: {
+				args: ['--headless', '--disable-gpu'],
+			},
 		},
 	],
 	sync: true,
