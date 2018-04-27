@@ -19,7 +19,7 @@ cache:
     - test/webdriver/node_modules
 
 env:
-  - ENV_PROFILE=dev
+  - ENV_PROFILE=test
 
 install: true
 script: ./environ/ci
