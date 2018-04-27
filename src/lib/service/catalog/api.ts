@@ -9,11 +9,12 @@ export interface PageResults {
 
 export interface ResourceResults {
 	page: number
-	results: model.Resource[]
+	results: (model.Resource | model.CourseModule)[]
 	size: number
 	totalResults: number
 }
 
 export interface SearchResults extends ResourceResults {
+	combinedResults: model.CourseModule[]
 	suggestion?: string
 }

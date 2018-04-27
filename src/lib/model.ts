@@ -68,15 +68,16 @@ export class Course {
 
 	getCost() {
 		const costArray = this.modules.map(module => module.price)
-		return costArray.length ? costArray
-			.reduce((p, c) => (p || 0) + (c || 0)) : null
+		return costArray.length
+			? costArray.reduce((p, c) => (p || 0) + (c || 0))
+			: null
 	}
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
-		return durationArray.length ? datetime.formatCourseDuration(
-			durationArray.reduce((p, c) => p + c)
-		) : null
+		return durationArray.length
+			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c))
+			: null
 	}
 
 	getGrades() {
@@ -214,7 +215,6 @@ export class Course {
 		return price
 	}
 }
-
 export class Resource {
 	static create(data: any) {
 		const resource = new Resource(data.id)
@@ -223,6 +223,7 @@ export class Resource {
 		resource.learningOutcomes = data.learningOutcomes
 		resource.shortDescription = data.shortDescription
 		resource.title = data.title
+		resource.type = data.type
 
 		resource.modules = (data.modules || []).map(Module.create)
 
@@ -232,6 +233,7 @@ export class Resource {
 	id: string
 	courseId: string
 	title: string
+	type: string
 	shortDescription: string
 	description: string
 	learningOutcomes: string
@@ -239,6 +241,26 @@ export class Resource {
 
 	constructor(id: string) {
 		this.id = id
+	}
+}
+
+export class CourseModule {
+	course: Course
+	module: ModuleWithCourse
+	type: string
+
+	static createFromCourse(course: Course) {
+		const courseModule = new CourseModule()
+		courseModule.course = course
+		courseModule.type = 'course'
+		return courseModule
+	}
+
+	static createFromModule(module: Module, courseId: string) {
+		const courseModule = new CourseModule()
+		courseModule.module = module
+		courseModule.module.courseId = courseId
+		return courseModule
 	}
 }
 
@@ -330,6 +352,9 @@ export class Module {
 	}
 }
 
+export class ModuleWithCourse extends Module {
+	courseId?: string
+}
 export class Event {
 	static create(data: any) {
 		const date = data.date ? new Date(data.date) : new Date()
