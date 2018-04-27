@@ -60,6 +60,6 @@ stage "Building the wdio test code"
 npm run build
 
 stage "Running the wdio tests"
-npm test || true
+xvfb-run npm test
 
 echo "Total run time: ${SECONDS}s"
