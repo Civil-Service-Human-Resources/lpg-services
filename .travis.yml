@@ -8,6 +8,9 @@ node_js:
 services:
   - docker
 
+addons:
+  chrome: stable
+
 cache:
   directories:
     - environ/lpg-ansible-mvp
