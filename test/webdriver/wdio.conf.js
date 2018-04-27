@@ -10,6 +10,14 @@ exports.config = {
 		{
 			maxInstances: 5,
 			browserName: 'chrome',
+			chromeOptions: {
+				args: [
+					'--headless',
+					'--disable-gpu',
+					'--window-size=1280,800',
+					'--no-sandbox',
+				],
+			},
 		},
 	],
 	sync: true,
@@ -22,9 +30,10 @@ exports.config = {
 	waitforTimeout: 20000,
 	connectionRetryTimeout: 90000,
 	connectionRetryCount: 3,
-	services: ['selenium-standalone', 'screenshots-cleanup', 'sauce'],
-	user: conf.SAUCE_USERNAME,
-	key: conf.SAUCE_ACCESS_KEY,
+	//services: ['selenium-standalone', 'screenshots-cleanup', 'sauce'],
+	services: ['selenium-standalone', 'screenshots-cleanup'],
+	// user: conf.SAUCE_USERNAME,
+	// key: conf.SAUCE_ACCESS_KEY,
 	//TODO(Will):Clean this up
 	//Enable to run against SauceLabs
 	//sauceConnect: true,
