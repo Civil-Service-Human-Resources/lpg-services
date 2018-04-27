@@ -22,6 +22,6 @@
 		"webdriverio": "4.7.1"
 	},
 	"dependencies": {
-		"chromedriver": "2.38.2"
+		"chromedriver": "2.31.0"
 	}
 }
