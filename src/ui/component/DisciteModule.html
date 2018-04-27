@@ -1,24 +1,42 @@
 <div class="discite__item u-clearfix discite__item--module">
     <div class="discite__main discite__main--module">
-        <h3 class="heading bold-small heading--text">
-            {{module.title}}
-        </h3>
+            {{#if modifier === "search"}} 
+            <a href="/courses/{{module.courseId}}/{{module.id}}">
+                <h3 class="heading bold-small heading--text">
+                    {{module.title}}
+                </h3>
+            </a>
+            {{else}}
+            <a href="/courses/{{course.id}}/{{module.id}}">
+                <h3 class="heading bold-small heading--text">
+                        {{module.title}}
+                    </h3>
+            </a>
+            {{/if}}
+
         {{#if module.description}}
             <p class="discite__description">{{module.description}}</p>
         {{/if}}
     </div>
-    <div class="discite__properties discite__properties--module u-clearfix">
-        <ul class="discite__property discite__property--module">
+    <div class="discite__properties discite__properties--{{modifier || ''}} u-clearfix">
+        <ul class="discite__property discite__property--{{modifier || ''}}">
             <li class="discite__property-item">
                 <span class="visuallyhidden">Type:</span> {{i18n(module.type)}}
             </li>
             <li class="discite__property-item">
-                <span class="visuallyhidden">Duration:</span> {{module.duration}}
+                <span class="visuallyhidden">Duration:</span> {{module.duration || ''}}
+            </li>
+            <li class="discite__property-item">
+                <span class="visuallyhidden">Cost:</span> &pound;{{module.price || 'Free'}}
             </li>
         </ul>
         <div class="discite__status"><span class="badge badge--info ">{{module.state ? i18n(module.state) : ''}}</span></div>
     </div>
     <div class="discite__action discite__action--module">
+        {{#if modifier === "search"}} 
+        <a href="/courses/{{module.courseId}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
+        {{else}}
         <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
+        {{/if}}
     </div>
 </div>
