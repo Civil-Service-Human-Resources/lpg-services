@@ -73,6 +73,7 @@
 	"profile_given-name_label": "Name",
 	"profile_email-address_label": "Email",
 	"profile_areas-of-work_label": "Area of work",
+	"profile_primary-area_label": "Primary area of work",
 	"profile_other-areas-of-work_label": "Other areas of work",
 	"profile_updated": "Profile successfully updated",
 	"register_for_account_link": "Register for an account",
