@@ -14,7 +14,7 @@
         {{/each}}
 		<li>
 			<a
-				href="/profile/areas-of-work/?select={{selectedArr[level] ? selectedArr[level] : level}}"
+				href="/profile/areas-of-work/?select={{selectedArr && selectedArr[level] ? selectedArr[level] : level}}"
 				class="levels__link levels__link--unsure">
 				Choose this level
 			</a>
