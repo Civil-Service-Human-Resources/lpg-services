@@ -51,18 +51,13 @@ export function editAreaOfWork(uncheck: string, checked: string[]) {
 }
 
 export function getProfs() {
-	return browser.elements(selectors.currentAreaOfWork).then(ele => {
-		const res = []
-		for (const el of ele.value) {
-			res.push(
-				browser
-					.element(el.ELEMENT)
-					.getAttribute('innerHTML')
-					.trim()
-			)
-		}
-		return res
-	})
+	const elements = browser.elements(selectors.currentAreaOfWork).value
+	const res = []
+
+	for (const element of elements) {
+		res.push(browser.elementIdText(element.ELEMENT).value)
+	}
+	return res
 }
 
 export function arrMod(str: string[]) {
