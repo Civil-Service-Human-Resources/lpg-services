@@ -25,6 +25,7 @@ import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
+import * as template from 'lib/ui/template'
 
 /* tslint:disable:no-var-requires */
 const favicon = require('serve-favicon')
@@ -135,6 +136,10 @@ app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
+
+app.get('/privacy', (req, res) => {
+	res.send(template.render('privacy', req, res))
+})
 
 app.post('/feedback.record', asyncHandler(feedbackController.record))
 
