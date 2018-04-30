@@ -223,6 +223,10 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 		case 'given-name':
 			value = req.user.givenName
 			break
+		case 'other-areas-of-work':
+			options = req.__('areas-of-work')
+			optionType = OptionTypes.Checkbox
+			break
 		case 'department':
 			options = req.__('departments')
 			optionType = OptionTypes.Typeahead
@@ -341,7 +345,7 @@ export async function updateProfile(
 		case 'grade':
 			updateProfileObject.CshrUser.grade = fieldValue
 			break
-		case 'areas-of-work':
+		case 'other-areas-of-work':
 			let joinedFieldValues
 			if (Array.isArray(fieldValue)) {
 				joinedFieldValues = fieldValue.join(',')

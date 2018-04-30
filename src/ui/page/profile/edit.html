@@ -35,7 +35,7 @@
 
                     <Levels :levels :selected :selectedArr/>
                 {{else}}
-                    <ProfileEditForm :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value/>
+                    <ProfileEditForm :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value :_csrf/>
                 {{/if}}
             </div>
         </div>
