@@ -226,12 +226,14 @@ export class Resource {
 		resource.type = data.type
 
 		resource.modules = (data.modules || []).map(Module.create)
+		resource.course = (data.course || {}).map(Course.create)
 
 		return resource
 	}
 
 	id: string
 	courseId: string
+	course: Course
 	title: string
 	type: string
 	shortDescription: string
@@ -256,10 +258,11 @@ export class CourseModule {
 		return courseModule
 	}
 
-	static createFromModule(module: Module, courseId: string) {
+	static createFromModule(module: Module, course: Course) {
 		const courseModule = new CourseModule()
 		courseModule.module = module
-		courseModule.module.courseId = courseId
+		courseModule.type = 'module'
+		courseModule.module.course = course
 		return courseModule
 	}
 }
@@ -354,6 +357,7 @@ export class Module {
 
 export class ModuleWithCourse extends Module {
 	courseId?: string
+	course?: Course
 }
 export class Event {
 	static create(data: any) {

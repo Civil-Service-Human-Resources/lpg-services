@@ -1,11 +1,12 @@
 <div class="discite__item u-clearfix discite__item--module">
-    <div class="discite__main discite__main--module">
+    <div class="discite__main discite__main--module--{{modifier || ''}}">
             {{#if modifier === "search"}} 
-            <a href="/courses/{{module.courseId}}/{{module.id}}">
+            <a href="/courses/{{module.course.id}}/{{module.id}}">
                 <h3 class="heading bold-small heading--text">
                     {{module.title}}
                 </h3>
             </a>
+            <p>This is a module in <a href="/courses/{{module.course.id}}"><b>{{ module.course.title }}.</b></a> There are {{module.course.modules.length}} in total.</p>
             {{else}}
             <a href="/courses/{{course.id}}/{{module.id}}">
                 <h3 class="heading bold-small heading--text">
@@ -34,7 +35,7 @@
     </div>
     <div class="discite__action discite__action--module">
         {{#if modifier === "search"}} 
-        <a href="/courses/{{module.courseId}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
+        <a href="/courses/{{module.course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
         {{else}}
         <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
         {{/if}}
