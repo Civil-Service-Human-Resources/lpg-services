@@ -146,11 +146,7 @@ app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 app.get('/profile', userController.viewProfile)
 
 app.get('/profile/areas-of-work', userController.renderAreasOfWorkPage)
-
-app.get(
-	'/profile/areas-of-work/:level1/:level2/:level3/:level4',
-	userController.renderEditPage
-)
+app.get('/profile/areas-of-work/*', userController.renderAreasOfWorkPage)
 
 app.get('/profile/:profileDetail', userController.renderEditPage)
 

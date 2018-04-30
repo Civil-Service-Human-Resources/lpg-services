@@ -1,9 +1,10 @@
 <div class="levels__col levels__col--4">
-	<ul class="levels__list">
 
+	<ul class="levels__list">
         {{#each Object.entries(levelOptions) as option}}
+
             <li>
-                <a href="/profile/areas-of-work/" class="levels__link {{option[0] === selected[level] ? 'levels__link--active' : '' }} ">{{(option[1])}}</a>
+                <a href="/profile/areas-of-work/{{selected ? selected + '/' : ''}}{{option[0]}}" class="levels__link {{selectedArr && option[0] === selectedArr[level] ? 'levels__link--selected' : '' }}">{{(option[1])}}</a>
             </li>
         {{/each}}
 		<li>
