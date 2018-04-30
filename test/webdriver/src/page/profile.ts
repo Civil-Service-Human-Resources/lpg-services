@@ -39,8 +39,52 @@ export function editProfileInfo(
 	browser.waitForVisible(selectors.profileUpdatedBanner)
 }
 
-// const editProfile = editProfileInfo()
-// export default editProfile
+export function editAreaOfWork(uncheck: string, checked: string[]) {
+	browser.click(selectors.changeAreasOfWork)
+	browser.waitForVisible(selectors.commercialAreaOfWork)
+	browser.click(uncheck)
+	for (const ele of checked) {
+		browser.click(ele)
+	}
+	browser.click(selectors.continueButton)
+	browser.waitForVisible(selectors.profileUpdatedBanner)
+}
+
+export function getProfs() {
+	return browser.elements(selectors.currentAreaOfWork).then(ele => {
+		const res = []
+		for (const el of ele.value) {
+			res.push(
+				browser
+					.element(el.ELEMENT)
+					.getAttribute('innerHTML')
+					.trim()
+			)
+		}
+		return res
+	})
+	// return browser.$$(selectors.currentAreaOfWork).value.map(nodes => {
+	// 	console.log('list of professions>>>>>>>>', nodes)
+	// const res = []
+	// for (const el of nodes) {
+	// 	res.push(el.innerHTML.trim())
+	// }
+	// return res
+}
+
+export function returnUserProfileDetails() {
+	const result = browser.$$('.form-control').value
+	console.log('WHAT AM I?>???.//', result)
+	const profile: Record<string, string> = {}
+	for (const val of result) {
+		console.log('ELEMENT>>>>>>>>', val)
+		// const attrName = val.getAttribute('name')
+		// if (attrName) {
+		// 	profile[attrName] = val.getAttribute('value') || ''
+		// }
+	}
+	return profile
+}
 
 // export async function returnUserProfileDetails(page: puppeteer.Page) {
 // 	return page.$$eval('.form-control', values => {
@@ -52,31 +96,6 @@ export function editProfileInfo(
 // 			}
 // 		}
 // 		return profile
-// 	})
-// }
-
-// export async function editAreaOfWork(
-// 	uncheck: string,
-// 	checked: string[],
-// 	page: puppeteer.Page
-// ) {
-// 	await page.click(selectors.changeAreasOfWork)
-// 	await page.waitForSelector(selectors.commercialAreaOfWork)
-// 	await page.click(uncheck)
-// 	for (const ele of checked) {
-// 		await page.click(ele)
-// 	}
-// 	await page.click(selectors.continueButton)
-// 	await page.waitForSelector(selectors.profileUpdatedBanner)
-// }
-
-// export async function getProfs(page: puppeteer.Page): Promise<string> {
-// 	return await page.$$eval(selectors.currentAreaOfWork, nodes => {
-// 		const res = []
-// 		for (const el of nodes) {
-// 			res.push(el.innerHTML.trim())
-// 		}
-// 		return res
 // 	})
 // }
 

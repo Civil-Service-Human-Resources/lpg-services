@@ -25,12 +25,12 @@ describe('Login page funtionality', () => {
 		expect(error).toBe(true)
 	})
 
-	it('Should display a feedback link with the correct survey link', async () => {
+	it('Should display a feedback link with the correct survey link', () => {
 		const feedback = browser.getAttribute(selectors.feedbackLink, 'href')
 		expect(feedback).toEqual(smartSurveyLink)
 	})
 
-	it('Should display a link to the user allowing them to get in touch to create account', async () => {
+	it('Should display a link to the user allowing them to get in touch to create account', () => {
 		const contact = browser.getAttribute(selectors.getInTouchLink, 'href')
 		expect(contact).toEqual(contactUsEmailAddress)
 	})
