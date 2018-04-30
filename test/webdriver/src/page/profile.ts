@@ -63,41 +63,7 @@ export function getProfs() {
 		}
 		return res
 	})
-	// return browser.$$(selectors.currentAreaOfWork).value.map(nodes => {
-	// 	console.log('list of professions>>>>>>>>', nodes)
-	// const res = []
-	// for (const el of nodes) {
-	// 	res.push(el.innerHTML.trim())
-	// }
-	// return res
 }
-
-export function returnUserProfileDetails() {
-	const result = browser.$$('.form-control').value
-	console.log('WHAT AM I?>???.//', result)
-	const profile: Record<string, string> = {}
-	for (const val of result) {
-		console.log('ELEMENT>>>>>>>>', val)
-		// const attrName = val.getAttribute('name')
-		// if (attrName) {
-		// 	profile[attrName] = val.getAttribute('value') || ''
-		// }
-	}
-	return profile
-}
-
-// export async function returnUserProfileDetails(page: puppeteer.Page) {
-// 	return page.$$eval('.form-control', values => {
-// 		const profile: Record<string, string> = {}
-// 		for (const val of values) {
-// 			const attrName = val.getAttribute('name')
-// 			if (attrName) {
-// 				profile[attrName] = val.getAttribute('value') || ''
-// 			}
-// 		}
-// 		return profile
-// 	})
-// }
 
 export function arrMod(str: string[]) {
 	return str.map(e => {
