@@ -403,5 +403,3 @@ export async function updateProfile(
 		)
 	}
 }
-
-export function selectLevel(req: express.Request, res: express.Response) {}
