@@ -128,7 +128,7 @@ export enum OptionTypes {
 }
 
 /*tslint:disable*/
-// placeholder until profile service is ready
+//TODO: LPFG-49,241 - remove when we have profile service
 const levels = [
 	{
 		a: 'Commercial',
@@ -144,18 +144,24 @@ const levels = [
 		k: 'Property',
 	},
 	{
-		b1: 'Content designer',
-		b2: 'Content strategist',
-		b3: 'Graphic designer',
-		b4: 'Interaction designer',
+		b101: 'Data',
+		b102: 'IT Operations',
+		b103: 'User centered design',
 	},
 	{
-		c1: 'head of interaction design',
-		c2: 'Lead interaction designer',
+		b201: 'Content designer',
+		b202: 'Content strategist',
+		b203: 'Graphic designer',
+		b204: 'Interaction designer',
+	},
+	{
+		d301: 'head of interaction design',
+		d302: 'Lead interaction designer',
 	},
 ]
 
 export function getLevels(selectedArray: string[]) {
+	//TODO: LPFG-49,241 - send get request to profile service to get levels to show
 	// placeholder until profile service is ready. This will be the call to the service
 	let levelsToReturn = []
 	if (!selectedArray) {
@@ -177,6 +183,12 @@ export function renderAreasOfWorkPage(
 	req: express.Request,
 	res: express.Response
 ) {
+	if (req.query.select) {
+		// const selectedLevel = req.query.select
+		//TODO: LPFG-49,241 - send request to profile service to update profile
+
+		res.redirect('/profile')
+	}
 	const lede = req.__('register_area_page_intro')
 	let selectedArr
 	let currentLevel
