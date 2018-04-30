@@ -127,37 +127,77 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
+/*tslint:disable*/
+// placeholder until profile service is ready
+const levels = [
+	{
+		a: 'Commercial',
+		b: 'Digital',
+		c: 'Project Delivery',
+		d: 'Communications',
+		e: 'Corporate finance',
+		f: 'Finance',
+		g: 'Fraud, error, debt and grants',
+		h: 'Human Resources',
+		i: 'Internal audit',
+		j: 'Legal',
+		k: 'Property',
+	},
+	{
+		b1: 'Content designer',
+		b2: 'Content strategist',
+		b3: 'Graphic designer',
+		b4: 'Interaction designer',
+	},
+	{
+		c1: 'head of interaction design',
+		c2: 'Lead interaction designer',
+	},
+]
+
+export function getLevels(selectedArray: string[]) {
+	// placeholder until profile service is ready. This will be the call to the service
+	let levelsToReturn = []
+	if (!selectedArray) {
+		levelsToReturn.push(levels[0])
+	}
+	for (const level in selectedArray) {
+		//push previous levels
+		levelsToReturn.push(levels[level])
+	}
+	if (selectedArray) {
+		levelsToReturn.push(levels[selectedArray.length]) //push the next level
+	}
+
+	return levelsToReturn
+}
+/*tslint:enable*/
+
 export function renderAreasOfWorkPage(
 	req: express.Request,
 	res: express.Response
 ) {
 	const lede = req.__('register_area_page_intro')
-	const selected = ['commercial']
-	/*tslint:disable*/
-	const levels = [
-		{
-			commercial: 'Commercial',
-			digital: 'Digital',
-			'project-delivery': 'Project Delivery',
-			communications: 'Communications',
-			'corporate-finance': 'Corporate finance',
-			finance: 'Finance',
-			'fraud-error-debt-grants': 'Fraud, error, debt and grants',
-			'human-resources': 'Human Resources',
-			'internal-audit': 'Internal audit',
-			legal: 'Legal',
-			property: 'Property',
-		},
-	]
-	/*tslint:enable*/
+	let selectedArr
+	let currentLevel
+	let selected
+	if (req.params[0]) {
+		selected = req.params[0]
+		selectedArr = req.params[0].split('/')
+		currentLevel = selectedArr.length
+	}
+
+	const levelsToShow = getLevels(selectedArr)
 
 	res.send(
 		template.render('profile/edit', req, res, {
+			currentLevel,
 			inputName: 'areas-of-work',
 			lede,
-			levels,
+			levels: levelsToShow,
 			...res.locals,
 			selected,
+			selectedArr,
 		})
 	)
 }

@@ -33,7 +33,7 @@
 
                 {{#if inputName === 'areas-of-work'}}
 
-                    <Levels :levels :selected  />
+                    <Levels :levels :selected :selectedArr/>
                 {{else}}
                     <ProfileEditForm :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value/>
                 {{/if}}
