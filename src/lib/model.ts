@@ -357,6 +357,7 @@ export class Module {
 
 export class ModuleWithCourse extends Module {
 	courseId?: string
+	course?: Course
 }
 export class Event {
 	static create(data: any) {
