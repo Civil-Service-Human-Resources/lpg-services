@@ -85,7 +85,6 @@ export async function search(req: express.Request, res: express.Response) {
 			let cmResult = result as model.CourseModule
 			if (cmResult.type === 'course') {
 				// a course
-				console.log('a course:', cmResult)
 				const course = courseRecords.find(
 					record => cmResult.course.id === cmResult.course.id
 				)

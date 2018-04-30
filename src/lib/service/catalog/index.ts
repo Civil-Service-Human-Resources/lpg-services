@@ -145,13 +145,14 @@ function convert(data: any) {
 
 function convertToMixed(data: any) {
 	if (data.results) {
-		console.log('results ', data.results)
 		data.results = data.results.map((result: model.Resource) => {
+			console.log('course ?', result.course)
+
 			return result.courseId === '0'
 				? model.CourseModule.createFromCourse(model.Course.create(result))
 				: model.CourseModule.createFromModule(
 						model.Module.create(result),
-						result.courseId
+						result.course
 				  )
 		})
 	}
