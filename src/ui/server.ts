@@ -14,6 +14,7 @@ import * as sessionFileStore from 'session-file-store'
 import * as passport from 'lib/config/passport'
 import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
+import * as template from 'lib/ui/template'
 
 import * as bookingController from './controllers/booking'
 import * as courseController from './controllers/course'
@@ -25,7 +26,6 @@ import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
-import * as template from 'lib/ui/template'
 
 /* tslint:disable:no-var-requires */
 const favicon = require('serve-favicon')
