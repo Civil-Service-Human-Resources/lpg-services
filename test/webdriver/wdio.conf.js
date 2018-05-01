@@ -7,9 +7,9 @@ exports.config = {
 		{
 			maxInstances: 1,
 			browserName: 'chrome',
-			// chromeOptions: {
-			// 	args: ['--headless', '--disable-gpu'],
-			// },
+			chromeOptions: {
+				args: ['--headless', '--disable-gpu'],
+			},
 		},
 	],
 	coloredLogs: true,
