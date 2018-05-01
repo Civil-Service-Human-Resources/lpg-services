@@ -29,7 +29,11 @@ exports.config = {
 	services: ['selenium-standalone', 'screenshots-cleanup'],
 	seleniumInstallArgs: {version: '3.4.0'},
 	seleniumArgs: {version: '3.4.0'},
-	specs: ['dist/test/feedback.spec.js'],
+	specs: [
+		'dist/test/feedback.spec.js',
+		'dist/test/login.spec.js',
+		'dist/test/footer.spec.js',
+	],
 	sync: true,
 	waitforTimeout: 40000,
 }
