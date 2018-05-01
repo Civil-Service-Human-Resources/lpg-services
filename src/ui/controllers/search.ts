@@ -45,14 +45,14 @@ export async function search(req: express.Request, res: express.Response) {
 	let cost = ''
 
 	let searchResults: api.SearchResults = {
+		combinedResults: [],
 		page: 0,
 		results: [],
-		combinedResults: [],
 		size: 10,
 		totalResults: 0,
 	}
 
-	let combinedResults: model.CourseModule[] = []
+	const combinedResults: model.CourseModule[] = []
 
 	const start = new Date()
 	if (req.query.p) {
@@ -82,7 +82,7 @@ export async function search(req: express.Request, res: express.Response) {
 		const courseRecords = await learnerRecord.getLearningRecord(user)
 
 		searchResults.results.forEach(result => {
-			let cmResult = result as model.CourseModule
+			const cmResult = result as model.CourseModule
 			if (cmResult.type === 'course') {
 				// a course
 				const course = courseRecords.find(
@@ -105,12 +105,12 @@ export async function search(req: express.Request, res: express.Response) {
 	// let learningFilter : SearchFilter =
 	res.send(
 		template.render('search', req, res, {
+			cost,
+			courseType,
 			end,
 			query,
-			searchResults,
 			range,
-			courseType,
-			cost,
+			searchResults,
 		})
 	)
 }
