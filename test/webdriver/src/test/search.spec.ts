@@ -7,6 +7,16 @@ describe('Search page funtionality', () => {
 		browser.url(config.URL)
 		loginPage.login(config.USERNAME, config.TEST_PASSWORD)
 		browser.waitForVisible(selectors.signoutButton)
+		browser.url(config.BASE_URL)
+	})
+
+	it('Should add to learning plan from search', async () => {
+		search('the')
+		const courseName = browser.getText(selectors.courseName)
+		browser.click(selectors.addToPlan)
+		browser.waitForVisible(selectors.addedNotification)
+		const addedCourse = browser.getText(selectors.addedNotification)
+		expect(addedCourse).toEqual(courseName[0])
 	})
 
 	it('Should display the search box on the home page', () => {
@@ -17,10 +27,20 @@ describe('Search page funtionality', () => {
 		expect(browser.isVisible(selectors.searchButton)).toBe(true)
 	})
 
+	it('Should display the search box on the suggested page', () => {
+		browser.url(config.BASE_URL + '/suggestions-for-you')
+		expect(browser.isVisible(selectors.searchBox)).toBe(true)
+	})
+
+	it('Should display the search button on the suggested page', () => {
+		browser.url(config.BASE_URL + '/suggestions-for-you')
+		expect(browser.isVisible(selectors.searchButton)).toBe(true)
+	})
+
 	it('Should allow the user to search for a valid term and return results', () => {
 		const searchTerm = 'something'
 		search(searchTerm)
-		const termSearched = browser.getText(selectors.searchTerm)
+		const termSearched = browser.getAttribute(selectors.searchBox, 'value')
 		expect(termSearched).toContain(searchTerm)
 	})
 
@@ -39,7 +59,7 @@ describe('Search page funtionality', () => {
 
 	it('Should allow the user to search via query string', async () => {
 		const searchTerm = 'the'
-		browser.url(config.BASE_URL + 'search?q=' + searchTerm)
+		browser.url(config.BASE_URL + '/search?q=' + searchTerm)
 		const termSearched = browser.getText(selectors.termSearched)
 		expect(termSearched).toContain(searchTerm)
 	})
@@ -52,29 +72,22 @@ describe('Search page funtionality', () => {
 
 	it('Should display add to learning plan option from the results', async () => {
 		search('the')
-		expect(browser.isVisible(selectors.addToPlan)).toBe(true)
+		expect(browser.isExisting(selectors.addToPlan)).toBe(true)
 	})
 
 	it('Should display book button for classroom courses', async () => {
 		search('qualification')
-		const bookUrl = browser.getAttribute('href')
-		expect(browser.isVisible(selectors.bookCourse)).toBe(true)
-		expect(bookUrl).toContain('book')
-		expect(bookUrl).toContain('choose-date')
-	})
-
-	it('Should add to learning plan from search', async () => {
-		search('the')
-		const courseName = browser.getText(selectors.courseName)
-		browser.click(selectors.addToPlan)
-		browser.waitForVisible(selectors.addedNotification)
-		const addedCourse = browser.getText(selectors.addedNotification)
-		expect(addedCourse).toEqual(courseName)
+		const bookUrl = browser.getAttribute(selectors.bookCourse, 'href')
+		expect(browser.isExisting(selectors.bookCourse)).toBe(true)
+		expect(bookUrl[0]).toContain('book')
+		expect(bookUrl[0]).toContain('choose-date')
 	})
 
 	it('Should show the number of modules a course comprises of', async () => {
 		search('fire')
 		const course = browser.getText(selectors.course)
-		expect(course).toContain('This course comprises of')
+		expect(course).toEqual(
+			jasmine.objectContaining({1: 'This course comprises of 6 modules'})
+		)
 	})
 })
