@@ -81,8 +81,6 @@ app.get('/courses', asyncHandler(displayCourseController.index))
 app.param('courseId', asyncHandler(editCourseController.loadCourseStub))
 app.param('moduleId', asyncHandler(editModuleController.loadModule))
 
-// *** new stuff **
-
 app.get('/courses/:courseId/add-module', editModuleController.getModuleType)
 app.post('/courses/:courseId/add-module', editModuleController.setModuleType)
 
@@ -120,13 +118,11 @@ app.get('/courses/:courseId/:moduleId', editModuleController.getModule)
 app.post('/courses/:courseId/:moduleId', editModuleController.setModule)
 app.get('/courses/:courseId', editCourseController.getCourse)
 app.post('/courses/:courseId', editCourseController.setCourse)
-// end new
-
 app.get('/bookings', asyncHandler(bookingsController.index))
 
-//** end new stuff */
-
 app.get('/courses/:courseId', displayCourseController.displayCourse)
+
+app.get('/search/create', displayCourseController.loadSearch)
 
 app.get('/bookings', bookingsController.index)
 

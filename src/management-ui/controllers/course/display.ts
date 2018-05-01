@@ -16,3 +16,8 @@ export async function index(req: express.Request, res: express.Response) {
 		})
 	)
 }
+
+export async function loadSearch(ireq: express.Request, res: express.Response) {
+	await catalog.loadSearch()
+	res.redirect('/courses')
+}

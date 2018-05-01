@@ -202,6 +202,7 @@ export async function loadCourse(ireq: express.Request, res: express.Response) {
 	logger.debug('End course get')
 }
 
+
 export async function loadCourseStub(
 	ireq: express.Request,
 	res: express.Response,

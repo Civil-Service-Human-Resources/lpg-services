@@ -247,9 +247,6 @@ export class Resource {
 }
 
 export class CourseModule {
-	course: Course
-	module: ModuleWithCourse
-	type: string
 
 	static createFromCourse(course: Course) {
 		const courseModule = new CourseModule()
@@ -265,6 +262,11 @@ export class CourseModule {
 		courseModule.module.course = course
 		return courseModule
 	}
+
+	course: Course
+	module: ModuleWithCourse
+	type: string
+
 }
 
 export class Module {
