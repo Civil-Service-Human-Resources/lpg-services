@@ -21,6 +21,10 @@ const http: AxiosInstance = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
+export async function loadSearch() {
+	await http.get(`/search/create`)
+}
+
 export async function add(course: model.Course) {
 	try {
 		if (course.id) {
@@ -153,8 +157,9 @@ function convertToMixed(data: any) {
 				: model.CourseModule.createFromModule(
 						model.Module.create(result),
 						result.course
-				  )
+				)
 		})
 	}
 	return data
 }
+
