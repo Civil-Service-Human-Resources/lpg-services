@@ -70,9 +70,9 @@ export async function search(
 	} catch (e) {
 		if (e.response.status === 400) {
 			return {
+				combinedResults: [],
 				page: 0,
 				results: [],
-				combinedResults: [],
 				size: 0,
 				totalResults: 0,
 			}
@@ -162,4 +162,3 @@ function convertToMixed(data: any) {
 	}
 	return data
 }
-

@@ -9,7 +9,7 @@ export interface PageResults {
 
 export interface ResourceResults {
 	page: number
-	results: (model.Resource | model.CourseModule)[]
+	results: Array<model.Resource | model.CourseModule>
 	size: number
 	totalResults: number
 }
