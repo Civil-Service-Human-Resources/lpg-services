@@ -48,7 +48,7 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 			delete course.id // delete fake id
 		}
 
-		// need to do this for new modules of existing courses too
+		// need to do this for new modules of existing courses tooy
 		course.modules.forEach((module, i) => {
 			if (module.id.indexOf('new_') === 0) {
 				if (session.pendingFiles) {
@@ -200,7 +200,6 @@ export async function loadCourse(ireq: express.Request, res: express.Response) {
 	}
 	logger.debug('End course get')
 }
-
 
 export async function loadCourseStub(
 	ireq: express.Request,
