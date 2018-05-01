@@ -1,9 +1,8 @@
 const conf = require('extension/config')
 
 exports.config = {
-	specs: ['dist/test/profile.spec.js'],
-	exclude: [],
-	maxInstances: 10,
+	bail: 0,
+	baseUrl: 'http://localhost',
 	capabilities: [
 		{
 			maxInstances: 1,
@@ -13,21 +12,24 @@ exports.config = {
 			// },
 		},
 	],
-	sync: true,
-	logLevel: 'silent',
 	coloredLogs: true,
-	deprecationWarnings: true,
-	bail: 0,
-	screenshotPath: './errorShots/',
-	baseUrl: 'http://localhost',
-	waitforTimeout: 40000,
 	connectionRetryTimeout: 90000,
 	connectionRetryCount: 3,
-	services: ['selenium-standalone', 'screenshots-cleanup'],
-	screenshotRoot: 'my-shots',
+	deprecationWarnings: true,
+	exclude: [],
 	framework: 'jasmine',
 	jasmineNodeOpts: {
 		defaultTimeoutInterval: 40000,
 		expectationResultHandler: function(passed, assertion) {},
 	},
+	logLevel: 'silent',
+	maxInstances: 10,
+	screenshotPath: './errorShots/',
+	screenshotRoot: 'my-shots',
+	services: ['selenium-standalone', 'screenshots-cleanup'],
+	seleniumInstallArgs: {version: '3.4.0'},
+	seleniumArgs: {version: '3.4.0'},
+	specs: ['dist/test/*.spec.js'],
+	sync: true,
+	waitforTimeout: 40000,
 }

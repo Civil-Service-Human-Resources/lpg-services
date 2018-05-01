@@ -1,8 +1,10 @@
+import * as config from '../extension/config'
+
 export const selectors: Record<string, string> = {
 	addToPlan: '.lpg-add-from-search',
 	addedNotification: '.banner__heading-large',
 	bookCourse: '.lpg-book-course',
-	course: '.discite__item',
+	course: '.discite__counter',
 	courseName: '.lpg-course-name',
 	searchAction: '.result__action',
 	searchBox: '#q',
@@ -16,11 +18,12 @@ export const selectors: Record<string, string> = {
 }
 
 export function searchResults() {
-	browser.getText(selectors.searchResultsAmount)
+	return browser.getText(selectors.searchResultsAmount)
 }
 
 export function search(searchTerm: string) {
-	browser.waitForVisible(selectors.searchBox)
+	browser.url(config.BASE_URL + '/search')
+	browser.waitForExist(selectors.searchBox, 1000)
 	browser.setValue(selectors.searchBox, '')
 	browser.setValue(selectors.searchBox, searchTerm)
 	browser.click(selectors.searchButton)
