@@ -14,6 +14,7 @@ import * as sessionFileStore from 'session-file-store'
 import * as passport from 'lib/config/passport'
 import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
+import * as template from 'lib/ui/template'
 
 import * as bookingController from './controllers/booking'
 import * as courseController from './controllers/course'
@@ -136,6 +137,10 @@ app.get('/sign-in', userController.signIn)
 app.get('/sign-out', userController.signOut)
 app.get('/reset-password', userController.resetPassword)
 
+app.get('/privacy', (req, res) => {
+	res.send(template.render('privacy', req, res))
+})
+
 app.post('/feedback.record', asyncHandler(feedbackController.record))
 
 app.use(passport.isAuthenticated)
@@ -145,7 +150,11 @@ app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
 
+app.get('/profile/areas-of-work', userController.renderAreasOfWorkPage)
+app.get('/profile/areas-of-work/*', userController.renderAreasOfWorkPage)
+
 app.get('/profile/:profileDetail', userController.renderEditPage)
+
 app.post(
 	'/profile/:profileDetail',
 	asyncHandler(userController.tryUpdateProfile)
@@ -164,6 +173,7 @@ app.use(
 )
 
 app.get('/courses/:courseId', asyncHandler(courseController.display))
+
 app.use(
 	'/courses/:courseId/delete',
 	asyncHandler(courseController.markCourseDeleted)

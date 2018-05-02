@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, {AxiosInstance} from 'axios'
 import * as log4js from 'log4js'
 import * as query from 'querystring'
 
@@ -21,6 +21,10 @@ const http: AxiosInstance = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
+export async function loadSearch() {
+	await http.get(`/search/create`)
+}
+
 export async function add(course: model.Course) {
 	try {
 		if (course.id) {
@@ -32,7 +36,7 @@ export async function add(course: model.Course) {
 	} catch (e) {
 		throw new Error(
 			`Error adding or updating course (${
-			course.id
+				course.id
 			}) to course catalogue - ${e}`
 		)
 	}
@@ -45,7 +49,7 @@ export async function postFeedback(feedback: model.Feedback) {
 	} catch (e) {
 		throw new Error(
 			`Error adding or updating feedback (${
-			feedback.id
+				feedback.id
 			}) to course catalogue - ${e}`
 		)
 	}
@@ -62,10 +66,11 @@ export async function search(
 		const response = await http.get(
 			`/search?query=${query}&page=${page}&size=${size}&type=${courseType}&cost=${cost}`
 		)
-		return convert(response.data) as api.SearchResults
+		return convertToMixed(response.data) as api.SearchResults
 	} catch (e) {
 		if (e.response.status === 400) {
 			return {
+				combinedResults: [],
 				page: 0,
 				results: [],
 				size: 0,
@@ -97,7 +102,7 @@ export class ApiParameters {
 		public department: string,
 		public page: number = 0,
 		public size: number = 6
-	) { }
+	) {}
 	serialize(): string {
 		return query.stringify(this)
 	}
@@ -138,6 +143,22 @@ export async function listAll(): Promise<api.PageResults> {
 function convert(data: any) {
 	if (data.results) {
 		data.results = data.results.map(model.Course.create)
+	}
+	return data
+}
+
+function convertToMixed(data: any) {
+	if (data.results) {
+		data.results = data.results.map((result: model.Resource) => {
+			console.log('course ?', result.course)
+
+			return result.courseId === '0'
+				? model.CourseModule.createFromCourse(model.Course.create(result))
+				: model.CourseModule.createFromModule(
+						model.Module.create(result),
+						result.course
+				)
+		})
 	}
 	return data
 }

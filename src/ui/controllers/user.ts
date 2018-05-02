@@ -127,27 +127,110 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-export function renderEditPage(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+/*tslint:disable*/
+//TODO: LPFG-49,241 - remove when we have profile service
+const levels = [
+	{
+		a: 'Commercial',
+		b: 'Digital',
+		c: 'Project Delivery',
+		d: 'Communications',
+		e: 'Corporate finance',
+		f: 'Finance',
+		g: 'Fraud, error, debt and grants',
+		h: 'Human Resources',
+		i: 'Internal audit',
+		j: 'Legal',
+		k: 'Property',
+	},
+	{
+		b101: 'Data',
+		b102: 'IT Operations',
+		b103: 'User centered design',
+	},
+	{
+		b201: 'Content designer',
+		b202: 'Content strategist',
+		b203: 'Graphic designer',
+		b204: 'Interaction designer',
+	},
+	{
+		d301: 'head of interaction design',
+		d302: 'Lead interaction designer',
+	},
+]
+
+export function getLevels(selectedArray: string[]) {
+	//TODO: LPFG-49,241 - send get request to profile service to get levels to show
+	// placeholder until profile service is ready. This will be the call to the service
+	let levelsToReturn = []
+	if (!selectedArray) {
+		levelsToReturn.push(levels[0])
+	}
+	for (const level in selectedArray) {
+		//push previous levels
+		levelsToReturn.push(levels[level])
+	}
+	if (selectedArray) {
+		levelsToReturn.push(levels[selectedArray.length]) //push the next level
+	}
+
+	return levelsToReturn
+}
+/*tslint:enable*/
+
+export function renderAreasOfWorkPage(
+	req: express.Request,
+	res: express.Response
+) {
+	if (req.query.select) {
+		// const selectedLevel = req.query.select
+		//TODO: LPFG-49,241 - send request to profile service to update profile
+
+		res.redirect('/profile')
+	}
+	const lede = req.__('register_area_page_intro')
+	let selectedArr
+	let currentLevel
+	let selected
+	if (req.params[0]) {
+		selected = req.params[0]
+		selectedArr = req.params[0].split('/')
+		currentLevel = selectedArr.length
+	}
+
+	const levelsToShow = getLevels(selectedArr)
+
+	res.send(
+		template.render('profile/edit', req, res, {
+			currentLevel,
+			inputName: 'areas-of-work',
+			lede,
+			levels: levelsToShow,
+			...res.locals,
+			selected,
+			selectedArr,
+		})
+	)
+}
+
+export function renderEditPage(req: express.Request, res: express.Response) {
 	const inputName = req.params.profileDetail
 	let options = {}
 	let optionType: string = ''
 	let value = null
-	let lede: string = ''
 	switch (inputName) {
 		case 'given-name':
 			value = req.user.givenName
+			break
+		case 'other-areas-of-work':
+			options = req.__('areas-of-work')
+			optionType = OptionTypes.Checkbox
 			break
 		case 'department':
 			options = req.__('departments')
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
-			break
-		case 'areas-of-work':
-			options = req.__('areas-of-work')
-			optionType = OptionTypes.Checkbox
-			lede = req.__('register_area_page_intro')
-			value = req.user.areasOfWork
 			break
 		case 'grade':
 			options = req.__('grades')
@@ -169,11 +252,11 @@ export function renderEditPage(ireq: express.Request, res: express.Response) {
 			})
 		}
     </script>`
+
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
 			inputName,
-			lede,
 			optionType,
 			options: Object.entries(options),
 			script,
@@ -262,7 +345,7 @@ export async function updateProfile(
 		case 'grade':
 			updateProfileObject.CshrUser.grade = fieldValue
 			break
-		case 'areas-of-work':
+		case 'other-areas-of-work':
 			let joinedFieldValues
 			if (Array.isArray(fieldValue)) {
 				joinedFieldValues = fieldValue.join(',')

@@ -5,7 +5,7 @@ import * as catalog from 'lib/service/catalog'
 import * as api from 'lib/service/catalog/api'
 import * as template from 'lib/ui/template'
 import * as striptags from 'striptags'
-import { isArray } from 'util'
+import {isArray} from 'util'
 
 export interface SearchFilter {
 	label: string
@@ -45,11 +45,15 @@ export async function search(req: express.Request, res: express.Response) {
 	let cost = ''
 
 	let searchResults: api.SearchResults = {
+		combinedResults: [],
 		page: 0,
 		results: [],
 		size: 10,
 		totalResults: 0,
 	}
+
+	const combinedResults: model.CourseModule[] = []
+
 	const start = new Date()
 	if (req.query.p) {
 		page = req.query.p
@@ -59,7 +63,9 @@ export async function search(req: express.Request, res: express.Response) {
 	}
 
 	if (req.query.courseType) {
-		courseType = isArray(req.query.courseType) ? req.query.courseType.join() : req.query.courseType
+		courseType = isArray(req.query.courseType)
+			? req.query.courseType.join()
+			: req.query.courseType
 	}
 
 	if (req.query.cost) {
@@ -74,12 +80,21 @@ export async function search(req: express.Request, res: express.Response) {
 		// rather than polling for each course lets get the learning record for the user
 		const user = req.user as model.User
 		const courseRecords = await learnerRecord.getLearningRecord(user)
+
 		searchResults.results.forEach(result => {
-			const course = courseRecords.find(record => record.id === result.id)
-			if (course) {
-				//we have a course record add it to the course
-				result.record = course.record
+			const cmResult = result as model.CourseModule
+			if (cmResult.type === 'course') {
+				// a course
+				const course = courseRecords.find(
+					record => cmResult.course.id === cmResult.course.id
+				)
+				if (course) {
+					//we have a course record add it to the course
+					cmResult.course.record = course.record
+				}
 			}
+			combinedResults.push(cmResult)
+			searchResults.combinedResults = combinedResults
 		})
 	}
 
@@ -89,6 +104,13 @@ export async function search(req: express.Request, res: express.Response) {
 
 	// let learningFilter : SearchFilter =
 	res.send(
-		template.render('search', req, res, { end, query, searchResults, range, courseType, cost })
+		template.render('search', req, res, {
+			cost,
+			courseType,
+			end,
+			query,
+			range,
+			searchResults,
+		})
 	)
 }

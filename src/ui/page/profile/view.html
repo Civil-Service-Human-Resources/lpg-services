@@ -79,7 +79,18 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_area_label')}}</td>
+                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_primary-area_label')}}</td>
+                            <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
+
+                            </td>
+                            <td class="key-value-list__item-action">
+                                <a href="/profile/areas-of-work">Change
+                                    <span class="visuallyhidden"> your area of work</span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_other-areas-of-work_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
                                 <ul>
                                     {{#if signedInUser.areasOfWork}}
@@ -92,7 +103,7 @@
                                 </ul>
                             </td>
                             <td class="key-value-list__item-action">
-                                <a href="/profile/areas-of-work">Change
+                                <a href="/profile/other-areas-of-work">Change
                                     <span class="visuallyhidden"> your area of work</span>
                                 </a>
                             </td>

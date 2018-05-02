@@ -30,14 +30,21 @@
 
         <div class="grid-row ">
             <div class="column-one-third">
-                {{#if searchResults.results.length}} 
-                <LeftSearchBox :query :courseType :cost />
-                {{/if}}
+                {{#if searchResults.combinedResults && searchResults.combinedResults.length}}
+                <LeftSearchBox :query :courseType :cost /> {{/if}}
             </div>
             <div class="column-two-thirds">
                 <div class="resources">
-                    {{#if searchResults.results.length}} {{#each searchResults.results as course}}
-                    <DisciteCourse course={{course}} modifier="search" /> {{/each}} {{/if}}
+                    {{#if searchResults.combinedResults && searchResults.combinedResults.length}}
+                        {{#each searchResults.combinedResults as result}}
+                            {{#if (result.type === "course") }}
+                            <DisciteCourse course={{result.course}} modifier="search" /> 
+                            {{else}}
+
+                            <DisciteModule module={{result.module}} modifier="search" /> 
+                            {{/if}}
+                        {{/each}} 
+                    {{/if}}
                 </div>
             </div>
         </div>

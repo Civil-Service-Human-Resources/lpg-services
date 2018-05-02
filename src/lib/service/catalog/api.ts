@@ -7,6 +7,14 @@ export interface PageResults {
 	totalResults: number
 }
 
-export interface SearchResults extends PageResults {
+export interface ResourceResults {
+	page: number
+	results: Array<model.Resource | model.CourseModule>
+	size: number
+	totalResults: number
+}
+
+export interface SearchResults extends ResourceResults {
+	combinedResults: model.CourseModule[]
 	suggestion?: string
 }

@@ -48,6 +48,7 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 			delete course.id // delete fake id
 		}
 
+		// need to do this for new modules of existing courses tooy
 		course.modules.forEach((module, i) => {
 			if (module.id.indexOf('new_') === 0) {
 				if (session.pendingFiles) {
@@ -120,7 +121,7 @@ export async function getCourse(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const session = req.session!
 
-	let {course} = req
+	let { course } = req
 	// module should be part of course or not submitted
 	delete session.modules
 
@@ -132,7 +133,7 @@ export async function getCourse(ireq: express.Request, res: express.Response) {
 		if (course.id === 'add-course') {
 			// blank a new course
 			const id = course.id
-			course = model.Course.create({id})
+			course = model.Course.create({ id })
 		}
 	} else {
 		logger.debug('clearing squash')
@@ -181,7 +182,7 @@ export async function loadCourse(ireq: express.Request, res: express.Response) {
 
 			logger.debug('Loading from  session')
 		} else {
-			req.course = {id: 'add-course'} as model.Course
+			req.course = { id: 'add-course' } as model.Course
 		}
 	} else {
 		if (session.course && session.course.id === courseId) {

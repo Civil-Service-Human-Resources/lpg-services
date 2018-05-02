@@ -67,15 +67,17 @@ export class Course {
 	}
 
 	getCost() {
-		return this.modules
-			.map(module => module.price)
-			.reduce((p, c) => (p || 0) + (c || 0))
+		const costArray = this.modules.map(module => module.price)
+		return costArray.length
+			? costArray.reduce((p, c) => (p || 0) + (c || 0))
+			: null
 	}
 
 	getDuration() {
-		return datetime.formatCourseDuration(
-			this.modules.map(m => m.duration).reduce((p, c) => p + c)
-		)
+		const durationArray = this.modules.map(m => m.duration)
+		return durationArray.length
+			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c))
+			: null
 	}
 
 	getGrades() {
@@ -213,6 +215,59 @@ export class Course {
 		return price
 	}
 }
+export class Resource {
+	static create(data: any) {
+		const resource = new Resource(data.id)
+		resource.courseId = data.courseId
+		resource.description = data.description
+		resource.learningOutcomes = data.learningOutcomes
+		resource.shortDescription = data.shortDescription
+		resource.title = data.title
+		resource.type = data.type
+
+		resource.modules = (data.modules || []).map(Module.create)
+		resource.course = (data.course || {}).map(Course.create)
+
+		return resource
+	}
+
+	id: string
+	courseId: string
+	course: Course
+	title: string
+	type: string
+	shortDescription: string
+	description: string
+	learningOutcomes: string
+	modules: Module[]
+
+	constructor(id: string) {
+		this.id = id
+	}
+}
+
+export class CourseModule {
+
+	static createFromCourse(course: Course) {
+		const courseModule = new CourseModule()
+		courseModule.course = course
+		courseModule.type = 'course'
+		return courseModule
+	}
+
+	static createFromModule(module: Module, course: Course) {
+		const courseModule = new CourseModule()
+		courseModule.module = module
+		courseModule.type = 'module'
+		courseModule.module.course = course
+		return courseModule
+	}
+
+	course: Course
+	module: ModuleWithCourse
+	type: string
+
+}
 
 export class Module {
 	static create(data: any) {
@@ -302,6 +357,10 @@ export class Module {
 	}
 }
 
+export class ModuleWithCourse extends Module {
+	courseId?: string
+	course?: Course
+}
 export class Event {
 	static create(data: any) {
 		const date = data.date ? new Date(data.date) : new Date()
