@@ -8,7 +8,7 @@ var CLOSE_METHODS = {
         }
         var scheme = match[1];
         var env = !!match[2] ? match[2] + '.' : '';
-        var host = 'lpg.' + env + 'cshr.digital/';
+        var host =  env + '-lpg.' +'cshr.digital/';
         var path = 'learning-record/' + match[3] + '/' + match[4];
 
         if (match[2] === 'local') {
