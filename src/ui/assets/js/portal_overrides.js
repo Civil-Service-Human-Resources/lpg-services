@@ -13,7 +13,7 @@ if (!match) {
 }
 var scheme = match[1];
 var env = !!match[2] ? match[2] + '.' : '';
-var host = env +'lpg.' + 'cshr.digital/';
+var host = env + '-lpg.' + 'cshr.digital/';
 var path = 'courses/' + match[3] + '/' + match[4] + '/xapi';
 
 if (match[2] === 'local') {
