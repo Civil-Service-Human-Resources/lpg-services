@@ -74,10 +74,16 @@
 			}
 		}
 
-		@include m('unsure') {
+		@include m(unsure) {
 			@include bold-16;
 			&:after {
 				content: '';
+			}
+		}
+
+		@include m(last) {
+			@include media(tablet) {
+				display: none;
 			}
 		}
 	}
