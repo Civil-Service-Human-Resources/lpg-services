@@ -108,8 +108,6 @@ export async function search(req: express.Request, res: express.Response) {
 			cost,
 			courseType,
 			end,
-			cost,
-			courseType,
 			query,
 			range,
 			searchResults,
