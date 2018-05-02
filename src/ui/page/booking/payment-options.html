@@ -18,7 +18,7 @@
                         <p>You must enter the {{signedInUser.department == ('co' || 'dh') ? 'purchase order number' : 'email address of your financial approver' }}</p>
                     </div>
                 {{/if}}
-                <form method="post">
+                <form autocomplete="nope" method="post">
                     <div class="form-group">
                         {{#if signedInUser.department == "hmrc"}}
                         <p>Financial approval - when prompted please select an approver to confirm your booking. To find out whether your organisation uses the financial approver process, please contact your learning and development team. They should be able to confirm the name of your financial approver.</p>
