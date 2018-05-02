@@ -44,13 +44,5 @@
         <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
         {{/if}}
         
-        {{#if module.course.record && !module.course.isRequired(signedInUser) &&  module.course.record.state === 'ARCHIVED'}}
-           <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{module.course.id}}?ref={{modifier}}">Add to learning plan</a>
-        {{else}}
-        {{#if !module.course.isRequired(signedInUser)}}
-            <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{module.course.id}}?ref={{modifier}}">Add to learning plan</a>
-        {{/if}}
-    {{/if}}
-
     </div>
 </div>
