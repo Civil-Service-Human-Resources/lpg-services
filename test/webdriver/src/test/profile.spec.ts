@@ -1,11 +1,6 @@
 import * as config from '../extension/config'
 import loginPage from '../page/login'
-// import {
-// 	editProfileInfo,
-// 	returnUserProfileDetails,
-// 	selectors,
-// } from '../page/profile'
-import {getProfs, selectors} from '../page/profile'
+import {editProfileInfo, selectors} from '../page/profile'
 
 const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
 
@@ -52,19 +47,44 @@ describe('Profile page funtionality', () => {
 		expect(browser.isVisible(selectors.emailAddressReadOnly)).toBe(true)
 	})
 
-	it('test', () => {
-		getProfs()
+	it('Should update the users name from the profile section', () => {
+		const name = 'John'
+		editProfileInfo(selectors.changeGivenName, selectors.editNameField, name)
+		const updatedName = browser.getText(selectors.givenName)
+		expect(updatedName).toEqual(name)
 	})
 
-	// it('Should be able to update users name from the profile section', async () => {
-	// 	const name = 'John'
-	// 	await editProfileInfo(
-	// 		selectors.changeGivenName,
-	// 		selectors.editNameField,
-	// 		name
-	// 	)
-	// 	expect(browser.isVisible(selectors.profileUpdatedBanner)).toBe(true)
-	// 	const updatedName = browser.getText(selectors.givenName)
-	// 	expect(updatedName).toContain(name)
-	// })
+	it('Should update the users department from the profile page', () => {
+		const dept = 'HM Revenue & Customs'
+		editProfileInfo(
+			selectors.changeDepartment,
+			selectors.editDepartmentField,
+			dept
+		)
+		const updatedDept = browser.getText(selectors.department)
+		expect(updatedDept).toEqual(dept)
+	})
+
+	xit('Should change the users profession value', () => {
+		//TODO: implment once new professions selector is complete
+	})
+
+	it('Should update the users grade from the profile page', () => {
+		const map = new Map()
+		map.set('#AA', 'Administrative level')
+		map.set('#EO', 'First line manager')
+		map.set('#HEO', 'Middle manager')
+		map.set('#G6', 'Senior manager')
+		map.set('#SCS', 'Director')
+		map.set('#other', 'Other')
+		for (const [code, gradeName] of map.entries()) {
+			browser.click(selectors.changeGrade)
+			browser.waitForVisible(code)
+			browser.click(code)
+			browser.click(selectors.continueButton)
+			browser.waitForVisible(selectors.profileUpdatedBanner)
+			const profilegrade = browser.getText(selectors.grade)
+			expect(profilegrade).toEqual(gradeName)
+		}
+	})
 })
