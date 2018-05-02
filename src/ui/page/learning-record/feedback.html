@@ -13,7 +13,7 @@
         </div>
         {{/if}}
 
-        <form name="feedbackForm" method="post" action="/learning-record/{{course.id}}/{{module.id}}/feedback">
+        <form autocomplete="nope" name="feedbackForm" method="post" action="/learning-record/{{course.id}}/{{module.id}}/feedback">
             <div class="grid-row ">
                 <div class="column-full ">
                     <p class="lede">Leave your feedback for {{ module.title || course.title }}</p>
