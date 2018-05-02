@@ -100,9 +100,7 @@ export async function search(req: express.Request, res: express.Response) {
 
 	const end: string = (((new Date() as any) - (start as any)) / 1000).toFixed(2)
 
-	// let filters: SearchFilter[] = []
 
-	// let learningFilter : SearchFilter =
 	res.send(
 		template.render('search', req, res, {
 			cost,

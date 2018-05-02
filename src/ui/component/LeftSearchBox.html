@@ -10,23 +10,23 @@
               
                 <div class="multiple-choice">
                     <input type="checkbox" value="blog" name="courseType" id="blog"  checked="{{(courseType || []).indexOf('blog') > -1 ? 'checked' : ''}}" >
-                    <label for"blog">Blog</label>
+                    <label for="blog">Blog</label>
                 </div>
                 <div class="multiple-choice">
-                    <input type="checkbox" name="courseType" value="face to face" checked="{{(courseType || []).indexOf('face to face') > -1 ? 'checked' : ''}}">
-                    <label for"classroom">Face to face</label>
+                    <input type="checkbox" name="courseType" id="faceToFace" value="face to face" checked="{{(courseType || []).indexOf('face to face') > -1 ? 'checked' : ''}}">
+                    <label for="classroom">Face to face</label>
                 </div>
                 <div class="multiple-choice">
-                        <input type="checkbox" name="courseType" value="link" checked="{{(courseType || []).indexOf('link') > -1 ? 'checked' : ''}}" >
-                        <label for"video">Link</label>
+                        <input type="checkbox" name="courseType" id="link" value="link" checked="{{(courseType || []).indexOf('link') > -1 ? 'checked' : ''}}" >
+                        <label for="video">Link</label>
                     </div>
                 <div class="multiple-choice">
-                    <input type="checkbox" name="courseType" value="elearning" checked="{{(courseType || []).indexOf('elearning') > -1 ? 'checked' : ''}}" >
-                    <label for"video">Online</label>
+                    <input type="checkbox" name="courseType" id="elearning" value="elearning" checked="{{(courseType || []).indexOf('elearning') > -1 ? 'checked' : ''}}" >
+                    <label for="elearning">Online</label>
                 </div>
                 <div class="multiple-choice">
-                    <input type="checkbox" name="courseType" value="video" checked="{{(courseType || []).indexOf('video') > -1 ? 'checked' : ''}}" >
-                    <label for"video">Video</label>
+                    <input type="checkbox" name="courseType" id="video" value="video" checked="{{(courseType || []).indexOf('video') > -1 ? 'checked' : ''}}" >
+                    <label for="video">Video</label>
                 </div>
             </fieldset>
         </div>
@@ -40,7 +40,7 @@
 
                 <div class="multiple-choice">
                         <input type="checkbox" name="cost" value="free" checked="{{(cost || []).indexOf('free') > -1 ? 'checked' : ''}}"  >
-                        <label for"cost">Show only free</label>
+                        <label for="cost">Show only free</label>
                     </div>
             </fieldset>
         </div>
