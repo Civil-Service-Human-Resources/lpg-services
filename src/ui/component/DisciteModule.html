@@ -1,12 +1,16 @@
 <div class="discite__item u-clearfix discite__item--module">
-    <div class="discite__main discite__main--module--{{modifier || ''}}">
+    <div class="discite__main discite__main--module discite__main--{{modifier || ''}}">
             {{#if modifier === "search"}} 
             <a href="/courses/{{module.course.id}}/{{module.id}}">
                 <h3 class="heading bold-small heading--text">
                     {{module.title}}
                 </h3>
             </a>
-            <p>This is a module in <a href="/courses/{{module.course.id}}"><b>{{ module.course.title }}.</b></a> There are {{module.course.modules.length}} in total.</p>
+            <div class="discite__area--{{modifier || ''}}">
+                <p class="font-small discite__counter">
+                    This is a module in <a href="/courses/{{module.course.id}}"><b>{{ module.course.title }}.</b></a> There are {{module.course.modules.length}} in total.
+                </p>
+             </div>
             {{else}}
             <a href="/courses/{{course.id}}/{{module.id}}">
                 <h3 class="heading bold-small heading--text">
@@ -39,5 +43,14 @@
         {{else}}
         <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
         {{/if}}
+        
+        {{#if module.course.record && !module.course.isRequired(signedInUser) &&  module.course.record.state === 'ARCHIVED'}}
+           <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{module.course.id}}?ref={{modifier}}">Add to learning plan</a>
+        {{else}}
+        {{#if !module.course.isRequired(signedInUser)}}
+            <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{module.course.id}}?ref={{modifier}}">Add to learning plan</a>
+        {{/if}}
+    {{/if}}
+
     </div>
 </div>

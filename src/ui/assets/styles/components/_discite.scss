@@ -39,10 +39,8 @@ $module: 'discite';
 			padding-right: 300px;
 		}
 
-		@include m(module) {
-			@include m(search) {
-				padding-right: 100px;
-			}
+		@include m(search) {
+			padding-right: 100px
 		}
 	}
 
@@ -148,6 +146,11 @@ $module: 'discite';
 			clear: both;
 			padding-right: 300px;
 		}
+
+		@include m(search) {
+			padding-right: 0px;
+		}
+	
 	}
 
 	@include e(counter) {
