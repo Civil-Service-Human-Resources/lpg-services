@@ -10,14 +10,16 @@
 
             </li>
         {{/each}}
-
+        {{#if selectedArr}}
          <li>
+
             <a
-                href="/profile/areas-of-work/?select={{selectedArr && selectedArr[level] && selectedArr.length !== level ? selectedArr[level] : selectedArr[level-1]}}"
+                href="/profile/areas-of-work/?select={{selectedArr[level] && selectedArr.length !== level ? selectedArr[level] :''}}"
                 class="levels__link levels__link--unsure {{selectedArr.length === level ? 'levels__link--last' : '' }}">
                 Choose this level
             </a>
-        </li>
 
+        </li>
+        {{/if}}
 	</ul>
 </div>
