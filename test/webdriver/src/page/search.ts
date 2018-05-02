@@ -3,9 +3,14 @@ import * as config from '../extension/config'
 export const selectors: Record<string, string> = {
 	addToPlan: '.lpg-add-from-search',
 	addedNotification: '.banner__heading-large',
+	applyFilter: 'button[class="button"]',
+	blog: '#blog',
 	bookCourse: '.lpg-book-course',
 	course: '.discite__counter',
 	courseName: '.lpg-course-name',
+	faceToFace: '',
+	link: '#link',
+	online: '#online',
 	searchAction: '.result__action',
 	searchBox: '#q',
 	searchButton: '.search-box__submit',
@@ -15,6 +20,7 @@ export const selectors: Record<string, string> = {
 	searchSummary: '.pager__summary',
 	signoutButton: 'a[href="/sign-out"]',
 	termSearched: '.lpg-search-query',
+	video: '#video',
 }
 
 export function searchResults() {
@@ -28,4 +34,9 @@ export function search(searchTerm: string) {
 	browser.setValue(selectors.searchBox, searchTerm)
 	browser.click(selectors.searchButton)
 	browser.waitForVisible(selectors.termSearched)
+}
+
+export function filter(appFilter: string) {
+	browser.click(appFilter)
+	browser.click(selectors.applyFilter)
 }
