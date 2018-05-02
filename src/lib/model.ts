@@ -258,7 +258,7 @@ export class CourseModule {
 		const courseModule = new CourseModule()
 		courseModule.module = module
 		courseModule.type = 'module'
-		courseModule.module.course = course
+		courseModule.module.course = Course.create(course)
 		return courseModule
 	}
 

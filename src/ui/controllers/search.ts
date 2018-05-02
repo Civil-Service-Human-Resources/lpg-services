@@ -83,16 +83,29 @@ export async function search(req: express.Request, res: express.Response) {
 
 		searchResults.results.forEach(result => {
 			const cmResult = result as model.CourseModule
+			let course = null
 			if (cmResult.type === 'course') {
 				// a course
-				const course = courseRecords.find(
-					record => cmResult.course.id === cmResult.course.id
+				course = courseRecords.find(
+					record => cmResult.course.id === record.id
 				)
 				if (course) {
 					//we have a course record add it to the course
 					cmResult.course.record = course.record
 				}
+
+			} else {
+				// a module
+				course = courseRecords.find(
+					record => cmResult.module.course!.id === record.id
+				)
+
+				if (course) {
+					//we have a course record add it to the course
+					cmResult.module.course!.record = course.record
+				}
 			}
+
 			combinedResults.push(cmResult)
 			searchResults.combinedResults = combinedResults
 		})
