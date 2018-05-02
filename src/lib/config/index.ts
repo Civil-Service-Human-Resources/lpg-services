@@ -47,8 +47,7 @@ export const AUTHENTICATION = set({
 	serviceAdmin: 'admin@cslearning.gov.uk',
 	servicePassword: 'changeme!12',
 	serviceUrl:
-		env.AUTHENTICATION_SERVICE_URL ||
-		'https://local-identity.cshr.digital',
+		env.AUTHENTICATION_SERVICE_URL || 'https://local-identity.cshr.digital',
 })
 
 export const BOOKING_CANCELLED_NOTIFY_TEMPLATE_ID =
