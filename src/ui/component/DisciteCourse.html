@@ -58,7 +58,7 @@
                     <a href="/book/{{course.id}}/{{course.record.modules[0].moduleId}}/{{course.record.modules[0].eventId}}/cancel">Cancel</a>
                 {{else}}
                     {{#if course.getType() !== 'face-to-face'}}
-                        {{#if course.record.modules.length}}
+                        {{#if course.record.modules.length && (course.record.state !== 'ARCHIVED')}}
                             <a href="/courses/{{course.id}}#modules">{{ i18n('action_' + (course.record.state || 'NOT_STARTED' )) }}
 
                                 <span class="visuallyhidden"> this course</span>
