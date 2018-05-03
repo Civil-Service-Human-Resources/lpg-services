@@ -80,30 +80,20 @@ export async function search(req: express.Request, res: express.Response) {
 		// rather than polling for each course lets get the learning record for the user
 		const user = req.user as model.User
 		const courseRecords = await learnerRecord.getLearningRecord(user)
-
+		console.log('looking at searxch results')
 		searchResults.results.forEach(result => {
 			const cmResult = result as model.CourseModule
-			let course = null
-			if (cmResult.type === 'course') {
+			let courseRecord = null
+			delete cmResult.course.record
 				// a course
-				course = courseRecords.find(
-					record => cmResult.course.id === record.id
-				)
-				if (course) {
-					//we have a course record add it to the course
-					cmResult.course.record = course.record
-				}
 
-			} else {
-				// a module
-				course = courseRecords.find(
-					record => cmResult.module.course!.id === record.id
-				)
-
-				if (course) {
-					//we have a course record add it to the course
-					cmResult.module.course!.record = course.record
-				}
+			courseRecord = courseRecords.find(
+				record => cmResult.course.id === record.id
+			)
+			if (courseRecord) {
+				console.log("course found in record", courseRecord.id)
+				//we have a course record add it to the course
+				cmResult.course.record = courseRecord.record
 			}
 
 			combinedResults.push(cmResult)
