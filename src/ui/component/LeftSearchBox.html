@@ -2,35 +2,21 @@
     <form autocomplete="nope" name="searchLearning" method="get" action="/search">
         <input type="hidden" id="q" name="q" value="{{ query }}" />
         <div class="govuk-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+
             <fieldset>
-              
+
                 <legend>
                     <h2 class="heading-medium">Learning type</h2>
                 </legend>
-              
-                <div class="multiple-choice">
-                    <input type="checkbox" value="blog" name="courseType" id="blog"  checked="{{(courseType || []).indexOf('blog') > -1 ? 'checked' : ''}}" >
-                    <label for="blog">Blog</label>
-                </div>
-                <div class="multiple-choice">
-                    <input type="checkbox" name="courseType" id="faceToFace" value="face to face" checked="{{(courseType || []).indexOf('face to face') > -1 ? 'checked' : ''}}">
-                    <label for="classroom">Face to face</label>
-                </div>
-                <div class="multiple-choice">
-                        <input type="checkbox" name="courseType" id="link" value="link" checked="{{(courseType || []).indexOf('link') > -1 ? 'checked' : ''}}" >
-                        <label for="video">Link</label>
+                {{#each Object.entries(currentReq.__('courseTypes')) as filter}}
+                    <div class="multiple-choice">
+                        <input type="checkbox" value="{{filter[1]}}" name="courseType" id="{{filter[0]}}"  checked="{{(courseType || []).indexOf(filter[1]) > -1 ? 'checked' : ''}}" >
+                        <label for="{{filter[0]}}">{{filter[1]}}</label>
                     </div>
-                <div class="multiple-choice">
-                    <input type="checkbox" name="courseType" id="elearning" value="elearning" checked="{{(courseType || []).indexOf('elearning') > -1 ? 'checked' : ''}}" >
-                    <label for="elearning">Online</label>
-                </div>
-                <div class="multiple-choice">
-                    <input type="checkbox" name="courseType" id="video" value="video" checked="{{(courseType || []).indexOf('video') > -1 ? 'checked' : ''}}" >
-                    <label for="video">Video</label>
-                </div>
+                {{/each}}
             </fieldset>
         </div>
-        
+
         <div class="govuk-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
             <fieldset>
 

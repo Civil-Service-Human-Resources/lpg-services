@@ -210,8 +210,7 @@
 	"learning_added_to_plan_message": "This has been added to your learning plan",
 	"learning_removed_from_plan_title": "%s",
 	"learning_confirm_removal_plan_title": "Are you sure you want to remove %s?",
-	"learning_confirm_removal_plan_message":
-		"If you remove this course, it will be deleted from your learning plan",
+	"learning_confirm_removal_plan_message": "If you remove this course, it will be deleted from your learning plan",
 	"learning_removed_from_plan_message": "This has been removed from your learning plan",
 	"feedback_content_title": "Content",
 	"feedback_content_description": "Was the %s content comprehensive enough for you?",
@@ -244,5 +243,12 @@
 		"braille": "Braille",
 		"assistive-listening": "Assistive listening device",
 		"assistant": "An assistant will accompany me"
-	}
+	},
+	"courseTypes": {
+		"blog": "Blog",
+		"faceToFace": "Face to face",
+		"link": "Link",
+		"elearning": "Online",
+		"video": "Video"
+	},
 }

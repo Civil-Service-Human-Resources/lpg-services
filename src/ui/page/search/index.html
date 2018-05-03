@@ -1,6 +1,6 @@
 <Page title="Search" :_csrf>
     <div class="container container--main">
-    {{courseType.split(',')}}
+
         <div class="grid-row ">
             <div class="column-full">
                 <h1 class="heading-xlarge heading heading--page-heading ">
@@ -32,7 +32,7 @@
         <div class="grid-row ">
             <div class="column-one-third">
                 {{#if searchResults.combinedResults && searchResults.combinedResults.length}}
-                <LeftSearchBox :query :courseType :cost /> {{/if}}
+                <LeftSearchBox :query :courseType :cost :currentReq /> {{/if}}
             </div>
             <div class="column-two-thirds">
                 <div class="resources">
