@@ -258,12 +258,12 @@ export class CourseModule {
 		const courseModule = new CourseModule()
 		courseModule.module = module
 		courseModule.type = 'module'
-		courseModule.module.course = Course.create(course)
+		courseModule.course = Course.create(course)
 		return courseModule
 	}
 
 	course: Course
-	module: ModuleWithCourse
+	module: Module
 	type: string
 }
 
@@ -355,10 +355,6 @@ export class Module {
 	}
 }
 
-export class ModuleWithCourse extends Module {
-	courseId?: string
-	course?: Course
-}
 export class Event {
 	static create(data: any) {
 		const date = data.date ? new Date(data.date) : new Date()

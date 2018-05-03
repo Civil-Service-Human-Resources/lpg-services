@@ -93,14 +93,5 @@
                     <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
                 {{/if}}
             {{/if}}
-
-            {{#if !course.isRequired(signedInUser) && !(course.record && course.record.modules && course.record.modules.length && course.record.modules[0].eventId)}}
-
-                    <a href="/home?delete={{course.id}}">Remove
-                        <span class="visuallyhidden"> this module</span>
-                    </a>
-
-            {{/if}}
-
     </div>
 </div>

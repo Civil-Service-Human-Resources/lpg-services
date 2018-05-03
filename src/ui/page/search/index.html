@@ -41,8 +41,7 @@
                             {{#if (result.type === "course") }}
                             <DisciteCourse course={{result.course}} modifier="search" /> 
                             {{else}}
-
-                            <DisciteModule module={{result.module}} modifier="search" /> 
+                            <DisciteModule module={{result.module}} course={{result.course}} modifier="search" /> 
                             {{/if}}
                         {{/each}} 
                     {{/if}}
