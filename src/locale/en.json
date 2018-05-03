@@ -18,6 +18,7 @@
 	"courseResult.passed": "Passed",
 	"courseResult.failed": "Failed",
 	"courseResult.complete": "Course complete",
+	"moduleResult.complete": "Module complete",
 	"face-to-face": "Face to face",
 	"link": "Link",
 	"REGISTERED": "Registered",
