@@ -1,12 +1,12 @@
 <div class="discite__item u-clearfix discite__item--module">
-    <div class="discite__main discite__main--module discite__main--{{modifier || ''}}">
+    <div class="discite__main discite__main--module {{ modifier ? `discite__main--${modifier}` : ''}}">
             {{#if modifier === "search"}} 
             <a href="/courses/{{module.course.id}}/{{module.id}}">
                 <h3 class="heading bold-small heading--text">
                     {{module.title}}
                 </h3>
             </a>
-            <div class="discite__area--{{modifier || ''}}">
+            <div class="discite__area {{modifier ? `discite__area--${modifier}` : ''}}">
                 <p class="font-small discite__counter">
                     This is a module in <a href="/courses/{{module.course.id}}"><b>{{ module.course.title }}.</b></a> There are {{module.course.modules.length}} in total.
                 </p>
@@ -23,8 +23,8 @@
             <p class="discite__description">{{module.description}}</p>
         {{/if}}
     </div>
-    <div class="discite__properties discite__properties--{{modifier || ''}} u-clearfix">
-        <ul class="discite__property discite__property--{{modifier || ''}}">
+    <div class="discite__properties {{modifier ? `discite__properties--${modifier}` : ''}} u-clearfix">
+        <ul class="discite__property {{modifier ? `discite__property--${modifier}` : ''}}">
             <li class="discite__property-item">
                 <span class="visuallyhidden">Type:</span> {{i18n(module.type)}}
             </li>
