@@ -26,7 +26,7 @@ npm install
 
 stage "Linting the codebase"
 npm run lint
-npm run lint:headless
+npm run lint:webdriver
 
 stage "Building the main src"
 npm run build

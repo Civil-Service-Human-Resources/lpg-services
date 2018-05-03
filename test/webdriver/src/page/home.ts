@@ -9,7 +9,7 @@ export const selectors: Record<string, string> = {
 	courseType: '.lpg-course-type',
 	// fireAwarenessCourse: 'a[href="/courses/0x394"]',
 	// firstRequiredBy: '.learning__information-desc:first-child',
-	otherSection: '.lpg-other-learning-heading',
+	otherSection: '.lpg-other-learning',
 	otherSectionCourse: '.lpg-other-learning .lpg-course-name',
 	requiredDuration: '.resource__duration',
 	requiredProgress: '.resource__status',

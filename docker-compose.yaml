@@ -84,6 +84,7 @@ services:
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: changeme
     image: cshr/lpg-learning-catalogue:d3aae570e1406d1bdf9bd33486ab4f0a34947328
+
     ports:
       - 9001:9001
 

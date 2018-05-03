@@ -7,7 +7,8 @@
                         {{i18n('home_page_title')}}
                     </h1>
                     {{#if readyForFeedback.length}}
-                    <p class="u-space-b5">You can <a href="/learning-record">leave feedback on {{readyForFeedback.length}} item{{readyForFeedback.length === 1 ? '' : 's'}}</a>.</p>
+                    <p class="u-space-b5">You can
+                        <a href="/learning-record">leave feedback on {{readyForFeedback.length}} item{{readyForFeedback.length === 1 ? '' : 's'}}</a>.</p>
                     {{/if}}
                 </Search>
             </div>
@@ -16,16 +17,13 @@
         <div class="grid-row">
             <div class="column-full">
                 {{#if successTitle}}
-                    <Banner type="confirmation" title={{successTitle}} message={{successMessage}} />
-                {{/if}}
+                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} /> {{/if}} {{#if confirmTitle}}
+                <Banner type="warning" title={{confirmTitle}} message={{confirmMessage}}>
 
-                {{#if confirmTitle}}
-                    <Banner type="warning" title={{confirmTitle}} message={{confirmMessage}}>
+                    <a class="banner__action" href="courses/{{removeCourseId}}/delete">Yes, remove course now.</a>
+                    <a class="banner__action" href="/">No, keep it.</a>
 
-                        <a class="banner__action" href="courses/{{removeCourseId}}/delete">Yes, remove course now.</a>
-                        <a class="banner__action" href="/">No, keep it.</a>
-
-                    </Banner>
+                </Banner>
                 {{/if}}
 
             </div>
@@ -38,11 +36,10 @@
                 </h2>
 
                 {{#if requiredLearning.length}}
-                    <div class="resources">
-                        {{#each requiredLearning as course}}
-                            <DisciteCourse course={{course}} modifier="home" />
-                        {{/each}}
-                    </div>
+                <div class="resources">
+                    {{#each requiredLearning as course}}
+                    <DisciteCourse course={{course}} modifier="home" /> {{/each}}
+                </div>
                 {{else}}
                 <p>{{i18n('required_learning_done')}}</p>
                 {{/if}}
@@ -51,10 +48,9 @@
                     {{i18n('other_section_title')}}
                 </h2>
                 {{#if plannedLearning.length}}
-                    <div class="resources">
+                <div class="resources lpg-other-courses">
                     {{#each plannedLearning as course}}
-                        <DisciteCourse course={{course}} modifier="home" />
-                    {{/each}}
+                    <DisciteCourse course={{course}} modifier="home" /> {{/each}}
                 </div>
                 {{else}}
                 <p>{{i18n('no_planned_learning_yet')}}</p>
@@ -63,6 +59,7 @@
         </div>
     </div>
     <div class="fullbleed fullbleed--grey home__suggested">
-        <SuggestionsSection title="{{i18n('suggestions_page_title')}}" lede="{{i18n('home_page_suggestions', i18n('proposition_name'))}}" :suggestedLearning home={{true}} />
+        <SuggestionsSection title="{{i18n('suggestions_page_title')}}" lede="{{i18n('home_page_suggestions', i18n('proposition_name'))}}"
+            :suggestedLearning home={{true}} />
     </div>
 </Page>

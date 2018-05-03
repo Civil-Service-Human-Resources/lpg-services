@@ -21,8 +21,7 @@ describe('Login page funtionality', () => {
 
 	it('Should display an error message when the incorrect login details are entered', () => {
 		loginPage.login('error@wron.g', 'details')
-		const error = browser.waitForVisible(selectors.loginFailure)
-		expect(error).toBe(true)
+		expect(browser.isVisible(selectors.loginFailure)).toBe(true)
 	})
 
 	it('Should display a feedback link with the correct survey link', () => {

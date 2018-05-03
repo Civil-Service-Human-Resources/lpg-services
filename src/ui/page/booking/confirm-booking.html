@@ -20,7 +20,7 @@
                         </li>
                         <li>
                             <span class="booking__key">Start date</span>
-                            <span class="booking__value">{{datetime.formatDate(event.date)}}</span>
+                            <span class="booking__value lpg-booking-date">{{datetime.formatDate(event.date)}}</span>
                         </li>
                         <li>
                             <span class="booking__key">Location</span>
@@ -31,7 +31,7 @@
                             <span class="booking__value">{{course.getDuration()}}</span>
                         </li>
                         <li>
-                            <a href="{{breadcrumbs[2].url}}" class="booking__change">Change</a>
+                            <a href="{{breadcrumbs[2].url}}" class="booking__change lpg-change-date">Change</a>
                         </li>
 
                     </ul>
@@ -45,14 +45,14 @@
                     <ul>
                         <li>
                             <span class="booking__key">Payment method</span>
-                            <span class="booking__value"> {{fap ? 'Financial approver' : 'Purchase order' }}</span>
+                            <span class="booking__value lpg-payment-method"> {{fap ? 'Financial approver' : 'Purchase order' }}</span>
                         </li>
                         <li>
                             <span class="booking__key">Amount</span>
-                            <span class="booking__value">&pound;{{module.price}}</span>
+                            <span class="booking__value lpg-confirm-price">&pound;{{module.price}}</span>
                         </li>
                         <li>
-                            <a href="{{breadcrumbs[3].url}}" class="booking__change">Change</a>
+                            <a href="{{breadcrumbs[3].url}}" class="booking__change lpg-change-payment">Change</a>
                         </li>
                     </ul>
                 </div>
@@ -69,13 +69,13 @@
                         <ul class="booking__values">
 
                             {{#if accessibilityReqs && accessibilityReqs.length}} {{#each accessibilityReqs as requirement }} {{#if requirement}}
-                            <li class="booking__value booking__value--li">{{requirement === 'other' ? 'Other' : i18n('accessibility-requirements')[requirement]}}</li>
+                            <li class="booking__value booking__value--li lpg-access-reqs">{{requirement === 'other' ? 'Other' : i18n('accessibility-requirements')[requirement]}}</li>
                             {{else}}
-                            <li class="booking__value booking__value--li">None</li>
+                            <li class="booking__value booking__value--li lpg-no-reqs">None</li>
                             {{/if}} {{/each}} {{/if}}
                         </ul>
                     </div>
-                    <a href="{{breadcrumbs[2].url}}&tab=accessibility" class="booking__change">Change</a>
+                    <a href="{{breadcrumbs[2].url}}&tab=accessibility" class="booking__change lpg-change-reqs">Change</a>
                 </div>
             </div>
         </div>

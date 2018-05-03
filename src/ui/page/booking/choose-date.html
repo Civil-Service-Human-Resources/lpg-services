@@ -27,7 +27,7 @@
                 </p>
                 <h2 class="heading-small">{{ module.title || course.title }}</h2>
                 <form autocomplete="nope" method="post">
-                    <div class="div-table div-table--5 ">
+                    <div class="div-table div-table--5 lpg-date-table">
                         <div class="div-table__row u-clearfix">
                             <div class="div-table__th">Course dates</div>
                             <div class="div-table__th">Duration</div>
@@ -38,19 +38,19 @@
                             </div>
                         </div>
                         {{#each events as event}}
-                        <div class="div-table__row u-clearfix">
-                            <div class="div-table__cell">{{datetime.formatDate(event.date)}}</div>
+                        <div class="div-table__row u-clearfix lpg-date-row">
+                            <div class="div-table__cell lpg-date">{{datetime.formatDate(event.date)}}</div>
                             <div class="div-table__cell">{{course.getDuration()}}</div>
                             <div class="div-table__cell">{{event.location}}</div>
-                            <div class="div-table__cell">&pound;{{module.price}}</div>
+                            <div class="div-table__cell lpg-price">&pound;{{module.price}}</div>
                             <div class="div-table__cell  div-table__cell--action">
                                 <div class="course-radios">
                                     {{#if event.id == selectedEventId}}
                                     <input id="radio-{{event.id}}" type="radio" name="selected-date" class="booking__date" value="{{event.id}}" checked> {{else}}
                                     <input id="radio-{{event.id}}" type="radio" name="selected-date" class="booking__date" value="{{event.id}}"> {{/if}}
                                     <label for="radio-{{event.id}}" class="booking__select-container">
-                                        <span class="booking__select booking__select--select">Select</span>
-                                        <span class="booking__select booking__select--selected">Selected</span>
+                                        <span class="booking__select booking__select--select lpg-select-date">Select</span>
+                                        <span class="booking__select booking__select--selected lpg-selected-date">Selected</span>
                                     </label>
                                 </div>
                             </div>
