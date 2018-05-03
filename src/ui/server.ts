@@ -4,6 +4,7 @@ import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
+import * as helmet from 'helmet'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as lusca from 'lusca'
@@ -44,6 +45,7 @@ const FileStore = sessionFileStore(session)
 app.disable('x-powered-by')
 app.disable('etag')
 app.enable('trust proxy')
+app.use(helmet())
 
 const corsOptions = {
 	allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
