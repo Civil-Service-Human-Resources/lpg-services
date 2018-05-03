@@ -59,7 +59,8 @@
                 {{else}}
                     {{#if course.getType() !== 'face-to-face'}}
                         {{#if course.record.modules.length}}
-                            <a href="/courses/{{course.id}}#modules">{{ i18n('action_' + (course.record.modules[0].state || 'NOT_STARTED' )) }}
+                            <a href="/courses/{{course.id}}#modules">{{ i18n('action_' + (course.record.state || 'NOT_STARTED' )) }}
+
                                 <span class="visuallyhidden"> this course</span>
                             </a>
                         {{else}}
