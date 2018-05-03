@@ -6,7 +6,6 @@ import * as session from 'express-session'
 import * as helmet from 'helmet'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
-import * as lusca from 'lusca'
 import * as path from 'path'
 
 import * as serveStatic from 'serve-static'
@@ -55,8 +54,6 @@ app.use(
 
 app.enable('trust proxy')
 
-app.use(lusca.xframe('SAMEORIGIN'))
-app.use(lusca.xssProtection(true))
 app.use(helmet())
 
 app.use(fileUpload())
