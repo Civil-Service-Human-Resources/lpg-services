@@ -40,7 +40,7 @@ $module: 'discite';
 		}
 
 		@include m(search) {
-			padding-right: 100px
+			padding-right: 100px;
 		}
 	}
 
@@ -89,8 +89,6 @@ $module: 'discite';
 			//this should not be here, .badge is being imported too late in main.scss
 			@include m(discite) {
 				margin-bottom: 0;
-				position: absolute;
-				right: 0;
 			}
 		}
 
@@ -111,8 +109,8 @@ $module: 'discite';
 	@include e(status) {
 		// div.discite__status usually a badge saying in progress|overdue|completed etc
 		@extend %disciteRowDiv;
+		position: absolute;
 		width: 50%;
-		float: right;
 		text-align: right;
 		padding-right: 0;
 		padding-top: 6px;
@@ -150,7 +148,6 @@ $module: 'discite';
 		@include m(search) {
 			padding-right: 0px;
 		}
-	
 	}
 
 	@include e(counter) {

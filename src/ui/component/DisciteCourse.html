@@ -1,13 +1,13 @@
-<div class="discite__item u-clearfix discite__item--{{modifier || ''}}">
-    <div class="discite__main discite__main--{{modifier}}">
+<div class="discite__item u-clearfix {{modifier ? `discite__item--${modifier}` : ''}}">
+    <div class="discite__main {{modifier ? `discite__main--${modifier}` : ''}}">
         <a class="lpg-course-link" href="/courses/{{course.id}}">
             <h3 class="heading discite__heading lpg-course-name">
                 {{course.title}}
             </h3>
         </a>
     </div>
-    <div class="discite__properties discite__properties--{{modifier || ''}} u-clearfix">
-        <ul class="discite__property discite__property--{{modifier || ''}}">
+    <div class="discite__properties {{modifier ? `discite__properties--${modifier}` : ''}} u-clearfix">
+        <ul class="discite__property {{modifier ? `discite__property--${modifier}` : ''}}">
             <li class="discite__property-item">
                 {{#if course.record && course.record.state && course.record.state !== 'RETRIEVED' && course.record.state !== 'ARCHIVED' }}
                 <div class="discite__status">
@@ -40,7 +40,7 @@
         </div>
     {{/if}}
     {{#if course.shortDescription}}
-    <div class="discite__desc discite__desc--{{modifier || ''}}">
+    <div class="discite__desc {{modifier ? `discite__desc--${modifier}` : ''}}">
         {{course.shortDescription}}
     </div>
     {{/if}}
@@ -51,7 +51,7 @@
             Work area: {{course.getAreasOfWork().map(function(aow) { return i18n('areas-of-work')[aow];}).join(', ')}}
         {{/if}}
     </div>
-    <div class="discite__action discite__action--{{modifier || ''}}">
+    <div class="discite__action {{modifier ? `discite__action--${modifier}`|| ''}}">
 
             {{#if course.record}}
                 {{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}}
@@ -102,4 +102,4 @@
             {{/if}}
 
     </div>
-</div>
+</div>s
