@@ -51,7 +51,7 @@
             Work area: {{course.getAreasOfWork().map(function(aow) { return i18n('areas-of-work')[aow];}).join(', ')}}
         {{/if}}
     </div>
-    <div class="discite__action {{modifier ? `discite__action--${modifier}`|| ''}}">
+    <div class="discite__action {{modifier ? `discite__action--${modifier}` : ''}}">
 
             {{#if course.record}}
                 {{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}}
