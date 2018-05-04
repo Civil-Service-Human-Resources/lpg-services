@@ -1,8 +1,8 @@
 import * as express from 'express'
 import * as config from 'lib/config'
-import * as oauth2 from 'passport-oauth2'
 import * as model from 'lib/model'
 import * as passport from 'passport'
+import * as oauth2 from 'passport-oauth2'
 
 let strategy: oauth2.Strategy
 export function configure(
