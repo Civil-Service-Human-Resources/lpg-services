@@ -40,7 +40,9 @@ const FileStore = sessionFileStore(session)
 app.use(
 	session({
 		cookie: {
+			httpOnly: true,
 			maxAge: 31536000,
+			secure: config.PRODUCTION_ENV,
 		},
 		name: 'lpg-management-ui',
 		resave: true,
