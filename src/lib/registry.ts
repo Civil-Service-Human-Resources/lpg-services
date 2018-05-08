@@ -6,7 +6,6 @@ traverson.registerMediaType(hal.mediaType, hal)
 
 const halHost = 'http://lpg.local.cshr.digital:9002'
 
-
 export async function get(node: string) {
 	console.log("called")
 	const result = await new Promise((resolve, reject) => traverson
@@ -80,7 +79,6 @@ export async function profile(token: string) {
 				console.log(error)
 				reject(false)
 			} else {
-				console.log('**********************')
 				console.log(document)
 				resolve(document)
 			}
