@@ -6,6 +6,7 @@ import * as log4js from 'log4js'
 import * as axiosLogger from 'lib/axiosLogger'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
+import * as registry from 'lib/registry'
 import * as template from 'lib/ui/template'
 
 import * as config from 'lib/config'
@@ -313,7 +314,7 @@ export function renderAreasOfWorkPage(
 	)
 }
 
-export function renderEditPage(req: express.Request, res: express.Response) {
+export async function renderEditPage(req: express.Request, res: express.Response) {
 	const inputName = req.params.profileDetail
 	let options = {}
 	let optionType: string = ''
@@ -323,16 +324,16 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			value = req.user.givenName
 			break
 		case 'other-areas-of-work':
-			options = req.__('areas-of-work')
+			options = await registry.get('professions')
 			optionType = OptionTypes.Checkbox
 			break
 		case 'department':
-			options = req.__('departments')
+			options = await registry.get('organisations')
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
 			break
 		case 'grade':
-			options = req.__('grades')
+			options = await registry.get('grades')
 			optionType = OptionTypes.Radio
 			value = req.user.grade
 			break

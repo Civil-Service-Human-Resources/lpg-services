@@ -58,6 +58,7 @@
 	},
 	"dependencies": {
 		"@types/express-validator": "3.0.0",
+		"@types/traverson": "2.0.28",
 		"axios": "0.17.1",
 		"azure-storage": "2.8.1",
 		"compression": "1.7.1",
@@ -94,6 +95,8 @@
 		"striptags": "3.1.1",
 		"svelte": "1.55.0",
 		"tmp": "0.0.33",
+		"traverson": "^6.0.3",
+		"traverson-hal": "^6.0.0",
 		"unzip": "0.1.11"
 	}
 }
