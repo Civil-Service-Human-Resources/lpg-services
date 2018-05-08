@@ -69,7 +69,7 @@ app.use(compression({threshold: 0}))
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
-passport.configure('lpg-management-ui', config.AUTHENTICATION.serviceUrl, app)
+passport.configure('', '', config.AUTHENTICATION.serviceUrl, app)
 i18n.configure(app)
 
 app.use(passport.isAuthenticated)

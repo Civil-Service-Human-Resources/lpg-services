@@ -1,42 +1,46 @@
 import * as express from 'express'
+import * as config from 'lib/config'
+import * as identity from 'lib/identity'
 import * as model from 'lib/model'
+import * as registry from 'lib/registry'
 import * as passport from 'passport'
-import * as saml from 'passport-saml'
+import * as oauth2 from 'passport-oauth2'
 
-let strategy: saml.Strategy
-
+let strategy: oauth2.Strategy
 export function configure(
-	issuer: string,
+	clientID: string,
+	clientSecret: string,
 	authenticationServiceUrl: string,
 	app: express.Express
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
-
-	strategy = new saml.Strategy(
+	strategy = new oauth2.Strategy(
 		{
-			acceptedClockSkewMs: -1,
-			entryPoint: `${authenticationServiceUrl}/samlsso`,
-			issuer,
-			path: '/authenticate',
+			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
+			callbackURL: `${config.LPG_UI_SERVER}/authenticate`,
+			clientID,
+			clientSecret,
+			tokenURL: `${authenticationServiceUrl}/oauth/token`,
 		},
-		(profile: any, done: saml.VerifiedCallback) => {
-			done(
-				null,
-				model.User.create({
-					areasOfWork: profile['http://wso2.org/claims/profession'],
-					department: profile['http://wso2.org/claims/department'],
-					emailAddress: profile.nameID,
-					givenName: profile['http://wso2.org/claims/givenname'],
-					grade: profile['http://wso2.org/claims/grade'],
-					id: profile['http://wso2.org/claims/userid'],
-					nameID: profile.nameID,
-					nameIDFormat: profile.nameIDFormat,
-					roles: profile['http://wso2.org/claims/role'],
-					sessionIndex: profile.sessionIndex,
-				}),
-				{}
-			)
+		async (
+			accessToken: string,
+			refreshToken: string,
+			profile: any,
+			cb: oauth2.VerifyCallback
+		) => {
+			profile.accessToken = accessToken
+			// get details here
+			const identityDetails = await identity.getDetails(accessToken)
+			const regDetails = await registry.profile(accessToken)
+
+			const combined = {
+				...profile,
+				...identityDetails,
+				...regDetails,
+			}
+			const user = model.User.create(combined)
+			return cb(null, user)
 		}
 	)
 
@@ -46,13 +50,13 @@ export function configure(
 		done(null, JSON.stringify(user))
 	})
 
-	passport.deserializeUser<model.User, string>((data, done) => {
-		done(null, model.User.create(JSON.parse(data)))
+	passport.deserializeUser<model.User, string>(async (data, done) => {
+		done(null,  model.User.create(JSON.parse(data)))
 	})
 
 	app.all(
 		'/authenticate',
-		passport.authenticate('saml', {
+		passport.authenticate('oauth2', {
 			failureFlash: true,
 			failureRedirect: '/',
 		}),
@@ -104,8 +108,6 @@ export function hasRole(role: string) {
 }
 
 export function logout(req: express.Request, res: express.Response) {
-	strategy.logout(req, (err, url) => {
-		req.logout()
-		res.redirect(url)
-	})
+	req.logout()
+	res.redirect('/')
 }

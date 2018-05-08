@@ -6,6 +6,7 @@ import * as log4js from 'log4js'
 import * as axiosLogger from 'lib/axiosLogger'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
+import * as registry from 'lib/registry'
 import * as template from 'lib/ui/template'
 
 import * as config from 'lib/config'
@@ -25,17 +26,14 @@ export interface SignIn {
 	authenticationServiceUrl: string
 }
 
-interface WSO2Profile {
-	CshrUser: {
-		department: string
-		grade: string
-		profession: string
-	}
-	name: {
-		givenName: string
-	}
-	userName: string
-	password?: string
+export enum nodes {
+	'given-name' = 'fullName',
+	'email-addresss' = 'emailAddress',
+	'department' = 'organisation',
+	'grade' = 'grade',
+	'areas-of-work' = 'profession',
+	'other-areas-of-work' = 'otherAreasOfWork',
+	'password' = 'password',
 }
 
 const logger = log4js.getLogger('controllers/user')
@@ -77,13 +75,11 @@ function renderSignIn(
 
 async function updateUserObject(
 	req: express.Request,
-	updatedProfile: WSO2Profile
+	updatedProfile: Record<string, string>
 ) {
-	const cshrUserObject = updatedProfile.CshrUser
 	const newUser = model.User.create({
 		...req.user,
-		givenName: updatedProfile.name.givenName,
-		...cshrUserObject,
+		...updatedProfile,
 	})
 	await new Promise(resolve => {
 		req.login(newUser, () => {
@@ -127,57 +123,166 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-/*tslint:disable*/
-//TODO: LPFG-49,241 - remove when we have profile service
-const levels = [
-	{
-		a: 'Commercial',
-		b: 'Digital',
-		c: 'Project Delivery',
-		d: 'Communications',
-		e: 'Corporate finance',
-		f: 'Finance',
-		g: 'Fraud, error, debt and grants',
-		h: 'Human Resources',
-		i: 'Internal audit',
-		j: 'Legal',
-		k: 'Property',
-	},
-	{
-		b101: 'Data',
-		b102: 'IT Operations',
-		b103: 'User centered design',
-	},
-	{
-		b201: 'Content designer',
-		b202: 'Content strategist',
-		b203: 'Graphic designer',
-		b204: 'Interaction designer',
-	},
-	{
-		d301: 'head of interaction design',
-		d302: 'Lead interaction designer',
-	},
-]
-
-export function getLevels(selectedArray: string[]) {
-	//TODO: LPFG-49,241 - send get request to profile service to get levels to show
-	// placeholder until profile service is ready. This will be the call to the service
-	let levelsToReturn = []
-	if (!selectedArray) {
-		levelsToReturn.push(levels[0])
-	}
-	for (const level in selectedArray) {
-		//push previous levels
-		levelsToReturn.push(levels[level])
-	}
-	if (selectedArray) {
-		levelsToReturn.push(levels[selectedArray.length]) //push the next level
-	}
-
-	return levelsToReturn
+export interface Level {
+	url: string
+	name: string
 }
-/*tslint:enable*/
+
+export function haltoObject(traversonResult: any[]): {} {
+	const data = traversonResult.map((x: any) => {
+		const hash: Record<string, string> = {}
+		hash[x.name] = x._links.self.href.replace(
+			config.REGISTRY_SERVICE_URL,
+			''
+		)
+
+		return hash
+	})
+
+	const out: Record<string, string> = {}
+
+	for (const item of data) {
+		const keys = Object.keys(item)
+		out[item[keys[0]]] = keys[0]
+	}
+	return out
+}
+
+export function parseProfessions(
+	traversonResult: any
+): [Level[], string] | void {
+	try {
+		const parsed = traversonResult._embedded.professions.map(
+			(profession: any) => {
+				return {
+					name: profession.name,
+					url: profession._links.jobRoles.href,
+				}
+			}
+		)
+		return [parsed, traversonResult._links.self.href]
+	} catch (e) {
+		logger.error(e)
+		return
+	}
+}
+
+export function parseRoles(traversonResult: any): [Level[], string] | void {
+	try {
+		const parsed = traversonResult._embedded.jobRoles.map((role: any) => {
+			return {
+				hasChildren: role.hasChildren,
+				name: role.name,
+				url: role._links.self.href,
+			}
+		})
+
+		return [parsed, traversonResult._links.self.href]
+	} catch (e) {
+		logger.error(e)
+		return
+	}
+}
+
+export async function newRenderAreasOfWorkPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const lede = req.__('register_area_page_intro')
+	let selectedArr = []
+	let currentLevel: number = 0
+	let selected: number
+	let levels: Level[][] = []
+	let prevLevelUrl
+
+	if (req.query.select) {
+		const arrUpdate = req.query.select.split('/')
+		await patchAndUpdate(arrUpdate[0], req.query.select, 'areas-of-work', req, res)
+		return
+	}
+
+	if (req.params[0]) {
+		/* set the 'progress' vars */
+		selectedArr = req.params[0].split('/')
+		currentLevel = selectedArr.length
+		selected = selectedArr[currentLevel - 1] || 0
+	}
+
+	if (currentLevel === 0) {
+		/* if the user hasn't selected anything, start from the beginning and reset 'levels' vars */
+		req.session!.levels = []
+		levels = []
+
+		const parsed = parseProfessions(await registry.get('professions'))
+
+		if (parsed) {
+			levels.push(parsed[0])
+			req.session!.prevLevelUrl = parsed[1]
+		}
+	} else {
+		/* if the user has selected levels or there are req.params[0] */
+		levels = req.session!.levels
+		const followPath: string[] = []
+
+		prevLevelUrl = levels[currentLevel! - 1][selected!].url
+		if (levels.length === currentLevel) {
+			if (selectedArr.length ! > 1) {
+				followPath.push('children')
+			}
+		} else {
+			/* If they don't match up, start from the beginning and reconstruct the path.
+			 * This may happen when they use the url to navigate to a level
+			 * or go backwards
+			 */
+
+			prevLevelUrl = levels[currentLevel - 1][selected!].url
+
+			selectedArr.forEach((selection: number, index: number) => {
+				if (index > 0) {
+					followPath.push('children')
+				}
+			})
+		}
+
+		const traversonResult = await registry.follow(prevLevelUrl, followPath)
+
+		if (levels.length === 0) {
+			/* if there are no levels saved, use parseProfessions method since the response contains 'professions' key */
+			const parsed = parseProfessions(traversonResult)
+			if (parsed) {
+				levels.push(parsed[0])
+				req.session!.prevLevelUrl = parsed[1]
+			}
+		} else {
+			/* if there are levels saved, use parseRoles method since the response contains 'jobRoles' key */
+			const parsed = parseRoles(traversonResult)
+
+			if (parsed) {
+				/* only set the results to the appropriate level*/
+				levels[selectedArr.length] = parsed[0]
+				req.session!.prevLevelUrl = parsed[1]
+			}
+		}
+	}
+
+	if (selectedArr) {
+		/* Slice the array to the amount of levels the user should see and save the levels to session */
+		levels = levels.slice(0, selectedArr.length + 1)
+		req.session!.levels = levels
+	}
+
+	res.send(
+		template.render('profile/edit', req, res, {
+			currentLevel,
+			inputName: 'areas-of-work',
+			lede,
+			levels,
+			...res.locals,
+			selected: selected!,
+			selectedArr,
+		})
+	)
+}
 
 export function renderAreasOfWorkPage(
 	req: express.Request,
@@ -199,7 +304,7 @@ export function renderAreasOfWorkPage(
 		currentLevel = selectedArr.length
 	}
 
-	const levelsToShow = getLevels(selectedArr)
+	const levelsToShow: any[] = []
 
 	res.send(
 		template.render('profile/edit', req, res, {
@@ -214,7 +319,10 @@ export function renderAreasOfWorkPage(
 	)
 }
 
-export function renderEditPage(req: express.Request, res: express.Response) {
+export async function renderEditPage(
+	req: express.Request,
+	res: express.Response
+) {
 	const inputName = req.params.profileDetail
 	let options = {}
 	let optionType: string = ''
@@ -224,18 +332,21 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			value = req.user.givenName
 			break
 		case 'other-areas-of-work':
-			options = req.__('areas-of-work')
+			options = haltoObject(await registry.halNode('professions'))
 			optionType = OptionTypes.Checkbox
 			break
 		case 'department':
-			options = req.__('departments')
+			options = haltoObject(await registry.halNode('organisations'))
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
 			break
 		case 'grade':
-			options = req.__('grades')
+			options = haltoObject(await registry.halNode('grades'))
 			optionType = OptionTypes.Radio
 			value = req.user.grade
+			break
+		case 'name':
+			value = req.user.name
 			break
 	}
 
@@ -252,7 +363,6 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			})
 		}
     </script>`
-
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
@@ -305,61 +415,64 @@ export async function tryUpdateProfile(
 		await updateProfile(req, res)
 	}
 }
+
+export async function patchAndUpdate(
+	node: string,
+	value: string,
+	input: string,
+	req: express.Request,
+	res: express.Response
+) {
+	const call: Record<string, string> = {}
+	call[node] = value
+	const response = await registry.patch(
+		'civilServants',
+		call,
+		req.user.accessToken
+	)
+
+	if (response) {
+		// seems like we have to get the profile again to get values
+		// which seems ...not good
+		const profile = await registry.profile(req.user.accessToken)
+		await updateUserObject(req, profile as Record<string, string>)
+		req.flash('profile-updated', 'profile-updated')
+		req.session!.save(() => {
+			res.redirect('/profile')
+		})
+	} else {
+		res.send(
+			template.render('profile/edit', req, res, {
+				identityServerFailed: true,
+				input,
+			})
+		)
+	}
+}
+
 export async function updateProfile(
 	ireq: express.Request,
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	const updateProfileObject: WSO2Profile = {
-		CshrUser: {
-			department: req.user.department,
-			grade: req.user.grade,
-			profession: (req.user.areasOfWork || []).join(','),
-		},
-		name: {givenName: req.user.givenName},
-		userName: req.user.emailAddress,
-	}
 
 	const inputName = req.params.profileDetail
-	const fieldValue = req.body[inputName]
+	let fieldValue = req.body[inputName]
 
-	const options = {
-		auth: {
-			password: config.AUTHENTICATION.servicePassword,
-			username: config.AUTHENTICATION.serviceAdmin,
-		},
-		baseURL: config.AUTHENTICATION.serviceUrl,
-		headers: SCIM2_HEADERS,
-	}
+	const node = nodes[inputName]
 
-	switch (inputName) {
-		case 'given-name':
-			updateProfileObject.name.givenName = fieldValue
-			break
-		case 'email-address':
-			updateProfileObject.userName = fieldValue
-			break
-		case 'department':
-			updateProfileObject.CshrUser.department = fieldValue
-			break
-		case 'grade':
-			updateProfileObject.CshrUser.grade = fieldValue
-			break
-		case 'other-areas-of-work':
-			let joinedFieldValues
-			if (Array.isArray(fieldValue)) {
-				joinedFieldValues = fieldValue.join(',')
-			} else {
-				joinedFieldValues = fieldValue
+	switch (node) {
+		case 'otherAreasOfWork':
+			if (!Array.isArray(fieldValue)) {
+				fieldValue = [fieldValue]
 			}
-			if (joinedFieldValues) {
-				updateProfileObject.CshrUser.profession = joinedFieldValues
-			} else {
-				delete updateProfileObject.CshrUser.profession
+			break
+		case 'profession':
+			if (Array.isArray(fieldValue)) {
+				fieldValue = fieldValue.join(',')
 			}
 			break
 		case 'password':
-			updateProfileObject.password = fieldValue
 			let passwordFailed = ''
 
 			if (fieldValue !== req.body.confirmPassword) {
@@ -383,23 +496,9 @@ export async function updateProfile(
 			break
 	}
 
-	try {
-		const response = await http.put(
-			`/scim2/Users/${req.user.id}`,
-			updateProfileObject,
-			options
-		)
-		await updateUserObject(req, JSON.parse(response.config.data))
-		req.flash('profile-updated', 'profile-updated')
-		req.session!.save(() => {
-			res.redirect('/profile')
-		})
-	} catch (e) {
-		res.send(
-			template.render('profile/edit', req, res, {
-				identityServerFailed: true,
-				inputName,
-			})
-		)
+	if (node in ['password']) {
+		// do something with identity
+	} else {
+		await patchAndUpdate(node, fieldValue, inputName, req, res)
 	}
 }
