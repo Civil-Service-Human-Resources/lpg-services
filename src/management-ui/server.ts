@@ -3,9 +3,9 @@ import * as compression from 'compression'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
+import * as helmet from 'helmet'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
-import * as lusca from 'lusca'
 import * as path from 'path'
 
 import * as serveStatic from 'serve-static'
@@ -40,7 +40,9 @@ const FileStore = sessionFileStore(session)
 app.use(
 	session({
 		cookie: {
+			httpOnly: true,
 			maxAge: 31536000,
+			secure: config.PRODUCTION_ENV,
 		},
 		name: 'lpg-management-ui',
 		resave: true,
@@ -54,8 +56,7 @@ app.use(
 
 app.enable('trust proxy')
 
-app.use(lusca.xframe('SAMEORIGIN'))
-app.use(lusca.xssProtection(true))
+app.use(helmet())
 
 app.use(fileUpload())
 app.use(bodyParser.json())
