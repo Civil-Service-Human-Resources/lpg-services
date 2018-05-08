@@ -11,6 +11,13 @@ import * as template from 'lib/ui/template'
 import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
 
+/*tslint:disable*/
+const JsonHalAdapter = require('traverson-hal')
+const traverson = require('traverson-promise')
+/*tslint:enable*/
+
+traverson.registerMediaType(JsonHalAdapter.mediaType, JsonHalAdapter)
+
 export interface Profile {
 	updateSuccessful: boolean
 	user: model.User
@@ -177,6 +184,197 @@ export function getLevels(selectedArray: string[]) {
 
 	return levelsToReturn
 }
+
+export interface LevelsinSession {
+	currentRegistryUrl: string
+	levels: {url: string; name: string}[][]
+}
+
+export async function getNextLevel(
+	req: express.Request,
+	selectedArray: number[]
+) {
+	let session: LevelsinSession = req.session!.levelsInSession
+
+	if (selectedArray.length === 1) {
+		const lastSelected = selectedArray.slice(-1)[0]
+		session.currentRegistryUrl =
+			session.levels[selectedArray.length - 1][lastSelected].url
+
+		logger.info('currentRegistryURL === 1', session.currentRegistryUrl)
+
+		const nextLevel = await registryService(`${session.currentRegistryUrl}`)
+		const registryRoles: RegistryRoles = nextLevel
+		const levelsToShow = registryRoles._embedded.jobRoles!.map(jobRole => {
+			return {
+				name: jobRole.name,
+				url: jobRole._links.self.href,
+			}
+		})
+
+		session.levels.push(levelsToShow)
+	} else if (selectedArray.length > 1) {
+		const lastSelected = selectedArray.slice(-1)[0]
+		session.currentRegistryUrl =
+			session.levels[selectedArray.length - 1][lastSelected].url
+		logger.info('currentRegistryURL > 1', session.currentRegistryUrl)
+		const nextLevel = await registryService(
+			`${session.currentRegistryUrl}/children`
+		)
+		const registryRoles: RegistryRoles = nextLevel
+		const levelsToShow = registryRoles._embedded.jobRoles!.map(jobRole => {
+			return {
+				name: jobRole.name,
+				url: jobRole._links.children.href,
+			}
+		})
+
+		session.levels.push(levelsToShow)
+
+		return session
+	}
+}
+
+export interface RegistryRoles {
+	_embedded: {
+		jobRoles: {
+			name: string
+			_links: {
+				self: {href: string}
+				jobRole: {href: string}
+				parent: {href: string}
+				children: {href: string}
+				profession: {href: string}
+			}
+		}[]
+	}
+}
+
+export interface RegistryProfessions {
+	_embedded: {
+		professions: {
+			name: string
+			_links: {
+				self: {href: string}
+				jobRoles: {href: string}
+			}
+		}[]
+	}
+}
+
+export async function registryService(url: string) {
+	const options = {
+		baseURL: config.registryServiceURL,
+	}
+	try {
+		const response = await http.get(url, options)
+		return response.data
+	} catch (e) {
+		logger.error(e)
+	}
+}
+
+function parseRegistryProfiles(registryProfessions: RegistryProfessions) {
+	return registryProfessions._embedded.professions.map(profession => {
+		return {
+			name: profession.name,
+			url: profession._links.jobRoles.href,
+		}
+	})
+}
+
+function parseRegistryRoles(registryRoles: RegistryRoles) {
+	return registryRoles._embedded.jobRoles.map(jobRoles => {
+		return {
+			name: jobRoles.name,
+			url: jobRoles._links.jobRole.href,
+		}
+	})
+}
+
+export async function newRenderAreasOfWorkPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const lede = req.__('register_area_page_intro')
+	let selectedArr = []
+	let currentLevel
+	let selected
+	let levels: {
+		name: string
+		url: string
+	}[][] = []
+
+	if (req.params[0]) {
+		selected = req.params[0]
+		selectedArr = req.params[0].split('/')
+		currentLevel = selectedArr.length
+		console.log(currentLevel)
+	}
+
+	if (selectedArr.length === 0) {
+		req.session!.levels = []
+		levels = []
+		//if there are no levels selected
+		const traversonResult = await traverson
+			.from('http://localhost:9002')
+			.jsonHal()
+			.follow('professions')
+			.getResource().result
+
+		try {
+			const parsed = parseRegistryProfiles(traversonResult)
+			levels.push(parsed)
+			req.session!.levels = levels
+		} catch (e) {
+			logger.error(e)
+		}
+	} else {
+		levels = req.session!.levels
+		let followPath: string[] = ['professions']
+
+		if (selectedArr) {
+			selectedArr.forEach((selected: number, index: number) => {
+				if (index === 0) {
+					followPath.push(`professions[${selected}]`)
+					followPath.push(`jobRoles`)
+				} else {
+					followPath.push(`jobRoles[${selected}]`)
+					followPath.push(`children`)
+				}
+			})
+		}
+
+		const traversonResult = await traverson
+			.from('http://localhost:9002')
+			.jsonHal()
+			.follow(followPath)
+			.getResource().result
+		try {
+			console.log(traversonResult)
+			const parsed = parseRegistryRoles(traversonResult)
+			console.log(parsed)
+			req.session!.levels[selectedArr.length] = parsed
+		} catch (e) {
+			logger.error(e)
+		}
+	}
+
+	levels = levels.slice(0, currentLevel + 1)
+
+	res.send(
+		template.render('profile/edit', req, res, {
+			currentLevel,
+			inputName: 'areas-of-work',
+			lede,
+			levels,
+			...res.locals,
+			selected,
+			selectedArr,
+		})
+	)
+}
+
 /*tslint:enable*/
 
 export function renderAreasOfWorkPage(
@@ -252,7 +450,8 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			})
 		}
     </script>`
-
+	console.log(options)
+	console.log(Object.entries(options))
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,

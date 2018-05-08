@@ -118,7 +118,7 @@ export const LOGGING = set(
 				out: {type: 'console'},
 			},
 			categories: {
-				default: {appenders: ['out'], level: 'all'},
+				default: {appenders: ['out'], level: 'debug'},
 			},
 		},
 	}
@@ -142,3 +142,5 @@ export const XAPI = set({
 })
 
 export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
+
+export const registryServiceURL = 'http://localhost:9002'

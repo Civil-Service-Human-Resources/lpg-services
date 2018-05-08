@@ -151,8 +151,14 @@ app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
 
-app.get('/profile/areas-of-work', userController.renderAreasOfWorkPage)
-app.get('/profile/areas-of-work/*', userController.renderAreasOfWorkPage)
+app.get(
+	'/profile/areas-of-work',
+	asyncHandler(userController.newRenderAreasOfWorkPage)
+)
+app.get(
+	'/profile/areas-of-work/*',
+	asyncHandler(userController.newRenderAreasOfWorkPage)
+)
 
 app.get('/profile/:profileDetail', userController.renderEditPage)
 

@@ -1,11 +1,12 @@
 <div class="levels__col">
 	<ul class="levels__list">
-        {{#each Object.entries(levelOptions) as option}}
+
+        {{#each levelOptions as option, index}}
             <li>
                 {{#if level !== 3}}
-                    <a href="/profile/areas-of-work/{{selectedArr ? selectedArr.slice(0, level).join('/') : '' }}{{level > 0 ? '/' : ''}}{{option[0]}}" class="levels__link {{selectedArr && option[0] === selectedArr[level] ? 'levels__link--selected' : '' }}">{{(option[1])}}</a>
+                    <a href="/profile/areas-of-work/{{selectedArr ? selectedArr.slice(0, level).join('/') : '' }}{{level > 0 ? '/' : ''}}{{index}}" class="levels__link {{selectedArr[level] == index ? 'levels__link--selected' : ''}}">{{option.name}}</a>
                 {{else}}
-                    <a href="/profile/areas-of-work/?select={{option[0]}}" class="levels__link {{selectedArr && option[0] === selectedArr[level] ? 'levels__link--selected' : '' }}">{{(option[1])}}</a>
+                    <a href="/profile/areas-of-work/?select={{index}}" class="levels__link {{selectedArr[level] == index ? 'levels__link--selected' : ''}}">{{(option.name)}}</a>
                 {{/if}}
 
             </li>
