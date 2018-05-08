@@ -35,7 +35,7 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_email_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-email-address">
-                                {{signedInUser.emailAddress}}
+                                {{signedInUser.userName}}
                             </td>
                             <td class="key-value-list__item-action lpg-email-address-read-only">
 
@@ -46,7 +46,7 @@
                             <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_password_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-password">••••••••</td>
                             <td class="key-value-list__item-action">
-                                <a href="/profile/password">Change
+                                <a href="/profile/password" class="visuallyhidden">Change
                                     <span class="visuallyhidden"> your password</span>
                                 </a>
                             </td>
@@ -78,6 +78,7 @@
                                 </a>
                             </td>
                         </tr>
+                    {{#if impossibleStatement}}
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_primary-area_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
@@ -89,14 +90,16 @@
                                 </a>
                             </td>
                         </tr>
+                    {{/if}}
+
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_other-areas-of-work_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
                                 <ul>
-                                    {{#if signedInUser.areasOfWork}}
-                                        {{#each signedInUser.areasOfWork as aow}}
+                                    {{#if signedInUser.otherAreasOfWork}}
+                                        {{#each signedInUser.otherAreasOfWork as aow}}
                                             <li>
-                                                {{aow === 'other' ? 'Other' :  i18n('areas-of-work')[aow]}}
+                                                {{aow === 'other' ? 'Other' :  aow.name}}
                                             </li>
                                         {{/each}}
                                     {{/if}}

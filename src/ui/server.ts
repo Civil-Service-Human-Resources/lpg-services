@@ -121,8 +121,12 @@ app.use(
 
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
-
-passport.configure('lpg-ui', config.AUTHENTICATION.serviceUrl, app)
+passport.configure(
+	'9fbd4ae2-2db3-44c7-9544-88e80255b56e',
+	'test',
+	config.AUTHENTICATION.serviceUrl,
+	app
+)
 i18n.configure(app)
 
 app.param('courseId', asyncHandler(courseController.loadCourse))
@@ -145,14 +149,20 @@ app.get('/privacy', (req, res) => {
 app.post('/feedback.record', asyncHandler(feedbackController.record))
 
 app.use(passport.isAuthenticated)
-app.use(passport.hasRole('learner'))
+app.use(passport.hasRole('USER'))
 
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
 
-app.get('/profile/areas-of-work', userController.renderAreasOfWorkPage)
-app.get('/profile/areas-of-work/*', userController.renderAreasOfWorkPage)
+app.get(
+	'/profile/areas-of-work',
+	asyncHandler(userController.newRenderAreasOfWorkPage)
+)
+app.get(
+	'/profile/areas-of-work/*',
+	asyncHandler(userController.newRenderAreasOfWorkPage)
+)
 
 app.get('/profile/:profileDetail', userController.renderEditPage)
 

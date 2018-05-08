@@ -504,59 +504,53 @@ export class Feedback {
 export class User {
 	static create(data: any) {
 		const user = new User(
-			data.id,
-			data.emailAddress,
-			data.nameID,
-			data.nameIDFormat,
+			data.uid || data.id,
+			data.userName || data.username,
 			data.sessionIndex,
-			Array.isArray(data.roles) ? data.roles : [data.roles]
+			Array.isArray(data.roles) ? data.roles : [data.roles],
+			data.accessToken
 		)
-		user.department = data.department
-		user.givenName = data.givenName
-		user.grade = data.grade
 
-		const areasOfWork = data.profession || data.areasOfWork
-		if (areasOfWork) {
-			user.areasOfWork = Array.isArray(areasOfWork)
-				? areasOfWork
-				: areasOfWork.split(',')
-		} else {
-			user.areasOfWork = []
-		}
+		user.department = data.organisation
+			? data.organisation.code
+			: data.department
+		user.givenName = data.fullName ? data.fullName : data.givenName
+		user.grade = data.grade && data.grade.code ? data.grade.code : data.grade
 
+		//const areasOfWork = data.profession || data.areasOfWork
+		user.otherAreasOfWork = data.otherAreasOfWork
 		return user
 	}
 
 	readonly id: string
-	readonly emailAddress: string
-	readonly nameID: string
-	readonly nameIDFormat: string
+	readonly userName: string
 	readonly sessionIndex: string
 	readonly roles: string[]
+	readonly accessToken: string
 
 	department?: string
 	areasOfWork?: string[]
+	otherAreasOfWork?: string[]
 	givenName?: string
 	grade?: string
 
 	constructor(
 		id: string,
-		emailAddress: string,
-		nameID: string,
-		nameIDFormat: string,
+		userName: string,
 		sessionIndex: string,
-		roles: string[]
+		roles: string[],
+		accessToken: string
 	) {
 		this.id = id
-		this.emailAddress = emailAddress
-		this.nameID = nameID
-		this.nameIDFormat = nameIDFormat
+		this.userName = userName
 		this.sessionIndex = sessionIndex
 		this.roles = roles
+		this.accessToken = accessToken
 	}
 
 	hasCompleteProfile() {
-		return this.department && this.areasOfWork && this.grade
+	//	return this.department && this.areasOfWork && this.grade
+		return true
 	}
 
 	hasRole(role: string) {
