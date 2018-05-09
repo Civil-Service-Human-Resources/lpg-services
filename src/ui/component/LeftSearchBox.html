@@ -10,7 +10,7 @@
                 </legend>
                 {{#each Object.entries(currentReq.__('courseTypes')) as filter}}
                     <div class="multiple-choice">
-                        <input type="checkbox" value="{{filter[1]}}" name="courseType" id="{{filter[0]}}"  checked="{{(courseType || []).indexOf(filter[1]) > -1 ? 'checked' : ''}}" >
+                        <input type="checkbox" value="{{filter[0]}}" name="courseType" id="{{filter[0]}}"  checked="{{(courseType || []).indexOf(filter[1]) > -1 ? 'checked' : ''}}" >
                         <label for="{{filter[0]}}">{{filter[1]}}</label>
                     </div>
                 {{/each}}
