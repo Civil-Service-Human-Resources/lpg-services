@@ -1,5 +1,4 @@
 {
-	"0": 0,
 	"audience_department_label": "Organisation(s)",
 	"audience_area_label": "Area(s) of work",
 	"audience_grade_label": "Grade(s)",
@@ -250,6 +249,6 @@
 		"link": "Link",
 		"elearning": "Online",
 		"video": "Video"
-	},
-	"profile_areas-of-wor_label": "profile_areas-of-wor_label"
+	}
 }
+
