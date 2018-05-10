@@ -8,7 +8,8 @@ describe('Should test User roles logic', () => {
 			'test@example.com',
 			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
-			['learner']
+			['learner'],
+			''
 		)
 		user.department = 'commercial'
 		user.areasOfWork = ['co']
@@ -25,7 +26,8 @@ describe('Should test User roles logic', () => {
 			'test@example.com',
 			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
-			['learner', 'management', 'other']
+			['learner', 'management', 'other'],
+			''
 		)
 		user.department = 'commercial'
 		user.areasOfWork = ['co']
@@ -42,7 +44,8 @@ describe('Should test User roles logic', () => {
 			'test@example.com',
 			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
-			['management']
+			['management'],
+			''
 		)
 		user.department = 'commercial'
 		user.areasOfWork = ['co']
@@ -59,7 +62,8 @@ describe('Should test User roles logic', () => {
 			'test@example.com',
 			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
-			[]
+			[],
+			''
 		)
 		user.department = 'commercial'
 		user.areasOfWork = ['co']
@@ -77,7 +81,8 @@ describe('Should test User roles logic', () => {
 			'test@example.com',
 			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
-			['Learner']
+			['Learner'],
+			''
 		)
 		user.department = 'commercial'
 		user.areasOfWork = ['co']

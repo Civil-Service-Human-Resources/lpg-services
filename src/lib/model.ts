@@ -502,15 +502,19 @@ export class Feedback {
 }
 
 export class User {
-	static create(data: any) {
+	static  async create(data: any) {
 		const user = new User(
 			data.id,
 			data.emailAddress,
 			data.nameID,
 			data.nameIDFormat,
 			data.sessionIndex,
-			Array.isArray(data.roles) ? data.roles : [data.roles]
+			Array.isArray(data.roles) ? data.roles : [data.roles],
+			data.accessToken
 		)
+
+	//	await identity.getDetails(user.accessToken)
+
 		user.department = data.department
 		user.givenName = data.givenName
 		user.grade = data.grade
@@ -533,6 +537,7 @@ export class User {
 	readonly nameIDFormat: string
 	readonly sessionIndex: string
 	readonly roles: string[]
+	readonly accessToken: string
 
 	department?: string
 	areasOfWork?: string[]
@@ -545,7 +550,8 @@ export class User {
 		nameID: string,
 		nameIDFormat: string,
 		sessionIndex: string,
-		roles: string[]
+		roles: string[],
+		accessToken: string
 	) {
 		this.id = id
 		this.emailAddress = emailAddress
@@ -553,6 +559,9 @@ export class User {
 		this.nameIDFormat = nameIDFormat
 		this.sessionIndex = sessionIndex
 		this.roles = roles
+		this.accessToken = accessToken
+
+		console.log(this)
 	}
 
 	hasCompleteProfile() {
