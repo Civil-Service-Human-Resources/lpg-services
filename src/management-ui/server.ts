@@ -24,6 +24,8 @@ import * as loginController from './controllers/login'
 
 import * as i18n from 'lib/service/translation'
 
+import * as expressValidator from 'express-validator'
+
 /* tslint:disable:no-var-requires */
 const favicon = require('serve-favicon')
 const fileUpload = require('express-fileupload')
@@ -72,6 +74,18 @@ i18n.configure(app)
 
 app.use(passport.isAuthenticated)
 app.use(passport.hasRole('management'))
+
+app.use(expressValidator())
+
+app.post(
+	'*',
+	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+		for (const key of Object.keys(req.body)) {
+			req.sanitizeBody(key).escape()
+		}
+		next()
+	}
+)
 
 app.get('/sign-in', loginController.signIn)
 app.get('/sign-out', loginController.signOut)

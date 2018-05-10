@@ -43,7 +43,7 @@
 		"@types/i18n": "0.8.3",
 		"@types/jasmine": "2.8.6",
 		"@types/lusca": "1.5.0",
-		"@types/mime-types": "^2.1.0",
+		"@types/mime-types": "2.1.0",
 		"@types/node": "9.4.0",
 		"@types/node-fetch": "1.6.7",
 		"@types/passport": "0.4.2",
@@ -64,6 +64,7 @@
 		"typescript": "2.7.1"
 	},
 	"dependencies": {
+		"@types/express-validator": "3.0.0",
 		"axios": "0.17.1",
 		"azure-storage": "2.8.1",
 		"compression": "1.7.1",
@@ -73,6 +74,7 @@
 		"express": "4.16.2",
 		"express-async-handler": "1.1.1",
 		"express-fileupload": "0.4.0",
+		"express-sanitizer": "1.0.4",
 		"express-session": "1.15.6",
 		"express-validator": "4.3.0",
 		"full-icu": "1.2.0",
