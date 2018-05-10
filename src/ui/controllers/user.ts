@@ -134,7 +134,7 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-export interface Level {
+interface Level {
 	url: string
 	name: string
 }
@@ -175,24 +175,12 @@ export interface RegistryProfessions {
 	}
 }
 
-export async function registryService(url: string) {
-	const options = {
-		baseURL: config.registryServiceURL,
-	}
-	try {
-		const response = await http.get(url, options)
-		return response.data
-	} catch (e) {
-		logger.error(e)
-	}
-}
-
 function parseRegistryProfiles(registryProfessions: RegistryProfessions) {
 	return registryProfessions._embedded.professions.map(profession => {
 		return {
 			name: profession.name,
 			url: profession._links.jobRoles.href,
-		}
+		} as Level
 	})
 }
 
@@ -213,10 +201,8 @@ export async function newRenderAreasOfWorkPage(
 	let selectedArr = []
 	let currentLevel
 	let selected
-	let levels: {
-		name: string
-		url: string
-	}[][] = []
+	let isEndOfBranch: boolean = false
+	let levels: Level[][] = []
 
 	if (req.query.select) {
 		//update method goes here
@@ -247,7 +233,7 @@ export async function newRenderAreasOfWorkPage(
 		}
 	} else {
 		levels = req.session!.levels
-		const followPath: string[] = []
+		const followPath: string[] = ['professions']
 
 		if (selectedArr) {
 			selectedArr.forEach((selection: number, index: number) => {
@@ -267,23 +253,24 @@ export async function newRenderAreasOfWorkPage(
 		try {
 			const parsed = parseRegistryRoles(traversonResult)
 			if (parsed.length === 0) {
-				//end of the line
+				isEndOfBranch = true
 			}
 
-			req.session!.levels[selectedArr.length] = parsed
+			levels[selectedArr.length] = parsed
 		} catch (e) {
 			logger.error(e)
 		}
 	}
 	if (selectedArr) {
-		req.session!.levels.slice(0, currentLevel)
-		levels.slice(0, currentLevel)
+		levels = levels.slice(0, selectedArr.length + 1)
+		req.session!.levels = levels
 	}
 
 	res.send(
 		template.render('profile/edit', req, res, {
 			currentLevel,
 			inputName: 'areas-of-work',
+			isEndOfBranch,
 			lede,
 			levels,
 			...res.locals,
@@ -366,8 +353,6 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			})
 		}
     </script>`
-	console.log(options)
-	console.log(Object.entries(options))
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
