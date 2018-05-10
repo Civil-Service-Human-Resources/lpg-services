@@ -158,11 +158,6 @@ export interface RegistryProfession {
 	}
 }
 
-export interface LevelsinSession {
-	currentRegistryUrl: string
-	levels: Level[]
-}
-
 export interface RegistryRoles {
 	_embedded: {
 		jobRoles: RegistryRole[]
