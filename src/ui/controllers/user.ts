@@ -134,7 +134,7 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-interface Level {
+export interface Level {
 	url: string
 	name: string
 }
