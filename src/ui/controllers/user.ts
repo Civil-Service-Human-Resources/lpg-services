@@ -158,36 +158,6 @@ export interface RegistryProfession {
 	}
 }
 
-export interface RegistryRoles {
-	_embedded: {
-		jobRoles: RegistryRole[]
-	}
-}
-
-export interface RegistryProfessions {
-	_embedded: {
-		professions: RegistryProfession[]
-	}
-}
-
-function parseRegistryProfiles(registryProfessions: RegistryProfessions) {
-	return registryProfessions._embedded.professions.map(profession => {
-		return {
-			name: profession.name,
-			url: profession._links.jobRoles.href,
-		} as Level
-	})
-}
-
-function parseRegistryRoles(registryRoles: RegistryRoles) {
-	return registryRoles._embedded.jobRoles.map(jobRoles => {
-		return {
-			name: jobRoles.name,
-			url: jobRoles._links.jobRole.href,
-		}
-	})
-}
-
 export async function newRenderAreasOfWorkPage(
 	req: express.Request,
 	res: express.Response
@@ -198,6 +168,7 @@ export async function newRenderAreasOfWorkPage(
 	let selected
 	let isEndOfBranch: boolean = false
 	let levels: Level[][] = []
+	let prevLevelUrl
 
 	if (req.query.select) {
 		//update method goes here
@@ -205,9 +176,9 @@ export async function newRenderAreasOfWorkPage(
 	}
 
 	if (req.params[0]) {
-		selected = req.params[0]
 		selectedArr = req.params[0].split('/')
 		currentLevel = selectedArr.length
+		selected = selectedArr[currentLevel - 1]
 	}
 
 	if (selectedArr.length === 0) {
@@ -215,12 +186,20 @@ export async function newRenderAreasOfWorkPage(
 		levels = []
 		//if there are no levels selected
 		const traversonResult = await traverson
-			.from('http://localhost:9002')
+			.from(`${config.REGISTRY_SERVICE_URL}/professions`)
 			.jsonHal()
-			.follow('professions')
 			.getResource().result
 		try {
-			const parsed = parseRegistryProfiles(traversonResult)
+			const parsed = traversonResult._embedded.professions.map(
+				(profession: any) => {
+					return {
+						name: profession.name,
+						url: profession._links.jobRoles.href,
+					}
+				}
+			)
+			req.session!.prevLevelUrl = traversonResult._links.self.href
+			console.log(req.session!.prevLevelUrl)
 			levels.push(parsed)
 			req.session!.levels = levels
 		} catch (e) {
@@ -228,29 +207,32 @@ export async function newRenderAreasOfWorkPage(
 		}
 	} else {
 		levels = req.session!.levels
-		const followPath: string[] = ['professions']
+		const followPath: string[] = []
+		prevLevelUrl = req.session!.prevLevelUrl
 
 		if (selectedArr) {
-			selectedArr.forEach((selection: number, index: number) => {
-				if (index === 0) {
-					followPath.push(`professions[${selection}]`, 'jobRoles')
-				} else {
-					followPath.push(`jobRoles[${selection}]`, 'children')
-				}
-			})
+			if (selectedArr.length === 1) {
+				followPath.push(`professions[${selected}]`, 'jobRoles')
+			} else {
+				followPath.push(`jobRoles[${selected}]`, 'children')
+			}
 		}
-
 		const traversonResult = await traverson
-			.from('http://localhost:9002')
+			.from(prevLevelUrl)
 			.jsonHal()
 			.follow(followPath)
 			.getResource().result
 		try {
-			const parsed = parseRegistryRoles(traversonResult)
+			const parsed = traversonResult._embedded.jobRoles.map((role: any) => {
+				return {
+					name: role.name,
+					url: role._links.href,
+				}
+			})
 			if (parsed.length === 0) {
 				isEndOfBranch = true
 			}
-
+			req.session!.prevLevelUrl = traversonResult._links.self.href
 			levels[selectedArr.length] = parsed
 		} catch (e) {
 			logger.error(e)
