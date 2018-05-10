@@ -83,22 +83,22 @@ function renderSignIn(
 	return template.render('account/sign-in', req, res, props)
 }
 
-async function updateUserObject(
-	req: express.Request,
-	updatedProfile: WSO2Profile
-) {
-	const cshrUserObject = updatedProfile.CshrUser
-	const newUser = model.User.create({
-		...req.user,
-		givenName: updatedProfile.name.givenName,
-		...cshrUserObject,
-	})
-	await new Promise(resolve => {
-		req.login(newUser, () => {
-			req.session!.save(resolve)
-		})
-	})
-}
+// async function updateUserObject(
+// 	req: express.Request,
+// 	updatedProfile: WSO2Profile
+// ) {
+// 	const cshrUserObject = updatedProfile.CshrUser
+// 	const newUser = model.User.create({
+// 		...req.user,
+// 		givenName: updatedProfile.name.givenName,
+// 		...cshrUserObject,
+// 	})
+// 	await new Promise(resolve => {
+// 		req.login(newUser, () => {
+// 			req.session!.save(resolve)
+// 		})
+// 	})
+// }
 
 function validateForm(req: express.Request) {
 	const form = req.body
@@ -404,6 +404,7 @@ export async function tryUpdateProfile(
 		await updateProfile(req, res)
 	}
 }
+
 export async function updateProfile(
 	ireq: express.Request,
 	res: express.Response
@@ -421,15 +422,6 @@ export async function updateProfile(
 
 	const inputName = req.params.profileDetail
 	const fieldValue = req.body[inputName]
-
-	const options = {
-		auth: {
-			password: config.AUTHENTICATION.servicePassword,
-			username: config.AUTHENTICATION.serviceAdmin,
-		},
-		baseURL: config.AUTHENTICATION.serviceUrl,
-		headers: SCIM2_HEADERS,
-	}
 
 	switch (inputName) {
 		case 'given-name':
@@ -483,13 +475,15 @@ export async function updateProfile(
 	}
 
 	try {
-		const response = await http.put(
-			`/scim2/Users/${req.user.id}`,
-			updateProfileObject,
-			options
-		)
-		await updateUserObject(req, JSON.parse(response.config.data))
-		req.flash('profile-updated', 'profile-updated')
+		await registry.patch('civilServants', { organisation: 'http://localhost:9002/organisations/1' }, req.user.accessToken)
+
+		// const response = await http.put(
+		// 	`/scim2/Users/${req.user.id}`,
+		// 	updateProfileObject,
+		// 	options
+		// )
+		// await updateUserObject(req, JSON.parse(response.config.data))
+		// req.flash('profile-updated', 'profile-updated')
 		req.session!.save(() => {
 			res.redirect('/profile')
 		})

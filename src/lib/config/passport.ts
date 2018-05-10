@@ -1,8 +1,10 @@
 import * as express from 'express'
 import * as config from 'lib/config'
+import * as identity from 'lib/identity'
 import * as model from 'lib/model'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
+
 
 let strategy: oauth2.Strategy
 export function configure(
@@ -13,7 +15,7 @@ export function configure(
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
-	strategy = new oauth2.Strategy(
+	strategy = new  oauth2.Strategy(
 		{
 			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
 			callbackURL: `${config.LPG_UI_SERVER}/authenticate`,
@@ -21,13 +23,20 @@ export function configure(
 			clientSecret,
 			tokenURL: `${authenticationServiceUrl}/oauth/token`,
 		},
-		(
+		async (
 			accessToken: string,
 			refreshToken: string,
 			profile: any,
 			cb: oauth2.VerifyCallback
 		) => {
-			const user = model.User.create(profile)
+			profile.accessToken = accessToken
+
+			const userDetails = await identity.getDetails(accessToken)
+			const combined = {
+				...profile,
+				...userDetails,
+			}
+			const user = await  model.User.create(profile)
 			return cb(null, user)
 		}
 	)
@@ -38,8 +47,8 @@ export function configure(
 		done(null, JSON.stringify(user))
 	})
 
-	passport.deserializeUser<model.User, string>((data, done) => {
-		done(null, model.User.create(JSON.parse(data)))
+	passport.deserializeUser<model.User, string>(async (data, done) => {
+		done(null, await model.User.create(JSON.parse(data)))
 	})
 
 	app.all(
