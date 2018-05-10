@@ -28,9 +28,9 @@ import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
 /* tslint:disable:no-var-requires */
-const favicon = require('serve-favicon')
-/* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
+const favicon = require('serve-favicon')
+/* tslint:enable */
 
 log4js.configure(config.LOGGING)
 
