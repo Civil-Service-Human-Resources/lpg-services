@@ -14,7 +14,7 @@ export function configure(
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
-	strategy = new oauth2.Strategy(
+	strategy = new  oauth2.Strategy(
 		{
 			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
 			callbackURL: `${config.LPG_UI_SERVER}/authenticate`,
@@ -22,7 +22,7 @@ export function configure(
 			clientSecret,
 			tokenURL: `${authenticationServiceUrl}/oauth/token`,
 		},
-		(
+		async (
 			accessToken: string,
 			refreshToken: string,
 			profile: any,
