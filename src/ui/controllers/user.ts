@@ -134,131 +134,44 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-/*tslint:disable*/
-//TODO: LPFG-49,241 - remove when we have profile service
-const levels = [
-	{
-		a: 'Commercial',
-		b: 'Digital',
-		c: 'Project Delivery',
-		d: 'Communications',
-		e: 'Corporate finance',
-		f: 'Finance',
-		g: 'Fraud, error, debt and grants',
-		h: 'Human Resources',
-		i: 'Internal audit',
-		j: 'Legal',
-		k: 'Property',
-	},
-	{
-		b101: 'Data',
-		b102: 'IT Operations',
-		b103: 'User centered design',
-	},
-	{
-		b201: 'Content designer',
-		b202: 'Content strategist',
-		b203: 'Graphic designer',
-		b204: 'Interaction designer',
-	},
-	{
-		d301: 'head of interaction design',
-		d302: 'Lead interaction designer',
-	},
-]
+export interface Level {
+	url: string
+	name: string
+}
 
-export function getLevels(selectedArray: string[]) {
-	//TODO: LPFG-49,241 - send get request to profile service to get levels to show
-	// placeholder until profile service is ready. This will be the call to the service
-	let levelsToReturn = []
-	if (!selectedArray) {
-		levelsToReturn.push(levels[0])
+export interface RegistryRole {
+	name: string
+	_links: {
+		self: {href: string}
+		jobRole: {href: string}
+		parent: {href: string}
+		children: {href: string}
+		profession: {href: string}
 	}
-	for (const level in selectedArray) {
-		//push previous levels
-		levelsToReturn.push(levels[level])
-	}
-	if (selectedArray) {
-		levelsToReturn.push(levels[selectedArray.length]) //push the next level
-	}
+}
 
-	return levelsToReturn
+export interface RegistryProfession {
+	name: string
+	_links: {
+		self: {href: string}
+		jobRoles: {href: string}
+	}
 }
 
 export interface LevelsinSession {
 	currentRegistryUrl: string
-	levels: {url: string; name: string}[][]
-}
-
-export async function getNextLevel(
-	req: express.Request,
-	selectedArray: number[]
-) {
-	let session: LevelsinSession = req.session!.levelsInSession
-
-	if (selectedArray.length === 1) {
-		const lastSelected = selectedArray.slice(-1)[0]
-		session.currentRegistryUrl =
-			session.levels[selectedArray.length - 1][lastSelected].url
-
-		logger.info('currentRegistryURL === 1', session.currentRegistryUrl)
-
-		const nextLevel = await registryService(`${session.currentRegistryUrl}`)
-		const registryRoles: RegistryRoles = nextLevel
-		const levelsToShow = registryRoles._embedded.jobRoles!.map(jobRole => {
-			return {
-				name: jobRole.name,
-				url: jobRole._links.self.href,
-			}
-		})
-
-		session.levels.push(levelsToShow)
-	} else if (selectedArray.length > 1) {
-		const lastSelected = selectedArray.slice(-1)[0]
-		session.currentRegistryUrl =
-			session.levels[selectedArray.length - 1][lastSelected].url
-		logger.info('currentRegistryURL > 1', session.currentRegistryUrl)
-		const nextLevel = await registryService(
-			`${session.currentRegistryUrl}/children`
-		)
-		const registryRoles: RegistryRoles = nextLevel
-		const levelsToShow = registryRoles._embedded.jobRoles!.map(jobRole => {
-			return {
-				name: jobRole.name,
-				url: jobRole._links.children.href,
-			}
-		})
-
-		session.levels.push(levelsToShow)
-
-		return session
-	}
+	levels: Level[]
 }
 
 export interface RegistryRoles {
 	_embedded: {
-		jobRoles: {
-			name: string
-			_links: {
-				self: {href: string}
-				jobRole: {href: string}
-				parent: {href: string}
-				children: {href: string}
-				profession: {href: string}
-			}
-		}[]
+		jobRoles: RegistryRole[]
 	}
 }
 
 export interface RegistryProfessions {
 	_embedded: {
-		professions: {
-			name: string
-			_links: {
-				self: {href: string}
-				jobRoles: {href: string}
-			}
-		}[]
+		professions: RegistryProfession[]
 	}
 }
 
@@ -305,11 +218,15 @@ export async function newRenderAreasOfWorkPage(
 		url: string
 	}[][] = []
 
+	if (req.query.select) {
+		//update method goes here
+		res.redirect('/profile')
+	}
+
 	if (req.params[0]) {
 		selected = req.params[0]
 		selectedArr = req.params[0].split('/')
 		currentLevel = selectedArr.length
-		console.log(currentLevel)
 	}
 
 	if (selectedArr.length === 0) {
@@ -321,7 +238,6 @@ export async function newRenderAreasOfWorkPage(
 			.jsonHal()
 			.follow('professions')
 			.getResource().result
-
 		try {
 			const parsed = parseRegistryProfiles(traversonResult)
 			levels.push(parsed)
@@ -331,16 +247,14 @@ export async function newRenderAreasOfWorkPage(
 		}
 	} else {
 		levels = req.session!.levels
-		let followPath: string[] = ['professions']
+		const followPath: string[] = []
 
 		if (selectedArr) {
-			selectedArr.forEach((selected: number, index: number) => {
+			selectedArr.forEach((selection: number, index: number) => {
 				if (index === 0) {
-					followPath.push(`professions[${selected}]`)
-					followPath.push(`jobRoles`)
+					followPath.push(`professions[${selection}]`, 'jobRoles')
 				} else {
-					followPath.push(`jobRoles[${selected}]`)
-					followPath.push(`children`)
+					followPath.push(`jobRoles[${selection}]`, 'children')
 				}
 			})
 		}
@@ -351,16 +265,20 @@ export async function newRenderAreasOfWorkPage(
 			.follow(followPath)
 			.getResource().result
 		try {
-			console.log(traversonResult)
 			const parsed = parseRegistryRoles(traversonResult)
-			console.log(parsed)
+			if (parsed.length === 0) {
+				//end of the line
+			}
+
 			req.session!.levels[selectedArr.length] = parsed
 		} catch (e) {
 			logger.error(e)
 		}
 	}
-
-	levels = levels.slice(0, currentLevel + 1)
+	if (selectedArr) {
+		req.session!.levels.slice(0, currentLevel)
+		levels.slice(0, currentLevel)
+	}
 
 	res.send(
 		template.render('profile/edit', req, res, {
@@ -374,8 +292,6 @@ export async function newRenderAreasOfWorkPage(
 		})
 	)
 }
-
-/*tslint:enable*/
 
 export function renderAreasOfWorkPage(
 	req: express.Request,
@@ -397,7 +313,7 @@ export function renderAreasOfWorkPage(
 		currentLevel = selectedArr.length
 	}
 
-	const levelsToShow = getLevels(selectedArr)
+	const levelsToShow: any[] = []
 
 	res.send(
 		template.render('profile/edit', req, res, {
