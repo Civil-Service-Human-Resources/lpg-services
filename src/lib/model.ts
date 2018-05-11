@@ -502,22 +502,22 @@ export class Feedback {
 }
 
 export class User {
-	static  async create(data: any) {
+	static create(data: any) {
 		const user = new User(
 			data.id,
-			data.emailAddress,
-			data.nameID,
-			data.nameIDFormat,
+			data.userName || data.username,
 			data.sessionIndex,
 			Array.isArray(data.roles) ? data.roles : [data.roles],
 			data.accessToken
 		)
 
-	//	await identity.getDetails(user.accessToken)
+		console.log('data in ', data)
 
-		user.department = data.department
+		user.department = data.organisation
+			? data.organisation.code
+			: data.department
 		user.givenName = data.givenName
-		user.grade = data.grade
+		user.grade = data.grade.code ? data.grade.code : data.grade
 
 		const areasOfWork = data.profession || data.areasOfWork
 		if (areasOfWork) {
@@ -532,9 +532,7 @@ export class User {
 	}
 
 	readonly id: string
-	readonly emailAddress: string
-	readonly nameID: string
-	readonly nameIDFormat: string
+	readonly userName: string
 	readonly sessionIndex: string
 	readonly roles: string[]
 	readonly accessToken: string
@@ -546,17 +544,13 @@ export class User {
 
 	constructor(
 		id: string,
-		emailAddress: string,
-		nameID: string,
-		nameIDFormat: string,
+		userName: string,
 		sessionIndex: string,
 		roles: string[],
 		accessToken: string
 	) {
 		this.id = id
-		this.emailAddress = emailAddress
-		this.nameID = nameID
-		this.nameIDFormat = nameIDFormat
+		this.userName = userName
 		this.sessionIndex = sessionIndex
 		this.roles = roles
 		this.accessToken = accessToken

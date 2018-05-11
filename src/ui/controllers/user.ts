@@ -33,19 +33,6 @@ export interface SignIn {
 	authenticationServiceUrl: string
 }
 
-interface WSO2Profile {
-	CshrUser: {
-		department: string
-		grade: string
-		profession: string
-	}
-	name: {
-		givenName: string
-	}
-	userName: string
-	password?: string
-}
-
 const logger = log4js.getLogger('controllers/user')
 
 // This super slick regex is by Andrew Clark from:
@@ -83,22 +70,20 @@ function renderSignIn(
 	return template.render('account/sign-in', req, res, props)
 }
 
-// async function updateUserObject(
-// 	req: express.Request,
-// 	updatedProfile: WSO2Profile
-// ) {
-// 	const cshrUserObject = updatedProfile.CshrUser
-// 	const newUser = model.User.create({
-// 		...req.user,
-// 		givenName: updatedProfile.name.givenName,
-// 		...cshrUserObject,
-// 	})
-// 	await new Promise(resolve => {
-// 		req.login(newUser, () => {
-// 			req.session!.save(resolve)
-// 		})
-// 	})
-// }
+async function updateUserObject(
+	req: express.Request,
+	updatedProfile: Record<string, string>
+) {
+	const newUser = model.User.create({
+		...req.user,
+		...updatedProfile,
+	})
+	await new Promise(resolve => {
+		req.login(newUser, () => {
+			req.session!.save(resolve)
+		})
+	})
+}
 
 function validateForm(req: express.Request) {
 	const form = req.body
@@ -314,7 +299,10 @@ export function renderAreasOfWorkPage(
 	)
 }
 
-export async function renderEditPage(req: express.Request, res: express.Response) {
+export async function renderEditPage(
+	req: express.Request,
+	res: express.Response
+) {
 	const inputName = req.params.profileDetail
 	let options = {}
 	let optionType: string = ''
@@ -405,52 +393,33 @@ export async function tryUpdateProfile(
 	}
 }
 
+export enum nodes {
+	'given-name' = 'givenName',
+	'email-addresss' = 'emailAddress',
+	'department' = 'organisation',
+	'grade' = 'grade',
+	'other-areas-of-work' = 'profession',
+	'password' = 'password',
+}
+
 export async function updateProfile(
 	ireq: express.Request,
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	const updateProfileObject: WSO2Profile = {
-		CshrUser: {
-			department: req.user.department,
-			grade: req.user.grade,
-			profession: (req.user.areasOfWork || []).join(','),
-		},
-		name: {givenName: req.user.givenName},
-		userName: req.user.emailAddress,
-	}
 
 	const inputName = req.params.profileDetail
-	const fieldValue = req.body[inputName]
+	let fieldValue = req.body[inputName]
 
-	switch (inputName) {
-		case 'given-name':
-			updateProfileObject.name.givenName = fieldValue
-			break
-		case 'email-address':
-			updateProfileObject.userName = fieldValue
-			break
-		case 'department':
-			updateProfileObject.CshrUser.department = fieldValue
-			break
-		case 'grade':
-			updateProfileObject.CshrUser.grade = fieldValue
-			break
-		case 'other-areas-of-work':
-			let joinedFieldValues
+	let node = nodes[inputName]
+
+	switch (node) {
+		case 'profession':
 			if (Array.isArray(fieldValue)) {
-				joinedFieldValues = fieldValue.join(',')
-			} else {
-				joinedFieldValues = fieldValue
-			}
-			if (joinedFieldValues) {
-				updateProfileObject.CshrUser.profession = joinedFieldValues
-			} else {
-				delete updateProfileObject.CshrUser.profession
+				fieldValue = fieldValue.join(',')
 			}
 			break
 		case 'password':
-			updateProfileObject.password = fieldValue
 			let passwordFailed = ''
 
 			if (fieldValue !== req.body.confirmPassword) {
@@ -474,25 +443,33 @@ export async function updateProfile(
 			break
 	}
 
-	try {
-		await registry.patch('civilServants', { organisation: 'http://localhost:9002/organisations/1' }, req.user.accessToken)
-
-		// const response = await http.put(
-		// 	`/scim2/Users/${req.user.id}`,
-		// 	updateProfileObject,
-		// 	options
-		// )
-		// await updateUserObject(req, JSON.parse(response.config.data))
-		// req.flash('profile-updated', 'profile-updated')
-		req.session!.save(() => {
-			res.redirect('/profile')
-		})
-	} catch (e) {
-		res.send(
-			template.render('profile/edit', req, res, {
-				identityServerFailed: true,
-				inputName,
-			})
+	if (node in ['password', 'name']) {
+		// do something with identity
+	} else {
+		let call: Record<string, string> = {}
+		call[node] = fieldValue
+		let response = await registry.patch(
+			'civilServants',
+			call,
+			req.user.accessToken
 		)
+
+		if (response) {
+			// seems like we have to get the profile again to get values
+			// which seems ...not good
+			let profile = await registry.profile(req.user.accessToken)
+			await updateUserObject(req, profile as Record<string, string>)
+			req.flash('profile-updated', 'profile-updated')
+			req.session!.save(() => {
+				res.redirect('/profile')
+			})
+		} else {
+			res.send(
+				template.render('profile/edit', req, res, {
+					identityServerFailed: true,
+					inputName,
+				})
+			)
+		}
 	}
 }
