@@ -5,8 +5,6 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'test@example.com',
-			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
 			['learner'],
 			''
@@ -23,8 +21,6 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'test@example.com',
-			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
 			['learner', 'management', 'other'],
 			''
@@ -41,8 +37,6 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'test@example.com',
-			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
 			['management'],
 			''
@@ -59,8 +53,6 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'test@example.com',
-			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
 			[],
 			''
@@ -78,8 +70,6 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'test@example.com',
-			'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
 			'session123',
 			['Learner'],
 			''

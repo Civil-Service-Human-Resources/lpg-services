@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as identity from 'lib/identity'
+import * as registry from 'lib/registry'
 import * as model from 'lib/model'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
@@ -14,7 +15,7 @@ export function configure(
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
-	strategy = new  oauth2.Strategy(
+	strategy = new oauth2.Strategy(
 		{
 			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
 			callbackURL: `${config.LPG_UI_SERVER}/authenticate`,
@@ -29,11 +30,13 @@ export function configure(
 			cb: oauth2.VerifyCallback
 		) => {
 			profile.accessToken = accessToken
-
-			const userDetails = await identity.getDetails(accessToken)
+			// get details here			console.log(userDetails)
+			const identityDetails = await identity.getDetails(accessToken)
+			const regDetails = await registry.profile(accessToken)
 			const combined = {
 				...profile,
-				...userDetails,
+				...identityDetails,
+				...regDetails,
 			}
 			const user = model.User.create(combined)
 			return cb(null, user)
@@ -43,10 +46,12 @@ export function configure(
 	passport.use(strategy)
 
 	passport.serializeUser((user, done) => {
+		console.log('serialising', user)
 		done(null, JSON.stringify(user))
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
+		console.log('deserialising', data)
 		done(null, await model.User.create(JSON.parse(data)))
 	})
 
