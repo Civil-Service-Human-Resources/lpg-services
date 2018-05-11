@@ -8,10 +8,10 @@
             </a>
             <div class="discite__area {{modifier ? `discite__area--${modifier}` : ''}}">
                 <p class="font-small discite__counter">
-					This is a module in <a href="/courses/{{module.course.id}}"><b>{{ module.course.title }}.</b></a>
+					This is a module in <a href="/courses/{{course.id}}"><b>{{ course.title }}.</b></a>
 				</p>
 
-				<p  class="font-small discite__counter--search">There are {{module.course.modules.length}} in total.</p>
+				<p  class="font-small discite__counter--search">There are {{course.modules.length}} in total.</p>
              </div>
             {{else}}
             <a href="/courses/{{course.id}}/{{module.id}}">
