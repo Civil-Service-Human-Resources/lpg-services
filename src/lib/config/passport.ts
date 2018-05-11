@@ -32,7 +32,9 @@ export function configure(
 			profile.accessToken = accessToken
 			// get details here			console.log(userDetails)
 			const identityDetails = await identity.getDetails(accessToken)
+			console.log(1)
 			const regDetails = await registry.profile(accessToken)
+			console.log(2)
 			const combined = {
 				...profile,
 				...identityDetails,

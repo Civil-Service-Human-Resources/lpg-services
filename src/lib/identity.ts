@@ -16,7 +16,6 @@ function create(token: string) {
 
 export async function getDetails(token: string) {
 	const http = create(token)
-	console.log('http :', http)
 	const response = await http.get(`/oauth/resolve`)
 	return response.data
 }

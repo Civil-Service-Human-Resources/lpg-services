@@ -12,13 +12,6 @@ import * as template from 'lib/ui/template'
 import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
 
-/*tslint:disable*/
-const JsonHalAdapter = require('traverson-hal')
-const traverson = require('traverson-promise')
-/*tslint:enable*/
-
-traverson.registerMediaType(JsonHalAdapter.mediaType, JsonHalAdapter)
-
 export interface Profile {
 	updateSuccessful: boolean
 	user: model.User
@@ -188,13 +181,8 @@ export async function newRenderAreasOfWorkPage(
 		/* if the user hasn't selected anything, start from the beginning and reset 'levels' vars */
 		req.session!.levels = []
 		levels = []
-		/* check the session. If the amount of levels saved matches up with the amount of selections made */
-		const followPath = ['professions']
-		const traversonResult = await traverson
-			.from(`${config.REGISTRY_SERVICE_URL}`)
-			.jsonHal()
-			.follow(followPath)
-			.getResource().result
+
+		const traversonResult = await registry.get('professions')
 		const parsed = parseProfessions(traversonResult)
 		if (parsed) {
 			levels.push(parsed[0])
@@ -225,11 +213,7 @@ export async function newRenderAreasOfWorkPage(
 			})
 		}
 
-		const traversonResult = await traverson
-			.from(prevLevelUrl)
-			.jsonHal()
-			.follow(followPath)
-			.getResource().result
+		const traversonResult = await registry.follow(prevLevelUrl, followPath)
 
 		if (levels.length === 0) {
 			/* if there are no levels saved, use parseProfessions method since the response contains 'professions' key */

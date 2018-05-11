@@ -50,15 +50,13 @@
 		"nodemon": "1.14.12",
 		"protobufjs": "6.8.4",
 		"slugid": "1.1.0",
-		"traverson": "^6.0.3",
 		"traverson-hal": "^6.0.0",
-		"traverson-promise": "0.0.9",
 		"tslint": "5.9.1",
 		"typescript": "2.7.1"
 	},
 	"dependencies": {
 		"@types/express-validator": "3.0.0",
-		"@types/traverson": "2.0.28",
+		"@types/traverson": "^2.0.28",
 		"axios": "0.17.1",
 		"azure-storage": "2.8.1",
 		"compression": "1.7.1",
@@ -95,8 +93,8 @@
 		"striptags": "3.1.1",
 		"svelte": "1.55.0",
 		"tmp": "0.0.33",
-		"traverson": "^6.0.3",
 		"traverson-hal": "^6.0.0",
+		"traverson-promise": "0.0.9",
 		"unzip": "0.1.11"
 	}
 }

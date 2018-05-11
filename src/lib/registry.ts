@@ -1,16 +1,15 @@
+import * as config from 'lib/config'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
 
 // register the traverson-hal plug-in for media type 'application/hal+json'
 traverson.registerMediaType(hal.mediaType, hal)
 
-const halHost = 'http://lpg.local.cshr.digital:9002'
-
 export async function get(node: string) {
 	console.log('called')
 	const result = await new Promise((resolve, reject) =>
 		traverson
-			.from(halHost)
+			.from(config.REGISTRY_SERVICE_URL)
 			.jsonHal()
 			.follow(node, 'self')
 			.getResource((error, document) => {
@@ -19,8 +18,14 @@ export async function get(node: string) {
 				} else {
 					const data = document._embedded[node].map((x: any) => {
 						const hash: Record<string, string> = {}
-						hash[x.name] = x._links.self.href.replace(halHost, '')
-						console.log('link:', x._links.self.href.replace(halHost, ''))
+						hash[x.name] = x._links.self.href.replace(
+							config.REGISTRY_SERVICE_URL,
+							''
+						)
+						console.log(
+							'link:',
+							x._links.self.href.replace(config.REGISTRY_SERVICE_URL, '')
+						)
 						return hash
 					})
 
@@ -38,12 +43,50 @@ export async function get(node: string) {
 	return result
 }
 
+export async function getRaw(node: string) {
+	console.log('called')
+	const result = await new Promise((resolve, reject) =>
+		traverson
+			.from(config.REGISTRY_SERVICE_URL)
+			.jsonHal()
+			.follow(node, 'self')
+			.getResource((error, document) => {
+				if (error) {
+					reject(false)
+				} else {
+					resolve(document)
+				}
+			})
+	)
+
+	return result
+}
+
+export async function follow(path: string, nodes: string[]) {
+	console.log('called')
+	const result = await new Promise((resolve, reject) =>
+		traverson
+			.from(path)
+			.jsonHal()
+			.follow('', ...nodes)
+			.getResource((error, document) => {
+				if (error) {
+					reject(false)
+				} else {
+					resolve(document)
+				}
+			})
+	)
+
+	return result
+}
+
 export async function patch(node: string, data: any, token: string) {
 	console.log('token sent', token)
 	console.log('updating ', node, ' with ', data)
 	const result = await new Promise((resolve, reject) =>
 		traverson
-			.from(halHost)
+			.from(config.REGISTRY_SERVICE_URL)
 			.jsonHal()
 			.follow(node, 'me', 'self')
 			.withRequestOptions({
@@ -69,9 +112,10 @@ export async function patch(node: string, data: any, token: string) {
 // }
 
 export async function profile(token: string) {
+	console.log('calling profile')
 	const result = await new Promise((resolve, reject) =>
 		traverson
-			.from(halHost)
+			.from(config.REGISTRY_SERVICE_URL)
 			.jsonHal()
 			.follow('civilServants', 'me')
 			.withRequestOptions({
@@ -81,12 +125,16 @@ export async function profile(token: string) {
 			})
 			.getResource((error, document) => {
 				if (error) {
+					console.log('reject')
+					console.log(document)
 					reject(false)
 				} else {
+					console.log('good')
+					console.log(document)
 					resolve(document)
 				}
 			})
 	)
-
+	console.log('end')
 	return result
 }

@@ -517,7 +517,7 @@ export class User {
 			? data.organisation.code
 			: data.department
 		user.givenName = data.givenName
-		user.grade = data.grade.code ? data.grade.code : data.grade
+		user.grade = data.grade ? data.grade.code : data.grade
 
 		const areasOfWork = data.profession || data.areasOfWork
 		if (areasOfWork) {
