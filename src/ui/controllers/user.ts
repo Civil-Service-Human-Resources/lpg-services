@@ -254,7 +254,7 @@ export async function newRenderAreasOfWorkPage(
 			if (parsed) {
 				/* only set the results to the appropriate level*/
 				levels[selectedArr.length] = parsed[0]
-				req.session!.prevLevelUrl = traversonResult._links.self.href
+				req.session!.prevLevelUrl = parsed[1]
 			}
 		}
 	}
