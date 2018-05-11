@@ -166,7 +166,7 @@ export async function newRenderAreasOfWorkPage(
 	let selectedArr = []
 	let currentLevel
 	let selected
-	let isEndOfBranch: boolean = false
+	let hasChildren: boolean = true
 	let levels: Level[][] = []
 	let prevLevelUrl
 
@@ -229,10 +229,9 @@ export async function newRenderAreasOfWorkPage(
 					url: role._links.href,
 				}
 			})
-			if (parsed.length === 0) {
-				isEndOfBranch = true
-			}
+
 			req.session!.prevLevelUrl = traversonResult._links.self.href
+
 			levels[selectedArr.length] = parsed
 		} catch (e) {
 			logger.error(e)
@@ -247,7 +246,7 @@ export async function newRenderAreasOfWorkPage(
 		template.render('profile/edit', req, res, {
 			currentLevel,
 			inputName: 'areas-of-work',
-			isEndOfBranch,
+			hasChildren,
 			lede,
 			levels,
 			...res.locals,
