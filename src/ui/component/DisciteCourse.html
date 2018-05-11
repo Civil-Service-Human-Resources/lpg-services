@@ -76,6 +76,8 @@
                     {{#if !course.isRequired(signedInUser)}}
                         {{#if course.record.state === 'ARCHIVED'}}
                             <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                        {{else}}
+                            <span>Already in your learning plan</span>
                         {{/if}}
                     {{/if}}
                 {{/if}}
