@@ -68,7 +68,7 @@ export async function follow(path: string, nodes: string[]) {
 		traverson
 			.from(path)
 			.jsonHal()
-			.follow('', ...nodes)
+			.follow('/', ...nodes)
 			.getResource((error, document) => {
 				if (error) {
 					reject(false)

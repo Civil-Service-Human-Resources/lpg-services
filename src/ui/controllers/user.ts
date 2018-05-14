@@ -158,6 +158,7 @@ export async function newRenderAreasOfWorkPage(
 	req: express.Request,
 	res: express.Response
 ) {
+	console.log("reached")
 	const lede = req.__('register_area_page_intro')
 	let selectedArr = []
 	let currentLevel: number = 0
