@@ -1,24 +1,23 @@
 <div class="levels__col">
 	<ul class="levels__list">
-        {{#each Object.entries(levelOptions) as option}}
+        {{#each levelOptions as option, index}}
+
             <li>
-                {{#if level !== 3}}
-                    <a href="/profile/areas-of-work/{{selectedArr ? selectedArr.slice(0, level).join('/') : '' }}{{level > 0 ? '/' : ''}}{{option[0]}}" class="levels__link {{selectedArr && option[0] === selectedArr[level] ? 'levels__link--selected' : '' }}">{{(option[1])}}</a>
+                {{#if option.hasChildren || level === 0}}
+                <a href="/profile/areas-of-work/{{selectedArr ? selectedArr.slice(0, level).join('/') : '' }}{{level > 0 ? '/' : ''}}{{index}}" class="levels__link {{selectedArr[level] == index ? 'levels__link--selected' : ''}}">{{option.name}}</a>
                 {{else}}
-                    <a href="/profile/areas-of-work/?select={{option[0]}}" class="levels__link {{selectedArr && option[0] === selectedArr[level] ? 'levels__link--selected' : '' }}">{{(option[1])}}</a>
+                    <a href="/profile/areas-of-work/?select={{level === 0 ? `profession` : 'jobRole'}}/{{option.url.split('/').slice(-1)[0]}}" class="levels__link {{selectedArr[level] == index ? 'levels__link--selected' : ''}}">{{(option.name)}}</a>
                 {{/if}}
 
             </li>
         {{/each}}
-        {{#if selectedArr}}
+        {{#if selectedArr && selectedArr[level]}}
          <li>
-
             <a
-                href="/profile/areas-of-work/?select={{selectedArr[level] && selectedArr.length !== level ? selectedArr[level] :''}}"
+                href="/profile/areas-of-work/?select={{level === 0 ? 'profession' : 'jobRole'}}/{{levelOptions[selectedArr[level]].url.split('/').slice(level === 0 ? -2 : -1)[0]}}"
                 class="levels__link levels__link--unsure {{selectedArr.length === level ? 'levels__link--last' : '' }}">
                 Choose this level
             </a>
-
         </li>
         {{/if}}
 	</ul>

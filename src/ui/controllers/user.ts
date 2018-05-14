@@ -11,6 +11,13 @@ import * as template from 'lib/ui/template'
 import * as config from 'lib/config'
 import * as passport from 'lib/config/passport'
 
+/*tslint:disable*/
+const JsonHalAdapter = require('traverson-hal')
+const traverson = require('traverson-promise')
+/*tslint:enable*/
+
+traverson.registerMediaType(JsonHalAdapter.mediaType, JsonHalAdapter)
+
 export interface Profile {
 	updateSuccessful: boolean
 	user: model.User
@@ -127,57 +134,154 @@ export enum OptionTypes {
 	Typeahead = 'typeahead',
 }
 
-/*tslint:disable*/
-//TODO: LPFG-49,241 - remove when we have profile service
-const levels = [
-	{
-		a: 'Commercial',
-		b: 'Digital',
-		c: 'Project Delivery',
-		d: 'Communications',
-		e: 'Corporate finance',
-		f: 'Finance',
-		g: 'Fraud, error, debt and grants',
-		h: 'Human Resources',
-		i: 'Internal audit',
-		j: 'Legal',
-		k: 'Property',
-	},
-	{
-		b101: 'Data',
-		b102: 'IT Operations',
-		b103: 'User centered design',
-	},
-	{
-		b201: 'Content designer',
-		b202: 'Content strategist',
-		b203: 'Graphic designer',
-		b204: 'Interaction designer',
-	},
-	{
-		d301: 'head of interaction design',
-		d302: 'Lead interaction designer',
-	},
-]
-
-export function getLevels(selectedArray: string[]) {
-	//TODO: LPFG-49,241 - send get request to profile service to get levels to show
-	// placeholder until profile service is ready. This will be the call to the service
-	let levelsToReturn = []
-	if (!selectedArray) {
-		levelsToReturn.push(levels[0])
-	}
-	for (const level in selectedArray) {
-		//push previous levels
-		levelsToReturn.push(levels[level])
-	}
-	if (selectedArray) {
-		levelsToReturn.push(levels[selectedArray.length]) //push the next level
-	}
-
-	return levelsToReturn
+export interface Level {
+	url: string
+	name: string
 }
-/*tslint:enable*/
+
+export function parseProfessions(
+	traversonResult: any
+): [Level[], string] | void {
+	try {
+		const parsed = traversonResult._embedded.professions.map(
+			(profession: any) => {
+				return {
+					name: profession.name,
+					url: profession._links.jobRoles.href,
+				}
+			}
+		)
+		return [parsed, traversonResult._links.self.href]
+	} catch (e) {
+		logger.error(e)
+		return
+	}
+}
+
+export function parseRoles(traversonResult: any): [Level[], string] | void {
+	try {
+		const parsed = traversonResult._embedded.jobRoles.map((role: any) => {
+			return {
+				hasChildren: role.hasChildren,
+				name: role.name,
+				url: role._links.self.href,
+			}
+		})
+
+		return [parsed, traversonResult._links.self.href]
+	} catch (e) {
+		logger.error(e)
+		return
+	}
+}
+
+export async function newRenderAreasOfWorkPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const lede = req.__('register_area_page_intro')
+	let selectedArr = []
+	let currentLevel: number = 0
+	let selected: number
+	let levels: Level[][] = []
+	let prevLevelUrl
+
+	if (req.query.select) {
+		//TODO: update method goes here
+		res.redirect('/profile')
+	}
+
+	if (req.params[0]) {
+		/* set the 'progress' vars */
+		selectedArr = req.params[0].split('/')
+		currentLevel = selectedArr.length
+		selected = selectedArr[currentLevel - 1] || 0
+	}
+
+	if (currentLevel === 0) {
+		/* if the user hasn't selected anything, start from the beginning and reset 'levels' vars */
+		req.session!.levels = []
+		levels = []
+		/* check the session. If the amount of levels saved matches up with the amount of selections made */
+		const followPath = ['professions']
+		const traversonResult = await traverson
+			.from(`${config.REGISTRY_SERVICE_URL}`)
+			.jsonHal()
+			.follow(followPath)
+			.getResource().result
+		const parsed = parseProfessions(traversonResult)
+		if (parsed) {
+			levels.push(parsed[0])
+			req.session!.prevLevelUrl = parsed[1]
+		}
+	} else {
+		/* if the user has selected levels or there are req.params[0] */
+		levels = req.session!.levels
+		const followPath: string[] = []
+
+		prevLevelUrl = levels[currentLevel! - 1][selected!].url
+		if (levels.length === currentLevel) {
+			if (selectedArr.length !== 1) {
+				followPath.push('children')
+			}
+		} else {
+			/* If they don't match up, start from the beginning and reconstruct the path.
+			 * This may happen when they use the url to navigate to a level
+			 * or go backwards
+			 */
+
+			prevLevelUrl = levels[currentLevel - 1][selected!].url
+
+			selectedArr.forEach((selection: number, index: number) => {
+				if (index > 0) {
+					followPath.push('children')
+				}
+			})
+		}
+
+		const traversonResult = await traverson
+			.from(prevLevelUrl)
+			.jsonHal()
+			.follow(followPath)
+			.getResource().result
+
+		if (levels.length === 0) {
+			/* if there are no levels saved, use parseProfessions method since the response contains 'professions' key */
+			const parsed = parseProfessions(traversonResult)
+			if (parsed) {
+				levels.push(parsed[0])
+				req.session!.prevLevelUrl = parsed[1]
+			}
+		} else {
+			/* if there are levels saved, use parseRoles method since the response contains 'jobRoles' key */
+			const parsed = parseRoles(traversonResult)
+
+			if (parsed) {
+				/* only set the results to the appropriate level*/
+				levels[selectedArr.length] = parsed[0]
+				req.session!.prevLevelUrl = parsed[1]
+			}
+		}
+	}
+
+	if (selectedArr) {
+		/* Slice the array to the amount of levels the user should see and save the levels to session */
+		levels = levels.slice(0, selectedArr.length + 1)
+		req.session!.levels = levels
+	}
+
+	res.send(
+		template.render('profile/edit', req, res, {
+			currentLevel,
+			inputName: 'areas-of-work',
+			lede,
+			levels,
+			...res.locals,
+			selected: selected!,
+			selectedArr,
+		})
+	)
+}
 
 export function renderAreasOfWorkPage(
 	req: express.Request,
@@ -199,7 +303,7 @@ export function renderAreasOfWorkPage(
 		currentLevel = selectedArr.length
 	}
 
-	const levelsToShow = getLevels(selectedArr)
+	const levelsToShow: any[] = []
 
 	res.send(
 		template.render('profile/edit', req, res, {
@@ -252,7 +356,6 @@ export function renderEditPage(req: express.Request, res: express.Response) {
 			})
 		}
     </script>`
-
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
