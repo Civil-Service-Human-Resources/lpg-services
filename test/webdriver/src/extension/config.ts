@@ -40,8 +40,8 @@ function warn(msg: string) {
 const env: Record<string, string> = new Proxy({}, {get: getEnv})
 
 export const WSO2_URL = set(
-	'https://identity.local.cshr.digital:9443',
-	`https://identity.${PROFILE}.cshr.digital`
+	'https://local-identity.cshr.digital:9443',
+	`https://${PROFILE}-identity.cshr.digital`
 )
 
 export const WSO2_ADMIN_PASSWORD = env.WSO2_ADMIN_PASSWORD
@@ -58,12 +58,12 @@ export const SAUCE_ACCESS_KEY = env.SAUCE_ACCESS_KEY
 export const SAUCE_USERNAME = env.SAUCE_USERNAME
 
 export const URL = set(
-	'http://lpg-local.cshr.digital:3001/sign-in',
+	'http://lpg.local.cshr.digital:3001/sign-in',
 	`https://${PROFILE}-lpg.cshr.digital/sign-in`
 )
 
 export const BASE_URL = set(
-	'http://local-lpg.cshr.digital:3001',
+	'http://lpg.local.cshr.digital:3001',
 	`https://${PROFILE}-lpg.cshr.digital`
 )
 

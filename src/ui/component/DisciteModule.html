@@ -41,17 +41,14 @@
     </div>
     <div class="discite__action discite__action--module">
         {{#if modifier === "search"}} 
-        <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
-
-        {{#if course.record && !course.isRequired(signedInUser)}}
-            {{#if  course.record.state === 'ARCHIVED'}}
-                <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+            <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
+            {{#if !course.isRequired(signedInUser) }}
+                {{#if !course.record || course.record.state === 'ARCHIVED'}}
+                    <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                {{else}}
+                    <span>Already in your learning plan</span>
+                {{/if}}
             {{/if}}
-        {{else}}
-            {{#if !course.isRequired(signedInUser)}}
-                <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
-            {{/if}}
-        {{/if}}
         {{else}}
         <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
         {{/if}}

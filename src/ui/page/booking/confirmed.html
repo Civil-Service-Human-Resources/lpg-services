@@ -5,26 +5,26 @@
                 <div class="govuk-box-highlight">
                     <h1 class="heading-xlarge">{{message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }}</h1>
                     <h3 class="lede">Course</h3>
-                    <h2 class="heading-medium confirmed__heading confirmed__heading--caps">
+                    <h2 class="heading-medium confirmed__heading confirmed__heading--caps lpg-booking-confirmed">
                         {{module.title || course.title}}
                     </h2>
                 </div>
                 <h4 class="heading-small">What happens next?</h4>
             </div>
             <div class="column-two-thirds">
-            {{#if message === 'Booked'}}
+                {{#if message === 'Booked'}}
                 <p>
-                    We have sent your booking request through to the course provider for
-                    confirmation.
+                    We have sent your booking request through to the course provider for confirmation.
                 </p>
                 <p>
-                    Once confirmed you will be notified and we will contact you with the
-                    course logistics.
+                    Once confirmed you will be notified and we will contact you with the course logistics.
                 </p>
-            {{else}}
+                {{else}}
                 <p>Your course booking has been cancelled.</p>
-                <p><a href="/home">You can now return to the home page</a></p>
-            {{/if}}
+                <p>
+                    <a href="/home">You can now return to the home page</a>
+                </p>
+                {{/if}}
             </div>
         </div>
     </div>

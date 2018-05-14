@@ -22,3 +22,7 @@ export function completeFeedback() {
 	browser.setValue(selectors.feedbackWrongField, 'What went wrong')
 	browser.click(selectors.feedbackSubmitButton)
 }
+
+export function genUserEmail() {
+	return `test${Date.now()}@c.gov.uk`
+}

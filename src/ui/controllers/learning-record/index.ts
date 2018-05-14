@@ -51,9 +51,15 @@ export async function display(req: express.Request, res: express.Response) {
 	const completedLearning = learningRecord
 		.filter(course => course.isComplete(req.user))
 		.sort(
-			(a, b) =>
-				b.getCompletionDate(req.user)!.getTime() -
-				a.getCompletionDate(req.user)!.getTime()
+			(a, b) => {
+				const bcd = b.getCompletionDate(req.user)
+				const acd = a.getCompletionDate(req.user)
+
+				const bt = bcd ? bcd.getTime() : 0
+				const at = acd ? acd.getTime() : 0
+
+				return bt - at
+			}
 		)
 
 	const requiredLearningTotal = (await catalog.findRequiredLearning(req.user))
