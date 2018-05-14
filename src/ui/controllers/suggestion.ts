@@ -63,6 +63,14 @@ export async function removeFromSuggestions(
 
 	try {
 		await xapi.record(req, course, xapi.Verb.Disliked)
+		req.flash(
+			'successTitle',
+			req.__('learning_removed_from_plan_title', course.title)
+		)
+		req.flash(
+			'successMessage',
+			req.__('learning_removed_from_plan_message', course.title)
+		)
 	} catch (err) {
 		logger.error('Error recording xAPI statement', err)
 		res.sendStatus(500)

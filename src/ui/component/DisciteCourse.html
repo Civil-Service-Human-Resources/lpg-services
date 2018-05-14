@@ -74,11 +74,7 @@
                         </a>
                     {{/if}}
                     {{#if !course.isRequired(signedInUser)}}
-                        {{#if course.record.state === 'ARCHIVED'}}
-                            <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
-                        {{else}}
-                            <span>Already in your learning plan</span>
-                        {{/if}}
+                        <a href="/suggestions-for-you/remove/{{course.id}}?ref=home">Remove from learning plan</a>
                     {{/if}}
                 {{/if}}
             {{else}}
@@ -92,7 +88,7 @@
                     </a>
                 {{/if}}
                 {{#if !course.isRequired(signedInUser)}}
-                    <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                        <a href="/suggestions-for-you/remove/{{course.id}}?ref=home">Remove from learning plan</a>
                 {{/if}}
             {{/if}}
     </div>
