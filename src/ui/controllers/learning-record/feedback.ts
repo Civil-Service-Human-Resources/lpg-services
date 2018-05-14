@@ -1,10 +1,10 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
+import * as learnerRecord from "lib/learnerrecord"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
-import * as learnerRecord from "lib/learnerrecord"
 
 const logger = log4js.getLogger('controllers/learning-record/feedback')
 
@@ -94,7 +94,7 @@ export async function submitFeedback(
 	}
 }
 
-export async function listItemsForFeedback(req: express.Request, res: express.Response){
+export async function listItemsForFeedback(req: express.Request, res: express.Response) {
 	const learningRecord = await learnerRecord.getLearningRecord(req.user)
 	const readyForFeedback = await learnerRecord.getReadyForFeedback(
 		learningRecord
