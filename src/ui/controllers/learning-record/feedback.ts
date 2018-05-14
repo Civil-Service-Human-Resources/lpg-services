@@ -4,6 +4,7 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
+import * as learnerRecord from "lib/learnerrecord"
 
 const logger = log4js.getLogger('controllers/learning-record/feedback')
 
@@ -88,7 +89,22 @@ export async function submitFeedback(
 		req.flash('successTitle', req.__('learning_feedback_submitted_title'))
 		req.flash('successMessage', req.__('learning_feedback_submitted_message'))
 		req.session!.save(() => {
-			res.redirect('/learning-record')
+			res.redirect('/learning-record/feedback')
 		})
 	}
+}
+
+export async function listItemsForFeedback(req: express.Request, res: express.Response){
+	const learningRecord = await learnerRecord.getLearningRecord(req.user)
+	const readyForFeedback = await learnerRecord.getReadyForFeedback(
+		learningRecord
+	)
+
+	res.send(
+		template.render('learning-record/feedback-list', req, res, {
+			readyForFeedback,
+			successMessage: req.flash('successMessage')[0],
+			successTitle: req.flash('successTitle')[0],
+		})
+	)
 }
