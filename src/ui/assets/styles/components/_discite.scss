@@ -115,6 +115,10 @@ $module: 'discite';
 		padding-right: 0;
 		padding-top: 6px;
 
+		@include media(mobile) {
+			left: 50%;
+			text-align: left;
+		}
 		@include media(tablet) {
 			width: 100%;
 			display: block;
