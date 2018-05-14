@@ -9,17 +9,6 @@
                 {{/if}}
             </div>
         </div>
-
-        {{#if readyForFeedback.length}}
-        <div class="grid-row">
-            <div class="column-full">
-                {{#each readyForFeedback as forFeedback}}
-                    <LearningFeedback course={{forFeedback.course}} module={{forFeedback.module}} />
-                {{/each}}
-            </div>
-        </div>
-        {{/if}}
-
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading heading-medium heading--red-top lpg-required-learning">
