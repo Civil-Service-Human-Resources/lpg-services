@@ -502,12 +502,7 @@ export class Feedback {
 }
 
 export class User {
-<<<<<<< HEAD
 	static create(data: any) {
-=======
-	// can be created by incoming data or from itself stored, hence conditional
-	static  create(data: any) {
->>>>>>> ffb2ee2... integration changes
 		const user = new User(
 			data.uid || data.id,
 			data.userName || data.username,
@@ -532,7 +527,7 @@ export class User {
 		} else {
 			user.areasOfWork = []
 		}
-console.log("user is", user)
+
 		return user
 	}
 

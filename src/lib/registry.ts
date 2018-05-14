@@ -5,7 +5,7 @@ import * as hal from 'traverson-hal'
 // register the traverson-hal plug-in for media type 'application/hal+json'
 traverson.registerMediaType(hal.mediaType, hal)
 
-export async function get(node: string): Promise<any[]> {
+export async function get(node: string): Promise<{}> {
 	console.log('called')
 	const result = await new Promise((resolve, reject) =>
 		traverson
@@ -16,7 +16,7 @@ export async function get(node: string): Promise<any[]> {
 				if (error) {
 					reject(false)
 				} else {
-					resolve(document._embedded[node])
+					resolve(document)
 				}
 			})
 	)
@@ -24,8 +24,16 @@ export async function get(node: string): Promise<any[]> {
 	return result as any[]
 }
 
+export async function halNode(node: string): Promise<any[]> {
+	const result = await get(node)
+	return (result as any)._embedded[node]
+}
+
 export async function follow(path: string, nodes: string[]) {
 	console.log('called follow')
+	if (nodes.length === 0) {
+		nodes = ['self']
+	}
 	const first = nodes[0]
 	nodes.shift()
 	const result = await new Promise((resolve, reject) =>
@@ -35,7 +43,8 @@ export async function follow(path: string, nodes: string[]) {
 			.follow(first, ...nodes)
 			.getResource((error, document) => {
 				if (error) {
-					console.log("error")
+					console.log("error", document)
+					console.log(path, first, nodes)
 					reject(false)
 				} else {
 					console.log(document)

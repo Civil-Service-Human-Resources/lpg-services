@@ -196,6 +196,7 @@ export async function newRenderAreasOfWorkPage(
 
 	if (req.params[0]) {
 		/* set the 'progress' vars */
+		console.log('parAMS', req.params[0])
 		selectedArr = req.params[0].split('/')
 		currentLevel = selectedArr.length
 		selected = selectedArr[currentLevel - 1] || 0
@@ -207,6 +208,7 @@ export async function newRenderAreasOfWorkPage(
 		levels = []
 
 		const parsed = parseProfessions(await registry.get('professions'))
+
 		if (parsed) {
 			levels.push(parsed[0])
 			req.session!.prevLevelUrl = parsed[1]
@@ -218,7 +220,9 @@ export async function newRenderAreasOfWorkPage(
 
 		prevLevelUrl = levels[currentLevel! - 1][selected!].url
 		if (levels.length === currentLevel) {
-			if (selectedArr.length !== 1) {
+			console.log('arr', selectedArr)
+			if (selectedArr.length ! > 1) {
+				console.log('push')
 				followPath.push('children')
 			}
 		} else {
@@ -235,7 +239,8 @@ export async function newRenderAreasOfWorkPage(
 				}
 			})
 		}
-
+		console.log("FOLLOWING")
+		console.log(prevLevelUrl, followPath)
 		const traversonResult = await registry.follow(prevLevelUrl, followPath)
 
 		if (levels.length === 0) {
@@ -324,16 +329,16 @@ export async function renderEditPage(
 			value = req.user.givenName
 			break
 		case 'other-areas-of-work':
-			options = haltoObject(await registry.get('professions'))
+			options = haltoObject(await registry.halNode('professions'))
 			optionType = OptionTypes.Checkbox
 			break
 		case 'department':
-			options = haltoObject(await registry.get('organisations'))
+			options = haltoObject(await registry.halNode('organisations'))
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
 			break
 		case 'grade':
-			options = haltoObject(await registry.get('grades'))
+			options = haltoObject(await registry.halNode('grades'))
 			optionType = OptionTypes.Radio
 			value = req.user.grade
 			break
@@ -457,7 +462,7 @@ export async function updateProfile(
 	const inputName = req.params.profileDetail
 	let fieldValue = req.body[inputName]
 
-	let node = nodes[inputName]
+	const node = nodes[inputName]
 
 	switch (node) {
 		case 'profession':
@@ -492,6 +497,6 @@ export async function updateProfile(
 	if (node in ['password', 'name']) {
 		// do something with identity
 	} else {
-		await patchAndUpdate('civilServants', fieldValue, inputName, req, res)
+		await patchAndUpdate(node, fieldValue, inputName, req, res)
 	}
 }
