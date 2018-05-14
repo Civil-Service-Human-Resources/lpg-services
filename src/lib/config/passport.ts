@@ -1,8 +1,8 @@
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as identity from 'lib/identity'
-import * as registry from 'lib/registry'
 import * as model from 'lib/model'
+import * as registry from 'lib/registry'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
 
@@ -54,7 +54,7 @@ export function configure(
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
 		console.log('deserialising', data)
-		done(null, await model.User.create(JSON.parse(data)))
+		done(null,  model.User.create(JSON.parse(data)))
 	})
 
 	app.all(

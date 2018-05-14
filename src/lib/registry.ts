@@ -5,7 +5,7 @@ import * as hal from 'traverson-hal'
 // register the traverson-hal plug-in for media type 'application/hal+json'
 traverson.registerMediaType(hal.mediaType, hal)
 
-export async function get(node: string) {
+export async function get(node: string): Promise<any[]> {
 	console.log('called')
 	const result = await new Promise((resolve, reject) =>
 		traverson
@@ -16,68 +16,35 @@ export async function get(node: string) {
 				if (error) {
 					reject(false)
 				} else {
-					const data = document._embedded[node].map((x: any) => {
-						const hash: Record<string, string> = {}
-						hash[x.name] = x._links.self.href.replace(
-							config.REGISTRY_SERVICE_URL,
-							''
-						)
-						console.log(
-							'link:',
-							x._links.self.href.replace(config.REGISTRY_SERVICE_URL, '')
-						)
-						return hash
-					})
-
-					const out: Record<string, string> = {}
-					for (const item of data) {
-						const keys = Object.keys(item)
-						out[item[keys[0]]] = keys[0]
-					}
-					console.log(out)
-					resolve(out)
+					resolve(document._embedded[node])
 				}
 			})
 	)
 
-	return result
-}
-
-export async function getRaw(node: string) {
-	console.log('called')
-	const result = await new Promise((resolve, reject) =>
-		traverson
-			.from(config.REGISTRY_SERVICE_URL)
-			.jsonHal()
-			.follow(node, 'self')
-			.getResource((error, document) => {
-				if (error) {
-					reject(false)
-				} else {
-					resolve(document)
-				}
-			})
-	)
-
-	return result
+	return result as any[]
 }
 
 export async function follow(path: string, nodes: string[]) {
-	console.log('called')
+	console.log('called follow')
+	const first = nodes[0]
+	nodes.shift()
 	const result = await new Promise((resolve, reject) =>
 		traverson
 			.from(path)
 			.jsonHal()
-			.follow('/', ...nodes)
+			.follow(first, ...nodes)
 			.getResource((error, document) => {
 				if (error) {
+					console.log("error")
 					reject(false)
 				} else {
+					console.log(document)
 					resolve(document)
 				}
 			})
 	)
 
+	console.log(result)
 	return result
 }
 

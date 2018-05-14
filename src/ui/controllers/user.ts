@@ -67,10 +67,11 @@ async function updateUserObject(
 	req: express.Request,
 	updatedProfile: Record<string, string>
 ) {
-	const newUser = model.User.create({
+	const newUser = await model.User.create({
 		...req.user,
 		...updatedProfile,
 	})
+
 	await new Promise(resolve => {
 		req.login(newUser, () => {
 			req.session!.save(resolve)
@@ -118,6 +119,26 @@ export interface Level {
 	name: string
 }
 
+export function haltoObject(traversonResult: any[]): {} {
+	const data = traversonResult.map((x: any) => {
+		const hash: Record<string, string> = {}
+		hash[x.name] = x._links.self.href.replace(
+			config.REGISTRY_SERVICE_URL,
+			''
+		)
+
+		return hash
+	})
+
+	const out: Record<string, string> = {}
+
+	for (const item of data) {
+		const keys = Object.keys(item)
+		out[item[keys[0]]] = keys[0]
+	}
+	return out
+}
+
 export function parseProfessions(
 	traversonResult: any
 ): [Level[], string] | void {
@@ -158,7 +179,6 @@ export async function newRenderAreasOfWorkPage(
 	req: express.Request,
 	res: express.Response
 ) {
-	console.log("reached")
 	const lede = req.__('register_area_page_intro')
 	let selectedArr = []
 	let currentLevel: number = 0
@@ -167,8 +187,11 @@ export async function newRenderAreasOfWorkPage(
 	let prevLevelUrl
 
 	if (req.query.select) {
-		//TODO: update method goes here
+		console.log(req.query.select)
+		const arrUpdate = req.query.select.split('/')
+		patchAndUpdate(arrUpdate[1], req.query.select, 'areas-of-work', req, res)
 		res.redirect('/profile')
+		return
 	}
 
 	if (req.params[0]) {
@@ -183,8 +206,7 @@ export async function newRenderAreasOfWorkPage(
 		req.session!.levels = []
 		levels = []
 
-		const traversonResult = await registry.get('professions')
-		const parsed = parseProfessions(traversonResult)
+		const parsed = parseProfessions(await registry.get('professions'))
 		if (parsed) {
 			levels.push(parsed[0])
 			req.session!.prevLevelUrl = parsed[1]
@@ -302,16 +324,16 @@ export async function renderEditPage(
 			value = req.user.givenName
 			break
 		case 'other-areas-of-work':
-			options = await registry.get('professions')
+			options = haltoObject(await registry.get('professions'))
 			optionType = OptionTypes.Checkbox
 			break
 		case 'department':
-			options = await registry.get('organisations')
+			options = haltoObject(await registry.get('organisations'))
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
 			break
 		case 'grade':
-			options = await registry.get('grades')
+			options = haltoObject(await registry.get('grades'))
 			optionType = OptionTypes.Radio
 			value = req.user.grade
 			break
@@ -388,8 +410,42 @@ export enum nodes {
 	'email-addresss' = 'emailAddress',
 	'department' = 'organisation',
 	'grade' = 'grade',
-	'other-areas-of-work' = 'profession',
+	'areas-of-work' = 'profession',
 	'password' = 'password',
+}
+
+export async function patchAndUpdate(
+	node: string,
+	value: string,
+	input: string,
+	req: express.Request,
+	res: express.Response
+) {
+	const call: Record<string, string> = {}
+	call[node] = value
+	const response = await registry.patch(
+		'civilServants',
+		call,
+		req.user.accessToken
+	)
+
+	if (response) {
+		// seems like we have to get the profile again to get values
+		// which seems ...not good
+		const profile = await registry.profile(req.user.accessToken)
+		await updateUserObject(req, profile as Record<string, string>)
+		req.flash('profile-updated', 'profile-updated')
+		req.session!.save(() => {
+			res.redirect('/profile')
+		})
+	} else {
+		res.send(
+			template.render('profile/edit', req, res, {
+				identityServerFailed: true,
+				input,
+			})
+		)
+	}
 }
 
 export async function updateProfile(
@@ -436,30 +492,6 @@ export async function updateProfile(
 	if (node in ['password', 'name']) {
 		// do something with identity
 	} else {
-		let call: Record<string, string> = {}
-		call[node] = fieldValue
-		let response = await registry.patch(
-			'civilServants',
-			call,
-			req.user.accessToken
-		)
-
-		if (response) {
-			// seems like we have to get the profile again to get values
-			// which seems ...not good
-			let profile = await registry.profile(req.user.accessToken)
-			await updateUserObject(req, profile as Record<string, string>)
-			req.flash('profile-updated', 'profile-updated')
-			req.session!.save(() => {
-				res.redirect('/profile')
-			})
-		} else {
-			res.send(
-				template.render('profile/edit', req, res, {
-					identityServerFailed: true,
-					inputName,
-				})
-			)
-		}
+		await patchAndUpdate('civilServants', fieldValue, inputName, req, res)
 	}
 }

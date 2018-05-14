@@ -502,9 +502,14 @@ export class Feedback {
 }
 
 export class User {
+<<<<<<< HEAD
 	static create(data: any) {
+=======
+	// can be created by incoming data or from itself stored, hence conditional
+	static  create(data: any) {
+>>>>>>> ffb2ee2... integration changes
 		const user = new User(
-			data.id,
+			data.uid || data.id,
 			data.userName || data.username,
 			data.sessionIndex,
 			Array.isArray(data.roles) ? data.roles : [data.roles],
@@ -517,17 +522,17 @@ export class User {
 			? data.organisation.code
 			: data.department
 		user.givenName = data.givenName
-		user.grade = data.grade ? data.grade.code : data.grade
+		user.grade = data.grade && data.grade.code ? data.grade.code : data.grade
 
 		const areasOfWork = data.profession || data.areasOfWork
 		if (areasOfWork) {
-			user.areasOfWork = Array.isArray(areasOfWork)
-				? areasOfWork
-				: areasOfWork.split(',')
+			// user.areasOfWork = Array.isArray(areasOfWork)
+			// 	? areasOfWork
+			// 	: areasOfWork.split(',')
 		} else {
 			user.areasOfWork = []
 		}
-
+console.log("user is", user)
 		return user
 	}
 
