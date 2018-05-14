@@ -164,9 +164,10 @@ export function parseRoles(traversonResult: any): [Level[], string] | void {
 			return {
 				hasChildren: role.hasChildren,
 				name: role.name,
-				url: role._links.href,
+				url: role._links.self.href,
 			}
 		})
+
 		return [parsed, traversonResult._links.self.href]
 	} catch (e) {
 		logger.error(e)
@@ -180,8 +181,8 @@ export async function newRenderAreasOfWorkPage(
 ) {
 	const lede = req.__('register_area_page_intro')
 	let selectedArr = []
-	let currentLevel
-	let selected
+	let currentLevel: number = 0
+	let selected: number
 	let levels: Level[][] = []
 	let prevLevelUrl
 
@@ -194,19 +195,20 @@ export async function newRenderAreasOfWorkPage(
 		/* set the 'progress' vars */
 		selectedArr = req.params[0].split('/')
 		currentLevel = selectedArr.length
-		selected = selectedArr[currentLevel - 1]
+		selected = selectedArr[currentLevel - 1] || 0
 	}
 
-	if (selectedArr.length === 0) {
+	if (currentLevel === 0) {
 		/* if the user hasn't selected anything, start from the beginning and reset 'levels' vars */
 		req.session!.levels = []
 		levels = []
-
+		/* check the session. If the amount of levels saved matches up with the amount of selections made */
+		const followPath = ['professions']
 		const traversonResult = await traverson
-			.from(`${config.REGISTRY_SERVICE_URL}/professions`)
+			.from(`${config.REGISTRY_SERVICE_URL}`)
 			.jsonHal()
+			.follow(followPath)
 			.getResource().result
-
 		const parsed = parseProfessions(traversonResult)
 		if (parsed) {
 			levels.push(parsed[0])
@@ -216,22 +218,24 @@ export async function newRenderAreasOfWorkPage(
 		/* if the user has selected levels or there are req.params[0] */
 		levels = req.session!.levels
 		const followPath: string[] = []
-		prevLevelUrl = req.session!.prevLevelUrl
 
-		if (levels.length === selectedArr.length - 1) {
-			/* check the session. If the amount of levels saved matches up with the amount of selections made */
-			selectedArr.length === 1
-				? followPath.push(`professions[${selected}]`, 'jobRoles')
-				: followPath.push(`jobRoles[${selected}]`, 'children')
+		prevLevelUrl = levels[currentLevel! - 1][selected!].url
+		if (levels.length === currentLevel) {
+			if (selectedArr.length !== 1) {
+				followPath.push('children')
+			}
 		} else {
 			/* If they don't match up, start from the beginning and reconstruct the path.
 			 * This may happen when they use the url to navigate to a level
+			 * or go backwards
 			 */
-			prevLevelUrl = `${config.REGISTRY_SERVICE_URL}/professions`
+
+			prevLevelUrl = levels[currentLevel - 1][selected!].url
+
 			selectedArr.forEach((selection: number, index: number) => {
-				index === 0
-					? followPath.push(`professions[${selection}]`, 'jobRoles')
-					: followPath.push(`jobRoles[${selection}]`, 'children')
+				if (index > 0) {
+					followPath.push('children')
+				}
 			})
 		}
 
@@ -251,6 +255,7 @@ export async function newRenderAreasOfWorkPage(
 		} else {
 			/* if there are levels saved, use parseRoles method since the response contains 'jobRoles' key */
 			const parsed = parseRoles(traversonResult)
+
 			if (parsed) {
 				/* only set the results to the appropriate level*/
 				levels[selectedArr.length] = parsed[0]
@@ -272,7 +277,7 @@ export async function newRenderAreasOfWorkPage(
 			lede,
 			levels,
 			...res.locals,
-			selected,
+			selected: selected!,
 			selectedArr,
 		})
 	)
