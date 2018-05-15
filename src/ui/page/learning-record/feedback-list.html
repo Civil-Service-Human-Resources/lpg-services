@@ -1,0 +1,26 @@
+<Page title="Leave details feedback" :_csrf>
+    <div class="container container container--main">
+        <h1 class="heading-xlarge">Leave feedback</h1>
+        <div>
+            <p>
+                You need to leave feedback on the following items. Leaving feedback helps us improve our service.
+            </p>
+        </div>
+        <div class="grid-row">
+            <div class="column-full">
+                {{#if successTitle}}
+                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} />
+                {{/if}}
+            </div>
+        </div>
+        {{#if readyForFeedback.length}}
+        <div class="grid-row">
+            <div class="column-full">
+                {{#each readyForFeedback as forFeedback}}
+                <DisciteFeedback course={{forFeedback.course}} module={{forFeedback.module}} />
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</Page>

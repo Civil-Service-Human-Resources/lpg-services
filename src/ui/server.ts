@@ -186,6 +186,8 @@ app.use(
 )
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
+app.get('/learning-record/feedback', asyncHandler(learningRecordFeedbackController.listItemsForFeedback))
+
 app.get(
 	'/learning-record/:courseId/:moduleId/feedback',
 	asyncHandler(learningRecordFeedbackController.displayFeedback)
