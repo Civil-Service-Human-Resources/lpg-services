@@ -287,6 +287,10 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 			if (!req.course.modules) {
 				req.course.modules = []
 			}
+			if (data.type === ('file' || 'elearning')) {
+				console.log('set module url')
+				data.url = `${config.CONTENT_URL}/${course.id}/${data.id}`
+			}
 			req.course.modules.push(model.Module.create(data))
 			moduleIndex = data.id
 		} else {
@@ -300,7 +304,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		}
 
 		if (req.files && req.files.content) {
-			console.log('upload')
+			logger.info('upload')
 			pendingFileHandler(ireq, moduleIndex, req.files.content.data)
 		}
 
