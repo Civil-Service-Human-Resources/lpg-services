@@ -15,6 +15,12 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id={($config.GOOGLE_ANALYTICS_ID)}"></script> {@html $config.GOOGLE_ANALYTICS_CODE}
 </head>
 <body>
+    <div id="global-cookie-message">
+        <p>
+            GOV.UK uses cookies to make the site simpler.
+            <a href="/cookies"> Find out more about cookies</a>
+        </p>
+    </div>
     <Header />
     <Layout {_csrf}>
         <slot> </slot>

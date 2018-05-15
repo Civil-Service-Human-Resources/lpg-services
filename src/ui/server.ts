@@ -150,6 +150,8 @@ app.get('/privacy', (req, res) => {
 	res.send(template.render('privacy', req, res))
 })
 
+app.get('/cookies', homeController.cookies)
+
 app.get('/status', (req, res) => {
 	let version = 'unknown'
 	try {

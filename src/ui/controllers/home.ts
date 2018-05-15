@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as extended from "lib/extended"
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
@@ -100,4 +101,13 @@ export function index(req: express.Request, res: express.Response) {
 	} else {
 		res.redirect('/sign-in')
 	}
+}
+
+export function cookies(ireq: express.Request, res: express.Response) {
+	res.cookie("seen_cookie_message", "yes")
+
+	const req = ireq as extended.CourseRequest
+	res.send(
+		template.render('/cookies', req, res, {})
+	)
 }

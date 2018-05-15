@@ -233,10 +233,6 @@
 
 /* Global cookie message */
 
-.js-enabled #global-cookie-message {
-	display: none; /* shown with JS, always on for non-JS */
-}
-
 #global-cookie-message {
 	width: 100%;
 	background-color: $light-blue-25;
