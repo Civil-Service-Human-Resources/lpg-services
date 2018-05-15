@@ -282,6 +282,10 @@ export class Module {
 		module.audiences = (data.audiences || []).map(Audience.create)
 		module.events = (data.events || []).map(Event.create)
 
+		if (data.type === ('file' || 'elearning')) {
+			data.url = `${config.CONTENT_URL}/${course.id}/${module.id}`
+		}
+
 		return module
 	}
 
