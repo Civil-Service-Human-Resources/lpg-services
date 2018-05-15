@@ -300,36 +300,8 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		}
 
 		if (req.files && req.files.content) {
-			logger.info('upload')
-
-			const fileExtension = `.${req.files.content.name.split('.').pop()}`
-
-			if (data.type === 'elearning' && fileExtension === '.zip') {
-				req.flash('error', 'Expecting .zip file')
-				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
-				return
-			} else if (
-				!(Object.keys(acceptedFileTypes).indexOf(fileExtension) > -1)
-			) {
-				req.flash(
-					'error',
-					`Expecting ${Object.keys(acceptedFileTypes).join(', ')} file`
-				)
-				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
-				return
-			}
-
-			const isFileValid = await pendingFileHandler(
-				ireq,
-				moduleIndex,
-				req.files.content.data,
-				encodeURIComponent(req.files.content.name)
-			)
-
-			if (!isFileValid) {
-				req.flash('error', 'not valid file')
-				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
-			}
+			console.log('upload')
+			pendingFileHandler(ireq, moduleIndex, req.files.content.data)
 		}
 
 		// now update course and send back to edit page
