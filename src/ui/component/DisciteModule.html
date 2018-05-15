@@ -43,7 +43,11 @@
         {{#if modifier === "search"}} 
             <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
             {{#if !course.isRequired(signedInUser) }}
-                <a href="/suggestions-for-you/remove/{{course.id}}{{home ? '?ref=home' :''}}">Remove from learning plan</a>
+                {{#if !course.record || course.record.state === 'ARCHIVED'}}
+                    <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref={{modifier}}">Add to learning plan</a>
+                {{else}}
+                    <span>Already in your learning plan</span>
+                {{/if}}
             {{/if}}
         {{else}}
         <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
