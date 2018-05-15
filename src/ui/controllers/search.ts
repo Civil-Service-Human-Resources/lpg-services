@@ -79,7 +79,18 @@ export async function search(req: express.Request, res: express.Response) {
 		// lets pull get course record
 		// rather than polling for each course lets get the learning record for the user
 		const user = req.user as model.User
+		const activeLearning: model.Course[] = []
+
 		const courseRecords = await learnerRecord.getLearningRecord(user)
+
+		for (const course of courseRecords) {
+			const record = course.record!
+			if (
+				learnerRecord.isActive(record)
+			) {
+				activeLearning.push(course)
+			}
+		}
 		console.log('looking at searxch results')
 		searchResults.results.forEach(result => {
 			const cmResult = result as model.CourseModule
@@ -87,7 +98,7 @@ export async function search(req: express.Request, res: express.Response) {
 			delete cmResult.course.record
 				// a course
 
-			courseRecord = courseRecords.find(
+			courseRecord = activeLearning.find(
 				record => cmResult.course.id === record.id
 			)
 			if (courseRecord) {

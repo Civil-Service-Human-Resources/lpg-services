@@ -52,7 +52,6 @@
         {{/if}}
     </div>
     <div class="discite__action {{modifier ? `discite__action--${modifier}` : ''}}">
-
             {{#if course.record}}
                 {{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}}
                     <a href="/book/{{course.id}}/{{course.record.modules[0].moduleId}}/{{course.record.modules[0].eventId}}/cancel">Cancel</a>

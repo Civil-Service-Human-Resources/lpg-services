@@ -52,9 +52,7 @@ export async function home(req: express.Request, res: express.Response) {
 			if (
 				!course.isComplete(user) &&
 				!course.isRequired(user) &&
-				record.state !== 'ARCHIVED' &&
-				record.state !== 'UNREGISTERED' &&
-				record.preference !== 'DISLIKED'
+				learnerRecord.isActive(record)
 			) {
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
