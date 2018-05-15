@@ -189,14 +189,12 @@ export async function newRenderAreasOfWorkPage(
 	if (req.query.select) {
 		console.log(req.query.select)
 		const arrUpdate = req.query.select.split('/')
-		patchAndUpdate(arrUpdate[1], req.query.select, 'areas-of-work', req, res)
-		res.redirect('/profile')
+		await patchAndUpdate(arrUpdate[0], req.query.select, 'areas-of-work', req, res)
 		return
 	}
 
 	if (req.params[0]) {
 		/* set the 'progress' vars */
-		console.log('parAMS', req.params[0])
 		selectedArr = req.params[0].split('/')
 		currentLevel = selectedArr.length
 		selected = selectedArr[currentLevel - 1] || 0
@@ -220,7 +218,6 @@ export async function newRenderAreasOfWorkPage(
 
 		prevLevelUrl = levels[currentLevel! - 1][selected!].url
 		if (levels.length === currentLevel) {
-			console.log('arr', selectedArr)
 			if (selectedArr.length ! > 1) {
 				console.log('push')
 				followPath.push('children')
@@ -239,8 +236,7 @@ export async function newRenderAreasOfWorkPage(
 				}
 			})
 		}
-		console.log("FOLLOWING")
-		console.log(prevLevelUrl, followPath)
+
 		const traversonResult = await registry.follow(prevLevelUrl, followPath)
 
 		if (levels.length === 0) {
