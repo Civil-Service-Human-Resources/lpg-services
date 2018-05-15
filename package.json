@@ -104,6 +104,7 @@
 		"striptags": "3.1.1",
 		"svelte": "1.55.0",
 		"tmp": "0.0.33",
+		"traverson": "^6.0.3",
 		"traverson-hal": "6.0.0",
 		"unzip": "0.1.11"
 	}

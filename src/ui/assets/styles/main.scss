@@ -36,6 +36,8 @@
 @import 'components/tabs';
 @import 'components/levels';
 
+@import 'components/videojs';
+
 .phase-banner {
 	@extend %site-width-container;
 	@extend %contain-floats;
