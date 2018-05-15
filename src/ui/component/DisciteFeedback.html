@@ -9,13 +9,17 @@
                 {{/if}}
             </h3>
         </a>
+        {{#if course.modules.length==1}}
+        <p class="discite__description">{{course.shortDescription}}</p>
+        {{else}}
         {{#if module.description}}
         <p class="discite__description">{{module.description}}</p>
         {{else}}
         <p class="font-small discite__counter">
             This is a module in <a href="/courses/{{course.id}}"><b>{{ course.title }}.</b></a>
         </p>
-        <p  class="font-small discite__counter">There are {{course.modules.length}} in total.</p>
+        <p class="font-small discite__counter">There are {{course.modules.length}} in total.</p>
+        {{/if}}
         {{/if}}
     </div>
     <div class="discite__action discite__action--module">
