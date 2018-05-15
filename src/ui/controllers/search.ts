@@ -79,8 +79,6 @@ export async function search(req: express.Request, res: express.Response) {
 		// lets pull get course record
 		// rather than polling for each course lets get the learning record for the user
 		const user = req.user as model.User
-		const activeLearning: model.Course[] = []
-
 		const courseRecords = await learnerRecord.getLearningRecord(user)
 
 		for (const course of courseRecords) {
@@ -96,7 +94,7 @@ export async function search(req: express.Request, res: express.Response) {
 			delete cmResult.course.record
 			// a course
 
-			courseRecord = activeLearning.find(
+			courseRecord = courseRecords.find(
 				record => cmResult.course.id === record.id
 			)
 			if (courseRecord) {
