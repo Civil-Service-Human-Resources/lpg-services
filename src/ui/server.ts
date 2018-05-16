@@ -128,7 +128,7 @@ passport.configure(
 	config.AUTHENTICATION.clientId,
 	config.AUTHENTICATION.clientSecret,
 	config.AUTHENTICATION.serviceUrl,
-	app,
+	app
 )
 i18n.configure(app)
 
