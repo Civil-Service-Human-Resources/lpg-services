@@ -57,6 +57,7 @@ export enum Type {
 	FaceToFace = 'http://cslearning.gov.uk/activities/face-to-face',
 	Link = 'http://adlnet.gov/expapi/activities/link',
 	Video = 'https://w3id.org/xapi/acrossx/activities/video',
+	File = 'http://adlnet.gov/expapi/activities/file',
 }
 
 export const Category = {
@@ -272,6 +273,9 @@ export async function record(
 				break
 			case 'video':
 				type = Type.Video
+				break
+			case 'file':
+				type = Type.File
 				break
 			default:
 				throw new Error(`Unknown module type ${module.type}`)

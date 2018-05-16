@@ -99,8 +99,9 @@ export async function displayModule(
 			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 			break
 		case 'link':
+		case 'file':
 			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
-			res.redirect(module.location!)
+			res.redirect(module.location! || module.url!)
 			break
 		case 'video':
 			const sessionId = await xapi.record(
@@ -139,6 +140,8 @@ export async function display(ireq: express.Request, res: express.Response) {
 	switch (type) {
 		case 'elearning':
 		case 'face-to-face':
+		case 'link':
+		case 'file':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
 			const modules = course.modules.map(cm => {
