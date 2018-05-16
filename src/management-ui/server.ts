@@ -79,7 +79,7 @@ passport.configure(
 i18n.configure(app)
 
 app.use(passport.isAuthenticated)
-app.use(passport.hasRole('USER'))
+app.use(passport.hasRole('MANAGEMENT'))
 
 app.use(expressValidator())
 
