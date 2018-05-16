@@ -125,7 +125,8 @@ passport.configure(
 	'9fbd4ae2-2db3-44c7-9544-88e80255b56e',
 	'test',
 	config.AUTHENTICATION.serviceUrl,
-	app
+	app,
+	config.LPG_UI_SERVER
 )
 i18n.configure(app)
 

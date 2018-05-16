@@ -69,11 +69,17 @@ app.use(compression({threshold: 0}))
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
-passport.configure('', '', config.AUTHENTICATION.serviceUrl, app)
+passport.configure(
+	'f90a4080-e5e9-4a80-ace4-f738b4c9c30e',
+	'test',
+	config.AUTHENTICATION.serviceUrl,
+	app,
+	config.LPG_MANAGMENT_SERVER
+	)
 i18n.configure(app)
 
 app.use(passport.isAuthenticated)
-app.use(passport.hasRole('management'))
+app.use(passport.hasRole('USER'))
 
 app.use(expressValidator())
 

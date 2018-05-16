@@ -1,5 +1,4 @@
 import * as express from 'express'
-import * as config from 'lib/config'
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
@@ -11,14 +10,15 @@ export function configure(
 	clientID: string,
 	clientSecret: string,
 	authenticationServiceUrl: string,
-	app: express.Express
+	app: express.Express,
+	callbackUrl: string
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
 	strategy = new oauth2.Strategy(
 		{
 			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
-			callbackURL: `${config.LPG_UI_SERVER}/authenticate`,
+			callbackURL: `${callbackUrl}/authenticate`,
 			clientID,
 			clientSecret,
 			tokenURL: `${authenticationServiceUrl}/oauth/token`,
