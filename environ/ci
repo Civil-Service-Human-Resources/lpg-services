@@ -39,6 +39,7 @@ docker build --cache-from cshr/lpg-services-ui:latest -t cshr/lpg-services:${TRA
 
 stage "Pushing the lpg-services-ui ${TRAVIS_COMMIT} docker image"
 docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
+docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:${TRAVIS_BRANCH}
 docker push cshr/lpg-services
 
 stage "Installing ansible if necessary"
