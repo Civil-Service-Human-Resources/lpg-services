@@ -277,7 +277,8 @@ export class Module {
 		module.startPage = data.startPage
 		module.title = data.title
 		module.description = data.description
-
+		module.url = data.url
+		module.fileSize = data.fileSize
 		module.audiences = (data.audiences || []).map(Audience.create)
 		module.events = (data.events || []).map(Event.create)
 
@@ -291,7 +292,9 @@ export class Module {
 	description: string
 
 	duration: number
-
+	url?: string
+	fileSize?: number
+	parsedFileSize?: string
 	location?: string
 	price?: number
 	productCode?: string

@@ -27,9 +27,10 @@ import * as i18n from 'lib/service/translation'
 import * as expressValidator from 'express-validator'
 
 /* tslint:disable:no-var-requires */
+const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 const fileUpload = require('express-fileupload')
-
+/* tslint:enable */
 log4js.configure(config.LOGGING)
 
 const logger = log4js.getLogger('server')
@@ -60,6 +61,7 @@ app.enable('trust proxy')
 
 app.use(helmet())
 
+app.use(flash())
 app.use(fileUpload())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))

@@ -89,35 +89,51 @@ async function parseMetadata(entry: unzip.Entry) {
 export async function saveContent(
 	course: model.Course,
 	module: model.Module,
-	fileName: string
+	fileName: string,
+	filePath: string,
+	fileSize: number
 ) {
-	logger.info(`Starting upload of ${fileName} to ${course.id}/${module.id}`)
-
-	const responses = await uploadEntries(
-		`${course.id}/${module.id}`,
-		fileName,
-		true
+	logger.info(
+		`Starting upload of ${fileName} to ${course.id}/${module.id}/${fileName}`
 	)
 
-	const metadata = responses.find(result => !!result)
-
-	if (!metadata || !metadata.launchPage) {
-		// 	// TODO: if no launch page...
-		throw new Error(
-			`No launch page found for course ${course.id} and module ${module.id}`
+	const currentCourse = await catalog.get(course.id)!
+	const currentModule = currentCourse!.modules.find(m => m.id === module.id)!
+	if (module.type === 'elearning') {
+		const responses = await uploadEntries(
+			`${course.id}/${module.id}`,
+			fileName,
+			true
 		)
+		const metadata = responses.find(result => !!result)
+		if (!metadata || !metadata.launchPage) {
+			// 	// TODO: if no launch page...
+			throw new Error(
+				`No launch page found for course ${course.id} and module ${module.id}`
+			)
+		}
+
+		currentModule.startPage = metadata.launchPage
+		await catalog.add(currentCourse!)
+
+		logger.info(
+			`Upload of ${fileName} complete, startPage set to ${metadata.launchPage}`
+		)
+	} else {
+		//if it is a document
+		currentModule.url = `${config.CONTENT_URL}/${course.id}/${
+			currentModule.id
+		}/${encodeURIComponent(fileName)}`
+
+		currentModule.fileSize = fileSize
+		const fileData = fs.createReadStream(filePath)
+		await doUpload(`${course.id}/${currentModule.id}/${fileName}`, fileData)
+		await catalog.add(currentCourse!)
+
+		logger.info(`Upload of ${fileName} complete, with no start page`)
 	}
 
-	const currentCourse = await catalog.get(course.id)
-	const currentModule = currentCourse!.modules.find(m => m.id === module.id)
-	currentModule!.startPage = metadata.launchPage
-
-	logger.info(
-		`Upload of ${fileName} complete, startPage set to ${metadata.launchPage}`
-	)
-	await catalog.add(currentCourse!)
-
-	fs.unlinkSync(fileName)
+	fs.unlinkSync(filePath)
 	logger.info(`${fileName} removed`)
 }
 

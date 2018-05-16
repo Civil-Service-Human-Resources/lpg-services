@@ -5,11 +5,18 @@ import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 import * as log4js from 'log4js'
+import * as path from 'path'
 import * as shortid from 'shortid'
 import {Readable} from 'stream'
 import * as tmp from 'tmp'
 
+/*tslint:disable*/
+const exiftool = require('node-exiftool')
+const exiftoolBin = require('dist-exiftool')
+/*tslint:enable*/
+
 import * as editCourseController from '../course/edit'
+
 const logger = log4js.getLogger('controllers/course/edit')
 
 function missingCourse() {
@@ -18,6 +25,29 @@ function missingCourse() {
 
 function missingModule() {
 	throw new Error('Missing module')
+}
+
+export interface AcceptableMetaInfo {
+	keys: string[]
+	values: string[]
+}
+
+const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
+	'.doc': {
+		keys: ['CompObjUserType'],
+		values: ['Microsoft Office Word 97-2003 Document'],
+	},
+	'.docx': {keys: ['ZipFileName'], values: ['word/numbering.xml']},
+	'.mp4': {keys: [], values: []},
+	'.pdf': {keys: ['PDFVersion'], values: []},
+	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
+	'.pptx': {keys: ['ZipFileName'], values: ['ppt/theme/theme1.xml']},
+	'.xls': {
+		keys: ['CompObjUserType'],
+		values: ['Microsoft Office Excel 2003 Worksheet'],
+	},
+	'.xlsx': {keys: ['ZipFileName'], values: ['xl/drawings/drawing1.xml']},
+	'.zip': {keys: ['ZipFileName'], values: []},
 }
 
 function courseModuleCheck(req: extended.CourseRequest) {
@@ -29,22 +59,48 @@ function courseModuleCheck(req: extended.CourseRequest) {
 	}
 }
 
-function pendingFileHandler(
+function validator(extension: string, metaData: any): boolean {
+	const acceptedForFile = acceptedFileTypes[extension]
+
+	/* doing this so it typecasts */
+	const metaDataKeys: string[] = Object.keys(metaData.data[0])
+	const metaDataValues: string[] = Object.values(metaData.data[0])
+
+	return (
+		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) &&
+		metaDataValues.some(r => acceptedForFile.values.indexOf(r) >= 0)
+	)
+}
+
+async function pendingFileHandler(
 	req: express.Request,
 	moduleIndex: string | null,
-	fileData: any
-) {
+	fileData: any,
+	fileName: string
+): Promise<boolean> {
 	//save file temporarily rather than upload straight away to prevent orphans
-	const tmpObj = tmp.fileSync()
+	const tmpObj = tmp.dirSync()
+	const filePath = `${tmpObj.name}/${fileName}`
 	const session = req.session!
 
-	new Readable({
+	await new Readable({
 		read(size) {
 			this.push(fileData)
 			this.push(null)
 		},
-	}).pipe(fs.createWriteStream(tmpObj.name))
+	}).pipe(fs.createWriteStream(filePath))
 
+	const ep = new exiftool.ExiftoolProcess(exiftoolBin)
+	const metaData = await ep
+		.open()
+		.then((pid: any) => console.log('Started exiftool process %s', pid))
+		.then(() => ep.readMetadata(filePath, ['-File:all']))
+	ep.close()
+
+	if (!validator(path.extname(filePath), metaData)) {
+		tmp.setGracefulCleanup()
+		return false
+	}
 	if (!session.pendingFiles || !session.pendingFiles.length) {
 		session.pendingFiles = []
 	}
@@ -59,8 +115,12 @@ function pendingFileHandler(
 
 	session.pendingFiles.push({
 		moduleIndex,
-		name: tmpObj.name,
+		name: fileName,
+		path: filePath,
+		size: fs.statSync(filePath).size,
 	})
+
+	return true
 }
 
 export async function removeModule(
@@ -240,7 +300,36 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		}
 
 		if (req.files && req.files.content) {
-			pendingFileHandler(ireq, moduleIndex, req.files.content.data)
+			logger.info('upload')
+
+			const fileExtension = `.${req.files.content.name.split('.').pop()}`
+
+			if (data.type === 'elearning' && fileExtension === '.zip') {
+				req.flash('error', 'Expecting .zip file')
+				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+				return
+			} else if (
+				!(Object.keys(acceptedFileTypes).indexOf(fileExtension) > -1)
+			) {
+				req.flash(
+					'error',
+					`Expecting ${Object.keys(acceptedFileTypes).join(', ')} file`
+				)
+				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+				return
+			}
+
+			const isFileValid = await pendingFileHandler(
+				ireq,
+				moduleIndex,
+				req.files.content.data,
+				encodeURIComponent(req.files.content.name)
+			)
+
+			if (!isFileValid) {
+				req.flash('error', 'not valid file')
+				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+			}
 		}
 
 		// now update course and send back to edit page
@@ -252,25 +341,25 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 export function getModule(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const {module} = req
-
-	const audiences: model.Audience[] = module!.audiences.length
-		? module!.audiences
+	const module: model.Module = req.module!
+	const audiences: model.Audience[] = module.audiences.length
+		? module.audiences
 		: [model.Audience.create({})]
 
-	const events: model.Event[] = module!.events.length
-		? module!.events
+	const events: model.Event[] = module.events.length
+		? module.events
 		: [model.Event.create({})]
 
 	courseModuleCheck(req)
 
-	if (!module!.type) {
-		module!.type = req.params.moduleType
+	if (!module.type) {
+		module.type = req.params.moduleType
 	}
 
 	res.send(
-		template.render(`courses/modules/${module!.type}`, req, res, {
+		template.render(`courses/modules/${module.type}`, req, res, {
 			audiences,
+			error: req.flash('error')[0],
 			events,
 			module,
 		})
@@ -382,6 +471,7 @@ export async function loadModule(
 				return
 			}
 		}
+
 		req.module = module
 	} else {
 		logger.debug(`course for module not found`)

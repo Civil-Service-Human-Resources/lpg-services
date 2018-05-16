@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as fs from 'fs'
 import * as config from 'lib/config'
 import * as dateTime from 'lib/datetime'
+import * as fileHelpers from 'lib/filehelpers'
 import * as path from 'path'
 import * as svelte from 'svelte'
 import * as vm from 'vm'
@@ -71,6 +72,7 @@ data() {
         config: configModule,
         currentReq: req,
         datetime: dateTimeModule,
+        fileHelpers,
         i18n: req.__ ? req.__.bind(req) : null,
         signedInUser: req.user,
         toHtml: toHtml,
@@ -102,7 +104,7 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, configModule, dateTimeModule, toHtml) {
+		`(function(module, exports, require, components, getCurrentRequest, configModule, dateTimeModule, fileHelpers, toHtml) {
 const {${componentNames}} = components
 ${code}
 });`,
@@ -116,6 +118,7 @@ ${code}
 		getCurrentRequest,
 		config,
 		dateTime,
+		fileHelpers,
 		toHtml
 	)
 	return module.exports

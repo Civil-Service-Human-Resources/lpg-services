@@ -28,10 +28,10 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 	await saveCourse(ireq, course)
 	// action handlers
 	if (submit.startsWith('edit_module')) {
-		redirect = `/courses/${course.id}/${submit.split('/')[1]}/edit`
+		redirect = `/courses/${course.id}/${submit.split('&#x2F;')[1]}/edit`
 	}
 	if (submit.startsWith('remove_module')) {
-		redirect = `/courses/${course.id}/${submit.split('/')[1]}/remove`
+		redirect = `/courses/${course.id}/${submit.split('&#x2F;')[1]}/remove`
 	}
 	if (submit.startsWith('Add Module')) {
 		redirect = `/courses/${course.id}/add-module`
@@ -89,9 +89,9 @@ async function uploadPendingFiles(courseId: string, pendingFiles: any[]) {
 	const course = await catalog.get(courseId)
 	for (const file of pendingFiles) {
 		if (file) {
-			logger.debug(`Uploading zip content from ${file.name}`)
+			logger.debug(`Uploading zip content from ${file.path}`)
 
-			await fs.readFileSync(file.name)
+			await fs.readFileSync(file.path)
 			let moduleIndex = null
 
 			if (course!.modules.length) {
@@ -107,10 +107,12 @@ async function uploadPendingFiles(courseId: string, pendingFiles: any[]) {
 				await filestore.saveContent(
 					course!,
 					course!.modules[moduleIndex],
-					file.name
+					file.name,
+					file.path,
+					file.size
 				)
 			} catch (e) {
-				logger.error(`Error uploading file ${file.name}`, e)
+				logger.error(`Error uploading file ${file.path}`, e)
 			}
 		}
 	}

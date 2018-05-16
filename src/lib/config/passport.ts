@@ -33,23 +33,18 @@ export function configure(
 			profile: any,
 			cb: oauth2.VerifyCallback
 		) => {
-			profile.accessToken = accessToken
+			// profile.accessToken = accessToken
+			// get details here
+			const identityDetails = await identity.getDetails(accessToken)
+			const regDetails = await registry.profile(accessToken)
 
-			try {
-				const identityDetails = await identity.getDetails(accessToken)
-				const regDetails = await registry.profile(accessToken)
-
-				const combined = {
-					...profile,
-					...identityDetails,
-					...regDetails,
-				}
-				const user = model.User.create(combined)
-				return cb(null, user)
-			} catch (e) {
-				logger.warn(`Error retrieving user profile information`, e)
-				cb(e)
+			const combined = {
+				...profile,
+				...identityDetails,
+				...regDetails,
 			}
+			const user = model.User.create(combined)
+			return cb(null, user)
 		}
 	)
 
