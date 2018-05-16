@@ -21,11 +21,11 @@ export function configure(
 	app.use(passport.session())
 	strategy = new oauth2.Strategy(
 		{
-			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
+			authorizationURL: `https://dev-identity.cshr.digital/oauth/authorize`,
 			callbackURL: `${callbackUrl}/authenticate`,
 			clientID,
 			clientSecret,
-			tokenURL: `${authenticationServiceUrl}/oauth/token`,
+			tokenURL: `https://dev-identity.cshr.digital/oauth/token`,
 		},
 		async (
 			accessToken: string,

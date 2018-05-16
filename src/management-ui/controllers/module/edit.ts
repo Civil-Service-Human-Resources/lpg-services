@@ -76,23 +76,12 @@ async function pendingFileHandler(
 	req: express.Request,
 	moduleIndex: string | null,
 	fileData: any,
-	fileName: string
-) {
+	fileName: string,
+	validatorFunction: (a: any) => boolean
+): Promise<boolean> {
 	//save file temporarily rather than upload straight away to prevent orphans
 
 	const tmpObj = tmp.fileSync()
-	tmpObj.name = fileName
-
-	const ep = new exiftool.ExiftoolProcess(exiftoolBin)
-	ep
-		.open()
-		// display pid
-		.then((pid: any) => console.log('Started exiftool process %s', pid))
-		.then(() => ep.readMetadata(tmpObj.name, ['-File:all']))
-		.then(console.log, console.error)
-		.then(() => ep.close())
-		.then(() => console.log('Closed exiftool'))
-		.catch(console.error)
 
 	const session = req.session!
 
@@ -315,13 +304,20 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		if (req.files && req.files.content) {
 			logger.info('upload')
 
-
-			pendingFileHandler(
+			//await
+			const isVald = await pendingFileHandler(
 				ireq,
 				moduleIndex,
 				req.files.content.data,
-				req.files.content.name
+				req.files.content.name,
+				validator
 			)
+
+			if (!isVald) {
+				req.flash('error', 'not valid file')
+				res.redirect(`/courses/${course.id}/${module!.id}/edit`)
+				return
+			}
 		}
 
 		// now update course and send back to edit page
