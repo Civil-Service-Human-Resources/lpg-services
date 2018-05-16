@@ -126,6 +126,9 @@ export const LOGGING = set(
 export const LPG_UI_SERVER =
 	env.LPG_UI_SERVER || 'http://lpg.local.cshr.digital:3001'
 
+export const LPG_MANAGMENT_SERVER =
+	env.LPG_MANAGEMENT_SERVER || 'http://lpg.local.cshr.digital:3003'
+
 export const SESSION_SECRET =
 	env.SESSION_SECRET ||
 	'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
