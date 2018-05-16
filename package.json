@@ -58,7 +58,7 @@
 		"nodemon": "1.14.12",
 		"protobufjs": "6.8.4",
 		"slugid": "1.1.0",
-		"traverson": "6.0.1",
+		"traverson": "^6.0.1",
 		"traverson-hal": "6.0.0",
 		"tslint": "5.9.1",
 		"typescript": "2.7.1"

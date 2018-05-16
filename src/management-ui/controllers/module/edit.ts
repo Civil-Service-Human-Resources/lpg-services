@@ -77,10 +77,23 @@ async function pendingFileHandler(
 	moduleIndex: string | null,
 	fileData: any,
 	fileName: string
-): Promise<boolean> {
+) {
 	//save file temporarily rather than upload straight away to prevent orphans
-	const tmpObj = tmp.dirSync()
-	const filePath = `${tmpObj.name}/${fileName}`
+
+	const tmpObj = tmp.fileSync()
+	tmpObj.name = fileName
+
+	const ep = new exiftool.ExiftoolProcess(exiftoolBin)
+	ep
+		.open()
+		// display pid
+		.then((pid: any) => console.log('Started exiftool process %s', pid))
+		.then(() => ep.readMetadata(tmpObj.name, ['-File:all']))
+		.then(console.log, console.error)
+		.then(() => ep.close())
+		.then(() => console.log('Closed exiftool'))
+		.catch(console.error)
+
 	const session = req.session!
 
 	await new Readable({
@@ -287,10 +300,6 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 			if (!req.course.modules) {
 				req.course.modules = []
 			}
-			if (data.type === ('file' || 'elearning')) {
-				console.log('set module url')
-				data.url = `${config.CONTENT_URL}/${course.id}/${data.id}`
-			}
 			req.course.modules.push(model.Module.create(data))
 			moduleIndex = data.id
 		} else {
@@ -305,7 +314,14 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 		if (req.files && req.files.content) {
 			logger.info('upload')
-			pendingFileHandler(ireq, moduleIndex, req.files.content.data)
+
+
+			pendingFileHandler(
+				ireq,
+				moduleIndex,
+				req.files.content.data,
+				req.files.content.name
+			)
 		}
 
 		// now update course and send back to edit page
