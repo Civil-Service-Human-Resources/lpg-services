@@ -9,7 +9,6 @@ import * as path from 'path'
 import * as shortid from 'shortid'
 import {Readable} from 'stream'
 import * as tmp from 'tmp'
-
 /*tslint:disable*/
 const exiftool = require('node-exiftool')
 const exiftoolBin = require('dist-exiftool')
@@ -31,7 +30,7 @@ export interface AcceptableMetaInfo {
 	keys: string[]
 	values: string[]
 }
-/*
+
 const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 	'.doc': {
 		keys: ['CompObjUserType'],
@@ -48,7 +47,7 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 	},
 	'.xlsx': {keys: ['ZipFileName'], values: ['xl/drawings/drawing1.xml']},
 	'.zip': {keys: ['ZipFileName'], values: []},
-} */
+}
 
 function courseModuleCheck(req: extended.CourseRequest) {
 	if (!req.course) {
