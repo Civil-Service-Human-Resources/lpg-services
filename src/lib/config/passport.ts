@@ -2,10 +2,14 @@ import * as express from 'express'
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
+import * as log4js from 'log4js'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
 
+const logger = log4js.getLogger('config/passport')
+
 let strategy: oauth2.Strategy
+
 export function configure(
 	clientID: string,
 	clientSecret: string,
@@ -30,17 +34,22 @@ export function configure(
 			cb: oauth2.VerifyCallback
 		) => {
 			profile.accessToken = accessToken
-			// get details here
-			const identityDetails = await identity.getDetails(accessToken)
-			const regDetails = await registry.profile(accessToken)
 
-			const combined = {
-				...profile,
-				...identityDetails,
-				...regDetails,
+			try {
+				const identityDetails = await identity.getDetails(accessToken)
+				const regDetails = await registry.profile(accessToken)
+
+				const combined = {
+					...profile,
+					...identityDetails,
+					...regDetails,
+				}
+				const user = model.User.create(combined)
+				return cb(null, user)
+			} catch (e) {
+				logger.warn(`Error retrieving user profile information`, e)
+				cb(e)
 			}
-			const user = model.User.create(combined)
-			return cb(null, user)
 		}
 	)
 
@@ -51,7 +60,7 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
-		done(null,  model.User.create(JSON.parse(data)))
+		done(null, model.User.create(JSON.parse(data)))
 	})
 
 	app.all(

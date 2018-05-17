@@ -52,7 +52,6 @@ export async function follow(path: string, nodes: string[]) {
 }
 
 export async function patch(node: string, data: any, token: string) {
-
 	const result = await new Promise((resolve, reject) =>
 		traverson
 			.from(config.REGISTRY_SERVICE_URL)
@@ -76,7 +75,7 @@ export async function patch(node: string, data: any, token: string) {
 }
 
 export async function profile(token: string) {
-	const result = await new Promise((resolve, reject) =>
+	return await new Promise((resolve, reject) =>
 		traverson
 			.from(config.REGISTRY_SERVICE_URL)
 			.jsonHal()
@@ -88,13 +87,10 @@ export async function profile(token: string) {
 			})
 			.getResource((error, document) => {
 				if (error) {
-
-					reject(false)
+					reject(error)
 				} else {
 					resolve(document)
 				}
 			})
 	)
-
-	return result
 }

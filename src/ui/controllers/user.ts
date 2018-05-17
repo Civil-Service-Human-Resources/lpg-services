@@ -131,10 +131,7 @@ export interface Level {
 export function haltoObject(traversonResult: any[]): {} {
 	const data = traversonResult.map((x: any) => {
 		const hash: Record<string, string> = {}
-		hash[x.name] = x._links.self.href.replace(
-			config.REGISTRY_SERVICE_URL,
-			''
-		)
+		hash[x.name] = x._links.self.href.replace(config.REGISTRY_SERVICE_URL, '')
 
 		return hash
 	})
@@ -197,7 +194,13 @@ export async function newRenderAreasOfWorkPage(
 
 	if (req.query.select) {
 		const arrUpdate = req.query.select.split('/')
-		await patchAndUpdate(arrUpdate[0], req.query.select, 'areas-of-work', req, res)
+		await patchAndUpdate(
+			arrUpdate[0],
+			req.query.select,
+			'areas-of-work',
+			req,
+			res
+		)
 		return
 	}
 
@@ -226,7 +229,7 @@ export async function newRenderAreasOfWorkPage(
 
 		prevLevelUrl = levels[currentLevel! - 1][selected!].url
 		if (levels.length === currentLevel) {
-			if (selectedArr.length ! > 1) {
+			if (selectedArr.length! > 1) {
 				followPath.push('children')
 			}
 		} else {

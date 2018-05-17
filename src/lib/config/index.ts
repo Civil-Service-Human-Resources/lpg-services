@@ -44,8 +44,8 @@ function warn(msg: string) {
 const env: Record<string, string> = new Proxy({}, {get: getEnv})
 
 export const AUTHENTICATION = set({
-	serviceAdmin: 'admin@cslearning.gov.uk',
-	servicePassword: 'changeme!12',
+	clientId: env.OAUTH_CLIENT_ID || '9fbd4ae2-2db3-44c7-9544-88e80255b56e',
+	clientSecret: env.OAUTH_CLIENT_SECRET || 'test',
 	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 

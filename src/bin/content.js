@@ -362,7 +362,7 @@ async function doUpload(storagePath, entry) {
     await new Promise((resolve, reject) => {
         entry.pipe(
             blob.createWriteStreamToBlockBlob(
-                'lpgdevcontent',
+                'packages',
                 storagePath,
                 { contentSettings: { contentType: mime.lookup(entry.path) || 'application/octet-stream' } },
                 (err, blobData) => {
