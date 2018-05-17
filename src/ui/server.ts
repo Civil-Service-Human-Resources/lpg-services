@@ -150,7 +150,7 @@ app.get('/privacy', (req, res) => {
 app.post('/feedback.record', asyncHandler(feedbackController.record))
 
 app.use(passport.isAuthenticated)
-app.use(passport.hasRole('LEARNER'))
+app.use(passport.hasRole('USER'))
 
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
