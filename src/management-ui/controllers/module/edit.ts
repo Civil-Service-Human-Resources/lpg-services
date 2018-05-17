@@ -76,8 +76,7 @@ async function pendingFileHandler(
 	req: express.Request,
 	moduleIndex: string | null,
 	fileData: any,
-	fileName: string,
-	validatorFunction: (a: any) => boolean
+	fileName: string
 ): Promise<boolean> {
 	//save file temporarily rather than upload straight away to prevent orphans
 
@@ -309,8 +308,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 				ireq,
 				moduleIndex,
 				req.files.content.data,
-				req.files.content.name,
-				validator
+				req.files.content.name
 			)
 
 			if (!isVald) {
