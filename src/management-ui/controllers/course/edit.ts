@@ -8,6 +8,7 @@ import * as log4js from 'log4js'
 import * as filestore from '../../filestore'
 
 const logger = log4js.getLogger('controllers/course/edit')
+const pathSeperator = '&#x2F;'
 
 export async function setCourse(ireq: express.Request, res: express.Response) {
 	let redirect: string | null = null
@@ -28,10 +29,10 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 	await saveCourse(ireq, course)
 	// action handlers
 	if (submit.startsWith('edit_module')) {
-		redirect = `/courses/${course.id}/${submit.split('&#x2F;')[1]}/edit`
+		redirect = `/courses/${course.id}/${submit.split(pathSeperator)[1]}/edit`
 	}
 	if (submit.startsWith('remove_module')) {
-		redirect = `/courses/${course.id}/${submit.split('&#x2F;')[1]}/remove`
+		redirect = `/courses/${course.id}/${submit.split(pathSeperator)[1]}/remove`
 	}
 	if (submit.startsWith('Add Module')) {
 		redirect = `/courses/${course.id}/add-module`
