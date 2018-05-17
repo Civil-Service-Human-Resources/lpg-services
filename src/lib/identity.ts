@@ -5,7 +5,7 @@ function create(token: string) {
 	const http = axios.create({
 		baseURL: config.AUTHENTICATION.serviceUrl,
 		headers: {
-			Authorization: `Bearer ${token}`,
+			'Authorization': `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
 		timeout: 5000,
