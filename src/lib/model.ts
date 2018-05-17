@@ -549,7 +549,7 @@ export class User {
 	}
 
 	hasCompleteProfile() {
-	//	return this.department && this.areasOfWork && this.grade
+		//	return this.department && this.areasOfWork && this.grade
 		return true
 	}
 

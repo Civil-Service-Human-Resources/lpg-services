@@ -122,8 +122,8 @@ app.use(
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 passport.configure(
-	'9fbd4ae2-2db3-44c7-9544-88e80255b56e',
-	'test',
+	config.AUTHENTICATION.clientId,
+	config.AUTHENTICATION.clientSecret,
 	config.AUTHENTICATION.serviceUrl,
 	app,
 	config.LPG_UI_SERVER
@@ -197,7 +197,10 @@ app.use(
 )
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
-app.get('/learning-record/feedback', asyncHandler(learningRecordFeedbackController.listItemsForFeedback))
+app.get(
+	'/learning-record/feedback',
+	asyncHandler(learningRecordFeedbackController.listItemsForFeedback)
+)
 
 app.get(
 	'/learning-record/:courseId/:moduleId/feedback',

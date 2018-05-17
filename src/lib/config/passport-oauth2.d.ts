@@ -11,10 +11,7 @@ declare module 'passport-oauth2' {
 	class OAuth2Strategy implements Strategy {
 		name: string
 
-		constructor(
-			options: StrategyOptions,
-			verify: VerifyFunction
-		)
+		constructor(options: StrategyOptions, verify: VerifyFunction)
 		constructor(
 			options: StrategyOptionsWithRequest,
 			verify: VerifyFunctionWithRequest
@@ -36,92 +33,92 @@ declare module 'passport-oauth2' {
 
 	/*tslint:disable*/
 	// namespace OAuth2Strategy {
-        export type VerifyCallback = (
-			err?: Error | null,
-			user?: object,
-			info?: object
-		) => void
+	export type VerifyCallback = (
+		err?: Error | null,
+		user?: object,
+		info?: object
+	) => void
 
-        export type VerifyFunction =
-			| ((
-					accessToken: string,
-					refreshToken: string,
-					profile: any,
-					verified: VerifyCallback
-				) => void)
-			| ((
-					accessToken: string,
-					refreshToken: string,
-					results: any,
-					profile: any,
-					verified: VerifyCallback
-				) => void)
-        export type VerifyFunctionWithRequest =
-			| ((
-					req: Request,
-					accessToken: string,
-					refreshToken: string,
-					profile: any,
-					verified: VerifyCallback
-				) => void)
-			| ((
-					req: Request,
-					accessToken: string,
-					refreshToken: string,
-					results: any,
-					profile: any,
-					verified: VerifyCallback
-				) => void)
+	export type VerifyFunction =
+		| ((
+				accessToken: string,
+				refreshToken: string,
+				profile: any,
+				verified: VerifyCallback
+			) => void)
+		| ((
+				accessToken: string,
+				refreshToken: string,
+				results: any,
+				profile: any,
+				verified: VerifyCallback
+			) => void)
+	export type VerifyFunctionWithRequest =
+		| ((
+				req: Request,
+				accessToken: string,
+				refreshToken: string,
+				profile: any,
+				verified: VerifyCallback
+			) => void)
+		| ((
+				req: Request,
+				accessToken: string,
+				refreshToken: string,
+				results: any,
+				profile: any,
+				verified: VerifyCallback
+			) => void)
 
-		interface _StrategyOptionsBase {
-			authorizationURL: string
-			tokenURL: string
-			clientID: string
-			clientSecret: string
-			callbackURL: string
-		}
+	interface _StrategyOptionsBase {
+		authorizationURL: string
+		tokenURL: string
+		clientID: string
+		clientSecret: string
+		callbackURL: string
+	}
 
-        export interface StrategyOptions extends _StrategyOptionsBase {
-			passReqToCallback?: false
-		}
+	export interface StrategyOptions extends _StrategyOptionsBase {
+		passReqToCallback?: false
+	}
 
-        export interface StrategyOptionsWithRequest extends _StrategyOptionsBase {
-			passReqToCallback: true
-		}
+	export interface StrategyOptionsWithRequest extends _StrategyOptionsBase {
+		passReqToCallback: true
+	}
 
-        export type Strategy = OAuth2Strategy
-		const Strategy: typeof OAuth2Strategy
+	export type Strategy = OAuth2Strategy
+	const Strategy: typeof OAuth2Strategy
 
-		class TokenError extends Error {
-			constructor(
-				message: string | undefined,
-				code: string,
-				uri?: string,
-				status?: number
-			)
+	class TokenError extends Error {
+		constructor(
+			message: string | undefined,
+			code: string,
+			uri?: string,
+			status?: number
+		)
 
-			code: string
-			uri?: string
-			status: number
-		}
+		code: string
+		uri?: string
+		status: number
+	}
 
-		class AuthorizationError extends Error {
-			constructor(
-				message: string | undefined,
-				code: string,
-				uri?: string,
-				status?: number
-			)
+	class AuthorizationError extends Error {
+		constructor(
+			message: string | undefined,
+			code: string,
+			uri?: string,
+			status?: number
+		)
 
-			code: string
-			uri?: string
-			status: number
-		}
+		code: string
+		uri?: string
+		status: number
+	}
 
-		class InternalOAuthError extends Error {
-			constructor(message: string, err: any)
+	class InternalOAuthError extends Error {
+		constructor(message: string, err: any)
 
-			oauthError: any
-		}
+		oauthError: any
+	}
 	// }
 }
