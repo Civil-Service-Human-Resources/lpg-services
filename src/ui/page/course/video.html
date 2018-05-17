@@ -12,10 +12,8 @@
                         	<noscript>
                             	<iframe src="https://www.youtube.com/embed/{{video.id}}" frameborder="0" scrolling="no"></iframe>
                         	</noscript>
-						 
-							<script src="js/video.js"></script>
 						{{else}}
-						<video id="my-video" class="video-js" controls preload="auto" width="640" height="400" data-setup="{}">
+						<video id="videojs-player" class="video-js" controls preload="auto" width="640" height="400" data-setup="{}">
 						  <source src="https://lpgdev.blob.core.windows.net/lpgdevcontent/ed_hd_512kb.mp4" type='video/mp4'>
 						  <p class="vjs-no-js">
 							To view this video please enable JavaScript, and consider upgrading to a web browser that
@@ -25,7 +23,7 @@
 
 						<script src="js/video.min.js"></script>
 						{{/if}}
-
+						<script src="js/video.js"></script>
 						<input type="hidden" id="video-id" value="{{video.id}}">
                         <input type="hidden" id="course-id" value="{{course.id}}">
                         <input type="hidden" id="module-id" value="{{module.id}}">

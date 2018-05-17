@@ -81,7 +81,7 @@ passport.configure(
 i18n.configure(app)
 
 app.use(passport.isAuthenticated)
-app.use(passport.hasRole('COURSE_MANAGER'))
+app.use(passport.hasRole('USER'))
 
 app.use(expressValidator())
 
