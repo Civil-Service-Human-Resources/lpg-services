@@ -31,7 +31,7 @@ export interface AcceptableMetaInfo {
 	keys: string[]
 	values: string[]
 }
-
+/*
 const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 	'.doc': {
 		keys: ['CompObjUserType'],
@@ -48,7 +48,7 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 	},
 	'.xlsx': {keys: ['ZipFileName'], values: ['xl/drawings/drawing1.xml']},
 	'.zip': {keys: ['ZipFileName'], values: []},
-}
+} */
 
 function courseModuleCheck(req: extended.CourseRequest) {
 	if (!req.course) {
@@ -79,8 +79,8 @@ async function pendingFileHandler(
 	fileName: string
 ): Promise<boolean> {
 	//save file temporarily rather than upload straight away to prevent orphans
-
-	const tmpObj = tmp.fileSync()
+	const tmpObj = tmp.dirSync()
+	const filePath = `${tmpObj.name}/${fileName}`
 
 	const session = req.session!
 
@@ -97,6 +97,7 @@ async function pendingFileHandler(
 		.then((pid: any) => console.log('Started exiftool process %s', pid))
 		.then(() => ep.readMetadata(filePath, ['-File:all']))
 	ep.close()
+	console.log(metaData)
 
 	if (!validator(path.extname(filePath), metaData)) {
 		tmp.setGracefulCleanup()
