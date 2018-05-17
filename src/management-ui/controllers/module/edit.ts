@@ -37,7 +37,7 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 		values: ['Microsoft Office Word 97-2003 Document'],
 	},
 	'.docx': {keys: ['ZipFileName'], values: ['word/numbering.xml']},
-	'.mp4': {keys: [], values: []},
+	'.mp4': {keys: ['VideoFrameRate'], values: []},
 	'.pdf': {keys: ['PDFVersion'], values: []},
 	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
 	'.pptx': {keys: ['ZipFileName'], values: ['ppt/theme/theme1.xml']},
@@ -96,7 +96,6 @@ async function pendingFileHandler(
 		.then((pid: any) => console.log('Started exiftool process %s', pid))
 		.then(() => ep.readMetadata(filePath, ['-File:all']))
 	ep.close()
-	console.log(metaData)
 
 	if (!validator(path.extname(filePath), metaData)) {
 		tmp.setGracefulCleanup()
@@ -253,7 +252,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		logger.debug('Redirecting')
 		res.redirect(redirect)
 	} else {
-		if (data.type === 'video') {
+		if (data.type === 'video' && !req.files) {
 			logger.debug('Getting video duration')
 
 			const info = await youtube.getBasicInfo(data.location)
@@ -278,6 +277,11 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		if (req.params.moduleId === 'add-module') {
 			data.type = req.params.moduleType
 			data.startPage = 'Not set' // need this as placeholder or java falls over
+
+			if (data.type === 'mp4video') { // we deferentiate mp4video and video for the uni but they are both 'video' types
+				data.type = 'video'
+			}
+
 			let rand = shortid.generate()
 			while (rand.indexOf('new_') > -1) {
 				rand = shortid.generate() // lets just makes sure it never randomly generates the new module id prefixf
