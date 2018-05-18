@@ -129,8 +129,13 @@ export function formatTime(d: number | Date) {
 	return timeFormat.format(d)
 }
 
+export function parseMP4Duration(duration:string) {
+	
+}
+
 export function parseDuration(isoDuration: string): number | undefined {
 	const parts = isoDuration.match(isoRegex)
+	console.log(parts)
 	if (!parts) {
 		return
 	}
