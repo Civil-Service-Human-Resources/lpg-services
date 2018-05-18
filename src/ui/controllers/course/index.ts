@@ -111,6 +111,7 @@ export async function displayModule(
 				undefined,
 				module
 			)
+
 			res.send(
 				template.render(`course/video`, req, res, {
 					course,

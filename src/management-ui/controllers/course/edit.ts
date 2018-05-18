@@ -49,7 +49,7 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 			delete course.id // delete fake id
 		}
 
-		// need to do this for new modules of existing courses tooy
+		// need to do this for new modules of existing courses too
 		course.modules.forEach((module, i) => {
 			if (module.id.indexOf('new_') === 0) {
 				if (session.pendingFiles) {
@@ -108,9 +108,7 @@ async function uploadPendingFiles(courseId: string, pendingFiles: any[]) {
 				await filestore.saveContent(
 					course!,
 					course!.modules[moduleIndex],
-					file.name,
-					file.path,
-					file.size
+					file
 				)
 			} catch (e) {
 				logger.error(`Error uploading file ${file.path}`, e)
