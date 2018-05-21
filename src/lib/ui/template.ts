@@ -33,7 +33,8 @@ const pageDir = path.join(rootDir, 'page')
 
 let allComponentNames = ''
 
-let componentList: string[] = []
+let componentList: {[name: string]: string} = {}
+
 let components: {[key: string]: Renderer | undefined} = {}
 let currentRequest: express.Request
 let pages: {[key: string]: Renderer} = {}
@@ -56,7 +57,7 @@ function compile(
 	let componentNames = allComponentNames
 	let constructorName = name
 	if (isComponent) {
-		const componentSet = new Set(componentList)
+		const componentSet = new Set(Object.keys(componentList))
 		componentSet.delete(name)
 		componentNames = Array.from(componentSet).join(', ')
 	} else {
@@ -167,6 +168,18 @@ function isFile(path: string) {
 	}
 }
 
+function isDirectory(path: string) {
+	try {
+		return fs.statSync(path).isDirectory()
+	} catch (err) {
+		return false
+	}
+}
+
+function componentIdentity(component: string): [string, string] {
+	return [component.slice(0, -5), path.join(componentDir, component)]
+}
+
 function toHtml(text: string) {
 	if (text) {
 		const lines = text
@@ -207,31 +220,48 @@ function logParseError(path: string, err: ParseError) {
 	console.error(err.message)
 	console.error()
 }
-
-function resetCache() {
-	componentList = []
-	for (const file of fs.readdirSync(componentDir)) {
+function readComponentDir(dir: string, nestedDirName?: string) {
+	for (const file of fs.readdirSync(dir)) {
 		if (file.endsWith('.html')) {
-			componentList.push(file.slice(0, -5))
+			// componentList.push(componentIdentity(file))
+
+			if (nestedDirName) {
+				const [name, cPath]: [string, string] = componentIdentity(
+					path.join(nestedDirName, file)
+				)
+				componentList[name.split('/').pop()!] = cPath
+			} else {
+				const [name, cPath]: [string, string] = componentIdentity(file)
+				componentList[name] = cPath
+			}
+		} else if (isDirectory(path.join(componentDir, file))) {
+			readComponentDir(path.join(componentDir, file), file)
 		}
 	}
-	allComponentNames = componentList.join(', ')
+}
+
+function resetCache() {
+	componentList = {}
+
+	readComponentDir(componentDir)
+	allComponentNames = Object.keys(componentList).join(', ')
 	components = {}
 	pages = {}
 	const reverseDeps: Record<string, Set<string>> = {}
 	const sources: Record<string, [string, string]> = {}
 	// Do a first pass in order to figure out the component dependencies.
-	for (const component of componentList) {
-		const filepath = path.join(componentDir, component + '.html')
-		const source = fs.readFileSync(filepath, {encoding: 'utf8'})
+	for (const componentName of Object.keys(componentList)) {
+		const componentPath = componentList[componentName]
+
+		const source = fs.readFileSync(componentPath, {encoding: 'utf8'})
 		try {
 			const compiled = svelte.compile(source, {
 				css: false,
 				dev: false,
-				filename: filepath,
+				filename: componentPath,
 				format: 'cjs',
 				generate: 'ssr',
-				name: component,
+				name: componentName,
 				onerror: (err: Error) => {
 					throw err
 				},
@@ -244,18 +274,18 @@ function resetCache() {
 				if (!reverseDeps[dep]) {
 					reverseDeps[dep] = new Set()
 				}
-				reverseDeps[dep].add(component)
+				reverseDeps[dep].add(componentName)
 			}
-			sources[component] = [filepath, source]
+			sources[componentName] = [componentPath, source]
 		} catch (err) {
-			logParseError(filepath, err)
+			logParseError(componentPath, err)
 		}
 	}
 	// Do a second pass to figure out the right compilation order.
 	const seq: string[] = []
-	for (const component of componentList) {
+	for (const componentName of Object.keys(componentList)) {
 		let idx = seq.length
-		const deps = reverseDeps[component]
+		const deps = reverseDeps[componentName]
 		if (deps) {
 			for (const dep of deps) {
 				const depIdx = seq.indexOf(dep)
@@ -267,12 +297,12 @@ function resetCache() {
 				}
 			}
 		}
-		seq.splice(idx, 0, component)
+		seq.splice(idx, 0, componentName)
 	}
 	// Do a final pass doing the actual Component compilation.
-	for (const component of seq) {
-		const [filepath, source] = sources[component]
-		components[component] = compile(filepath, source, component, true)
+	for (const componentName of seq) {
+		const [filepath, source] = sources[componentName]
+		components[componentName] = compile(filepath, source, componentName, true)
 	}
 }
 
