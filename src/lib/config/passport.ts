@@ -30,7 +30,7 @@ export function configure(
 			profile: any,
 			cb: oauth2.VerifyCallback
 		) => {
-			// profile.accessToken = accessToken
+			profile.accessToken = accessToken
 			// get details here
 			const identityDetails = await identity.getDetails(accessToken)
 			const regDetails = await registry.profile(accessToken)
