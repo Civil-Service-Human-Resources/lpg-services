@@ -281,11 +281,6 @@ export class Module {
 		module.fileSize = data.fileSize
 		module.audiences = (data.audiences || []).map(Audience.create)
 		module.events = (data.events || []).map(Event.create)
-
-		if (data.type === ('file' || 'elearning')) {
-			data.url = `${config.CONTENT_URL}/${course.id}/${module.id}`
-		}
-
 		return module
 	}
 
@@ -362,6 +357,10 @@ export class Module {
 	}
 }
 
+export class ModuleWithCourse extends Module {
+	courseId?: string
+	course?: Course
+}
 export class Event {
 	static create(data: any) {
 		const date = data.date ? new Date(data.date) : new Date()

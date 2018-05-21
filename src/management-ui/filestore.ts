@@ -117,17 +117,22 @@ export async function saveContent(
 		)
 	} else {
 		//if it is a document
-		currentModule.url = `${config.CONTENT_URL}/${course.id}/${currentModule.id}/${file.name}`
+		if (module.type === 'video') {
+				currentModule.location = `${config.CONTENT_URL}/${course.id}/${currentModule.id}/${file.name}`
+		} else {
+			currentModule.url = `${config.CONTENT_URL}/${course.id}/${currentModule.id}/${file.name}`
+		}
+
 		if (file.duration) {
 			currentModule.duration = file.duration
 		}
 
 		const fileData = fs.createReadStream(file.path)
 		await doUpload(`${course.id}/${module.id}/${file.name}`, fileData)
-	}
 
-	await catalog.add(currentCourse!)
-	logger.info(`Upload of ${file.name} complete, with no start page`)
+		await catalog.add(currentCourse!)
+		logger.info(`Upload of ${file.name} complete, with no start page`)
+	}
 
 	fs.unlinkSync(file.path)
 	logger.info(`${file.name} removed`)
