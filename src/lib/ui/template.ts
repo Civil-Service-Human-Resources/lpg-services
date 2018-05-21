@@ -104,7 +104,8 @@ data() {
 function createModule(filename: string, code: string, componentNames: string) {
 	const module = {exports: {}}
 	const wrapper = vm.runInThisContext(
-		`(function(module, exports, require, components, getCurrentRequest, configModule, dateTimeModule, fileHelpers, toHtml) {
+		`(function(module, exports, require, components, getCurrentRequest, configModule, dateTimeModule,
+		 fileHelpers, toHtml) {
 const {${componentNames}} = components
 ${code}
 });`,
