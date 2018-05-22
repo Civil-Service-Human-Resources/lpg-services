@@ -17,7 +17,7 @@
                         <strong>You must complete all {{modules.length}} learning modules to finish this topic.</strong>
                     </p>
                     {{#each modules as module}}
-                    <DisciteModule course={{course}} module={{module}} />
+                        <DisciteModule :course :module/>
                     {{/each}}
                 </div>
             </div>
