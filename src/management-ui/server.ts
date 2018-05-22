@@ -73,7 +73,7 @@ app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
 passport.configure(
 	config.AUTHENTICATION.managementId,
-	config.AUTHENTICATION.clientSecret,
+	config.AUTHENTICATION.managementSecret,
 	config.AUTHENTICATION.serviceUrl,
 	app,
 	config.LPG_MANAGMENT_SERVER
