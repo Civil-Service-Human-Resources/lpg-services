@@ -47,6 +47,7 @@ export const AUTHENTICATION = set({
 	clientId: env.OAUTH_CLIENT_ID || '9fbd4ae2-2db3-44c7-9544-88e80255b56e',
 	clientSecret: env.OAUTH_CLIENT_SECRET || 'test',
 	managementId: env.OAUTH_CLIENT_ID || 'f90a4080-e5e9-4a80-ace4-f738b4c9c30e',
+	managementSecret: env.OAUTH_CLIENT_SECRET || 'test',
 	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 
