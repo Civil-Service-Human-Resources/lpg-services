@@ -3,8 +3,8 @@ import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 
 export interface LineManager {
-	email: string,
-	uid: string,
+	email: string
+	uid: string
 }
 
 export class Course {
@@ -512,7 +512,6 @@ export class Feedback {
 }
 
 export class User {
-
 	static create(data: any) {
 		const user = new User(
 			data.uid || data.id,
@@ -537,13 +536,12 @@ export class User {
 		let uid = null
 
 		if (data.lineManager) {
-			email = data.lineManager.email,
-			uid = data.lineManager.uid
+			;(email = data.lineManager.email), (uid = data.lineManager.uid)
 		}
 
 		user.lineManager = {
-			email : data.lineManagerEmail ? data.lineManagerEmail : email,
-			uid	  : data.lineManagerUid ? data.lineManagerUid  : uid,
+			email: data.lineManagerEmail ? data.lineManagerEmail : email,
+			uid: data.lineManagerUid ? data.lineManagerUid : uid,
 		}
 
 		return user

@@ -454,16 +454,12 @@ export async function patchAndUpdate(
 ) {
 	const call: Record<string, string> = {}
 	call[node] = value
-	const response = (node !== 'lineManager') ? await registry.patch(
-		'civilServants',
-		call,
-		req.user.accessToken
-	) : await registry.checkLineManager(
-		call,
-		req.user.accessToken
-	)
+	const response =
+		node !== 'lineManager'
+			? await registry.patch('civilServants', call, req.user.accessToken)
+			: await registry.checkLineManager(call, req.user.accessToken)
 
-	if (node === 'lineManager' && (response as any).status !== 200)  {
+	if (node === 'lineManager' && (response as any).status !== 200) {
 		const inputName = 'line-manager'
 		const status = (response as any).status
 		let lineManagerFailed = null
@@ -531,7 +527,8 @@ export async function updateProfile(
 			break
 		case 'lineManager':
 			if (fieldValue !== req.body.confirmLineManager) {
-				lineManagerFailed = 'Line Manager Email does not match the confirmation.'
+				lineManagerFailed =
+					'Line Manager Email does not match the confirmation.'
 			} else if (!validEmail.exec(fieldValue)) {
 				lineManagerFailed = 'Line Manager Email  is not valid'
 			}
