@@ -15,6 +15,7 @@ mkdir management-ui
 mkdir management-ui/assets
 mkdir ui
 mkdir ui/assets
+mkdir ui/assets/styles
 
 
 cd "$dist/management-ui/assets"
@@ -27,6 +28,7 @@ ln -s ../../src/management-ui/component
 ln -s ../../src/management-ui/page
 
 cd "$dist/ui/assets"
+cp ../../../src/ui/assets/styles/video-js.min.css styles
 
 ln -s ../../../src/ui/assets/js .
 ln -s ../../../src/ui/assets/img .

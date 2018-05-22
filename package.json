@@ -5,8 +5,7 @@
 		"build": "npm run sass:management && npm run sass:ui && npm run compile",
 		"clean": "./bin/setup-dist",
 		"compile": "./bin/tsc",
-		"dev:management":
-			"npm run watch & npm run watch-sass:management & npm run start:management & wait",
+		"dev:management": "npm run watch & npm run watch-sass:management & npm run start:management & wait",
 		"dev:ui": "npm run watch & npm run watch-sass:ui & npm run start:ui & wait",
 		"lint": "tslint --project tsconfig.json",
 		"lint:headless": "tslint --project test/headless/tsconfig.json",
@@ -14,23 +13,16 @@
 		"nuke": "rm -rf dist node_modules",
 		"postinstall": "./bin/setup-dist",
 		"sass:all": "npm run sass:management & npm run sass:ui",
-		"sass:management":
-			"node-sass src/management-ui/assets/styles/index.scss dist/management-ui/assets/styles/main.css",
-		"sass:ui":
-			"node-sass src/ui/assets/styles/main.scss dist/ui/assets/styles/main.css",
+		"sass:management": "node-sass src/management-ui/assets/styles/index.scss dist/management-ui/assets/styles/main.css",
+		"sass:ui": "node-sass src/ui/assets/styles/main.scss dist/ui/assets/styles/main.css",
 		"start:all": "npm run start:management & npm run start:ui",
-		"start:management":
-			"cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
-		"start:ui":
-			"cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
-		"test":
-			"NODE_ICU_DATA=node_modules/full-icu ./node_modules/.bin/jasmine-node dist/build/**/*.spec.js",
+		"start:management": "cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
+		"start:ui": "cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
+		"test": "NODE_ICU_DATA=node_modules/full-icu ./node_modules/.bin/jasmine-node dist/build/**/*.spec.js",
 		"watch": "./bin/tsc -w",
 		"watch-sass-nodemon": "nodemon -e scss -x \"npm run sass:all\"",
-		"watch-sass:ui":
-			"node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles",
-		"watch-sass:management":
-			"node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles"
+		"watch-sass:ui": "node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles",
+		"watch-sass:management": "node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
@@ -104,6 +96,7 @@
 		"striptags": "3.1.1",
 		"svelte": "1.55.0",
 		"tmp": "0.0.33",
+		"traverson": "6.0.3",
 		"traverson-hal": "6.0.0",
 		"unzip": "0.1.11"
 	}

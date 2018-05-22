@@ -1,5 +1,7 @@
+
 import * as express from 'express'
 import * as fs from 'fs'
+import * as datetime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
@@ -9,7 +11,6 @@ import * as path from 'path'
 import * as shortid from 'shortid'
 import {Readable} from 'stream'
 import * as tmp from 'tmp'
-
 /*tslint:disable*/
 const exiftool = require('node-exiftool')
 const exiftoolBin = require('dist-exiftool')
@@ -67,8 +68,10 @@ function validator(extension: string, metaData: any): boolean {
 	const metaDataValues: string[] = Object.values(metaData.data[0])
 
 	return (
-		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) &&
-		metaDataValues.some(r => acceptedForFile.values.indexOf(r) >= 0)
+		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) && (
+			!acceptedForFile.values.length ||
+			metaDataValues.some(r => acceptedForFile.values.indexOf(r) >= 0)
+		)
 	)
 }
 
@@ -81,6 +84,7 @@ async function pendingFileHandler(
 	//save file temporarily rather than upload straight away to prevent orphans
 	const tmpObj = tmp.dirSync()
 	const filePath = `${tmpObj.name}/${fileName}`
+
 	const session = req.session!
 
 	await new Readable({
@@ -93,6 +97,7 @@ async function pendingFileHandler(
 	const ep = new exiftool.ExiftoolProcess(exiftoolBin)
 	const metaData = await ep
 		.open()
+		// display pid
 		.then((pid: any) => console.log('Started exiftool process %s', pid))
 		.then(() => ep.readMetadata(filePath, ['-File:all']))
 	ep.close()
@@ -101,6 +106,7 @@ async function pendingFileHandler(
 		tmp.setGracefulCleanup()
 		return false
 	}
+
 	if (!session.pendingFiles || !session.pendingFiles.length) {
 		session.pendingFiles = []
 	}
@@ -113,13 +119,18 @@ async function pendingFileHandler(
 		session.pendingFiles.splice(index, 1)
 	}
 
-	session.pendingFiles.push({
+	const pendingFile = {
+		duration: null,
 		moduleIndex,
 		name: fileName,
 		path: filePath,
-		size: fs.statSync(filePath).size,
-	})
+	}
 
+	if (path.extname(filePath) === '.mp4') {
+		pendingFile.duration = datetime.parseMP4Duration(metaData.data[0].MediaDuration) as any
+	}
+
+	session.pendingFiles.push(pendingFile)
 	return true
 }
 
@@ -158,6 +169,8 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 	const submit = ireq.body.submit
 	const {course, module} = req
 	const session = req.session!
+
+	req.body.location = req.sanitizeBody('location').unescape()
 
 	const data = {
 		...req.body,
@@ -252,7 +265,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		logger.debug('Redirecting')
 		res.redirect(redirect)
 	} else {
-		if (data.type === 'video') {
+		if (data.type === 'video' && !req.files) {
 			logger.debug('Getting video duration')
 
 			const info = await youtube.getBasicInfo(data.location)
@@ -277,6 +290,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		if (req.params.moduleId === 'add-module') {
 			data.type = req.params.moduleType
 			data.startPage = 'Not set' // need this as placeholder or java falls over
+
 			let rand = shortid.generate()
 			while (rand.indexOf('new_') > -1) {
 				rand = shortid.generate() // lets just makes sure it never randomly generates the new module id prefixf
@@ -305,20 +319,19 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 			const fileExtension = `.${req.files.content.name.split('.').pop()}`
 
 			if (data.type === 'elearning' && fileExtension === '.zip') {
-				req.flash('error', 'Expecting .zip file')
-				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
-				return
-			} else if (
-				!(Object.keys(acceptedFileTypes).indexOf(fileExtension) > -1)
-			) {
-				req.flash(
-					'error',
-					`Expecting ${Object.keys(acceptedFileTypes).join(', ')} file`
-				)
-				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
-				return
-			}
+					req.flash('error', 'Expecting .zip file')
+					res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+					return
+			} else if (!(Object.keys(acceptedFileTypes).indexOf(fileExtension) > -1)) {
+					req.flash(
+						'error',
+						`Expecting ${Object.keys(acceptedFileTypes).join(', ')} file`
+					)
+					res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+					return
+				}
 
+			//await
 			const isFileValid = await pendingFileHandler(
 				ireq,
 				moduleIndex,
@@ -328,7 +341,8 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 			if (!isFileValid) {
 				req.flash('error', 'not valid file')
-				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+				res.redirect(`/courses/${course.id}/${module!.id}/edit`)
+				return
 			}
 		}
 
@@ -341,25 +355,25 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 export function getModule(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const module: model.Module = req.module!
-	const audiences: model.Audience[] = module.audiences.length
-		? module.audiences
+	const {module} = req
+
+	const audiences: model.Audience[] = module!.audiences.length
+		? module!.audiences
 		: [model.Audience.create({})]
 
-	const events: model.Event[] = module.events.length
-		? module.events
+	const events: model.Event[] = module!.events.length
+		? module!.events
 		: [model.Event.create({})]
 
 	courseModuleCheck(req)
 
-	if (!module.type) {
-		module.type = req.params.moduleType
+	if (!module!.type) {
+		module!.type = req.params.moduleType
 	}
 
 	res.send(
-		template.render(`courses/modules/${module.type}`, req, res, {
+		template.render(`courses/modules/${module!.type}`, req, res, {
 			audiences,
-			error: req.flash('error')[0],
 			events,
 			module,
 		})
@@ -471,7 +485,6 @@ export async function loadModule(
 				return
 			}
 		}
-
 		req.module = module
 	} else {
 		logger.debug(`course for module not found`)

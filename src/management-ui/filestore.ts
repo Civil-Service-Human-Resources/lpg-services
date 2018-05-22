@@ -89,20 +89,16 @@ async function parseMetadata(entry: unzip.Entry) {
 export async function saveContent(
 	course: model.Course,
 	module: model.Module,
-	fileName: string,
-	filePath: string,
-	fileSize: number
+	file: any
 ) {
-	logger.info(
-		`Starting upload of ${fileName} to ${course.id}/${module.id}/${fileName}`
-	)
+	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
 
 	const currentCourse = await catalog.get(course.id)!
 	const currentModule = currentCourse!.modules.find(m => m.id === module.id)!
 	if (module.type === 'elearning') {
 		const responses = await uploadEntries(
 			`${course.id}/${module.id}`,
-			fileName,
+			file.name,
 			true
 		)
 		const metadata = responses.find(result => !!result)
@@ -117,24 +113,29 @@ export async function saveContent(
 		await catalog.add(currentCourse!)
 
 		logger.info(
-			`Upload of ${fileName} complete, startPage set to ${metadata.launchPage}`
+			`Upload of ${file.name} complete, startPage set to ${metadata.launchPage}`
 		)
 	} else {
 		//if it is a document
-		currentModule.url = `${config.CONTENT_URL}/${course.id}/${
-			currentModule.id
-		}/${encodeURIComponent(fileName)}`
+		if (module.type === 'video') {
+				currentModule.location = `${config.CONTENT_URL}/${course.id}/${currentModule.id}/${file.name}`
+		} else {
+			currentModule.url = `${config.CONTENT_URL}/${course.id}/${currentModule.id}/${file.name}`
+		}
 
-		currentModule.fileSize = fileSize
-		const fileData = fs.createReadStream(filePath)
-		await doUpload(`${course.id}/${currentModule.id}/${fileName}`, fileData)
+		if (file.duration) {
+			currentModule.duration = file.duration
+		}
+
+		const fileData = fs.createReadStream(file.path)
+		await doUpload(`${course.id}/${module.id}/${file.name}`, fileData)
+
 		await catalog.add(currentCourse!)
-
-		logger.info(`Upload of ${fileName} complete, with no start page`)
+		logger.info(`Upload of ${file.name} complete, with no start page`)
 	}
 
-	fs.unlinkSync(filePath)
-	logger.info(`${fileName} removed`)
+	fs.unlinkSync(file.path)
+	logger.info(`${file.name} removed`)
 }
 
 async function upload(uid: string, entry: unzip.Entry) {

@@ -129,8 +129,22 @@ export function formatTime(d: number | Date) {
 	return timeFormat.format(d)
 }
 
+export function parseMP4Duration(duration: string) {
+	if (duration.endsWith(' s')) {
+		const seconds = Math.round(parseInt(duration.replace(' s', ''), 10))
+		return seconds
+	} else {
+		const arrDurration = duration.split(':')
+		const seconds = (parseInt(arrDurration[0], 10) * ( 60 * 60)) +
+		(parseInt(arrDurration[1], 10) * 60) + parseInt(arrDurration[2], 10 )
+
+		return seconds
+	}
+}
+
 export function parseDuration(isoDuration: string): number | undefined {
 	const parts = isoDuration.match(isoRegex)
+	console.log(parts)
 	if (!parts) {
 		return
 	}

@@ -89,18 +89,17 @@ export async function search(req: express.Request, res: express.Response) {
 				activeLearning.push(course)
 			}
 		}
-		console.log('looking at searxch results')
+
 		searchResults.results.forEach(result => {
 			const cmResult = result as model.CourseModule
 			let courseRecord = null
 			delete cmResult.course.record
 			// a course
 
-			courseRecord = activeLearning.find(
+			courseRecord = courseRecords.find(
 				record => cmResult.course.id === record.id
 			)
 			if (courseRecord) {
-				console.log('course found in record', courseRecord.id)
 				//we have a course record add it to the course
 				cmResult.course.record = courseRecord.record
 			}

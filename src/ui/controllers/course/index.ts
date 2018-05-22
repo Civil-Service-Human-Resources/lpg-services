@@ -89,6 +89,7 @@ export async function displayModule(
 	const course = req.course
 	const module = req.module!
 
+	console.log(course)
 	switch (module.type) {
 		case 'elearning':
 			res.redirect(
@@ -111,13 +112,14 @@ export async function displayModule(
 				undefined,
 				module
 			)
+			console.log(module)
 			res.send(
 				template.render(`course/video`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
 					sessionId,
-					video: await youtube.getBasicInfo(module.location!),
+					video: module.location!.endsWith('.mp4') ? null : await youtube.getBasicInfo(module.location!),
 				})
 			)
 			break

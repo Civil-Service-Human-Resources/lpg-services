@@ -281,7 +281,6 @@ export class Module {
 		module.fileSize = data.fileSize
 		module.audiences = (data.audiences || []).map(Audience.create)
 		module.events = (data.events || []).map(Event.create)
-
 		return module
 	}
 
