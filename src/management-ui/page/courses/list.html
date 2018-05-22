@@ -11,16 +11,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each courses as course, i}}
+                    {#each courses as course, i}
                     <tr>
                         <th scope="row">
-                            <a href="/courses/{{course.id}}">{{course.title}}</a>
+                            <a href="/courses/{course.id}">{course.title}</a>
                         </th>
                         <td>
-                            <a href="{{config.LPG_UI_SERVER}}/courses/{{course.id}}/">Review</a>
+                            <a href="{config.LPG_UI_SERVER}/courses/{course.id}/">Review</a>
                         </td>
                     </tr>
-                    {{/each}}
+                    {/each}
                 </tbody>
             </table>
         </div>
@@ -43,3 +43,18 @@
         </div>
     </div>
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page
+		}
+	}
+</script>

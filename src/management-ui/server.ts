@@ -1,11 +1,14 @@
+import * as config from 'lib/config'
+import * as log4js from 'log4js'
+
+log4js.configure(config.LOGGING)
+
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as helmet from 'helmet'
-import * as config from 'lib/config'
-import * as log4js from 'log4js'
 import * as path from 'path'
 
 import * as serveStatic from 'serve-static'
@@ -31,7 +34,6 @@ const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 const fileUpload = require('express-fileupload')
 /* tslint:enable */
-log4js.configure(config.LOGGING)
 
 const logger = log4js.getLogger('server')
 

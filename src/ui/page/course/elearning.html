@@ -1,24 +1,41 @@
-<Page title="{{module.title || course.title}}" :_csrf>
+<Page title="{module.title || course.title}" {_csrf}>
     <div class="container">
         <h1 class="heading-xlarge heading heading--page-heading ">
-            {{module.title || course.title}}
+            {module.title || course.title}
         </h1>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <div>{{{toHtml(course.description)}}}</div>
+                <div>{@html toHtml(course.description)}</div>
 
-                {{#if course.learningOutcomes}}
+                {#if course.learningOutcomes}
                 <h2 class="heading-medium">Learning outcomes</h2>
-                <div>{{{toHtml(course.learningOutcomes)}}}</div>
-                {{/if}}
+                <div>{@html toHtml(course.learningOutcomes)}</div>
+                {/if}
 
-                <a class="button" href="/courses/{{course.id}}/{{module.id}}">Start this learning</a>
+                <a class="button" href="/courses/{course.id}/{module.id}">Start this learning</a>
             </div>
             <div class="column-one-third">
-                {{#if courseDetails.length}} {{#each courseDetails as dataRows}}
-                <Rightbox :dataRows/>
-                {{/each}} {{/if}}
+                {#if courseDetails.length} {#each courseDetails as dataRows}
+                <Rightbox {dataRows}/>
+                {/each} {/if}
             </div>
         </div>
     </div>
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+    import RightBox from '../../component/Rightbox.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			RightBox
+		}
+	}
+</script>

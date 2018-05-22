@@ -5,27 +5,27 @@
     </a>
 
     <ul id="proposition-links">
-        {{#if signedInUser}} {{#if signedInUser.hasCompleteProfile()}}
+        {#if $signedInUser} {#if $signedInUser.hasCompleteProfile()}
         <li>
             <a href="/home">Home</a>
         </li>
         <li>
-            <a href="/suggestions-for-you">{{i18n('suggestions_page_title')}}</a>
+            <a href="/suggestions-for-you">{$i18n('suggestions_page_title')}</a>
         </li>
         <li>
             <a href="/learning-record">Learning record</a>
         </li>
-        {{/if}}
+        {/if}
         <li>
             <a href="/profile">Profile</a>
         </li>
         <li>
             <a href="/sign-out">Sign out</a>
         </li>
-        {{else}}
+        {:else}
         <li>
             <a href="/sign-in">Sign in</a>
         </li>
-        {{/if}}
+        {/if}
     </ul>
 </nav>

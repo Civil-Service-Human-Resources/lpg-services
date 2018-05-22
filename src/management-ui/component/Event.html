@@ -12,33 +12,30 @@
             </th>
         </tr>
     </thead>
-    {{#each events as event, i}}
+    {#each events as event, i}
     <tbody>
         <tr>
             <td class="key-value-list__value key-value-list__auto--auto lpg-date">
-                {{#if event.id}}
-                <input type="hidden" id="event_id_{{i}}" name="id" value="{{ event.id }} "> {{/if}}
-                <input class="form-control form-control-2-3" id="event_date_{{i}}" name="event_date" type="date" value="{{ (event.date? datetime.HTMLFormatDate(event.date) : '') }}">
+                {#if event.id}
+                <input type="hidden" id="event_id_{i}" name="id" value="{ event.id } "> {/if}
+                <input class="form-control form-control-2-3" id="event_date_{i}" name="event_date" type="date" value="{ (event.date? $datetime.HTMLFormatDate(event.date) : '') }">
             </td>
             <td class="key-value-list__value key-value-list__auto--auto lpg-location">
-                <input class="form-control form-control-2-3" id="event_location_{{i}}" name="event_location" type="text" value="{{ event.location || '' }}">
+                <input class="form-control form-control-2-3" id="event_location_{i}" name="event_location" type="text" value="{ event.location || '' }">
             </td>
             <td class="key-value-list__item-action">
-                {{#if i !== 0 }}
-                <button name="submit" type="submit" class="button audience__button--remove" value="remove_event_{{i}}">Remove</button>
-                {{/if}}
+                {#if i !== 0 }
+                <button name="submit" type="submit" class="button audience__button--remove" value="remove_event_{i}">Remove</button>
+                {/if}
             </td>
         </tr>
 
         <tr>
             <td class="key-value-list__item-action" colspan="3 ">
-                {{#if i === events.length-1 }}
-                <button name="submit" type="submit" class="button" value="add_event ">Add Event</button>{{/if}}
+                {#if i === events.length-1 }
+                <button name="submit" type="submit" class="button" value="add_event ">Add Event</button>{/if}
             </td>
         </tr>
     </tbody>
-    {{/each}}
+    {/each}
 </table>
-<p>
-
-</p>

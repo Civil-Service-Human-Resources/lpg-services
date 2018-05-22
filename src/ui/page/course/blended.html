@@ -1,32 +1,51 @@
-<Page title="{{course.title}}" :_csrf>
+<Page title="{course.title}" {_csrf}>
     <div class="container">
         <h1 class="heading-xlarge heading heading--page-heading ">
-            {{course.title}}
+            {course.title}
         </h1>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <div>{{{toHtml(course.description)}}}</div>
+                <div>{@html $toHtml(course.description)}</div>
 
-                {{#if course.learningOutcomes}}
+                {#if course.learningOutcomes}
                 <h2 class="heading-medium">Learning outcomes</h2>
-                <div>{{{toHtml(course.learningOutcomes)}}}</div>
-                {{/if}}
+                <div>{@html $toHtml(course.learningOutcomes)}</div>
+                {/if}
 
                 <div class="discite" id="modules">
                     <p>
-                        <strong>You must complete all {{modules.length}} learning modules to finish this topic.</strong>
+                        <strong>You must complete all {modules.length} learning modules to finish this topic.</strong>
                     </p>
-                    {{#each modules as module}}
-                    <DisciteModule course={{course}} module={{module}} />
-                    {{/each}}
+                    {#each modules as module}
+                        <DisciteModule {course} {module}/>
+                    {/each}
                 </div>
             </div>
 
             <div class="column-one-third">
-                {{#if courseDetails.length}} {{#each courseDetails as dataRows}}
-                <Rightbox :dataRows/>
-                {{/each}} {{/if}}
+                {#if courseDetails.length} {#each courseDetails as dataRows}
+                <RightBox {dataRows}/>
+                {/each} {/if}
             </div>
         </div>
     </div>
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+    import DisciteModule from '../../component/DisciteModule.html'
+    import RightBox from '../../component/Rightbox.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			DisciteModule,
+			RightBox
+		}
+	}
+</script>

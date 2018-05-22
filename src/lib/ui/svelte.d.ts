@@ -29,7 +29,9 @@ declare module 'svelte' {
 		ast: {
 			html: Node
 		}
-		code: string
+		stats: any
+		js: any
+		css: any
 	}
 
 	export interface CustomElementOptions {

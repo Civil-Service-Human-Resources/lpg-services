@@ -25,4 +25,14 @@ $(document).ready(function() {
 			$('.feedback-details')[0].innerHTML = resp
 		})
 	})
+
+	var selectEl = document.querySelector('.type-ahead')
+	if (selectEl) {
+		accessibleAutocomplete.enhanceSelectElement({
+			autoselect: true,
+			defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
+			minLength: 1,
+			selectElement: selectEl,
+		})
+	}
 })

@@ -1,13 +1,13 @@
 <div class="header-context breadcrumbs">
   <ol class="group">
-    {{#each breadcrumbs as breadcrumb, index}}
+    {#each breadcrumbs as breadcrumb, index}
       <li>
-        {{#if breadcrumbs.length === (index + 1)}}
-            {{breadcrumb.name}}
-        {{else}}
-            <a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
-        {{/if}}
+        {#if breadcrumbs.length === (index + 1)}
+            {breadcrumb.name}
+        {:else}
+            <a href="{ breadcrumb.url }">{ breadcrumb.name }</a>
+        {/if}
       </li>
-    {{/each}}
+    {/each}
   </ol>
 </div>

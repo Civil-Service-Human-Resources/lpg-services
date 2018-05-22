@@ -8,27 +8,43 @@
     <meta name="theme-color" content="#0b0c0c" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:image" content="/img/opengraph-image.png">
-    <title>{{title}} &ndash; {{i18n('proposition_name')}}</title>
-	<link rel="stylesheet" href="/styles/main.css?v={{config.VER}}">
+    <title>{title} &ndash; {$i18n('proposition_name')}</title>
+	<link rel="stylesheet" href="/styles/main.css?v=">
 	<link rel="stylesheet" href="/styles/video-js.min.css">
     <script src="/js/jquery.min.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{config.GOOGLE_ANALYTICS_ID}}"></script> {{{config.GOOGLE_ANALYTICS_CODE}}}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={($config.GOOGLE_ANALYTICS_ID)}"></script> {@html $config.GOOGLE_ANALYTICS_CODE}
 </head>
 <body>
     <Header />
-    <Layout :_csrf>
-        <slot ></slot>
+    <Layout {_csrf}>
+        <slot> </slot>
     </Layout>
     <script>document.body.className = document.body.className.replace('', 'js-enabled');</script>
     <script src="/js/govuk_frontend_toolkit/govuk/show-hide-content.js"></script>
     <script src="/js/govuk_frontend_toolkit/govuk/modules.js"></script>
     <script src="/js/govuk_frontend_toolkit/govuk/govuk-template.js"></script>
-
+    <script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
 
     <script src="/js/main.js"></script>
-    {{#if script}}
-        {{{script}}}
-    {{/if}}
+
 
 </body>
 </html>
+
+<script>
+	import Layout from './Layout.html';
+	import Header from './Header.html';
+
+	export default {
+		data() {
+			return {
+
+			}
+		},
+		components: {
+			Layout,
+			Header,
+
+		}
+	};
+</script>

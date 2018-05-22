@@ -1,8 +1,8 @@
-<Page title="Confirm" :_csrf>
+<Page title="Confirm" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <Breadcrumb :breadcrumbs/>
+                <Breadcrumb {breadcrumbs}/>
                 <h1 class="heading-large">
                     <span class="heading-secondary">Booking a course</span>
                     Confirm your details before completing your booking
@@ -16,22 +16,22 @@
                     <ul>
                         <li>
                             <span class="booking__key">Course title</span>
-                            <span class="booking__value">{{module.title || course.title}}</span>
+                            <span class="booking__value">{module.title || course.title}</span>
                         </li>
                         <li>
                             <span class="booking__key">Start date</span>
-                            <span class="booking__value lpg-booking-date">{{datetime.formatDate(event.date)}}</span>
+                            <span class="booking__value lpg-booking-date">{$datetime.formatDate(event.date)}</span>
                         </li>
                         <li>
                             <span class="booking__key">Location</span>
-                            <span class="booking__value">{{event.location}}</span>
+                            <span class="booking__value">{event.location}</span>
                         </li>
                         <li class="push-bottom">
                             <span class="booking__key">Duration</span>
-                            <span class="booking__value">{{course.getDuration()}}</span>
+                            <span class="booking__value">{course.getDuration()}</span>
                         </li>
                         <li>
-                            <a href="{{breadcrumbs[2].url}}" class="booking__change lpg-change-date">Change</a>
+                            <a href="{breadcrumbs[2].url}" class="booking__change lpg-change-date">Change</a>
                         </li>
 
                     </ul>
@@ -45,14 +45,14 @@
                     <ul>
                         <li>
                             <span class="booking__key">Payment method</span>
-                            <span class="booking__value lpg-payment-method"> {{fap ? 'Financial approver' : 'Purchase order' }}</span>
+                            <span class="booking__value lpg-payment-method"> {fap ? 'Financial approver' : 'Purchase order' }</span>
                         </li>
                         <li>
                             <span class="booking__key">Amount</span>
-                            <span class="booking__value lpg-confirm-price">&pound;{{module.price}}</span>
+                            <span class="booking__value lpg-confirm-price">&pound;{module.price}</span>
                         </li>
                         <li>
-                            <a href="{{breadcrumbs[3].url}}" class="booking__change lpg-change-payment">Change</a>
+                            <a href="{breadcrumbs[3].url}" class="booking__change lpg-change-payment">Change</a>
                         </li>
                     </ul>
                 </div>
@@ -68,14 +68,14 @@
                         </span>
                         <ul class="booking__values">
 
-                            {{#if accessibilityReqs && accessibilityReqs.length}} {{#each accessibilityReqs as requirement }} {{#if requirement}}
-                            <li class="booking__value booking__value--li lpg-access-reqs">{{requirement === 'other' ? 'Other' : i18n('accessibility-requirements')[requirement]}}</li>
-                            {{else}}
+                            {#if accessibilityReqs && accessibilityReqs.length} {#each accessibilityReqs as requirement } {#if requirement}
+                            <li class="booking__value booking__value--li lpg-access-reqs">{requirement === 'other' ? 'Other' : $i18n('accessibility-requirements')[requirement]}</li>
+                            {:else}
                             <li class="booking__value booking__value--li lpg-no-reqs">None</li>
-                            {{/if}} {{/each}} {{/if}}
+                            {/if} {/each} {/if}
                         </ul>
                     </div>
-                    <a href="{{breadcrumbs[2].url}}&tab=accessibility" class="booking__change lpg-change-reqs">Change</a>
+                    <a href="{breadcrumbs[2].url}&tab=accessibility" class="booking__change lpg-change-reqs">Change</a>
                 </div>
             </div>
         </div>
@@ -83,10 +83,27 @@
 
         <div class="grid-row">
             <div class="column-full">
-                <a class="button" href="/book/{{course.id}}/{{module.id}}/{{event.id}}/complete">Complete booking</a>
+                <a class="button" href="/book/{course.id}/{module.id}/{event.id}/complete">Complete booking</a>
             </div>
         </div>
 
     </div>
 
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+    import Breadcrumb from '../../component/Breadcrumb.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			Breadcrumb,
+		}
+	}
+</script>
