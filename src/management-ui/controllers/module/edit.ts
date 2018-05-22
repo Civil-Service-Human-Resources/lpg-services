@@ -34,11 +34,20 @@ export interface AcceptableMetaInfo {
 }
 
 const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
+	'.doc': {
+		keys: ['CompObjUserType'],
+		values: ['Microsoft Office Word 97-2003 Document'],
+	},
 	'.docx': {keys: ['ZipFileName'], values: ['word/numbering.xml']},
-	'.mp4': {keys: ['VideoFrameRate'], values: []},
+	'.mp4': {keys: [], values: []},
 	'.pdf': {keys: ['PDFVersion'], values: []},
+	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
 	'.pptx': {keys: ['ZipFileName'], values: ['ppt/theme/theme1.xml']},
-	'.xls': {keys: ['ZipFileName'], values: ['xl/drawings/drawing1.xml']},
+	'.xls': {
+		keys: ['CompObjUserType'],
+		values: ['Microsoft Office Excel 2003 Worksheet'],
+	},
+	'.xlsx': {keys: ['ZipFileName'], values: ['xl/drawings/drawing1.xml']},
 	'.zip': {keys: ['ZipFileName'], values: []},
 }
 
