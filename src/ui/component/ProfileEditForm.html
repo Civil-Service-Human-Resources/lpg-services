@@ -19,6 +19,9 @@
         {{#if inputName === 'password'}}
             <label class="form-label" for="confirmPassword">Confirm Password</label>
             <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
+		{{elseif inputName === 'line-manager'}}
+            <label class="form-label" for="confirmLineManager">Confirm {{i18n('profile_line-manager_label')}}</label>
+            <input class="form-control" id="confirmLineManager" name="confirmLineManager" type="text">
         {{/if}}
     </div>
 
