@@ -72,7 +72,7 @@ app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
 passport.configure(
-	config.AUTHENTICATION.clientId,
+	config.AUTHENTICATION.managementId,
 	config.AUTHENTICATION.clientSecret,
 	config.AUTHENTICATION.serviceUrl,
 	app,
