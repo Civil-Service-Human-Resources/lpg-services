@@ -3,15 +3,29 @@
 		<div class="column-two-thirds">
 			<h1 class="heading-large">Bookings</h1>
             <ul>
-            {{#each registrations as registration}}
+            {#each registrations as registration}
 
                 <li>
-                    {{registration.userId}}: <a href="{{registration.activityId}}">{{registration.course.title}}</a>, {{new Date(registration.selectedDate).toISOString().slice(0, 10)}}
+                    {registration.userId}: <a href="{registration.activityId}">{registration.course.title}</a>, {new Date(registration.selectedDate).toISOString().slice(0, 10)}
                 </li>
 
-            {{/each}}
+            {/each}
             </ul>
 
 		</div>
 	</div>
 </Page>
+<script>
+	import Page from '../../component/Page.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page
+		}
+	}
+</script>

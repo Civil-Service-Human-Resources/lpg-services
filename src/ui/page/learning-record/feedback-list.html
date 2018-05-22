@@ -1,4 +1,4 @@
-<Page title="Leave details feedback" :_csrf>
+<Page title="Leave details feedback" {_csrf}>
     <div class="container container container--main">
         <h1 class="heading-xlarge">Leave feedback</h1>
         <div>
@@ -8,19 +8,39 @@
         </div>
         <div class="grid-row">
             <div class="column-full">
-                {{#if successTitle}}
-                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} />
-                {{/if}}
+                {#if successTitle}
+                <Banner type="confirmation" title={successTitle} message={successMessage} />
+                {/if}
             </div>
         </div>
-        {{#if readyForFeedback.length}}
+        {#if readyForFeedback.length}
         <div class="grid-row">
             <div class="column-full">
-                {{#each readyForFeedback as forFeedback}}
-                <DisciteFeedback course={{forFeedback.course}} module={{forFeedback.module}} />
-                {{/each}}
+                {#each readyForFeedback as forFeedback}
+                <DisciteFeedback course={forFeedback.course} module={forFeedback.module} />
+                {/each}
             </div>
         </div>
-        {{/if}}
+        {/if}
     </div>
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+	import Banner from '../../component/Banner.html'
+	import DisciteFeedback from '../../component/DisciteFeedback.html'
+
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+		    Page,
+		    Banner,
+		    DisciteFeedback
+		}
+	}
+</script>

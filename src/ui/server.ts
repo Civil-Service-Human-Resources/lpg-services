@@ -1,12 +1,20 @@
+import * as config from 'lib/config'
+import * as log4js from 'log4js'
+
+log4js.configure(config.LOGGING)
+
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
+<<<<<<< HEAD
 import * as fs from 'fs'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
+=======
+>>>>>>> LPFG-375
 import * as lusca from 'lusca'
 import * as path from 'path'
 import * as serveStatic from 'serve-static'
@@ -32,8 +40,6 @@ import * as xApiController from './controllers/xapi'
 const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 /* tslint:enable */
-
-log4js.configure(config.LOGGING)
 
 const {PORT = 3001} = process.env
 

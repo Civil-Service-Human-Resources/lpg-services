@@ -1,41 +1,61 @@
-<Page title="Change your {{i18n('profile_' + inputName + '_label').toLowerCase()}}" :script :_csrf>
+<Page title="Change your {$i18n('profile_' + inputName + '_label').toLowerCase()}" {_csrf}>
     <div class="container">
         <div class="grid-row">
-            <div class="{{inputName === 'areas-of-work' ? 'column-full' : 'column-two-thirds' }}">
+            <div class="{inputName === 'areas-of-work' ? 'column-full' : 'column-two-thirds' }">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Your profile</span>
-                    Change your {{i18n('profile_' + inputName + '_label').toLowerCase()}}
+                    Change your {$i18n('profile_' + inputName + '_label').toLowerCase()}
                 </h1>
-                {{#if lede}}
+                {#if lede}
                     <p class="lede">
-                        {{lede}}
+                        {lede}
                     </p>
-                {{/if}}
+                {/if}
 
-                {{#if identityServerFailed || passwordFailed || validFields === false || lineManagerFailed }}
+                {#if identityServerFailed || passwordFailed || validFields === false || lineManagerFailed }
 
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                         Update failed
                     </h2>
                     <p>
-                        {{#if identityServerFailed}} Server error. Update failed, please try again or contact the
+                        {#if identityServerFailed} Server error. Update failed, please try again or contact the
                         <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>
-                        {{elseif validFields === false}}
-                            Form error. {{i18n('profile_' + inputName + '_label')}} field cannot be empty.
-                        {{elseif passwordFailed}}
-							{{passwordFailed}}
-						{{elseif lineManagerFailed}}
-							{{lineManagerFailed}}
-                        {{/if}}
+                        {:elseif validFields === false}
+                            Form error. {$i18n('profile_' + inputName + '_label')} field cannot be empty.
+                        {:elseif passwordFailed}
+                            {passwordFailed}
+                        {/if}
                     </p>
                 </div>
 
-                {{/if}}
+                {/if}
 
-                <ProfileEditForm :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value :_csrf/>
+                {#if inputName === 'areas-of-work'}
 
+                    <Levels {levels} {selected} {selectedArr} {isEndOfBranch}/>
+                {:else}
+                    <ProfileEditForm {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
+                {/if}
             </div>
         </div>
     </div>
 </Page>
+<script>
+	import Page from '../../component/Page.html'
+	import Levels from '../../component/levels/Levels.html'
+	import ProfileEditForm from '../../component/ProfileEditForm.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			ProfileEditForm,
+			Levels
+		}
+	}
+</script>

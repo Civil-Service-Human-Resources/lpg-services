@@ -1,20 +1,26 @@
 <div class="discite__item u-clearfix discite__item--module">
-    <div class="discite__main discite__main--module {{ modifier ? `discite__main--${modifier}` : ''}}">
-            {{#if modifier === "search"}}
-            <a href="/courses/{{course.id}}/{{module.id}}">
-                <h3 class="heading bold-small heading--text">
-                    {{module.title}}
-                </h3>
-            </a>
-            <div class="discite__area {{modifier ? `discite__area--${modifier}` : ''}}">
-                <p class="font-small discite__counter">
-					This is a module in <a href="/courses/{{course.id}}"><b>{{ course.title }}.</b></a>
-				</p>
+    <slot name="main">
+	    <DisciteModuleMain {course} {module} />
+    </slot>
+	<slot name="properties">
+	    <DisciteModuleProperties {course} {modifier} {module} />
+    </slot>
+	<slot name="actions">
+        <DisciteModuleActions {course} {module} />
+    </slot>
+</div>
+<script>
+	import DisciteModuleMain from './disciteParts/DisciteModuleMain.html'
+	import DisciteModuleProperties from './disciteParts/DisciteModuleProperties.html'
+	import DisciteModuleActions from './disciteParts/DisciteModuleActions.html'
 
-				<p  class="font-small discite__counter--search">There are {{course.modules.length}} in total.</p>
-             </div>
-            {{else}}
+	export default {
+		data() {
+			return {
+			}
+		},
 
+<<<<<<< HEAD
                 <h3 class="heading bold-small heading--text">
                         {{module.title}}
                 </h3>
@@ -66,3 +72,12 @@
         {{/if}}
     </div>
 </div>
+=======
+		components: {
+		    DisciteModuleActions,
+		    DisciteModuleMain,
+		    DisciteModuleProperties
+		}
+	};
+</script>
+>>>>>>> LPFG-375

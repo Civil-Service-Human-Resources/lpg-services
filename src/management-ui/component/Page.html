@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0b0c0c" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:image" content="/img/opengraph-image.png">
-    <title>{{title}}</title>
+    <title>{title}</title>
     <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
@@ -18,3 +18,18 @@
     </Layout>
 </body>
 </html>
+
+<script>
+	import Layout from './Layout.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+            Layout
+		}
+	}
+</script>

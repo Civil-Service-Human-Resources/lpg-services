@@ -11,8 +11,8 @@ To start the services, most of what you need will be in this repo. You will also
 
 **In the root dir of this repo, run**
 
-1.  `npm install`
-2.  `docker-compose up`
+1. `npm install`
+2. `docker-compose up`
 
 **To build and run the services**
 
@@ -29,6 +29,9 @@ There are several npm scripts. Find them in [package.json](package.json)
 
 **[Lib](src/lib)**
 
+* The templating engine we are currently using is [svelte.technology](svelte.technology)@v2.
+  See more about how to use it in this project [here](src/lib/ui/README.md)
+
 **Testing**
 
 * [WebdriverIO](test/webdriver)
@@ -37,9 +40,9 @@ All the services required to run this are npm dependancies. To run against diffe
 
 **In the webdriver dir of this repo, run**
 
-1.  `npm install`
-2.  `npm run build`
-3.  `npm run test`
+1. `npm install`
+2. `npm run build`
+3. `npm run test`
 
 **Configure WebdriverIO capabilities**
 

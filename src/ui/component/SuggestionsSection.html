@@ -1,38 +1,52 @@
 <div class="container">
   <div class="grid-row">
       <div class="column-full">
-          <h2 class="heading-medium u-space-t30 {{home ? '': 'heading--red-top'}} lpg-suggestions-section">
-            {{home ? '' : 'From '}}{{title}}
+          <h2 class="heading-medium u-space-t30 {home ? '': 'heading--red-top'} lpg-suggestions-section">
+            {home ? '' : 'From '}{title}
           </h2>
-          {{#if lede}}
-          <p>{{lede}}</p>
-          {{/if}}
+          {#if lede}
+          <p>{lede}</p>
+          {/if}
       </div>
   </div>
   <div class="grid-row grid-row--suggested">
-      {{#each suggestedLearning.slice(0,3) as course}}
+      {#each suggestedLearning.slice(0,3) as course}
       <div class="column-third">
-          <Tile :home :course :isHome/>
+          <Tile {home} {course} {isHome}/>
       </div>
-      {{/each}}
+      {/each}
   </div>
 
   <div class="grid-row grid-row--suggested">
-      {{#each suggestedLearning.slice(3,suggestedLearning.length) as course, index}}
+      {#each suggestedLearning.slice(3,suggestedLearning.length) as course, index}
       <div class="column-third">
-          <Tile :home :course isLast="{{home && suggestedLearning.length === (index + 4)}}"/>
+          <Tile {home} {course} isLast="{home && suggestedLearning.length === (index + 4)}"/>
       </div>
-      {{/each}}
+      {/each}
   </div>
 
   <div class="grid-row">
       <div class="column-full">
-      {{#if home === true }}
-        <p><a href="/suggestions-for-you">{{i18n('home_page_suggestions_link')}}</a></p>
-      {{elseif (suggestedLearning.length === 6)}}
+      {#if home === true }
+        <p><a href="/suggestions-for-you">{$i18n('home_page_suggestions_link')}</a></p>
+      {:elseif (suggestedLearning.length === 6)}
        
-      {{/if}}
+      {/if}
       </div>
   </div>
 
 </div>
+<script>
+	import Tile from './Tile.html';
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+		    Tile,
+		}
+	};
+</script>

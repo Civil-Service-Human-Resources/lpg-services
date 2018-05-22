@@ -1,8 +1,16 @@
 <fieldset class="u-space-b30">
-    {{#each options as option}}
+    {#each options as option}
         <div class="multiple-choice">
-            <input id="{{option[0]}}" type="radio" name="{{inputName}}" value="{{option[0]}}" checked="{{value == option[0] ? 'checked' : ''}}">
-            <label for="{{option[0]}}">{{option[1]}}</label>
+            <input id="{option[0]}" type="radio" name="{inputName}" value="{option[0]}" checked="{value == option[0] ? 'checked' : ''}">
+            <label for="{option[0]}">{option[1]}</label>
         </div>
+<<<<<<< HEAD
     {{/each}}
+=======
+    {/each}
+    <div class="multiple-choice">
+        <input id="other" type="radio" name="{inputName}" value="other" checked="{value == 'other' ? 'checked' : ''}">
+        <label for="other">Other</label>
+    </div>
+>>>>>>> LPFG-375
 </fieldset>

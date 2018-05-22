@@ -132,6 +132,13 @@ $module: 'discite';
 		& > .meta {
 			margin-top: 4px;
 		}
+
+		@include m(search) {
+			@include media(tablet) {
+				position: relative;
+			}
+			position: absolute;
+		}
 	}
 
 	@include e(area) {
