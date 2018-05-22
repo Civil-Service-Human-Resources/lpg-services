@@ -33,6 +33,7 @@ export enum nodes {
 	'grade' = 'grade',
 	'primary-area-of-work' = 'profession',
 	'other-areas-of-work' = 'otherAreasOfWork',
+	'line-manager' = 'lineManager',
 	'password' = 'password',
 }
 
@@ -42,7 +43,14 @@ const logger = log4js.getLogger('controllers/user')
 // https://stackoverflow.com/questions/6739676/regular-expression-matching-at-least-n-of-m-groups
 //
 // Keep it in sync with the regex on WSO2.
+
 const validPassword = /(?!([a-zA-Z]*|[a-z\d]*|[^A-Z\d]*|[A-Z\d]*|[^a-z\d]*|[^a-zA-Z]*)$).{8,}/
+
+// This slick super regex is from http://emailregex.com/
+
+/* tslint:disable:max-line-length */
+const validEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+/* tslint:enable */
 
 const http = axios.create({
 	httpsAgent: new https.Agent({
@@ -116,6 +124,7 @@ export enum OptionTypes {
 	Radio = 'radio',
 	Checkbox = 'checkbox',
 	Typeahead = 'typeahead',
+	Confirm = 'confirm',
 }
 
 export interface Level {
@@ -481,6 +490,9 @@ export async function updateProfile(
 
 	const node = nodes[inputName]
 
+	let passwordFailed = ''
+	let lineManagerFailed = ''
+
 	switch (node) {
 		case 'otherAreasOfWork':
 			if (!Array.isArray(fieldValue)) {
@@ -493,9 +505,14 @@ export async function updateProfile(
 				fieldValue = fieldValue.join(',')
 			}
 			break
+		case 'lineManager':
+			if (fieldValue !== req.body.confirmLineManager) {
+				lineManagerFailed = 'Line Manager Email does not match the confirmation.'
+			} else if (!validEmail.exec(fieldValue)) {
+				lineManagerFailed = 'Line Manager Email  is not valid'
+			}
+			break
 		case 'password':
-			let passwordFailed = ''
-
 			if (fieldValue !== req.body.confirmPassword) {
 				passwordFailed = 'Password does not match the confirmation.'
 			} else if (fieldValue.length < 8) {
@@ -504,17 +521,18 @@ export async function updateProfile(
 				passwordFailed = 'Password did not meet requirements'
 			}
 
-			if (passwordFailed) {
-				res.send(
-					template.render('profile/edit', req, res, {
-						inputName,
-						passwordFailed,
-					})
-				)
-				return
-			}
-
 			break
+	}
+
+	if (passwordFailed || lineManagerFailed) {
+		res.send(
+			template.render('profile/edit', req, res, {
+				inputName,
+				lineManagerFailed,
+				passwordFailed,
+			})
+		)
+		return
 	}
 
 	if (node in ['password']) {

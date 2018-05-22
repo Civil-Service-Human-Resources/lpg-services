@@ -121,7 +121,19 @@
                                 </a>
                             </td>
                         </tr>
-
+						<tr>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_line-manager_label')}}</td>
+                            <td class="key-value-list__value key-value-value--auto lpg-grade">
+                                {{#if signedInUser.lineManager}}
+                                    {{ signedInUser.lineManager }}
+                                {{/if}}
+                            </td>
+                            <td class="key-value-list__item-action">
+                                <a href="/profile/line-manager">Change
+                                    <span class="visuallyhidden"> your line manager</span>
+                                </a>
+                            </td>
+                        </tr>
                     </tbody>
 
                 </table>

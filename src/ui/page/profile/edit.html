@@ -12,7 +12,7 @@
                     </p>
                 {{/if}}
 
-                {{#if identityServerFailed || passwordFailed || validFields === false }}
+                {{#if identityServerFailed || passwordFailed || validFields === false || lineManagerFailed }}
 
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
@@ -24,7 +24,9 @@
                         {{elseif validFields === false}}
                             Form error. {{i18n('profile_' + inputName + '_label')}} field cannot be empty.
                         {{elseif passwordFailed}}
-                            {{passwordFailed}}
+							{{passwordFailed}}
+						{{elseif lineManagerFailed}}
+							{{lineManagerFailed}}
                         {{/if}}
                     </p>
                 </div>

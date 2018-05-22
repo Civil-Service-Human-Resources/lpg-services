@@ -65,6 +65,7 @@
 	"profile_email_label": "Email",
 	"profile_password_label": "Password",
 	"profile_department_label": "Organisation",
+	"profile_line-manager_label": "Line Manager email",
 	"profile_area_label": "Area of work",
 	"profile_grade_label": "Grade",
 	"profile_given-name_label": "Name",
