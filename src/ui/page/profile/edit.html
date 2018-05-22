@@ -24,7 +24,9 @@
                         {:elseif validFields === false}
                             Form error. {$i18n('profile_' + inputName + '_label')} field cannot be empty.
                         {:elseif passwordFailed}
-                            {passwordFailed}
+							{passwordFailed}
+						{:elseif lineManagerFailed}
+							{lineManagerFailed}
                         {/if}
                     </p>
                 </div>
