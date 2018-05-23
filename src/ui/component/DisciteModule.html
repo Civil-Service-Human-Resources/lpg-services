@@ -1,11 +1,11 @@
 <div class="discite__item u-clearfix discite__item--module">
 	<slot name="main">
-	    <DisciteModuleMain :course :modifier :module />
+	    <DisciteModuleMain {course} {modifier} {module} />
     </slot>
 	<slot name="properties">
-	    <DisciteModuleProperties :course :modifier :module />
+	    <DisciteModuleProperties {course} {modifier} {module} />
     </slot>
 	<slot name="actions">
-        <DisciteModuleActions :course :modifier :module />
+        <DisciteModuleActions {course} {modifier} {module} />
     </slot>
 </div>

@@ -1,12 +1,12 @@
-<Page title="Learning record" :_csrf>
+<Page title="Learning record" {_csrf}>
     <div class="container">
         <h1 class="heading-xlarge">Learning record</h1>
 
         <div class="grid-row">
             <div class="column-full">
-                {{#if successTitle}}
-                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} />
-                {{/if}}
+                {#if successTitle}
+                <Banner type="confirmation" title={successTitle} message={successMessage} />
+                {/if}
             </div>
         </div>
         <div class="grid-row">
@@ -14,12 +14,12 @@
                 <h2 class="heading heading-medium heading--red-top lpg-required-learning">
                     Required learning
                 </h2>
-                {{#if completedRequiredLearning.length}}
-                <LearningRecordTable courses={{completedRequiredLearning}} />
-                <p>You have completed {{completedRequiredLearning.length}} of your required learning courses.</p>
-                {{else}}
+                {#if completedRequiredLearning.length}
+                <LearningRecordTable courses={completedRequiredLearning} />
+                <p>You have completed {completedRequiredLearning.length} of your required learning courses.</p>
+                {:else}
                 <p>You haven't completed any required learning courses yet.</p>
-                {{/if}}
+                {/if}
             </div>
         </div>
         <div class="grid-row">
@@ -27,11 +27,11 @@
                 <h2 class="heading heading-medium heading--red-top lpg-other-learning">
                     Other learning
                 </h2>
-                {{#if completedLearning.length}}
-                <LearningRecordTable courses={{completedLearning}} />
-                {{else}}
+                {#if completedLearning.length}
+                <LearningRecordTable courses={completedLearning} />
+                {:else}
                 <p>You haven't completed any other learning courses yet.</p>
-                {{/if}}
+                {/if}
             </div>
         </div>
     </div>

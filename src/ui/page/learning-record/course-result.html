@@ -1,26 +1,26 @@
-<Page title="Learning Record" :_csrf>
+<Page title="Learning Record" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
                 <div class="govuk-box-highlight results">
                     <h1 class="heading-xlarge">
-                        {{#if record.result}}
-                            {{ i18n('courseResult.' + record.result) }}
-                        {{else}}
+                        {#if record.result}
+                            { i18n('courseResult.' + record.result) }
+                        {:else}
 
-                            {{ module ? i18n('moduleResult.complete') : i18n('courseResult.complete') }}
-                        {{/if}}
+                            { module ? i18n('moduleResult.complete') : i18n('courseResult.complete') }
+                        {/if}
                     </h1>
-                    <div>{{ datetime.formatDate(record.completionDate) }}</div>
+                    <div>{ datetime.formatDate(record.completionDate) }</div>
                     <div>
-                        <strong>{{ module.title || course.title }}</strong>
+                        <strong>{ module.title || course.title }</strong>
                     </div>
-                    {{#if record.score}}
+                    {#if record.score}
                     <div>Your score</div>
                     <div>
-                        <strong>{{ record.score.scaled * 100 }}</strong>%
+                        <strong>{ record.score.scaled * 100 }</strong>%
                     </div>
-                    {{/if}}
+                    {/if}
                 </div>
                 <p>Your
                     <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>

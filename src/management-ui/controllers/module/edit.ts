@@ -1,4 +1,3 @@
-
 import * as express from 'express'
 import * as fs from 'fs'
 import * as datetime from 'lib/datetime'
@@ -68,10 +67,9 @@ function validator(extension: string, metaData: any): boolean {
 	const metaDataValues: string[] = Object.values(metaData.data[0])
 
 	return (
-		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) && (
-			!acceptedForFile.values.length ||
-			metaDataValues.some(r => acceptedForFile.values.indexOf(r) >= 0)
-		)
+		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) &&
+		(!acceptedForFile.values.length ||
+			metaDataValues.some(r => acceptedForFile.values.indexOf(r) >= 0))
 	)
 }
 
@@ -127,7 +125,9 @@ async function pendingFileHandler(
 	}
 
 	if (path.extname(filePath) === '.mp4') {
-		pendingFile.duration = datetime.parseMP4Duration(metaData.data[0].MediaDuration) as any
+		pendingFile.duration = datetime.parseMP4Duration(
+			metaData.data[0].MediaDuration
+		) as any
 	}
 
 	session.pendingFiles.push(pendingFile)
@@ -319,17 +319,19 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 			const fileExtension = `.${req.files.content.name.split('.').pop()}`
 
 			if (data.type === 'elearning' && fileExtension === '.zip') {
-					req.flash('error', 'Expecting .zip file')
-					res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
-					return
-			} else if (!(Object.keys(acceptedFileTypes).indexOf(fileExtension) > -1)) {
-					req.flash(
-						'error',
-						`Expecting ${Object.keys(acceptedFileTypes).join(', ')} file`
-					)
-					res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
-					return
-				}
+				req.flash('error', 'Expecting .zip file')
+				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+				return
+			} else if (
+				!(Object.keys(acceptedFileTypes).indexOf(fileExtension) > -1)
+			) {
+				req.flash(
+					'error',
+					`Expecting ${Object.keys(acceptedFileTypes).join(', ')} file`
+				)
+				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
+				return
+			}
 
 			//await
 			const isFileValid = await pendingFileHandler(
@@ -374,6 +376,7 @@ export function getModule(ireq: express.Request, res: express.Response) {
 	res.send(
 		template.render(`courses/modules/${module!.type}`, req, res, {
 			audiences,
+			error: req.flash('error')[0],
 			events,
 			module,
 		})

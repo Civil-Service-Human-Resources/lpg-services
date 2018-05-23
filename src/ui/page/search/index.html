@@ -1,4 +1,4 @@
-<Page title="Search" :_csrf>
+<Page title="Search" {_csrf}>
     <div class="container container--main">
 
         <div class="grid-row ">
@@ -10,93 +10,93 @@
                     <form autocomplete="nope" name="searchLearning" method="get" action="/search">
                         <div class="form-group search-box__group">
                             <label class="visuallyhidden">Search all available learning</label>
-                            <input class="form-control search-box__input" id="q" type="search" name="q" value="{{ query }}" placeholder="Search CSL">
+                            <input class="form-control search-box__input" id="q" type="search" name="q" value="{ query }" placeholder="Search CSL">
                             <button type="submit" class="search-box__submit">Search</button>
                         </div>
                     </form>
                 </div>
-                {{#if searchResults && searchResults.suggestion}}
+                {#if searchResults && searchResults.suggestion}
                 <span class="search__suggestion">Did you mean
-                    <a href="/search?q={{searchResults.suggestion}}">{{searchResults.suggestion}}</a>
+                    <a href="/search?q={searchResults.suggestion}">{searchResults.suggestion}</a>
                 </span>
-                {{/if}} {{#if searchResults && query}}
-                <p class="lede">There {{ currentReq.__n('was', searchResults.totalResults)}}
-                    <strong class="lpg-search-amount">{{ currentReq.__n('%s result', searchResults.totalResults) }}</strong>
+                {/if} {#if searchResults && query}
+                <p class="lede">There { currentReq.__n('was', searchResults.totalResults)}
+                    <strong class="lpg-search-amount">{ currentReq.__n('%s result', searchResults.totalResults) }</strong>
                     for
-                    <strong class="lpg-search-query"> {{ query }}</strong>
+                    <strong class="lpg-search-query"> { query }</strong>
                 </p>
-                {{/if}}
+                {/if}
             </div>
         </div>
 
         <div class="grid-row ">
             <div class="column-one-third">
-                {{#if searchResults.combinedResults && searchResults.combinedResults.length}}
-                <LeftSearchBox :query :courseType :cost :currentReq /> {{/if}}
+                {#if searchResults.combinedResults && searchResults.combinedResults.length}
+                <LeftSearchBox {query} {courseType} {cost} {currentReq} /> {/if}
             </div>
             <div class="column-two-thirds">
                 <div class="resources">
-                    {{#if searchResults.combinedResults && searchResults.combinedResults.length}}
-                        {{#each searchResults.combinedResults as result}}
-                            {{#if (result.type === "course") }}
-                            <DisciteCourse course={{result.course}} modifier="search" /> 
-                            {{else}}
-                                <DisciteModule :course :modifier :module>
+                    {#if searchResults.combinedResults && searchResults.combinedResults.length}
+                        {#each searchResults.combinedResults as result}
+                            {#if (result.type === "course") }
+                            <DisciteCourse course={result.course} modifier="search" /> 
+                            {:else}
+                                <DisciteModule {course} {modifier} {module}>
                                     <div slot="main">
-                                        <a href="/courses/{{course.id}}/{{module.id}}">
+                                        <a href="/courses/{course.id}/{module.id}">
                                             <h3 class="heading bold-small heading--text">
-                                                {{module.title}}
+                                                {module.title}
                                             </h3>
                                         </a>
                                         <div class="discite__area discite__area--search">
                                             <p class="font-small discite__counter">
-                                                This is a module in <a href="/courses/{{course.id}}"><b>{{ course.title }}.</b></a>
+                                                This is a module in <a href="/courses/{course.id}"><b>{ course.title }.</b></a>
                                             </p>
 
-                                            <p  class="font-small discite__counter--search">There are {{course.modules.length}} in total.</p>
+                                            <p  class="font-small discite__counter--search">There are {course.modules.length} in total.</p>
                                         </div>
                                     </div>
                                     <div slot="actions">
-                                        <a href="/courses/{{course.id}}/{{module.id}}">{{ i18n('action_' + (module.state || 'NOT_STARTED' )) }} <span class="visuallyhidden"> this module</span></a>
-                                        {{#if !course.isRequired(signedInUser) }}
-                                            {{#if !course.record || course.record.state === 'ARCHIVED'}}
-                                                <a class="lpg-add-from-search" href="/suggestions-for-you/add/{{course.id}}?ref=search">Add to learning plan</a>
-                                            {{else}}
+                                        <a href="/courses/{course.id}/{module.id}">{ i18n('action_' + (module.state || 'NOT_STARTED' )) } <span class="visuallyhidden"> this module</span></a>
+                                        {#if !course.isRequired(signedInUser) }
+                                            {#if !course.record || course.record.state === 'ARCHIVED'}
+                                                <a class="lpg-add-from-search" href="/suggestions-for-you/add/{course.id}?ref=search">Add to learning plan</a>
+                                            {:else}
                                                 <span>Already in your learning plan</span>
-                                            {{/if}}
-                                        {{/if}}
+                                            {/if}
+                                        {/if}
                                     </div>
                                 </DisciteModule>
-                            {{/if}}
-                        {{/each}} 
-                    {{/if}}
+                            {/if}
+                        {/each} 
+                    {/if}
                 </div>
             </div>
         </div>
-        {{#if searchResults.totalResults !== 0}}
+        {#if searchResults.totalResults !== 0}
         <div class="pager">
             <div class="pager__controls">
-                {{#if searchResults.page > 0}}
-                <a class="pager__prev" href="/search?q={{query}}{{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}}&s={{searchResults.size}}&p={{searchResults.page - 1}}">Prev</a>
-                {{/if}} {{#if Math.ceil(searchResults.totalResults/searchResults.size) != 1}}
+                {#if searchResults.page > 0}
+                <a class="pager__prev" href="/search?q={query}{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}&s={searchResults.size}&p={searchResults.page - 1}">Prev</a>
+                {/if} {#if Math.ceil(searchResults.totalResults/searchResults.size) != 1}
                 <ul class="pager__list">
-                    {{#each range(Math.ceil(searchResults.totalResults/searchResults.size)) as x}}
+                    {#each range(Math.ceil(searchResults.totalResults/searchResults.size)) as x}
                     <li>
-                        {{#if x === searchResults.page}}
-                        <span>{{x+1}}</span>
-                        {{else}}
-                        <a href="/search?q={{query}}{{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}}&s={{searchResults.size}}&p={{x}}">{{x+1}}</a>
-                        {{/if}}
+                        {#if x === searchResults.page}
+                        <span>{x+1}</span>
+                        {:else}
+                        <a href="/search?q={query}{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}&s={searchResults.size}&p={x}">{x+1}</a>
+                        {/if}
                     </li>
-                    {{/each}}
+                    {/each}
                 </ul>
-                {{/if}} {{#if searchResults.page != (Math.ceil(searchResults.totalResults/searchResults.size)-1)}}
-                <a class="pager__next" href="/search?q={{query}}{{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}}&s={{searchResults.size}}&p={{searchResults.page + 1}}">Next</a>
-                {{/if}}
+                {/if} {#if searchResults.page != (Math.ceil(searchResults.totalResults/searchResults.size)-1)}
+                <a class="pager__next" href="/search?q={query}{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}&s={searchResults.size}&p={searchResults.page + 1}">Next</a>
+                {/if}
             </div>
-            <div class="pager__summary">Showing {{((searchResults.page*searchResults.size)+1)}} – {{((searchResults.page*searchResults.size)+searchResults.results.length)}}
-                of {{searchResults.totalResults}} items</div>
+            <div class="pager__summary">Showing {((searchResults.page*searchResults.size)+1)} – {((searchResults.page*searchResults.size)+searchResults.results.length)}
+                of {searchResults.totalResults} items</div>
         </div>
-        {{/if}}
+        {/if}
     </div>
 </Page>

@@ -1,47 +1,47 @@
 
 <div class="tile">
 	<h4 class="heading-small">
-		<a href="/courses/{{course.id}}">
-			{{course.title}}
+		<a href="/courses/{course.id}">
+			{course.title}
 		</a>
 	</h4>
-	{{#if home}}
-	<p class="tile__attribution">{{isLast ? 'Department:' : 'Work area: '}}
-	{{#if isLast}}
-     {{i18n('departments')[signedInUser.department]}}
-	{{elseif course.getAreasOfWork().length}}
-	    {{#each course.getAreasOfWork() as aow, index}}
-	        {{i18n('areas-of-work')[aow]}}{{course.getAreasOfWork().length !== index + 1 ? ', ' : ''}}
-	    {{/each}}
-    {{/if}}
+	{#if home}
+	<p class="tile__attribution">{isLast ? 'Department:' : 'Work area: '}
+	{#if isLast}
+     {i18n('departments')[signedInUser.department]}
+	{:elseif course.getAreasOfWork().length}
+	    {#each course.getAreasOfWork() as aow, index}
+	        {i18n('areas-of-work')[aow]}{course.getAreasOfWork().length !== index + 1 ? ', ' : ''}
+	    {/each}
+    {/if}
 	</p>
-	{{/if}}
+	{/if}
 	<ul class="tile__properties">
             <li class="tile__property">
                 <span class="tile__key">Type</span>
-                <span class="tile__value">{{i18n(course.getType())}}</span>
+                <span class="tile__value">{i18n(course.getType())}</span>
             </li>
 
             <li class="tile__property">
                 <span class="tile__key">Duration</span>
-                <span class="tile__value">{{course.getDuration()}}</span>
+                <span class="tile__value">{course.getDuration()}</span>
             </li>
 
 
             <li class="tile__property">
                 <span class="tile__key">Cost</span>
-                <span class="tile__value">&pound;{{course.getCost() || 'Free'}}</span>
+                <span class="tile__value">&pound;{course.getCost() || 'Free'}</span>
             </li>
 
     </ul>
 	<p>
-		{{course.shortDescription}}
+		{course.shortDescription}
 	</p>
 	<p class="tile__actions">
-		<a href="/suggestions-for-you/add/{{course.id}}{{home ? '?ref=home' :''}}">
+		<a href="/suggestions-for-you/add/{course.id}{home ? '?ref=home' :''}">
 			Add to learning plan
 		</a>
-		<a href="/suggestions-for-you/remove/{{course.id}}{{home ? '?ref=home' :''}}">
+		<a href="/suggestions-for-you/remove/{course.id}{home ? '?ref=home' :''}">
 			Remove
 			<span class="visuallyhidden">from suggested learning list</span>
 		</a>

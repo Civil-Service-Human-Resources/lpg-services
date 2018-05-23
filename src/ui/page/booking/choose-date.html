@@ -1,8 +1,8 @@
-<Page title="Select course date" :_csrf>
+<Page title="Select course date" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <Breadcrumb :breadcrumbs/>
+                <Breadcrumb {breadcrumbs}/>
                 <h1 class="heading-xlarge">
                     <span class="heading-secondary">Booking a course</span>
                     Select course date
@@ -12,20 +12,20 @@
         <div class="grid-row">
             <div class="column-full">
 
-                {{#if errorTitle}}
+                {#if errorTitle}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        {{i18n(errorTitle)}}
+                        {i18n(errorTitle)}
                     </h2>
                     <p>
-                        {{i18n(errorMessage)}}
+                        {i18n(errorMessage)}
                     </p>
                 </div>
-                {{/if}} {{#if events && events.length}}
+                {/if} {#if events && events.length}
                 <p class="lede">
                     Check on which dates you can attend and in which locations, then select a suitable option below.
                 </p>
-                <h2 class="heading-small">{{ module.title || course.title }}</h2>
+                <h2 class="heading-small">{ module.title || course.title }</h2>
                 <form autocomplete="nope" method="post">
                     <div class="div-table div-table--5 lpg-date-table">
                         <div class="div-table__row u-clearfix">
@@ -37,45 +37,45 @@
                                 <span class="visually-hidden">Selected</span>
                             </div>
                         </div>
-                        {{#each events as event}}
+                        {#each events as event}
                         <div class="div-table__row u-clearfix lpg-date-row">
-                            <div class="div-table__cell lpg-date">{{datetime.formatDate(event.date)}}</div>
-                            <div class="div-table__cell">{{course.getDuration()}}</div>
-                            <div class="div-table__cell">{{event.location}}</div>
-                            <div class="div-table__cell lpg-price">&pound;{{module.price}}</div>
+                            <div class="div-table__cell lpg-date">{datetime.formatDate(event.date)}</div>
+                            <div class="div-table__cell">{course.getDuration()}</div>
+                            <div class="div-table__cell">{event.location}</div>
+                            <div class="div-table__cell lpg-price">&pound;{module.price}</div>
                             <div class="div-table__cell  div-table__cell--action">
                                 <div class="course-radios">
-                                    {{#if event.id == selectedEventId}}
-                                    <input id="radio-{{event.id}}" type="radio" name="selected-date" class="booking__date" value="{{event.id}}" checked> {{else}}
-                                    <input id="radio-{{event.id}}" type="radio" name="selected-date" class="booking__date" value="{{event.id}}"> {{/if}}
-                                    <label for="radio-{{event.id}}" class="booking__select-container">
+                                    {#if event.id == selectedEventId}
+                                    <input id="radio-{event.id}" type="radio" name="selected-date" class="booking__date" value="{event.id}" checked> {:else}
+                                    <input id="radio-{event.id}" type="radio" name="selected-date" class="booking__date" value="{event.id}"> {/if}
+                                    <label for="radio-{event.id}" class="booking__select-container">
                                         <span class="booking__select booking__select--select lpg-select-date">Select</span>
                                         <span class="booking__select booking__select--selected lpg-selected-date">Selected</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        {{/each}}
+                        {/each}
                     </div>
 
                     <div class="tabbed-section">
-                        <BookingTabContent url="/book/{{course.id}}/{{module.id}}/choose-date" tab="{{tab ? tab : 'before-you-book'}}" accessibilityReqs="{{accessibilityReqs ? accessibilityReqs : []}}"
-                            :selectedEventId/>
+                        <BookingTabContent url="/book/{course.id}/{module.id}/choose-date" tab="{tab ? tab : 'before-you-book'}" accessibilityReqs="{accessibilityReqs ? accessibilityReqs : []}"
+                            {selectedEventId}/>
                     </div>
                     <div class="panel panel-border-wide">
                         <p>
                             By booking this course you are agreeing to the terms and conditions
                         </p>
                     </div>
-                    <input type="hidden" name="_csrf" value="{{_csrf}}">
-                    <input type="submit" class="button" value="Continue" formaction="/book/{{course.id}}/{{module.id}}/choose-date">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <input type="submit" class="button" value="Continue" formaction="/book/{course.id}/{module.id}/choose-date">
                 </form>
 
 
 
-                {{else}}
+                {:else}
                 <p>Unfortunately this course is not currently available.</p>
-                {{/if}}
+                {/if}
             </div>
         </div>
     </div>

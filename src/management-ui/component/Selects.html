@@ -1,4 +1,4 @@
-{{#if optionType === 'checkbox'}}
-<Checkboxes :options :node :values /> {{elseif optionType === 'radio'}}
-<Radios :options :node :values />{{elseif optionType === 'date'}}
-<Date :options :node :values /> {{/if}}
+{#if optionType === 'checkbox'}
+<Checkboxes {options} {node} {values} /> {:elseif optionType === 'radio'}
+<Radios {options} {node} {values} />{:elseif optionType === 'date'}
+<Date {options} {node} {values} /> {/if}

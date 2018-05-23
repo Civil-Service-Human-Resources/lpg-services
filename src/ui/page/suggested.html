@@ -1,25 +1,25 @@
-<Page title="{{i18n('suggestions_page_title')}}">
+<Page title="{i18n('suggestions_page_title')}">
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
                 <Search>
                     <h1 class="heading heading-large heading--flush">
-                        {{i18n('suggestions_page_title')}}
+                        {i18n('suggestions_page_title')}
                     </h1>
-                    <p>{{i18n('home_page_suggestions', i18n('proposition_name'))}}</p>
+                    <p>{i18n('home_page_suggestions', i18n('proposition_name'))}</p>
                 </Search>
 
-                {{#if successTitle}}
-                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} />
-                {{/if}}
+                {#if successTitle}
+                <Banner type="confirmation" title={successTitle} message={successMessage} />
+                {/if}
             </div>
         </div>
     </div>
-    {{#each courses as coursesGroup, index}}
-        {{#if (index+1) === courses.length}}
-        <SuggestionsSection title="{{i18n('departments')[signedInUser.department]}}" suggestedLearning="{{coursesGroup}}" home={{false}}/>
-        {{elseif coursesGroup.length}}
-        <SuggestionsSection title="{{i18n('areas-of-work')[areasOfWork[index]]}}" suggestedLearning="{{coursesGroup}}" home={{false}}/>
-        {{/if}}
-    {{/each}}
+    {#each courses as coursesGroup, index}
+        {#if (index+1) === courses.length}
+        <SuggestionsSection title="{i18n('departments')[signedInUser.department]}" suggestedLearning="{coursesGroup}" home={false}/>
+        {:elseif coursesGroup.length}
+        <SuggestionsSection title="{i18n('areas-of-work')[areasOfWork[index]]}" suggestedLearning="{coursesGroup}" home={false}/>
+        {/if}
+    {/each}
 </Page>

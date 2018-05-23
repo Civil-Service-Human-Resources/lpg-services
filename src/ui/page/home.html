@@ -1,30 +1,30 @@
-<Page title="{{i18n('home_page_title')}}" :_csrf>
+<Page title="{i18n('home_page_title')}" {_csrf}>
     <div class="container container--main">
         <div class="grid-row">
             <div class="column-full">
                 <Search>
                     <h1 class="heading heading-large heading--flush">
-                        {{i18n('home_page_title')}}
+                        {i18n('home_page_title')}
                     </h1>
-                    {{#if readyForFeedback.length}}
+                    {#if readyForFeedback.length}
                     <p class="u-space-b5">You can
-                        <a href="/learning-record/feedback">leave feedback on {{readyForFeedback.length}} item{{readyForFeedback.length === 1 ? '' : 's'}}</a>.</p>
-                    {{/if}}
+                        <a href="/learning-record/feedback">leave feedback on {readyForFeedback.length} item{readyForFeedback.length === 1 ? '' : 's'}</a>.</p>
+                    {/if}
                 </Search>
             </div>
         </div>
 
         <div class="grid-row">
             <div class="column-full">
-                {{#if successTitle}}
-                <Banner type="confirmation" title={{successTitle}} message={{successMessage}} /> {{/if}} {{#if confirmTitle}}
-                <Banner type="warning" title={{confirmTitle}} message={{confirmMessage}}>
+                {#if successTitle}
+                <Banner type="confirmation" title={successTitle} message={successMessage} /> {/if} {#if confirmTitle}
+                <Banner type="warning" title={confirmTitle} message={confirmMessage}>
 
-                    <a class="banner__action" href="courses/{{removeCourseId}}/delete">Yes, remove course now.</a>
+                    <a class="banner__action" href="courses/{removeCourseId}/delete">Yes, remove course now.</a>
                     <a class="banner__action" href="/">No, keep it.</a>
 
                 </Banner>
-                {{/if}}
+                {/if}
 
             </div>
         </div>
@@ -32,34 +32,34 @@
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading-medium heading heading--red-top lpg-required-learning">
-                    {{i18n('required_section_title')}}
+                    {i18n('required_section_title')}
                 </h2>
 
-                {{#if requiredLearning.length}}
+                {#if requiredLearning.length}
                 <div class="resources">
-                    {{#each requiredLearning as course}}
-                    <DisciteCourse course={{course}} modifier="home" /> {{/each}}
+                    {#each requiredLearning as course}
+                    <DisciteCourse course={course} modifier="home" /> {/each}
                 </div>
-                {{else}}
-                <p>{{i18n('required_learning_done')}}</p>
-                {{/if}}
+                {:else}
+                <p>{i18n('required_learning_done')}</p>
+                {/if}
 
                 <h2 class="heading-medium heading heading--red-top lpg-other-learning">
-                    {{i18n('other_section_title')}}
+                    {i18n('other_section_title')}
                 </h2>
-                {{#if plannedLearning.length}}
+                {#if plannedLearning.length}
                 <div class="resources lpg-other-courses">
-                    {{#each plannedLearning as course}}
-                    <DisciteCourse course={{course}} modifier="home" /> {{/each}}
+                    {#each plannedLearning as course}
+                    <DisciteCourse course={course} modifier="home" /> {/each}
                 </div>
-                {{else}}
-                <p>{{i18n('no_planned_learning_yet')}}</p>
-                {{/if}}
+                {:else}
+                <p>{i18n('no_planned_learning_yet')}</p>
+                {/if}
             </div>
         </div>
     </div>
     <div class="fullbleed fullbleed--grey home__suggested">
-        <SuggestionsSection title="{{i18n('suggestions_page_title')}}" lede="{{i18n('home_page_suggestions', i18n('proposition_name'))}}"
-            :suggestedLearning home={{true}} />
+        <SuggestionsSection title="{i18n('suggestions_page_title')}" lede="{i18n('home_page_suggestions', i18n('proposition_name'))}"
+            {suggestedLearning} home={true} />
     </div>
 </Page>

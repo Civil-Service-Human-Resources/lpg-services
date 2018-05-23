@@ -1,6 +1,6 @@
 <aside role="complementary">
     <form autocomplete="nope" name="searchLearning" method="get" action="/search">
-        <input type="hidden" id="q" name="q" value="{{ query }}" />
+        <input type="hidden" id="q" name="q" value="{ query }" />
         <div class="govuk-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
 
             <fieldset>
@@ -8,12 +8,12 @@
                 <legend>
                     <h2 class="heading-medium">Learning type</h2>
                 </legend>
-                {{#each Object.entries(currentReq.__('courseTypes')) as filter}}
+                {#each Object.entries(currentReq.__('courseTypes')) as filter}
                     <div class="multiple-choice">
-                        <input type="checkbox" value="{{filter[0]}}" name="courseType" id="{{filter[0]}}"  checked="{{(courseType || []).indexOf(filter[1]) > -1 ? 'checked' : ''}}" >
-                        <label for="{{filter[0]}}">{{filter[1]}}</label>
+                        <input type="checkbox" value="{filter[0]}" name="courseType" id="{filter[0]}"  checked="{(courseType || []).indexOf(filter[1]) > -1 ? 'checked' : ''}" >
+                        <label for="{filter[0]}">{filter[1]}</label>
                     </div>
-                {{/each}}
+                {/each}
             </fieldset>
         </div>
 
@@ -25,7 +25,7 @@
                 </legend>
 
                 <div class="multiple-choice">
-                        <input type="checkbox" name="cost" value="free" checked="{{(cost || []).indexOf('free') > -1 ? 'checked' : ''}}"  >
+                        <input type="checkbox" name="cost" value="free" checked="{(cost || []).indexOf('free') > -1 ? 'checked' : ''}"  >
                         <label for="cost">Show only free</label>
                     </div>
             </fieldset>

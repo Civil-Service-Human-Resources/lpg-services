@@ -2,32 +2,32 @@
     <div class="grid-row">
         <div class="column">
             <h1 class="heading-large">
-                {{#if course.id}}Edit{{else}}Add{{/if}} course
+                {#if course.id}Edit{:else}Add{/if} course
             </h1>
 
             <form method="post" name="editCourseForm" class="push-bottom">
-                <input name="id" type="hidden" value="{{ course.id || '' }}">
-                <input name="uri" type="hidden" value="{{ course.uri || '' }}">
+                <input name="id" type="hidden" value="{ course.id || '' }">
+                <input name="uri" type="hidden" value="{ course.uri || '' }">
 
                 <div class="form-group">
                     <label for="title" class="form-label">
                         Title
                     </label>
-                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ course.title || '' }}">
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{ course.title || '' }">
                 </div>
 
                 <div class="form-group">
                     <label for="short-description" class="form-label">
                         Short description
                     </label>
-                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{{ course.shortDescription || '' }}</textarea>
+                    <textarea class="form-control form-control-2-3" id="short-description" name="shortDescription" rows="3">{ course.shortDescription || '' }</textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="short-description" class="form-label">
                         Description
                     </label>
-                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ course.description || '' }}</textarea>
+                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{ course.description || '' }</textarea>
                 </div>
 
                 <div class="form-group">
@@ -36,7 +36,7 @@
                     </label>
 
 
-                    <textarea class="form-control form-control-2-3" id="learning-outcomes" name="learningOutcomes" rows="3">{{ course.learningOutcomes || '' }}</textarea>
+                    <textarea class="form-control form-control-2-3" id="learning-outcomes" name="learningOutcomes" rows="3">{ course.learningOutcomes || '' }</textarea>
                 </div>
                 <div class="grid-row">
                     <div class="form-group column-two-thirds">
@@ -44,9 +44,9 @@
                             Modules
                         </label>
                         <div class="resource resource__modules">
-                            {{#each (course.modules || []) as module, i}}
-                             <DisciteModule :module :dateTime/>
-                            {{/each}}
+                            {#each (course.modules || []) as module, i}
+                             <DisciteModule {module} {dateTime}/>
+                            {/each}
 
                         </div>
 
@@ -60,11 +60,11 @@
                 </div>
 
                 <div>
-                    {{#if course.id}}
+                    {#if course.id}
                         <input type="submit" name="submit" class="button" value="Update">
-                    {{else}}
+                    {:else}
                         <input type="submit" name="submit" class="button" value="Add">
-                    {{/if}}
+                    {/if}
                 </div>
             </form>
         </div>

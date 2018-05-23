@@ -4,21 +4,21 @@
             <a href="/profile/areas-of-work" class="levels-nav__link">All work areas</a>
         </li>
 
-        {{#if selectedArr}}
-            {{#each selectedArr as selected, level }}
+        {#if selectedArr}
+            {#each selectedArr as selected, level }
 
                     <li class="levels-nav__item">
 
-                        {{#if selectedArr.length !== (level+1)}}
-                            <a class="levels-nav__link" href="/profile/areas-of-work/{{selectedArr ? selectedArr.slice(0, level).join('/') : '' }}{{level > 0 ? '/' : ''}}{{selected}}">{{levels[level][selected]}}</a>
-                        {{else}}
-                            <span class="levels-nav__last">{{levels[level][selected]}}</span>
-                        {{/if}}
+                        {#if selectedArr.length !== (level+1)}
+                            <a class="levels-nav__link" href="/profile/areas-of-work/{selectedArr ? selectedArr.slice(0, level).join('/') : '' }{level > 0 ? '/' : ''}{selected}">{levels[level][selected]}</a>
+                        {:else}
+                            <span class="levels-nav__last">{levels[level][selected]}</span>
+                        {/if}
                     </li>
 
 
-            {{/each}}
-        {{/if}}
+            {/each}
+        {/if}
 
     </ul>
 </div>

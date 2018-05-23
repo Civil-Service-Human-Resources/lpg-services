@@ -4,8 +4,12 @@ import * as config from 'lib/config'
 import * as dateTime from 'lib/datetime'
 import * as fileHelpers from 'lib/filehelpers'
 import * as path from 'path'
-import * as svelte from 'svelte'
+
 import * as vm from 'vm'
+
+/*tslint:disable*/
+const svelte = require('svelte')
+/*tslint:enable*/
 
 interface AST {
 	children: AST[]
@@ -84,13 +88,14 @@ data() {
 `
 	let compiled
 	try {
-		compiled = svelte.compile(source, {
+		compiled = svelte.parse(source, {
 			css: false,
 			dev: false,
 			filename: path,
 			format: 'cjs',
 			generate: 'ssr',
 			name: constructorName,
+			shared: true,
 			onwarn: () => {
 				return
 			},
@@ -213,7 +218,7 @@ function logParseError(path: string, err: ParseError) {
 	if (err.name !== 'ParseError') {
 		throw err
 	}
-	console.error(`Error parsing ${path}:${err.loc.line}:${err.loc.column}`)
+	// console.error(`Error parsing ${path}:${err.loc.line}:${err.loc.column}`)
 	console.error()
 	console.error(err.frame)
 	console.error()
@@ -222,6 +227,10 @@ function logParseError(path: string, err: ParseError) {
 }
 function readComponentDir(dir: string, nestedDirName?: string) {
 	for (const file of fs.readdirSync(dir)) {
+		if (isDirectory(path.join(componentDir, file))) {
+			readComponentDir(path.join(componentDir, file), file)
+		}
+
 		if (file.endsWith('.html')) {
 			// componentList.push(componentIdentity(file))
 
@@ -234,8 +243,6 @@ function readComponentDir(dir: string, nestedDirName?: string) {
 				const [name, cPath]: [string, string] = componentIdentity(file)
 				componentList[name] = cPath
 			}
-		} else if (isDirectory(path.join(componentDir, file))) {
-			readComponentDir(path.join(componentDir, file), file)
 		}
 	}
 }
@@ -252,25 +259,23 @@ function resetCache() {
 	// Do a first pass in order to figure out the component dependencies.
 	for (const componentName of Object.keys(componentList)) {
 		const componentPath = componentList[componentName]
-
+		console.log(componentName)
 		const source = fs.readFileSync(componentPath, {encoding: 'utf8'})
 		try {
-			const compiled = svelte.compile(source, {
+			const compiled = svelte.parse(source, {
 				css: false,
 				dev: false,
 				filename: componentPath,
 				format: 'cjs',
 				generate: 'ssr',
 				name: componentName,
-				onerror: (err: Error) => {
-					throw err
-				},
+				shared: true,
 				onwarn: () => {
 					return
 				},
 			})
 			// TODO(tav): Handle cyclical dependencies.
-			for (const dep of getDependencies(compiled.ast.html)) {
+			for (const dep of getDependencies(compiled.html)) {
 				if (!reverseDeps[dep]) {
 					reverseDeps[dep] = new Set()
 				}
@@ -320,24 +325,24 @@ export function render(
 	let mod: Renderer | undefined = pages[page]
 	currentRequest = req
 
-	if (!mod) {
-		let pagePath = path.join(pageDir, page + '.html')
+	let pagePath = path.join(pageDir, page + '.html')
+	if (!isFile(pagePath)) {
+		pagePath = path.join(pageDir, page, 'index.html')
 		if (!isFile(pagePath)) {
-			pagePath = path.join(pageDir, page, 'index.html')
-			if (!isFile(pagePath)) {
-				throw new Error(`Could not find a matching .html file for ${page}`)
-			}
+			throw new Error(`Could not find a matching .html file for ${page}`)
 		}
-		const source = fs.readFileSync(pagePath, {encoding: 'utf8'})
-		mod = compile(pagePath, source, getName(page))
-		if (!mod) {
-			throw new Error(`Could not compile renderer for ${page}`)
-		}
-		pages[page] = mod
 	}
+	const source = fs.readFileSync(pagePath, {encoding: 'utf8'})
+	mod = compile(pagePath, source, getName(page))
+	if (!mod) {
+		throw new Error(`Could not compile renderer for ${page}`)
+	}
+	pages[page] = mod
+
 	// TODO(tav): Should use source maps to show any errors here in the context
 	// of the original HTML source as opposed to in the generated JavaScript
 	// code/module.
+
 	return mod.render(props).html
 }
 
