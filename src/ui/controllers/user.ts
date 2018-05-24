@@ -402,7 +402,12 @@ export function signIn(req: express.Request, res: express.Response) {
 }
 
 export function signOut(req: express.Request, res: express.Response) {
-	passport.logout(req, res)
+	passport.logout(
+		config.AUTHENTICATION.serviceUrl,
+		config.LPG_UI_SERVER,
+		req,
+		res
+	)
 }
 
 export async function tryUpdateProfile(

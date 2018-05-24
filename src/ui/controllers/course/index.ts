@@ -117,7 +117,9 @@ export async function displayModule(
 					courseDetails: getCourseDetails(req, course, module),
 					module,
 					sessionId,
-					video: module.location!.endsWith('.mp4') ? null : await youtube.getBasicInfo(module.location!),
+					video: module.location!.endsWith('.mp4')
+						? null
+						: await youtube.getBasicInfo(module.location!),
 				})
 			)
 			break

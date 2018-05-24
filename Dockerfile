@@ -3,7 +3,7 @@ FROM library/ubuntu
 EXPOSE 3001
 
 RUN apt-get update && \
-  apt-get install --yes wget ssh sshpass g++ make && \
+  apt-get install --yes wget g++ make && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

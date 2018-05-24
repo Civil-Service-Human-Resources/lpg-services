@@ -116,7 +116,12 @@ export function hasRole(role: string) {
 	}
 }
 
-export function logout(req: express.Request, res: express.Response) {
+export function logout(
+	authenticationServiceUrl: string,
+	callbackUrl: string,
+	req: express.Request,
+	res: express.Response
+) {
 	req.logout()
-	res.redirect('/')
+	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
 }

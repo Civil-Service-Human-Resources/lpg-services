@@ -105,11 +105,7 @@ async function uploadPendingFiles(courseId: string, pendingFiles: any[]) {
 			//TODO if replacing elearning files remove old files!
 
 			try {
-				await filestore.saveContent(
-					course!,
-					course!.modules[moduleIndex],
-					file
-				)
+				await filestore.saveContent(course!, course!.modules[moduleIndex], file)
 			} catch (e) {
 				logger.error(`Error uploading file ${file.path}`, e)
 			}

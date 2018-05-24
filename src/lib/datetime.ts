@@ -135,8 +135,10 @@ export function parseMP4Duration(duration: string) {
 		return seconds
 	} else {
 		const arrDurration = duration.split(':')
-		const seconds = (parseInt(arrDurration[0], 10) * ( 60 * 60)) +
-		(parseInt(arrDurration[1], 10) * 60) + parseInt(arrDurration[2], 10 )
+		const seconds =
+			parseInt(arrDurration[0], 10) * (60 * 60) +
+			parseInt(arrDurration[1], 10) * 60 +
+			parseInt(arrDurration[2], 10)
 
 		return seconds
 	}
