@@ -5,6 +5,17 @@
                 {{#if module.id}}Edit{{else}}Add{{/if}} Video
             </h1>
 
+			{{#if error}}
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                    Error with MP4
+                </h2>
+                <p>
+                    {{error}}
+                </p>
+            </div>
+            {{/if}}
+
             <form method="post" name="editCourseForm" class="push-bottom" enctype="multipart/form-data">
                 <input name="type" type="hidden" value="video">
                 <div class="form-group">
