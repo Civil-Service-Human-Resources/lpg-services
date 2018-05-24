@@ -92,7 +92,7 @@ export async function displayModule(
 	switch (module.type) {
 		case 'elearning':
 			res.redirect(
-				`${config.CONTENT_URL}/${course.id}/${module.id}/${module.startPage}`
+				`${config.CONTENT_URL}/${course.id}/${module.id}/${module.startPage}?title=${module.title}`
 			)
 			break
 		case 'face-to-face':
@@ -111,6 +111,7 @@ export async function displayModule(
 				undefined,
 				module
 			)
+
 			res.send(
 				template.render(`course/video`, req, res, {
 					course,

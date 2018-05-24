@@ -91,6 +91,7 @@ export async function saveContent(
 	module: model.Module,
 	file: any
 ) {
+
 	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
 
 	const currentCourse = await catalog.get(course.id)!
@@ -98,7 +99,7 @@ export async function saveContent(
 	if (module.type === 'elearning') {
 		const responses = await uploadEntries(
 			`${course.id}/${module.id}`,
-			file.name,
+			file.path,
 			true
 		)
 		const metadata = responses.find(result => !!result)
@@ -212,6 +213,7 @@ async function uploadEntries(
 		const stream = isFileName
 			? fs.createReadStream(file)
 			: streamifier.createReadStream(file.data)
+		console.log("reached")
 		stream
 			.pipe(unzip.Parse())
 			.on('entry', (entry: unzip.Entry) => {

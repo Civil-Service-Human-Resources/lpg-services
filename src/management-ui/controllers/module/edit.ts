@@ -318,7 +318,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 			const fileExtension = `.${req.files.content.name.split('.').pop()}`
 
-			if (data.type === 'elearning' && fileExtension === '.zip') {
+			if (data.type === 'elearning' && fileExtension !== '.zip') {
 				req.flash('error', 'Expecting .zip file')
 				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
 				return
@@ -332,6 +332,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
 				return
 			}
+			console.log(1)
 
 			//await
 			const isFileValid = await pendingFileHandler(

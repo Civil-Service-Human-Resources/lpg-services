@@ -3,7 +3,19 @@
         <div class="column-two-thirds">
             <h1 class="heading-large">
                 {{#if module.id}}Edit{{else}}Add{{/if}} Elearning course
-            </h1>
+			</h1>
+			
+			{{#if error}}
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                    Error with Zip
+                </h2>
+                <p>
+                    {{error}}
+                </p>
+            </div>
+            {{/if}}
+
             <form method="post" name="editCourseForm" class="push-bottom module--form" enctype="multipart/form-data">
                 <input name="type" type="hidden" value="elearning">
                 <div class="form-group">
