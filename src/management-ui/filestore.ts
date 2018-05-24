@@ -118,9 +118,13 @@ export async function saveContent(
 	} else {
 		//if it is a document
 		if (module.type === 'video') {
-				currentModule.location = `${config.CONTENT_URL}/${course.id}/${currentModule.id}/${file.name}`
+			currentModule.location = `${config.CONTENT_URL}/${course.id}/${
+				currentModule.id
+			}/${file.name}`
 		} else {
-			currentModule.url = `${config.CONTENT_URL}/${course.id}/${currentModule.id}/${file.name}`
+			currentModule.url = `${config.CONTENT_URL}/${course.id}/${
+				currentModule.id
+			}/${file.name}`
 		}
 
 		if (file.duration) {
