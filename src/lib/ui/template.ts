@@ -88,14 +88,13 @@ data() {
 `
 	let compiled
 	try {
-		compiled = svelte.parse(source, {
+		compiled = svelte.compile(source, {
 			css: false,
 			dev: false,
 			filename: path,
 			format: 'cjs',
 			generate: 'ssr',
 			name: constructorName,
-			shared: true,
 			onwarn: () => {
 				return
 			},
@@ -104,7 +103,7 @@ data() {
 		logParseError(path, err)
 		return
 	}
-	return createModule(path, compiled.code, componentNames) as Renderer
+	return createModule(path, compiled.js.code, componentNames) as Renderer
 }
 
 function createModule(filename: string, code: string, componentNames: string) {
@@ -322,7 +321,7 @@ export function render(
 		throw new Error('Attempt to override signedInUser in props')
 	}
 
-	let mod: Renderer | undefined = pages[page]
+	let mod: Renderer | any | undefined = pages[page]
 	currentRequest = req
 
 	let pagePath = path.join(pageDir, page + '.html')
@@ -333,6 +332,7 @@ export function render(
 		}
 	}
 	const source = fs.readFileSync(pagePath, {encoding: 'utf8'})
+
 	mod = compile(pagePath, source, getName(page))
 	if (!mod) {
 		throw new Error(`Could not compile renderer for ${page}`)
