@@ -38,7 +38,7 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 		values: ['Microsoft Office Word 97-2003 Document'],
 	},
 	'.docx': {keys: ['ZipFileName'], values: ['word/numbering.xml']},
-	'.mp4': {keys: [], values: []},
+	'.mp4': {keys: ['VideoFrameRate'], values: []},
 	'.pdf': {keys: ['PDFVersion'], values: []},
 	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
 	'.pptx': {keys: ['ZipFileName'], values: ['ppt/theme/theme1.xml']},
@@ -342,7 +342,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 			)
 
 			if (!isFileValid) {
-				req.flash('error', 'not valid file')
+				req.flash('error', `not valid ${data.type} file`)
 				res.redirect(`/courses/${course.id}/${module!.id}/edit`)
 				return
 			}
