@@ -32,8 +32,9 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+
+// Native js method to run on document ready thats crossbrowser and also will not override any existing on ready code
 function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
-// use like
 r(function(){
 	var title = getParameterByName('title');
 	document.title = title;
