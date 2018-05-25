@@ -26,6 +26,14 @@ function isDirectory(path: string) {
 	}
 }
 
+function isFile(path: string) {
+	try {
+		return fs.statSync(path).isFile()
+	} catch (err) {
+		return false
+	}
+}
+
 function toHtml(text: string) {
 	if (text) {
 		const lines = text
@@ -100,7 +108,6 @@ function readComponentDir(dir: string, nestedDirName?: string) {
 
 function readAll() {
 	readComponentDir(componentDir)
-	readComponentDir(pageDir)
 }
 
 export function renderTest(req: express.Request, res: express.Response) {
@@ -111,11 +118,20 @@ export function renderTest(req: express.Request, res: express.Response) {
 }
 
 export function renderWithHelpers(
-	componentName: string,
+	page: string,
 	req: express.Request,
 	res: express.Response,
 	withData: any
 ) {
+	let pagePath = path.join(pageDir, page + '.html')
+	if (!isFile(pagePath)) {
+		pagePath = path.join(pageDir, page, 'index.html')
+		if (!isFile(pagePath)) {
+			throw new Error(`Could not find a matching .html file for ${page}`)
+		}
+	}
+	const component = require(pagePath)
+
 	currentRequest = req
 	logger.debug(`rendering component:${componentName}`)
 	const component = require(componentList[componentName])
