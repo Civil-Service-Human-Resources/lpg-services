@@ -213,7 +213,6 @@ async function uploadEntries(
 		const stream = isFileName
 			? fs.createReadStream(file)
 			: streamifier.createReadStream(file.data)
-		console.log("reached")
 		stream
 			.pipe(unzip.Parse())
 			.on('entry', (entry: unzip.Entry) => {
