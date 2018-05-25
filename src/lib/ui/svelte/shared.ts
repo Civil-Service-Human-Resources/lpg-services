@@ -1,3 +1,5 @@
+/*
+
 import * as path from 'path'
 import * as fs from 'fs'
 import * as express from 'express'
@@ -47,4 +49,9 @@ export function toHtml(text: string) {
 		return output
 	}
 	return ''
+}
+*/
+
+export function allc() {
+	console.log('hello')
 }

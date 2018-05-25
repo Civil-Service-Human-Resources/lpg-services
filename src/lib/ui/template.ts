@@ -230,7 +230,7 @@ function readComponentDir(dir: string, nestedDirName?: string) {
 			readComponentDir(path.join(componentDir, file), file)
 		}
 
-		if (file.endsWith('.html')) {
+		if (file.endsWith('.html') && !file.includes('Aatest')) {
 			// componentList.push(componentIdentity(file))
 
 			if (nestedDirName) {
@@ -258,7 +258,6 @@ function resetCache() {
 	// Do a first pass in order to figure out the component dependencies.
 	for (const componentName of Object.keys(componentList)) {
 		const componentPath = componentList[componentName]
-		console.log(componentName)
 		const source = fs.readFileSync(componentPath, {encoding: 'utf8'})
 		try {
 			const compiled = svelte.parse(source, {
