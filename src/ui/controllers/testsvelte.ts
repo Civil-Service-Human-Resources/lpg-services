@@ -1,3 +1,4 @@
+import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as fileHelpers from 'lib/fileHelpers'
 
@@ -8,6 +9,7 @@ import * as path from 'path'
 
 /*tslint:disable*/
 require('svelte/ssr/register')
+const {Store} = require('svelte/store.umd.js')
 /*tslint:enable*/
 
 const rootDir = process.cwd()
@@ -67,6 +69,7 @@ let currentRequest: express.Request
 function getHelpers(): {} {
 	const req = getCurrentRequest()
 	return {
+		config,
 		datetime,
 		fileHelpers,
 		i18n: req.__ ? req.__.bind(req) : null,
@@ -114,7 +117,7 @@ export function renderTest(req: express.Request, res: express.Response) {
 	currentRequest = req
 	readAll()
 
-	renderWithHelpers('Aatest', req, res, {answer: 42})
+	renderWithHelpers('test', req, res, {answer: 42})
 }
 
 export function renderWithHelpers(
@@ -130,15 +133,17 @@ export function renderWithHelpers(
 			throw new Error(`Could not find a matching .html file for ${page}`)
 		}
 	}
+
 	const component = require(pagePath)
 
 	currentRequest = req
-	logger.debug(`rendering component:${componentName}`)
-	const component = require(componentList[componentName])
+	logger.debug(`rendering component:${component}`)
+
 	const data = {
-		...getHelpers(),
 		...withData,
 	}
-
-	res.send(component.render(data))
+	const store = new Store({
+		...getHelpers(),
+	})
+	res.send(component.render(data, {store}).html)
 }
