@@ -327,7 +327,7 @@ export async function renderEditPage(
 	res: express.Response
 ) {
 	const inputName = req.params.profileDetail
-	let options = {}
+	let options: {[prop: string]: any} = {}
 	let optionType: string = ''
 	let value = null
 	let lede
@@ -342,6 +342,16 @@ export async function renderEditPage(
 			break
 		case 'other-areas-of-work':
 			options = haltoObject(await registry.halNode('professions'))
+			if (req.user.areasOfWork) {
+				const profession: string = Object.values(
+					req.user.areasOfWork
+				)[0].toString()
+				const indexOfProfession: number = Object.values(options).indexOf(
+					profession
+				)
+				delete options[Object.keys(options)[indexOfProfession]]
+			}
+
 			optionType = OptionTypes.Checkbox
 			break
 		case 'department':
@@ -471,7 +481,7 @@ export async function updateProfile(
 ) {
 	const req = ireq as extended.CourseRequest
 
-	const inputName = req.params.profileDetail
+	let inputName = req.params.profileDetail
 	let fieldValue = req.body[inputName]
 
 	const node = nodes[inputName]
@@ -484,6 +494,7 @@ export async function updateProfile(
 			break
 		case 'profession':
 			if (Array.isArray(fieldValue)) {
+				inputName = 'areasOfWork'
 				fieldValue = fieldValue.join(',')
 			}
 			break
