@@ -526,6 +526,7 @@ export class User {
 			user.areasOfWork = Object.values(data.profession || data.areasOfWork)
 		}
 		user.otherAreasOfWork = data.otherAreasOfWork
+		user.lineManager = data.lineManager
 		return user
 	}
 
@@ -540,6 +541,8 @@ export class User {
 	lineManager?: string
 	otherAreasOfWork?: string[]
 	givenName?: string
+
+
 	grade?: string
 
 	constructor(
