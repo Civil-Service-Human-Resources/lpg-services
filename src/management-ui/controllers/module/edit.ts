@@ -332,7 +332,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 				res.redirect(`/courses/${course.id}/${moduleIndex}/file`)
 				return
 			}
-			
+
 			//await
 			const isFileValid = await pendingFileHandler(
 				ireq,
