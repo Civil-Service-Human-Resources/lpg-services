@@ -31,7 +31,7 @@ export enum nodes {
 	'email-addresss' = 'emailAddress',
 	'department' = 'organisation',
 	'grade' = 'grade',
-	'areas-of-work' = 'profession',
+	'primary-area-of-work' = 'profession',
 	'other-areas-of-work' = 'otherAreasOfWork',
 	'password' = 'password',
 }
@@ -330,9 +330,15 @@ export async function renderEditPage(
 	let options = {}
 	let optionType: string = ''
 	let value = null
+	let lede
 	switch (inputName) {
 		case 'given-name':
 			value = req.user.givenName
+			break
+		case 'primary-area-of-work':
+			lede = req.__('register_area_page_intro')
+			options = haltoObject(await registry.halNode('professions'))
+			optionType = OptionTypes.Radio
 			break
 		case 'other-areas-of-work':
 			options = haltoObject(await registry.halNode('professions'))
@@ -370,6 +376,7 @@ export async function renderEditPage(
 		template.render('profile/edit', req, res, {
 			...res.locals,
 			inputName,
+			lede,
 			optionType,
 			options: Object.entries(options),
 			script,
