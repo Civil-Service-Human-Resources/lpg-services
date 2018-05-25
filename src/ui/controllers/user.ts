@@ -31,7 +31,7 @@ export enum nodes {
 	'email-addresss' = 'emailAddress',
 	'department' = 'organisation',
 	'grade' = 'grade',
-	'areas-of-work' = 'profession',
+	'primary-area-of-work' = 'profession',
 	'other-areas-of-work' = 'otherAreasOfWork',
 	'password' = 'password',
 }
@@ -327,15 +327,31 @@ export async function renderEditPage(
 	res: express.Response
 ) {
 	const inputName = req.params.profileDetail
-	let options = {}
+	let options: {[prop: string]: any} = {}
 	let optionType: string = ''
 	let value = null
+	let lede
 	switch (inputName) {
 		case 'given-name':
 			value = req.user.givenName
 			break
+		case 'primary-area-of-work':
+			lede = req.__('register_area_page_intro')
+			options = haltoObject(await registry.halNode('professions'))
+			optionType = OptionTypes.Radio
+			break
 		case 'other-areas-of-work':
 			options = haltoObject(await registry.halNode('professions'))
+			if (req.user.areasOfWork) {
+				const profession: string = Object.values(
+					req.user.areasOfWork
+				)[0].toString()
+				const indexOfProfession: number = Object.values(options).indexOf(
+					profession
+				)
+				delete options[Object.keys(options)[indexOfProfession]]
+			}
+
 			optionType = OptionTypes.Checkbox
 			break
 		case 'department':
@@ -370,6 +386,7 @@ export async function renderEditPage(
 		template.render('profile/edit', req, res, {
 			...res.locals,
 			inputName,
+			lede,
 			optionType,
 			options: Object.entries(options),
 			script,
@@ -464,7 +481,7 @@ export async function updateProfile(
 ) {
 	const req = ireq as extended.CourseRequest
 
-	const inputName = req.params.profileDetail
+	let inputName = req.params.profileDetail
 	let fieldValue = req.body[inputName]
 
 	const node = nodes[inputName]
@@ -477,6 +494,7 @@ export async function updateProfile(
 			break
 		case 'profession':
 			if (Array.isArray(fieldValue)) {
+				inputName = 'areasOfWork'
 				fieldValue = fieldValue.join(',')
 			}
 			break

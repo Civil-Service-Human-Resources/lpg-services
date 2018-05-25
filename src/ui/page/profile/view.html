@@ -78,20 +78,18 @@
                                 </a>
                             </td>
                         </tr>
-                    {{#if impossibleStatement}}
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_primary-area_label')}}</td>
+                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_primary-area-of-work_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
+                                {{Object.values(signedInUser.areasOfWork)[0]}}
 
                             </td>
                             <td class="key-value-list__item-action">
-                                <a href="/profile/areas-of-work">Change
+                                <a href="/profile/primary-area-of-work">Change
                                     <span class="visuallyhidden"> your area of work</span>
                                 </a>
                             </td>
                         </tr>
-                    {{/if}}
-
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_other-areas-of-work_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
@@ -114,9 +112,7 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_grade_label')}}</td>
                             <td class="key-value-list__value key-value-value--auto lpg-grade">
-                                {{#if signedInUser.grade}}
-                                    {{signedInUser.grade === 'other' ? 'Other' : i18n('grades')[signedInUser.grade] }}
-                                {{/if}}
+                                {{signedInUser.grade ? signedInUser.grade : ''}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/grade">Change
