@@ -37,16 +37,34 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 		keys: ['CompObjUserType'],
 		values: ['Microsoft Office Word 97-2003 Document'],
 	},
-	'.docx': {keys: ['ZipFileName'], values: ['word/numbering.xml']},
+	'.docx': {
+		keys: ['ZipFileName', 'MIMEType'],
+		values: [
+			'word/numbering.xml',
+			'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		],
+	},
 	'.mp4': {keys: ['VideoFrameRate'], values: []},
 	'.pdf': {keys: ['PDFVersion'], values: []},
 	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
-	'.pptx': {keys: ['ZipFileName'], values: ['ppt/theme/theme1.xml']},
+	'.pptx': {
+		keys: ['ZipFileName', 'MIMEType'],
+		values: [
+			'ppt/theme/theme1.xml',
+			'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+		],
+	},
 	'.xls': {
 		keys: ['CompObjUserType'],
 		values: ['Microsoft Office Excel 2003 Worksheet'],
 	},
-	'.xlsx': {keys: ['ZipFileName'], values: ['xl/drawings/drawing1.xml']},
+	'.xlsx': {
+		keys: ['ZipFileName', 'MIMEType'],
+		values: [
+			'xl/drawings/drawing1.xml',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		],
+	},
 	'.zip': {keys: ['ZipFileName'], values: []},
 }
 
