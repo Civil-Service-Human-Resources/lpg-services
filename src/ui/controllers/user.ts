@@ -44,11 +44,6 @@ const logger = log4js.getLogger('controllers/user')
 // Keep it in sync with the regex on WSO2.
 const validPassword = /(?!([a-zA-Z]*|[a-z\d]*|[^A-Z\d]*|[A-Z\d]*|[^a-z\d]*|[^a-zA-Z]*)$).{8,}/
 
-const SCIM2_HEADERS: Record<string, string> = {
-	Accept: 'application/json',
-}
-SCIM2_HEADERS['Content-Type'] = 'application/json'
-
 const http = axios.create({
 	httpsAgent: new https.Agent({
 		rejectUnauthorized: false,
@@ -312,7 +307,7 @@ export function renderAreasOfWorkPage(
 	res.send(
 		template.render('profile/edit', req, res, {
 			currentLevel,
-			inputName: 'areas-of-work',
+			inputName: 'other-areas-of-work',
 			lede,
 			levels: levelsToShow,
 			...res.locals,
