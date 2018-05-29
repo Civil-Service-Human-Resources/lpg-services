@@ -58,6 +58,26 @@ services:
 
 # CSHR
 
+  identity:
+    container_name: identity
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    image: cshr/identity-service:local-1
+    ports:
+      - 8080:8080
+      - 8081:8081
+
+  civil-servant-registry:
+    container_name: civil-servant-registry
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - CHECK_TOKEN_URL=http://identity:8080/oauth/check_token
+    image: cshr/civil-servant-registry-service:f0199521cc315fed7ffdc22921b13a00930ef264
+    links:
+      - identity
+    ports:
+      - 9002:9002
+
   learner-record:
     container_name: learner-record
     environment:
@@ -84,7 +104,6 @@ services:
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: changeme
     image: cshr/lpg-learning-catalogue:222b2025e3c8f3ec2ad29b65304edc0f2a5a642d
-
     ports:
       - 9001:9001
 
