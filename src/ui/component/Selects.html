@@ -5,3 +5,22 @@
 {:elseif optionType === 'radio'}
 	<NewRadios {options} {inputName} {script} {value} />
 {/if}
+
+<script>
+	import TypeAhead from './TypeAhead.html'
+	import Checkboxes from './Checkboxes.html'
+	import NewRadios from './NewRadios.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+		    TypeAhead,
+		    Checkboxes,
+		    NewRadios
+		}
+	}
+</script>

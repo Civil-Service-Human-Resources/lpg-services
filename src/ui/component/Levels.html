@@ -4,3 +4,20 @@
         <Level {levelOptions} {level} {selected} {selectedArr} {isEndOfBranch}/>
     {/each}
 </div>
+
+<script>
+	import LevelsNav from './LevelsNav.html'
+	import Level from './Level.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+            LevelsNav,
+            Level
+		}
+	}
+</script>

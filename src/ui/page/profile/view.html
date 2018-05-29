@@ -2,7 +2,7 @@
     <div class="container">
         <h1 class="heading-large">
             <span class="heading-secondary">Your profile</span>
-            {$i18n('profile_page_title', signedInUser.givenName || '') }
+            {$i18n('profile_page_title', $signedInUser.givenName || '') }
         </h1>
         {#if updateSuccessful}
             <Banner type="confirmation" message={$i18n('profile_updated')} />
@@ -24,7 +24,7 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_name_label')}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-given-name">
-                                {signedInUser.givenName || ''}
+                                {$signedInUser.givenName || ''}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/given-name">Change
@@ -35,7 +35,7 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_email_label')}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-email-address">
-                                {signedInUser.userName}
+                                {$signedInUser.userName}
                             </td>
                             <td class="key-value-list__item-action lpg-email-address-read-only">
 
@@ -68,8 +68,8 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_department_label')}</td>
                             <td class="key-value-list__value key-value-list__auto--auto lpg-department">
-                                {#if signedInUser.department}
-                                    {signedInUser.department === 'other' ? 'Other' : i18n('departments')[signedInUser.department] }
+                                {#if $signedInUser.department}
+                                    {$signedInUser.department === 'other' ? 'Other' : i18n('departments')[$signedInUser.department] }
                                 {/if}
                             </td>
                             <td class="key-value-list__item-action">
@@ -96,8 +96,8 @@
                             <td class="key-value-list__key key-value-list__key--auto ">{$i18n('profile_other-areas-of-work_label')}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
                                 <ul>
-                                    {#if signedInUser.otherAreasOfWork}
-                                        {#each signedInUser.otherAreasOfWork as aow}
+                                    {#if $signedInUser.otherAreasOfWork}
+                                        {#each $signedInUser.otherAreasOfWork as aow}
                                             <li>
                                                 {aow === 'other' ? 'Other' :  aow.name}
                                             </li>
@@ -114,8 +114,8 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_grade_label')}</td>
                             <td class="key-value-list__value key-value-value--auto lpg-grade">
-                                {#if signedInUser.grade}
-                                    {signedInUser.grade === 'other' ? 'Other' : i18n('grades')[signedInUser.grade] }
+                                {#if $signedInUser.grade}
+                                    {$signedInUser.grade === 'other' ? 'Other' : i18n('grades')[$signedInUser.grade] }
                                 {/if}
                             </td>
                             <td class="key-value-list__item-action">
@@ -134,3 +134,20 @@
         </div>
     </div>
 </Page>
+<script>
+	import Page from '../../component/Page.html'
+	import Banner from '../../component/Banner.html'
+
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			Banner
+		}
+	}
+</script>

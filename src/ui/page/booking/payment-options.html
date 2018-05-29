@@ -15,7 +15,7 @@
                         <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                             Error
                         </h2>
-                        <p>You must enter the {signedInUser.department == ('co' || 'dh') ? 'purchase order number' : 'email address of your financial approver' }</p>
+                        <p>You must enter the {$signedInUser.department == ('co' || 'dh') ? 'purchase order number' : 'email address of your financial approver' }</p>
                     </div>
                 {/if}
                 <form autocomplete="nope" method="post">
