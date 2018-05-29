@@ -35,21 +35,17 @@ stage "Running the unit tests"
 npm test
 
 stage "Building the new lpg-services docker image"
-docker build --cache-from cshr/lpg-services-ui:latest -t cshr/lpg-services:${TRAVIS_COMMIT} .
+docker build --cache-from cshr/lpg-services:latest --build-arg VERSION=${TRAVIS_COMMIT} -t cshr/lpg-services:${TRAVIS_COMMIT} .
+
+export BRANCH_TAG=`echo ${TRAVIS_BRANCH} | sed 's/\//-/g'`
 
 stage "Pushing the lpg-services-ui ${TRAVIS_COMMIT} docker image"
+docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:${BRANCH_TAG}
 docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
 docker push cshr/lpg-services
 
-stage "Installing ansible if necessary"
-export PATH="`pwd`/pyhome/bin:${PATH}"
-export PYTHONPATH="`pwd`/pyhome/lib/python/site-packages:${PYTHONPATH}"
-export PYTHONPATH="`pwd`/pyhome/lib/python2.7/site-packages:${PYTHONPATH}"
-
-PYTHONUSERBASE=pyhome pip install --user ansible==2.4.3.0
-
 stage "Deploying to the dev environment"
-./environ/deploy dev ${TRAVIS_COMMIT}
+#./environ/deploy dev2 ${TRAVIS_COMMIT}
 
 stage "Installing the wdio test dependencies"
 cd test/webdriver

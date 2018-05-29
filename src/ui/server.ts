@@ -4,6 +4,7 @@ import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
+import * as fs from 'fs'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as lusca from 'lusca'
@@ -145,6 +146,18 @@ app.get('/reset-password', userController.resetPassword)
 
 app.get('/privacy', (req, res) => {
 	res.send(template.render('privacy', req, res))
+})
+
+app.get('/status', (req, res) => {
+    let version = 'unknown'
+    try {
+        version = fs.readFileSync('VERSION.txt')
+    } catch (e) {
+        logger.debug('No version set')
+    }
+	res.send({
+		version,
+	})
 })
 
 app.post('/feedback.record', asyncHandler(feedbackController.record))

@@ -42,6 +42,9 @@ ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
 RUN npm install -g yarn
 RUN yarn
 
+ARG VERSION=dev
+RUN echo ${VERSION} >> ./VERSION.txt
+
 COPY dist dist
 
 # This needs to be specified after the `npm install`
