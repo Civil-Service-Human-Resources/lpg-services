@@ -1,26 +1,30 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-# Usage: deploy [ENVIRONMENT] [IMAGE_TAG]
+end() {
+  EXIT_CODE=$1
+  MESSAGE="$2"
+  echo -e "\n${MESSAGE}"
+  exit ${EXIT_CODE}
+}
 
-repo=lpg-ansible-mvp
+ENV="$1"
+TAG="$2"
+UPDATE_TIMEOUT=900
 
-cd "$(dirname "$0")"
+echo "Checking ${ENV} has been updated to ${TAG}"
 
-if [ -d "$repo/.git" ]; then
-    cd $repo
-    git config advice.detachedHead false
-    git clean -fdx
-    git reset --hard HEAD
-    git remote update
-    git checkout origin/master
-else
-    rm -rf $repo
-    git clone https://github.com/Civil-Service-Human-Resources/$repo
-    cd $repo
-fi
 
-# TODO(tav): Make this default to deploying to the test environment and use the
-# current checked out source to derive the image tag.
-#
-# ./deploy.sh lpgservices "${1:-test}" "${2:-$(git rev-parse HEAD)}"
-./deploy.sh lpgservices "$1" "$2"
+START=`date +%s`
+
+while [ $(( `date +%s` - $START )) -lt ${UPDATE_TIMEOUT} ]; do
+  version=`curl https://dev-lpg.cshr.digital/status | grep "version"`
+
+  if [ -z "${version##*$TAG*}" ]; then
+    end 0 "update complete"
+  else
+    echo -n "."
+    sleep 5;
+  fi
+done
+
+end 1 "update timed out"
