@@ -91,7 +91,6 @@ export async function saveContent(
 	module: model.Module,
 	file: any
 ) {
-
 	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
 
 	const currentCourse = await catalog.get(course.id)!

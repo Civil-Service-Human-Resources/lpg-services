@@ -38,5 +38,10 @@ export function signIn(req: express.Request, res: express.Response) {
 }
 
 export function signOut(req: express.Request, res: express.Response) {
-	passport.logout(config.AUTHENTICATION.serviceUrl, config.LPG_MANAGMENT_SERVER, req, res)
+	passport.logout(
+		config.AUTHENTICATION.serviceUrl,
+		config.LPG_MANAGMENT_SERVER,
+		req,
+		res
+	)
 }

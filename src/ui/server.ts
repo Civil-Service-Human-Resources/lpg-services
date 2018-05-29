@@ -149,12 +149,12 @@ app.get('/privacy', (req, res) => {
 })
 
 app.get('/status', (req, res) => {
-    let version = 'unknown'
-    try {
-        version = fs.readFileSync('VERSION.txt')
-    } catch (e) {
-        logger.debug('No version set')
-    }
+	let version = 'unknown'
+	try {
+		version = fs.readFileSync('VERSION.txt').toString()
+	} catch (e) {
+		logger.debug('No version set')
+	}
 	res.send({
 		version,
 	})
