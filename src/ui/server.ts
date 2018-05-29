@@ -27,8 +27,6 @@ import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
-import * as svelteTestController from './controllers/testsvelte'
-
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
 const favicon = require('serve-favicon')
@@ -132,7 +130,7 @@ passport.configure(
 )
 i18n.configure(app)
 
-app.get('/testsvelte', svelteTestController.renderTest)
+// app.get('/testsvelte', svelteTestController.renderTest)
 
 app.param('courseId', asyncHandler(courseController.loadCourse))
 app.param('moduleId', asyncHandler(courseController.loadModule))

@@ -9,3 +9,21 @@
         <DisciteModuleActions {course} {modifier} {module} />
     </slot>
 </div>
+<script>
+	import DisciteModuleMain from './disciteParts/DisciteModuleMain.html'
+	import DisciteModuleProperties from './disciteParts/DisciteModuleProperties.html'
+	import DisciteModuleActions from './disciteParts/DisciteModuleActions.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+		    DisciteModuleActions,
+		    DisciteModuleMain,
+		    DisciteModuleProperties
+		}
+	};
+</script>

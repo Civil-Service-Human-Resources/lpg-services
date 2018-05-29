@@ -28,7 +28,7 @@
   <div class="grid-row">
       <div class="column-full">
       {#if home === true }
-        <p><a href="/suggestions-for-you">{i18n('home_page_suggestions_link')}</a></p>
+        <p><a href="/suggestions-for-you">{$i18n('home_page_suggestions_link')}</a></p>
       {:elseif (suggestedLearning.length === 6)}
        
       {/if}
@@ -36,3 +36,17 @@
   </div>
 
 </div>
+<script>
+	import Tile from './Tile.html';
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+		    Tile,
+		}
+	};
+</script>

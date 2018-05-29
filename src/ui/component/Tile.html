@@ -1,4 +1,3 @@
-
 <div class="tile">
 	<h4 class="heading-small">
 		<a href="/courses/{course.id}">
@@ -8,10 +7,10 @@
 	{#if home}
 	<p class="tile__attribution">{isLast ? 'Department:' : 'Work area: '}
 	{#if isLast}
-     {i18n('departments')[signedInUser.department]}
+     {$i18n('departments')[$signedInUser.department]}
 	{:elseif course.getAreasOfWork().length}
 	    {#each course.getAreasOfWork() as aow, index}
-	        {i18n('areas-of-work')[aow]}{course.getAreasOfWork().length !== index + 1 ? ', ' : ''}
+	        {$i18n('areas-of-work')[aow]}{course.getAreasOfWork().length !== index + 1 ? ', ' : ''}
 	    {/each}
     {/if}
 	</p>
@@ -19,7 +18,7 @@
 	<ul class="tile__properties">
             <li class="tile__property">
                 <span class="tile__key">Type</span>
-                <span class="tile__value">{i18n(course.getType())}</span>
+                <span class="tile__value">{$i18n(course.getType())}</span>
             </li>
 
             <li class="tile__property">

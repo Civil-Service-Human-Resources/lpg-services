@@ -1,10 +1,10 @@
-<Page title="{i18n('home_page_title')}" {_csrf}>
+<Page title="{$i18n('home_page_title')}" {_csrf}>
     <div class="container container--main">
         <div class="grid-row">
             <div class="column-full">
                 <Search>
                     <h1 class="heading heading-large heading--flush">
-                        {i18n('home_page_title')}
+                        {$i18n('home_page_title')}
                     </h1>
                     {#if readyForFeedback.length}
                     <p class="u-space-b5">You can
@@ -32,20 +32,21 @@
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading-medium heading heading--red-top lpg-required-learning">
-                    {i18n('required_section_title')}
+                    {$i18n('required_section_title')}
                 </h2>
 
                 {#if requiredLearning.length}
                 <div class="resources">
                     {#each requiredLearning as course}
-                    <DisciteCourse course={course} modifier="home" /> {/each}
+                    <DisciteCourse course={course} modifier="home" />
+                    {/each}
                 </div>
                 {:else}
-                <p>{i18n('required_learning_done')}</p>
+                <p>{$i18n('required_learning_done')}</p>
                 {/if}
 
                 <h2 class="heading-medium heading heading--red-top lpg-other-learning">
-                    {i18n('other_section_title')}
+                    {$i18n('other_section_title')}
                 </h2>
                 {#if plannedLearning.length}
                 <div class="resources lpg-other-courses">
@@ -53,13 +54,38 @@
                     <DisciteCourse course={course} modifier="home" /> {/each}
                 </div>
                 {:else}
-                <p>{i18n('no_planned_learning_yet')}</p>
+                <p>{$i18n('no_planned_learning_yet')}</p>
                 {/if}
             </div>
         </div>
     </div>
     <div class="fullbleed fullbleed--grey home__suggested">
-        <SuggestionsSection title="{i18n('suggestions_page_title')}" lede="{i18n('home_page_suggestions', i18n('proposition_name'))}"
+        <SuggestionsSection title="{$i18n('suggestions_page_title')}" lede="{$i18n('home_page_suggestions', $i18n('proposition_name'))}"
             {suggestedLearning} home={true} />
     </div>
 </Page>
+<script>
+    import Page from '../component/Page.html'
+    import Banner from '../component/Banner.html'
+    import Search from '../component/Search.html'
+	import SuggestionsSection from '../component/SuggestionsSection.html'
+	import DisciteCourse from '../component/DisciteCourse.html'
+	import DisciteModule from '../component/DisciteModule.html'
+
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Banner,
+			Search,
+			SuggestionsSection,
+			DisciteCourse,
+			DisciteModule,
+			Page,
+		}
+	};
+</script>
