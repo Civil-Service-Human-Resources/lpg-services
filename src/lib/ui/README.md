@@ -14,4 +14,4 @@ We are also using more standard svelte API so please refer to [svelte.technology
     Instead use a svelte store.
   * Stores are available to each parent which is rendered, and its children. You do not need to continually pass down data as a parameter to nested components.
   * To call a store inside a component, use `{$var}`. Occasionally you may need to wrap it in parentheses like so: `{($var)}`.
-  *
+* At the moment, we compile and render the pages on the server, then send this to the user using `res.send($compiledCode)`. This means that all of the clientside API for svelte will be disabled.

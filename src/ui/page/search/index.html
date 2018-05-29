@@ -57,8 +57,8 @@
                                         </div>
                                     </div>
                                     <div slot="actions">
-                                        <a href="/courses/{course.id}/{module.id}">{ i18n('action_' + (module.state || 'NOT_STARTED' )) } <span class="visuallyhidden"> this module</span></a>
-                                        {#if !course.isRequired(signedInUser) }
+                                        <a href="/courses/{course.id}/{module.id}">{ $i18n('action_' + (module.state || 'NOT_STARTED' )) } <span class="visuallyhidden"> this module</span></a>
+                                        {#if !course.isRequired($signedInUser) }
                                             {#if !course.record || course.record.state === 'ARCHIVED'}
                                                 <a class="lpg-add-from-search" href="/suggestions-for-you/add/{course.id}?ref=search">Add to learning plan</a>
                                             {:else}
@@ -100,3 +100,24 @@
         {/if}
     </div>
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+	import DisciteModule from '../../component/DisciteModule.html'
+	import DisciteCourse from '../../component/DisciteCourse.html'
+	import LeftSearchBox from '../../component/LeftSearchBox.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			DisciteModule,
+			DisciteCourse,
+			LeftSearchBox
+		}
+	}
+</script>
