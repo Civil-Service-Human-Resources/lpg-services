@@ -169,12 +169,10 @@
 
 	
 	var onStateChange = function(e,player) {
-		console.log(e)
 			// NOTE(tav): The current time will differ from the actual time the
 			// event was received by a few milliseconds. Polling will solve this
 			// issue, but then that masks any interleaving state changes.
 			videoLength = Math.floor(abstraction(player, 'duration'))
-			console.log('VIDEO LENGTH',videoLength)
 			currentTime = Math.floor(abstraction(player,'currentTime') * 1000) / 1000
 			if (currentTime >videoLength) currentTime = videoLength
 			currentProgress = Math.floor(currentTime / videoLength * 1000) / 1000
@@ -317,7 +315,7 @@
 			courseId = document.getElementById('course-id').value
 			moduleId = document.getElementById('module-id').value
 			sessionId = document.getElementById('session-id').value
-			videoId = document.getElementById('video-id').value
+			videoId = document.getElementById('video-id') ? document.getElementById('video-id').value : null
 			var elem = document.createElement('script')
 			elem.src = 'https://www.youtube.com/iframe_api'
 			var script = document.getElementsByTagName('script')[0]

@@ -265,7 +265,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		logger.debug('Redirecting')
 		res.redirect(redirect)
 	} else {
-		if (data.type === 'video' && !req.files) {
+		if (data.type === 'video' && Object.keys(req.files).length === 0) {
 			logger.debug('Getting video duration')
 
 			const info = await youtube.getBasicInfo(data.location)

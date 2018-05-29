@@ -519,7 +519,7 @@ export class User {
 		user.givenName = data.fullName ? data.fullName : data.givenName
 		user.grade = data.grade && data.grade.code ? data.grade.code : data.grade
 
-		//const areasOfWork = data.profession || data.areasOfWork
+		user.areasOfWork = data.profession || data.areasOfWork
 		user.otherAreasOfWork = data.otherAreasOfWork
 		return user
 	}
