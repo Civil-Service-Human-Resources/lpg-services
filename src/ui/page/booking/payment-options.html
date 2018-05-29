@@ -20,7 +20,7 @@
                 {/if}
                 <form autocomplete="nope" method="post">
                     <div class="form-group">
-                        {#if signedInUser.department == "hmrc"}
+                        {#if $signedInUser.department == "hmrc"}
                         <p>Financial approval - when prompted please select an approver to confirm your booking. To find out whether your organisation uses the financial approver process, please contact your learning and development team. They should be able to confirm the name of your financial approver.</p>
                         <label class="form-label" for="financial-approver">Financial approver</label>
                         <input class="form-control" id="financial-approver" type="email" name="financial-approver" value="{previouslyEntered ? previouslyEntered : ''}">

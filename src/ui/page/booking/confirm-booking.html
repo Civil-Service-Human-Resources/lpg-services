@@ -69,7 +69,7 @@
                         <ul class="booking__values">
 
                             {#if accessibilityReqs && accessibilityReqs.length} {#each accessibilityReqs as requirement } {#if requirement}
-                            <li class="booking__value booking__value--li lpg-access-reqs">{requirement === 'other' ? 'Other' : i18n('accessibility-requirements')[requirement]}</li>
+                            <li class="booking__value booking__value--li lpg-access-reqs">{requirement === 'other' ? 'Other' : $i18n('accessibility-requirements')[requirement]}</li>
                             {:else}
                             <li class="booking__value booking__value--li lpg-no-reqs">None</li>
                             {/if} {/each} {/if}
@@ -90,3 +90,20 @@
     </div>
 
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+    import Breadcrumb from '../../component/Breadcrumb.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			Breadcrumb,
+		}
+	}
+</script>

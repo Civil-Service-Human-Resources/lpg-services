@@ -5,11 +5,11 @@
     </h1>
     <div class="grid-row">
         <div class="column-two-thirds">
-            <div>{@html toHtml(course.description)}</div>
+            <div>{@html $toHtml(course.description)}</div>
 
             {#if course.learningOutcomes}
                 <h2 class="heading-medium">Learning outcomes</h2>
-                <div>{@html toHtml(course.learningOutcomes)}</div>
+                <div>{@html $toHtml(course.learningOutcomes)}</div>
             {/if}
         </div>
         <div class="column-one-third">
@@ -37,3 +37,20 @@
 </div>
 
 </Page>
+
+<script>
+	import Page from '../../component/Page.html'
+    import Rightbox from '../../component/Rightbox.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			Rightbox
+		}
+	}
+</script>

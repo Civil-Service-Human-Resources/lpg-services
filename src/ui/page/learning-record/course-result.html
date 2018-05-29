@@ -5,10 +5,10 @@
                 <div class="govuk-box-highlight results">
                     <h1 class="heading-xlarge">
                         {#if record.result}
-                            { i18n('courseResult.' + record.result) }
+                            { $i18n('courseResult.' + record.result) }
                         {:else}
 
-                            { module ? i18n('moduleResult.complete') : i18n('courseResult.complete') }
+                            { module ? $i18n('moduleResult.complete') : $i18n('courseResult.complete') }
                         {/if}
                     </h1>
                     <div>{ datetime.formatDate(record.completionDate) }</div>
