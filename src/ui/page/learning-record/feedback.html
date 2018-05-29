@@ -24,8 +24,8 @@
             <div class="grid-row ">
                 <div class="column-one-half ">
                     <fieldset class="bar-rating u-space-b30">
-                        <legend class="heading-small">{i18n('feedback_' + category + '_title')}</legend>
-                        <p>{i18n('feedback_' + category + '_description', i18n(module.type).toLowerCase())}</p>
+                        <legend class="heading-small">{$i18n('feedback_' + category + '_title')}</legend>
+                        <p>{$i18n('feedback_' + category + '_description', $i18n(module.type).toLowerCase())}</p>
 
                         <div class="bar-rating__scale" aria-hidden="true">
                             <span class="u-float-left">Not for me</span>
@@ -92,3 +92,17 @@
         </form>
     </div>
 </Page>
+<script>
+	import Page from '../../component/Page.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page
+		}
+	}
+</script>

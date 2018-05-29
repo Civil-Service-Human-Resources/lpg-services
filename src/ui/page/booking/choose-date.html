@@ -15,10 +15,10 @@
                 {#if errorTitle}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        {i18n(errorTitle)}
+                        {$i18n(errorTitle)}
                     </h2>
                     <p>
-                        {i18n(errorMessage)}
+                        {$i18n(errorMessage)}
                     </p>
                 </div>
                 {/if} {#if events && events.length}
@@ -39,7 +39,7 @@
                         </div>
                         {#each events as event}
                         <div class="div-table__row u-clearfix lpg-date-row">
-                            <div class="div-table__cell lpg-date">{datetime.formatDate(event.date)}</div>
+                            <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
                             <div class="div-table__cell">{course.getDuration()}</div>
                             <div class="div-table__cell">{event.location}</div>
                             <div class="div-table__cell lpg-price">&pound;{module.price}</div>

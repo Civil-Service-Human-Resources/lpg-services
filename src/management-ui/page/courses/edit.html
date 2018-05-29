@@ -45,7 +45,7 @@
                         </label>
                         <div class="resource resource__modules">
                             {#each (course.modules || []) as module, i}
-                             <DisciteModule {module} {dateTime}/>
+                             <DisciteModule {module} {$datetime}/>
                             {/each}
 
                         </div>

@@ -130,8 +130,6 @@ passport.configure(
 )
 i18n.configure(app)
 
-// app.get('/testsvelte', svelteTestController.renderTest)
-
 app.param('courseId', asyncHandler(courseController.loadCourse))
 app.param('moduleId', asyncHandler(courseController.loadModule))
 app.param('eventId', asyncHandler(courseController.loadEvent))

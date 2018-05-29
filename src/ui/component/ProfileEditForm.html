@@ -8,11 +8,11 @@
     <div class="form-group">
         {#if options && options.length }
 
-                <Selects {options} {optionType} {inputName} label="{i18n('profile_' + inputName + '_label')}" {value} />
+                <Selects {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} />
 
 
         {:else}
-            <label class="form-label" for="{inputName}">New {i18n('profile_' + inputName + '_label').toLowerCase()}</label>
+            <label class="form-label" for="{inputName}">New {$i18n('profile_' + inputName + '_label').toLowerCase()}</label>
             <input class="form-control" id="{inputName}" name="{inputName}" value="{value || ''}" type="{inputName === 'password' ? 'password' :'text'}">
         {/if}
     </div>

@@ -22,7 +22,7 @@
         </li>
         <li class="resource__info">
             <span>
-                {#if course.getType() !== 'blended'} {i18n(course.getType())} {#if course.duration}
+                {#if course.getType() !== 'blended'} {$i18n(course.getType())} {#if course.duration}
                 <br> {/if} {/if} {course.getDuration()} {#if course.price} {#if course.duration || course.getType()
                 !== 'blended'}
                 <br> {/if} &pound;{course.price} {/if}
@@ -31,7 +31,7 @@
         <li class="resource__info">
             {#if course.nextRequiredBy(signedInUser)}
             <span class="meta u-display-b">Due by:</span>
-            <span class="u-display-b">{datetime.formatDate(course.nextRequiredBy(signedInUser))}</span>
+            <span class="u-display-b">{$datetime.formatDate(course.nextRequiredBy(signedInUser))}</span>
             {:else}
             <span>
                 &nbsp;
@@ -40,9 +40,9 @@
         </li>
         <li class="resource__status">
             {#if course.record && course.record.state }
-            <span class="badge badge--info badge--smaller">{i18n(course.record.state)}</span>
+            <span class="badge badge--info badge--smaller">{$i18n(course.record.state)}</span>
             {/if} {#if course.getSelectedDate()}
-            <span class="meta">{datetime.formatDate(course.getSelectedDate())}</span>
+            <span class="meta">{$datetime.formatDate(course.getSelectedDate())}</span>
             {/if}
         </li>
     </ul>

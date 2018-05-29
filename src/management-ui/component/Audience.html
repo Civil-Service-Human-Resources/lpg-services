@@ -13,7 +13,7 @@
     {#each audiences as audience, i}
     <tbody>
         <tr>
-            <td class="key-value-list__key key-value-list__key--auto">{i18n('audience_department_label')}</td>
+            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_department_label')}</td>
             <td class="key-value-list__value key-value-list__auto--auto lpg-department">
                 <ul>
                     {#each audience.departments as department}
@@ -25,7 +25,7 @@
             </td>
         </tr>
         <tr>
-            <td class="key-value-list__key key-value-list__key--auto ">{i18n('audience_area_label')}</td>
+            <td class="key-value-list__key key-value-list__key--auto ">{$i18n('audience_area_label')}</td>
             <td class="key-value-list__value key-value-list__value--auto lpg-profession">
                 <ul>
                     {#each audience.areasOfWork as aow}
@@ -37,7 +37,7 @@
             </td>
         </tr>
         <tr>
-            <td class="key-value-list__key key-value-list__key--auto">{i18n('audience_grade_label')}</td>
+            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_grade_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-grade">
                 {#each audience.grades as grade}
                 <li class="audience__item">{ i18n('grades')[grade]}</li> {/each}
@@ -47,7 +47,7 @@
             </td>
         </tr>
         <tr>
-            <td class="key-value-list__key key-value-list__key--auto">{i18n('audience_mandatory_label')}</td>
+            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_mandatory_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-mandatory">
                 <input id="mandatory" type="checkbox" name="mandatory" value="true" checked="{ audience.mandatory=== 'true'  ? 'checked' : '' }"
                     disabled="disabled">
@@ -57,7 +57,7 @@
             </td>
         </tr>
         <tr>
-            <td class="key-value-list__key key-value-list__key--auto">{i18n('audience_frequency_label')}</td>
+            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_frequency_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-frequency">
                 {audience.frequency? i18n('frequency')[audience.frequency] : '' }</td>
             <td>
@@ -65,7 +65,7 @@
             </td>
         </tr>
         <tr>
-            <td class="key-value-list__key key-value-list__key--auto">{i18n('audience_required-by_label')}</td>
+            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_required-by_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-required-by">
                 { audience.requiredBy ? datetime.formatDate(audience.requiredBy) : ''}</td>
             <td>

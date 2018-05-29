@@ -1,10 +1,10 @@
-<Page title="Change your {i18n('profile_' + inputName + '_label').toLowerCase()}" {script} {_csrf}>
+<Page title="Change your {$i18n('profile_' + inputName + '_label').toLowerCase()}" {script} {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="{inputName === 'areas-of-work' ? 'column-full' : 'column-two-thirds' }">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Your profile</span>
-                    Change your {i18n('profile_' + inputName + '_label').toLowerCase()}
+                    Change your {$i18n('profile_' + inputName + '_label').toLowerCase()}
                 </h1>
                 {#if lede}
                     <p class="lede">
@@ -22,7 +22,7 @@
                         {#if identityServerFailed} Server error. Update failed, please try again or contact the
                         <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>
                         {:elseif validFields === false}
-                            Form error. {i18n('profile_' + inputName + '_label')} field cannot be empty.
+                            Form error. {$i18n('profile_' + inputName + '_label')} field cannot be empty.
                         {:elseif passwordFailed}
                             {passwordFailed}
                         {/if}
@@ -35,7 +35,7 @@
 
                     <Levels {levels} {selected} {selectedArr} {isEndOfBranch}/>
                 {:else}
-                    <ProfileEditForm {options} {optionType} {inputName} label="{i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
+                    <ProfileEditForm {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
                 {/if}
             </div>
         </div>
