@@ -10,6 +10,8 @@ import * as path from 'path'
 
 /*tslint:disable*/
 require('svelte/ssr/register')
+const svelte = require('svelte')
+
 const {Store} = require('svelte/store.umd.js')
 /*tslint:enable*/
 
@@ -19,19 +21,19 @@ const pageDir = path.join(rootDir, 'page')
 
 // const componentList: Record<string, string> = {}
 
-const logger = log4js.getLogger('svelte compilation')
-
-// function isDirectory(path: string) {
-// 	try {
-// 		return fs.statSync(path).isDirectory()
-// 	} catch (err) {
-// 		return false
-// 	}
-// }
+const logger = log4js.getLogger('lib/svelte')
 
 function isFile(path: string) {
 	try {
 		return fs.statSync(path).isFile()
+	} catch (err) {
+		return false
+	}
+}
+
+function isDirectory(path: string) {
+	try {
+		return fs.statSync(path).isDirectory()
 	} catch (err) {
 		return false
 	}
@@ -113,6 +115,31 @@ function readComponentDir(dir: string, nestedDirName?: string) {
 function readAll() {
 	readComponentDir(componentDir)
 } */
+function readPageDir(dir: string, nestedDirName?: string) {
+	for (const file of fs.readdirSync(dir)) {
+		if (isDirectory(path.join(dir, file))) {
+			readPageDir(path.join(dir, file), file)
+		}
+
+		if (file.endsWith('.html')) {
+			const pagepath = `${dir}/${file}`
+
+			if (isDirectory(pagepath)) {
+				readPageDir(pagepath)
+			}
+
+			try {
+				svelte.parse(pagepath)
+				console.debug(`Page ${file} compiled successfully`)
+			} catch (e) {
+				logger.error(`Page ${file} could not be compiled. ${e}`)
+				console.error(`Page ${file} could not be compiled. ${e}`)
+			}
+		}
+	}
+}
+
+readPageDir(pageDir)
 
 export function render(
 	page: string,
