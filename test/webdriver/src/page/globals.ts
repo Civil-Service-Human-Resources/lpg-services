@@ -11,6 +11,7 @@ export const selectors: Record<string, string> = {
 	learningRecordMenuButton: 'a[href="/learning-record"]',
 	license: 'a[rel="license"]',
 	privacy: 'a[href="https://lpg.cshr.digital/privacy"]',
+	privacyLoggedIn: 'a[href="/privacy"]',
 	profileMenuButton: 'a[href="/profile"]',
 	searchMenuButton: 'a[href="/search"]',
 	signoutMenuButton: 'a[href="/sign-out"]',

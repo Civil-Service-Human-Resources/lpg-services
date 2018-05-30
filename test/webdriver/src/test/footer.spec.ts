@@ -48,8 +48,7 @@ describe('Footer for LPG', () => {
 		expect(browser.element(selectors.license).isVisible()).toBe(true)
 	})
 
-	//TODO: wait on bug fix for LPFG-387åß
-	xit('Display footer privacy logged in', () => {
-		expect(browser.element(selectors.privacy).isVisible()).toBe(true)
+	it('Display footer privacy logged in', () => {
+		expect(browser.element(selectors.privacyLoggedIn).isVisible()).toBe(true)
 	})
 })

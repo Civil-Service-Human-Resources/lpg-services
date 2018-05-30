@@ -34,6 +34,7 @@ exports.config = {
 		'dist/test/login.spec.js',
 		'dist/test/footer.spec.js',
 		'dist/test/home.spec.js',
+		// 'dist/test/search.spec.js',
 		//'dist/test/book.spec.js',
 	],
 	sync: true,
