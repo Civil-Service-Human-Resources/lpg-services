@@ -454,13 +454,37 @@ export async function patchAndUpdate(
 ) {
 	const call: Record<string, string> = {}
 	call[node] = value
-	const response = await registry.patch(
+	const response = (node !== 'lineManager') ? await registry.patch(
 		'civilServants',
+		call,
+		req.user.accessToken
+	) : await registry.checkLineManager(
 		call,
 		req.user.accessToken
 	)
 
-	if (response) {
+	if (node === 'lineManager' && (response as any).status !== 200)  {
+		const inputName = 'line-manager'
+		const status = (response as any).status
+		let lineManagerFailed = null
+
+		switch (status) {
+			case 404:
+				lineManagerFailed = 'Line Manager Email does not exist'
+				break
+			case 400:
+				lineManagerFailed = 'You may not be your own line manager'
+				break
+		}
+
+		res.send(
+			template.render('profile/edit', req, res, {
+				inputName,
+				lineManagerFailed,
+			})
+		)
+		return
+	} else if (response) {
 		// seems like we have to get the profile again to get values
 		// which seems ...not good
 		const profile = await registry.profile(req.user.accessToken)

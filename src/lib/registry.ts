@@ -1,3 +1,4 @@
+import axios from 'axios'
 import * as config from 'lib/config'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
@@ -47,6 +48,28 @@ export async function follow(path: string, nodes: string[]) {
 				}
 			})
 	)
+
+	return result
+}
+
+export async function checkLineManager(data: any, token: string) {
+	const result = await new Promise((resolve, reject) => {
+		const http = axios.create({
+			baseURL: config.CHECK_LINEMANAGER_URL,
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			timeout: 5000,
+		})
+
+		http.get(`?email=${data.lineManager}`).then( (response: any) => {
+			resolve(response)
+		}).catch( (error: any) => {
+			console.log(error.response.status)
+			resolve(error.response)
+		})
+	})
 
 	return result
 }

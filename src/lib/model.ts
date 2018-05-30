@@ -2,6 +2,11 @@ import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 
+export interface LineManager {
+	email: string,
+	uid: string,
+}
+
 export class Course {
 	static create(data: any) {
 		const course = new Course(data.id)
@@ -507,6 +512,7 @@ export class Feedback {
 }
 
 export class User {
+
 	static create(data: any) {
 		const user = new User(
 			data.uid || data.id,
@@ -526,7 +532,12 @@ export class User {
 			user.areasOfWork = Object.values(data.profession || data.areasOfWork)
 		}
 		user.otherAreasOfWork = data.otherAreasOfWork
-		user.lineManager = data.lineManager
+
+		user.lineManager = {
+			email : data.lineManagerEmail ? data.lineManagerEmail : data.lineManager.email,
+			uid	  : data.lineManagerUid ? data.lineManagerUid  : data.lineManager.uid,
+		}
+
 		return user
 	}
 
@@ -538,10 +549,9 @@ export class User {
 
 	department?: string
 	areasOfWork?: string[]
-	lineManager?: string
+	lineManager?: LineManager
 	otherAreasOfWork?: string[]
 	givenName?: string
-
 
 	grade?: string
 

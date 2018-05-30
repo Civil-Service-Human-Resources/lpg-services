@@ -254,5 +254,7 @@
 		"video": "Video"
 	},
 	"document": "document",
-	"file": "file"
+	"file": "file",
+	"profile_undefined_label": "profile_undefined_label",
+	"profile_lineManager_label": "profile_lineManager_label"
 }

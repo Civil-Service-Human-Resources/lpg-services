@@ -127,7 +127,7 @@
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_line-manager_label')}</td>
                             <td class="key-value-list__value key-value-value--auto lpg-grade">
                                 {#if $signedInUser.lineManager}
-                                    { $signedInUser.lineManager }
+                                    { $signedInUser.lineManager.email }
                                 {/if}
                             </td>
                             <td class="key-value-list__item-action">
