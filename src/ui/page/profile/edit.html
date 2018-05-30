@@ -1,4 +1,4 @@
-<Page title="Change your {$i18n('profile_' + inputName + '_label').toLowerCase()}" {script} {_csrf}>
+<Page title="Change your {$i18n('profile_' + inputName + '_label').toLowerCase()}" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="{inputName === 'areas-of-work' ? 'column-full' : 'column-two-thirds' }">
@@ -43,7 +43,7 @@
 </Page>
 <script>
 	import Page from '../../component/Page.html'
-	import Levels from '../../component/Levels.html'
+	import Levels from '../../component/levels/Levels.html'
 	import ProfileEditForm from '../../component/ProfileEditForm.html'
 
 	export default {
