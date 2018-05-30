@@ -13,7 +13,7 @@ WEB_HOOK_URL="$3"
 UPDATE_TIMEOUT=900
 
 echo "Calling web hook for ${ENV}"
-curl ${WEB_HOOK_URL}
+curl --header "Content-Type: application/json" --request POST --data '{}' ${WEB_HOOK_URL}
 
 echo "Checking ${ENV} has been updated to ${TAG}"
 
