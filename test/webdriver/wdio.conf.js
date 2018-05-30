@@ -33,7 +33,7 @@ exports.config = {
 		'dist/test/feedback.spec.js',
 		'dist/test/login.spec.js',
 		'dist/test/footer.spec.js',
-		//'dist/test/home.spec.js',
+		'dist/test/home.spec.js',
 		//'dist/test/book.spec.js',
 	],
 	sync: true,

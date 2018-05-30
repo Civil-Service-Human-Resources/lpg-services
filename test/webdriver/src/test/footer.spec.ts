@@ -7,20 +7,28 @@ describe('Footer for LPG', () => {
 		browser.url(config.URL)
 	})
 
+	afterAll(done => {
+		browser.close()
+	})
+
 	it('Display footer author', () => {
 		expect(browser.isVisible(selectors.author)).toBe(true)
 	})
+
 	it('Display footer cookies', () => {
 		expect(browser.isVisible(selectors.cookies)).toBe(true)
 	})
+
 	it('Display footer copywrite', () => {
 		expect(browser.isVisible(selectors.copyright)).toBe(true)
 	})
+
 	it('Display footer license', () => {
 		expect(browser.element(selectors.license).isVisible()).toBe(true)
 	})
-	xit('Display footer privacy', () => {
-		expect(browser.isVisible(selectors.privacy)).toBe(true)
+
+	it('Display footer privacy', () => {
+		expect(browser.element(selectors.privacy).isVisible()).toBe(true)
 	})
 
 	it('Display footer author logged in', () => {
@@ -40,7 +48,8 @@ describe('Footer for LPG', () => {
 		expect(browser.element(selectors.license).isVisible()).toBe(true)
 	})
 
-	it('Display footer privacy logged in', () => {
-		expect(browser.isVisible(selectors.privacy)).toBe(true)
+	//TODO: wait on bug fix for LPFG-387åß
+	xit('Display footer privacy logged in', () => {
+		expect(browser.element(selectors.privacy).isVisible()).toBe(true)
 	})
 })

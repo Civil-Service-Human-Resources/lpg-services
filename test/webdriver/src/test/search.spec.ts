@@ -10,6 +10,10 @@ describe('Search page funtionality', () => {
 		browser.url(config.BASE_URL)
 	})
 
+	afterAll(done => {
+		browser.close()
+	})
+
 	it('Should add to learning plan from search', async () => {
 		search('the')
 		const courseName = browser.getText(selectors.courseName)
