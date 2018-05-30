@@ -29,7 +29,7 @@ npm test
 stage "Building the new lpg-services docker image"
 docker build --cache-from cshr/lpg-services:latest --build-arg VERSION=${TRAVIS_COMMIT} -t cshr/lpg-services:${TRAVIS_COMMIT} .
 
-export BRANCH_TAG=`echo ${TRAVIS_BRANCH} | sed 's/\//-/g'`
+export BRANCH_TAG=`echo ${TRAVIS_PULL_REQUEST_BRANCH:-TRAVIS_BRANCH} | sed 's/\//-/g'`
 
 stage "Pushing the lpg-services-ui ${TRAVIS_COMMIT} docker image"
 docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:${BRANCH_TAG}
