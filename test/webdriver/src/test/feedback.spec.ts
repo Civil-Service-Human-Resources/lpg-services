@@ -50,7 +50,7 @@ describe('feedback form functionality', () => {
 		expect(browser.waitForVisible(selectors.feedbackPrompt)).toBe(true)
 	})
 
-	it('Should display feedback link on the sign-in page', async () => {
+	xit('Should display feedback link on the sign-in page', async () => {
 		browser.url(config.BASE_URL + '/sign-out')
 		expect(browser.waitForVisible(selectors.feedbackPrompt)).toBe(true)
 	})
