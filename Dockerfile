@@ -43,7 +43,7 @@ RUN npm install -g yarn
 RUN yarn
 
 ARG VERSION=dev
-RUN echo ${VERSION} >> ./VERSION.txt
+RUN echo ${VERSION} > ./VERSION.txt
 
 COPY dist dist
 
