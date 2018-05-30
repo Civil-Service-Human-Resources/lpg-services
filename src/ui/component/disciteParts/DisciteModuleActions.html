@@ -2,7 +2,7 @@
     {#if module.type === 'elearning'}
         <a href="{module.url}">{ $i18n('action_' + (module.state || 'NOT_STARTED' )) } <span class="visuallyhidden"> this module</span></a>
     {:elseif module.type === 'file'}
-        <a download="{fileHelpers.fileName(module.url)}" href="{module.url}">
+        <a download="{$fileHelpers.fileName(module.url)}" href="{module.url}">
             Download document
         </a> ({fileHelpers.extension(module.url)} {fileHelpers.appropriateFileSize(module.fileSize)})
 

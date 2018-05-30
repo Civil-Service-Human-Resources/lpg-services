@@ -2,7 +2,7 @@
     <ul class="discite__property {modifier ? `discite__property--${modifier}` : ''}">
         <li class="discite__property-item">
             {#if course.record && course.record.state && course.record.state !== 'RETRIEVED' && course.record.state !== 'ARCHIVED' }
-            <div class="discite__status">
+            <div class="discite__status {modifier ? `discite__status--${modifier}` : ''}">
                 <span class="badge badge--discite badge--info">{$i18n(course.record.state)}</span>
                 {#if course.getSelectedDate()}
                 <span class="meta">{$datetime.formatDate(course.getSelectedDate())}</span>
