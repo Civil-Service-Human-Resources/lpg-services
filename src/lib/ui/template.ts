@@ -1,6 +1,6 @@
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
-import * as fileHelpers from 'lib/fileHelpers'
+import * as fileHelpers from 'lib/filehelpers'
 
 import * as express from 'express'
 import * as fs from 'fs'
