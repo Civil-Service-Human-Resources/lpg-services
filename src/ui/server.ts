@@ -9,12 +9,7 @@ import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
-<<<<<<< HEAD
-import * as fs from 'fs'
-import * as config from 'lib/config'
-import * as log4js from 'log4js'
-=======
->>>>>>> LPFG-375
+
 import * as lusca from 'lusca'
 import * as path from 'path'
 import * as serveStatic from 'serve-static'
