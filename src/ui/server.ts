@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 
