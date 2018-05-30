@@ -17,7 +17,7 @@
             <td class="key-value-list__value key-value-list__auto--auto lpg-department">
                 <ul>
                     {#each audience.departments as department}
-                    <li class="audience__item">{ i18n('departments')[department]}</li> {/each}
+                    <li class="audience__item">{ $i18n('departments')[department]}</li> {/each}
                 </ul>
             </td>
             <td >
@@ -29,7 +29,7 @@
             <td class="key-value-list__value key-value-list__value--auto lpg-profession">
                 <ul>
                     {#each audience.areasOfWork as aow}
-                    <li class="audience__item">{ i18n('areas-of-work')[aow]}</li> {/each}
+                    <li class="audience__item">{ $i18n('areas-of-work')[aow]}</li> {/each}
                 </ul>
             </td>
             <td >
@@ -40,7 +40,7 @@
             <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_grade_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-grade">
                 {#each audience.grades as grade}
-                <li class="audience__item">{ i18n('grades')[grade]}</li> {/each}
+                <li class="audience__item">{ $i18n('grades')[grade]}</li> {/each}
             </td>
             <td >
                 <button name="submit" type="submit" class="button audience__button" value="change_{i}_grade">Change</button>
@@ -59,7 +59,7 @@
         <tr>
             <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_frequency_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-frequency">
-                {audience.frequency? i18n('frequency')[audience.frequency] : '' }</td>
+                {audience.frequency? $i18n('frequency')[audience.frequency] : '' }</td>
             <td>
                 <button name="submit" type="submit" class="button audience__button" value="change_{i}_frequency">Change</button>
             </td>
@@ -67,7 +67,7 @@
         <tr>
             <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_required-by_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-required-by">
-                { audience.requiredBy ? datetime.formatDate(audience.requiredBy) : ''}</td>
+                { audience.requiredBy ? $datetime.formatDate(audience.requiredBy) : ''}</td>
             <td>
                 <button name="submit" type="submit" class="button audience__button" value="change_{i}_required">Change</button>
             </td>
