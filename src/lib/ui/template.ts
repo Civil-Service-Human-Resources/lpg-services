@@ -16,12 +16,10 @@ const {Store} = require('svelte/store.umd.js')
 /*tslint:enable*/
 
 const rootDir = process.cwd()
-// const componentDir = path.join(rootDir, 'component')
+
 const pageDir = path.join(rootDir, 'page')
 
-// const componentList: Record<string, string> = {}
-
-const logger = log4js.getLogger('lib/svelte')
+const logger = log4js.getLogger('lib/template')
 
 function isFile(path: string) {
 	try {
@@ -86,35 +84,6 @@ function getCurrentRequest() {
 	return currentRequest
 }
 
-/*function componentIdentity(component: string): [string, string] {
-	return [component.slice(0, -5), path.join(componentDir, component)]
-}
-
-function readComponentDir(dir: string, nestedDirName?: string) {
-	for (const file of fs.readdirSync(dir)) {
-		if (isDirectory(path.join(componentDir, file))) {
-			readComponentDir(path.join(componentDir, file), file)
-		}
-
-		if (file.endsWith('.html')) {
-			// componentList.push(componentIdentity(file))
-
-			if (nestedDirName) {
-				const [name, cPath]: [string, string] = componentIdentity(
-					path.join(nestedDirName, file)
-				)
-				componentList[name.split('/').pop()!] = cPath
-			} else {
-				const [name, cPath]: [string, string] = componentIdentity(file)
-				componentList[name] = cPath
-			}
-		}
-	}
-}
-
-function readAll() {
-	readComponentDir(componentDir)
-} */
 function readPageDir(dir: string, nestedDirName?: string) {
 	for (const file of fs.readdirSync(dir)) {
 		if (isDirectory(path.join(dir, file))) {
@@ -130,10 +99,9 @@ function readPageDir(dir: string, nestedDirName?: string) {
 
 			try {
 				svelte.parse(pagepath)
-				console.debug(`Page ${file} compiled successfully`)
+				logger.debug(`Page ${pagepath} can be parsed successfully`)
 			} catch (e) {
-				logger.error(`Page ${file} could not be compiled. ${e}`)
-				console.error(`Page ${file} could not be compiled. ${e}`)
+				logger.error(`Page ${pagepath} can not be compiled. ${e}`)
 			}
 		}
 	}
