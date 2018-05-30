@@ -29,7 +29,7 @@ describe('Login page funtionality', () => {
 		expect(feedback).toEqual(smartSurveyLink)
 	})
 
-	it('Should display a link to the user allowing them to get in touch to create account', () => {
+	xit('Should display a link to the user allowing them to get in touch to create account', () => {
 		const contact = browser.getAttribute(selectors.getInTouchLink, 'href')
 		expect(contact).toEqual(contactUsEmailAddress)
 	})

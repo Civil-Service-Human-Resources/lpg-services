@@ -19,7 +19,7 @@ describe('Footer for LPG', () => {
 	it('Display footer license', () => {
 		expect(browser.element(selectors.license).isVisible()).toBe(true)
 	})
-	it('Display footer privacy', () => {
+	xit('Display footer privacy', () => {
 		expect(browser.isVisible(selectors.privacy)).toBe(true)
 	})
 
