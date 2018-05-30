@@ -146,3 +146,5 @@ export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
 
 export const REGISTRY_SERVICE_URL =
 	env.REGISTRY_SERVICE_URL || 'http://localhost:9002'
+
+export const CHECK_LINEMANAGER_URL = REGISTRY_SERVICE_URL + '/civilServants/manager'
