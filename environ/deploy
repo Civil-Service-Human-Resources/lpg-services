@@ -9,22 +9,25 @@ end() {
 
 ENV="$1"
 TAG="$2"
+WEB_HOOK_URL="$3"
 UPDATE_TIMEOUT=900
 
-echo "Checking ${ENV} has been updated to ${TAG}"
+echo "Calling web hook for ${ENV}"
+curl ${WEB_HOOK_URL}
 
+echo "Checking ${ENV} has been updated to ${TAG}"
 
 START=`date +%s`
 
 while [ $(( `date +%s` - $START )) -lt ${UPDATE_TIMEOUT} ]; do
-  version=`curl https://dev-lpg.cshr.digital/status | grep "version"`
+  version=`curl -s https://${ENV}-lpg.cshr.digital/status | grep "version"`
 
   if [ -z "${version##*$TAG*}" ]; then
-    end 0 "update complete"
+    end 0 "Update complete"
   else
     echo -n "."
     sleep 5;
   fi
 done
 
-end 1 "update timed out"
+end 1 "Update timed out"

@@ -151,7 +151,7 @@ app.get('/privacy', (req, res) => {
 app.get('/status', (req, res) => {
 	let version = 'unknown'
 	try {
-		version = fs.readFileSync('VERSION.txt').toString()
+		version = fs.readFileSync('../../VERSION.txt').toString()
 	} catch (e) {
 		logger.debug('No version set')
 	}
