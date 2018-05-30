@@ -81,8 +81,8 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto ">{$i18n('profile_primary-area_label')}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
-                                {#if signedInUser.areasOfWork}
-                                    {signedInUser.areasOfWork[0]}
+                                {#if $signedInUser.areasOfWork}
+                                    {$signedInUser.areasOfWork[0]}
                                 {/if}
                             </td>
                             <td class="key-value-list__item-action">
