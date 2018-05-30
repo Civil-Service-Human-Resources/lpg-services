@@ -8,7 +8,7 @@
                 <legend>
                     <h2 class="heading-medium">Learning type</h2>
                 </legend>
-                {#each Object.entries(currentReq.__('courseTypes')) as filter}
+                {#each Object.entries($i18n('courseTypes')) as filter}
                     <div class="multiple-choice">
                         <input type="checkbox" value="{filter[0]}" name="courseType" id="{filter[0]}"  checked="{(courseType || []).indexOf(filter[1]) > -1 ? 'checked' : ''}" >
                         <label for="{filter[0]}">{filter[1]}</label>

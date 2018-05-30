@@ -5,11 +5,11 @@
         </h1>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <div>{@html toHtml(course.description)}</div>
+                <div>{@html $toHtml(course.description)}</div>
 
                 {#if course.learningOutcomes}
                 <h2 class="heading-medium">Learning outcomes</h2>
-                <div>{@html toHtml(course.learningOutcomes)}</div>
+                <div>{@html $toHtml(course.learningOutcomes)}</div>
                 {/if}
 
                 <div class="discite" id="modules">
@@ -24,7 +24,7 @@
 
             <div class="column-one-third">
                 {#if courseDetails.length} {#each courseDetails as dataRows}
-                <Rightbox {dataRows}/>
+                <RightBox {dataRows}/>
                 {/each} {/if}
             </div>
         </div>
@@ -44,7 +44,7 @@
 
 		components: {
 			Page,
-			disciteModule,
+			DisciteModule,
 			RightBox
 		}
 	}

@@ -20,8 +20,8 @@
                     <a href="/search?q={searchResults.suggestion}">{searchResults.suggestion}</a>
                 </span>
                 {/if} {#if searchResults && query}
-                <p class="lede">There { currentReq.__n('was', searchResults.totalResults)}
-                    <strong class="lpg-search-amount">{ currentReq.__n('%s result', searchResults.totalResults) }</strong>
+                <p class="lede">There { $i18n('was', searchResults.totalResults)}
+                    <strong class="lpg-search-amount">{ $i18n('%s result', searchResults.totalResults) }</strong>
                     for
                     <strong class="lpg-search-query"> { query }</strong>
                 </p>
@@ -32,7 +32,8 @@
         <div class="grid-row ">
             <div class="column-one-third">
                 {#if searchResults.combinedResults && searchResults.combinedResults.length}
-                <LeftSearchBox {query} {courseType} {cost} {currentReq} /> {/if}
+                    <LeftSearchBox {query} {courseType} {cost} {currentReq} />
+                {/if}
             </div>
             <div class="column-two-thirds">
                 <div class="resources">
