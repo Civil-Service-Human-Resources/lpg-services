@@ -8,12 +8,7 @@
     <div class="form-group">
         {#if options && options.length }
 
-<<<<<<< HEAD
-            <Selects :options :optionType :inputName label="{{i18n('profile_' + inputName + '_label')}}" :value />
-=======
-                <Selects {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} />
-
->>>>>>> LPFG-375
+            <Selects {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} />
 
         {:else}
             <label class="form-label" for="{inputName}">New {$i18n('profile_' + inputName + '_label').toLowerCase()}</label>
@@ -24,14 +19,7 @@
         {#if inputName === 'password'}
             <label class="form-label" for="confirmPassword">Confirm Password</label>
             <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
-<<<<<<< HEAD
-		{{elseif inputName === 'line-manager'}}
-            <label class="form-label" for="confirmLineManager">Confirm {{i18n('profile_line-manager_label')}}</label>
-            <input class="form-control" id="confirmLineManager" name="confirmLineManager" type="text">
-        {{/if}}
-=======
         {/if}
->>>>>>> LPFG-375
     </div>
 
     <div class="grid-row ">
