@@ -50,8 +50,8 @@
                             You have already uploaded a file for this module.
                             <a href="{module.url}"
                                download="{fileHelpers.fileName(module.url, true)}">
-                                {fileHelpers.fileName(module.url)}
-                            </a> {fileHelpers.appropriateFileSize(module.fileSize)})
+                                {$fileHelpers.fileName(module.url)}
+                            </a> {$fileHelpers.appropriateFileSize(module.fileSize)})
                           </p>
                         </div>
                     {/if}
@@ -76,6 +76,7 @@
 </Page>
 <script>
 	import Page from '../../../component/Page.html'
+	import Audience from '../../../component/Audience.html'
 
 	export default {
 		data() {
@@ -84,7 +85,8 @@
 		},
 
 		components: {
-			Page
+			Page,
+			Audience
 		}
 	}
 </script>

@@ -39,31 +39,22 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 	},
 	'.docx': {
 		keys: ['ZipFileName', 'MIMEType'],
-		values: [
-			'word/numbering.xml',
-			'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		],
+		values: ['word/numbering.xml', 'Microsoft Macintosh Word'],
 	},
 	'.mp4': {keys: ['VideoFrameRate'], values: []},
 	'.pdf': {keys: ['PDFVersion'], values: []},
 	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
 	'.pptx': {
 		keys: ['ZipFileName', 'MIMEType'],
-		values: [
-			'ppt/theme/theme1.xml',
-			'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-		],
+		values: ['ppt/theme/theme1.xml', 'Microsoft Macintosh Excel'],
 	},
 	'.xls': {
 		keys: ['CompObjUserType'],
 		values: ['Microsoft Office Excel 2003 Worksheet'],
 	},
 	'.xlsx': {
-		keys: ['ZipFileName', 'MIMEType'],
-		values: [
-			'xl/drawings/drawing1.xml',
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-		],
+		keys: ['ZipFileName'],
+		values: ['xl/drawings/drawing1.xml', 'Microsoft Macintosh Excel'],
 	},
 	'.zip': {keys: ['ZipFileName'], values: []},
 }
@@ -86,7 +77,7 @@ function validator(extension: string, metaData: any): boolean {
 
 	return (
 		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) &&
-		(!acceptedForFile.values.length ||
+		(acceptedForFile.values.length === 0 ||
 			metaDataValues.some(r => acceptedForFile.values.indexOf(r) >= 0))
 	)
 }
@@ -375,20 +366,20 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 export function getModule(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const {module} = req
+	const module: model.Module = req.module!
 
-	const audiences: model.Audience[] = module!.audiences.length
-		? module!.audiences
+	const audiences: model.Audience[] = module.audiences.length
+		? module.audiences
 		: [model.Audience.create({})]
 
-	const events: model.Event[] = module!.events.length
-		? module!.events
+	const events: model.Event[] = module.events.length
+		? module.events
 		: [model.Event.create({})]
 
 	courseModuleCheck(req)
 
-	if (!module!.type) {
-		module!.type = req.params.moduleType
+	if (!module.type) {
+		module.type = req.params.moduleType
 	}
 
 	res.send(
