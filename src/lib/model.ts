@@ -312,6 +312,9 @@ export class Module {
 	}
 
 	getDuration() {
+		if (!this.duration) {
+			return null
+		}
 		return datetime.formatCourseDuration(this.duration)
 	}
 

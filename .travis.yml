@@ -13,7 +13,6 @@ addons:
 
 cache:
   directories:
-    - environ/lpg-ansible-mvp
     - node_modules
     - pyhome
     - test/webdriver/node_modules

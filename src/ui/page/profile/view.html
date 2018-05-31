@@ -113,7 +113,9 @@
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_grade_label')}</td>
                             <td class="key-value-list__value key-value-value--auto lpg-grade">
-                                    {$signedInUser.grade ? $signedInUser.grade : ''}
+                                {#if $signedInUser.grade}
+                                    {$i18n('grades')[$signedInUser.grade] || $signedInUser.grade}
+                                {/if}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/grade">Change
