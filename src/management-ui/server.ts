@@ -15,6 +15,7 @@ import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
+import * as i18n from 'lib/service/translation'
 
 import * as audienceController from './controllers/audience/index'
 import * as bookingsController from './controllers/bookings/index'
@@ -24,8 +25,6 @@ import * as homeController from './controllers/home'
 import * as editModuleController from './controllers/module/edit'
 
 import * as loginController from './controllers/login'
-
-import * as i18n from 'lib/service/translation'
 
 import * as expressValidator from 'express-validator'
 

@@ -134,5 +134,5 @@ export function render(
 	const store = new Store({
 		...getHelpers(),
 	})
-	res.send(component.render(data, {store}).html)
+	return component.render(data, {store}).html
 }

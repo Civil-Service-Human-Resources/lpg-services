@@ -10,11 +10,9 @@ export function displayCourse(ireq: express.Request, res: express.Response) {
 
 export async function index(req: express.Request, res: express.Response) {
 	const result = await catalog.listAll()
-	res.send(
-		template.render('courses/list', req, res, {
-			courses: result.results,
-		})
-	)
+	template.render('courses/list', req, res, {
+		courses: result.results,
+	})
 }
 
 export async function loadSearch(ireq: express.Request, res: express.Response) {
