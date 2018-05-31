@@ -533,9 +533,17 @@ export class User {
 		}
 		user.otherAreasOfWork = data.otherAreasOfWork
 
+		let email = null
+		let uid = null
+
+		if (data.lineManager) {
+			email = data.lineManager.email,
+			uid = data.lineManager.uid
+		}
+
 		user.lineManager = {
-			email : data.lineManagerEmail ? data.lineManagerEmail : data.lineManager.email,
-			uid	  : data.lineManagerUid ? data.lineManagerUid  : data.lineManager.uid,
+			email : data.lineManagerEmail ? data.lineManagerEmail : email,
+			uid	  : data.lineManagerUid ? data.lineManagerUid  : uid,
 		}
 
 		return user
