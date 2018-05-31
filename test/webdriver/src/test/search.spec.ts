@@ -14,17 +14,18 @@ describe('Search page funtionality', () => {
 		browser.close()
 	})
 
-	it('Should add to learning plan from search', async () => {
+	//TODO: Blocked by LPFG-391
+	xit('Should add to learning plan from search', async () => {
 		search('the')
 		const courseName = browser.getText(selectors.courseName)
 		browser.click(selectors.addToPlan)
 		browser.waitForVisible(selectors.addedNotification)
 		const addedCourse = browser.getText(selectors.addedNotification)
-		expect(addedCourse).toEqual(courseName[0])
+		expect(addedCourse).toEqual(courseName)
 	})
 
 	it('Should display the search box on the home page', () => {
-		expect(browser.isVisible(selectors.searchBox)).toBe(true)
+		expect(browser.element(selectors.searchBox).isVisible()).toBe(true)
 	})
 
 	it('Should display the search button on the home page', () => {
@@ -74,7 +75,7 @@ describe('Search page funtionality', () => {
 		expect(amount).toContain('no')
 	})
 
-	it('Should display add to learning plan option from the results', async () => {
+	xit('Should display add to learning plan option from the results', async () => {
 		search('the')
 		expect(browser.isExisting(selectors.addToPlan)).toBe(true)
 	})
