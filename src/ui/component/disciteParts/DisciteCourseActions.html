@@ -26,7 +26,9 @@
                         {#if modifier === "search"}
                             <span>Already in your learning plan</span>
                         {:else}
-                            <a href="/suggestions-for-you/remove/{course.id}?ref=home">Remove from learning plan</a>
+                            <a href="/home?delete={course.id}">Remove
+                                <span class="visuallyhidden"> From learning plan</span>
+                            </a>
                         {/if}
                     {/if}
                 {/if}
