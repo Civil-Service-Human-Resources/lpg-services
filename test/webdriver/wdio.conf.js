@@ -24,6 +24,7 @@ exports.config = {
 	},
 	logLevel: 'silent',
 	maxInstances: 10,
+	reporters: ['dot', 'spec'],
 	screenshotPath: './errorShots/',
 	screenshotRoot: 'my-shots',
 	services: ['selenium-standalone', 'screenshots-cleanup'],
