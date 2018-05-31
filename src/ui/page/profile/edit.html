@@ -33,19 +33,13 @@
 
                 {/if}
 
-                {#if inputName === 'areas-of-work'}
-
-                    <Levels {levels} {selected} {selectedArr} {isEndOfBranch}/>
-                {:else}
-                    <ProfileEditForm {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
-                {/if}
+                <ProfileEditForm {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
             </div>
         </div>
     </div>
 </Page>
 <script>
 	import Page from '../../component/Page.html'
-	import Levels from '../../component/levels/Levels.html'
 	import ProfileEditForm from '../../component/ProfileEditForm.html'
 
 	export default {
@@ -57,7 +51,6 @@
 		components: {
 			Page,
 			ProfileEditForm,
-			Levels
 		}
 	}
 </script>
