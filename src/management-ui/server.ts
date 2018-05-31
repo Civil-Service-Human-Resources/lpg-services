@@ -90,7 +90,9 @@ app.post(
 	'*',
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
 		for (const key of Object.keys(req.body)) {
-			req.sanitizeBody(key).escape()
+			if (!Array.isArray(req.body[key])) {
+				req.sanitizeBody(key).escape()
+			}
 		}
 		next()
 	}
