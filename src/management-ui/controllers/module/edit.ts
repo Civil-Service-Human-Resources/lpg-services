@@ -46,7 +46,7 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
 	'.pptx': {
 		keys: ['ZipFileName', 'MIMEType'],
-		values: ['ppt/theme/theme1.xml', 'Microsoft Macintosh Excel'],
+		values: ['ppt/theme/theme1.xml', 'Microsoft Macintosh PowerPoint'],
 	},
 	'.xls': {
 		keys: ['CompObjUserType'],
@@ -352,7 +352,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 			if (!isFileValid) {
 				req.flash('error', `not valid ${data.type} file`)
-				res.redirect(`/courses/${course.id}/${module!.id}/edit`)
+				res.redirect(`/courses/${course.id}/${moduleIndex}/edit`)
 				return
 			}
 		}

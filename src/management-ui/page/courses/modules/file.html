@@ -49,7 +49,7 @@
                           <p>
                             You have already uploaded a file for this module.
                             <a href="{module.url}"
-                               download="{fileHelpers.fileName(module.url, true)}">
+                               download="{$fileHelpers.fileName(module.url, true)}">
                                 {$fileHelpers.fileName(module.url)}
                             </a> {$fileHelpers.appropriateFileSize(module.fileSize)})
                           </p>
