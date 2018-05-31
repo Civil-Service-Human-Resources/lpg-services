@@ -126,11 +126,13 @@ async function pendingFileHandler(
 		session.pendingFiles.splice(index, 1)
 	}
 
+	//TODO - Jen: Make this an interface for type safety.
 	const pendingFile = {
 		duration: null,
 		moduleIndex,
 		name: fileName,
 		path: filePath,
+		size: fs.statSync(filePath).size,
 	}
 
 	if (path.extname(filePath) === '.mp4') {
