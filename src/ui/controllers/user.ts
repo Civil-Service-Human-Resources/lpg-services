@@ -386,9 +386,13 @@ export async function renderEditPage(
 			})
 		}
     </script>`
+
+	const errorMessage = req.flash('profileError')[0]
+
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
+			error: errorMessage,
 			inputName,
 			lede,
 			optionType,
@@ -438,8 +442,8 @@ export async function tryUpdateProfile(
 	const validFields = validateForm(req)
 
 	if (!validFields) {
-		res.locals.validFields = validFields
-		renderEditPage(req, res)
+		req.flash('profileError', 'Fields cannot be empty')
+		res.redirect(`/profile/${Object.keys(req.body)[0]}`)
 	} else {
 		await updateProfile(req, res)
 	}
@@ -510,8 +514,7 @@ export async function updateProfile(
 
 	const node = nodes[inputName]
 
-	let passwordFailed = ''
-	let lineManagerFailed = ''
+	let errorMessage = ''
 
 	switch (node) {
 		case 'otherAreasOfWork':
@@ -527,32 +530,26 @@ export async function updateProfile(
 			break
 		case 'lineManager':
 			if (fieldValue !== req.body.confirmLineManager) {
-				lineManagerFailed =
-					'Line Manager Email does not match the confirmation.'
+				errorMessage = 'Line Manager Email does not match the confirmation.'
 			} else if (!validEmail.exec(fieldValue)) {
-				lineManagerFailed = 'Line Manager Email  is not valid'
+				errorMessage = 'Line Manager Email  is not valid'
 			}
 			break
 		case 'password':
 			if (fieldValue !== req.body.confirmPassword) {
-				passwordFailed = 'Password does not match the confirmation.'
+				errorMessage = 'Password does not match the confirmation.'
 			} else if (fieldValue.length < 8) {
-				passwordFailed = 'Password length should be at least 8 characters.'
+				errorMessage = 'Password length should be at least 8 characters.'
 			} else if (!validPassword.exec(fieldValue)) {
-				passwordFailed = 'Password did not meet requirements'
+				errorMessage = 'Password did not meet requirements'
 			}
 
 			break
 	}
 
-	if (passwordFailed || lineManagerFailed) {
-		res.send(
-			template.render('profile/edit', req, res, {
-				inputName,
-				lineManagerFailed,
-				passwordFailed,
-			})
-		)
+	if (errorMessage) {
+		req.flash('profileError', errorMessage)
+		res.redirect(`/profile/${inputName}`)
 		return
 	}
 
