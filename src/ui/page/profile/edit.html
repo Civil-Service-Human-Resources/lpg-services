@@ -11,14 +11,19 @@
                         {lede}
                     </p>
                 {/if}
-                {#if error}
+                {#if (error || errorEmpty)}
 
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                         Update failed
                     </h2>
                     <p>
-                        {error}
+                        {#if error}
+                            {@html error}
+                        {:elseif errorEmpty}
+                            {@html errorEmpty}
+                        {/if}
+
                     </p>
                 </div>
 

@@ -60,14 +60,6 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-function renderProfile(
-	req: express.Request,
-	res: express.Response,
-	props: Profile
-) {
-	return template.render('profile/view', req, res, props)
-}
-
 function renderSignIn(
 	req: express.Request,
 	res: express.Response,
@@ -112,7 +104,7 @@ function validateForm(req: express.Request) {
 export function viewProfile(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	res.send(
-		renderProfile(req, res, {
+		template.render('profile/view', req, res, {
 			updateSuccessful: req.flash('profile-updated').length > 0,
 			user: req.user,
 			validFields: true,
@@ -387,12 +379,11 @@ export async function renderEditPage(
 		}
     </script>`
 
-	const errorMessage = req.flash('profileError')[0]
-
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
-			error: errorMessage,
+			error: req.flash('profileError')[0],
+			errorEmpty: req.flash('profileErrorEmpty')[0],
 			inputName,
 			lede,
 			optionType,
@@ -442,8 +433,12 @@ export async function tryUpdateProfile(
 	const validFields = validateForm(req)
 
 	if (!validFields) {
-		req.flash('profileError', 'Fields cannot be empty')
-		res.redirect(`/profile/${Object.keys(req.body)[0]}`)
+		req.flash('profileErrorEmpty', 'Fields cannot be empty')
+		req.session!.save(() => {
+			res.redirect(`/profile/${req.params.profileDetail}`)
+		})
+
+		return
 	} else {
 		await updateProfile(req, res)
 	}
@@ -493,13 +488,16 @@ export async function patchAndUpdate(
 		req.session!.save(() => {
 			res.redirect('/profile')
 		})
+		return
 	} else {
-		res.send(
-			template.render('profile/edit', req, res, {
-				identityServerFailed: true,
-				input,
-			})
+		req.flash(
+			'profileError',
+			`Server error. Update failed, please try again or contact the <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>`
 		)
+		req.session!.save(() => {
+			res.redirect(`/profile/${input}`)
+		})
+		return
 	}
 }
 
@@ -549,7 +547,9 @@ export async function updateProfile(
 
 	if (errorMessage) {
 		req.flash('profileError', errorMessage)
-		res.redirect(`/profile/${inputName}`)
+		req.session!.save(() => {
+			res.redirect(`/profile/${inputName}`)
+		})
 		return
 	}
 
