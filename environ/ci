@@ -37,8 +37,9 @@ docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:${BRANCH_TAG}-${
 docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
 docker push cshr/lpg-services
 
-stage "Deploying to the dev environment"
-./environ/deploy dev2 ${TRAVIS_COMMIT} ${AZURE_DEPLOYMENT_WEB_HOOK_URL}
+stage "Deploying to the dev2 environment"
+curl --header "Content-Type: application/json" --request POST --data '{}' ${AZURE_DEPLOYMENT_WEB_HOOK_URL}
+curl --header "Content-Type: application/json" --request POST --data '{}' ${MANAGEMENT_DEPLOYMENT_URL}
 
 stage "Installing the wdio test dependencies"
 cd test/webdriver
@@ -47,6 +48,10 @@ npm install
 
 stage "Building the wdio test code"
 npm run build
+
+stage "Waiting for environment to update"
+./environ/wait-for-update dev2-lpg ${TRAVIS_COMMIT}
+./environ/wait-for-update dev2-management ${TRAVIS_COMMIT}
 
 stage "Running the wdio tests"
 xvfb-run npm test
