@@ -57,18 +57,20 @@ export async function checkLineManager(data: any, token: string) {
 		const http = axios.create({
 			baseURL: config.CHECK_LINEMANAGER_URL,
 			headers: {
-				'Authorization': `Bearer ${token}`,
+				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
 			timeout: 5000,
 		})
 
-		http.get(`?email=${data.lineManager}`).then( (response: any) => {
-			resolve(response)
-		}).catch( (error: any) => {
-			console.log(error.response.status)
-			resolve(error.response)
-		})
+		http
+			.get(`?email=${data.lineManager}`)
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
 	})
 
 	return result
