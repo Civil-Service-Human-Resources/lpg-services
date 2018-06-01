@@ -1,4 +1,4 @@
-<Page title="Cookies" :_csrf>
+<Page title="Cookies" {_csrf}>
     <div class="container container--main">
         <div class="grid-row">
             <div class="column-two-thirds">
@@ -115,3 +115,18 @@
         </div>
     </div>
 </Page>
+
+<script>
+  import Page from '../component/Page.html'
+
+  export default {
+    data() {
+      return {
+      }
+    },
+
+    components: {
+      Page,
+    }
+  };
+</script>
