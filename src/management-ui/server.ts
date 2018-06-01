@@ -6,6 +6,7 @@ log4js.configure(config.LOGGING)
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
+import * as fs from 'fs'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as helmet from 'helmet'
@@ -71,6 +72,18 @@ app.use(compression({threshold: 0}))
 
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
+
+app.get('/status', (req, res) => {
+	let version = 'unknown'
+	try {
+		version = fs.readFileSync('../../VERSION.txt').toString()
+	} catch (e) {
+		logger.debug('No version set')
+	}
+	res.send({
+		version,
+	})
+})
 
 passport.configure(
 	config.AUTHENTICATION.managementId,
