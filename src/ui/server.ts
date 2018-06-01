@@ -299,8 +299,6 @@ app.get(
 	asyncHandler(bookingController.renderCancelledBookingPage)
 )
 
-
-
 app.use(
 	(
 		err: Error,
