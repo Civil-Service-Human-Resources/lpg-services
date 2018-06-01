@@ -72,7 +72,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - CHECK_TOKEN_URL=http://identity:8080/oauth/check_token
-    image: cshr/civil-servant-registry-service:cf907a267f0936cd9aea45042bbe6a8a1a27d4f8
+    image: cshr/civil-servant-registry-service:82caf85211868e77a98d0e150bcb78a25b57a1ff
     depends_on:
       - identity
     ports:
