@@ -49,9 +49,10 @@ npm install
 stage "Building the wdio test code"
 npm run build
 
+
 stage "Waiting for environment to update"
-./environ/wait-for-update dev2-lpg ${TRAVIS_COMMIT}
-./environ/wait-for-update dev2-management ${TRAVIS_COMMIT}
+../../environ/wait-for-update dev2-lpg ${TRAVIS_COMMIT}
+../../environ/wait-for-update dev2-management ${TRAVIS_COMMIT}
 
 stage "Running the wdio tests"
 xvfb-run npm test
