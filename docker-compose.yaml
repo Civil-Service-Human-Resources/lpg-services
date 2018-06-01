@@ -62,7 +62,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: cshr/identity-service:dca9c7daf9c8e7b335ad9f6beae7ea173b1b65fd
+    image: cshr/identity-service:330502651b206925e08fa893fa1b10def23a72f2
     ports:
       - 8080:8080
       - 8081:8081
@@ -89,7 +89,7 @@ services:
       XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
       XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
       XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-    image: cshr/lpg-learner-record:621678ce3d703440f86218cbd075c9b5b2cb9492
+    image: cshr/lpg-learner-record:8181fb3e0ff6e4ae736b4caf5e0efb1bd865d10b
     depends_on:
       - civil-servant-registry
       - identity
