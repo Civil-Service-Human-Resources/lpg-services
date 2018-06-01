@@ -128,7 +128,8 @@ passport.configure(
 	config.AUTHENTICATION.clientId,
 	config.AUTHENTICATION.clientSecret,
 	config.AUTHENTICATION.serviceUrl,
-	app
+	app,
+	config.LPG_UI_SERVER
 )
 i18n.configure(app)
 
