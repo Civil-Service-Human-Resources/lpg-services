@@ -253,8 +253,13 @@
 		"elearning": "Online",
 		"video": "Video"
 	},
-	"document": "document",
-	"file": "file",
-	"profile_undefined_label": "profile_undefined_label",
-	"profile_lineManager_label": "profile_lineManager_label"
+	"errors": {
+		"profileErrorEmpty": "Fields cannot be empty",
+		"passwordUnmatched": "Password does not match the confirmation.",
+		"passwordLength": "Password length should be at least 8 characters.",
+		"passwordNotMetReq": "Password did not meet requirements",
+		"lineManagerConfirmation": "Line Manager Email does not match the confirmation.",
+		"lineManagerInvalid": "Line Manager Email is not valid"
+	},
+	"errors.profileErrorEmpty": "errors.profileErrorEmpty"
 }

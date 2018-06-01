@@ -433,7 +433,7 @@ export async function tryUpdateProfile(
 	const validFields = validateForm(req)
 
 	if (!validFields) {
-		req.flash('profileErrorEmpty', 'Fields cannot be empty')
+		req.flash('profileErrorEmpty', req.__('errors.profileErrorEmpty'))
 		req.session!.save(() => {
 			res.redirect(`/profile/${req.params.profileDetail}`)
 		})
@@ -528,18 +528,18 @@ export async function updateProfile(
 			break
 		case 'lineManager':
 			if (fieldValue !== req.body.confirmLineManager) {
-				errorMessage = 'Line Manager Email does not match the confirmation.'
+				errorMessage = req.__('errors.lineManagerConfirmation')
 			} else if (!validEmail.exec(fieldValue)) {
-				errorMessage = 'Line Manager Email  is not valid'
+				errorMessage = req.__('errors.lineManagerInvalid')
 			}
 			break
 		case 'password':
 			if (fieldValue !== req.body.confirmPassword) {
-				errorMessage = 'Password does not match the confirmation.'
+				errorMessage = req.__('errors.passwordUnmatched')
 			} else if (fieldValue.length < 8) {
-				errorMessage = 'Password length should be at least 8 characters.'
+				errorMessage = req.__('errors.passwordLength')
 			} else if (!validPassword.exec(fieldValue)) {
-				errorMessage = 'Password did not meet requirements'
+				errorMessage = req.__('errors.passwordNotMetReq')
 			}
 
 			break
