@@ -57,7 +57,7 @@ export async function checkLineManager(data: any, token: string) {
 		const http = axios.create({
 			baseURL: config.CHECK_LINEMANAGER_URL,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				'Authorization': `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
 			timeout: 5000,

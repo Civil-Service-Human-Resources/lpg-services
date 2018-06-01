@@ -536,7 +536,8 @@ export class User {
 		let uid = null
 
 		if (data.lineManager) {
-			;(email = data.lineManager.email), (uid = data.lineManager.uid)
+			email = data.lineManager.email
+			uid = data.lineManager.uid
 		}
 
 		user.lineManager = {
