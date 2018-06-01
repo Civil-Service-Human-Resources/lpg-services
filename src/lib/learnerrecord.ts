@@ -13,7 +13,6 @@ export enum CourseState {
 const logger = log4js.getLogger('learner-record')
 
 const http = axios.create({
-	auth: config.LEARNER_RECORD.auth,
 	baseURL: config.LEARNER_RECORD.url,
 	headers: {
 		'Content-Type': 'application/json',
@@ -38,6 +37,7 @@ export async function getRecord(
 	}
 
 	const response = await http.get(`/records/${user.id}`, {
+        headers: { 'Authorization': `Bearer ${user.accessToken}` },
 		params: {
 			activityId,
 		},
@@ -50,7 +50,9 @@ export async function getRecord(
 }
 
 export async function getLearningRecord(user: model.User) {
-	const response = await http.get(`/records/${user.id}`)
+	const response = await http.get(`/records/${user.id}`, {
+		headers: { 'Authorization': `Bearer ${user.accessToken}` },
+	})
 
 	const courses: model.Course[] = []
 	for (let record of response.data.records) {
