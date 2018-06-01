@@ -6,9 +6,9 @@ log4js.configure(config.LOGGING)
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
-import * as fs from 'fs'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
+import * as fs from 'fs'
 import * as helmet from 'helmet'
 import * as path from 'path'
 
