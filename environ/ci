@@ -9,10 +9,6 @@ function stage {
   printf "\n\033[34;1m➡  $1  \033[90m[stage $counter] [running ${SECONDS}s]\033[0m\n\n"
 }
 
-stage "Pulling the latest lpg-services docker image"
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-docker pull cshr/lpg-services || true
-
 stage "Installing the top-level dependencies"
 npm install
 
@@ -25,6 +21,10 @@ npm run build
 
 stage "Running the unit tests"
 npm test
+
+stage "Pulling the latest lpg-services docker image"
+docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+docker pull cshr/lpg-services || true
 
 stage "Building the new lpg-services docker image"
 docker build --cache-from cshr/lpg-services:latest --build-arg VERSION=${TRAVIS_COMMIT} -t cshr/lpg-services:${TRAVIS_COMMIT} .
