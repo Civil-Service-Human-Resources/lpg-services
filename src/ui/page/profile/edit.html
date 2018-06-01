@@ -11,23 +11,14 @@
                         {lede}
                     </p>
                 {/if}
-
-                {#if identityServerFailed || passwordFailed || validFields === false || lineManagerFailed }
+                {#if error}
 
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                         Update failed
                     </h2>
                     <p>
-                        {#if identityServerFailed} Server error. Update failed, please try again or contact the
-                        <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>
-                        {:elseif validFields === false}
-                            Form error. {$i18n('profile_' + inputName + '_label')} field cannot be empty.
-                        {:elseif passwordFailed}
-							{passwordFailed}
-						{:elseif lineManagerFailed}
-							{lineManagerFailed}
-                        {/if}
+                        {error}
                     </p>
                 </div>
 
