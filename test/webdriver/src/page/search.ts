@@ -11,6 +11,7 @@ export const selectors: Record<string, string> = {
 	faceToFace: '',
 	link: '#link',
 	online: '#online',
+	pageHeading: '.heading--page-heading',
 	searchAction: '.result__action',
 	searchBox: '#q',
 	searchButton: '.search-box__submit',
