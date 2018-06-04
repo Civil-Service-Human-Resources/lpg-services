@@ -92,7 +92,6 @@ export async function saveContent(
 	file: any
 ) {
 	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
-
 	const currentCourse = await catalog.get(course.id)!
 	const currentModule = currentCourse!.modules.find(m => m.id === module.id)!
 	if (module.type === 'elearning') {
@@ -117,14 +116,14 @@ export async function saveContent(
 		)
 	} else {
 		//if it is a document
+		const fileBlobUrl = `${config.CONTENT_URL}/${course.id}/${
+			currentModule.id
+		}/${encodeURIComponent(file.name)}`
+
 		if (module.type === 'video') {
-			currentModule.location = `${config.CONTENT_URL}/${course.id}/${
-				currentModule.id
-			}/${file.name}`
+			currentModule.location = fileBlobUrl
 		} else {
-			currentModule.url = `${config.CONTENT_URL}/${course.id}/${
-				currentModule.id
-			}/${file.name}`
+			currentModule.url = fileBlobUrl
 			currentModule.fileSize = file.size
 		}
 
@@ -133,7 +132,8 @@ export async function saveContent(
 		}
 
 		const fileData = fs.createReadStream(file.path)
-		await doUpload(`${course.id}/${module.id}/${file.name}`, fileData)
+
+		await doUpload(`${course.id}/${currentModule.id}/${file.name}`, fileData)
 
 		await catalog.add(currentCourse!)
 		logger.info(`Upload of ${file.name} complete, with no start page`)

@@ -349,7 +349,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 				ireq,
 				moduleIndex,
 				req.files.content.data,
-				encodeURIComponent(req.files.content.name)
+				req.files.content.name
 			)
 
 			if (!isFileValid) {
