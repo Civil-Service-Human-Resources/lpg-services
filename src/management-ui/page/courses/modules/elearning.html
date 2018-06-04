@@ -2,19 +2,20 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">
-                {{#if module.id}}Edit{{else}}Add{{/if}} Elearning course
+                {#if module.id}Edit
+                {:else}Add{/if} Elearning course
 			</h1>
 			
-			{{#if error}}
+			{#if error}
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                     Error with Zip
                 </h2>
                 <p>
-                    {{error}}
+                    {error}
                 </p>
             </div>
-            {{/if}}
+            {/if}
 
             <form method="post" name="editCourseForm" class="push-bottom module--form" enctype="multipart/form-data">
                 <input name="type" type="hidden" value="elearning">
@@ -60,6 +61,8 @@
 </Page>
 <script>
 	import Page from '../../../component/Page.html'
+	import Event from '../../../component/Event.html'
+	import Audience from '../../../component/Audience.html'
 
 	export default {
 		data() {
@@ -68,7 +71,9 @@
 		},
 
 		components: {
-			Page
+			Page,
+			Event,
+			Audience
 		}
 	}
 </script>
