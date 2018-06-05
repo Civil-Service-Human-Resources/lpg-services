@@ -1,28 +1,14 @@
+<!--<div id="global-cookie-message">-->
+<!--<p>-->
+<!--GOV.UK uses cookies to make the site simpler.-->
+<!--<a href="https://www.gov.uk/help/cookies"> Find out more about cookies</a>-->
+<!--</p>-->
+<!--</div>-->
 <main class="elements-index" id="content" role="main">
 	<div class="main-content">
 		<slot></slot>
 	</div>
 </main>
 
-<Feedback {_csrf} />
+<Feedback :_csrf />
 <Footer/>
-
-<script>
-
-    import Footer from './Footer.html';
-    import Feedback from './Feedback.html';
-
-
-	export default {
-		data() {
-			return {
-
-			}
-		},
-		components: {
-			Footer,
-			Feedback,
-
-		}
-	};
-</script>

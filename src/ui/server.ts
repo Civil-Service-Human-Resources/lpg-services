@@ -1,16 +1,12 @@
-import * as fs from 'fs'
-import * as config from 'lib/config'
-import * as log4js from 'log4js'
-
-log4js.configure(config.LOGGING)
-
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
-
+import * as fs from 'fs'
+import * as config from 'lib/config'
+import * as log4js from 'log4js'
 import * as lusca from 'lusca'
 import * as path from 'path'
 import * as serveStatic from 'serve-static'
@@ -36,6 +32,8 @@ import * as xApiController from './controllers/xapi'
 const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 /* tslint:enable */
+
+log4js.configure(config.LOGGING)
 
 const {PORT = 3001} = process.env
 
@@ -149,8 +147,6 @@ app.get('/reset-password', userController.resetPassword)
 app.get('/privacy', (req, res) => {
 	res.send(template.render('privacy', req, res))
 })
-
-app.get('/cookies', homeController.cookies)
 
 app.get('/status', (req, res) => {
 	let version = 'unknown'
@@ -299,6 +295,20 @@ app.post(
 app.get(
 	'/book/:courseId/:moduleId/:eventId/cancelled',
 	asyncHandler(bookingController.renderCancelledBookingPage)
+)
+
+app.use(
+	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+		res.status(404)
+
+		if (req.accepts('html')) {
+			res.sendFile(path.join(process.cwd(), 'page/error/404.html'))
+		} else if (req.accepts('json')) {
+			res.send({error: 'Not found'})
+		} else {
+			res.type('txt').send('Not found')
+		}
+	}
 )
 
 app.use(

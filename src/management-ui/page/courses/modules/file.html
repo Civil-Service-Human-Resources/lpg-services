@@ -2,22 +2,22 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">
-                {#if module.id}
+                {{#if module.id}}
                     Edit
-                {:else}
+                {{else}}
                     Add
-                {/if} File
+                {{/if}} File
             </h1>
-            {#if error}
+            {{#if error}}
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                     Error with file
                 </h2>
                 <p>
-                    {error}
+                    {{error}}
                 </p>
             </div>
-            {/if}
+            {{/if}}
 
             <form method="post" name="editCourseForm" class="push-bottom module--form" enctype="multipart/form-data">
                 <input name="type" type="hidden" value="elearning">
@@ -25,36 +25,36 @@
                     <label for="title" class="form-label">
                         Title
                     </label>
-                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{ module.title || '' }">
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ module.title || '' }}">
                 </div>
 
                 <div class="form-group">
                     <label for="description" class="form-label">
                         Description
                     </label>
-                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{ module.description || '' }</textarea>
+                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ module.description || '' }}</textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="duration" class="form-label">
                         Duration
                     </label>
-                    <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{ module.duration || '' }">
+                    <input class="form-control form-control-2-3" id="duration" name="duration" type="text" value="{{ module.duration || '' }}">
                 </div>
 
                 <div class="form-group">
 
-                    {#if module.url}
+                    {{#if module.url}}
                         <div class="panel panel-border-wide">
                           <p>
                             You have already uploaded a file for this module.
-                            <a href="{module.url}"
-                               download="{$fileHelpers.fileName(module.url, true)}">
-                                {$fileHelpers.fileName(module.url)}
-                            </a> {$fileHelpers.appropriateFileSize(module.fileSize)})
+                            <a href="{{module.url}}"
+                               download="{{fileHelpers.fileName(module.url, true)}}">
+                                {{fileHelpers.fileName(module.url)}}
+                            </a> {{fileHelpers.appropriateFileSize(module.fileSize)}})
                           </p>
                         </div>
-                    {/if}
+                    {{/if}}
 
                     <label for="content-zip" class="form-label">
                         Content
@@ -63,30 +63,14 @@
                 </div>
 
                 <div class="form-group">
-                    <Audience {audienceLists} {audiences} {course} {module} />
+                    <Audience :audienceLists :audiences :course :module />
                 </div>
                 <div>
-                    <input name="submit" type="submit" class="button" value="Back"> {#if module.id}
-                    <input name="submit" type="submit" class="button" value="Update"> {:else}
-                    <input name="submit" type="submit" class="button" value="Add"> {/if}
+                    <input name="submit" type="submit" class="button" value="Back"> {{#if module.id}}
+                    <input name="submit" type="submit" class="button" value="Update"> {{else}}
+                    <input name="submit" type="submit" class="button" value="Add"> {{/if}}
                 </div>
             </form>
         </div>
     </div>
 </Page>
-<script>
-	import Page from '../../../component/Page.html'
-	import Audience from '../../../component/Audience.html'
-
-	export default {
-		data() {
-			return {
-			}
-		},
-
-		components: {
-			Page,
-			Audience
-		}
-	}
-</script>

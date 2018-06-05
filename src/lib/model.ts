@@ -2,11 +2,6 @@ import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 
-export interface LineManager {
-	email: string
-	uid: string
-}
-
 export class Course {
 	static create(data: any) {
 		const course = new Course(data.id)
@@ -317,9 +312,6 @@ export class Module {
 	}
 
 	getDuration() {
-		if (!this.duration) {
-			return null
-		}
 		return datetime.formatCourseDuration(this.duration)
 	}
 
@@ -531,20 +523,6 @@ export class User {
 			user.areasOfWork = Object.values(data.profession || data.areasOfWork)
 		}
 		user.otherAreasOfWork = data.otherAreasOfWork
-
-		let email = null
-		let uid = null
-
-		if (data.lineManager) {
-			email = data.lineManager.email
-			uid = data.lineManager.uid
-		}
-
-		user.lineManager = {
-			email: data.lineManagerEmail ? data.lineManagerEmail : email,
-			uid: data.lineManagerUid ? data.lineManagerUid : uid,
-		}
-
 		return user
 	}
 
@@ -556,10 +534,9 @@ export class User {
 
 	department?: string
 	areasOfWork?: string[]
-	lineManager?: LineManager
+	lineManager?: string
 	otherAreasOfWork?: string[]
 	givenName?: string
-
 	grade?: string
 
 	constructor(

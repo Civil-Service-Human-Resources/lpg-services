@@ -8,16 +8,15 @@
         </tr>
     </thead>
     <tbody>
-        {#each courses as course}
+        {{#each courses as course}}
         <tr>
             <td>
-                <a href="/courses/{course.id}">{course.title} </a>
+                <a href="/courses/{{course.id}}">{{course.title}} </a>
             </td>
-            <td>{$i18n(course.getType())}</td>
-            <td>{course.getDuration() || '-'}</td>
-            <td>{course.getCompletionDate($signedInUser) ? $datetime.formatDate(course.getCompletionDate($signedInUser)) : ''}</td>
-
+            <td>{{i18n(course.getType())}}</td>
+            <td>{{course.getDuration() || '-'}}</td>
+            <td>{{datetime.formatDate(course.getCompletionDate(signedInUser))}}</td>
         </tr>
-        {/each}
+        {{/each}}
     </tbody>
 </table>

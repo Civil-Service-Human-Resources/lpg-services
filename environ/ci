@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /usr/bin/env bash
 
 set -e -o pipefail
 
@@ -8,6 +8,10 @@ function stage {
   ((counter++)) || true
   printf "\n\033[34;1m➡  $1  \033[90m[stage $counter] [running ${SECONDS}s]\033[0m\n\n"
 }
+
+stage "Pulling the latest lpg-services docker image"
+docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+docker pull cshr/lpg-services-ui || true
 
 stage "Installing the top-level dependencies"
 npm install
@@ -22,24 +26,18 @@ npm run build
 stage "Running the unit tests"
 npm test
 
-stage "Pulling the latest lpg-services docker image"
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-docker pull cshr/lpg-services || true
-
 stage "Building the new lpg-services docker image"
 docker build --cache-from cshr/lpg-services:latest --build-arg VERSION=${TRAVIS_COMMIT} -t cshr/lpg-services:${TRAVIS_COMMIT} .
 
-BRANCH_TAG=`echo ${TRAVIS_PULL_REQUEST_BRANCH:-${TRAVIS_BRANCH}} | sed 's/\//-/g'`
+export BRANCH_TAG=`echo ${TRAVIS_PULL_REQUEST_BRANCH:-TRAVIS_BRANCH} | sed 's/\//-/g'`
 
-stage "Pushing the lpg-services ${TRAVIS_COMMIT} docker image"
+stage "Pushing the lpg-services-ui ${TRAVIS_COMMIT} docker image"
 docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:${BRANCH_TAG}
-docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:${BRANCH_TAG}-${TRAVIS_BUILD_NUMBER}
 docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
 docker push cshr/lpg-services
 
-stage "Deploying to the dev2 environment"
-curl --header "Content-Type: application/json" --request POST --data '{}' ${AZURE_DEPLOYMENT_WEB_HOOK_URL}
-curl --header "Content-Type: application/json" --request POST --data '{}' ${MANAGEMENT_DEPLOYMENT_URL}
+stage "Deploying to the dev environment"
+./environ/deploy dev2 ${TRAVIS_COMMIT} ${AZURE_DEPLOYMENT_WEB_HOOK_URL}
 
 stage "Installing the wdio test dependencies"
 cd test/webdriver
@@ -48,11 +46,6 @@ npm install
 
 stage "Building the wdio test code"
 npm run build
-
-
-stage "Waiting for environment to update"
-../../environ/wait-for-update dev2-lpg ${TRAVIS_COMMIT}
-../../environ/wait-for-update dev2-management ${TRAVIS_COMMIT}
 
 stage "Running the wdio tests"
 xvfb-run npm test

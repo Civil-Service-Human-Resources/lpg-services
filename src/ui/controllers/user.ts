@@ -60,6 +60,14 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
+function renderProfile(
+	req: express.Request,
+	res: express.Response,
+	props: Profile
+) {
+	return template.render('profile/view', req, res, props)
+}
+
 function renderSignIn(
 	req: express.Request,
 	res: express.Response,
@@ -104,7 +112,7 @@ function validateForm(req: express.Request) {
 export function viewProfile(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	res.send(
-		template.render('profile/view', req, res, {
+		renderProfile(req, res, {
 			updateSuccessful: req.flash('profile-updated').length > 0,
 			user: req.user,
 			validFields: true,
@@ -378,12 +386,9 @@ export async function renderEditPage(
 			})
 		}
     </script>`
-
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
-			error: req.flash('profileError')[0],
-			errorEmpty: req.flash('profileErrorEmpty')[0],
 			inputName,
 			lede,
 			optionType,
@@ -433,12 +438,8 @@ export async function tryUpdateProfile(
 	const validFields = validateForm(req)
 
 	if (!validFields) {
-		req.flash('profileErrorEmpty', req.__('errors.profileErrorEmpty'))
-		req.session!.save(() => {
-			res.redirect(`/profile/${req.params.profileDetail}`)
-		})
-
-		return
+		res.locals.validFields = validFields
+		renderEditPage(req, res)
 	} else {
 		await updateProfile(req, res)
 	}
@@ -453,33 +454,13 @@ export async function patchAndUpdate(
 ) {
 	const call: Record<string, string> = {}
 	call[node] = value
-	const response =
-		node !== 'lineManager'
-			? await registry.patch('civilServants', call, req.user.accessToken)
-			: await registry.checkLineManager(call, req.user.accessToken)
+	const response = await registry.patch(
+		'civilServants',
+		call,
+		req.user.accessToken
+	)
 
-	if (node === 'lineManager' && (response as any).status !== 200) {
-		const inputName = 'line-manager'
-		const status = (response as any).status
-		let lineManagerFailed = null
-
-		switch (status) {
-			case 404:
-				lineManagerFailed = 'Line Manager Email does not exist'
-				break
-			case 400:
-				lineManagerFailed = 'You may not be your own line manager'
-				break
-		}
-
-		res.send(
-			template.render('profile/edit', req, res, {
-				inputName,
-				lineManagerFailed,
-			})
-		)
-		return
-	} else if (response) {
+	if (response) {
 		// seems like we have to get the profile again to get values
 		// which seems ...not good
 		const profile = await registry.profile(req.user.accessToken)
@@ -488,17 +469,13 @@ export async function patchAndUpdate(
 		req.session!.save(() => {
 			res.redirect('/profile')
 		})
-		return
 	} else {
-		req.flash(
-			'profileError',
-			`Server error. Update failed, please try again or contact the
-<a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>`
+		res.send(
+			template.render('profile/edit', req, res, {
+				identityServerFailed: true,
+				input,
+			})
 		)
-		req.session!.save(() => {
-			res.redirect(`/profile/${input}`)
-		})
-		return
 	}
 }
 
@@ -513,7 +490,8 @@ export async function updateProfile(
 
 	const node = nodes[inputName]
 
-	let errorMessage = ''
+	let passwordFailed = ''
+	let lineManagerFailed = ''
 
 	switch (node) {
 		case 'otherAreasOfWork':
@@ -529,28 +507,31 @@ export async function updateProfile(
 			break
 		case 'lineManager':
 			if (fieldValue !== req.body.confirmLineManager) {
-				errorMessage = req.__('errors.lineManagerConfirmation')
+				lineManagerFailed = 'Line Manager Email does not match the confirmation.'
 			} else if (!validEmail.exec(fieldValue)) {
-				errorMessage = req.__('errors.lineManagerInvalid')
+				lineManagerFailed = 'Line Manager Email  is not valid'
 			}
 			break
 		case 'password':
 			if (fieldValue !== req.body.confirmPassword) {
-				errorMessage = req.__('errors.passwordUnmatched')
+				passwordFailed = 'Password does not match the confirmation.'
 			} else if (fieldValue.length < 8) {
-				errorMessage = req.__('errors.passwordLength')
+				passwordFailed = 'Password length should be at least 8 characters.'
 			} else if (!validPassword.exec(fieldValue)) {
-				errorMessage = req.__('errors.passwordNotMetReq')
+				passwordFailed = 'Password did not meet requirements'
 			}
 
 			break
 	}
 
-	if (errorMessage) {
-		req.flash('profileError', errorMessage)
-		req.session!.save(() => {
-			res.redirect(`/profile/${inputName}`)
-		})
+	if (passwordFailed || lineManagerFailed) {
+		res.send(
+			template.render('profile/edit', req, res, {
+				inputName,
+				lineManagerFailed,
+				passwordFailed,
+			})
+		)
 		return
 	}
 
