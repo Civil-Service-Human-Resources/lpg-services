@@ -92,17 +92,30 @@ function readPageDir(dir: string, nestedDirName?: string) {
 
 		if (file.endsWith('.html')) {
 			const pagepath = `${dir}/${file}`
+			console.log(pagepath)
 
 			if (isDirectory(pagepath)) {
 				readPageDir(pagepath)
 			}
 
-			try {
-				svelte.parse(pagepath)
-				logger.debug(`Page ${pagepath} can be parsed successfully`)
-			} catch (e) {
-				logger.error(`Page ${pagepath} can not be compiled. ${e}`)
-			}
+			const c = svelte.parse(pagepath, {
+				format: 'cjs',
+				generate: 'ssr',
+				onerror: (err: any) => {
+					console.error(err.message)
+				},
+				onwarn: (warning: any) => {
+					console.warn(warning.message)
+				},
+			})
+			console.log(c)
+			// try {
+			// 	const compiled = svelte.compile(pagepath).parse)
+			// 	// logger.debug(`${compiled.stats.warnings}`)
+			// } catch (e) {
+			// 	console.log(e)
+			// 	logger.error(`Page ${pagepath} can not be compiled. ${e}`)
+			// }
 		}
 	}
 }

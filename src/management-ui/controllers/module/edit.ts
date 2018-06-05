@@ -32,7 +32,9 @@ export interface AcceptableMetaInfo {
 	values: string[]
 }
 
-const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
+export const acceptedFileTypes: {
+	[fileExtension: string]: AcceptableMetaInfo
+} = {
 	'.doc': {
 		keys: ['CompObjUserType'],
 		values: ['Microsoft Office Word 97-2003 Document'],
@@ -68,7 +70,7 @@ function courseModuleCheck(req: extended.CourseRequest) {
 	}
 }
 
-function validator(extension: string, metaData: any): boolean {
+export function validator(extension: string, metaData: any): boolean {
 	const acceptedForFile = acceptedFileTypes[extension]
 
 	/* doing this so it typecasts */
@@ -102,6 +104,7 @@ async function pendingFileHandler(
 	}).pipe(fs.createWriteStream(filePath))
 
 	const ep = new exiftool.ExiftoolProcess(exiftoolBin)
+
 	const metaData = await ep
 		.open()
 		// display pid
