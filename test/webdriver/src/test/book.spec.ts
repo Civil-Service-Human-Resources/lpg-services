@@ -1,14 +1,15 @@
 import * as config from '../extension/config'
 import {createAccessList, returnActive, selectors} from '../page/book'
 import loginPage from '../page/login'
-// import {genUserEmail} from '../page/globals'
-
-// const TEST_USERNAME = genUserEmail()
 
 describe('Bookable face to face courses funtionality', () => {
 	beforeAll(done => {
 		browser.url(config.URL)
 		loginPage.testAccountLogin()
+	})
+
+	afterAll(done => {
+		browser.close()
 	})
 
 	it('Should display the book option for a bookable course on search page', () => {
