@@ -7,7 +7,6 @@ describe('feedback form functionality', () => {
 		browser.url(config.URL)
 		loginPage.testAccountLogin()
 	})
-
 	it('Should display the feedback link on the home page', () => {
 		expect(browser.waitForVisible(selectors.feedbackPrompt)).toBe(true)
 	})
