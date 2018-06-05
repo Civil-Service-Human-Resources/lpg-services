@@ -9,6 +9,10 @@ describe('Login page funtionality', () => {
 		browser.url(config.URL)
 	})
 
+	afterAll(done => {
+		browser.close()
+	})
+
 	it('Should display the login page username field', () => {
 		const username = browser.isExisting(selectors.usernameField)
 		expect(username).toBe(true)

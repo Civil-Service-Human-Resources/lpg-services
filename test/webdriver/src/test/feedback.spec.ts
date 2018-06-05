@@ -8,6 +8,10 @@ describe('feedback form functionality', () => {
 		loginPage.testAccountLogin()
 	})
 
+	afterAll(done => {
+		browser.close()
+	})
+
 	it('Should display the feedback link on the home page', () => {
 		expect(browser.waitForVisible(selectors.feedbackPrompt)).toBe(true)
 	})
