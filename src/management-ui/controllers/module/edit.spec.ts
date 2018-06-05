@@ -1,22 +1,46 @@
-import {acceptedFileTypes} from './edit'
-import {validator} from './edit'
+import {randomBytes} from 'crypto'
+import {AcceptableMetaInfo, acceptedFileTypes, validator} from './edit'
 
-describe('Checking a valid file', () => {
-	it('validator should return true', () => {
-		const testFileExt = '.pptx'
-		const validMetaData = {...acceptedFileTypes[testFileExt]}
+function metaConstructor(expectedMeta: AcceptableMetaInfo): any {
+	const validMeta: {[key: string]: string} = {}
 
-		expect(validator(testFileExt, validMetaData)).toBe(true)
+	expectedMeta.keys.forEach((key: string) => {
+		validMeta[key] = 'valid key'
 	})
-})
+	expectedMeta.values.forEach((value: string) => {
+		validMeta[randomBytes(2).toString('hex')] = value
+	})
 
-describe('Checking an invalid file', () => {
-	it('validator should return false', () => {
+	return {data: [validMeta]}
+}
+
+describe('File validator tests', () => {
+	it('should return true for valid file type', () => {
+		const testFileExt = '.pptx'
+		const expectedMeta = acceptedFileTypes[testFileExt]
+
+		const validMeta = metaConstructor(expectedMeta)
+
+		const result: boolean = validator(testFileExt, validMeta)
+
+		expect(result).toBe(true)
+	})
+
+	it('should return false for invalid file type', () => {
 		const testFileExt = '.pptx'
 		const invalidMetaData = {
-			thisIs: 'invalidMetaData',
+			data: [{thisIs: 'invalidMetaData'}],
 		}
+		expect(validator(testFileExt, invalidMetaData)).toBe(false)
+	})
 
-		expect(validator(testFileExt, invalidMetaData)).toBe(true)
+	it('should return true for an uploaded file with an extension we support', () => {
+		const testFileExt = '.pptx'
+		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).toBe(true)
+	})
+
+	it('should return true for an uploaded video with an extension we support', () => {
+		const testFileExt = '.mp4'
+		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).toBe(true)
 	})
 })

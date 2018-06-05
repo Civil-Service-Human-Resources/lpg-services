@@ -9,6 +9,8 @@ mkdir -p "$dist"
 cd "$dist"
 
 ln -s ../src/locale
+cp ../src/jasmine.js .
+
 ln -s build node_modules
 
 mkdir management-ui
