@@ -1,27 +1,27 @@
 <div class="js-tabs nav-tabs">
     <ul>
-        <li class="{tab === 'before-you-book' ? 'active' : ''}">
-            <button class="tab lpg-before-book" type="submit" formaction="{url}/save?tab=before-you-book">Before you book</button>
+        <li class="{{tab === 'before-you-book' ? 'active' : ''}}">
+            <button class="tab lpg-before-book" type="submit" formaction="{{url}}/save?tab=before-you-book">Before you book</button>
         </li>
-        <li class="{tab === 'terms-and-conditions' ? 'active' : ''}">
-            <button class="tab lpg-terms" type="submit" formaction="{url}/save?tab=terms-and-conditions">Terms and Conditions</button>
+        <li class="{{tab === 'terms-and-conditions' ? 'active' : ''}}">
+            <button class="tab lpg-terms" type="submit" formaction="{{url}}/save?tab=terms-and-conditions">Terms and Conditions</button>
         </li>
-        <li class="{tab === 'refund-policy' ? 'active' : ''}">
-            <button class="tab lpg-refund" type="submit" formaction="{url}/save?tab=refund-policy">Refund policy</button>
+        <li class="{{tab === 'refund-policy' ? 'active' : ''}}">
+            <button class="tab lpg-refund" type="submit" formaction="{{url}}/save?tab=refund-policy">Refund policy</button>
         </li>
-        <li class="{tab === 'accessibility' ? 'active' : ''}">
-            <button class="tab lpg-accessibility" type="submit" formaction="{url}/save?tab=accessibility">Accessibility</button>
+        <li class="{{tab === 'accessibility' ? 'active' : ''}}">
+            <button class="tab lpg-accessibility" type="submit" formaction="{{url}}/save?tab=accessibility">Accessibility</button>
         </li>
     </ul>
 </div>
 <div class="js-tab-content tab-content u-space-b30">
     <div class="js-tab-pane tab-pane">
-        {#if tab === 'before-you-book'}
+        {{#if tab === 'before-you-book'}}
         <p>You are confirming that you have approval to book this course.</p>
         <p>You will be asked to provide payment details. If you need to raise a Purchase Order you will need the Provider Name
             and cost from the course description.</p>
 
-        {:elseif tab === 'terms-and-conditions'}
+        {{elseif tab === 'terms-and-conditions'}}
 
         <p>If you wish to cancel your participation in a course, you may have to pay a cancellation charge. The ‘days’ referred
             to in the cancellation policy are actual days rather than working days. The commencement of the course is the
@@ -82,7 +82,7 @@
             you have enabled javascript and popups before you start.</p>
 
 
-        {:elseif tab === 'refund-policy'}
+        {{elseif tab === 'refund-policy'}}
         <p>If you wish to cancel your participation in a course, you may have to pay a cancellation charge. The ‘days’ referred
             to in the cancellation policy are actual days rather than working days. The commencement of the course is the
             date on which any digital learning or pre-workshop work is released and made available to you.</p>
@@ -91,29 +91,14 @@
         <p>The refund policy is in keeping with the terms and conditions of the course. By booking this course you are agreeing
             to the terms and conditions.</p>
 
-        {:elseif tab === 'accessibility'}
+        {{elseif tab === 'accessibility'}}
         <p>All our venues are wheelchair accessible</p>
         <strong>If you have additional accessibility requirements, you can specify these below. Someone from our helpdesk may contact
             you to confirm your requirements.</strong>
-        {/if}
+        {{/if}}
 
-        <AccessibilityOptions {accessibilityReqs} class="{tab === 'accessibility' ? '' : 'visually-hidden'}" />
+        <AccessibilityOptions :accessibilityReqs class="{{tab === 'accessibility' ? '' : 'visually-hidden'}}" />
 
     </div>
 
 </div>
-
-<script>
-	import AccessibilityOptions from './AccessibilityOptions.html'
-
-	export default {
-		data() {
-			return {
-			}
-		},
-
-		components: {
-		    AccessibilityOptions
-		}
-	}
-</script>

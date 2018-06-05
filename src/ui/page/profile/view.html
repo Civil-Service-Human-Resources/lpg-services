@@ -1,12 +1,12 @@
-<Page title="Your profile" {_csrf}>
+<Page title="Your profile" :_csrf>
     <div class="container">
         <h1 class="heading-large">
             <span class="heading-secondary">Your profile</span>
-            {$i18n('profile_page_title', $signedInUser.givenName || '') }
+            {{i18n('profile_page_title', signedInUser.givenName || '') }}
         </h1>
-        {#if updateSuccessful}
-            <Banner type="confirmation" message={$i18n('profile_updated')} />
-        {/if}
+        {{#if updateSuccessful}}
+            <Banner type="confirmation" message={{i18n('profile_updated')}} />
+        {{/if}}
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading heading-medium">
@@ -22,9 +22,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_name_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_name_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-given-name">
-                                {$signedInUser.givenName || ''}
+                                {{signedInUser.givenName || ''}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/given-name">Change
@@ -33,9 +33,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_email_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_email_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-email-address">
-                                {$signedInUser.userName}
+                                {{signedInUser.userName}}
                             </td>
                             <td class="key-value-list__item-action lpg-email-address-read-only">
 
@@ -43,7 +43,7 @@
                         </tr>
 
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_password_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_password_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-password">••••••••</td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/password" class="visuallyhidden">Change
@@ -66,11 +66,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_department_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_department_label')}}</td>
                             <td class="key-value-list__value key-value-list__auto--auto lpg-department">
-                                {#if $signedInUser.department}
-                                    {$signedInUser.department === 'other' ? 'Other' : $i18n('departments')[$signedInUser.department] }
-                                {/if}
+                                {{#if signedInUser.department}}
+                                    {{signedInUser.department === 'other' ? 'Other' : i18n('departments')[signedInUser.department] }}
+                                {{/if}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/department">Change
@@ -79,11 +79,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto ">{$i18n('profile_primary-area-of-work_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_primary-area-of-work_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
-                                {#if $signedInUser.areasOfWork}
-                                    {$signedInUser.areasOfWork[0]}
-                                {/if}
+                                {{#if signedInUser.areasOfWork}}
+                                    {{signedInUser.areasOfWork[0]}}
+                                {{/if}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/primary-area-of-work">Change
@@ -92,16 +92,16 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto ">{$i18n('profile_other-areas-of-work_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto ">{{i18n('profile_other-areas-of-work_label')}}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
                                 <ul>
-                                    {#if $signedInUser.otherAreasOfWork}
-                                        {#each $signedInUser.otherAreasOfWork as aow}
+                                    {{#if signedInUser.otherAreasOfWork}}
+                                        {{#each signedInUser.otherAreasOfWork as aow}}
                                             <li>
-                                                {aow === 'other' ? 'Other' :  aow.name}
+                                                {{aow === 'other' ? 'Other' :  aow.name}}
                                             </li>
-                                        {/each}
-                                    {/if}
+                                        {{/each}}
+                                    {{/if}}
                                 </ul>
                             </td>
                             <td class="key-value-list__item-action">
@@ -111,11 +111,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_grade_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_grade_label')}}</td>
                             <td class="key-value-list__value key-value-value--auto lpg-grade">
-                                {#if $signedInUser.grade}
-                                    {$i18n('grades')[$signedInUser.grade] || $signedInUser.grade}
-                                {/if}
+                                {{signedInUser.grade ? signedInUser.grade : ''}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/grade">Change
@@ -124,11 +122,11 @@
                             </td>
                         </tr>
 						<tr>
-                            <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_line-manager_label')}</td>
+                            <td class="key-value-list__key key-value-list__key--auto">{{i18n('profile_line-manager_label')}}</td>
                             <td class="key-value-list__value key-value-value--auto lpg-grade">
-                                {#if $signedInUser.lineManager && $signedInUser.lineManager.email}
-                                    { $signedInUser.lineManager.email }
-                                {/if}
+                                {{#if signedInUser.lineManager}}
+                                    {{ signedInUser.lineManager }}
+                                {{/if}}
                             </td>
                             <td class="key-value-list__item-action">
                                 <a href="/profile/line-manager">Change
@@ -145,20 +143,3 @@
         </div>
     </div>
 </Page>
-<script>
-	import Page from '../../component/Page.html'
-	import Banner from '../../component/Banner.html'
-
-
-	export default {
-		data() {
-			return {
-			}
-		},
-
-		components: {
-			Page,
-			Banner
-		}
-	}
-</script>

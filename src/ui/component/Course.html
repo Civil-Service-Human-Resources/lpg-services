@@ -1,0 +1,17 @@
+<div class="course" {{showType}}>
+    <a href="/courses/{{course.id}}">{{course.title}}</a>
+    {{#if course.shortDescription}}
+    <p>
+    {{#if course.courseStatus}}
+        <strong class="course__progress">{{course.courseStatus}}</strong>
+    {{/if}}
+        {{course.shortDescription }}
+    </p>
+    {{/if}}
+
+{{#if showType}}
+    <p class="font-xsmall">
+    <span>Type: </span>{{course.tags}}
+    </p>
+{{/if}}
+</div>

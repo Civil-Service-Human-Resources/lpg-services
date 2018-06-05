@@ -2,7 +2,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">
-                {#if module.id}Edit{:else}Add{/if} Video
+                {{#if module.id}}Edit{{else}}Add{{/if}} Video
             </h1>
 
 			{{#if error}}
@@ -22,20 +22,20 @@
                     <label for="title" class="form-label">
                         Title
                     </label>
-                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{ module.title || '' }">
+                    <input class="form-control form-control-2-3" id="title" name="title" type="text" value="{{ module.title || '' }}">
                 </div>
 
                 <div class="form-group">
                     <label for="description" class="form-label">
                         Description
                     </label>
-                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{ module.description || '' }</textarea>
+                    <textarea class="form-control form-control-2-3" id="description" name="description" rows="3">{{ module.description || '' }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="uri" class="form-label">
                         URL
                     </label>
-                    <input class="form-control form-control-2-3" id="location" name="location" type="text" value="{ module.location || '' }">
+                    <input class="form-control form-control-2-3" id="location" name="location" type="text" value="{{ module.location || '' }}">
 				</div>
 				<div class="form-group">
                     <label for="uri" class="form-label">
@@ -44,29 +44,14 @@
                     <input class="form-control form-control-2-3" id="content-doc" name="content" type="file" accept=".mp4">
                 </div>
                 <div class="form-group">
-                    <Audience {audienceLists} {audiences} {course} {module} />
+                    <Audience :audienceLists :audiences :course :module />
                 </div>
                 <div>
-                    <input name="submit" type="submit" class="button" value="Back"> {#if module.id}
-                    <input name="submit" type="submit" class="button" value="Update"> {:else}
-                    <input name="submit" type="submit" class="button" value="Add"> {/if}
+                    <input name="submit" type="submit" class="button" value="Back"> {{#if module.id}}
+                    <input name="submit" type="submit" class="button" value="Update"> {{else}}
+                    <input name="submit" type="submit" class="button" value="Add"> {{/if}}
                 </div>
             </form>
         </div>
     </div>
 </Page>
-
-<script>
-	import Page from '../../../component/Page.html'
-
-	export default {
-		data() {
-			return {
-			}
-		},
-
-		components: {
-			Page
-		}
-	}
-</script>

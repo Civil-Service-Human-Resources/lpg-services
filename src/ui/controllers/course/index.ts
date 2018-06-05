@@ -145,6 +145,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 	switch (type) {
 		case 'elearning':
 		case 'face-to-face':
+		case 'link':
 		case 'file':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)

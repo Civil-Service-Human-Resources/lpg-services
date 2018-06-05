@@ -39,22 +39,31 @@ const acceptedFileTypes: {[fileExtension: string]: AcceptableMetaInfo} = {
 	},
 	'.docx': {
 		keys: ['ZipFileName', 'MIMEType'],
-		values: ['word/numbering.xml', 'Microsoft Macintosh Word'],
+		values: [
+			'word/numbering.xml',
+			'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		],
 	},
 	'.mp4': {keys: ['VideoFrameRate'], values: []},
 	'.pdf': {keys: ['PDFVersion'], values: []},
 	'.ppsm': {keys: ['Application'], values: ['Microsoft Office PowerPoint']},
 	'.pptx': {
 		keys: ['ZipFileName', 'MIMEType'],
-		values: ['ppt/theme/theme1.xml', 'Microsoft Macintosh PowerPoint'],
+		values: [
+			'ppt/theme/theme1.xml',
+			'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+		],
 	},
 	'.xls': {
 		keys: ['CompObjUserType'],
 		values: ['Microsoft Office Excel 2003 Worksheet'],
 	},
 	'.xlsx': {
-		keys: ['ZipFileName'],
-		values: ['xl/drawings/drawing1.xml', 'Microsoft Macintosh Excel'],
+		keys: ['ZipFileName', 'MIMEType'],
+		values: [
+			'xl/drawings/drawing1.xml',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		],
 	},
 	'.zip': {keys: ['ZipFileName'], values: []},
 }
@@ -77,7 +86,7 @@ function validator(extension: string, metaData: any): boolean {
 
 	return (
 		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) &&
-		(acceptedForFile.values.length === 0 ||
+		(!acceptedForFile.values.length ||
 			metaDataValues.some(r => acceptedForFile.values.indexOf(r) >= 0))
 	)
 }
@@ -126,13 +135,11 @@ async function pendingFileHandler(
 		session.pendingFiles.splice(index, 1)
 	}
 
-	//TODO - Jen: Make this an interface for type safety.
 	const pendingFile = {
 		duration: null,
 		moduleIndex,
 		name: fileName,
 		path: filePath,
-		size: fs.statSync(filePath).size,
 	}
 
 	if (path.extname(filePath) === '.mp4') {
@@ -354,7 +361,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 			if (!isFileValid) {
 				req.flash('error', `not valid ${data.type} file`)
-				res.redirect(`/courses/${course.id}/${moduleIndex}/edit`)
+				res.redirect(`/courses/${course.id}/${module!.id}/edit`)
 				return
 			}
 		}
@@ -368,20 +375,20 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 
 export function getModule(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const module: model.Module = req.module!
+	const {module} = req
 
-	const audiences: model.Audience[] = module.audiences.length
-		? module.audiences
+	const audiences: model.Audience[] = module!.audiences.length
+		? module!.audiences
 		: [model.Audience.create({})]
 
-	const events: model.Event[] = module.events.length
-		? module.events
+	const events: model.Event[] = module!.events.length
+		? module!.events
 		: [model.Event.create({})]
 
 	courseModuleCheck(req)
 
-	if (!module.type) {
-		module.type = req.params.moduleType
+	if (!module!.type) {
+		module!.type = req.params.moduleType
 	}
 
 	res.send(

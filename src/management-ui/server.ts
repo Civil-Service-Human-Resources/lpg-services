@@ -1,22 +1,17 @@
-import * as config from 'lib/config'
-import * as log4js from 'log4js'
-
-log4js.configure(config.LOGGING)
-
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
-import * as fs from 'fs'
 import * as helmet from 'helmet'
+import * as config from 'lib/config'
+import * as log4js from 'log4js'
 import * as path from 'path'
 
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
-import * as i18n from 'lib/service/translation'
 
 import * as audienceController from './controllers/audience/index'
 import * as bookingsController from './controllers/bookings/index'
@@ -27,6 +22,8 @@ import * as editModuleController from './controllers/module/edit'
 
 import * as loginController from './controllers/login'
 
+import * as i18n from 'lib/service/translation'
+
 import * as expressValidator from 'express-validator'
 
 /* tslint:disable:no-var-requires */
@@ -34,6 +31,7 @@ const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 const fileUpload = require('express-fileupload')
 /* tslint:enable */
+log4js.configure(config.LOGGING)
 
 const logger = log4js.getLogger('server')
 
@@ -73,18 +71,6 @@ app.use(compression({threshold: 0}))
 app.use(serveStatic('assets'))
 app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
 
-app.get('/status', (req, res) => {
-	let version = 'unknown'
-	try {
-		version = fs.readFileSync('../../VERSION.txt').toString()
-	} catch (e) {
-		logger.debug('No version set')
-	}
-	res.send({
-		version,
-	})
-})
-
 passport.configure(
 	config.AUTHENTICATION.managementId,
 	config.AUTHENTICATION.managementSecret,
@@ -103,9 +89,7 @@ app.post(
 	'*',
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
 		for (const key of Object.keys(req.body)) {
-			if (!Array.isArray(req.body[key])) {
-				req.sanitizeBody(key).escape()
-			}
+			req.sanitizeBody(key).escape()
 		}
 		next()
 	}

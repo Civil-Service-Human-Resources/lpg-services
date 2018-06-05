@@ -1,8 +1,8 @@
-<Page title="Payment Options" {_csrf}>
+<Page title="Payment Options" :_csrf>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <Breadcrumb {breadcrumbs}/>
+                <Breadcrumb :breadcrumbs/>
                 <h1 class="heading-large">
                     <span class="heading-secondary">Booking a course</span>Payment
                 </h1>
@@ -10,28 +10,28 @@
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
-                {#if paymentOptionsFailed }
+                {{#if paymentOptionsFailed }}
                     <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                         <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                             Error
                         </h2>
-                        <p>You must enter the {$signedInUser.department == ('co' || 'dh') ? 'purchase order number' : 'email address of your financial approver' }</p>
+                        <p>You must enter the {{signedInUser.department == ('co' || 'dh') ? 'purchase order number' : 'email address of your financial approver' }}</p>
                     </div>
-                {/if}
+                {{/if}}
                 <form autocomplete="nope" method="post">
                     <div class="form-group">
-                        {#if $signedInUser.department == "hmrc"}
+                        {{#if signedInUser.department == "hmrc"}}
                         <p>Financial approval - when prompted please select an approver to confirm your booking. To find out whether your organisation uses the financial approver process, please contact your learning and development team. They should be able to confirm the name of your financial approver.</p>
                         <label class="form-label" for="financial-approver">Financial approver</label>
-                        <input class="form-control" id="financial-approver" type="email" name="financial-approver" value="{previouslyEntered ? previouslyEntered : ''}">
-                        {:else}
+                        <input class="form-control" id="financial-approver" type="email" name="financial-approver" value="{{previouslyEntered ? previouslyEntered : ''}}">
+                        {{else}}
                         <p>Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.</p>
                         <label class="form-label" for="purchase-order">Purchase order number</label>
-                        <input class="form-control" id="purchase-order" type="text" name="purchase-order" value="{previouslyEntered ? previouslyEntered : ''}">
-                        {/if}
+                        <input class="form-control" id="purchase-order" type="text" name="purchase-order" value="{{previouslyEntered ? previouslyEntered : ''}}">
+                        {{/if}}
                     </div>
                     <input type="submit" class="button" value="Continue">
-                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <input type="hidden" name="_csrf" value="{{_csrf}}">
                 </form>
             </div>
         </div>

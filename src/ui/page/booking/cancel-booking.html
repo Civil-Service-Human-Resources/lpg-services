@@ -1,4 +1,4 @@
-<Page title="Cancel Booking" {_csrf}>
+<Page title="Cancel Booking" :_csrf>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
@@ -10,23 +10,23 @@
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
-                {#if cancelBookingFailed }
+                {{#if cancelBookingFailed }}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                         Error
                     </h2>
                     <p>You must enter agree to the Terms &amp; Conditions to cancel this booking</p>
                 </div>
-                {/if}
-                <h3 class="heading-small">{$signedInUser.givenName}</h3>
+                {{/if}}
+                <h3 class="heading-small">{{signedInUser.givenName}}</h3>
                 <ul class="cancel__list push-bottom">
                     <li class="cancel__row">
                         <span class="cancel__item">Requested Course:</span>
-                        <span class="bold-small cancel__item">{module.title || course.title}</span>
+                        <span class="bold-small cancel__item">{{module.title || course.title}}</span>
                     </li>
                     <li class="cancel__row">
                         <span class="cancel__item">Requested Date:</span>
-                        <span class="bold-small cancel__item">{$datetime.formatDate(event.date)}</span>
+                        <span class="bold-small cancel__item">{{datetime.formatDate(event.date)}}</span>
                     </li>
                 </ul>
                 <form autocomplete="nope" method="post" class="push-bottom">
@@ -36,8 +36,8 @@
                     </div>
                     <div class="form-group">
                         <input class="button" type="submit" value="Cancel Booking">
-                        <a href="/courses/{ course.id }" class="cancel__return">Return</a>
-                        <input type="hidden" name="_csrf" value="{_csrf}">
+                        <a href="/courses/{{ course.id }}" class="cancel__return">Return</a>
+                        <input type="hidden" name="_csrf" value="{{_csrf}}">
                     </div>
                 </form>
             </div>
@@ -45,20 +45,3 @@
     </div>
 
 </Page>
-
-
-<script>
-	import Page from '../../component/Page.html'
-
-	export default {
-		data() {
-			return {
-			}
-		},
-
-		components: {
-			Page
-		}
-	}
-</script>
-

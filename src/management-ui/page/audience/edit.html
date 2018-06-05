@@ -1,15 +1,15 @@
-<Page title="Edit your {$i18n(label)}" {script}>
+<Page title="Edit your {{i18n(label)}}" :script>
     <div class="container">
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-xlarge">
-                    Edit {$i18n(label)}
+                    Edit {{i18n(label)}}
                 </h1>
 
                 <form method="post" class="push-bottom">
                     <div class="form-group">
-                        {#if options && options.length }
-                        <Selects {options} {optionType} {node} {label} {values}/> {/if}
+                        {{#if options && options.length }}
+                        <Selects :options :optionType :node :label :values/> {{/if}}
                     </div>
 
                     <input type="submit" class="button" value="Continue">
@@ -18,19 +18,3 @@
         </div>
     </div>
 </Page>
-<script>
-	import Page from '../../component/Page.html'
-	import Selects from '../../component/Selects.html'
-
-	export default {
-		data() {
-			return {
-			}
-		},
-
-		components: {
-			Page,
-			Selects
-		}
-	}
-</script>

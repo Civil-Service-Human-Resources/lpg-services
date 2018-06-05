@@ -4,7 +4,8 @@
 	"scripts": {
 		"build": "../../bin/tsc",
 		"clean": "rm -rf dist",
-		"postinstall": "(test -e node_modules/extension || ln -s ../dist/extension node_modules/extension) && (test -e node_modules/test || ln -s ../dist/page node_modules/page) && (test -e node_modules/test || ln -s ../dist/test node_modules/test)",
+		"postinstall":
+			"(test -e node_modules/extension || ln -s ../dist/extension node_modules/extension) && (test -e node_modules/test || ln -s ../dist/page node_modules/page) && (test -e node_modules/test || ln -s ../dist/test node_modules/test)",
 		"test": "npm run build && wdio ./wdio.conf.js",
 		"test:sauce": "npm run build && wdio ./sauce.conf.js"
 	},

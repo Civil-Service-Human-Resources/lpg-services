@@ -125,7 +125,6 @@ export async function saveContent(
 			currentModule.url = `${config.CONTENT_URL}/${course.id}/${
 				currentModule.id
 			}/${file.name}`
-			currentModule.fileSize = file.size
 		}
 
 		if (file.duration) {

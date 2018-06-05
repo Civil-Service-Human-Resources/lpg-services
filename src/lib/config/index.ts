@@ -97,6 +97,10 @@ export const GOV_NOTIFY_API_KEY =
 	'test-22877568-4bca-40f9-8f54-8bf7922583cf-e2f80f22-e3de-4007-9ce2-b50a2b5785b7'
 
 export const LEARNER_RECORD = set({
+	auth: {
+		password: env.LEARNER_RECORD_PASS || 'password',
+		username: env.LEARNER_RECORD_USER || 'user',
+	},
 	url: env.LEARNER_RECORD_URL || 'http://localhost:9000',
 })
 
@@ -146,5 +150,3 @@ export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
 
 export const REGISTRY_SERVICE_URL =
 	env.REGISTRY_SERVICE_URL || 'http://localhost:9002'
-
-export const CHECK_LINEMANAGER_URL = REGISTRY_SERVICE_URL + '/civilServants/manager'
