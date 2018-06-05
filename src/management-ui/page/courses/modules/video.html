@@ -2,7 +2,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-large">
-                {#if module.id}Edit{:else}Add{/if} Video
+               { module.id ? 'Edit' : 'Add' } Video
             </h1>
 
 			{#if error}
