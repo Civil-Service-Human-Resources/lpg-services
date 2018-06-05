@@ -89,10 +89,8 @@ describe('Search page funtionality', () => {
 	})
 
 	it('Should show the number of modules a course comprises of', async () => {
-		search('fire')
+		search('health')
 		const course = browser.getText(selectors.course)
-		expect(course).toEqual(
-			jasmine.objectContaining({1: 'This course comprises of 6 modules'})
-		)
+		expect(course[0]).toEqual('This course comprises of 6 modules')
 	})
 })

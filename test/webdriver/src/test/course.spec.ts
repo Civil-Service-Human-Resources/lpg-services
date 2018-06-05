@@ -3,7 +3,7 @@ import * as config from '../extension/config'
 import loginPage from '../page/login'
 import {search, selectors} from '../page/search'
 
-describe('Footer for LPG', () => {
+describe('View learning materials', () => {
 	beforeAll(done => {
 		browser.url(config.URL)
 		loginPage.testAccountLogin()
@@ -15,7 +15,7 @@ describe('Footer for LPG', () => {
 		browser.close()
 	})
 
-	it('Should search for a video course and open it', () => {
+	it('Should search for a youtube course and open it', () => {
 		search('start with why')
 		const courseName = browser.getText(selectors.courseName)
 		browser.click(selectors.courseName)
