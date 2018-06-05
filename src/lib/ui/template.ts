@@ -130,6 +130,7 @@ export function render(
 
 	const data = {
 		...withData,
+		_csrf: res.locals._csrf,
 	}
 	const store = new Store({
 		...getHelpers(),

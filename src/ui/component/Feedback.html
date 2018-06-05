@@ -11,7 +11,7 @@
                         <input name="whatDoing" id="whatDoing">
                         <label for="wentWrong">What went wrong?</label>
                         <input name="wentWrong" id="wentWrong">
-
+                        <input type="hidden" name="pageUrl" id="pageUrl" value="{$req.originalUrl}">
                         <button class="button" name="commit" type="submit">Send</button>
                         <input type="hidden" name="_csrf" value="{_csrf}">
                     </form>
