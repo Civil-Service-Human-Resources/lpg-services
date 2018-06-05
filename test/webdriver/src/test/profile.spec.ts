@@ -12,6 +12,10 @@ describe('Profile page funtionality', () => {
 		browser.url(config.BASE_URL + '/profile')
 	})
 
+	afterAll(done => {
+		browser.close()
+	})
+
 	it('Should display a feedback link with the correct survey link', () => {
 		const feedback = browser.getAttribute(selectors.feedbackLink, 'href')
 		expect(feedback).toEqual(smartSurveyLink)
