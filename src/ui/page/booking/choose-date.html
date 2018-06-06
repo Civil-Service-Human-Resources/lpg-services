@@ -38,6 +38,7 @@
                             </div>
                         </div>
                         {#each events as event}
+                        {#if event.id}
                         <div class="div-table__row u-clearfix lpg-date-row">
                             <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
                             <div class="div-table__cell">{course.getDuration()}</div>
@@ -55,16 +56,22 @@
                                 </div>
                             </div>
                         </div>
+                        {/if}
                         {/each}
                     </div>
+                    {#if showAccessibility}
+                         <AccessibilityOptions/>
+                    {:else}
+                        <a href="{$req.url}?accessibility=true">
+                            Accessibility and reasonable adjustments
+                        </a>
+                    {/if}
 
-                    <div class="tabbed-section">
-                        <BookingTabContent url="/book/{course.id}/{module.id}/choose-date" tab="{tab ? tab : 'before-you-book'}" accessibilityReqs="{accessibilityReqs ? accessibilityReqs : []}"
-                            {selectedEventId}/>
-                    </div>
+
+
                     <div class="panel panel-border-wide">
                         <p>
-                            By booking this course you are agreeing to the terms and conditions
+                            You are confirming that you have approval to book this course.
                         </p>
                     </div>
                     <input type="hidden" name="_csrf" value="{_csrf}">
@@ -85,8 +92,8 @@
 
 <script>
 	import Page from '../../component/Page.html'
+	import AccessibilityOptions from '../../component/AccessibilityOptions.html'
     import Breadcrumb from '../../component/Breadcrumb.html'
-    import BookingTabContent from '../../component/BookingTabContent.html'
 
 	export default {
 		data() {
@@ -96,8 +103,8 @@
 
 		components: {
 			Page,
-			Breadcrumb,
-			BookingTabContent
+			AccessibilityOptions,
+			Breadcrumb
 		}
 	}
 </script>

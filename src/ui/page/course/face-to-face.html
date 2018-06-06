@@ -38,8 +38,8 @@
               </p>
             </div>
             <a class="button" href="/book/{course.id}/{module.id}/choose-date">View availability</a>
-            {#if !course.record.modules && course.record.modules.length && course.record.modules[0].eventId}
-                <a class="link" href="/suggestions-for-you/add/ref=home">
+            {#if !course.record}
+                <a class="link--block" href="/suggestions-for-you/add/ref=home">
                     Add to learning plan
                 </a>
             {/if}

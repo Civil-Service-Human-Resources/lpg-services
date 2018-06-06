@@ -195,6 +195,16 @@ export function saveAccessibilityOptions(
 export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
+	if (req.query.accessibility === 'true') {
+		req.flash('booking', 'showAccessibility')
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
+			)
+		})
+		return
+	}
+
 	const tab = req.query.tab
 
 	const course = req.course
@@ -227,6 +237,7 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 			events,
 			module,
 			selectedEventId,
+			showAccessibility: req.flash('booking')[0],
 			tab,
 		})
 	)

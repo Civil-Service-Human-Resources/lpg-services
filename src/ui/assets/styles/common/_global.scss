@@ -65,3 +65,10 @@ hr.clear {
 		}
 	}
 }
+
+.link {
+	@include m(block) {
+		margin-top: 1em;
+		display: block;
+	}
+}
