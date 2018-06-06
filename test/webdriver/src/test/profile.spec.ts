@@ -30,17 +30,21 @@ describe('Profile page funtionality', () => {
 		expect(browser.isVisible(selectors.givenName)).toBe(true)
 	})
 
-	it('Should display the department field', () => {
+	it('Should display the organisation field', () => {
 		expect(browser.isVisible(selectors.department)).toBe(true)
 	})
 
-	it('Should display the profession field', () => {
-		expect(browser.isVisible(selectors.areasOfWork)).toBe(true)
+	it('Should display the primary area of work field', () => {
+		expect(browser.element(selectors.areasOfWork).isVisible()).toBe(true)
 	})
 
+	// xit('Should display other areas of work field', () => {})
+
 	it('Should display the grade field', () => {
-		expect(browser.isVisible(selectors.grade)).toBe(true)
+		expect(browser.element(selectors.grade).isVisible()).toBe(true)
 	})
+
+	// xit('Should display line manager email field', () => {})
 
 	it('Should display a sign-out button with correct url', () => {
 		const signOut = browser.getAttribute(selectors.signoutButton, 'href')
@@ -52,14 +56,20 @@ describe('Profile page funtionality', () => {
 	})
 
 	it('Should update the users name from the profile section', () => {
-		const name = 'John'
+		const name = `John${Date.now()}`
 		editProfileInfo(selectors.changeGivenName, selectors.editNameField, name)
 		const updatedName = browser.getText(selectors.givenName)
 		expect(updatedName).toEqual(name)
 	})
 
 	it('Should update the users department from the profile page', () => {
-		const dept = 'HM Revenue & Customs'
+		let dept
+		const currentDept = browser.getText(selectors.department)
+		if (currentDept === 'HM Revenue & Customs') {
+			dept = 'Cabinet Office'
+		} else {
+			dept = 'HM Revenue & Customs'
+		}
 		editProfileInfo(
 			selectors.changeDepartment,
 			selectors.editDepartmentField,
@@ -73,7 +83,7 @@ describe('Profile page funtionality', () => {
 		//TODO: implment once new professions selector is complete
 	})
 
-	it('Should update the users grade from the profile page', () => {
+	xit('Should update the users grade from the profile page', () => {
 		const map = new Map()
 		map.set('#AA', 'Administrative level')
 		map.set('#EO', 'First line manager')
