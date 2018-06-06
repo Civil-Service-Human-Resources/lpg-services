@@ -11,7 +11,7 @@
                             { module ? $i18n('moduleResult.complete') : $i18n('courseResult.complete') }
                         {/if}
                     </h1>
-                    <div>{ datetime.formatDate(record.completionDate) }</div>
+                    <div>{ $datetime.formatDate(record.completionDate) }</div>
                     <div>
                         <strong>{ module.title || course.title }</strong>
                     </div>

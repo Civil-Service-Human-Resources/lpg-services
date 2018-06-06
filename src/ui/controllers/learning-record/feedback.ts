@@ -24,7 +24,7 @@ export async function displayFeedback(
 		await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
 
 		req.session!.save(() => {
-			res.redirect('/learning-record')
+			res.redirect('/home')
 		})
 	} else {
 		logger.debug(
