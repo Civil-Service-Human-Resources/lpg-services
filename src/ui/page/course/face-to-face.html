@@ -31,7 +31,18 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <a class="button" href="/book/{course.id}/{module.id}/choose-date">Book this course</a>
+            <div class="panel panel-border-wide">
+              <p>
+                By continuing to book, you are confirming you have approval to book this course and the appropriate
+                payment option in place.
+              </p>
+            </div>
+            <a class="button" href="/book/{course.id}/{module.id}/choose-date">View availability</a>
+            {#if !course.record.modules && course.record.modules.length && course.record.modules[0].eventId}
+                <a class="link" href="/suggestions-for-you/add/ref=home">
+                    Add to learning plan
+                </a>
+            {/if}
         </div>
     </div>
 </div>
