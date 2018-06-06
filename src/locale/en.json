@@ -14,10 +14,6 @@
 	"health-and-safety": "Health & safety",
 	"information-management": "Information management",
 	"diversity-and-equality": "Diversity and equality",
-	"courseResult.passed": "Passed",
-	"courseResult.failed": "Failed",
-	"courseResult.complete": "Course complete",
-	"moduleResult.complete": "Module complete",
 	"face-to-face": "Face to face",
 	"link": "Link",
 	"REGISTERED": "Registered",
@@ -261,5 +257,13 @@
 		"lineManagerConfirmation": "Line Manager Email does not match the confirmation.",
 		"lineManagerInvalid": "Line Manager Email is not valid"
 	},
-	"errors.profileErrorEmpty": "errors.profileErrorEmpty"
+	"errors.profileErrorEmpty": "errors.profileErrorEmpty",
+	"courseResult": {
+		"complete": "Course complete",
+		"passed": "Passed",
+		"failed": "Failed"
+	},
+	"moduleResult": {
+		"complete": "Module complete"
+	}
 }
