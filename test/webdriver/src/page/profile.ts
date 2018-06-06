@@ -35,6 +35,7 @@ export function editProfileInfo(
 	browser.waitForVisible(selector)
 	browser.setValue(selector, '')
 	browser.setValue(selector, updateValue)
+	browser.pause(500)
 	browser.click(selectors.continueButton)
 	browser.waitForVisible(selectors.profileUpdatedBanner)
 }
