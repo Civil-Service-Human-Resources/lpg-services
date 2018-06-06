@@ -85,22 +85,16 @@
 		switch (item) {
 			case 'duration':
 				return youTubePlayer ? player.getDuration() : player.duration()
-				break;
 			case 'currentTime':
 				return youTubePlayer ? player.getCurrentTime() : player.currentTime()
-				break;
 			case 'playing':
 				return youTubePlayer ? YT.PlayerState.PLAYING : 'play'
-				break;
 			case 'paused':
 				return youTubePlayer ? YT.PlayerState.PAUSED : 'pause'
-				break;
 			case 'event':
-				return youTubePlayer ? event.data : event.type
-				break;
+				return youTubePlayer ? JSON.parse(event.data ).info : event.type
 			case 'ended':
 				return youTubePlayer ? YT.PlayerState.ENDED : 'ended'
-				break;
 		}
 	}
 
