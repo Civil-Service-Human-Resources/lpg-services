@@ -260,13 +260,13 @@ app.get(
 )
 
 app.post(
-	'/book/:courseId/:moduleId/choose-date/save',
-	bookingController.saveAccessibilityOptions
+	'/book/:courseId/:moduleId/choose-date',
+	bookingController.selectedDate
 )
 
 app.post(
-	'/book/:courseId/:moduleId/choose-date',
-	bookingController.selectedDate
+	'/book/:courseId/:moduleId/choose-date/save',
+	bookingController.saveAccessibilityOptions
 )
 
 app.get(
