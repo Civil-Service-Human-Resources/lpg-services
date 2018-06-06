@@ -1,6 +1,8 @@
 export const selectors: Record<string, string> = {
 	// counterFraudCourse: 'a[href="/courses/0x390"]',
 	bannerConfirmation: '.banner__heading-large',
+	cookieLink: 'a[href="/cookies"]',
+	cookieMessage: '#global-cookie-message',
 	courseDuration: 'lpg-course-duration',
 	courseInfoTitle: '.heading--page-heading',
 	courseLink: '.lpg-course-link',
