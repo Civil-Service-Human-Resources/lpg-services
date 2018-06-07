@@ -75,6 +75,10 @@ function validator(extension: string, metaData: any): boolean {
 	const metaDataKeys: string[] = Object.keys(metaData.data[0])
 	const metaDataValues: string[] = Object.values(metaData.data[0])
 
+	logger.debug(`Checking ${extension}`, acceptedForFile)
+	logger.debug('metaDataKeys', metaDataKeys)
+	logger.debug('metaDataValues', metaDataValues)
+
 	return (
 		metaDataKeys.some(r => acceptedForFile.keys.indexOf(r) >= 0) &&
 		(acceptedForFile.values.length === 0 ||

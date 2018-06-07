@@ -164,7 +164,7 @@
 	"PB1": "Senior Civil Service - Deputy Director",
 	"PB2": "Senior Civil Service - Director",
 	"PB3": "Senior Civil Service - Director General",
-	"PS":  "Senior Civil Service - Permanent Secretary",
+	"PS": "Senior Civil Service - Permanent Secretary",
 	"grades": {
 		"AA": "Administrative Assistant",
 		"AO": "Administrative Officer",
@@ -176,7 +176,7 @@
 		"PB1": "Senior Civil Service - Deputy Director",
 		"PB2": "Senior Civil Service - Director",
 		"PB3": "Senior Civil Service - Director General",
-		"PS":  "Senior Civil Service - Permanent Secretary"
+		"PS": "Senior Civil Service - Permanent Secretary"
 	},
 	"departments": {
 		"hmrc": "HM Revenue & Customs",
@@ -273,5 +273,6 @@
 	},
 	"moduleResult": {
 		"complete": "Module complete"
-	}
+	},
+	"file": "file"
 }
