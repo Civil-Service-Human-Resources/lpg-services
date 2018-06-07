@@ -138,3 +138,54 @@
 		float: left;
 	}
 }
+
+.multiple-choice {
+	@include m(booking) {
+		float: none;
+		padding-left: 0;
+
+		@include media(desktop) {
+			position: absolute;
+			left: 0;
+			top: 10px;
+		}
+	}
+
+	@include e(spanner) {
+		display: block;
+		position: relative;
+		width: 136px;
+		height: 24px;
+		// text-indent: 400px;
+		overflow: hidden;
+
+		&:before {
+			position: absolute;
+			display: block;
+			content: 'Select';
+			width: 136px;
+			text-align: left;
+			height: 24px;
+			// border: 2px solid $mauve;
+			// border-radius: 4px;
+			left: 32px;
+			top: 0;
+			cursor: pointer;
+		}
+	}
+
+	@include e(input) {
+		&:checked + .multiple-choice__label {
+			.multiple-choice__spanner:before {
+				content: 'Selected';
+			}
+		}
+	}
+	@include e(input) {
+		&:disabled + .multiple-choice__label {
+			.multiple-choice__spanner:before {
+				content: 'Unavailable';
+			}
+		}
+	}
+}

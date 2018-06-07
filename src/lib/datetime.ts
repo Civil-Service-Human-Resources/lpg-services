@@ -122,10 +122,17 @@ export function formatDuration(d: number) {
 	return out
 }
 
-export function formatTime(d: number | Date) {
+export function formatTime(d: number | Date, timeOnly?: boolean) {
 	if (!(d instanceof Date)) {
 		d = new Date(d)
 	}
+	if (timeOnly) {
+		return timeFormat
+			.format(d)
+			.split(',')
+			.pop()
+	}
+
 	return timeFormat.format(d)
 }
 
@@ -163,6 +170,15 @@ export function parseDuration(isoDuration: string): number | undefined {
 		return -duration
 	}
 	return duration
+}
+
+export function addSeconds(date: Date, seconds: number, parsedTime?: boolean) {
+	const milliseconds = seconds * 1000
+	const newDate = new Date(date.getTime() + milliseconds)
+	if (parsedTime) {
+		return formatTime(newDate, true)
+	}
+	return newDate
 }
 
 ensureFullICU()
