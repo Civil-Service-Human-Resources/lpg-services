@@ -35,15 +35,22 @@
                             <div class="div-table__th">Availability</div>
                             <div class="div-table__th"><span class="visuallyhidden">Action</span></div>
                         </div>
-                        {#each events as event}
+                        {#each events as event, index}
                             <div class="div-table__row u-clearfix lpg-date-row">
                                 <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
-                                <div class="div-table__cell">$TIME</div>
+
+                                <div class="div-table__cell">
+                                    {$datetime.formatTime(event.date, true)} to
+                                    {$datetime.addSeconds(event.date, course.modules[index].duration, true)}
+                                </div>
                                 <div class="div-table__cell">{event.location}</div>
                                 <div class="div-table__cell">Fully booked $BOOKING_STATUS</div>
                                 <div class="div-table__cell div-table__cell--action">
                                     <div class="multiple-choice multiple-choice--booking">
-                                        <input id="radio-{event.id}" type="radio" name="selected-date" class="multiple-choice__input" value="{event.id}" disabled="disabled">
+                                        <input id="radio-{event.id}"
+                                        type="radio" name="selected-date"
+                                        class="multiple-choice__input"
+                                        value="{event.id}" disabled="{selectedDate ? 'disabled' : ''}">
                                         <label for="radio-{event.id}" class="multiple-choice__label">
                                             <span class="multiple-choice__spanner">
                                                 <span class="visuallyhidden">{$datetime.formatDate(event.date)}, {event.location}</span>
