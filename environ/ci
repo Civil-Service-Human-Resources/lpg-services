@@ -20,7 +20,13 @@ stage "Building the main src"
 npm run build
 
 stage "Running the unit tests"
+export NODE_ENV=test
+export AZURE_STORAGE_CONNECTION_STRING=key1=value1;key2=value2
+
 npm test
+
+unset NODE_ENV
+unset AZURE_STORAGE_CONNECTION_STRING
 
 stage "Pulling the latest lpg-services docker image"
 docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
