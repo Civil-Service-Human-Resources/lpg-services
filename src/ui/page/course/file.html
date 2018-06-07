@@ -5,15 +5,15 @@
         </h1>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <div>{@html toHtml(course.description)}</div>
+                <div>{@html $toHtml(course.description)}</div>
 
                 {#if course.learningOutcomes}
                 <h2 class="heading-medium">Learning outcomes</h2>
-                <div>{@html toHtml(course.learningOutcomes)}</div>
+                <div>{@html $toHtml(course.learningOutcomes)}</div>
                 {/if}
                 <h3 class="heading-small">Download document</h3>
-                <a href="/courses/{course.id}/{module.id}">{fileHelpers.fileName(module.url)}</a>
-                ({fileHelpers.extension(module.url)}, {fileHelpers.appropriateFileSize(module.fileSize)})
+                <a href="/courses/{course.id}/{module.id}">{$fileHelpers.fileName(module.url)}</a>
+                ({$fileHelpers.extension(module.url)}, {$fileHelpers.appropriateFileSize(module.fileSize)})
             </div>
             <div class="column-one-third">
                 {#if courseDetails.length} {#each courseDetails as dataRows}

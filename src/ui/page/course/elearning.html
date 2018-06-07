@@ -5,11 +5,11 @@
         </h1>
         <div class="grid-row">
             <div class="column-two-thirds">
-                <div>{@html toHtml(course.description)}</div>
+                <div>{@html $toHtml(course.description)}</div>
 
                 {#if course.learningOutcomes}
                 <h2 class="heading-medium">Learning outcomes</h2>
-                <div>{@html toHtml(course.learningOutcomes)}</div>
+                <div>{@html $toHtml(course.learningOutcomes)}</div>
                 {/if}
 
                 <a class="button" href="/courses/{course.id}/{module.id}">Start this learning</a>
