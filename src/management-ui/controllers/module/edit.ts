@@ -102,11 +102,12 @@ async function pendingFileHandler(
 	}).pipe(fs.createWriteStream(filePath))
 
 	const ep = new exiftool.ExiftoolProcess(exiftoolBin)
+
 	const metaData = await ep
 		.open()
-		// display pid
-		.then((pid: any) => console.log('Started exiftool process %s', pid))
+		.then((pid: any) => logger.debug(`Started exiftool process ${pid}`))
 		.then(() => ep.readMetadata(filePath, ['-File:all']))
+
 	ep.close()
 
 	if (!validator(path.extname(filePath), metaData)) {
