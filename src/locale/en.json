@@ -265,5 +265,6 @@
 	},
 	"moduleResult": {
 		"complete": "Module complete"
-	}
+	},
+	"file": "file"
 }

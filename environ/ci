@@ -21,7 +21,7 @@ npm run build
 
 stage "Running the unit tests"
 export NODE_ENV=test
-export AZURE_STORAGE_CONNECTION_STRING=key1=value1;key2=value2
+export AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https
 
 npm test
 
