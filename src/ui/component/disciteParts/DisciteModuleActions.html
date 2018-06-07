@@ -1,6 +1,6 @@
 <div class="discite__action discite__action--module">
     {#if module.type === 'file'}
-        <a download="{$fileHelpers.fileName(module.url)}" href="{module.url}">
+        <a href="/courses/{course.id}/{module.id}">
             Download document
         </a> ({$fileHelpers.extension(module.url)} {$fileHelpers.appropriateFileSize(module.fileSize)})
     {:else}
