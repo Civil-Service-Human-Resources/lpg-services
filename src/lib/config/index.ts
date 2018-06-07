@@ -7,7 +7,6 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
-	warn('Loading dotenv')
 	const envFile = '/keybase/team/lpg/dev/dotenv'
 	try {
 		if (!fs.statSync(envFile).isFile()) {

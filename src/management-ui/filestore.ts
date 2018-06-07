@@ -11,7 +11,12 @@ import * as streamifier from 'streamifier'
 import * as unzip from 'unzip'
 import * as xml2js from 'xml2js'
 
-const blob = azure.createBlobService()
+let blob: azure.BlobService
+
+if (process.env.NODE_ENV !== 'test') {
+	blob = azure.createBlobService()
+}
+
 const logger = log4js.getLogger('lib/management-ui/fileStore')
 
 const filesToSubstitute = [
