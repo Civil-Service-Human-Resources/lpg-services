@@ -209,7 +209,15 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 
 	const course = req.course
 	const module = req.module!
-	const selectedEventId = req.query.eventId
+
+	let selectedEventId: string
+
+	if (req.flash('bookingSelected')[0]) {
+		selectedEventId = req.flash('bookingSelected')[0]
+	} else {
+		selectedEventId = req.query.eventId
+	}
+
 	if (req.session!.selectedEventId) {
 		req.session!.selectedEventId = selectedEventId
 	}
@@ -285,6 +293,20 @@ export function renderPaymentOptions(
 
 export function selectedDate(req: express.Request, res: express.Response) {
 	const selected = req.body['selected-date']
+
+	if (req.query.accessibility === 'true') {
+		req.flash('booking', 'showAccessibility')
+		if (selected) {
+			req.flash('bookingSelected', selected)
+		}
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
+			)
+		})
+		return
+	}
+
 	if (Array.isArray(req.body.accessibilityreqs)) {
 		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
 	} else {

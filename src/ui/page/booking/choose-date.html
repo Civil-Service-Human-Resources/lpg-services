@@ -44,7 +44,7 @@
                                     {$datetime.addSeconds(event.date, course.modules[index].duration, true)}
                                 </div>
                                 <div class="div-table__cell">{event.location}</div>
-                                <div class="div-table__cell">Fully booked $BOOKING_STATUS</div>
+                                <div class="div-table__cell">Fully booked $BOOKING_STATUS {event.id}</div>
                                 <div class="div-table__cell div-table__cell--action">
                                     <div class="multiple-choice multiple-choice--booking">
                                         <input id="radio-{event.id}"
@@ -64,9 +64,9 @@
                     {#if showAccessibility}
                          <AccessibilityOptions/>
                     {:else}
-                        <a href="{$req.url}?accessibility=true">
+                        <button class="link button--link" type="submit" formaction="{$req.url}?accessibility=true">
                             Accessibility and reasonable adjustments
-                        </a>
+                        </button>
                     {/if}
 
 
