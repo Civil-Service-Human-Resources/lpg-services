@@ -23,7 +23,7 @@
 			"cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
 		"start:ui":
 			"cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
-		"test": "AZURE_STORAGE_CONNECTION_STRING=key1=value1;key2=value2 NODE_ICU_DATA=node_modules/full-icu node dist/jasmine.js",
+		"test": "NODE_ENV=test AZURE_STORAGE_CONNECTION_STRING=key1=value1;key2=value2 NODE_ICU_DATA=node_modules/full-icu node dist/jasmine.js",
 		"watch": "./bin/tsc -w",
 		"watch-sass:ui":
 			"node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles --output-style compressed",
