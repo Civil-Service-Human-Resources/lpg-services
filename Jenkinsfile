@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                withNPM(npmrcConfig:'my-custom-npmrc') {
+                nodejs(nodeJSInstallationName: 'NodeJS 10.4.0') {
                     sh 'npm install'
                     sh 'npm run lint'
                     sh 'npm run lint:webdriver'
