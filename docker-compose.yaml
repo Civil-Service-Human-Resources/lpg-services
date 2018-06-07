@@ -89,7 +89,7 @@ services:
       XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
       XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
       XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-    image: cshr/lpg-learner-record:d0308151b4ac302f59207d7c28b277881ea0e47f
+    image: cshr/lpg-learner-record:872feac7582bc92ef9feae6df229c3782b636dd2
     depends_on:
       - civil-servant-registry
       - identity
