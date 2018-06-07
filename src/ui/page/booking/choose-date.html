@@ -29,34 +29,29 @@
                 <form autocomplete="nope" method="post">
                     <div class="div-table div-table--5 lpg-date-table">
                         <div class="div-table__row u-clearfix">
-                            <div class="div-table__th">Course dates</div>
-                            <div class="div-table__th">Duration</div>
+                            <div class="div-table__th">Date</div>
+                            <div class="div-table__th">Time</div>
                             <div class="div-table__th">Location</div>
-                            <div class="div-table__th">Price</div>
-                            <div class="div-table__th">
-                                <span class="visually-hidden">Selected</span>
-                            </div>
+                            <div class="div-table__th">Availability</div>
+                            <div class="div-table__th"><span class="visuallyhidden">Action</span></div>
                         </div>
                         {#each events as event}
-                        {#if event.id}
-                        <div class="div-table__row u-clearfix lpg-date-row">
-                            <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
-                            <div class="div-table__cell">{course.getDuration()}</div>
-                            <div class="div-table__cell">{event.location}</div>
-                            <div class="div-table__cell lpg-price">&pound;{module.price}</div>
-                            <div class="div-table__cell  div-table__cell--action">
-                                <div class="course-radios">
-                                    {#if event.id == selectedEventId}
-                                    <input id="radio-{event.id}" type="radio" name="selected-date" class="booking__date" value="{event.id}" checked> {:else}
-                                    <input id="radio-{event.id}" type="radio" name="selected-date" class="booking__date" value="{event.id}"> {/if}
-                                    <label for="radio-{event.id}" class="booking__select-container">
-                                        <span class="booking__select booking__select--select lpg-select-date">Select</span>
-                                        <span class="booking__select booking__select--selected lpg-selected-date">Selected</span>
-                                    </label>
+                            <div class="div-table__row u-clearfix lpg-date-row">
+                                <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
+                                <div class="div-table__cell">$TIME</div>
+                                <div class="div-table__cell">{event.location}</div>
+                                <div class="div-table__cell">Fully booked $BOOKING_STATUS</div>
+                                <div class="div-table__cell div-table__cell--action">
+                                    <div class="multiple-choice multiple-choice--booking">
+                                        <input id="radio-{event.id}" type="radio" name="selected-date" class="multiple-choice__input" value="{event.id}" disabled="disabled">
+                                        <label for="radio-{event.id}" class="multiple-choice__label">
+                                            <span class="multiple-choice__spanner">
+                                                <span class="visuallyhidden">{$datetime.formatDate(event.date)}, {event.location}</span>
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {/if}
                         {/each}
                     </div>
                     {#if showAccessibility}
