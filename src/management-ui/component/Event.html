@@ -7,6 +7,7 @@
         <tr>
             <th>Date, Start Time</th>
             <th>Location</th>
+            <th>Maximum capacity</th>
             <th>
                 <span class="visuallyhidden">Action</span>
             </th>
@@ -16,13 +17,17 @@
     <tbody>
         <tr>
             <td class="key-value-list__value key-value-list__auto--auto lpg-date">
-                {#if event.id}
-                    <input type="hidden" id="event_id_{i}" name="id" value="{ event.id } ">
-                {/if}
-                <input class="form-control input--datetime" id="event_date_{i}" name="event_date" type="datetime-local" value="{ (event.date? $datetime.HTMLFormatDate(event.date) : '') }">
+                {#if event.id}<input type="hidden" id="event_id_{i}" name="event_id" value="{ event.id } ">{/if}
+                <input class="form-control input--datetime" id="event_date_{i}" name="event_date" type="datetime-local" value="{$datetime.HTMLFormatDate(event.date, true)}">
             </td>
             <td class="key-value-list__value key-value-list__auto--auto lpg-location">
                 <input class="form-control form-control-2-3" id="event_location_{i}" name="event_location" type="text" value="{ event.location || '' }">
+            </td>
+            <td class="key-value-list__value key-value-list__auto--auto">
+                <input class="form-control form-control-2-3" id="event_capacity_{i}" name="event_capacity" type="number" value="{ event.capacity || '' }">
+            </td>
+            <td>
+               {event.id}
             </td>
             <td class="key-value-list__item-action">
                 {#if i !== 0 }
@@ -30,13 +35,14 @@
                 {/if}
             </td>
         </tr>
+        {#if i === events.length-1 }
+            <tr>
+                <td class="key-value-list__item-action" colspan="3 ">
 
-        <tr>
-            <td class="key-value-list__item-action" colspan="3 ">
-                {#if i === events.length-1 }
-                <button name="submit" type="submit" class="button" value="add_event ">Add Event</button>{/if}
-            </td>
-        </tr>
+                    <button name="submit" type="submit" class="button" value="add_event ">Add Event</button>
+                </td>
+            </tr>
+        {/if}
     </tbody>
     {/each}
 </table>
