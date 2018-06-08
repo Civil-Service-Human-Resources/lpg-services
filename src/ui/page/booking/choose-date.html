@@ -2,7 +2,6 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <Breadcrumb {breadcrumbs}/>
                 <h1 class="heading-xlarge">
                     <span class="heading-secondary">Booking a course</span>
                     Select course date
@@ -25,6 +24,7 @@
                 <p class="lede">
                     Check on which dates you can attend and in which locations, then select a suitable option below.
                 </p>
+                {selectedEventId}
                 <h2 class="heading-small">{ module.title || course.title }</h2>
                 <form autocomplete="nope" method="post">
                     <div class="div-table div-table--5 lpg-date-table">
@@ -51,7 +51,10 @@
                                         <input id="radio-{event.id}"
                                         type="radio" name="selected-date"
                                         class="multiple-choice__input"
-                                        value="{event.id}" disabled="{selectedDate ? 'disabled' : ''}">
+                                        checked="{selectedEventId === event.id ? 'checked' : ''}"
+                                        disabled="{selectedDate ? 'disabled' : ''}"
+                                        value="{event.id}"
+                                        >
                                         <label for="radio-{event.id}" class="multiple-choice__label">
                                             <span class="multiple-choice__spanner">
                                                 <span class="visuallyhidden">{$datetime.formatDate(event.date)}, {event.location}</span>
@@ -96,7 +99,6 @@
 <script>
 	import Page from '../../component/Page.html'
 	import AccessibilityOptions from '../../component/AccessibilityOptions.html'
-    import Breadcrumb from '../../component/Breadcrumb.html'
 
 	export default {
 		data() {
@@ -107,7 +109,6 @@
 		components: {
 			Page,
 			AccessibilityOptions,
-			Breadcrumb
 		}
 	}
 </script>

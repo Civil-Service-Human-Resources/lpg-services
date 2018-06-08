@@ -89,7 +89,7 @@ services:
       XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
       XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
       XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-    image: cshr/lpg-learner-record:8181fb3e0ff6e4ae736b4caf5e0efb1bd865d10b
+    image: cshr/lpg-learner-record:277a622b15c8ce4a342fd8e05ba621e03adcd74a
     depends_on:
       - civil-servant-registry
       - identity
@@ -109,7 +109,7 @@ services:
       ELASTICSEARCH_URI: http://elasticsearch:9200
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: changeme
-    image: cshr/lpg-learning-catalogue:222b2025e3c8f3ec2ad29b65304edc0f2a5a642d
+    image: cshr/lpg-learning-catalogue:781d5e92df2238fc184e1276e079b9833f67017b
     ports:
       - 9001:9001
 

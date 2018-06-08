@@ -17,7 +17,7 @@
     <tbody>
         <tr>
             <td class="key-value-list__value key-value-list__auto--auto lpg-date">
-                {#if event.id}<input type="hidden" id="event_id_{i}" name="event_id" value="{ event.id } ">{/if}
+                {#if event.id}<input type="hidden" id="event_id_{i}" name="event_id" value="{ event.id }">{/if}
                 <input class="form-control input--datetime" id="event_date_{i}" name="event_date" type="datetime-local" value="{$datetime.HTMLFormatDate(event.date, true)}">
             </td>
             <td class="key-value-list__value key-value-list__auto--auto lpg-location">
