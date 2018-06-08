@@ -2,7 +2,6 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <Breadcrumb {breadcrumbs}/>
                 <h1 class="heading-large">
                     <span class="heading-secondary">Booking a course</span>
                     Confirm your details before completing your booking
@@ -75,7 +74,7 @@
                             {/if} {/each} {/if}
                         </ul>
                     </div>
-                    <a href="{breadcrumbs[2].url}&tab=accessibility" class="booking__change lpg-change-reqs">Change</a>
+                    <a href="/book/{course.id}/{module.id}/choose-date?accessibility=true&ref=confirmation" class="booking__change lpg-change-reqs">Change</a>
                 </div>
             </div>
         </div>
@@ -93,7 +92,6 @@
 
 <script>
 	import Page from '../../component/Page.html'
-    import Breadcrumb from '../../component/Breadcrumb.html'
 
 	export default {
 		data() {
@@ -103,7 +101,6 @@
 
 		components: {
 			Page,
-			Breadcrumb,
 		}
 	}
 </script>

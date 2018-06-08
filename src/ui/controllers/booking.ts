@@ -195,8 +195,22 @@ export function saveAccessibilityOptions(
 export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
+	const tab = req.query.tab
+
+	const course = req.course
+	const module = req.module!
+
+	let selectedEventId: string = req.flash('bookingSelected')[0]
+
 	if (req.query.accessibility === 'true') {
 		req.flash('booking', 'showAccessibility')
+		req.flash('bookingSelected', selectedEventId)
+
+		if (req.query.ref === 'confirmation') {
+			req.flash('booking', 'showAccessibility')
+			req.flash('bookingSelected', req.session!.selectedEventId)
+		}
+
 		req.session!.save(() => {
 			res.redirect(
 				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
@@ -205,21 +219,11 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 		return
 	}
 
-	const tab = req.query.tab
-
-	const course = req.course
-	const module = req.module!
-
-	let selectedEventId: string
-
-	if (req.flash('bookingSelected')[0]) {
-		selectedEventId = req.flash('bookingSelected')[0]
-	} else {
+	if (!selectedEventId) {
 		selectedEventId = req.query.eventId
-	}
-
-	if (req.session!.selectedEventId) {
-		req.session!.selectedEventId = selectedEventId
+		if (req.session!.selectedEventId) {
+			req.session!.selectedEventId = selectedEventId
+		}
 	}
 
 	if (!selectedEventId && req.session) {
@@ -233,7 +237,6 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const events = (module.events || [])
 		.filter(a => a.date > today)
 		.sort((a, b) => a.date.getTime() - b.date.getTime())
-
 	res.send(
 		template.render('booking/choose-date', req, res, {
 			accessibilityReqs: req.session!.accessibilityReqs,
@@ -249,6 +252,47 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 			tab,
 		})
 	)
+}
+
+export function selectedDate(req: express.Request, res: express.Response) {
+	const selected = req.body['selected-date']
+	if (req.query.accessibility === 'true') {
+		req.flash('booking', 'showAccessibility')
+		req.flash('bookingSelected', selected)
+
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
+			)
+		})
+		return
+	}
+
+	if (Array.isArray(req.body.accessibilityreqs)) {
+		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
+	} else {
+		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
+	}
+
+	if (!selected) {
+		req.flash('errorTitle', 'booking_must_select_date_title')
+		req.flash('errorMessage', 'booking_must_select_date_message')
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
+			)
+		})
+	} else {
+		req.session!.selectedEventId = selected
+		console.log(req.session!.selectedEventId)
+		req.session!.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${
+					req.params.moduleId
+				}/${decodeURIComponent(selected)}`
+			)
+		})
+	}
 }
 
 export async function renderConfirmPayment(
@@ -289,45 +333,6 @@ export function renderPaymentOptions(
 			previouslyEntered: session.po || session.fap,
 		})
 	)
-}
-
-export function selectedDate(req: express.Request, res: express.Response) {
-	const selected = req.body['selected-date']
-
-	if (req.query.accessibility === 'true') {
-		req.flash('booking', 'showAccessibility')
-		if (selected) {
-			req.flash('bookingSelected', selected)
-		}
-		req.session!.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
-			)
-		})
-		return
-	}
-
-	if (Array.isArray(req.body.accessibilityreqs)) {
-		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
-	} else {
-		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
-	}
-
-	if (!selected) {
-		req.flash('errorTitle', 'booking_must_select_date_title')
-		req.flash('errorMessage', 'booking_must_select_date_message')
-		req.session!.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
-			)
-		})
-	} else {
-		req.session!.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/${selected}`
-			)
-		})
-	}
 }
 
 export async function tryCancelBooking(
