@@ -204,14 +204,17 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		if (Array.isArray(req.body.event_date)) {
 			data.events = []
 			for (const index of Object.keys(req.body.event_date)) {
-				const event = {
+				let event = {
+					capacity: req.body.event_capacity[index],
 					date: req.body.event_date[index],
-					id: null,
+					id: req.body.event_id ? req.body.event_id[index] : null,
 					location: req.body.event_location[index],
 				}
-				event.id = req.body.event_id ? req.body.event_id[index] : null
+
+				// event.id = req.body.event_id ? req.body.event_id[index] : null
 				data.events.push(model.Event.create(event))
 			}
+			console.log(data.events)
 		} else {
 			//singular
 

@@ -372,17 +372,19 @@ export class ModuleWithCourse extends Module {
 export class Event {
 	static create(data: any) {
 		const date = data.date ? new Date(data.date) : new Date()
-		return new Event(data.id, date, data.location)
+		return new Event(data.id, date, data.location, data.capacity)
 	}
 
 	id: string
 	date: Date
 	location: string
+	capacity: number
 
-	constructor(id: string, date: Date, location: string) {
+	constructor(id: string, date: Date, location: string, capacity: number) {
 		this.id = id
 		this.date = date
 		this.location = location
+		this.capacity = capacity
 	}
 
 	getActivityId() {

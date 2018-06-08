@@ -1,3 +1,5 @@
+import DateTimeFormatOptions = Intl.DateTimeFormatOptions
+
 const dateFormat = new Intl.DateTimeFormat('en-GB', {
 	day: '2-digit',
 	month: 'short',
@@ -74,21 +76,37 @@ export function formatDate(d: number | Date) {
 	return dateFormat.format(d)
 }
 
-export function HTMLFormatDate(d: number | Date) {
+export function HTMLFormatDate(d: number | Date, withTime?: boolean) {
 	if (!(d instanceof Date)) {
 		d = new Date(d)
 	}
 
-	const HTMLDateFormat = new Intl.DateTimeFormat('en-GB', {
+	let options: DateTimeFormatOptions = {
 		day: '2-digit',
 		month: '2-digit',
 		timeZone: 'Europe/London',
 		year: 'numeric',
-	})
+	}
+	if (withTime) {
+		options = {...options, hour: '2-digit', minute: '2-digit'}
+	}
+
+	const HTMLDateFormat = new Intl.DateTimeFormat('en-GB', options)
 
 	const arrDate = HTMLDateFormat.format(d).split('/')
-	const formatted = `${arrDate[2]}-${arrDate[1]}-${arrDate[0]}`
-	return formatted.slice(0, 10)
+
+	let formatted: string
+	if (!withTime) {
+		formatted = `${arrDate[2]}-${arrDate[1]}-${arrDate[0]}`
+	} else {
+		const yearTime = arrDate[2].split(', ')
+		const arrDateTime = [...arrDate.slice(0, 2), ...yearTime]
+
+		formatted = `${arrDateTime[2]}-${arrDateTime[1]}-${arrDateTime[0]}T${
+			arrDateTime[3]
+		}`
+	}
+	return formatted
 }
 
 // Convert duration in seconds to an ISO 8601 format duration string. Used to
