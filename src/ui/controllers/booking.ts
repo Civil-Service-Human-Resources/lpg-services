@@ -192,7 +192,10 @@ export function saveAccessibilityOptions(
 	}
 }
 
-export function renderChooseDate(ireq: express.Request, res: express.Response) {
+export async function renderChooseDate(
+	ireq: express.Request,
+	res: express.Response
+) {
 	const req = ireq as extended.CourseRequest
 
 	const tab = req.query.tab
@@ -237,6 +240,18 @@ export function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const events = (module.events || [])
 		.filter(a => a.date > today)
 		.sort((a, b) => a.date.getTime() - b.date.getTime())
+
+	const registrations = await learnerRecord.getRegistrationsForEvents(
+		events.map((event: any) => {
+			return event.id
+		}),
+		req.user
+	)
+
+	events.map((event: any) => {
+		event.registrations = registrations[0]
+	})
+
 	res.send(
 		template.render('booking/choose-date', req, res, {
 			accessibilityReqs: req.session!.accessibilityReqs,
@@ -430,12 +445,14 @@ export async function tryCompleteBooking(
 		}
 	}
 
+	//TODO: LPFG-315 add line manager and eventId here?
+	console.log(req.user)
 	await notify.bookingConfirmed({
 		accessibility: accessibilityArray.join(', '),
 		courseDate: dateTime.formatDate(event.date),
 		courseTitle: module.title || course.title,
-		email: req.user.emailAddress,
-		name: req.user.givenName || req.user.emailAddress,
+		email: req.user.userName,
+		name: req.user.givenName || req.user.userName,
 		paymentOption,
 	})
 

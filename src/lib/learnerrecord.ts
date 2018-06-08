@@ -37,7 +37,7 @@ export async function getRecord(
 	}
 
 	const response = await http.get(`/records/${user.id}`, {
-		headers: { Authorization: `Bearer ${user.accessToken}` },
+		headers: {Authorization: `Bearer ${user.accessToken}`},
 		params: {
 			activityId,
 		},
@@ -51,7 +51,7 @@ export async function getRecord(
 
 export async function getLearningRecord(user: model.User) {
 	const response = await http.get(`/records/${user.id}`, {
-		headers: { Authorization: `Bearer ${user.accessToken}` },
+		headers: {Authorization: `Bearer ${user.accessToken}`},
 	})
 
 	const courses: model.Course[] = []
@@ -99,6 +99,7 @@ function uriToId(type: string, uri: string) {
 
 export async function getRegistrations() {
 	const response = await http.get('/registrations')
+
 	const registrations: Registration[] = []
 	for (const data of response.data.registrations) {
 		const uriParts = data.courseId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
@@ -121,6 +122,21 @@ export async function getRegistrations() {
 		})
 	}
 	return registrations
+}
+
+export async function getRegistrationsForEvents(
+	events: string[],
+	user: model.User
+) {
+	const queryParam = events.pop()
+	const response = await http.get(
+		`/registrations/count?eventId=${queryParam}`,
+		{headers: {Authorization: `Bearer ${user.accessToken}`}}
+	)
+	//TODO: LPFG-315, LPFG-416 implement with multiple eventIds. Response will soon be {eventId: int}
+
+
+	return Object.values(response.data)
 }
 
 export async function getReadyForFeedback(learningRecord: model.Course[]) {
