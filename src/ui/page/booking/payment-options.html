@@ -2,7 +2,6 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <Breadcrumb {breadcrumbs}/>
                 <h1 class="heading-large">
                     <span class="heading-secondary">Booking a course</span>Payment
                 </h1>
@@ -40,8 +39,6 @@
 
 <script>
 	import Page from '../../component/Page.html'
-	import Breadcrumb from '../../component/Breadcrumb.html'
-
 	export default {
 		data() {
 			return {
@@ -49,8 +46,7 @@
 		},
 
 		components: {
-			Page,
-			Breadcrumb
+			Page
 		}
 	}
 </script>

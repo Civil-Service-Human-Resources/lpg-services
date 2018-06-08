@@ -177,6 +177,13 @@ export async function removeModule(
 	res.redirect(`/courses/${course.id}`)
 }
 
+interface EventData {
+	capacity?: string
+	date?: string
+	id?: string
+	location?: string
+}
+
 export async function setModule(ireq: express.Request, res: express.Response) {
 	let redirect = null
 	const req = ireq as extended.CourseRequest & {files: any}
@@ -207,21 +214,19 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		if (Array.isArray(req.body.event_date)) {
 			data.events = []
 			for (const index of Object.keys(req.body.event_date)) {
-				let event = {
+				let event: EventData = {
 					capacity: req.body.event_capacity[index],
 					date: req.body.event_date[index],
-					id: req.body.event_id ? req.body.event_id[index] : null,
 					location: req.body.event_location[index],
 				}
 
-				// event.id = req.body.event_id ? req.body.event_id[index] : null
 				data.events.push(model.Event.create(event))
 			}
-			console.log(data.events)
 		} else {
 			//singular
 
 			const event = {
+				capacity: req.body.event_capacity,
 				date: req.body.event_date,
 				id: req.body.event_id || null,
 				location: req.body.event_location,
