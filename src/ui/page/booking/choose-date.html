@@ -45,7 +45,10 @@
 
                                 </div>
                                 <div class="div-table__cell">{event.location}</div>
-                                <div class="div-table__cell">Fully booked {event.capacity}</div>
+
+                                <div class="div-table__cell">
+                                    {event.availability !== undefined ? `${event.registrations} out of` : ''} {event.capacity}
+                                </div>
                                 <div class="div-table__cell div-table__cell--action">
                                     <div class="multiple-choice multiple-choice--booking">
                                         <input id="radio-{event.id}"
