@@ -304,5 +304,6 @@
 	"moduleResult": {
 		"complete": "Module complete"
 	},
-	"file": "file"
+	"file": "file",
+	"action_REGISTERED": "action_REGISTERED"
 }
