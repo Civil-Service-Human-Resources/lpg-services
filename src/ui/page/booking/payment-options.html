@@ -7,22 +7,14 @@
                 </h1>
             </div>
         </div>
-        {#if poErrors && poErrors.length}
-            <Error errorHeading="There was an issue with your purchase order" errors={poErrors} />
-        {/if}
-        {#if fapErrors && fapErrors.length}
-            <Error errorHeading="There was an issue with your financial approver" errors={fapErrors} />
-        {/if}
         <div class="grid-row">
+            {#if poErrors && poErrors.length}
+                <Error errorHeading="There was an issue with your purchase order" errors={poErrors} />
+            {/if}
+            {#if fapErrors && fapErrors.length}
+                <Error errorHeading="There was an issue with your financial approver" errors={fapErrors} />
+            {/if}
             <div class="column-two-thirds">
-                {#if paymentOptionsFailed }
-                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
-                            Error
-                        </h2>
-                        <p>You must enter the {$signedInUser.department == ('co' || 'dh') ? 'purchase order number' : 'email address of your financial approver' }</p>
-                    </div>
-                {/if}
                 <form autocomplete="nope" method="post">
                     <div class="form-group">
                         {#if $signedInUser.department == "hmrc"}
