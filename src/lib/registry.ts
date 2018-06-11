@@ -60,7 +60,7 @@ export async function checkLineManager(data: any, token: string) {
 				'Authorization': `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
-			timeout: 5000,
+			timeout: config.REQUEST_TIMEOUT,
 		})
 
 		http

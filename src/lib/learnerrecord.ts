@@ -17,7 +17,7 @@ const http = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
-	timeout: 5000,
+	timeout: config.REQUEST_TIMEOUT,
 })
 
 axiosLogger.axiosRequestLogger(http, logger)
