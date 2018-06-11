@@ -1,6 +1,17 @@
 const config = require('./config')
 const axios = require('axios')
 
+//TODO: Will
+// GET /home
+// GET session cookie (log-ui)
+// Redirects to identity
+// Get redirect url
+// CSRF token scrape
+// GET session cookie (identity)
+// POST login {usr/pass/csrf/cookie}
+// Redirect
+// GET redirect url
+
 module.exports = {
 	setLoginBody: setLoginBody,
 	logAfterResponse: logAfterResponse,
@@ -32,9 +43,10 @@ function loginToWso2(requestParams, response, context, ee, next) {
 		axiosOptions = {
 			method: 'post',
 			data: {
-				emailAddress: config.USERNAME,
+				username: config.USERNAME,
 				password: config.PASSWORD,
-				sessionDateKey: context.vars.sessionDataKey,
+				//_csrf(scrape)
+				//sessionDateKey: context.vars.sessionDataKey,
 			},
 			headers: {
 				'Content-Type': 'application/json',
@@ -42,7 +54,8 @@ function loginToWso2(requestParams, response, context, ee, next) {
 		}
 
 		let loginMethod = () => {
-			let url = `https://identity.cshr.digital/commonauth`
+			let url = config.BASE_URL + '/sign-in'
+			//let url = `https://test-lpg.cshr.digital/sign-in`
 			axios
 				.post(url, axiosOptions)
 				.then(response => {
@@ -67,17 +80,17 @@ function loginToWso2(requestParams, response, context, ee, next) {
 	}
 }
 
-function setLoginBody(requestParams, context, ee, next) {
-	// requestParams.headers['Authorization'] = authLogin()
-	requestParams.headers['Content-Type'] = 'application/json'
-	requestParams.json = {
-		emailAddress: config.USERNAME,
-		password: config.PASSWORD,
-		sessionDateKey: context.vars.sessionDataKey,
-	}
+// function setLoginBody(requestParams, context, ee, next) {
+// 	// requestParams.headers['Authorization'] = authLogin()
+// 	requestParams.headers['Content-Type'] = 'application/json'
+// 	requestParams.json = {
+// 		emailAddress: config.USERNAME,
+// 		password: config.PASSWORD,
+// 		//sessionDateKey: context.vars.sessionDataKey,
+// 	}
 
-	return next() // MUST be called for the scenario to continue
-}
+// 	return next() // MUST be called for the scenario to continue
+// }
 
 function sessionDataKey(requestParams, response, context, ee, next) {
 	if (
@@ -100,17 +113,17 @@ function logBeforeRequest(requestParams, context, ee, next) {
 	return next()
 }
 
-function authLogin() {
-	let auth = new Buffer(
-		config.BASIC_AUTH_USERNAME + ':' + config.BASIC_AUTH_PASSWORD
-	).toString('base64')
+// function authLogin() {
+// 	let auth = new Buffer(
+// 		config.BASIC_AUTH_USERNAME + ':' + config.BASIC_AUTH_PASSWORD
+// 	).toString('base64')
 
-	return 'Basic ' + auth
-}
+// 	return 'Basic ' + auth
+// }
 
-function setAuthHeader(requestParams, context, ee, next) {
-	requestParams.headers['Authorization'] = authLogin()
-	requestParams.headers['Content-Type'] = 'application/json'
+// function setAuthHeader(requestParams, context, ee, next) {
+// 	requestParams.headers['Authorization'] = authLogin()
+// 	requestParams.headers['Content-Type'] = 'application/json'
 
-	next()
-}
+// 	next()
+// }
