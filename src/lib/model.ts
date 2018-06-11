@@ -585,7 +585,7 @@ export class User {
 		return this.roles && this.roles.indexOf(role) > -1
 	}
 
-    hasAnyRole(roles: string[]) {
+	hasAnyRole(roles: string[]) {
 		return this.roles && this.roles.some(value => roles.indexOf(value) > -1)
 	}
 }
