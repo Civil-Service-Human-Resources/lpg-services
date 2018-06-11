@@ -149,4 +149,8 @@ export const REGISTRY_SERVICE_URL =
 
 export const CHECK_LINEMANAGER_URL = REGISTRY_SERVICE_URL + '/civilServants/manager'
 
+export const REPORT_SERVICE = set({
+	url: env.REPORT_SERVICE_URL || 'http://localhost:9004',
+})
+
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000

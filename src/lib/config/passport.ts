@@ -116,6 +116,19 @@ export function hasRole(role: string) {
 	}
 }
 
+export function hasAnyRole(roles: string[]) {
+	return (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction
+	) => {
+		if (req.user && req.user.hasAnyRole(roles)) {
+			return next()
+		}
+		res.sendStatus(401)
+	}
+}
+
 export function logout(
 	authenticationServiceUrl: string,
 	callbackUrl: string,
