@@ -24,7 +24,6 @@
                 <p class="lede">
                     Check on which dates you can attend and in which locations, then select a suitable option below.
                 </p>
-                {selectedEventId}
                 <h2 class="heading-small">{ module.title || course.title }</h2>
                 <form autocomplete="nope" method="post">
                     <div class="div-table div-table--5 lpg-date-table">
@@ -87,10 +86,8 @@
                     <input type="submit" class="button" value="Continue" formaction="/book/{course.id}/{module.id}/choose-date">
                 </form>
 
-
-
                 {:else}
-                <p>Unfortunately this course is not currently available.</p>
+                    <p>Unfortunately this course is not currently available.</p>
                 {/if}
             </div>
         </div>
