@@ -19,7 +19,7 @@ exports.config = {
 	exclude: [],
 	framework: 'jasmine',
 	jasmineNodeOpts: {
-		defaultTimeoutInterval: 15000,
+		defaultTimeoutInterval: 90000,
 		expectationResultHandler: function(passed, assertion) {},
 	},
 	logLevel: 'silent',
