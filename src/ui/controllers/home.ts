@@ -1,5 +1,5 @@
 import * as express from 'express'
-import * as extended from "lib/extended"
+import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
@@ -15,7 +15,7 @@ export async function home(req: express.Request, res: express.Response) {
 		const user = req.user as model.User
 		const learningRecord = await learnerRecord.getLearningRecord(user)
 		const learningHash = suggestionController.hashArray(learningRecord, 'id')
-		const plannedLearning: model.Course[] = []
+		let plannedLearning: model.Course[] = []
 		const requiredLearning = (await catalog.findRequiredLearning(user)).results
 
 		const suggestedLearning = await suggestionController.homeSuggestions(
@@ -48,6 +48,8 @@ export async function home(req: express.Request, res: express.Response) {
 			}
 		}
 
+		const bookedLearning: model.Course[] = []
+
 		for (const course of learningRecord) {
 			const record = course.record!
 			if (
@@ -58,9 +60,19 @@ export async function home(req: express.Request, res: express.Response) {
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
 				}
-				plannedLearning.push(course)
+				if (course.getSelectedDate()) {
+					bookedLearning.push(course)
+				} else {
+					plannedLearning.push(course)
+				}
 			}
 		}
+
+		bookedLearning.sort((a, b) => {
+			return a.getSelectedDate()!.getDate() - b.getSelectedDate()!.getDate()
+		})
+
+		plannedLearning = [...bookedLearning, ...plannedLearning]
 
 		let removeCourseId
 		let confirmTitle
@@ -104,10 +116,8 @@ export function index(req: express.Request, res: express.Response) {
 }
 
 export function cookies(ireq: express.Request, res: express.Response) {
-	res.cookie("seen_cookie_message", "yes")
+	res.cookie('seen_cookie_message', 'yes')
 
 	const req = ireq as extended.CourseRequest
-	res.send(
-		template.render('/cookies', req, res, {})
-	)
+	res.send(template.render('/cookies', req, res, {}))
 }
