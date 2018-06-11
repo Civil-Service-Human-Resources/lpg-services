@@ -67,35 +67,6 @@ function getBreadcrumbs(
 	return allBreadcrumbs.slice(0, step)
 }
 
-export function enteredPaymentDetails(
-	req: express.Request,
-	res: express.Response
-) {
-	const session = req.session!
-
-	if (req.body['purchase-order'] && /\S/.test(req.body['purchase-order'])) {
-		session.po = req.body['purchase-order']
-		session.save(() => {
-			res.redirect(`${req.originalUrl}/confirm`)
-		})
-	} else if (
-		req.body['financial-approver'] &&
-		/^\S+@\S+$/.test(req.body['financial-approver'])
-	) {
-		session.fap = req.body['financial-approver']
-		session.save(() => {
-			res.redirect(`${req.originalUrl}/confirm`)
-		})
-	} else {
-		res.send(
-			template.render('booking/payment-options', req, res, {
-				breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
-				paymentOptionsFailed: true,
-			})
-		)
-	}
-}
-
 export async function renderCancelBookingPage(
 	ireq: express.Request,
 	res: express.Response
@@ -345,9 +316,74 @@ export function renderPaymentOptions(
 	res.send(
 		template.render('booking/payment-options', req, res, {
 			breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
+			fapErrors: req.flash('fapErrors'),
+			poErrors: req.flash('purchaseOrderErrors'),
 			previouslyEntered: session.po || session.fap,
 		})
 	)
+}
+
+function validatePurchaseOrder(po: string, req: express.Request) {
+	const errors: string[] = []
+	const trimmed = po.trim()
+
+	if (!trimmed.length) {
+		errors.push(req.__('errors.po-empty'))
+	}
+
+	if (trimmed.length < 3) {
+		errors.push(req.__('errors.po-too-short'))
+	}
+
+	if (trimmed.length >= 20) {
+		errors.push(req.__('errors.po-too-long'))
+	}
+
+	if (trimmed.match(/[#;.%]/)) {
+		errors.push(req.__('errors.po-special-characters'))
+	}
+
+	return errors
+}
+
+export function enteredPaymentDetails(
+	req: express.Request,
+	res: express.Response
+) {
+	const session = req.session!
+	const poErrors = validatePurchaseOrder(req.body['purchase-order'], req)
+
+	if (poErrors) {
+		poErrors.map((error: string) => {
+			req.flash('purchaseOrderErrors', error)
+		})
+		session.save(() => {
+			res.redirect(`${req.originalUrl}/confirm`)
+		})
+		return
+	} else {
+		session.po = req.body['purchase-order']
+		session.save(() => {
+			res.redirect(`${req.originalUrl}/confirm`)
+		})
+	}
+
+	//TODO: REF LPFG-315 Financial approver booking flow was not updated
+	if (
+		req.body['financial-approver'] &&
+		/^\S+@\S+$/.test(req.body['financial-approver'])
+	) {
+		session.fap = req.body['financial-approver']
+		session.save(() => {
+			res.redirect(`${req.originalUrl}/confirm`)
+		})
+	} else {
+		req.flash('fapErrors', 'Not valid email address')
+		session.save(() => {
+			res.redirect(`${req.originalUrl}`)
+		})
+		return
+	}
 }
 
 export async function tryCancelBooking(

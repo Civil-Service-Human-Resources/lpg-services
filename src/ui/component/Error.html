@@ -1,0 +1,15 @@
+<div class="error-summary" role="alert" aria-labelledby="error" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error">
+        {errorHeading}
+    </h2>
+    <slot>
+        {#if errors}
+            {#each errors as error}
+                <p>
+                    {error}
+                </p>
+            {/each}
+        {/if}
+    </slot>
+</div>
+
