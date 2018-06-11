@@ -7,6 +7,12 @@
                 </h1>
             </div>
         </div>
+        {#if poErrors && poErrors.length}
+            <Error errorHeading="There was an issue with your purchase order" errors={poErrors} />
+        {/if}
+        {#if fapErrors && fapErrors.length}
+            <Error errorHeading="There was an issue with your financial approver" errors={fapErrors} />
+        {/if}
         <div class="grid-row">
             <div class="column-two-thirds">
                 {#if paymentOptionsFailed }
@@ -39,6 +45,7 @@
 
 <script>
 	import Page from '../../component/Page.html'
+	import Error from '../../component/Error.html'
 	export default {
 		data() {
 			return {
@@ -46,7 +53,8 @@
 		},
 
 		components: {
-			Page
+			Page,
+			Error
 		}
 	}
 </script>
