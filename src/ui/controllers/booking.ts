@@ -249,7 +249,7 @@ export async function renderChooseDate(
 	)
 
 	events.map((event: any) => {
-		event.registrations = registrations[0]
+		event.availability = event.capacity - registrations[event.id]
 	})
 
 	res.send(

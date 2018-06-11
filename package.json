@@ -5,7 +5,8 @@
 		"build": "npm run sass:all && npm run compile",
 		"clean": "./bin/setup-dist",
 		"compile": "./bin/tsc",
-		"dev:management": "npm run watch & npm run watch-sass:management & npm run start:management & wait",
+		"dev:management":
+			"npm run watch & npm run watch-sass:management & npm run start:management & wait",
 		"dev:ui": "npm run watch & npm run watch-sass:ui & npm run start:ui & wait",
 		"lint": "tslint --project tsconfig.json",
 		"lint:headless": "tslint --project test/headless/tsconfig.json",
@@ -13,15 +14,22 @@
 		"nuke": "rm -rf dist node_modules",
 		"postinstall": "./bin/setup-dist",
 		"sass:all": "npm run sass:management & npm run sass:ui",
-		"sass:management": "node-sass src/management-ui/assets/styles/index.scss dist/management-ui/assets/styles/main.css --output-style compressed",
-		"sass:ui": "node-sass src/ui/assets/styles/main.scss dist/ui/assets/styles/main.css --output-style compressed",
+		"sass:management":
+			"node-sass src/management-ui/assets/styles/index.scss dist/management-ui/assets/styles/main.css --output-style compressed",
+		"sass:ui":
+			"node-sass src/ui/assets/styles/main.scss dist/ui/assets/styles/main.css --output-style compressed",
 		"start:all": "npm run start:management & npm run start:ui",
-		"start:management": "cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
-		"start:ui": "cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
-		"test": "NODE_ICU_DATA=node_modules/full-icu ./node_modules/.bin/jasmine-node dist/build/**/*.spec.js",
+		"start:management":
+			"cd dist/management-ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/management-ui/server.js",
+		"start:ui":
+			"cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
+		"test":
+			"NODE_ICU_DATA=node_modules/full-icu ./node_modules/.bin/jasmine-node dist/build/**/*.spec.js",
 		"watch": "./bin/tsc -w",
-		"watch-sass:ui": "node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles --output-style compressed",
-		"watch-sass:management": "node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles --output-style compressed"
+		"watch-sass:ui":
+			"node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles --output-style compressed",
+		"watch-sass:management":
+			"node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles --output-style compressed"
 	},
 	"devDependencies": {
 		"@types/compression": "0.0.35",
