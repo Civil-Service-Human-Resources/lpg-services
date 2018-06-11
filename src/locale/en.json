@@ -293,7 +293,12 @@
 			"Line Manager Email does not match the confirmation.",
 		"lineManagerInvalid": "Line Manager Email is not valid",
 		"lineManagerMissing": "Line Manager Email does not exist",
-		"lineManagerIsUser": "You may not be your own line manager"
+		"lineManagerIsUser": "You may not be your own line manager",
+		"po-empty": "Enter a purchase order number",
+		"po-too-short": "A purchase order number must be longer than 2 characters",
+		"po-too-long": "A purchase order number must be shorter than 20 characters",
+		"po-special-characters":
+			"A purchase order should not contain dots (.), colons ( : ), or hashes ( # )"
 	},
 	"errors.profileErrorEmpty": "errors.profileErrorEmpty",
 	"courseResult": {
