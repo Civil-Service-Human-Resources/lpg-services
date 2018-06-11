@@ -3,7 +3,9 @@
         <div class="grid-row">
             <div class="column-full">
                 <div class="govuk-box-highlight">
-                    <h1 class="heading-xlarge">{message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }</h1>
+                    <h1 class="heading-xlarge">
+                        {message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }
+                    </h1>
                     <h3 class="lede">Course</h3>
                     <h2 class="heading-medium confirmed__heading confirmed__heading--caps lpg-booking-confirmed">
                         {module.title || course.title}
