@@ -124,19 +124,27 @@ export async function getRegistrations() {
 	return registrations
 }
 
+export interface EventRegistrations {
+	[eventId: string]: number
+}
+
 export async function getRegistrationsForEvents(
 	events: string[],
 	user: model.User
-) {
-	const queryParam = events.pop()
+): Promise<EventRegistrations> {
+	const queryParam = events.join('&eventId=')
 	const response = await http.get(
 		`/registrations/count?eventId=${queryParam}`,
 		{headers: {Authorization: `Bearer ${user.accessToken}`}}
 	)
-	//TODO: LPFG-315, LPFG-416 implement with multiple eventIds. Response will soon be {eventId: int}
 
+	let registrations: EventRegistrations = {}
 
-	return Object.values(response.data)
+	response.data.map((registration: {eventId: string; value: number}) => {
+		registrations[registration.eventId] = registration.value
+	})
+
+	return registrations
 }
 
 export async function getReadyForFeedback(learningRecord: model.Course[]) {
