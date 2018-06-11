@@ -113,16 +113,16 @@ services:
     ports:
       - 9001:9001
 
-#  report-service:
-#    container_name: report-service
-#    environment:
-#      OAUTH_SERVICE_URL: http://identity:8080
-#      LEARNER_RECORD_URL: http://learner-record:9000
-#    image: cshr/report-service:95d6bc36ffb26ee11d796c75b093b3b0684f8c2d
-#    depends_on:
-#      - identity
-#      - learner-record
-#    ports:
-#      - 9004:9004
+  report-service:
+    container_name: report-service
+    environment:
+      OAUTH_SERVICE_URL: http://identity:8080
+      LEARNER_RECORD_URL: http://learner-record:9000
+    image: cshr/report-service:95d6bc36ffb26ee11d796c75b093b3b0684f8c2d
+    depends_on:
+      - identity
+      - learner-record
+    ports:
+      - 9004:9004
 
 # /CSHR
