@@ -446,7 +446,6 @@ export async function tryCompleteBooking(
 	}
 
 	//TODO: LPFG-315 add line manager and eventId here?
-	console.log(req.user)
 	await notify.bookingConfirmed({
 		accessibility: accessibilityArray.join(', '),
 		courseDate: dateTime.formatDate(event.date),
