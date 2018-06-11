@@ -24,6 +24,7 @@ import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as homeController from './controllers/home'
 import * as editModuleController from './controllers/module/edit'
+import * as reportsController from './controllers/reports'
 
 import * as loginController from './controllers/login'
 
@@ -95,7 +96,8 @@ passport.configure(
 i18n.configure(app)
 
 app.use(passport.isAuthenticated)
-app.use(passport.hasRole('COURSE_MANAGER'))
+app.use('/courses', passport.hasRole('COURSE_MANAGER'))
+app.use('/reports', passport.hasAnyRole(['ORGANISATION_REPORTER', 'PROFESSION_REPORTER', 'CSHR_REPORTER']))
 
 app.use(expressValidator())
 
@@ -115,6 +117,10 @@ app.get('/sign-in', loginController.signIn)
 app.get('/sign-out', loginController.signOut)
 
 app.get('/', homeController.index)
+
+app.get('/reports', reportsController.index)
+app.get('/reports/learner-record', reportsController.runLearnerRecordReport)
+
 app.get('/courses', asyncHandler(displayCourseController.index))
 
 app.param('courseId', asyncHandler(editCourseController.loadCourseStub))
