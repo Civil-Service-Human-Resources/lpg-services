@@ -132,16 +132,24 @@ export async function getRegistrationsForEvents(
 	events: string[],
 	user: model.User
 ): Promise<EventRegistrations> {
-	const queryParam = events.join('&eventId=')
+	const queryParam = events
+		.map((eventId: string) => {
+			return `${config.XAPI.eventBaseUri}/${eventId}`
+		})
+		.join('&eventId=')
+
 	const response = await http.get(
 		`/registrations/count?eventId=${queryParam}`,
 		{headers: {Authorization: `Bearer ${user.accessToken}`}}
 	)
 
-	let registrations: EventRegistrations = {}
+	const registrations: EventRegistrations = {}
 
 	response.data.map((registration: {eventId: string; value: number}) => {
-		registrations[registration.eventId] = registration.value
+		registrations[
+			registration.eventId.substr(config.XAPI.eventBaseUri.length + 1)
+		] =
+			registration.value
 	})
 
 	return registrations
