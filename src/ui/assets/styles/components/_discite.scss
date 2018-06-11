@@ -53,7 +53,7 @@ $module: 'discite';
 		@extend %disciteRowDiv;
 
 		@include media(desktop) {
-			padding-right: 300px;
+			width: calc(100% - 300px);
 		}
 
 		@include m(search) {
