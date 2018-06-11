@@ -37,7 +37,7 @@ export async function getRecord(
 	}
 
 	const response = await http.get(`/records/${user.id}`, {
-		headers: { Authorization: `Bearer ${user.accessToken}` },
+		headers: {Authorization: `Bearer ${user.accessToken}`},
 		params: {
 			activityId,
 		},
@@ -51,7 +51,7 @@ export async function getRecord(
 
 export async function getLearningRecord(user: model.User) {
 	const response = await http.get(`/records/${user.id}`, {
-		headers: { Authorization: `Bearer ${user.accessToken}` },
+		headers: {Authorization: `Bearer ${user.accessToken}`},
 	})
 
 	const courses: model.Course[] = []

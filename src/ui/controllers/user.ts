@@ -461,24 +461,25 @@ export async function patchAndUpdate(
 	if (node === 'lineManager' && (response as any).status !== 200) {
 		const inputName = 'line-manager'
 		const status = (response as any).status
-		let lineManagerFailed = null
+		let errorMessage = null
 
 		switch (status) {
 			case 404:
-				lineManagerFailed = 'Line Manager Email does not exist'
+				errorMessage = req.__('errors.lineManagerMissing')
 				break
 			case 400:
-				lineManagerFailed = 'You may not be your own line manager'
+				errorMessage = req.__('errors.lineManagerIsUser')
 				break
 		}
 
-		res.send(
-			template.render('profile/edit', req, res, {
-				inputName,
-				lineManagerFailed,
+		if (errorMessage) {
+			req.flash('profileError', errorMessage)
+			req.session!.save(() => {
+				res.redirect(`/profile/${inputName}`)
 			})
-		)
-		return
+			return
+		}
+
 	} else if (response) {
 		// seems like we have to get the profile again to get values
 		// which seems ...not good
