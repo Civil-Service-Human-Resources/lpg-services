@@ -331,7 +331,7 @@ export function validatePurchaseOrder(po: string): string[] {
 		errors.push('errors.po-empty')
 	}
 
-	if (trimmed.length < 3) {
+	if (trimmed.length < 3 && trimmed.length) {
 		errors.push('errors.po-too-short')
 	}
 
