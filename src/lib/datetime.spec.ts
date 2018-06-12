@@ -76,4 +76,23 @@ describe('Should return formatted the date', () => {
 	it('Should handle NaN for format course duration (ISO8601 formatting)', () => {
 		expect(datetime.formatCourseDuration(NaN)).toBe('-')
 	})
+
+	it('should add a second value to a date value', () => {
+		const map = new Map()
+
+		map.set(new Date(2018, 0, 1, 13, 0), ['01 Jan 2018', ' 17:00'])
+		map.set(new Date(2018, 11, 1, 1, 20), ['01 Dec 2018', ' 05:20'])
+		map.set(new Date(2018, 11, 1, 12, 0, 0), ['01 Dec 2018', ' 16:00'])
+		map.set(new Date(2018, 11, 1, 11, 59, 59), ['01 Dec 2018', ' 15:59'])
+		map.set(new Date(2018, 11, 1, 23, 59, 59), ['02 Dec 2018', ' 03:59'])
+
+		for (const [duration, output] of map.entries()) {
+			const timeAddedString = datetime.addSeconds(duration, 14400) as string
+			const time = datetime.addSeconds(duration, 14400, true)
+			const date = datetime.formatDate(new Date(timeAddedString))
+
+			expect(date).toBe(output[0])
+			expect(time).toBe(output[1])
+		}
+	})
 })
