@@ -10,11 +10,6 @@ import * as courseController from './course/index'
 
 const logger = log4js.getLogger('controllers/booking')
 
-interface BookingBreadcrumb {
-	url: string
-	name: string
-}
-
 enum confirmedMessage {
 	Booked = 'Booked',
 	Cancelled = 'Cancelled',
@@ -24,47 +19,6 @@ enum BookingStep {
 	ChooseDate = 3,
 	EnterPaymentDetails = 4,
 	Confirm = 5,
-}
-
-function getBreadcrumbs(
-	ireq: express.Request,
-	step: number
-): BookingBreadcrumb[] {
-	const req = ireq as extended.CourseRequest
-
-	const course = req.course
-	const module = req.module!
-	const event = req.event
-
-	const allBreadcrumbs: BookingBreadcrumb[] = [
-		{
-			name: 'Home',
-			url: '/',
-		},
-		{
-			name: module.title || course.title,
-			url: `/courses/${course.id}`,
-		},
-		{
-			name: 'Choose Date',
-			url: `/book/${course.id}/${module.id}/choose-date?eventId=${
-				event ? event.id : ''
-			}`,
-		},
-		{
-			name: 'Payment Options',
-			url: `/book/${course.id}/${module ? module.id : ''}/${
-				event ? event.id : ''
-			}`,
-		},
-		{
-			name: 'Confirm details',
-			url: `/book/${course.id}/${module ? module.id : ''}/${
-				event ? event.id : ''
-			}/confirm`,
-		},
-	]
-	return allBreadcrumbs.slice(0, step)
 }
 
 export async function renderCancelBookingPage(
@@ -226,7 +180,6 @@ export async function renderChooseDate(
 	res.send(
 		template.render('booking/choose-date', req, res, {
 			accessibilityReqs: req.session!.accessibilityReqs,
-			breadcrumbs: getBreadcrumbs(req, BookingStep.ChooseDate),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
 			errorMessage: req.flash('errorMessage')[0],
@@ -296,7 +249,6 @@ export async function renderConfirmPayment(
 	res.send(
 		template.render('booking/confirm-booking', req, res, {
 			accessibilityReqs: session.accessibilityReqs,
-			breadcrumbs: getBreadcrumbs(req, BookingStep.Confirm),
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
 			event,
@@ -315,7 +267,6 @@ export function renderPaymentOptions(
 
 	res.send(
 		template.render('booking/payment-options', req, res, {
-			breadcrumbs: getBreadcrumbs(req, BookingStep.EnterPaymentDetails),
 			fapErrors: req.flash('fapErrors'),
 			poErrors: req.flash('purchaseOrderErrors'),
 			previouslyEntered: session.po || session.fap,
