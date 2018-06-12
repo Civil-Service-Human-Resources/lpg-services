@@ -214,7 +214,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 		if (Array.isArray(req.body.event_date)) {
 			data.events = []
 			for (const index of Object.keys(req.body.event_date)) {
-				let event: EventData = {
+				const event: EventData = {
 					capacity: req.body.event_capacity[index],
 					date: req.body.event_date[index],
 					location: req.body.event_location[index],

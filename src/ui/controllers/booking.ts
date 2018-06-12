@@ -15,12 +15,6 @@ enum confirmedMessage {
 	Cancelled = 'Cancelled',
 }
 
-enum BookingStep {
-	ChooseDate = 3,
-	EnterPaymentDetails = 4,
-	Confirm = 5,
-}
-
 export async function renderCancelBookingPage(
 	ireq: express.Request,
 	res: express.Response
