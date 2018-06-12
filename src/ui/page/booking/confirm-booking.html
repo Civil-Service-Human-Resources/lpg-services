@@ -29,6 +29,10 @@
                             <span class="booking__key">Duration</span>
                             <span class="booking__value">{course.getDuration()}</span>
                         </li>
+                        <li>
+                            <a href="/book/{course.id}/{module.id}/choose-date" class="booking__change lpg-change-payment">Change</a>
+                        </li>
+
                     </ul>
                 </div>
             </div>
@@ -45,6 +49,9 @@
                         <li>
                             <span class="booking__key">Amount</span>
                             <span class="booking__value lpg-confirm-price">&pound;{module.price}</span>
+                        </li>
+                        <li>
+                            <a href="/book/{course.id}/{module.id}/{event.id}" class="booking__change lpg-change-payment">Change</a>
                         </li>
                     </ul>
                 </div>

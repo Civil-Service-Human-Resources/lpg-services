@@ -122,7 +122,8 @@ export async function renderChooseDate(
 	const course = req.course
 	const module = req.module!
 
-	let selectedEventId: string = req.flash('bookingSelected')[0]
+	let selectedEventId: string =
+		req.flash('bookingSelected')[0] || req.session!.selectedEventId || null
 
 	if (req.query.accessibility === 'true') {
 		req.flash('booking', 'showAccessibility')
@@ -217,7 +218,6 @@ export function selectedDate(req: express.Request, res: express.Response) {
 		})
 	} else {
 		req.session!.selectedEventId = selected
-		console.log(req.session!.selectedEventId)
 		req.session!.save(() => {
 			res.redirect(
 				`/book/${req.params.courseId}/${
@@ -297,20 +297,22 @@ export function enteredPaymentDetails(
 ) {
 	const session = req.session!
 	const poErrors = validatePurchaseOrder(req.body['purchase-order'])
-
-	if (poErrors) {
-		poErrors.map((error: string) => {
-			req.flash('purchaseOrderErrors', req.__(error))
-		})
-		session.save(() => {
-			res.redirect(`${req.originalUrl}/confirm`)
-		})
-		return
-	} else {
-		session.po = req.body['purchase-order']
-		session.save(() => {
-			res.redirect(`${req.originalUrl}/confirm`)
-		})
+	if (req.body['purchase-order']) {
+		if (poErrors.length) {
+			poErrors.map((error: string) => {
+				req.flash('purchaseOrderErrors', req.__(error))
+			})
+			session.save(() => {
+				res.redirect(`${req.originalUrl}`)
+			})
+			return
+		} else {
+			session.po = req.body['purchase-order']
+			session.save(() => {
+				res.redirect(`${req.originalUrl}/confirm`)
+			})
+			return
+		}
 	}
 
 	//TODO: REF LPFG-315 Financial approver booking flow was not updated
