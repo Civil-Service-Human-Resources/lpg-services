@@ -86,9 +86,9 @@ describe('Should return formatted the date', () => {
 		map.set(new Date(2018, 11, 1, 11, 59, 59), ['01 Dec 2018', ' 15:59'])
 		map.set(new Date(2018, 11, 1, 23, 59, 59), ['02 Dec 2018', ' 03:59'])
 
-		for (const [datetime, output] of map.entries()) {
-			const timeAddedString = datetime.addSeconds(datetime, 14400) as string
-			const time = datetime.addSeconds(datetime, 14400, true)
+		for (const [dateToTest, output] of map.entries()) {
+			const timeAddedString = datetime.addSeconds(dateToTest, 14400) as string
+			const time = datetime.addSeconds(dateToTest, 14400, true)
 			const date = datetime.formatDate(new Date(timeAddedString))
 
 			expect(date).toBe(output[0])
