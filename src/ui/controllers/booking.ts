@@ -323,24 +323,24 @@ export function renderPaymentOptions(
 	)
 }
 
-function validatePurchaseOrder(po: string, req: express.Request) {
+export function validatePurchaseOrder(po: string): string[] {
 	const errors: string[] = []
 	const trimmed = po.trim()
 
 	if (!trimmed.length) {
-		errors.push(req.__('errors.po-empty'))
+		errors.push('errors.po-empty')
 	}
 
 	if (trimmed.length < 3) {
-		errors.push(req.__('errors.po-too-short'))
+		errors.push('errors.po-too-short')
 	}
 
 	if (trimmed.length >= 20) {
-		errors.push(req.__('errors.po-too-long'))
+		errors.push('errors.po-too-long')
 	}
 
 	if (trimmed.match(/[#;.%]/)) {
-		errors.push(req.__('errors.po-special-characters'))
+		errors.push('errors.po-special-characters')
 	}
 
 	return errors
@@ -351,11 +351,11 @@ export function enteredPaymentDetails(
 	res: express.Response
 ) {
 	const session = req.session!
-	const poErrors = validatePurchaseOrder(req.body['purchase-order'], req)
+	const poErrors = validatePurchaseOrder(req.body['purchase-order'])
 
 	if (poErrors) {
 		poErrors.map((error: string) => {
-			req.flash('purchaseOrderErrors', error)
+			req.flash('purchaseOrderErrors', req.__(error))
 		})
 		session.save(() => {
 			res.redirect(`${req.originalUrl}/confirm`)
