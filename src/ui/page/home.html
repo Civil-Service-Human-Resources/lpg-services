@@ -52,7 +52,7 @@
                 {#if plannedLearning.length}
                 <div class="resources lpg-other-courses">
                     {#each plannedLearning as course}
-                    <DisciteCourse course={course} modifier="home" /> {/each}
+                    <DisciteCourse course={course} modifier="home" today="{today}" /> {/each}
                 </div>
                 {:else}
                 <p>{$i18n('no_planned_learning_yet')}</p>
