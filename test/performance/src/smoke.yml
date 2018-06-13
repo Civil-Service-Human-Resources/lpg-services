@@ -3,9 +3,9 @@ config:
   phases:
     - duration: 1
       arrivalRate: 1
-    - pause: 60
-    # - duration: 60
-    #   arrivalRate: 20
+    - pause: 5
+    - duration: 60
+      arrivalRate: 20
   processor: "./artilleryfunc.js"
   defaults:
   payload:
@@ -16,15 +16,13 @@ scenarios:
         url: "/home"
         capture:
           selector: "input[type='hidden']"
-          as: "_csrf"
-        afterResponse: "logHeaders"
-    - post: 
+          as: "csrf"
+    - post:
         url: "https://test-identity.cshr.digital/login"
-        formData: 
-          username: 'load@domain.com'
-          password: 'test'
-          _csrf: $._csrf
-        afterResponse: "logHeaders"
-    - get: 
+        beforeRequest: "setLoginBody"
+    - get:
         url: "/home"
-        afterResponse: "logHeaders"
+    - get:
+        url: "/search?q=commercial"
+    - get:
+        url: "/suggestions-for-you/add/e0HNfmkTSMiRPHVJ9ljnxA?ref=search"
