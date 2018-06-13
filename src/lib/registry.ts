@@ -3,6 +3,14 @@ import * as config from 'lib/config'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
 
+const http = axios.create({
+	baseURL: config.CHECK_LINEMANAGER_URL,
+	headers: {
+		'Content-Type': 'application/json',
+	},
+	timeout: config.REQUEST_TIMEOUT,
+})
+
 // register the traverson-hal plug-in for media type 'application/hal+json'
 traverson.registerMediaType(hal.mediaType, hal)
 
@@ -54,17 +62,10 @@ export async function follow(path: string, nodes: string[]) {
 
 export async function checkLineManager(data: any, token: string) {
 	const result = await new Promise((resolve, reject) => {
-		const http = axios.create({
-			baseURL: config.CHECK_LINEMANAGER_URL,
-			headers: {
-				'Authorization': `Bearer ${token}`,
-				'Content-Type': 'application/json',
-			},
-			timeout: config.REQUEST_TIMEOUT,
-		})
-
 		http
-			.patch(`?email=${data.lineManager}`)
+			.patch(`?email=${data.lineManager}`, null, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
 			.then((response: any) => {
 				resolve(response)
 			})
@@ -73,10 +74,12 @@ export async function checkLineManager(data: any, token: string) {
 			})
 	})
 
+	console.log(result)
 	return result
 }
 
 export async function patch(node: string, data: any, token: string) {
+	console.log(node)
 	const result = await new Promise((resolve, reject) =>
 		traverson
 			.from(config.REGISTRY_SERVICE_URL)
