@@ -51,11 +51,11 @@ export const AUTHENTICATION = set({
 	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 
-export const BOOKING_CANCELLED_NOTIFY_TEMPLATE_ID =
-	'cc525c34-1a31-4fa1-ab19-862fd223caab'
-
-export const BOOKING_CONFIRMED_NOTIFY_TEMPLATE_ID =
-	'8efb52bd-9ada-402e-8fab-84a751bf4a71'
+export const BOOKING_NOTIFY_TEMPLATE_IDS = {
+	cancelled: 'cc525c34-1a31-4fa1-ab19-862fd223caab',
+	confirmed: '8efb52bd-9ada-402e-8fab-84a751bf4a71',
+	confirmedLineManager: '659f8f61-d326-428e-996d-f890b61a2f96',
+}
 
 export const BOOKING_NOTIFY_RECIPIENTS = [
 	'r.vaughan@kainos.com',

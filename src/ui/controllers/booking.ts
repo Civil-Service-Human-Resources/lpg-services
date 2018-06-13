@@ -428,13 +428,25 @@ export async function tryCompleteBooking(
 		}
 	}
 
-	//TODO: LPFG-315 add line manager and eventId here?
-	await notify.bookingConfirmed({
+	await notify.bookingRequested({
 		accessibility: accessibilityArray.join(', '),
-		courseDate: dateTime.formatDate(event.date),
+		bookingReference: `${req.user.id}-${event.id}`,
+		cost: module.price,
+		courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
+			event.date,
+			true
+		)} ${
+			module.duration
+				? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
+				: ''
+		}`,
+		courseLocation: event.location,
 		courseTitle: module.title || course.title,
 		email: req.user.userName,
-		name: req.user.givenName || req.user.userName,
+		eventId: event.id,
+		learnerName: req.user.givenName || req.user.userName,
+		lineManager: req.user.lineManager,
+		location: event.location,
 		paymentOption,
 	})
 
