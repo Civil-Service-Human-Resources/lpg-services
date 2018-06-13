@@ -289,12 +289,26 @@ app.get(
 )
 
 app.get(
+	'/book/:courseId/:moduleId/:eventId/completed',
+	asyncHandler(bookingController.tryCompletedBooking)
+)
+
+app.get(
 	'/book/:courseId/:moduleId/:eventId/cancel',
 	asyncHandler(bookingController.renderCancelBookingPage)
+)
+
+app.get(
+	'/book/:courseId/:moduleId/:eventId/skip',
+	asyncHandler(bookingController.trySkipBooking)
 )
 app.post(
 	'/book/:courseId/:moduleId/:eventId/cancel',
 	asyncHandler(bookingController.tryCancelBooking)
+)
+app.get(
+	'/book/:courseId/:moduleId/:eventId/skipped',
+	asyncHandler(bookingController.renderSkippedBookingPage)
 )
 app.get(
 	'/book/:courseId/:moduleId/:eventId/cancelled',

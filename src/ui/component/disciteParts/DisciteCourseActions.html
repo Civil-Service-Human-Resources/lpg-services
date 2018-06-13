@@ -1,12 +1,11 @@
 <div class="discite__action {modifier ? `discite__action--${modifier}` : ''}">
         {#if course.record}
 			{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}
-			{ course.record.modules[0].eventId }
 				{#if today == null || today < course.getSelectedDate() } 
 					<a href="/book/{course.id}/{course.record.modules[0].moduleId}/{course.record.modules[0].eventId}/cancel">Cancel</a>
 				{:else}
-					<a href="/book/{course.id}/{course.record.modules[0].moduleId}/{course.record.modules[0].eventId}/cancel">Move to Learner Record</a>
-					<a href="/book/{course.id}/{course.record.modules[0].moduleId}/{course.record.modules[0].eventId}/not-attend">I did not attend</a>
+					<a href="/book/{course.id}/{course.record.modules[0].moduleId}/{course.record.modules[0].eventId}/completed">Move to Learner Record</a>
+					<a href="/home?skip={course.id},{course.record.modules[0].moduleId},{course.record.modules[0].eventId}">I did not attend</a>
 				{/if}
             {:else}
                 {#if course.getType() !== 'face-to-face'}
