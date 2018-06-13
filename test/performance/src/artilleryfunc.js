@@ -17,20 +17,15 @@ function getTokens(requestParams, response, context, ee, next) {
 }
 
 function setLoginBody(requestParams, context, ee, next) {
-	requestParams.headers['Content-Type'] = 'multipart/form-data'
-	requestParams.json = {
+	requestParams.form = {
 		username: config.USERNAME,
 		password: config.PASSWORD,
-		_csrf: csrf,
+		_csrf: context.vars.csrf.value,
 	}
-
-	return next() // MUST be called for the scenario to continue
+	return next()
 }
 
 function logHeaders(requestParams, response, context, ee, next) {
-	console.log(response.req.path)
-	console.log(response.statusCode)
-	console.log(response.headers)
-	console.log(response.body)
-	return next() // MUST be called for the scenario to continue
+	console.log(requestParams)
+	return next()
 }
