@@ -34,8 +34,7 @@ function warn(msg) {
 }
 const env = new Proxy({}, {get: getEnv})
 
-exports.PASSWORD = 'test'
-exports.TEST_PASSWORD = 'test'
+exports.PASSWORD = env.PASSWORD
 exports.URL = set(
 	'http://lpg.local.cshr.digital:3001/sign-in',
 	`https://${exports.PROFILE}-lpg.cshr.digital/sign-in`
@@ -44,5 +43,5 @@ exports.BASE_URL = set(
 	'http://lpg.local.cshr.digital:3001',
 	`https://${exports.PROFILE}-lpg.cshr.digital`
 )
-exports.USERNAME = 'learner@domain.com'
+exports.USERNAME = env.USERNAME
 //# sourceMappingURL=config.js.map

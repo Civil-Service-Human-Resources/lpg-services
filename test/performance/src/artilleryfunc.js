@@ -1,8 +1,6 @@
 const config = require('./config')
-const cheerio = require('cheerio')
 
 module.exports = {
-	getTokens: getTokens,
 	setLoginBody: setLoginBody,
 	logHeaders: logHeaders,
 }
