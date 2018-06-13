@@ -72,7 +72,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: cshr/civil-servant-registry-service:9fe7cd23d21b7428786e14f6a8c3a548b6a7211f
+    image: cshr/civil-servant-registry-service:27f7d576b080447f8b3d939337c60a57910c430e
     depends_on:
       - identity
     ports:
