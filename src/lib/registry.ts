@@ -73,13 +73,10 @@ export async function checkLineManager(data: any, token: string) {
 				resolve(error.response)
 			})
 	})
-
-	console.log(result)
 	return result
 }
 
 export async function patch(node: string, data: any, token: string) {
-	console.log(node)
 	const result = await new Promise((resolve, reject) =>
 		traverson
 			.from(config.REGISTRY_SERVICE_URL)
