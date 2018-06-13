@@ -1,23 +1,30 @@
 config:
-  target: 'https://lpg.cshr.digital'
+  target: 'https://test-lpg.cshr.digital'
   phases:
-    - duration: 0
+    - duration: 1
       arrivalRate: 1
-    - pause: 5
-    - duration: 60
-      arrivalRate: 20
+    - pause: 60
+    # - duration: 60
+    #   arrivalRate: 20
   processor: "./artilleryfunc.js"
   defaults:
   payload:
     # path is relative to the location of the test script
 scenarios:
   - flow:
-    - get:
+    - get: 
         url: "/home"
-        afterResponse: [sessionDataKey, loginToWso2]
-    - get:
-        url: "/search?q=commercial"
-        beforeRequest: "useCookie"
-    - get:
-        url: "/suggestions-for-you/add/e0HNfmkTSMiRPHVJ9ljnxA?ref=search"
-        beforeRequest: "useCookie"
+        capture:
+          selector: "input[type='hidden']"
+          as: "_csrf"
+        afterResponse: "logHeaders"
+    - post: 
+        url: "https://test-identity.cshr.digital/login"
+        formData: 
+          username: 'load@domain.com'
+          password: 'test'
+          _csrf: $._csrf
+        afterResponse: "logHeaders"
+    - get: 
+        url: "/home"
+        afterResponse: "logHeaders"
