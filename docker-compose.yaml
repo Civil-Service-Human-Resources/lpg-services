@@ -71,7 +71,7 @@ services:
     container_name: civil-servant-registry
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      - CHECK_TOKEN_URL=http://identity:8080/oauth/check_token
+      - OAUTH_SERVICE_URL=http://identity:8080
     image: cshr/civil-servant-registry-service:9fe7cd23d21b7428786e14f6a8c3a548b6a7211f
     depends_on:
       - identity
