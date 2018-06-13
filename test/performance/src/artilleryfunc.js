@@ -7,12 +7,6 @@ module.exports = {
 	logHeaders: logHeaders,
 }
 
-function getTokens(requestParams, response, context, ee, next) {
-	let $ = cheerio.load(response.body)
-	csrf = $('input[type="hidden"]').val()
-	return next()
-}
-
 function setLoginBody(requestParams, context, ee, next) {
 	requestParams.form = {
 		username: config.USERNAME,
