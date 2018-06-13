@@ -23,7 +23,8 @@ export async function renderCancelBookingPage(
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
-
+	const record2 = await learnerRecord.getRecord(req.user, course, module, event)
+	console.log(event, record2)
 	const record = await learnerRecord.getRecord(req.user, course, module, event)
 
 	if (!record) {

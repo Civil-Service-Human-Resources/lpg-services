@@ -49,6 +49,7 @@ export async function home(req: express.Request, res: express.Response) {
 		}
 
 		const bookedLearning: model.Course[] = []
+		const today: Date = new Date()
 
 		for (const course of learningRecord) {
 			const record = course.record!
@@ -99,6 +100,7 @@ export async function home(req: express.Request, res: express.Response) {
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],
 				suggestedLearning,
+				today,
 			})
 		)
 	} catch (e) {
