@@ -45,7 +45,4 @@ exports.BASE_URL = set(
 	`https://${exports.PROFILE}-lpg.cshr.digital`
 )
 exports.USERNAME = 'learner@domain.com'
-exports.XAPI_URL = env.XAPI_URL || 'http://localhost:8083/data/xAPI'
-exports.XAPI_PASS = '66f2b4fc001e3da992d23b57d8a7457655bea078'
-exports.XAPI_USER = '1c0e1b6827606d7efed71e204939d048f94f842b'
 //# sourceMappingURL=config.js.map

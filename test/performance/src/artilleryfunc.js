@@ -1,14 +1,11 @@
 const config = require('./config')
 const cheerio = require('cheerio')
-const axios = require('axios')
 
 module.exports = {
 	getTokens: getTokens,
 	setLoginBody: setLoginBody,
 	logHeaders: logHeaders,
 }
-
-let csrf = {}
 
 function getTokens(requestParams, response, context, ee, next) {
 	let $ = cheerio.load(response.body)

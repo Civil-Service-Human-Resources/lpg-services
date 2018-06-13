@@ -4,8 +4,6 @@ config:
     - duration: 1
       arrivalRate: 1
     - pause: 5
-    - duration: 60
-      arrivalRate: 20
   processor: "./artilleryfunc.js"
   defaults:
   payload:
