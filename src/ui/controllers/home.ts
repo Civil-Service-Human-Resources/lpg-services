@@ -73,10 +73,8 @@ export async function home(req: express.Request, res: express.Response) {
 						if (eventRecord && eventRecord.modules && eventRecord.modules.length) {
 							state = eventRecord.modules[0].state
 						}
-						console.log("EVENT", eventRecord)
 					}
 					if (state !== xapi.Labels[xapi.Verb.Skipped].toUpperCase()) {
-						console.log(state, xapi.Labels[xapi.Verb.Skipped].toUpperCase())
 						bookedLearning.push(course)
 					}
 				} else {
@@ -94,7 +92,10 @@ export async function home(req: express.Request, res: express.Response) {
 		let removeCourseId
 		let confirmTitle
 		let confirmMessage
-		let skipEventDetails
+		let eventActionDetails
+		let action = ''
+		let yesOption
+		let noOption
 
 		if (req.query.delete) {
 			const courseToDelete = await catalog.get(req.query.delete)
@@ -107,28 +108,43 @@ export async function home(req: express.Request, res: express.Response) {
 		}
 
 		if (req.query.skip) {
-			skipEventDetails = req.query.skip.split(',')
-			const moduleToSkip = await catalog.get(skipEventDetails[0])
+			action = "skip"
+		}
+
+		if (req.query.move) {
+			action = "move"
+		}
+
+		if (req.query.skip || req.query.move) {
+			eventActionDetails = req.query[action].split(',')
+			eventActionDetails.push(action)
+			const module = await catalog.get(eventActionDetails[0])
+
 			confirmTitle = req.__(
-				'learning_confirm_skip_plan_title',
-				moduleToSkip!.title
+				'learning_confirm_' + action + '_plan_title',
+				module!.title
 			)
-			confirmMessage = req.__('learning_confirm_skip_plan_message')
+
+			confirmMessage = req.__('learning_confirm_' + action + '_plan_message')
+			yesOption = req.__('learning_confirm_' + action + '_yes_option')
+			noOption = req.__('learning_confirm_' + action + '_no_option')
 		}
 
 		res.send(
 			template.render('home', req, res, {
 				confirmMessage,
 				confirmTitle,
+				eventActionDetails,
+				noOption,
 				plannedLearning,
 				readyForFeedback,
 				removeCourseId,
 				requiredLearning,
-				skipEventDetails,
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],
 				suggestedLearning,
 				today,
+				yesOption,
 			})
 		)
 	} catch (e) {

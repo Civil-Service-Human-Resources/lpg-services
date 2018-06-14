@@ -20,9 +20,9 @@
                     <Banner type="confirmation" title={successTitle} message={successMessage} /> {/if}
                 {#if confirmTitle}
                     <Banner type="warning" title={confirmTitle} message={confirmMessage}>
-						{#if skipEventDetails}
-						<a class="banner__action" href="book/{skipEventDetails[0]}/{skipEventDetails[1]}/{skipEventDetails[2]}/skip/">Yes, mark event as not attended.</a>
-						<a class="banner__action" href="/">No, keep it.</a>
+						{#if eventActionDetails}
+							<a class="banner__action" href="book/{eventActionDetails[0]}/{eventActionDetails[1]}/{eventActionDetails[2]}/{eventActionDetails[3]}/">{yesOption}.</a>
+							<a class="banner__action" href="/">{noOption}</a>
 						{:else}
                         	<a class="banner__action" href="courses/{removeCourseId}/delete">Yes, remove course now.</a>
                         	<a class="banner__action" href="/">No, keep it.</a>

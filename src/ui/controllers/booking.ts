@@ -39,8 +39,7 @@ export async function renderCancelBookingPage(
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
-	const record2 = await learnerRecord.getRecord(req.user, course, module, event)
-	console.log(event, record2)
+
 	const record = await learnerRecord.getRecord(req.user, course, module, event)
 
 	if (!recordCheck(record, ireq)) {
@@ -428,7 +427,7 @@ export async function trySkipBooking(
 
 }
 
-export async function tryCompletedBooking(
+export async function tryMoveBooking(
 	ireq: express.Request,
 	res: express.Response
 ) {
@@ -535,37 +534,4 @@ export async function tryCompleteBooking(
 			module,
 		})
 	)
-}
-
-export async function renderSkippedBookingPage(
-	ireq: express.Request,
-	res: express.Response
-) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
-
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
-	}
-
-	const moduleRecord = record!.modules.find(
-		rm => rm.moduleId === module.id && rm.eventId === event.id
-	)
-	if (!moduleRecord || moduleRecord.state !== xapi.Labels[xapi.Verb.Skipped].toUpperCase()) {
-		res.redirect(`/book/${course.id}/${module.id}/cancel`)
-	} else {
-		res.send(
-			template.render('booking/confirmed', req, res, {
-				course,
-				event,
-				message: confirmedMessage.Cancelled,
-				module,
-			})
-		)
-	}
 }
