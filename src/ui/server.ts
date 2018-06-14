@@ -289,8 +289,8 @@ app.get(
 )
 
 app.get(
-	'/book/:courseId/:moduleId/:eventId/completed',
-	asyncHandler(bookingController.tryCompletedBooking)
+	'/book/:courseId/:moduleId/:eventId/move',
+	asyncHandler(bookingController.tryMoveBooking)
 )
 
 app.get(
@@ -302,6 +302,7 @@ app.get(
 	'/book/:courseId/:moduleId/:eventId/skip',
 	asyncHandler(bookingController.trySkipBooking)
 )
+
 app.post(
 	'/book/:courseId/:moduleId/:eventId/cancel',
 	asyncHandler(bookingController.tryCancelBooking)

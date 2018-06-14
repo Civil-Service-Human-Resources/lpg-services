@@ -4,7 +4,7 @@
 				{#if today == null || today < course.getSelectedDate() } 
 					<a href="/book/{course.id}/{course.record.modules[0].moduleId}/{course.record.modules[0].eventId}/cancel">Cancel</a>
 				{:else}
-					<a href="/book/{course.id}/{course.record.modules[0].moduleId}/{course.record.modules[0].eventId}/completed">Move to Learner Record</a>
+					<a href="/home?move={course.id},{course.record.modules[0].moduleId},{course.record.modules[0].eventId}">Move to Learner Record</a>
 					<a href="/home?skip={course.id},{course.record.modules[0].moduleId},{course.record.modules[0].eventId}">I did not attend</a>
 				{/if}
             {:else}
