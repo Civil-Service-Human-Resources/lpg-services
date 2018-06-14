@@ -2,6 +2,7 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
+                {#if message === ('Booked' || 'Cancelled')}
                 <div class="govuk-box-highlight">
                     <h1 class="heading-xlarge">
                         {message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }
@@ -11,6 +12,13 @@
                         {module.title || course.title}
                     </h2>
                 </div>
+                {:elseif message === 'NotFound'}
+                <Error errorHeading="Request not found">
+                {error}
+                </Error>
+                {/if}
+
+
                 <h4 class="heading-small">What happens next?</h4>
             </div>
             <div class="column-two-thirds">
@@ -21,12 +29,12 @@
                 <p>
                     Once confirmed you will be notified and we will contact you with the course logistics.
                 </p>
-                {:else}
-                <p>Your course booking has been cancelled.</p>
+                {:elseif message === 'Cancelled'}
+                    <p>Your course booking has been cancelled.</p>
+                {/if}
                 <p>
                     <a href="/home">You can now return to the home page</a>
                 </p>
-                {/if}
             </div>
         </div>
     </div>
@@ -34,6 +42,7 @@
 
 <script>
 	import Page from '../../component/Page.html'
+	import Error from '../../component/Error.html'
 
 	export default {
 		data() {
@@ -42,7 +51,8 @@
 		},
 
 		components: {
-			Page
+			Page,
+			Error
 		}
 	}
 </script>
