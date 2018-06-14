@@ -32,14 +32,15 @@ export async function getRecord(
 	let activityId = course.getActivityId()
 	if (event) {
 		activityId = event.getActivityId()
-	} else if (module) {
+		console.log(event.id)
+	} else if (module && !event) {
 		activityId = module.getActivityId()
 	}
 
 	const response = await http.get(`/records/${user.id}`, {
 		headers: {Authorization: `Bearer ${user.accessToken}`},
 		params: {
-			activityId,
+			eventId: activityId,
 		},
 	})
 	if (response.data.records.length > 0) {

@@ -5,91 +5,16 @@ import * as learnerRecord from 'lib/learnerrecord'
 import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
-import * as log4js from 'log4js'
-import * as courseController from './course/index'
 
+import * as courseController from '../course/index'
+
+import * as log4js from 'log4js'
 const logger = log4js.getLogger('controllers/booking')
 
-enum confirmedMessage {
+export enum confirmedMessage {
 	Booked = 'Booked',
 	Cancelled = 'Cancelled',
-}
-
-function recordCheck(record: learnerRecord.CourseRecord | null, ireq: express.Request) {
-	const req = ireq as extended.CourseRequest
-
-	if (!record) {
-		logger.warn(
-			`Attempt to cancel a booking when not registered. user: ${
-				req.user.id
-			}, course: ${req.course.id}, module: ${req.module!.id}, event: ${req.event!.id}`
-		)
-
-		return false
-	} else {
-		return true
-	}
-}
-
-export async function renderCancelBookingPage(
-	ireq: express.Request,
-	res: express.Response
-) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
-
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
-	}
-
-	course.record = record!
-
-	res.send(
-		template.render('booking/cancel-booking', req, res, {
-			cancelBookingFailed: false,
-			course,
-			event,
-			module,
-		})
-	)
-}
-
-export async function renderCancelledBookingPage(
-	ireq: express.Request,
-	res: express.Response
-) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
-
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
-	}
-
-	const moduleRecord = record!.modules.find(
-		rm => rm.moduleId === module.id && rm.eventId === event.id
-	)
-	if (!moduleRecord || moduleRecord.state !== xapi.Labels[xapi.Verb.Unregistered].toUpperCase()) {
-		res.redirect(`/book/${course.id}/${module.id}/cancel`)
-	} else {
-		res.send(
-			template.render('booking/confirmed', req, res, {
-				course,
-				event,
-				message: confirmedMessage.Cancelled,
-				module,
-			})
-		)
-	}
+	NotFound = 'NotFound',
 }
 
 export function saveAccessibilityOptions(
@@ -244,7 +169,6 @@ export async function renderConfirmPayment(
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
-
 	const session = req.session!
 
 	res.send(
@@ -337,52 +261,6 @@ export function enteredPaymentDetails(
 			res.redirect(`${req.originalUrl}`)
 		})
 		return
-	}
-}
-
-export async function tryCancelBooking(
-	ireq: express.Request,
-	res: express.Response
-) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
-
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
-	}
-
-	course.record = record!
-
-	if (req.body['cancel-tc']) {
-		await xapi.record(
-			req,
-			course,
-			xapi.Verb.Unregistered,
-			undefined,
-			module,
-			event
-		)
-		await notify.bookingCancelled({
-			courseDate: dateTime.formatDate(event.date),
-			courseTitle: module.title || course.title,
-			email: req.user.emailAddress,
-			name: req.user.givenName || req.user.emailAddress,
-		})
-		res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
-	} else {
-		res.send(
-			template.render('booking/cancel-booking', req, res, {
-				cancelBookingFailed: true,
-				course,
-				event,
-				module,
-			})
-		)
 	}
 }
 
@@ -482,14 +360,18 @@ export async function tryCompleteBooking(
 		paymentOption = `Financial Approver: ${session.fap}`
 	}
 
-	await xapi.record(
-		req,
-		course,
-		xapi.Verb.Registered,
-		extensions,
-		module,
-		event
+	await xapi
+		.record(req, course, xapi.Verb.Registered, extensions, module, event)
+		.catch((e: Error) => {
+			logger.error('Error with XAPI', e)
+		})
+
+	logger.debug(
+		'XAPI successfully recorded REGISTERED verb against:',
+		`user:${req.user}`,
+		`event: ${event.id}`
 	)
+
 	const accessibilityArray: string[] = []
 	for (const i in session.accessibilityReqs) {
 		if (i) {
@@ -503,28 +385,36 @@ export async function tryCompleteBooking(
 			}
 		}
 	}
+	await notify
+		.bookingRequested({
+			accessibility: accessibilityArray.join(', '),
+			bookingReference: `${req.user.id}-${event.id}`,
+			cost: module.price,
+			courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
+				event.date,
+				true
+			)} ${
+				module.duration
+					? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
+					: ''
+			}`,
+			courseLocation: event.location,
+			courseTitle: module.title || course.title,
+			email: req.user.userName,
+			eventId: event.id,
+			learnerName: req.user.givenName || req.user.userName,
+			lineManager: req.user.lineManager,
+			location: event.location,
+			paymentOption,
+		})
+		.catch((e: Error) => {
+			logger.error('There was an error with GOV Notify', e)
+		})
 
-	await notify.bookingRequested({
-		accessibility: accessibilityArray.join(', '),
-		bookingReference: `${req.user.id}-${event.id}`,
-		cost: module.price,
-		courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
-			event.date,
-			true
-		)} ${
-			module.duration
-				? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
-				: ''
-		}`,
-		courseLocation: event.location,
-		courseTitle: module.title || course.title,
-		email: req.user.userName,
-		eventId: event.id,
-		learnerName: req.user.givenName || req.user.userName,
-		lineManager: req.user.lineManager,
-		location: event.location,
-		paymentOption,
-	})
+	delete req.session!.po
+	delete req.session!.fap
+	delete req.session!.accessibilityReqs
+	delete req.session!.selectedEventId
 
 	res.send(
 		template.render('booking/confirmed', req, res, {

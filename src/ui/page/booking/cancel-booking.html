@@ -9,6 +9,11 @@
             </div>
         </div>
         <div class="grid-row">
+            {#if error}
+                <Error errorHeading="There was an error">
+                    {error}
+                </Error>
+            {/if}
             <div class="column-two-thirds">
                 {#if cancelBookingFailed }
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
@@ -50,6 +55,7 @@
 
 <script>
 	import Page from '../../component/Page.html'
+	import Error from '../../component/Error.html'
 
 	export default {
 		data() {
@@ -58,7 +64,8 @@
 		},
 
 		components: {
-			Page
+			Page,
+			Error
 		}
 	}
 </script>

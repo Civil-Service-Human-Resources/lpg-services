@@ -21,7 +21,9 @@ import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
 import * as template from 'lib/ui/template'
 
-import * as bookingController from './controllers/booking'
+import * as bookingController from './controllers/booking/booking'
+import * as cancelBookingController from './controllers/booking/cancel'
+
 import * as courseController from './controllers/course'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
@@ -295,7 +297,7 @@ app.get(
 
 app.get(
 	'/book/:courseId/:moduleId/:eventId/cancel',
-	asyncHandler(bookingController.renderCancelBookingPage)
+	asyncHandler(cancelBookingController.renderCancelBookingPage)
 )
 
 app.get(
@@ -305,12 +307,17 @@ app.get(
 
 app.post(
 	'/book/:courseId/:moduleId/:eventId/cancel',
-	asyncHandler(bookingController.tryCancelBooking)
+	asyncHandler(cancelBookingController.tryCancelBooking)
 )
 
 app.get(
 	'/book/:courseId/:moduleId/:eventId/cancelled',
-	asyncHandler(bookingController.renderCancelledBookingPage)
+	asyncHandler(cancelBookingController.renderCancelledBookingPage)
+)
+
+app.get(
+	'/book/cancelled',
+	asyncHandler(cancelBookingController.renderCancelledBookingPage)
 )
 
 app.use(

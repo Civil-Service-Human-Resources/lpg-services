@@ -39,7 +39,7 @@
                                 <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
 
                                 <div class="div-table__cell">
-                                    {$datetime.formatTime(event.date, true)}
+
                                     { module.duration ? 'to ' + $datetime.addSeconds(event.date, module.duration, true) : ''}
 
                                 </div>

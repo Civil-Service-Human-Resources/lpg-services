@@ -237,7 +237,7 @@
 	"action_IN_PROGRESS": "Resume",
 	"action_NOT_STARTED": "Start",
 	"action_video_COMPLETED": "Restart",
-	"action_REGISTERED": "Requested",
+	"action_REGISTERED": "action_REGISTERED",
 	"NOT_STARTED": "NOT_STARTED",
 	"learning_added_to_plan_title": "%s",
 	"learning_added_to_plan_message": "This has been added to your learning plan",
@@ -313,9 +313,12 @@
 		"po-too-short": "A purchase order number must be longer than 2 characters",
 		"po-too-long": "A purchase order number must be shorter than 20 characters",
 		"po-special-characters":
-			"A purchase order should not contain dots (.), colons ( : ), or hashes ( # )"
+			"A purchase order should not contain dots (.), colons ( : ), or hashes ( # )",
+		"cancelBooking":
+			"There was an error cancelling your booking request. Please try again.",
+		"registrationNotFound":
+			"You attempted to cancel a booking you were not registered."
 	},
-	"errors.profileErrorEmpty": "errors.profileErrorEmpty",
 	"courseResult": {
 		"complete": "Course complete",
 		"passed": "Passed",
@@ -324,5 +327,6 @@
 	"moduleResult": {
 		"complete": "Module complete"
 	},
-	"file": "file"
+	"file": "file",
+	"UNREGISTERED": "UNREGISTERED"
 }
