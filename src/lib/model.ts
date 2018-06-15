@@ -535,6 +535,7 @@ export class User {
 			user.areasOfWork = Object.values(data.profession || data.areasOfWork)
 		}
 		user.otherAreasOfWork = data.otherAreasOfWork
+		user.interests = data.interests
 
 		if (data.lineManagerEmailAddress) {
 			user.lineManager = {
@@ -558,6 +559,7 @@ export class User {
 	areasOfWork?: string[]
 	lineManager?: LineManager
 	otherAreasOfWork?: string[]
+	interests?: string[]
 	givenName?: string
 
 	grade?: string

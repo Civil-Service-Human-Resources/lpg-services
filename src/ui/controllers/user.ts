@@ -31,6 +31,7 @@ export enum nodes {
 	'email-addresss' = 'emailAddress',
 	'department' = 'organisation',
 	'grade' = 'grade',
+	'interest' = 'interests',
 	'primary-area-of-work' = 'profession',
 	'other-areas-of-work' = 'otherAreasOfWork',
 	'line-manager' = 'lineManager',
@@ -362,6 +363,10 @@ export async function renderEditPage(
 			break
 		case 'name':
 			value = req.user.name
+			break
+		case 'interest':
+			options = haltoObject(await registry.halNode('interests'))
+			optionType = OptionTypes.Checkbox
 			break
 	}
 
