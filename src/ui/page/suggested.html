@@ -22,6 +22,9 @@
         <SuggestionsSection title={$i18n('areas-of-work')[areasOfWork[index]] || areasOfWork[index]} suggestedLearning="{coursesGroup}" home={false}/>
         {/if}
     {/each}
+    {#each Object.keys(interests) as interest}
+        <SuggestionsSection title={$i18n('interests')[interest.toLowerCase().replace(' ','-')]} suggestedLearning="{interests[interest]}" home={false}/>
+    {/each}
 </Page>
 
 <script>

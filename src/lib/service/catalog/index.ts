@@ -96,6 +96,19 @@ export async function findRequiredLearning(
 	}
 }
 
+// interests are distinct from areas of work and department and
+// so are seperate parameters
+export class ApiParametersByInterest {
+	constructor(
+		public interest: string[],
+		public page: number = 0,
+		public size: number = 6
+	) {}
+	serialize(): string {
+		return query.stringify(this)
+	}
+}
+
 export class ApiParameters {
 	constructor(
 		public areaOfWork: string[],
@@ -155,7 +168,7 @@ function convertToMixed(data: any) {
 				: model.CourseModule.createFromModule(
 						model.Module.create(result),
 						result.course
-					)
+				  )
 		})
 	}
 	return data
