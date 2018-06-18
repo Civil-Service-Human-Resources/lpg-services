@@ -531,8 +531,7 @@ export class User {
 			? data.organisation.code
 			: data.department
 		user.givenName = data.fullName ? data.fullName : data.givenName
-		user.grade = data.grade && data.grade.code ? data.grade.code : data.grade
-
+		user.grade = data.grade
 		if (data.profession || data.areasOfWork) {
 			user.areasOfWork = Object.values(data.profession || data.areasOfWork)
 		}
