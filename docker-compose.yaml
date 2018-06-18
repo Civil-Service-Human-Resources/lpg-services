@@ -72,7 +72,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: cshr/civil-servant-registry-service:0eea6c74ac8f97fc4ed8573fbd0f14fc3b3ed110
+    image: cshr/civil-servant-registry-service:1744b1a00ecb1fc9eceabb9520be464dbc602cd4
     depends_on:
       - identity
     ports:
@@ -109,7 +109,7 @@ services:
       ELASTICSEARCH_URI: http://elasticsearch:9200
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: changeme
-    image: cshr/lpg-learning-catalogue:781d5e92df2238fc184e1276e079b9833f67017b
+    image: cshr/lpg-learning-catalogue:899c11c17afa5a9a83c37bfa68be325df39d8553
     ports:
       - 9001:9001
 
