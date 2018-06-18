@@ -86,7 +86,7 @@ export async function suggestionsPage(
 	const user = req.user as model.User
 	const modified = await suggestions(user)
 	const interest = await suggestionsByInterest(user)
-	console.log('INTERSTS ', interest)
+
 	res.send(
 		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
@@ -126,7 +126,7 @@ export async function suggestionsByInterest(
 		const records = await learnerRecord.getLearningRecord(user)
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
-	console.log(user)
+
 	for (const interest of user.interests || []) {
 		courseSuggestions[(interest as any).name] = await getSuggestionsByInterest(
 			[interest],
