@@ -484,7 +484,6 @@ export async function patchAndUpdate(
 			})
 			return
 		}
-
 	} else if (response) {
 		// seems like we have to get the profile again to get values
 		// which seems ...not good
@@ -522,6 +521,11 @@ export async function updateProfile(
 	let errorMessage = ''
 
 	switch (node) {
+		case 'interests':
+			if (!Array.isArray(fieldValue)) {
+				fieldValue = [fieldValue]
+			}
+			break
 		case 'otherAreasOfWork':
 			if (!Array.isArray(fieldValue)) {
 				fieldValue = [fieldValue]
