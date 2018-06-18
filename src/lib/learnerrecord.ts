@@ -32,7 +32,6 @@ export async function getRecord(
 	let activityId = course.getActivityId()
 	if (event) {
 		activityId = event.getActivityId()
-		console.log(event.id)
 	} else if (module && !event) {
 		activityId = module.getActivityId()
 	}
