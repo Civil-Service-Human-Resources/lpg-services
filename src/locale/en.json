@@ -2,6 +2,7 @@
 	"audience_department_label": "Organisation(s)",
 	"audience_area_label": "Area(s) of work",
 	"audience_grade_label": "Grade(s)",
+	"audience_interest_label": "Interest(s)",
 	"audience_mandatory_label": "Mandatory",
 	"audience_frequency_label": "Frequency",
 	"audience_required-by_label": "Required By",
@@ -198,6 +199,10 @@
 		"PB2": "Senior Civil Service - Director",
 		"PB3": "Senior Civil Service - Director General",
 		"PS": "Senior Civil Service - Permanent Secretary"
+	},
+	"interests": {
+		"contract-management": "Contract management",
+		"leadership": "Leadership"
 	},
 	"departments": {
 		"hmrc": "HM Revenue & Customs",

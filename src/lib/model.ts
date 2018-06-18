@@ -400,6 +400,7 @@ export class Audience {
 		audience.areasOfWork = data.areasOfWork || []
 		audience.departments = data.departments || []
 		audience.grades = data.grades || []
+		audience.interests = data.interests || []
 		audience.mandatory = data.mandatory || false
 		audience.frequency = data.frequency
 		if (data.requiredBy) {
@@ -411,6 +412,7 @@ export class Audience {
 	areasOfWork: string[]
 	departments: string[]
 	grades: string[]
+	interests: string[]
 	mandatory: boolean
 
 	requiredBy?: Date | null

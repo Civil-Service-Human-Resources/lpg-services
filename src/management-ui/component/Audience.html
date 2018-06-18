@@ -47,6 +47,16 @@
             </td>
         </tr>
         <tr>
+            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_interest_label')}</td>
+            <td class="key-value-list__value key-value-value--auto lpg-interest">
+                {#each audience.interests as interest}
+                <li class="audience__item">{ $i18n('interests')[interest]}</li> {/each}
+            </td>
+            <td >
+                <button name="submit" type="submit" class="button audience__button" value="change_{i}_interest">Change</button>
+            </td>
+        </tr>
+        <tr>
             <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_mandatory_label')}</td>
             <td class="key-value-list__value key-value-value--auto lpg-mandatory">
                 <input id="mandatory" type="checkbox" name="mandatory" value="true" checked="{ audience.mandatory=== 'true'  ? 'checked' : '' }"
