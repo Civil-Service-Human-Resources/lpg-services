@@ -85,10 +85,13 @@ export async function suggestionsPage(
 ) {
 	const user = req.user as model.User
 	const modified = await suggestions(user)
+	const interest = await suggestionsByInterest(user)
+	console.log('INTERSTS ', interest)
 	res.send(
 		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
 			courses: modified,
+			interests: interest,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
 		})
@@ -108,6 +111,32 @@ export async function expandedSuggestionsPage(
 			courses: modified,
 		})
 	)
+}
+
+export async function suggestionsByInterest(
+	user: model.User,
+	learningRecordIn: Record<string, model.Course> = {}
+) {
+	let learningRecord: Record<string, model.Course> = {}
+	const courseSuggestions: Record<string, model.Course[]> = {}
+
+	if (Object.keys(learningRecordIn).length > 0) {
+		learningRecord = learningRecordIn
+	} else {
+		const records = await learnerRecord.getLearningRecord(user)
+		learningRecord = records.length ? hashArray(records, 'id') : {}
+	}
+	console.log(user)
+	for (const interest of user.interests || []) {
+		courseSuggestions[(interest as any).name] = await getSuggestionsByInterest(
+			[interest],
+			6,
+			learningRecord,
+			user
+		)
+	}
+
+	return courseSuggestions
 }
 
 export async function suggestions(
@@ -196,6 +225,31 @@ export async function homeSuggestions(
 	}
 
 	return [...areaOfWorkSuggestions, ...departmentSuggestions]
+}
+
+async function getSuggestionsByInterest(
+	interests: {}[],
+	count: number,
+	learningRecord: Record<string, model.Course>,
+	user: model.User
+): Promise<model.Course[]> {
+	const interestNames = interests.map(interest => (interest as any).name)
+	const params = new catalog.ApiParametersByInterest(interestNames, 0, count)
+	let newSuggestions: model.Course[] = []
+	let hasMore = true
+
+	while (newSuggestions.length < count && hasMore) {
+		const page = await catalog.findSuggestedLearningWithParameters(
+			params.serialize()
+		)
+		newSuggestions = newSuggestions.concat(
+			modifyCourses(page.results, learningRecord, user)
+		)
+		hasMore = page.totalResults > page.size * (page.page + 1)
+		params.page += 1
+	}
+
+	return newSuggestions.slice(0, count)
 }
 
 async function getSuggestions(
