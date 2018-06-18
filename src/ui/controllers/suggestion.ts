@@ -228,7 +228,7 @@ export async function homeSuggestions(
 }
 
 async function getSuggestionsByInterest(
-	interests: {}[],
+	interests: Array<{}>,
 	count: number,
 	learningRecord: Record<string, model.Course>,
 	user: model.User
