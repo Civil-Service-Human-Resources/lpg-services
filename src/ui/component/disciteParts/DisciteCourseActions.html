@@ -4,7 +4,7 @@
         <a href="{cta.actionToRecord.skip}">I did not attend</a>
     {/if}
     {#if cta.url}
-        <a href="{cta.url}">{cta.message}
+        <a href="{cta.url}">{$i18n(cta.message)}
             <span class="visuallyhidden">{cta.accessibilityHelper}</span>
         </a>
     {/if}
@@ -12,6 +12,7 @@
     {#if (cta.isInLearningPlan === true) && (modifier === 'search')}
         <span>Already in your learning plan</span>
     {/if}
+
     {#if cta.actionToPlan}
         {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
             <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add to learning plan</a>
@@ -19,8 +20,6 @@
             <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">
                 Remove <span class="visuallyhidden">from learning plan</span>
             </a>
-        {:else}
-
         {/if}
     {/if}
 </div>

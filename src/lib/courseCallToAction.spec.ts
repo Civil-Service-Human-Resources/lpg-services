@@ -3,7 +3,7 @@ import {
 	CourseActionType,
 } from 'lib/courseCallToAction'
 
-import {CourseRecord, ModuleRecord} from 'lib/learnerrecord'
+import {ModuleRecord} from 'lib/learnerrecord'
 import {Course, Module, User} from 'lib/model'
 
 const courseSkeletonData: any = {
@@ -80,7 +80,7 @@ const moduleData: {[module: string]: any} = {
 	},
 }
 
-const testUser = User.create({
+export const testUser = User.create({
 	accessToken: '',
 	id: '3c706a70-3fff-4e7b-ae7f-102c1d46f569',
 	userName: 'learner@domain.com',
@@ -94,13 +94,6 @@ const testUser = User.create({
 
 	sessionIndex: '',
 })
-
-const recordData: CourseRecord = {
-	courseId: courseSkeletonData.id,
-	modules: [],
-	state: 'IN_PROGRESS',
-	userId: testUser.id,
-}
 
 describe('Course Call to Actions', () => {
 	let course: Course
@@ -120,11 +113,11 @@ describe('Course Call to Actions', () => {
 				).toBeFalsy()
 			})
 
-			it('for bookable courses it should return "Book"', () => {
+			it('for bookable courses it should return "action_BOOK"', () => {
 				course = initCourse()
 				course.modules = initModules(['faceToFace'])
 				const cta = constructCourseCallToAction(course, testUser)
-				expect(cta.message).toEqual('Book')
+				expect(cta.message).toEqual('action_BOOK')
 			})
 
 			describe('on search page', () => {
@@ -229,9 +222,9 @@ describe('Course Call to Actions', () => {
 				course.modules = initModules(['faceToFace'])
 				course.isRequired = () => true
 			})
-			it('should return "Book" for bookable courses', () => {
+			it('should return "action_BOOK" for bookable courses', () => {
 				const cta = constructCourseCallToAction(course, testUser)
-				expect(cta.message).toBe('Book')
+				expect(cta.message).toBe('action_BOOK')
 			})
 
 			it('should not have cancel actions if booked', () => {
@@ -243,25 +236,9 @@ describe('Course Call to Actions', () => {
 			})
 		})
 	})
-
-	/*is in record
-        N
-        is face to face?
-            Y book
-            N start#modules
-                Required?
-                Y nothing
-                N Add to learning plan
-        Y
-        Booked?
-            Y Cancel
-            N state is null or 'archived'?
-                Y not required?
-                    Add to LP
-        */
 })
 
-function initCourse(withRecord?: boolean): Course {
+export function initCourse(withRecord?: boolean): Course {
 	const c = Course.create(courseSkeletonData)
 	if (withRecord) {
 		c.record = {
@@ -274,7 +251,7 @@ function initCourse(withRecord?: boolean): Course {
 	return c
 }
 
-function initModules(moduleNames: string[]): Module[] {
+export function initModules(moduleNames: string[]): Module[] {
 	const modules: Module[] = []
 	for (const module of moduleNames) {
 		modules.push(Module.create(moduleData[module]))

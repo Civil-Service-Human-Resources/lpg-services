@@ -12,7 +12,7 @@
                 <div>{@html $toHtml(course.learningOutcomes)}</div>
                 {/if}
                 <h3 class="heading-small">Download document</h3>
-                <a href="/courses/{course.id}/{module.id}">{$fileHelpers.fileName(module.url)}</a>
+                <a download href="/courses/{course.id}/{module.id}">{$fileHelpers.fileName(module.url)}</a>
                 ({$fileHelpers.extension(module.url)}, {$fileHelpers.appropriateFileSize(module.fileSize)})
             </div>
             <div class="column-one-third">

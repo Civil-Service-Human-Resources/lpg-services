@@ -4,12 +4,14 @@ export enum CourseActionType {
 	Add = 'Add',
 	Delete = 'Delete',
 }
+export interface ActionToPlan {
+	type: CourseActionType
+	url: string
+}
+
 export interface CallToActionProps {
 	accessibilityHelper: string
-	actionToPlan?: {
-		type: CourseActionType
-		url: string
-	}
+	actionToPlan?: ActionToPlan
 	actionToRecord?: {
 		move: string
 		skip: string
@@ -31,7 +33,8 @@ export function constructCourseCallToAction(
 	const callToActionProps: CallToActionProps = {
 		accessibilityHelper: ' this course',
 		isInLearningPlan: false,
-		message: courseType === 'face-to-face' ? 'Book' : 'action_NOT_STARTED',
+		message:
+			courseType === 'face-to-face' ? 'action_BOOK' : 'action_NOT_STARTED',
 		url:
 			courseType === 'face-to-face'
 				? `/book/${course.id}/${course.modules[0].id}/choose-date`
@@ -46,7 +49,7 @@ export function constructCourseCallToAction(
 		callToActionProps.url = `/book/${course.id}/${
 			course.modules[0].id
 		}/choose-date`
-		callToActionProps.message = 'Book'
+		callToActionProps.message = 'action_BOOK'
 	}
 
 	if (course.record) {
