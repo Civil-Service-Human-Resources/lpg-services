@@ -17,6 +17,27 @@ export enum confirmedMessage {
 	NotFound = 'NotFound',
 }
 
+export function recordCheck(
+	record: learnerRecord.CourseRecord | null,
+	ireq: express.Request
+) {
+	const req = ireq as extended.CourseRequest
+
+	if (!record) {
+		logger.warn(
+			`Attempt to cancel a booking when not registered. user: ${
+				req.user.id
+			}, course: ${req.course.id}, module: ${req.module!.id}, event: ${
+				req.event!.id
+			}`
+		)
+
+		return false
+	} else {
+		return true
+	}
+}
+
 export function saveAccessibilityOptions(
 	req: express.Request,
 	res: express.Response
@@ -282,19 +303,9 @@ export async function trySkipBooking(
 
 	course.record = record!
 
-	await xapi.record(
-		req,
-		course,
-		xapi.Verb.Skipped,
-		undefined,
-		module,
-		event
-	)
+	await xapi.record(req, course, xapi.Verb.Skipped, undefined, module, event)
 
-	req.flash(
-		'successTitle',
-		req.__('learning_skipped_title', req.course.title)
-	)
+	req.flash('successTitle', req.__('learning_skipped_title', req.course.title))
 	req.flash(
 		'successMessage',
 		req.__('learning_skipped_from_plan_message', req.course.title)
@@ -302,7 +313,6 @@ export async function trySkipBooking(
 	req.session!.save(() => {
 		res.redirect('/')
 	})
-
 }
 
 export async function tryMoveBooking(
@@ -323,19 +333,11 @@ export async function tryMoveBooking(
 
 	course.record = record!
 
-	await xapi.record(
-		req,
-		course,
-		xapi.Verb.Completed,
-		undefined,
-		module,
-		event
-	)
+	await xapi.record(req, course, xapi.Verb.Completed, undefined, module, event)
 
 	req.session!.save(() => {
 		res.redirect('/')
 	})
-
 }
 
 export async function tryCompleteBooking(
