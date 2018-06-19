@@ -43,37 +43,11 @@
                             {#if (result.type === "course") }
                                 <DisciteCourse course={result.course} modifier="search"/>
                             {:else}
-                            <DisciteModule course={result.course} modifier="search" module={result.module}>
-                                 <div slot="main">
-                                     <a href="/courses/{result.course.id}/{result.module.id}">
-                                         <h3 class="heading bold-small heading--text">
-                                             {result.module.title}
-                                         </h3>
-                                     </a>
-                                     <div class="discite__area discite__area--search">
-                                         <p class="font-small discite__counter">
-                                             This is a module in <a href="/courses/{result.course.id}"><b>{ result.course.title }.</b></a>
-                                         </p>
-
-                                         <p  class="font-small discite__counter--search">There are {result.course.modules.length} in total.</p>
-                                     </div>
-                                 </div>
-
-                                 <div slot="actions">
-                                     <div class="discite__action">
-                                         <a href="/courses/{result.course.id}/{result.module.id}">
-                                             { $i18n('action_' + (result.module.state || 'NOT_STARTED' ))}
-                                             <span class="visuallyhidden"> this module</span>
-                                         </a>
-                                          {#if !result.course.isRequired($signedInUser) }
-                                              {#if !result.course.record || result.course.record.state === 'ARCHIVED'}
-                                                  <a class="lpg-add-from-search" href="/suggestions-for-you/add/{result.course.id}?ref=search">Add to learning plan</a>
-                                              {:else}
-                                                  <span>Already in your learning plan</span>
-                                              {/if}
-                                          {/if}
-                                    </div>
-                                 </div>
+                            <DisciteModule
+                                course={result.course}
+                                modifier="search"
+                                module={result.module}
+                                cta={$constructModuleCta(result.course.id, result.module, $req.user, result.module.state, result.course.record, 'search')}>
                             </DisciteModule>
                             {/if}
                         {/each} 

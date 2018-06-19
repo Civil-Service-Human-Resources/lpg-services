@@ -1,4 +1,8 @@
 import * as config from 'lib/config'
+
+import {constructCourseCallToAction} from 'lib/ui/courseCallToAction'
+import {constructModuleCta} from 'lib/ui/moduleCallToAction'
+
 import * as datetime from 'lib/datetime'
 import * as fileHelpers from 'lib/filehelpers'
 
@@ -67,6 +71,8 @@ function getHelpers(): {} {
 	const req = getCurrentRequest()
 	return {
 		config,
+		constructCourseCallToAction,
+		constructModuleCta,
 		datetime,
 		fileHelpers,
 		i18n: req.__ ? req.__.bind(req) : null,
@@ -103,6 +109,7 @@ export function render(
 		...withData,
 		_csrf: res.locals._csrf,
 	}
+
 	const store = new Store({
 		...getHelpers(),
 	})

@@ -128,11 +128,7 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 }
 
 export function isActive(record: CourseRecord) {
-	return (
-		record.state !== 'ARCHIVED' &&
-		record.state !== 'UNREGISTERED' &&
-		record.preference !== 'DISLIKED'
-	)
+	return record.state !== 'ARCHIVED' && record.preference !== 'DISLIKED'
 }
 
 export interface CourseRecord {

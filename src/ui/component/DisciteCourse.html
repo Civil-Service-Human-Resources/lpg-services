@@ -4,7 +4,7 @@
     </slot>
 
     <slot name="properties">
-        <DisciteCourseProperties course={course} {modifier} {module}  />
+        <DisciteCourseProperties course={course} {successId} {modifier} {module}  />
     </slot>
 
     {#if course.modules.length > 1 }
@@ -30,7 +30,7 @@
     </div>
 
     <slot name="actions">
-        <DisciteCourseActions {course} {modifier} {module} today={modifier === 'home' ? new Date() : null} />
+        <DisciteCourseActions cta={$constructCourseCallToAction(course, $req.user, modifier)} {course} {modifier} {module} today={modifier === home ? new Date() : null} />
     </slot>
 
 
