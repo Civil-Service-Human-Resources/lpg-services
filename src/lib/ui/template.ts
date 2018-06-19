@@ -1,4 +1,5 @@
 import * as config from 'lib/config'
+import {constructCourseCallToAction} from 'lib/courseCallToAction'
 import * as datetime from 'lib/datetime'
 import * as fileHelpers from 'lib/filehelpers'
 
@@ -67,6 +68,7 @@ function getHelpers(): {} {
 	const req = getCurrentRequest()
 	return {
 		config,
+		constructCourseCallToAction,
 		datetime,
 		fileHelpers,
 		i18n: req.__ ? req.__.bind(req) : null,

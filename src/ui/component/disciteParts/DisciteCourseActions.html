@@ -1,55 +1,26 @@
 <div class="discite__action {modifier ? `discite__action--${modifier}` : ''}">
-        {#if course.record}
-			{#if course.record.modules && course.record.modules.length && course.record.modules[0].eventId}
-				{#if today == null || today < course.getSelectedDate() } 
-					<a href="/book/{course.id}/{course.record.modules[0].moduleId}/{course.record.modules[0].eventId}/cancel">Cancel</a>
-				{:else}
-					<a href="/home?move={course.id},{course.record.modules[0].moduleId},{course.record.modules[0].eventId}">Move to Learner Record</a>
-					<a href="/home?skip={course.id},{course.record.modules[0].moduleId},{course.record.modules[0].eventId}">I did not attend</a>
-				{/if}
-            {:else}
-                {#if course.getType() !== 'face-to-face'}
-                    {#if course.record.modules.length && (course.record.state !== 'ARCHIVED')}
-                        <a href="/courses/{course.id}#modules">{ $i18n('action_' + (course.record.state || 'NOT_STARTED' )) }
+    {#if modifier === 'home' && cta.actionToRecord }
+        <a href="{cta.actionToRecord.move}">Move to Learner Record</a>
+        <a href="{cta.actionToRecord.skip}">I did not attend</a>
+    {/if}
+    {#if cta.url}
+        <a href="{cta.url}">{cta.message}
+            <span class="visuallyhidden">{cta.accessibilityHelper}</span>
+        </a>
+    {/if}
 
-                            <span class="visuallyhidden"> this course</span>
-                        </a>
-                    {:else}
-                        <a href="/courses/{course.id}#modules">{ $i18n('action_NOT_STARTED') }
-                            <span class="visuallyhidden"> this course</span>
-                        </a>
-                    {/if}
-                {:else}
-                    <a class="lpg-book-course" href="/book/{course.id}/{course.modules[0].id}/choose-date">Book
-                        <span class="visuallyhidden"> this module</span>
-                    </a>
-                {/if}
-                {#if !course.isRequired($signedInUser)}
-                    {#if course.record.state === 'ARCHIVED'}
-                        <a class="lpg-add-from-search" href="/suggestions-for-you/add/{course.id}?ref={modifier}">Add to learning plan</a>
-                    {:else}
-                        {#if modifier === "search"}
-                            <span>Already in your learning plan</span>
-                        {:else}
-                            <a href="/home?delete={course.id}">Remove
-                                <span class="visuallyhidden"> From learning plan</span>
-                            </a>
-                        {/if}
-                    {/if}
-                {/if}
-            {/if}
+    {#if (cta.isInLearningPlan === true) && (modifier === 'search')}
+        <span>Already in your learning plan</span>
+    {/if}
+    {#if cta.actionToPlan}
+        {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
+            <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add to learning plan</a>
+        {:elseif (cta.actionToPlan.url && cta.actionToPlan.type === 'Delete')}
+            <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">
+                Remove <span class="visuallyhidden">from learning plan</span>
+            </a>
         {:else}
-            {#if course.getType() !== 'face-to-face'}
-                <a href="/courses/{course.id}#modules">Start
-                    <span class="visuallyhidden"> this course</span>
-                </a>
-            {:else}
-                <a class="lpg-book-course" href="/book/{course.id}/{course.modules[0].id}/choose-date">Book
-                    <span class="visuallyhidden"> this module</span>
-                </a>
-            {/if}
-            {#if !course.isRequired($signedInUser)}
-                <a class="lpg-add-from-search" href="/suggestions-for-you/add/{course.id}?ref={modifier}">Add to learning plan</a>
-            {/if}
+
         {/if}
+    {/if}
 </div>
