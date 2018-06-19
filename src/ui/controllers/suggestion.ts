@@ -41,6 +41,7 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 			'successMessage',
 			req.__('learning_added_to_plan_message', course.title)
 		)
+		req.flash('successId', course.id)
 		req.session!.save(() => {
 			res.redirect(redirectTo)
 		})

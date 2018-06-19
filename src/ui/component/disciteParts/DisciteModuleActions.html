@@ -1,9 +1,16 @@
 <div class="discite__action discite__action--module">
-    {#if module.type === 'file'}
-        <a href="/courses/{course.id}/{module.id}">
-            Download document
-        </a> ({$fileHelpers.extension(module.url)} {$fileHelpers.appropriateFileSize(module.fileSize)})
-    {:else}
-        <a href="/courses/{course.id}/{module.id}">{ $i18n('action_' + (module.state || 'NOT_STARTED' )) } <span class="visuallyhidden"> this module</span></a>
+
+
+    {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
+        {$i18n(cta.learningAction.text)}
+    {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
+
+    {#if cta.actionToPlan}
+        {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
+            <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add to learning plan</a>
+            {:else}
+               <span>{cta.message}</span>
+        {/if}
     {/if}
+
 </div>

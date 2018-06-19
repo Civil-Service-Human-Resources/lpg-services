@@ -1,9 +1,21 @@
-<div class="discite__main discite__main--module">
-  <h3 class="heading bold-small heading--text">{module.title}</h3>
-  {#if module.description}
-      <p class="discite__description">{module.description}</p>
-  {/if}
-  {#if !module.isMandatory}
-      <p class="discite__optional">This module is optional</p>
-  {/if}
+{#if modifier === 'search'}
+<div class="discite__area discite__area--search">
+    <p class="font-small discite__counter">
+        This is a module in
+        <a href="/courses/{course.id}">
+            <b>{ course.title }.</b>
+        </a>
+    </p>
+
+    <p class="font-small discite__counter--search">There { $req.__n('is', course.modules.length)} in total.</p>
 </div>
+{:else}
+<div class="discite__main discite__main--module">
+    <h3 class="heading bold-small heading--text">{module.title}</h3>
+    {#if module.description}
+    <p class="discite__description">{module.description}</p>
+    {/if} {#if !module.isMandatory}
+    <p class="discite__optional">This module is optional</p>
+    {/if}
+</div>
+{/if}
