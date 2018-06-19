@@ -37,11 +37,11 @@ export class Course {
 	}
 
 	isComplete(user: User) {
-		return this.checkModuleStates(user, 'COMPLETED', true)
+		return this.checkModuleStates(user, 'COMPLETED', true, true)
 	}
 
 	isStarted(user: User) {
-		return this.checkModuleStates(user, 'IN_PROGRESS', false)
+		return this.checkModuleStates(user, 'IN_PROGRESS')
 	}
 
 	hasPreference() {
@@ -140,6 +140,18 @@ export class Course {
 		return next
 	}
 
+	getMandatoryCount(user: User){
+		const modules = this.getModules(user)
+		let count = 0
+		modules.forEach(module => {
+			if (module.getAudience(user) && module.getAudience(user)!.mandatory) {
+				count++
+			}
+		})
+
+		return count
+	}
+
 	getCompletionDate(user: User) {
 		if (this.isComplete(user)) {
 			let completionDate: Date | undefined
@@ -169,31 +181,24 @@ export class Course {
 		return false
 	}
 
-	/** musthave: allmodules must have state or any module has */
-	private checkModuleStates(user: User, states: string, mustHave: boolean) {
+	// musthave: allmodules must have state or any module has
+	// countOnlyMandatory:  ignore optional modules
+
+	private checkModuleStates(user: User, states: string, mustHave?: boolean, onlyMandatory?: boolean) {
 		const arrStates: string[] = states.split(',')
 
 		if (this.record) {
 			const modules = this.getModules(user)
 
-			if (states === 'COMPLETED') {
-				const completedModulesCount = modules.filter(module => {
-					const moduleRecord = this.record!.modules.find(
-						mr => mr.moduleId === module.id
-					)
-					if (moduleRecord && moduleRecord.state === 'COMPLETED') {
-						return moduleRecord
-					}
-				}).length
-
-				return completedModulesCount === modules.length
-			}
-
 			for (const module of modules) {
+
+				const audience = module.getAudience(user)
+				const mandatory = audience ? audience.mandatory : false
+
 				const moduleRecord = this.record.modules.find(
 					mr => mr.moduleId === module.id
 				)
-				if (moduleRecord && moduleRecord.state) {
+				if (moduleRecord && moduleRecord.state && (!onlyMandatory || mandatory)) {
 					if (arrStates.indexOf(moduleRecord.state) < 0 && mustHave) {
 						return false
 					} else if (arrStates.indexOf(moduleRecord.state) >= 0) {
@@ -203,6 +208,7 @@ export class Course {
 					return false
 				}
 			}
+
 			return true
 		}
 		return false
