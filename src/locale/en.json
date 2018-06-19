@@ -238,7 +238,7 @@
 	"action_IN_PROGRESS": "Resume",
 	"action_NOT_STARTED": "Start",
 	"action_video_COMPLETED": "Restart",
-	"action_REGISTERED": "action_REGISTERED",
+	"action_REGISTERED": "Requested",
 	"NOT_STARTED": "NOT_STARTED",
 	"learning_added_to_plan_title": "%s",
 	"learning_added_to_plan_message": "This has been added to your learning plan",
