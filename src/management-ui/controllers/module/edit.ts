@@ -192,6 +192,7 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 	const session = req.session!
 
 	req.body.location = req.sanitizeBody('location').unescape()
+	req.body.url = req.sanitizeBody('url').unescape()
 
 	const data = {
 		...req.body,
