@@ -243,12 +243,6 @@
 	"learning_added_to_plan_message": "This has been added to your learning plan",
 	"learning_removed_from_plan_title": "%s",
 	"learning_confirm_removal_plan_title": "Are you sure you want to remove %s?",
-<<<<<<< HEAD
-	"learning_confirm_removal_plan_message":
-		"If you remove this course, it will be deleted from your learning plan",
-	"learning_removed_from_plan_message":
-		"This has been removed from your learning plan",
-=======
 	"learning_confirm_removal_plan_message": "If you remove this course, it will be deleted from your learning plan",
 	"learning_confirm_skip_plan_title": "Are you sure you want to say you did not attend %s?",
 	"learning_confirm_skip_plan_message": "Are you sure you did not attend? This will remove it from your learning plan",
@@ -261,7 +255,6 @@
 	"learning_skipped_title": "%s",
 	"learning_skipped_from_plan_message": "This has been removed from your learning plan",
 	"learning_removed_from_plan_message": "This has been removed from your learning plan",
->>>>>>> BA Changes + tidy up
 	"feedback_content_title": "Content",
 	"feedback_content_description":
 		"Was the %s content comprehensive enough for you?",
