@@ -30,7 +30,7 @@
     </div>
 
     <slot name="actions">
-        <DisciteCourseActions {course} {modifier} {module} {today}/>
+        <DisciteCourseActions {course} {modifier} {module} today={modifier === home ? New Date() : null} />
     </slot>
 
 
