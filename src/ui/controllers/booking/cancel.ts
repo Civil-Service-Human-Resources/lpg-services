@@ -1,4 +1,4 @@
-import {confirmedMessage} from './booking'
+import {confirmedMessage, recordCheck} from './booking'
 
 import * as express from 'express'
 import * as dateTime from 'lib/datetime'
@@ -22,17 +22,12 @@ export async function renderCancelBookingPage(
 
 	const record = await learnerRecord.getRecord(req.user, course, module, event)
 
-	if (!record) {
-		logger.warn(
-			`Attempt to cancel a booking when not registered. user: ${
-				req.user.id
-			}, course: ${course.id}, module: ${module.id}, event: ${event.id}`
-		)
+	if (!recordCheck(record, ireq)) {
 		res.sendStatus(400)
 		return
 	}
 
-	course.record = record
+	course.record = record!
 
 	res.send(
 		template.render('booking/cancel-booking', req, res, {
@@ -56,16 +51,10 @@ export async function renderCancelledBookingPage(
 	let error: string = ''
 
 	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!record) {
-		logger.warn(
-			`Attempt to cancel a booking when not registered. user: ${
-				req.user.id
-			}, course: ${course.id}, module: ${module.id}, event: ${event.id}`
-		)
+	if (!recordCheck(record, ireq)) {
 		error = req.__('errors.registrationNotFound')
 	} else {
-		const moduleRecord = record.modules.find(
+		const moduleRecord = record!.modules.find(
 			rm => rm.moduleId === module.id && rm.eventId === event.id
 		)
 
