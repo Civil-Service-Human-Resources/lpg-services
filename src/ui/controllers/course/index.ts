@@ -155,9 +155,11 @@ export async function display(ireq: express.Request, res: express.Response) {
 				return {
 					...cm,
 					duration: cm.getDuration(),
+					isMandatory: cm.getAudience(req.user) ? cm.getAudience(req.user)!.mandatory : false,
 					state: moduleRecord ? moduleRecord.state : null,
 				}
 			})
+
 			res.send(
 				template.render(`course/${type}`, req, res, {
 					course,
