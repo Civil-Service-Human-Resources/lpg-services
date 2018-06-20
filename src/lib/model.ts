@@ -140,7 +140,7 @@ export class Course {
 		return next
 	}
 
-	getMandatoryCount(user: User){
+	getMandatoryCount(user: User) {
 		const modules = this.getModules(user)
 		let count = 0
 		modules.forEach(module => {
@@ -184,32 +184,48 @@ export class Course {
 	// musthave: allmodules must have state or any module has
 	// countOnlyMandatory:  ignore optional modules
 
-	private checkModuleStates(user: User, states: string, mustHave?: boolean, onlyMandatory?: boolean) {
+	private checkModuleStates(
+		user: User,
+		states: string,
+		mustHave?: boolean,
+		onlyMandatory?: boolean
+	) {
 		const arrStates: string[] = states.split(',')
+		let hasModuleRecord
 
 		if (this.record) {
 			const modules = this.getModules(user)
-
 			for (const module of modules) {
-
 				const audience = module.getAudience(user)
 				const mandatory = audience ? audience.mandatory : false
 
 				const moduleRecord = this.record.modules.find(
 					mr => mr.moduleId === module.id
 				)
-				if (moduleRecord && moduleRecord.state && (!onlyMandatory || mandatory)) {
+
+				hasModuleRecord = moduleRecord ? true : false
+
+				if (
+					moduleRecord &&
+					moduleRecord.state &&
+					(!onlyMandatory || mandatory)
+				) {
 					if (arrStates.indexOf(moduleRecord.state) < 0 && mustHave) {
 						return false
-					} else if (arrStates.indexOf(moduleRecord.state) >= 0) {
+					} else if (arrStates.indexOf(moduleRecord.state) >= 0 && !mustHave) {
 						return true
 					}
 				} else {
-					return false
+					if (mandatory) {
+						// mandatory courses that have no record fail completion
+						return false
+					}
 				}
 			}
-
-			return true
+			if (hasModuleRecord) {
+				// need to have at least one module with a record to pass by default
+				return true
+			}
 		}
 		return false
 	}
@@ -426,7 +442,6 @@ export class Audience {
 
 	getRelevance(user: User) {
 		let relevance = -1
-
 		if (
 			user.areasOfWork &&
 			this.areasOfWork.filter(
@@ -435,10 +450,10 @@ export class Audience {
 		) {
 			relevance += 1
 		}
-		if (user.department && this.departments.indexOf(user.department)) {
-			relevance += 1
+		if (user.department && this.departments.indexOf(user.department) > -1) {
+			relevance += 1 // N.B. user.areasOfWork!.indexOf(areaOfWork) will be false for index 0 , so check for >1
 		}
-		if (user.grade && this.grades.indexOf(user.grade)) {
+		if (user.grade && this.grades.indexOf(user.grade) > -1) {
 			relevance += 1
 		}
 		return relevance
