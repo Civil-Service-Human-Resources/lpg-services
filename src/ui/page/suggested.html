@@ -23,7 +23,9 @@
         {/if}
     {/each}
     {#each Object.keys(interests) as interest}
-        <SuggestionsSection title={$i18n('interests')[interest.toLowerCase().replace(' ','-')]} suggestedLearning="{interests[interest]}" home={false}/>
+        {#if interests[interest].length}
+            <SuggestionsSection title={$i18n('interests')[interest.toLowerCase().replace(' ','-')]} suggestedLearning="{interests[interest]}" home={false}/>
+        {/if}
     {/each}
 </Page>
 
