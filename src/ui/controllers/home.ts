@@ -53,11 +53,20 @@ export async function home(req: express.Request, res: express.Response) {
 
 		for (const course of learningRecord) {
 			const record = course.record!
+			console.log(
+				course.title,
+				' ',
+				' is complete?',
+				course.isComplete(user),
+				course.isRequired(user),
+				learnerRecord.isActive(record)
+			)
 			if (
 				!course.isComplete(user) &&
 				!course.isRequired(user) &&
 				learnerRecord.isActive(record)
 			) {
+				console.log(course.title, ' IN LOOP')
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
 				}
@@ -68,8 +77,17 @@ export async function home(req: express.Request, res: express.Response) {
 					let state = null
 					if (eventId && course.modules && course.modules.length) {
 						const module = course.modules[0]
-						const eventRecord = await learnerRecord.getRecord(req.user, course, module, module.getEvent(eventId))
-						if (eventRecord && eventRecord.modules && eventRecord.modules.length) {
+						const eventRecord = await learnerRecord.getRecord(
+							req.user,
+							course,
+							module,
+							module.getEvent(eventId)
+						)
+						if (
+							eventRecord &&
+							eventRecord.modules &&
+							eventRecord.modules.length
+						) {
 							state = eventRecord.modules[0].state
 						}
 					}
@@ -107,11 +125,11 @@ export async function home(req: express.Request, res: express.Response) {
 		}
 
 		if (req.query.skip) {
-			action = "skip"
+			action = 'skip'
 		}
 
 		if (req.query.move) {
-			action = "move"
+			action = 'move'
 		}
 
 		if (req.query.skip || req.query.move) {
