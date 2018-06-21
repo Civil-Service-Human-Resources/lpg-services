@@ -1,12 +1,16 @@
 config:
   target: 'https://test-lpg.cshr.digital'
   phases:
-    - duration: 1
+    - duration: 200
       arrivalRate: 1
-    - pause: 5
   processor: "./artilleryfunc.js"
   defaults:
   payload:
+    path: 'users.csv'
+    fields:
+      - "username"
+      - "password"
+    order: "sequence"
     # path is relative to the location of the test script
 scenarios:
   - flow:
@@ -17,6 +21,8 @@ scenarios:
           as: "csrf"
     - post:
         url: "https://test-identity.cshr.digital/login"
+        username: "{{ username }}"
+        password: "{{ password }}"
         beforeRequest: "setLoginBody"
     - get:
         url: "/home"
