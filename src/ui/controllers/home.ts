@@ -91,6 +91,10 @@ export async function home(req: express.Request, res: express.Response) {
 		let removeCourseId
 		let confirmTitle
 		let confirmMessage
+		let eventActionDetails
+		let action = ''
+		let yesOption
+		let noOption
 
 		if (req.query.delete) {
 			const courseToDelete = await catalog.get(req.query.delete)
@@ -102,10 +106,35 @@ export async function home(req: express.Request, res: express.Response) {
 			confirmMessage = req.__('learning_confirm_removal_plan_message')
 		}
 
+		if (req.query.skip) {
+			action = "skip"
+		}
+
+		if (req.query.move) {
+			action = "move"
+		}
+
+		if (req.query.skip || req.query.move) {
+			eventActionDetails = req.query[action].split(',')
+			eventActionDetails.push(action)
+			const module = await catalog.get(eventActionDetails[0])
+
+			confirmTitle = req.__(
+				'learning_confirm_' + action + '_plan_title',
+				module!.title
+			)
+
+			confirmMessage = req.__('learning_confirm_' + action + '_plan_message')
+			yesOption = req.__('learning_confirm_' + action + '_yes_option')
+			noOption = req.__('learning_confirm_' + action + '_no_option')
+		}
+
 		res.send(
 			template.render('home', req, res, {
 				confirmMessage,
 				confirmTitle,
+				eventActionDetails,
+				noOption,
 				plannedLearning,
 				readyForFeedback,
 				removeCourseId,
@@ -113,6 +142,7 @@ export async function home(req: express.Request, res: express.Response) {
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],
 				suggestedLearning,
+				yesOption,
 			})
 		)
 	} catch (e) {
