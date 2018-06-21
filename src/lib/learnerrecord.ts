@@ -39,7 +39,7 @@ export async function getRecord(
 	const response = await http.get(`/records/${user.id}`, {
 		headers: {Authorization: `Bearer ${user.accessToken}`},
 		params: {
-			eventId: activityId,
+			activityId,
 		},
 	})
 	if (response.data.records.length > 0) {
@@ -73,55 +73,12 @@ export async function getLearningRecord(user: model.User) {
 }
 
 function convert(record: CourseRecord) {
-	record.courseId = uriToId('courses', record.courseId)!
 	for (const module of record.modules) {
-		module.moduleId = uriToId('modules', module.moduleId)!
 		if (module.completionDate) {
 			module.completionDate = new Date(module.completionDate)
 		}
-		if (module.eventId) {
-			module.eventId = uriToId('events', module.eventId)
-		}
 	}
 	return record
-}
-
-function uriToId(type: string, uri: string) {
-	if (!uri) {
-		return undefined
-	}
-	const match = uri.match(new RegExp(`${type}/([^/]+)`))
-	if (match) {
-		return match[1]
-	}
-	return undefined
-}
-
-export async function getRegistrations() {
-	const response = await http.get('/registrations')
-
-	const registrations: Registration[] = []
-	for (const data of response.data.registrations) {
-		const uriParts = data.courseId.match(/courses\/([^\/]+)(\/([^\/]+))?/)
-		const courseId = uriParts[1]
-		const selectedDate = uriParts[3]
-		const course = await catalog.get(courseId)
-		if (!course) {
-			logger.warn(
-				`LRS data for course that doesn't exist. course URI: ${data.activityId}`
-			)
-			continue
-		}
-		registrations.push({
-			activityId: data.courseId,
-			course,
-			lastUpdated: new Date(data.lastUpdated),
-			selectedDate: new Date(selectedDate),
-			state: data.state,
-			userId: data.userId,
-		})
-	}
-	return registrations
 }
 
 export interface EventRegistrations {
@@ -132,12 +89,7 @@ export async function getRegistrationsForEvents(
 	events: string[],
 	user: model.User
 ): Promise<EventRegistrations> {
-	const queryParam = events
-		.map((eventId: string) => {
-			return `${config.XAPI.eventBaseUri}/${eventId}`
-		})
-		.join('&eventId=')
-
+	const queryParam = events.join('&eventId=')
 	const response = await http.get(
 		`/registrations/count?eventId=${queryParam}`,
 		{headers: {Authorization: `Bearer ${user.accessToken}`}}
@@ -146,10 +98,7 @@ export async function getRegistrationsForEvents(
 	const registrations: EventRegistrations = {}
 
 	response.data.map((registration: {eventId: string; value: number}) => {
-		registrations[
-			registration.eventId.substr(config.XAPI.eventBaseUri.length + 1)
-		] =
-			registration.value
+		registrations[registration.eventId] = registration.value
 	})
 
 	return registrations
@@ -195,13 +144,4 @@ export interface ModuleRecord {
 	moduleId: string
 	rated?: boolean
 	state?: string
-}
-
-export interface Registration {
-	activityId: string
-	course: model.Course
-	lastUpdated: Date
-	selectedDate: Date
-	state: string
-	userId: string
 }
