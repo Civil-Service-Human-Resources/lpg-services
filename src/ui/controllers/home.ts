@@ -4,7 +4,6 @@ import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
 import * as suggestionController from './suggestion'
 
@@ -53,47 +52,16 @@ export async function home(req: express.Request, res: express.Response) {
 
 		for (const course of learningRecord) {
 			const record = course.record!
-			console.log(
-				course.title,
-				' ',
-				' is complete?',
-				course.isComplete(user),
-				course.isRequired(user),
-				learnerRecord.isActive(record)
-			)
 			if (
 				!course.isComplete(user) &&
 				!course.isRequired(user) &&
 				learnerRecord.isActive(record)
 			) {
-				console.log(course.title, ' IN LOOP')
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
 				}
 				if (course.getSelectedDate()) {
-					// should have an eventId in record , lets look at it's state
-
-					const eventId = course.record!.modules[0].eventId
-					let state = null
-					if (eventId && course.modules && course.modules.length) {
-						const module = course.modules[0]
-						const eventRecord = await learnerRecord.getRecord(
-							req.user,
-							course,
-							module,
-							module.getEvent(eventId)
-						)
-						if (
-							eventRecord &&
-							eventRecord.modules &&
-							eventRecord.modules.length
-						) {
-							state = eventRecord.modules[0].state
-						}
-					}
-					if (state !== xapi.Labels[xapi.Verb.Skipped].toUpperCase()) {
-						bookedLearning.push(course)
-					}
+					bookedLearning.push(course)
 				} else {
 					plannedLearning.push(course)
 				}
@@ -109,10 +77,6 @@ export async function home(req: express.Request, res: express.Response) {
 		let removeCourseId
 		let confirmTitle
 		let confirmMessage
-		let eventActionDetails
-		let action = ''
-		let yesOption
-		let noOption
 
 		if (req.query.delete) {
 			const courseToDelete = await catalog.get(req.query.delete)
@@ -124,35 +88,10 @@ export async function home(req: express.Request, res: express.Response) {
 			confirmMessage = req.__('learning_confirm_removal_plan_message')
 		}
 
-		if (req.query.skip) {
-			action = 'skip'
-		}
-
-		if (req.query.move) {
-			action = 'move'
-		}
-
-		if (req.query.skip || req.query.move) {
-			eventActionDetails = req.query[action].split(',')
-			eventActionDetails.push(action)
-			const module = await catalog.get(eventActionDetails[0])
-
-			confirmTitle = req.__(
-				'learning_confirm_' + action + '_plan_title',
-				module!.title
-			)
-
-			confirmMessage = req.__('learning_confirm_' + action + '_plan_message')
-			yesOption = req.__('learning_confirm_' + action + '_yes_option')
-			noOption = req.__('learning_confirm_' + action + '_no_option')
-		}
-
 		res.send(
 			template.render('home', req, res, {
 				confirmMessage,
 				confirmTitle,
-				eventActionDetails,
-				noOption,
 				plannedLearning,
 				readyForFeedback,
 				removeCourseId,
@@ -160,7 +99,6 @@ export async function home(req: express.Request, res: express.Response) {
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],
 				suggestedLearning,
-				yesOption,
 			})
 		)
 	} catch (e) {

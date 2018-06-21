@@ -39,7 +39,7 @@ export async function getRecord(
 	const response = await http.get(`/records/${user.id}`, {
 		headers: {Authorization: `Bearer ${user.accessToken}`},
 		params: {
-			eventId: activityId,
+			activityId,
 		},
 	})
 	if (response.data.records.length > 0) {
