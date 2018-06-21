@@ -15,17 +15,12 @@
             </div>
         </div>
     </div>
-    {#each courses as coursesGroup, index}
-        {#if (index+1) === courses.length}
-        <SuggestionsSection title={$i18n('departments')[$signedInUser.department] || $signedInUser.department} suggestedLearning="{coursesGroup}" home={false}/>
-        {:elseif coursesGroup.length}
-        <SuggestionsSection title={$i18n('areas-of-work')[areasOfWork[index]] || areasOfWork[index]} suggestedLearning="{coursesGroup}" home={false}/>
+    {#each courses as courseGroup}
+        {#each Object.keys(courseGroup.value) as courseKey}
+        {#if courseGroup.value[courseKey].length}
+            <SuggestionsSection title={$i18n(courseGroup.key)[courseKey] || courseKey} suggestedLearning="{courseGroup.value[courseKey]}" home={false}/>
         {/if}
-    {/each}
-    {#each Object.keys(interests) as interest}
-        {#if interests[interest].length}
-            <SuggestionsSection title={$i18n('interests')[interest.toLowerCase().replace(' ','-')]} suggestedLearning="{interests[interest]}" home={false}/>
-        {/if}
+        {/each}
     {/each}
 </Page>
 
