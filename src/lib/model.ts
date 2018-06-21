@@ -452,7 +452,7 @@ export class Audience {
 			relevance += 1
 		}
 		if (user.department && this.departments.indexOf(user.department) > -1) {
-			relevance += 1 // N.B. user.areasOfWork!.indexOf(areaOfWork) will be false for index 0 , so check for >1
+			relevance += 1 // N.B. user.areasOfWork!.indexOf(areaOfWork) will be false for index 0 , so check for > -1
 		}
 		if (user.grade && this.grades.indexOf(user.grade) > -1) {
 			relevance += 1
