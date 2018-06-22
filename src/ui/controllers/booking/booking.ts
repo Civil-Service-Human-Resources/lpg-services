@@ -352,7 +352,7 @@ export async function tryCompleteBooking(
 
 	const extensions: Record<string, any> = {}
 	let paymentOption = '-'
-
+	
 	if (session.po) {
 		extensions[xapi.Extension.PurchaseOrder] = session.po
 		paymentOption = `Purchase Order: ${session.po}`
