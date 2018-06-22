@@ -34,6 +34,8 @@ import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
+import * as _ from 'lodash'
+
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
 const favicon = require('serve-favicon')
@@ -337,7 +339,14 @@ app.use(
 		)
 		res.status(500)
 		if (req.accepts('html')) {
-			res.sendFile(path.join(process.cwd(), 'page/error/500.html'))
+			if (_.find(['dev', 'test'], (environment: string) => environment === process.env.ENV_PROFILE)) {
+				res.send({
+					stack: err.stack,
+					time: new Date().toISOString(),
+				})
+			} else {
+				res.sendFile(path.join(process.cwd(), 'page/error/500.html'))
+			}
 		} else if (req.accepts('json')) {
 			res.send({error: err.message})
 		} else {
