@@ -248,8 +248,10 @@ export function enteredPaymentDetails(
 	res: express.Response
 ) {
 	const session = req.session!
-	const poErrors = validatePurchaseOrder(req.body['purchase-order'])
+
 	if (req.body['purchase-order']) {
+		const poErrors = validatePurchaseOrder(req.body['purchase-order'])
+
 		if (poErrors.length) {
 			poErrors.map((error: string) => {
 				req.flash('purchaseOrderErrors', req.__(error))
