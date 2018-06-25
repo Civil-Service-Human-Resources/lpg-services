@@ -273,11 +273,11 @@ app.post(
 
 app.get(
 	'/book/:courseId/:moduleId/:eventId',
-	bookingController.renderPaymentOptions
+	asyncHandler(bookingController.renderPaymentOptions)
 )
 app.post(
 	'/book/:courseId/:moduleId/:eventId',
-	bookingController.enteredPaymentDetails
+	asyncHandler(bookingController.enteredPaymentDetails)
 )
 
 app.get(

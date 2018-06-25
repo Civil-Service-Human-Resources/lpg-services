@@ -276,6 +276,8 @@
 		"video": "Video"
 	},
 	"errors": {
+		"empty-payment-method": "Please enter your payment details",
+		"invalid-email-address": "Not a valid email address",
 		"profileErrorEmpty": "Fields cannot be empty",
 		"passwordUnmatched": "Password does not match the confirmation.",
 		"passwordLength": "Password length should be at least 8 characters.",
@@ -300,7 +302,10 @@
 		"complete": "Module complete"
 	},
 	"file": "file",
-	" areas-of-work": " areas-of-work",
-	" departments": " departments",
-	" interests": " interests"
+	"paymentMethods_FINANCIAL_APPROVER_information": "Financial approval - when prompted please select an approver to confirm your booking. To find out whether your organisation uses the financial approver process, please contact your learning and development team. They should be able to confirm the name of your financial approver.",
+	"paymentMethods_FINANCIAL_APPROVER_label": "Financial approver email address",
+	"paymentMethods_FINANCIAL_APPROVER_type": "Financial approver",
+	"paymentMethods_PURCHASE_ORDER_information": "Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.",
+	"paymentMethods_PURCHASE_ORDER_label": "Purchase order number",
+	"paymentMethods_PURCHASE_ORDER_type": "Purchase order"
 }

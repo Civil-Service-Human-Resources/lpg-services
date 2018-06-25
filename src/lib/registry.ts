@@ -37,25 +37,32 @@ export async function halNode(node: string): Promise<any[]> {
 	return (result as any)._embedded[node]
 }
 
-export async function follow(path: string, nodes: string[]) {
+export async function follow(path: string, nodes: string[], templateParameters?: any) {
 	if (nodes.length === 0) {
 		nodes = ['self']
 	}
+
 	const first = nodes[0]
 	nodes.shift()
-	const result = await new Promise((resolve, reject) =>
-		traverson
+
+	const result = await new Promise((resolve, reject) => {
+		const builder = traverson
 			.from(path)
 			.jsonHal()
 			.follow(first, ...nodes)
-			.getResource((error, document) => {
-				if (error) {
-					reject(false)
-				} else {
-					resolve(document)
-				}
-			})
-	)
+
+		if (templateParameters) {
+			builder.withTemplateParameters(templateParameters!)
+		}
+
+		builder.getResource((error, document) => {
+			if (error) {
+				reject(false)
+			} else {
+				resolve(document)
+			}
+		})
+	})
 
 	return result
 }
