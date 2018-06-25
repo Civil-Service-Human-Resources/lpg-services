@@ -8,24 +8,17 @@
             </div>
         </div>
         <div class="grid-row">
-            {#if poErrors && poErrors.length}
-                <Error errorHeading="There was an issue with your purchase order" errors={poErrors} />
-            {/if}
-            {#if fapErrors && fapErrors.length}
-                <Error errorHeading="There was an issue with your financial approver" errors={fapErrors} />
+            {#if errors && errors.length}
+                <Error errorHeading="There was an issue with the data you entered" errors={errors} />
             {/if}
             <div class="column-two-thirds">
                 <form autocomplete="nope" method="post">
                     <div class="form-group">
-                        {#if $signedInUser.department == "hmrc"}
-                        <p>Financial approval - when prompted please select an approver to confirm your booking. To find out whether your organisation uses the financial approver process, please contact your learning and development team. They should be able to confirm the name of your financial approver.</p>
-                        <label class="form-label" for="financial-approver">Financial approver</label>
-                        <input class="form-control" id="financial-approver" type="email" name="financial-approver" value="{previouslyEntered ? previouslyEntered : ''}">
-                        {:else}
-                        <p>Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.</p>
-                        <label class="form-label" for="purchase-order">Purchase order number</label>
-                        <input class="form-control" id="purchase-order" type="text" name="purchase-order" value="{previouslyEntered ? previouslyEntered : ''}">
-                        {/if}
+                        {#each paymentMethods as pm}
+                            <p>{$i18n('paymentMethods_' + pm + '_information')}</p>
+                            <label class="form-label" for="{pm}">{$i18n('paymentMethods_' + pm + '_label')}</label>
+                            <input class="form-control" id="{pm}" type="text" name="{pm}" value="{values[pm] || ''}">
+                        {/each}
                     </div>
                     <input type="submit" class="button" value="Continue">
                     <input type="hidden" name="_csrf" value="{_csrf}">

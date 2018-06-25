@@ -44,7 +44,7 @@
                     <ul>
                         <li>
                             <span class="booking__key">Payment method</span>
-                            <span class="booking__value lpg-payment-method"> {fap ? 'Financial approver' : 'Purchase order' }</span>
+                            <span class="booking__value lpg-payment-method"> { $i18n('paymentMethods_' + payment.type + '_type' ) }</span>
                         </li>
                         <li>
                             <span class="booking__key">Amount</span>
