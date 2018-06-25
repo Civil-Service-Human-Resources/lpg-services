@@ -259,7 +259,7 @@ export function enteredPaymentDetails(
 			})
 			return
 		} else {
-			session.po = req.body['purchase-order']
+			session.po = req.body['purchase-order'].trim()
 			session.save(() => {
 				res.redirect(`${req.originalUrl}/confirm`)
 			})
@@ -352,7 +352,7 @@ export async function tryCompleteBooking(
 
 	const extensions: Record<string, any> = {}
 	let paymentOption = '-'
-
+	
 	if (session.po) {
 		extensions[xapi.Extension.PurchaseOrder] = session.po
 		paymentOption = `Purchase Order: ${session.po}`
