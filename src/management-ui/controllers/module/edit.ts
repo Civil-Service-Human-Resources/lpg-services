@@ -192,9 +192,9 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 	const session = req.session!
 
 	req.body.location = req.sanitizeBody('location').unescape()
-	req.body.url = req.sanitizeBody('url').unescape()
 
 	const data = {
+		...module!,
 		...req.body,
 		events: module!.events || [],
 		id: module!.id || 'add-module', //temp id for persistance
