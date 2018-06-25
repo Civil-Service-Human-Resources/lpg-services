@@ -364,7 +364,7 @@ export async function renderEditPage(
 		case 'grade':
 			options = haltoObject(await registry.halNode('grades'))
 			optionType = OptionTypes.Radio
-			value = req.user.grade.name
+			value = req.user.grade ? req.user.grade.name : ''
 			break
 		case 'name':
 			value = req.user.name
