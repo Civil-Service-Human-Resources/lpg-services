@@ -84,14 +84,16 @@ export async function suggestionsPage(
 	res: express.Response
 ) {
 	const user = req.user as model.User
-	const modified = await suggestions(user)
-	const interest = await suggestionsByInterest(user)
+	const courses = []
+
+	courses.push({key: 'areas-of-work', value: await suggestionsByAreaOfWork(user) })
+	courses.push({key: 'areas-of-work', value: await suggestionsByOtherAreasOfWork(user) })
+	courses.push({key: 'departments', value: await suggestionsByDepartment(user) })
+	courses.push({key: 'interests', value: await suggestionsByInterest(user) })
 
 	res.send(
 		template.render('suggested', req, res, {
-			areasOfWork: user.areasOfWork,
-			courses: modified,
-			interests: interest,
+			courses,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
 		})
@@ -104,21 +106,20 @@ export async function expandedSuggestionsPage(
 ) {
 	const user = req.user as model.User
 	const areaOfWorktoExpand = req.params.expandedAow
-	const modified = await suggestions(user, {}, areaOfWorktoExpand)
+	const courses = []
+	courses.push({key: 'areas-of-work', value: await suggestionsByAreaOfWork(user, {}, areaOfWorktoExpand) })
+	courses.push({key: 'departments', value: await suggestionsByDepartment(user, {}, areaOfWorktoExpand) })
+
 	res.send(
 		template.render('suggested', req, res, {
 			areasOfWork: user.areasOfWork,
-			courses: modified,
+			courses,
 		})
 	)
 }
 
-export async function suggestionsByInterest(
-	user: model.User,
-	learningRecordIn: Record<string, model.Course> = {}
-) {
+export async function getLearningRecord(user: model.User, learningRecordIn: Record<string, model.Course> ) {
 	let learningRecord: Record<string, model.Course> = {}
-	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
@@ -127,11 +128,20 @@ export async function suggestionsByInterest(
 		learningRecord = records.length ? hashArray(records, 'id') : {}
 	}
 
+	return learningRecord
+}
+
+export async function suggestionsByInterest(
+	user: model.User,
+	learningRecordIn: Record<string, model.Course> = {}
+) {
+
+	const courseSuggestions: Record<string, model.Course[]> = {}
 	for (const interest of user.interests || []) {
 		courseSuggestions[(interest as any).name] = await getSuggestionsByInterest(
 			[interest],
 			6,
-			learningRecord,
+			await getLearningRecord(user, learningRecordIn),
 			user
 		)
 	}
@@ -139,35 +149,63 @@ export async function suggestionsByInterest(
 	return courseSuggestions
 }
 
-export async function suggestions(
+export async function suggestionsByAreaOfWork(
 	user: model.User,
 	learningRecordIn: Record<string, model.Course> = {},
 	expand?: string
 ) {
-	let learningRecord: Record<string, model.Course> = {}
-	const courseSuggestions: model.Course[][] = []
-
-	if (Object.keys(learningRecordIn).length > 0) {
-		learningRecord = learningRecordIn
-	} else {
-		const records = await learnerRecord.getLearningRecord(user)
-		learningRecord = records.length ? hashArray(records, 'id') : {}
-	}
+	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	for (const aow of user.areasOfWork || []) {
-		courseSuggestions.push(
+		courseSuggestions[(aow as any)] =
 			await getSuggestions(
 				'',
 				[aow],
 				aow === expand ? 10 : 6,
-				learningRecord,
+				await getLearningRecord(user, learningRecordIn),
 				user
 			)
-		)
 	}
-	courseSuggestions.push(
-		await getSuggestions(user.department!, [], 6, learningRecord, user)
-	)
+
+	return courseSuggestions
+}
+
+export async function suggestionsByOtherAreasOfWork(
+	user: model.User,
+	learningRecordIn: Record<string, model.Course> = {},
+	expand?: string
+) {
+	const courseSuggestions: Record<string, model.Course[]> = {}
+
+	for (const aow of user.otherAreasOfWork || []) {
+		courseSuggestions[(aow as any).name] =
+			await getSuggestions(
+				'',
+				[aow],
+				aow === expand ? 10 : 6,
+				await getLearningRecord(user, learningRecordIn),
+				user
+			)
+	}
+
+	return courseSuggestions
+}
+
+export async function suggestionsByDepartment(
+	user: model.User,
+	learningRecordIn: Record<string, model.Course> = {},
+	expand?: string
+) {
+	const courseSuggestions: Record<string, model.Course[]> = {}
+
+	courseSuggestions[(user.department as any)] =
+		await getSuggestions(
+			user.department!,
+			[],
+			user.department === expand ? 10 : 6,
+			await getLearningRecord(user, learningRecordIn),
+			user
+		)
 
 	return courseSuggestions
 }
