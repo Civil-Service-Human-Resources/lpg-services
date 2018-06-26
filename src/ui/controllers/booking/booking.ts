@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as config from "lib/config"
 import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -11,7 +12,6 @@ import * as xapi from 'lib/xapi'
 import * as courseController from '../course/index'
 
 import * as log4js from 'log4js'
-import * as config from "lib/config";
 
 const logger = log4js.getLogger('controllers/booking')
 
@@ -382,9 +382,11 @@ export async function tryCompleteBooking(
 	const module = req.module!
 	const event = req.event!
 	const session = req.session!
-
-	const extensions: Record<string, any> = {}
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
+
+	const extensions: Record<string, any> = {
+		[xapi.Extension.Payment]: paymentOption,
+	}
 
 	await xapi
 		.record(req, course, xapi.Verb.Registered, extensions, module, event)
