@@ -25,3 +25,12 @@ export async function getLearnerRecordReport(
 	})
 	return response.data
 }
+
+export async function getBookingsReport(
+	user: model.User
+) {
+	const response = await http.get(`/events`, {
+		headers: { Authorization: `Bearer ${user.accessToken}` },
+	})
+	return response.data
+}

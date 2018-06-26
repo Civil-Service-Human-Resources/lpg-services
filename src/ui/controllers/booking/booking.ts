@@ -262,7 +262,7 @@ export async function enteredPaymentDetails(
 			if (!errors.length) {
 				session.payment = {
 					type: paymentMethod,
-					value: req.body[paymentMethod],
+					value: req.body[paymentMethod].trim(),
 				}
 			}
 			break

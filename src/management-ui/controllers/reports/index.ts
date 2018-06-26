@@ -11,3 +11,9 @@ export async function runLearnerRecordReport(req: express.Request, res: express.
 	res.attachment('report.csv')
 	res.send(data)
 }
+
+export async function runBookingsReport(req: express.Request, res: express.Response) {
+	const data = await reports.getBookingsReport(req.user)
+	res.attachment('bookings.csv')
+	res.send(data)
+}
