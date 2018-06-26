@@ -1,4 +1,4 @@
-import * as fileHelpers from 'lib/fileHelpers'
+import * as fileHelpers from 'lib/filehelpers'
 import {CourseRecord} from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import {ActionToPlan, CourseActionType} from 'lib/ui/courseCallToAction'
