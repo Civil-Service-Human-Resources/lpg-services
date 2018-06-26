@@ -19,7 +19,6 @@ import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
 
 import * as audienceController from './controllers/audience/index'
-import * as bookingsController from './controllers/bookings/index'
 import * as displayCourseController from './controllers/course/display'
 import * as editCourseController from './controllers/course/edit'
 import * as homeController from './controllers/home'
@@ -99,7 +98,12 @@ i18n.configure(app)
 app.use(passport.isAuthenticated)
 app.use('/purchase-orders', passport.hasRole('MANAGE_CALL_OFF_PO'))
 app.use('/courses', passport.hasRole('COURSE_MANAGER'))
-app.use('/reports', passport.hasAnyRole(['ORGANISATION_REPORTER', 'PROFESSION_REPORTER', 'CSHR_REPORTER']))
+app.use('/reports', passport.hasAnyRole([
+	'DOWNLOAD_BOOKING_FEED',
+	'ORGANISATION_REPORTER',
+	'PROFESSION_REPORTER',
+	'CSHR_REPORTER',
+]))
 
 app.use(expressValidator())
 
@@ -122,6 +126,7 @@ app.get('/', homeController.index)
 
 app.get('/reports', reportsController.index)
 app.get('/reports/learner-record', reportsController.runLearnerRecordReport)
+app.get('/reports/bookings', reportsController.runBookingsReport)
 
 app.get('/courses', asyncHandler(displayCourseController.index))
 
@@ -165,13 +170,10 @@ app.get('/courses/:courseId/:moduleId', editModuleController.getModule)
 app.post('/courses/:courseId/:moduleId', editModuleController.setModule)
 app.get('/courses/:courseId', editCourseController.getCourse)
 app.post('/courses/:courseId', editCourseController.setCourse)
-app.get('/bookings', asyncHandler(bookingsController.index))
 
 app.get('/courses/:courseId', displayCourseController.displayCourse)
 
 app.get('/search/create', displayCourseController.loadSearch)
-
-app.get('/bookings', bookingsController.index)
 
 app.get('/purchase-orders', asyncHandler(purchaseOrdersController.index))
 app.get('/purchase-orders/:purchaseOrderId', asyncHandler(purchaseOrdersController.displayEdit))
