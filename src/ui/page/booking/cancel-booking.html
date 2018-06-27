@@ -5,7 +5,7 @@
                 <h1 class="heading-large">
                     Cancel Booking
                 </h1>
-                <h2 class="heading-medium u-space-t30 heading--red-top lpg-suggestions-section"></h2>
+                <hr class="heading-medium u-space-t30 heading--red lpg-suggestions-section"/>
             </div>
         </div>
         <div class="grid-row">
@@ -23,8 +23,8 @@
                     <p>You must enter agree to the Terms &amp; Conditions to cancel this booking</p>
                 </div>
                 {/if}
-                <form autocomplete="nope" method="post" class="push-bottom">
-                    <div class="div-table div-table--5 lpg-date-table">
+                <form autocomplete="nope" method="post" class="push-bottom cancel">
+                    <div class="div-table div-table--5 lpg-date-table push-bottom">
                         <div class="div-table__row u-clearfix">
                             <div class="div-table__th">Date</div>
                             <div class="div-table__th">Time</div>
@@ -41,42 +41,44 @@
                             </div>
                             <div class="div-table__cell">{event.location}</div>
                        
-                        <div class="div-table__cell div-table__cell--action">
-                                <div>
-                                    <input class="button" type="submit" value="Cancel Booking">
-                                    <input type="hidden" name="_csrf" value="{_csrf}">
+                            <div class="div-table__cell div-table__cell--action">    
+                                <div class="discite__status discite__status--home">
+                                    <span class="badge badge--discite badge--info">{module.record.state}</span>
                                 </div>
                             </div>
-                         </div>
+                        </div>
                     </div>
-                </form>
+                    
+                    <Selects {options} {optionType}/> 
+                    <label for="otherReason" class="visually-hidden">Other reason</label>
+                    <input type="text" id="otherReason" name="otherReason" value="" class="push-bottom">
 
-                <strong>Cancellation policy</strong>
-                <p>If you wish to cancel your booking, the policy is:</p>
-                <ul  class="booking__list--cancel">
-                    <li>22 days or more before the opening of a course, you will not be charged</li>
-                    <li>14 to 21 days before the opening of a course, you will be charged 30% of the total course cost</li>
-                    <li>Less than 14 days  before the opening of a course, you will be charged 100% of the of the total course cost</li>
-                </ul>
+                    <p><strong>Cancellation policy</strong></p>
+                    <p>If you wish to cancel your booking, the policy is:</p>
+                    <ul  class="booking__list--cancel">
+                        <li>22 days or more before the opening of a course, you will not be charged</li>
+                        <li>14 to 21 days before the opening of a course, you will be charged 30% of the total course cost</li>
+                        <li>Less than 14 days  before the opening of a course, you will be charged 100% of the of the total course cost</li>
+                    </ul>
   
-                <details class="booking__details">
-                    <summary><span class="summary">Cancellation policy in full</span></summary>
-                    <div class="panel panel-border-narrow">
-                        <p>If you wish to cancel your booking, the policy is:</p>
-                        <ul class="booking__list--cancel">
-                            <li>22 days or more before the opening of a course, you will not be charged</li>
-                            <li>14 to 21 days before the opening of a course, you will be charged 30% of the total course cost</li>
-                            <li>Less than 14 days  before the opening of a course, you will be charged 100% of the of the total course cost</li>
-                        </ul>
-                        <p>
-                        <p>The ‘days’ referred to are actual days rather than working days.</p>
-                        <p>The ‘opening’ of the course is the date on which any digital learning or preparatory work is released and made available to you.</p>
-                        <p>We reserve the right to cancel a course if the minimum number of participants has not been reached.</p>
-                        <p>Please ensure that the information you provide for your booking is valid and accurate. Inaccurate booking information may result in your booking being cancelled or your department incurring costs.</p>
-                    </div>
-                </details>
+                    <details class="booking__details">
+                        <summary><span class="summary">Cancellation policy in full</summary>
+                        <div class="panel panel-border-narrow">
+                            <p>If you wish to cancel your booking, the policy is:</p>
+                            <ul class="booking__list--cancel">
+                                <li>22 days or more before the opening of a course, you will not be charged</li>
+                                <li>14 to 21 days before the opening of a course, you will be charged 30% of the total course cost</li>
+                                <li>Less than 14 days  before the opening of a course, you will be charged 100% of the of the total course cost</li>
+                            </ul>
+                            <p>
+                            <p>The ‘days’ referred to are actual days rather than working days.</p>
+                            <p>The ‘opening’ of the course is the date on which any digital learning or preparatory work is released and made available to you.</p>
+                            <p>We reserve the right to cancel a course if the minimum number of participants has not been reached.</p>
+                            <p>Please ensure that the information you provide for your booking is valid and accurate. Inaccurate booking information may result in your booking being cancelled or your department incurring costs.</p>
+                        </div>
+                    </details>
                 
-                <details class="booking__details">
+                    <details class="booking__details">
                     <summary><span class="summary">Terms and conditions</span></summary>
                     <div class="panel panel-border-narrow">
                             <p>You may not:</p>
@@ -90,16 +92,22 @@
                             <p>You may access the digital course materials yourself as many times as you wish.</p>
                             <p>Please ensure that the information you provide for your booking is valid and accurate. Inaccurate booking information may result in your booking being cancelled or your department incurring costs.</p>
                     </div>
-                </details>
-
-                <div class="notice">
+                    </details>
+                
+                    <div class="notice booking__notice push-bottom">
                     <i class="icon icon-important">
                         <span class="visually-hidden">Warning</span>
                     </i>
                     <strong class="bold-small">
-                        By continuing the cancellation you are agreeing to the cancellation policy and the terms and conditions
+                        By continuing the cancellation you are agreeing to the heading--red-topcancellation policy and the terms and conditions
                     </strong>
-                </div>
+                    </div>
+
+                    <div>
+                        <input class="button" type="submit" value="Cancel Booking">
+                        <input type="hidden" name="_csrf" value="{_csrf}">
+                    </div>
+                </form>    
             </div>
         </div>
     </div>
@@ -109,7 +117,8 @@
 
 <script>
 	import Page from '../../component/Page.html'
-	import Error from '../../component/Error.html'
+    import Error from '../../component/Error.html'
+    import Selects from '../../component/Selects.html'
 
 	export default {
 		data() {
@@ -119,7 +128,8 @@
 
 		components: {
 			Page,
-			Error
+            Error,
+            Selects
 		}
 	}
 </script>
