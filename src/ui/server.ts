@@ -34,7 +34,9 @@ import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
-import * as _ from 'lodash'
+import * as errorController from './controllers/errorHandler'
+
+// import * as _ from 'lodash'
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
@@ -322,39 +324,12 @@ app.get(
 	asyncHandler(cancelBookingController.renderCancelledBookingPage)
 )
 
-app.use(
-	(
-		err: Error,
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
-		logger.error(
-			'Error handling request for',
-			req.method,
-			req.url,
-			req.body,
-			'\n',
-			err.stack
-		)
-		res.status(500)
-		if (req.accepts('html')) {
-			if (_.find(['dev', 'test'], (environment: string) => environment === process.env.ENV_PROFILE)) {
-				res.send({
-					stack: err.stack,
-					time: new Date().toISOString(),
-				})
-			} else {
-				res.sendFile(path.join(process.cwd(), 'page/error/500.html'))
-			}
-		} else if (req.accepts('json')) {
-			res.send({error: err.message})
-		} else {
-			res.type('txt').send(`Internal error: ${err.message}`)
-		}
-	}
-)
+app.use(errorController.handleError)
 
-app.listen(PORT, () => {
-	logger.info(`listening on port ${PORT}`)
-})
+if (require.main === module) {
+	app.listen(PORT, () => {
+		logger.info(`listening on port ${PORT}`)
+	})
+}
+
+module.exports = app

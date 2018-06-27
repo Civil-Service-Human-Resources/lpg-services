@@ -1,3 +1,4 @@
+import * as rootDir from 'app-root-path'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as fileHelpers from 'lib/filehelpers'
@@ -12,8 +13,8 @@ import * as path from 'path'
 require('svelte/ssr/register')
 const {Store} = require('svelte/store.umd.js')
 /*tslint:enable*/
-const rootDir = process.cwd()
-export const pageDir = path.join(rootDir, 'page')
+
+export const pageDir = path.join(rootDir.path, 'src/ui/page')
 
 const logger = log4js.getLogger('lib/template')
 
