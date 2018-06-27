@@ -1,3 +1,4 @@
+import {expect} from 'chai'
 import {randomBytes} from 'crypto'
 import {AcceptableMetaInfo, acceptedFileTypes, validator} from './edit'
 
@@ -23,7 +24,7 @@ describe('File validator tests', () => {
 
 		const result: boolean = validator(testFileExt, validMeta)
 
-		expect(result).toBe(true)
+		expect(result).to.equal(true)
 	})
 
 	it('should return false for invalid file type', () => {
@@ -31,16 +32,16 @@ describe('File validator tests', () => {
 		const invalidMetaData = {
 			data: [{thisIs: 'invalidMetaData'}],
 		}
-		expect(validator(testFileExt, invalidMetaData)).toBe(false)
+		expect(validator(testFileExt, invalidMetaData)).to.equal(false)
 	})
 
 	it('should return true for an uploaded file with an extension we support', () => {
 		const testFileExt = '.pptx'
-		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).toBe(true)
+		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).to.equal(true)
 	})
 
 	it('should return true for an uploaded video with an extension we support', () => {
 		const testFileExt = '.mp4'
-		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).toBe(true)
+		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).to.equal(true)
 	})
 })
