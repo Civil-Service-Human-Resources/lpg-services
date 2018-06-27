@@ -44,3 +44,9 @@
 @import '../../../../node_modules/govuk-elements-sass/public/sass/elements/phase-banner'; // Alpha and beta banners and tags
 @import '../../../../node_modules/govuk-elements-sass/public/sass/elements/components'; // GOV.UK prefixed styles - blue highlighted box
 @import '../../../../node_modules/govuk-elements-sass/public/sass/elements/shame'; // Hacks and workarounds that will go away eventually
+
+.icon-important {
+	width: 35px;
+	height: 35px;
+	background-image: url(../img/icon-important.png);
+}
