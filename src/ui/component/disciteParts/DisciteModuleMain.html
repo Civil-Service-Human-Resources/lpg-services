@@ -3,4 +3,7 @@
   {#if module.description}
       <p class="discite__description">{module.description}</p>
   {/if}
+  {#if !module.isMandatory}
+      <p class="discite__optional">This module is optional</p>
+  {/if}
 </div>

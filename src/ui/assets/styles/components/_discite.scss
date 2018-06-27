@@ -188,4 +188,9 @@ $module: 'discite';
 	@include e(description) {
 		margin-bottom: 0;
 	}
+
+	@include e(optional) {
+		margin-bottom: 0;
+		color: $optional-text;
+	}
 }
