@@ -3,6 +3,7 @@ import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/home')
+const nonProductionEnvironments = ['dev', 'test']
 
 export async function handleError(error: Error, request: Request, response: Response, next: NextFunction) {
 	try {
@@ -10,17 +11,14 @@ export async function handleError(error: Error, request: Request, response: Resp
 
 		response.status(500)
 
-		let isPreProd: boolean = false
-
-		if (process.env.ENV_PROFILE && ['dev', 'test'].includes(process.env.ENV_PROFILE)) {
-			isPreProd = true
-		}
+		const isNonProduction: boolean =
+			!!(process.env.ENV_PROFILE && nonProductionEnvironments.includes(process.env.ENV_PROFILE))
 
 		response.send(
 			template.render('error', request, response, {
 				error: error.stack,
 				errorTime: new Date().toISOString(),
-				isPreProd,
+				isNonProd: isNonProduction,
 			})
 		)
 	} catch (e) {
