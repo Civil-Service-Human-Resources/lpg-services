@@ -109,11 +109,16 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 	for (const course of learningRecord) {
 		for (const moduleRecord of course.record!.modules) {
 			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
-				readyForFeedback.push({
-					completionDate: moduleRecord.completionDate,
-					course,
-					module: course.modules.find(m => m.id === moduleRecord.moduleId),
-				})
+				const module = course.modules.find(m => m.id === moduleRecord.moduleId)
+				if (!module) {
+					logger.debug(`No module found matching user's module record, id = ${moduleRecord.moduleId}`)
+				} else {
+					readyForFeedback.push({
+						completionDate: moduleRecord.completionDate,
+						course,
+						module,
+					})
+				}
 			}
 		}
 	}
