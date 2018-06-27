@@ -5,7 +5,7 @@ export const selectors: Record<string, string> = {
 	addedNotification: '.banner__heading-large',
 	applyFilter: 'button[class="button"]',
 	blog: '#blog',
-	bookCourse: '.lpg-book-course',
+	bookCourse: '.discite__action--search > a',
 	course: '.discite__counter',
 	courseName: '.lpg-course-name',
 	faceToFace: '',
