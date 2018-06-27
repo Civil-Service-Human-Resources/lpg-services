@@ -1,5 +1,5 @@
-import * as model from 'lib/model'
 import {expect} from 'chai'
+import * as model from 'lib/model'
 
 describe('Should test User roles logic', () => {
 	it('User should have role if it was created with it', () => {
