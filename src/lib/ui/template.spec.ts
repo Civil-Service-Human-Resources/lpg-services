@@ -4,6 +4,7 @@ import {isDirectory} from './template'
 /*tslint:disable*/
 require('svelte/ssr/register')
 /*tslint:enable*/
+import {expect} from 'chai'
 
 const rootDir = process.cwd()
 export const uiPageDir = path.join(rootDir, 'dist', 'ui', 'page')
@@ -48,10 +49,10 @@ function readPageDir(dir: string, prevErr?: any[], nestedDirName?: string) {
 describe('Testing templates and templating engine', () => {
 	it('Should not return any errors when compiling ui pages', () => {
 		const pageErrors = readPageDir(uiPageDir)
-		expect(pageErrors.length).toEqual(0)
+		expect(pageErrors.length).to.equal(0)
 	})
 	it('Should not return any errors when compiling management-ui pages', () => {
 		const pageErrors = readPageDir(managementPageDir)
-		expect(pageErrors.length).toEqual(0)
+		expect(pageErrors.length).to.equal(0)
 	})
 })

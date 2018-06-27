@@ -1,4 +1,5 @@
 import * as model from 'lib/model'
+import {expect} from 'chai'
 
 describe('Should test User roles logic', () => {
 	it('User should have role if it was created with it', () => {
@@ -14,7 +15,7 @@ describe('Should test User roles logic', () => {
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
-		expect(user.hasRole('learner')).toBe(true)
+		expect(user.hasRole('learner')).to.equal(true)
 	})
 
 	it('User have role if was created with it and other roles', () => {
@@ -30,7 +31,7 @@ describe('Should test User roles logic', () => {
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
-		expect(user.hasRole('learner')).toBe(true)
+		expect(user.hasRole('learner')).to.equal(true)
 	})
 
 	it('User should not have role if it was created without it', () => {
@@ -46,7 +47,7 @@ describe('Should test User roles logic', () => {
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
-		expect(user.hasRole('learner')).toBe(false)
+		expect(user.hasRole('learner')).to.equal(false)
 	})
 
 	it('User should not have learner or management role if was created with no roles', () => {
@@ -62,8 +63,8 @@ describe('Should test User roles logic', () => {
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
-		expect(user.hasRole('learner')).toBe(false)
-		expect(user.hasRole('management')).toBe(false)
+		expect(user.hasRole('learner')).to.equal(false)
+		expect(user.hasRole('management')).to.equal(false)
 	})
 
 	it('User should not have learner or management role if was created with role in upper case', () => {
@@ -79,6 +80,6 @@ describe('Should test User roles logic', () => {
 		user.givenName = 'Test'
 		user.grade = 'Test'
 
-		expect(user.hasRole('learner')).toBe(false)
+		expect(user.hasRole('learner')).to.equal(false)
 	})
 })
