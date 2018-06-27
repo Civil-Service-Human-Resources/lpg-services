@@ -4,33 +4,27 @@ import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/home')
 
-export async function handleError(err: Error, req: Request, res: Response, next: NextFunction) {
+export async function handleError(error: Error, request: Request, response: Response, next: NextFunction) {
 	try {
-		logger.error('Error handling request for', req.method, req.url, req.body, '\n', err.stack)
+		logger.error('Error handling request for', request.method, request.url, request.body, '\n', error.stack)
 
-		res.status(500)
+		response.status(500)
 
 		let isPreProd: boolean = false
 
-		if (req.accepts('html')) {
-			if (process.env.ENV_PROFILE && ['dev', 'test'].includes(process.env.ENV_PROFILE)) {
-				isPreProd = true
-			}
-
-			res.send(
-				template.render('error', req, res, {
-					error: err.stack,
-					errorTime: new Date().toISOString(),
-					isPreProd,
-				})
-			)
-		} else if (req.accepts('json')) {
-			res.send({error: err.message})
-		} else {
-			res.type('txt').send(`Internal error: ${err.message}`)
+		if (process.env.ENV_PROFILE && ['dev', 'test'].includes(process.env.ENV_PROFILE)) {
+			isPreProd = true
 		}
+
+		response.send(
+			template.render('error', request, response, {
+				error: error.stack,
+				errorTime: new Date().toISOString(),
+				isPreProd,
+			})
+		)
 	} catch (e) {
-		console.error("Error handling error", err, e)
+		console.error("Error handling error", error, e)
 		next(e)
 	}
 }
