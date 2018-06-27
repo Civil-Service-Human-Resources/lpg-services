@@ -64,7 +64,7 @@ export async function renderCancelledBookingPage(
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 			})
 			return
-		} else if (!moduleRecord || moduleRecord.state === 'UNREGISTERED') {
+		} else if (!moduleRecord) {
 			error = req.__('errors.registrationNotFound')
 		}
 	}
