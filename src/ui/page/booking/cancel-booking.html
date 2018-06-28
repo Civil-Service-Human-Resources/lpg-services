@@ -43,14 +43,14 @@
                        
                             <div class="div-table__cell div-table__cell--action">    
                                 <div class="discite__status discite__status--home">
-                                    <span class="badge badge--discite badge--info">{module.record.state}</span>
+                                    <span class="badge badge--discite badge--info">{module.record.state ? $i18n(module.record.state) : ''}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <Selects {options} {optionType}/> 
-                    <label for="otherReason" class="visually-hidden">Other reason</label>
+                    <Selects {options} {optionType} inputName="cancel-reason" /> 
+                    <label for="other-reason" class="visually-hidden">Other reason</label>
                     <input type="text" id="otherReason" name="otherReason" value="" class="push-bottom">
 
                     <p><strong>Cancellation policy</strong></p>
