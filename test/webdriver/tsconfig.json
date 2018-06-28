@@ -1,7 +1,24 @@
 {
-	"extends": "../../tsconfig.json",
+	"compileOnSave": true,
 	"compilerOptions": {
-		"outDir": "dist"
+		"outDir": "dist",
+		"alwaysStrict": true,
+		"baseUrl": ".",
+		"declaration": true,
+		"experimentalDecorators": true,
+		"module": "commonjs",
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"paths": {
+			"lib/*": ["src/lib/*"]
+		},
+		"preserveConstEnums": true,
+		"pretty": true,
+		"sourceMap": true,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"target": "ESNext"
 	},
 	"include": ["./src/**/*"]
 }
