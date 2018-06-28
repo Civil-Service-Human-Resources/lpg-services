@@ -1,3 +1,4 @@
+import {expect} from 'chai'
 import {initCourse, initModules, testUser} from 'lib/ui/courseCallToAction.spec'
 
 import {
@@ -26,8 +27,9 @@ describe('Module call to actions', () => {
 			'IN_PROGRESS',
 			course.record!
 		)
-
-		expect(cta).toBeDefined()
+		/* tslint:disable:no-unused-expression */
+		expect(cta).to.exist
+		/* tslint:enable */
 	})
 
 	describe('on the search page', () => {
@@ -43,7 +45,7 @@ describe('Module call to actions', () => {
 				course.record!,
 				modifier
 			)
-			expect(cta.url).toContain('#modules')
+			expect(cta.url).to.contain('#modules')
 		})
 		describe('that are bookable', () => {
 			it('should go to the course overview page (modules section) if it is part of a blended course', () => {
@@ -55,18 +57,20 @@ describe('Module call to actions', () => {
 					course.record!,
 					modifier
 				)
-				expect(cta.url).toContain('#modules')
+				expect(cta.url).to.contain('#modules')
 			})
 		})
 	})
 
 	describe('that are required', () => {
 		it('should not have actions to learning plan', () => {
-			expect(cta.actionToPlan).toBeUndefined()
+			/* tslint:disable:no-unused-expression */
+			expect(cta.actionToPlan).to.be.undefined
+			/* tslint:enable */
 		})
 		describe('on the search page', () => {
 			it('should show "Already added to your learning Plan"', () => {
-				expect(cta.message).toBe('Already in your learning plan')
+				expect(cta.message).to.be.equal('Already in your learning plan')
 			})
 		})
 	})
@@ -88,11 +92,11 @@ describe('Module call to actions', () => {
 						course.record!,
 						modifier
 					)
-					expect(cta.url).toContain('#modules')
+					expect(cta.url).to.contain('#modules')
 				})
 
 				it('should return Add (to learning plan)', () => {
-					expect(cta.actionToPlan!.type).toEqual(CourseActionType.Add)
+					expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Add)
 				})
 			})
 			describe('on the course overview page', () => {
@@ -106,8 +110,8 @@ describe('Module call to actions', () => {
 						course.record!,
 						modifier
 					)
-					expect(cta.url).toContain('/book/')
-					expect(cta.learningAction.text).toEqual('action_BOOK')
+					expect(cta.url).to.contain('/book/')
+					expect(cta.learningAction.text).to.be.equal('action_BOOK')
 				})
 			})
 		})
@@ -123,7 +127,9 @@ describe('Module call to actions', () => {
 					course.record!,
 					'search'
 				)
-				expect(cta.actionToPlan).toBeUndefined()
+				/* tslint:disable:no-unused-expression */
+				expect(cta.actionToPlan).to.be.undefined
+				/* tslint:enable */
 			})
 		})
 	})
