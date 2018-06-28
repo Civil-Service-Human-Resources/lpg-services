@@ -30,7 +30,7 @@
     </div>
 
     <slot name="actions">
-        <DisciteCourseActions cta={$constructCourseCallToAction(course, $req.user, modifier)} {course} {modifier} {module} today={modifier === home ? new Date() : null} />
+        <DisciteCourseActions cta={($constructCourseCallToAction(course, $req.user, modifier))} {course} {modifier} {module} today={modifier === home ? new Date() : null} />
     </slot>
 
 
