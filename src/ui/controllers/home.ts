@@ -68,8 +68,17 @@ export async function home(req: express.Request, res: express.Response) {
 					let state = null
 					if (eventId && course.modules && course.modules.length) {
 						const module = course.modules[0]
-						const eventRecord = await learnerRecord.getRecord(req.user, course, module, module.getEvent(eventId))
-						if (eventRecord && eventRecord.modules && eventRecord.modules.length) {
+						const eventRecord = await learnerRecord.getRecord(
+							req.user,
+							course,
+							module,
+							module.getEvent(eventId)
+						)
+						if (
+							eventRecord &&
+							eventRecord.modules &&
+							eventRecord.modules.length
+						) {
 							state = eventRecord.modules[0].state
 						}
 					}
@@ -107,11 +116,11 @@ export async function home(req: express.Request, res: express.Response) {
 		}
 
 		if (req.query.skip) {
-			action = "skip"
+			action = 'skip'
 		}
 
 		if (req.query.move) {
-			action = "move"
+			action = 'move'
 		}
 
 		if (req.query.skip || req.query.move) {
@@ -139,6 +148,7 @@ export async function home(req: express.Request, res: express.Response) {
 				readyForFeedback,
 				removeCourseId,
 				requiredLearning,
+				successId: req.flash('successId')[0],
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],
 				suggestedLearning,

@@ -7,8 +7,8 @@ module.exports = {
 
 function setLoginBody(requestParams, context, ee, next) {
 	requestParams.form = {
-		username: config.USERNAME,
-		password: config.PASSWORD,
+		username: context.vars.username,
+		password: context.vars.password,
 		_csrf: context.vars.csrf.value,
 	}
 	return next()

@@ -336,6 +336,7 @@ export async function renderEditPage(
 			lede = req.__('register_area_page_intro')
 			options = haltoObject(await registry.halNode('professions'))
 			optionType = OptionTypes.Radio
+			value = req.user.areasOfWork
 			break
 		case 'other-areas-of-work':
 			options = haltoObject(await registry.halNode('professions'))
@@ -350,6 +351,10 @@ export async function renderEditPage(
 			}
 
 			optionType = OptionTypes.Checkbox
+			value = req.user.otherAreasOfWork.map((aow: {name: string}) => {
+				return aow.name
+			})
+
 			break
 		case 'department':
 			options = haltoObject(await registry.halNode('organisations'))
@@ -359,7 +364,7 @@ export async function renderEditPage(
 		case 'grade':
 			options = haltoObject(await registry.halNode('grades'))
 			optionType = OptionTypes.Radio
-			value = req.user.grade
+			value = req.user.grade ? req.user.grade.name : ''
 			break
 		case 'name':
 			value = req.user.name

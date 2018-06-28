@@ -55,9 +55,10 @@ $module: 'discite';
 		@include media(desktop) {
 			width: calc(100% - 300px);
 		}
-
 		@include m(search) {
-			padding-right: 100px;
+			@include media(desktop) {
+				width: calc(100% - 100px);
+			}
 		}
 	}
 
@@ -187,5 +188,10 @@ $module: 'discite';
 
 	@include e(description) {
 		margin-bottom: 0;
+	}
+
+	@include e(optional) {
+		margin-bottom: 0;
+		color: $optional-text;
 	}
 }

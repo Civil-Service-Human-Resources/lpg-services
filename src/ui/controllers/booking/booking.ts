@@ -205,6 +205,17 @@ export async function renderConfirmPayment(
 	)
 }
 
+export async function renderOuch(
+	ireq: express.Request,
+	res: express.Response
+) {
+	const req = ireq as extended.CourseRequest
+	console.log("reached")
+	res.send(
+		template.render('booking/ouch', req, res, {})
+	)
+}
+
 export function renderPaymentOptions(
 	req: express.Request,
 	res: express.Response
@@ -248,8 +259,10 @@ export function enteredPaymentDetails(
 	res: express.Response
 ) {
 	const session = req.session!
-	const poErrors = validatePurchaseOrder(req.body['purchase-order'])
+
 	if (req.body['purchase-order']) {
+		const poErrors = validatePurchaseOrder(req.body['purchase-order'])
+
 		if (poErrors.length) {
 			poErrors.map((error: string) => {
 				req.flash('purchaseOrderErrors', req.__(error))
@@ -259,7 +272,7 @@ export function enteredPaymentDetails(
 			})
 			return
 		} else {
-			session.po = req.body['purchase-order']
+			session.po = req.body['purchase-order'].trim()
 			session.save(() => {
 				res.redirect(`${req.originalUrl}/confirm`)
 			})
@@ -387,7 +400,7 @@ export async function tryCompleteBooking(
 			}
 		}
 	}
-	await notify
+	const error = await notify
 		.bookingRequested({
 			accessibility: accessibilityArray.join(', '),
 			bookingReference: `${req.user.id}-${event.id}`,
@@ -411,19 +424,23 @@ export async function tryCompleteBooking(
 		})
 		.catch((e: Error) => {
 			logger.error('There was an error with GOV Notify', e)
+			res.redirect('/book/ouch')
+			return true
 		})
 
-	delete req.session!.po
-	delete req.session!.fap
-	delete req.session!.accessibilityReqs
-	delete req.session!.selectedEventId
+	if (!error) {
+		delete req.session!.po
+		delete req.session!.fap
+		delete req.session!.accessibilityReqs
+		delete req.session!.selectedEventId
 
-	res.send(
-		template.render('booking/confirmed', req, res, {
-			course,
-			event,
-			message: confirmedMessage.Booked,
-			module,
-		})
-	)
+		res.send(
+			template.render('booking/confirmed', req, res, {
+				course,
+				event,
+				message: confirmedMessage.Booked,
+				module,
+			})
+		)
+	}
 }

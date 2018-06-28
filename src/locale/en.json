@@ -240,6 +240,9 @@
 	"action_video_COMPLETED": "Restart",
 	"action_REGISTERED": "Requested",
 	"NOT_STARTED": "NOT_STARTED",
+	"action_BOOK": "Book",
+	"action_DOWNLOAD": "Download document",
+	"action_CANCEL": "Cancel",
 	"learning_added_to_plan_title": "%s",
 	"learning_added_to_plan_message": "This has been added to your learning plan",
 	"learning_removed_from_plan_title": "%s",
@@ -288,6 +291,10 @@
 		"one": "was",
 		"other": "were"
 	},
+	"is": {
+		"one": "is %s",
+		"other": "are %s"
+	},
 	"digital": "digital",
 	"commercial": "commercial",
 	"communications": "communications",
@@ -335,5 +342,11 @@
 	"moduleResult": {
 		"complete": "Module complete"
 	},
-	"file": "file"
+	"file": "file",
+	" areas-of-work": " areas-of-work",
+	" departments": " departments",
+	" interests": " interests",
+	"SCS": "SCS",
+	"cancel": "cancel",
+	"justAdded": "Just added"
 }

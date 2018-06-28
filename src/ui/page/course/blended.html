@@ -13,9 +13,11 @@
                 {/if}
 
                 <div class="discite" id="modules">
-                    <p>
-                        <strong>You must complete all {modules.length} learning modules to finish this topic.</strong>
-                    </p>
+                    {#if course.getMandatoryCount($signedInUser)>0}
+                        <p>
+                            <strong>You must complete { (modules.length ===course.getMandatoryCount($signedInUser)) ? 'all' : ''} {course.getMandatoryCount($signedInUser)} learning modules to finish this topic.</strong>
+                        </p>
+                    {/if}
                     {#each modules as module}
                         <DisciteModule {course} {module}/>
                     {/each}

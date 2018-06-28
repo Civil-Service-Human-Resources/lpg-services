@@ -261,6 +261,11 @@ app.get(
 app.get('/home', asyncHandler(homeController.home))
 
 app.get(
+	'/book/ouch',
+	bookingController.renderOuch
+)
+
+app.get(
 	'/book/:courseId/:moduleId/choose-date',
 	bookingController.renderChooseDate
 )
