@@ -21,8 +21,7 @@ import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
 import * as template from 'lib/ui/template'
 
-import * as bookingController from './controllers/booking/booking'
-import * as cancelBookingController from './controllers/booking/cancel'
+import * as bookingRouter from './controllers/booking/routes'
 
 import * as courseController from './controllers/course'
 import * as feedbackController from './controllers/feedback'
@@ -254,75 +253,7 @@ app.get(
 
 app.get('/home', asyncHandler(homeController.home))
 
-app.get('/book/ouch', bookingController.renderOuch)
-
-app.get(
-	'/book/:courseId/:moduleId/choose-date',
-	bookingController.renderChooseDate
-)
-
-app.post(
-	'/book/:courseId/:moduleId/choose-date',
-	bookingController.selectedDate
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/accessibility',
-	bookingController.renderAccessibilityOptions
-)
-app.post(
-	'/book/:courseId/:moduleId/:eventId/accessibility',
-	bookingController.saveAccessibilityOptions
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/payment',
-	bookingController.renderPaymentOptions
-)
-app.post(
-	'/book/:courseId/:moduleId/:eventId/payment',
-	bookingController.enteredPaymentDetails
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/confirm',
-	asyncHandler(bookingController.renderConfirmPayment)
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/complete',
-	asyncHandler(bookingController.tryCompleteBooking)
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/move',
-	asyncHandler(bookingController.tryMoveBooking)
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/cancel',
-	asyncHandler(cancelBookingController.renderCancelBookingPage)
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/skip',
-	asyncHandler(bookingController.trySkipBooking)
-)
-
-app.post(
-	'/book/:courseId/:moduleId/:eventId/cancel',
-	asyncHandler(cancelBookingController.tryCancelBooking)
-)
-
-app.get(
-	'/book/:courseId/:moduleId/:eventId/cancelled',
-	asyncHandler(cancelBookingController.renderCancelledBookingPage)
-)
-
-app.get(
-	'/book/cancelled',
-	asyncHandler(cancelBookingController.renderCancelledBookingPage)
-)
+app.use(bookingRouter.router)
 
 app.use(errorController.handleError)
 
