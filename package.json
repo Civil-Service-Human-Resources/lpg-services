@@ -24,13 +24,14 @@
 		"watch-sass:management": "node-sass -w -r src/management-ui/assets/styles -o dist/management-ui/assets/styles --output-style compressed"
 	},
 	"devDependencies": {
+		"@types/app-root-path": "^1.2.4",
 		"@types/chai": "^4.1.4",
 		"@types/cheerio": "^0.22.8",
 		"@types/compression": "0.0.35",
 		"@types/connect-flash": "0.0.34",
 		"@types/cors": "2.8.3",
 		"@types/dotenv": "4.0.2",
-		"@types/express-session": "1.15.6",
+		"@types/express-validator": "3.0.0",
 		"@types/google-protobuf": "3.2.7",
 		"@types/helmet": "0.0.37",
 		"@types/i18n": "0.8.3",
@@ -46,6 +47,7 @@
 		"@types/shortid": "0.0.29",
 		"@types/supertest": "^2.0.4",
 		"@types/tmp": "0.0.33",
+		"@types/traverson": "2.0.28",
 		"@types/unzip": "0.1.0",
 		"@types/xml2js": "0.4.2",
 		"chai": "^4.1.2",
@@ -61,9 +63,6 @@
 		"typescript": "2.7.1"
 	},
 	"dependencies": {
-		"@types/app-root-path": "^1.2.4",
-		"@types/express-validator": "3.0.0",
-		"@types/traverson": "2.0.28",
 		"app-root-path": "^2.1.0",
 		"axios": "0.17.1",
 		"azure-storage": "2.8.1",
