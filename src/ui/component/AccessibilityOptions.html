@@ -1,47 +1,48 @@
 <fieldset class="push-bottom">
     <legend>
-        <h4 class="heading-small">Accessibility requirement</h4>
+        <h4 class="heading-small">All our venues are wheelchair accessible</h4>
     </legend>
+    <p>Tell us if you have any further requirements or reasonable adjustments from the list below.</p>
+    <div class="form-group">
+        <div class="multiple-choice">
+            <input id="accessibility-req-1" checked="{ accessibilityReqs.indexOf('sign-language') > -1 ? 'checked' : '' }" name="accessibilityreqs"
+                type="checkbox" value="sign-language">
+            <label for="accessibility-req-1">Sign language interpreter</label>
+        </div>
+        <div class="multiple-choice">
+            <input id="accessibility-req-3" checked="{ accessibilityReqs.indexOf('large-print') > -1 ? 'checked' : '' }" name="accessibilityreqs"
+                type="checkbox" value="large-print">
+            <label for="accessibility-req-3">Large print versions</label>
+        </div>
+        <div class="multiple-choice">
+            <input id="accessibility-req-4" checked="{ accessibilityReqs.indexOf('braille') > -1 ? 'checked' : '' }" name="accessibilityreqs"
+                type="checkbox" value="braille">
+            <label for="accessibility-req-4">Braille versions</label>
 
-    <div class="multiple-choice">
+        </div>
+        <div class="multiple-choice">
+            <input id="accessibility-req-5" checked="{ accessibilityReqs.indexOf('assistive-listening') > -1 ? 'checked' : '' }" name="accessibilityreqs"
+                type="checkbox" value="assistive-listening">
+            <label for="accessibility-req-5">Assistive listening device</label>
 
-        <input id="accessibility-req-1" checked="{ accessibilityReqs.indexOf('sign-language') > -1 ? 'checked' : '' }" name="accessibilityreqs"
-            type="checkbox" value="sign-language">
-        <label for="accessibility-req-1">Sign language interpreter</label>
-    </div>
-    <div class="multiple-choice">
-        <input id="accessibility-req-2" checked="{ accessibilityReqs.indexOf('cart') > -1 ? 'checked' : '' }" name="accessibilityreqs"
-            type="checkbox" value="cart">
-        <label for="accessibility-req-2">CART (communication access real-time translation) services</label>
-    </div>
-    <div class="multiple-choice">
-        <input id="accessibility-req-3" checked="{ accessibilityReqs.indexOf('large-print') > -1 ? 'checked' : '' }" name="accessibilityreqs"
-            type="checkbox" value="large-print">
-        <label for="accessibility-req-3">Large print</label>
-    </div>
-    <div class="multiple-choice">
-        <input id="accessibility-req-4" checked="{ accessibilityReqs.indexOf('braille') > -1 ? 'checked' : '' }" name="accessibilityreqs"
-            type="checkbox" value="braille">
-        <label for="accessibility-req-4">Braille</label>
-
-    </div>
-    <div class="multiple-choice">
-        <input id="accessibility-req-5" checked="{ accessibilityReqs.indexOf('assistive-listening') > -1 ? 'checked' : '' }" name="accessibilityreqs"
-            type="checkbox" value="assistive-listening">
-        <label for="accessibility-req-5">Assistive listening device</label>
-
-    </div>
-    <div class="multiple-choice">
-        <input id="accessibility-req-6" checked="{ accessibilityReqs.indexOf('assistant') > -1 ? 'checked' : '' }" name="accessibilityreqs"
-            type="checkbox" value="assistant">
-        <label for="accessibility-req-6">An assistant will accompany me</label>
+        </div>
+        <div class="multiple-choice">
+            <input id="accessibility-req-6" checked="{ accessibilityReqs.indexOf('assistant') > -1 ? 'checked' : '' }" name="accessibilityreqs"
+                type="checkbox" value="assistant">
+            <label for="accessibility-req-6">Additional place for my assistant</label>
+        </div>
+        <div class="multiple-choice">
+            <input id="accessibility-req-7" checked="{ accessibilityReqs.indexOf('other') > -1 ? 'checked' : '' }" name="accessibilityreqs"
+                type="checkbox" value="other">
+            <label for="accessibility-req-7">Other</label>
+        </div>
     </div>
 
-    <div class="multiple-choice">
-        <input id="accessibility-req-7" checked="{ accessibilityReqs.indexOf('other') > -1 ? 'checked' : '' }" name="accessibilityreqs"
-            type="checkbox" value="other">
-        <label for="accessibility-req-7">Other</label>
+    <div class="form-group">
+        <input class="form-control" name="other-description" type="text">
+        <p>If you have indicated 'Other' accessibility needs, you may be contacted by our helpdesk to confirm your specific requirements.</p>
     </div>
+
 </fieldset>
 
 <script>

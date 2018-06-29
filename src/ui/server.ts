@@ -36,8 +36,6 @@ import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
 
-// import * as _ from 'lodash'
-
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
 const favicon = require('serve-favicon')
@@ -256,10 +254,7 @@ app.get(
 
 app.get('/home', asyncHandler(homeController.home))
 
-app.get(
-	'/book/ouch',
-	bookingController.renderOuch
-)
+app.get('/book/ouch', bookingController.renderOuch)
 
 app.get(
 	'/book/:courseId/:moduleId/choose-date',
@@ -271,18 +266,22 @@ app.post(
 	bookingController.selectedDate
 )
 
+app.get(
+	'/book/:courseId/:moduleId/:eventId/accessibility',
+	bookingController.renderAccessibilityOptions
+)
 app.post(
-	'/book/:courseId/:moduleId/choose-date/save',
+	'/book/:courseId/:moduleId/:eventId/accessibility',
 	bookingController.saveAccessibilityOptions
 )
 
 app.get(
-	'/book/:courseId/:moduleId/:eventId',
-	asyncHandler(bookingController.renderPaymentOptions)
+	'/book/:courseId/:moduleId/:eventId/payment',
+	bookingController.renderPaymentOptions
 )
 app.post(
-	'/book/:courseId/:moduleId/:eventId',
-	asyncHandler(bookingController.enteredPaymentDetails)
+	'/book/:courseId/:moduleId/:eventId/payment',
+	bookingController.enteredPaymentDetails
 )
 
 app.get(

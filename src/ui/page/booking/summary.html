@@ -30,7 +30,7 @@
                             <span class="booking__value">{course.getDuration()}</span>
                         </li>
                         <li>
-                            <a href="/book/{course.id}/{module.id}/choose-date" class="booking__change lpg-change-payment">Change</a>
+                            <a href="/book/{course.id}/{module.id}/choose-date?ref=confirmation" class="booking__change lpg-change-payment">Change</a>
                         </li>
 
                     </ul>
@@ -56,7 +56,7 @@
                             <span class="booking__value lpg-confirm-price">&pound;{module.price}</span>
                         </li>
                         <li>
-                            <a href="/book/{course.id}/{module.id}/{event.id}" class="booking__change lpg-change-payment">Change</a>
+                            <a href="/book/{course.id}/{module.id}/{event.id}/payment?ref=confirmation" class="booking__change lpg-change-payment">Change</a>
                         </li>
                     </ul>
                 </div>
@@ -79,7 +79,7 @@
                             {/if} {/each} {/if}
                         </ul>
                     </div>
-                    <a href="/book/{course.id}/{module.id}/choose-date?accessibility=true&ref=confirmation" class="booking__change lpg-change-reqs">Change</a>
+                    <a href="/book/{course.id}/{module.id}/{event.id}/accessibility?ref=confirmation" class="booking__change lpg-change-reqs">Change</a>
                 </div>
             </div>
         </div>

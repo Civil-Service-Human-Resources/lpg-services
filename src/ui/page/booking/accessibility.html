@@ -1,0 +1,39 @@
+<Page title="Payment Options" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large">
+                    Select any accessibility requirements
+                </h1>
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <form autocomplete="nope" method="post">
+                    <AccessibilityOptions {accessibilityReqs} />
+                    <input type="submit" class="button" value="Continue">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+
+
+<script>
+	import Page from '../../component/Page.html'
+	import AccessibilityOptions from '../../component/AccessibilityOptions.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			AccessibilityOptions,
+		}
+	}
+</script>
+                    

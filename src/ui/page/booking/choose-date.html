@@ -31,7 +31,6 @@
                             <div class="div-table__th">Date</div>
                             <div class="div-table__th">Time</div>
                             <div class="div-table__th">Location</div>
-                            <div class="div-table__th">Availability</div>
                             <div class="div-table__th"><span class="visuallyhidden">Action</span></div>
                         </div>
                         {#each events as event, index}
@@ -44,9 +43,6 @@
                                 </div>
                                 <div class="div-table__cell">{event.location}</div>
 
-                                <div class="div-table__cell">
-                                    {event.availability !== undefined ? `${event.availability} out of` : ''} {event.capacity}
-                                </div>
                                 <div class="div-table__cell div-table__cell--action">
                                     <div class="multiple-choice multiple-choice--booking">
                                         <input id="radio-{event.id}"
@@ -66,15 +62,6 @@
                             </div>
                         {/each}
                     </div>
-                    {#if showAccessibility}
-                         <AccessibilityOptions/>
-                    {:else}
-                        <button class="link button--link" type="submit" formaction="{$req.url}?accessibility=true">
-                            Accessibility and reasonable adjustments
-                        </button>
-                    {/if}
-
-
 
                     <div class="panel panel-border-wide">
                         <p>
@@ -88,6 +75,13 @@
                 {:else}
                     <p>Unfortunately this course is not currently available.</p>
                 {/if}
+
+                {#if !course.record}
+                    <a class="link--block" href="/suggestions-for-you/add/{course.id}?ref=home">
+                        Add to learning plan
+                    </a>
+                {/if}
+
             </div>
         </div>
     </div>
@@ -97,7 +91,6 @@
 
 <script>
 	import Page from '../../component/Page.html'
-	import AccessibilityOptions from '../../component/AccessibilityOptions.html'
 
 	export default {
 		data() {
@@ -107,7 +100,6 @@
 
 		components: {
 			Page,
-			AccessibilityOptions,
 		}
 	}
 </script>
