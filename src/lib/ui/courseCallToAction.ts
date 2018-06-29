@@ -45,27 +45,24 @@ export function constructCourseCallToAction(
 		callToActionProps.isInLearningPlan = true
 	}
 
-	if (courseType === 'face-to-face') {
-		callToActionProps.url = `/book/${course.id}/${
-			course.modules[0].id
-		}/choose-date`
+	if (courseType === 'face-to-face' && modifier === 'search') {
+		callToActionProps.url = `/courses/${course.id}`
 		callToActionProps.message = 'action_BOOK'
 	}
 
-	if (course.record) {
+	if (course.record && course.record.state !== 'ARCHIVED') {
 		const record = course.record
 		callToActionProps.isInLearningPlan = true
+
+		const hasEvent =
+			record.modules && record.modules.length && record.modules[0].eventId
+
+		const isBooked = hasEvent && record.modules[0].state === 'REGISTERED'
+		const isCancelled = hasEvent && record.modules[0].state === 'UNREGISTERED'
+		const isDatePassed = new Date() > course.getSelectedDate()!
+
 		switch (courseType) {
 			case 'face-to-face':
-				const hasEvent =
-					record.modules && record.modules.length && record.modules[0].eventId
-
-				const isBooked = hasEvent && record.modules[0].state === 'REGISTERED'
-				const isCancelled =
-					hasEvent && record.modules[0].state === 'UNREGISTERED'
-
-				const isDatePassed = new Date() > course.getSelectedDate()!
-
 				if (hasEvent) {
 					if (isBooked) {
 						if (isDatePassed) {
@@ -95,6 +92,7 @@ export function constructCourseCallToAction(
 			default:
 				break
 		}
+
 		if (!isRequired && record.state !== 'REGISTERED' && isHome) {
 			callToActionProps.actionToPlan = {
 				type: CourseActionType.Delete,
