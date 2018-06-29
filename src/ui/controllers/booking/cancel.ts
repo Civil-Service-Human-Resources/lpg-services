@@ -128,20 +128,20 @@ export async function tryCancelBooking(
 	if (cancelReason) {
 		extensions[xapi.Extension.CancelReason] = cancelReason
 	}
-	console.log(1)
-	const errors = await xapi
+	let errors = false
+
+	 await xapi
 		.record(req, course, xapi.Verb.Unregistered, extensions, module, event)
 		.catch((error: any) => {
 			req.session!.save(() => {
 				req.flash('cancelBookingError', error.message)
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-				console.log(error.message)
-				return true
+
+				errors = true
 			})
 		})
-	console.log(3)
+
 	if (!errors) {
-		console.log(4)
 		await notify.bookingCancelled({
 			bookingReference: `${req.user.id}-${event.id}`,
 			cost: module.price,
@@ -161,7 +161,6 @@ export async function tryCancelBooking(
 		})
 
 		req.session!.save(() => {
-			console.log(5)
 			res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
 		})
 	}
