@@ -30,15 +30,19 @@ export function getCourseDetails(
 	const keyAreas = course.getAreasOfWork().map(areaOfWork => req.__(areaOfWork))
 
 	const duration = course.getDuration()
-	const productCode = module ? module.productCode : null
 	const location = module ? module.location : null
 	const cost = course.getCost()
 	const dataRows: DataRow[] = []
 
-	if (levels.length) {
+	dataRows.push({
+		label: 'Course type',
+		value: req.__(course.getType()!),
+	})
+
+	if (duration) {
 		dataRows.push({
-			label: req.__('Level'),
-			value: levels.join(', '),
+			label: req.__('Duration'),
+			value: duration,
 		})
 	}
 	if (keyAreas.length) {
@@ -47,27 +51,21 @@ export function getCourseDetails(
 			value: keyAreas.join(', '),
 		})
 	}
-	if (duration) {
-		dataRows.push({
-			label: req.__('Duration'),
-			value: duration,
-		})
-	}
-	if (productCode) {
-		dataRows.push({
-			label: req.__('Product code'),
-			value: productCode,
-		})
-	}
 	if (location) {
 		dataRows.push({
 			label: req.__('Location'),
 			value: location,
 		})
 	}
+	if (levels.length) {
+		dataRows.push({
+			label: req.__('Level'),
+			value: levels.join(', '),
+		})
+	}
 	if (cost) {
 		dataRows.push({
-			label: req.__('Price'),
+			label: req.__('Cost'),
 			value: `£${cost}`,
 		})
 	}

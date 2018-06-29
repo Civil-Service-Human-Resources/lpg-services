@@ -1,15 +1,14 @@
-<aside class="govuk-related-items govuk-related-items--flush govuk-related-items--keylined" role="complementary">
-    <h2 class="heading-small">{ dataRows.label}</h2>
-    <table class="table-simple table--top u-space-b30">
+<aside class="lpg-related-items lpg-related-items--course-overview" role="complementary">
+    <table class="table-simple table--top">
         <caption class="visuallyhidden">Details about the course</caption>
         <tbody>
         {#if dataRows.dataRows.length}
-        {#each dataRows.dataRows as row}
-        <tr>
-            <th>{row.label}</th>
-            <td>{row.value}</td>
-        </tr>
-        {/each}
+            {#each dataRows.dataRows as row}
+            <tr>
+                <th class="lpg-related-items__th">{row.label}</th>
+                <td class="lpg-related-items__td">{row.value}</td>
+            </tr>
+            {/each}
         {/if}
         </tbody>
     </table>

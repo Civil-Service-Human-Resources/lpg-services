@@ -14,9 +14,9 @@
         </div>
         <div class="column-one-third">
             {#if courseDetails.length}
-            {#each courseDetails as dataRows}
-            <Rightbox {dataRows}/>
-            {/each}
+                {#each courseDetails as dataRows}
+                    <Rightbox {dataRows} />
+                {/each}
             {/if}
         </div>
     </div>
@@ -30,19 +30,26 @@
     {/if}
 
     <div class="grid-row">
-        <div class="column-full">
-            <div class="panel panel-border-wide">
-              <p>
+        <div class="column-two-thirds">
+            <div class="notice push-bottom">
+              <i class="icon icon-important">
+                <span class="visually-hidden">Warning</span>
+              </i>
+              <strong class="bold-small">
                 By continuing to book, you are confirming you have approval to book this course and the appropriate
                 payment option in place.
-              </p>
+              </strong>
             </div>
+            <HowToGetPo/>
+
             <a class="button" href="/book/{course.id}/{module.id}/choose-date">View availability</a>
+
             {#if !course.record}
-                <a class="link--block" href="/suggestions-for-you/add/ref=home">
+                <a class="link--block" href="/suggestions-for-you/add/{course.id}?ref=home">
                     Add to learning plan
                 </a>
             {/if}
+
         </div>
     </div>
 </div>
@@ -52,6 +59,7 @@
 <script>
 	import Page from '../../component/Page.html'
     import Rightbox from '../../component/Rightbox.html'
+    import HowToGetPo from '../../component/statics/Hidden-howtogetpo.html'
 
 	export default {
 		data() {
@@ -61,7 +69,8 @@
 
 		components: {
 			Page,
-			Rightbox
+			Rightbox,
+			HowToGetPo
 		}
 	}
 </script>
