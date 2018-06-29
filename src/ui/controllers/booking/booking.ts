@@ -52,21 +52,14 @@ export function saveAccessibilityOptions(
 	} else {
 		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
 	}
-	const eventId = req.body['selected-date']
 
-	if (eventId || req.session!.selectedEventId) {
+	req.session!.save(() => {
 		res.redirect(
-			`/book/${req.params.courseId}/${req.params.moduleId}/choose-date/?tab=${
-				req.query.tab
-			}&eventId=${eventId ? eventId : req.session!.selectedEventId}`
+			`/book/${req.params.courseId}/${req.params.moduleId}/${
+				req.session!.selectedEventId
+			}/payment`
 		)
-	} else {
-		res.redirect(
-			`/book/${req.params.courseId}/${req.params.moduleId}/choose-date?tab=${
-				req.query.tab
-			}`
-		)
-	}
+	})
 }
 
 export async function renderChooseDate(
@@ -82,23 +75,6 @@ export async function renderChooseDate(
 
 	let selectedEventId: string =
 		req.flash('bookingSelected')[0] || req.session!.selectedEventId || null
-
-	if (req.query.accessibility === 'true') {
-		req.flash('booking', 'showAccessibility')
-		req.flash('bookingSelected', selectedEventId)
-
-		if (req.query.ref === 'confirmation') {
-			req.flash('booking', 'showAccessibility')
-			req.flash('bookingSelected', req.session!.selectedEventId)
-		}
-
-		req.session!.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
-			)
-		})
-		return
-	}
 
 	if (!selectedEventId) {
 		selectedEventId = req.query.eventId
@@ -176,10 +152,22 @@ export function selectedDate(req: express.Request, res: express.Response) {
 			res.redirect(
 				`/book/${req.params.courseId}/${
 					req.params.moduleId
-				}/${decodeURIComponent(selected)}`
+				}/${decodeURIComponent(selected)}/accessibility`
 			)
 		})
 	}
+}
+
+export async function renderAccessibilityOptions(
+	req: express.Request,
+	res: express.Response
+) {
+	const session = req.session!
+	res.send(
+		template.render('booking/accessibility', req, res, {
+			accessibilityReqs: session.accessibilityReqs,
+		})
+	)
 }
 
 export async function renderConfirmPayment(
@@ -194,7 +182,7 @@ export async function renderConfirmPayment(
 	const session = req.session!
 
 	res.send(
-		template.render('booking/confirm-booking', req, res, {
+		template.render('booking/summary', req, res, {
 			accessibilityReqs: session.accessibilityReqs,
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
@@ -205,15 +193,10 @@ export async function renderConfirmPayment(
 	)
 }
 
-export async function renderOuch(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function renderOuch(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	console.log("reached")
-	res.send(
-		template.render('booking/ouch', req, res, {})
-	)
+	console.log('reached')
+	res.send(template.render('booking/ouch', req, res, {}))
 }
 
 export async function renderPaymentOptions(
