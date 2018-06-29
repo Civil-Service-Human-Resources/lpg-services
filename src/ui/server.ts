@@ -22,7 +22,6 @@ import * as i18n from 'lib/service/translation'
 import * as template from 'lib/ui/template'
 
 import * as bookingRouter from './controllers/booking/routes'
-
 import * as courseController from './controllers/course'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
