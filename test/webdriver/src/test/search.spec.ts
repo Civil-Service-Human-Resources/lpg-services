@@ -82,10 +82,9 @@ describe('Search page funtionality', () => {
 
 	it('Should display book button for classroom courses', async () => {
 		search('qualification')
-		const bookUrl = browser.getAttribute(selectors.bookCourse, 'href')
+		const bookUrl = browser.getAttribute(selectors.bookCourse, 'innerHTML')
 		expect(browser.isExisting(selectors.bookCourse)).toBe(true)
-		expect(bookUrl[0]).toContain('book')
-		expect(bookUrl[0]).toContain('choose-date')
+		expect(bookUrl[0]).toContain('Book')
 	})
 
 	it('Should show the number of modules a course comprises of', async () => {
