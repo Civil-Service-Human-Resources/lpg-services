@@ -18,7 +18,13 @@
 		"sourceMap": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
-		"target": "ESNext"
+		"target": "ESNext",
+		"typeRoots": ["./node-modules/@types"]
+
 	},
-	"include": ["./src/**/*"]
+	"include": [
+		"./src/**/*",
+		"node_modules/@types/jasmine/index.d.ts",
+		"node_modules/@types/webdriverio/index.d.ts"
+	]
 }
