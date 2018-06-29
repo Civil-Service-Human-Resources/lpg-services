@@ -10,18 +10,19 @@ function stage {
 }
 
 stage "Installing the top-level dependencies"
-npm install
+npm install -g yarn
+yarn
 
 stage "Linting the codebase"
-npm run lint
-npm run lint:webdriver
+yarn run lint
+yarn run lint:webdriver
 
 stage "Building the main src"
-npm run build
+yarn run build
 
 stage "Running the unit tests"
 export NODE_ENV=test
-npm test
+yarn test
 unset NODE_ENV
 
 stage "Pulling the latest lpg-services docker image"
@@ -46,10 +47,10 @@ curl --header "Content-Type: application/json" --request POST --data '{}' ${MANA
 stage "Installing the wdio test dependencies"
 cd test/webdriver
 rm -f node_modules/extension node_modules/page node_modules/test
-npm install
+yarn
 
 stage "Building the wdio test code"
-npm run build
+yarn run build
 
 
 stage "Waiting for environment to update"
@@ -57,6 +58,6 @@ stage "Waiting for environment to update"
 ../../environ/wait-for-update dev2-management ${TRAVIS_COMMIT}
 
 stage "Running the wdio tests"
-xvfb-run npm test
+xvfb-run yarn test
 
 echo "Total run time: ${SECONDS}s"
