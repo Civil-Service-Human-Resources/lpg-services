@@ -1,8 +1,8 @@
-<Page title="Booking confirmed" {_csrf}>
+<Page title="{message === 'Booked' ? 'Booking Request Submitted' : 'Booking Request Cancelled' }" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                {#if message === ('Booked' || 'Cancelled')}
+                {#if message === 'Booked' || message === 'Cancelled'}
                 <div class="govuk-box-highlight">
                     <h1 class="heading-xlarge">
                         {message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }

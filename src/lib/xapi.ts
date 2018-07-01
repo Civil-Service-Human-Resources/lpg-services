@@ -65,6 +65,7 @@ export const Category = {
 }
 
 export const Extension = {
+	CancelReason: 'http://cslearning.gov.uk/extension/cancelReason',
 	FinancialApprover: 'http://cslearning.gov.uk/extension/finanacialApprover',
 	PurchaseOrder: 'http://cslearning.gov.uk/extension/purhaseOrder',
 	VideoLength: 'https://w3id.org/xapi/video/extensions/length',
@@ -77,6 +78,7 @@ export const Extension = {
 }
 
 export const ExtensionPlacements = {
+	[Extension.CancelReason]: Placement.Result,
 	[Extension.FinancialApprover]: Placement.Result,
 	[Extension.PurchaseOrder]: Placement.Result,
 	[Extension.VideoLength]: Placement.Context,
