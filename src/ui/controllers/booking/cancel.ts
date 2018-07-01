@@ -55,7 +55,6 @@ export async function renderCancelBookingPage(
 	)
 }
 
-
 export async function renderCancelledBookingPage(
 	ireq: express.Request,
 	res: express.Response
@@ -130,7 +129,7 @@ export async function tryCancelBooking(
 	}
 	let errors = false
 
-	 await xapi
+	await xapi
 		.record(req, course, xapi.Verb.Unregistered, extensions, module, event)
 		.catch((error: any) => {
 			req.session!.save(() => {
