@@ -29,12 +29,28 @@ export async function renderCancelBookingPage(
 
 	course.record = record!
 
+	const moduleRecord = record!.modules.find(
+		rm => rm.moduleId === module.id && rm.eventId === event.id
+	)
+
+	if (!moduleRecord) {
+		res.sendStatus(400)
+		return
+	}
+
+	(module as any).record = moduleRecord
+
+	const optionType = 'radio'
+	const options = Object.entries(req.__('cancelReasons'))
+
 	res.send(
 		template.render('booking/cancel-booking', req, res, {
 			course,
 			error: req.flash('cancelBookingError')[0],
 			event,
 			module,
+			optionType,
+			options,
 		})
 	)
 }
@@ -64,7 +80,7 @@ export async function renderCancelledBookingPage(
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 			})
 			return
-		} else if (!moduleRecord || moduleRecord.state === 'UNREGISTERED') {
+		} else if (!moduleRecord) {
 			error = req.__('errors.registrationNotFound')
 		}
 	}
@@ -105,16 +121,26 @@ export async function tryCancelBooking(
 
 	course.record = record
 
-	if (req.body['cancel-tc']) {
-		await xapi
-			.record(req, course, xapi.Verb.Unregistered, undefined, module, event)
-			.catch((error: any) => {
-				req.session!.save(() => {
-					req.flash('cancelBookingError', error.message)
-					res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-				})
-			})
+	const extensions: Record<string, any> = {}
+	const cancelReason = req.body['other-reason'] ? req.body['cancel-reason'] : req.body['cancel-reason']
 
+	if (cancelReason) {
+		extensions[xapi.Extension.CancelReason] = cancelReason
+	}
+	let errors = false
+
+	await xapi
+		.record(req, course, xapi.Verb.Unregistered, extensions, module, event)
+		.catch((error: any) => {
+			req.session!.save(() => {
+				req.flash('cancelBookingError', error.message)
+				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
+
+				errors = true
+			})
+		})
+
+	if (!errors) {
 		await notify.bookingCancelled({
 			bookingReference: `${req.user.id}-${event.id}`,
 			cost: module.price,
@@ -132,12 +158,9 @@ export async function tryCancelBooking(
 			learnerName: req.user.givenName || req.user.userName,
 			lineManager: req.user.lineManager,
 		})
+
 		req.session!.save(() => {
 			res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
-		})
-	} else {
-		req.session!.save(() => {
-			res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 		})
 	}
 }

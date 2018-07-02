@@ -1,4 +1,19 @@
 .booking {
+	@include e(notice) {
+		margin-top: 20px;
+	}
+
+	@include e(list) {
+		@include m(cancel) {
+			list-style-type: disc;
+			margin-left: 20px;
+		}
+	}
+
+	@include e(details) {
+		margin-top: 20px;
+	}
+
 	@include e(col-heading) {
 		padding: 10px 0;
 		border-top: 5px solid #000;
@@ -52,6 +67,7 @@
 			right: 15px;
 		}
 	}
+
 	@include e(table) {
 		th {
 			border: none;
@@ -66,6 +82,12 @@
 			padding-bottom: 0;
 			border: none;
 		}
+	}
+}
+
+.cancel {
+	fieldset {
+		margin-bottom: 10px !important;
 	}
 }
 

@@ -348,5 +348,12 @@
 	" interests": " interests",
 	"SCS": "SCS",
 	"cancel": "cancel",
-	"justAdded": "Just added"
+	"justAdded": "Just added",
+	"cancelReasons": {
+		"work-priorities": "Other work priorities",
+		"illness": "Illness",
+		"family-bereavement": "Family Bereavement",
+		"prefer-not-to-say": "Prefer not to say",
+		"Other": "Other"
+	}
 }

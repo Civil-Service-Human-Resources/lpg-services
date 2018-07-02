@@ -218,14 +218,17 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 				const event: EventData = {
 					capacity: req.body.event_capacity[index],
 					date: req.body.event_date[index],
+					id: req.body.event_id[index],
 					location: req.body.event_location[index],
 				}
 
+				if (!event.id || event.id === 'new') {
+					event.id = undefined
+				}
 				data.events.push(model.Event.create(event))
 			}
 		} else {
 			//singular
-
 			const event = {
 				capacity: req.body.event_capacity,
 				date: req.body.event_date,
