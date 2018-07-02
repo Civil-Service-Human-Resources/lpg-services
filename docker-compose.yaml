@@ -62,63 +62,54 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: cshr/identity-service:ae1f725a4ee5a94ab76488c12e4309bedc925a9b
+    image: cshr/identity-service:672e7b8044cb8e7b9d870ae4957c2b7b6690e8f2
     ports:
       - 8080:8080
       - 8081:8081
 
-  civil-servant-registry:
-    container_name: civil-servant-registry
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - OAUTH_SERVICE_URL=http://identity:8080
-    image: cshr/civil-servant-registry-service:1744b1a00ecb1fc9eceabb9520be464dbc602cd4
-    depends_on:
-      - identity
-    ports:
-      - 9002:9002
-
   learner-record:
-    container_name: learner-record
-    environment:
-      OAUTH_SERVICE_URL: http://identity:8080
-      REGISTRY_SERVICE_URL: http://civil-servant-registry:9002
-      LEARNING_CATALOGUE_SERVICE_URL: http://learning-catalogue:9001
-      LEARNING_CATALOGUE_SERVICE_USER: user
-      LEARNING_CATALOGUE_SERVICE_PASS: password
-      XAPI_USERNAME: 66f2b4fc001e3da992d23b57d8a7457655bea078
-      XAPI_PASSWORD: 1c0e1b6827606d7efed71e204939d048f94f842b
-      XAPI_URL: http://learning-locker-xapi:8083/data/xAPI
-    image: cshr/lpg-learner-record:29b11e9135b7060375534b72270d4fb0c5ca9ec6
-    depends_on:
-      - civil-servant-registry
-      - identity
-      - learning-catalogue
-      - learning-locker-xapi
-    ports:
-      - 9000:9000
+      container_name: learner-record
+      environment:
+        - SPRING_PROFILES_ACTIVE=default
+        - OAUTH_SERVICE_URL=http://identity:8080
+        - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+        - LEARNING_CATALOGUE_SERVICE_URL=http://localhost:9001
+        - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
+      image: cshr/lpg-learner-record:65c638aecd33bab290be6e1a83378545f73cc4dd
+      depends_on:
+        - civil-servant-registry
+        - identity
+        - learning-catalogue
+        - learning-locker-xapi
+      ports:
+        - 9000:9000
 
   learning-catalogue:
     container_name: learning-catalogue
     command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
-    depends_on:
-      - elasticsearch
     environment:
-      AUTH_USER: user
-      AUTH_PASSWORD: password
-      ELASTICSEARCH_URI: http://elasticsearch:9200
-      ELASTICSEARCH_USERNAME: elastic
-      ELASTICSEARCH_PASSWORD: changeme
-    image: cshr/lpg-learning-catalogue:899c11c17afa5a9a83c37bfa68be325df39d8553
+      - ELASTICSEARCH_URI=http://elasticsearch:9200
+    image: cshr/lpg-learning-catalogue:08e98b011e061199a869bed35a1338265ecf5d7f
     ports:
       - 9001:9001
+
+  civil-servant-registry:
+      container_name: civil-servant-registry
+      environment:
+        - SPRING_PROFILES_ACTIVE=default
+        - OAUTH_SERVICE_URL=http://identity:8080
+      image: cshr/civil-servant-registry-service:4234a089fdeb55056d25b28385279e1f7866c142
+      depends_on:
+        - identity
+      ports:
+        - 9002:9002
 
   report-service:
     container_name: report-service
     environment:
-      OAUTH_SERVICE_URL: http://identity:8080
-      LEARNER_RECORD_URL: http://learner-record:9000
-    image: cshr/report-service:95d6bc36ffb26ee11d796c75b093b3b0684f8c2d
+      - OAUTH_SERVICE_URL=http://identity:8080
+      - LEARNER_RECORD_URL=http://learner-record:9000
+    image: cshr/report-service:33dbad3c44acbe8ab4207fd23a405a448005ce0c
     depends_on:
       - identity
       - learner-record
