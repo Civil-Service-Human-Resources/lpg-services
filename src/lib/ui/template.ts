@@ -1,4 +1,3 @@
-import * as rootDir from 'app-root-path'
 import * as config from 'lib/config'
 
 import {constructCourseCallToAction} from 'lib/ui/courseCallToAction'
@@ -18,7 +17,8 @@ require('svelte/ssr/register')
 const {Store} = require('svelte/store.umd.js')
 /*tslint:enable*/
 
-export const pageDir = path.join(rootDir.path, 'src/ui/page')
+const rootDir = process.cwd()
+export const pageDir = path.join(rootDir, 'page')
 
 const logger = log4js.getLogger('lib/template')
 
