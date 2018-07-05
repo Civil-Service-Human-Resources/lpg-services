@@ -20,7 +20,7 @@ axiosLogger.axiosResponseLogger(http, logger)
 export async function getLearnerRecordReport(
 	user: model.User
 ) {
-	const response = await http.get(`/learner-record`, {
+	const response = await http.get(`/learner-record/summaries`, {
 		headers: { Authorization: `Bearer ${user.accessToken}` },
 	})
 	return response.data
