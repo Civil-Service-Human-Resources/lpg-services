@@ -1,12 +1,19 @@
 pipeline {
     agent any
+
+    environment{
+        ENV_PROFILE='test'
+    }
+
     stages {
         stage('Peformance Test') {
             steps { 
                 nodejs(nodeJSInstallationName: 'NodeJS 10.4.0') {
-                    sh 'cd test/performance'
-                    sh 'npm install'
-                    sh 'npm run smoke'
+                    dir('test/performance') {
+                        sh 'npm install'
+                        sh 'npm run smoke'
+                        sh 'npm run report'
+                    }
                 }
             }
         }
