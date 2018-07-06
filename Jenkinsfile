@@ -13,6 +13,7 @@ pipeline {
                         sh 'npm install'
                         sh 'npm run smoke'
                         sh 'npm run report'
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'reports', reportFiles: 'report.json.html', reportName: 'Performance Report', reportTitles: ''])
                     }
                 }
             }
