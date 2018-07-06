@@ -2,7 +2,8 @@
 	"name": "lpg-performance-test",
 	"version": "0.0.1",
 	"scripts": {
-		"smoke": "artillery run src/smoke.yml"
+		"smoke": "artillery run -o reports/report.json src/smoke.yml",
+		"report": "artillery report reports/report.json"
 	},
 	"dependencies": {
 		"artillery": "1.6.0-15",
