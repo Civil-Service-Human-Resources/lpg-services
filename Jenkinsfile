@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        cron('H 02 * * *')
+    }
+
     environment{
         ENV_PROFILE='test'
     }
