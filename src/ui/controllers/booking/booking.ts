@@ -218,7 +218,7 @@ export async function renderOuch(
 	)
 }
 
-export function renderPaymentOptions(
+export async function renderPaymentOptions(
 	req: express.Request,
 	res: express.Response
 ) {
