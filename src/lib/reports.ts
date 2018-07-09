@@ -29,7 +29,7 @@ export async function getLearnerRecordReport(
 export async function getBookingsReport(
 	user: model.User
 ) {
-	const response = await http.get(`/events`, {
+	const response = await http.get(`/learner-record/events`, {
 		headers: { Authorization: `Bearer ${user.accessToken}` },
 	})
 	return response.data
