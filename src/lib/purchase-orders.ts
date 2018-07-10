@@ -22,7 +22,15 @@ export async function findPurchaseOrder(
 	user: model.User,
 	moduleId: string
 ) {
-	return (await http.get(`/purchase-orders?department=${user.department}&moduleId=${moduleId}`)).data
+	try {
+		const response = await http.get(`/purchase-orders?department=${user.department}&moduleId=${moduleId}`)
+		if (response && response.data) {
+			return response.data
+		}
+	} catch (e) {
+		logger.info('Error searching for call off PO, ignoring', e)
+	}
+	return null
 }
 
 export async function listAll() {

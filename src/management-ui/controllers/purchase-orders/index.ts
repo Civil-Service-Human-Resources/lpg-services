@@ -19,7 +19,7 @@ export async function displayEdit(req: express.Request, res: express.Response) {
 	if (id === 'new') {
 		purchaseOrder = {}
 	} else {
-		purchaseOrder = await purchaseOrdersService.get(req.params.id)
+		purchaseOrder = await purchaseOrdersService.get(id)
 	}
 
 	res.send(template.render('purchase-orders/edit', req, res, {
