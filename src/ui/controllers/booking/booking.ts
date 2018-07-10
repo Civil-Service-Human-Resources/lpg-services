@@ -4,6 +4,7 @@ import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
+import * as purchaseOrdersService from 'lib/purchase-orders'
 import * as registry from 'lib/registry'
 import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
@@ -219,27 +220,42 @@ export async function renderOuch(
 }
 
 export async function renderPaymentOptions(
-	req: express.Request,
+	ireq: express.Request,
 	res: express.Response
 ) {
+	const req = ireq as extended.CourseRequest
 	const session = req.session!
+	const module = req.module!
 
 	const user = req.user as model.User
-	const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
-		['organisations', 'search', 'findByDepartmentCode'],
-		{ departmentCode: user.department }) as any
+	const callOffPo = await purchaseOrdersService.findPurchaseOrder(user, module.id)
 
-	if (!organisation) {
-		res.redirect('/profile')
+	if (callOffPo) {
+		session.payment = {
+			type: 'PURCHASE_ORDER',
+			value: `Call off: ${callOffPo.id}`,
+		}
+		session.save(() => {
+			res.redirect(`${req.originalUrl}/confirm`)
+		})
 	} else {
-		res.send(
-			template.render('booking/payment-options', req, res, {
-				errors: req.flash('errors'),
-				paymentMethods: organisation.department.paymentMethods,
-				values: req.flash('values')[0] || (session.payment ? { [session.payment.type]: session.payment.value } : {}),
-			})
-		)
+		const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
+			['organisations', 'search', 'findByDepartmentCode'],
+			{ departmentCode: user.department }) as any
+
+		if (!organisation) {
+			res.redirect('/profile')
+		} else {
+			res.send(
+				template.render('booking/payment-options', req, res, {
+					errors: req.flash('errors'),
+					paymentMethods: organisation.department.paymentMethods,
+					values: req.flash('values')[0] || (session.payment ? { [session.payment.type]: session.payment.value } : {}),
+				})
+			)
+		}
 	}
+
 }
 
 export async function enteredPaymentDetails(
@@ -269,7 +285,7 @@ export async function enteredPaymentDetails(
 		}
 	}
 
-	if (!session.payment) {
+	if (!session.payment && !errors.length) {
 		errors.push('errors.empty-payment-method')
 	}
 
