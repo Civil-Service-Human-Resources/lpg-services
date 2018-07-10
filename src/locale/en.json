@@ -297,7 +297,7 @@
 		"po-special-characters": "A purchase order should not contain dots (.), colons ( : ), or hashes ( # )",
 		"cancelBooking": "There was an error cancelling your booking request. Please try again.",
 		"registrationNotFound": "You attempted to cancel a booking you were not registered.",
-		"empty-payment-method": "Please enter ypur payment details."
+		"empty-payment-method": "Please enter your payment details."
 	},
 	"courseResult": {
 		"complete": "Course complete",
