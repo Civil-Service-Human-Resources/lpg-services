@@ -105,9 +105,6 @@ export async function renderChooseDate(
 		if (req.session!.selectedEventId) {
 			req.session!.selectedEventId = selectedEventId
 		}
-	}
-
-	if (!selectedEventId && req.session) {
 		delete req.session!.payment
 		delete req.session!.accessibilityReqs
 	}
@@ -233,7 +230,7 @@ export async function renderPaymentOptions(
 	if (callOffPo) {
 		session.payment = {
 			type: 'PURCHASE_ORDER',
-			value: `Call off: ${callOffPo.id}`,
+			value: `Call off ${callOffPo.id}`,
 		}
 		session.save(() => {
 			res.redirect(`${req.originalUrl}/confirm`)
