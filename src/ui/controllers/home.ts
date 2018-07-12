@@ -4,7 +4,6 @@ import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
 import * as suggestionController from './suggestion'
 
@@ -14,10 +13,15 @@ export async function home(req: express.Request, res: express.Response) {
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
-		const learningRecord = await learnerRecord.getLearningRecord(user)
+
+		const [ learningRecord, requiredLearningResults ] = await Promise.all([
+			learnerRecord.getLearningRecord(user),
+			catalog.findRequiredLearning(user),
+		])
+
+		const requiredLearning = requiredLearningResults.results
+
 		const learningHash = suggestionController.hashArray(learningRecord, 'id')
-		let plannedLearning: model.Course[] = []
-		const requiredLearning = (await catalog.findRequiredLearning(user)).results
 
 		const suggestedLearning = await suggestionController.homeSuggestions(
 			user,
@@ -50,6 +54,7 @@ export async function home(req: express.Request, res: express.Response) {
 		}
 
 		const bookedLearning: model.Course[] = []
+		let plannedLearning: model.Course[] = []
 
 		for (const course of learningRecord) {
 			const record = course.record!
@@ -62,29 +67,11 @@ export async function home(req: express.Request, res: express.Response) {
 					record.state = 'IN_PROGRESS'
 				}
 				if (course.getSelectedDate()) {
-					// should have an eventId in record , lets look at it's state
-
-					const eventId = course.record!.modules[0].eventId
-					let state = null
-					if (eventId && course.modules && course.modules.length) {
-						const module = course.modules[0]
-						const eventRecord = await learnerRecord.getRecord(
-							req.user,
-							course,
-							module,
-							module.getEvent(eventId)
-						)
-						if (
-							eventRecord &&
-							eventRecord.modules &&
-							eventRecord.modules.length
-						) {
-							state = eventRecord.modules[0].state
-						}
+					const bookedModuleRecord = course.record!.modules.find(m => !!m.eventId)
+					if (bookedModuleRecord) {
+						record.state = bookedModuleRecord.bookingStatus
 					}
-					if (state !== xapi.Labels[xapi.Verb.Skipped].toUpperCase()) {
-						bookedLearning.push(course)
-					}
+					bookedLearning.push(course)
 				} else {
 					plannedLearning.push(course)
 				}

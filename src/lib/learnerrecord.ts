@@ -128,7 +128,7 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 }
 
 export function isActive(record: CourseRecord) {
-	return record.state !== 'ARCHIVED' && record.preference !== 'DISLIKED'
+	return record.state !== 'ARCHIVED' && record.state !== 'SKIPPED' && record.preference !== 'DISLIKED'
 }
 
 export interface CourseRecord {
@@ -145,4 +145,5 @@ export interface ModuleRecord {
 	moduleId: string
 	rated?: boolean
 	state?: string
+	bookingStatus?: string
 }
