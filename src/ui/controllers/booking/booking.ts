@@ -1,7 +1,10 @@
 import * as express from 'express'
+import * as config from "lib/config"
 import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import * as model from 'lib/model'
+import * as registry from 'lib/registry'
 import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
@@ -9,6 +12,7 @@ import * as xapi from 'lib/xapi'
 import * as courseController from '../course/index'
 
 import * as log4js from 'log4js'
+
 const logger = log4js.getLogger('controllers/booking')
 
 export enum confirmedMessage {
@@ -103,8 +107,7 @@ export async function renderChooseDate(
 	}
 
 	if (!selectedEventId && req.session) {
-		delete req.session!.po
-		delete req.session!.fap
+		delete req.session!.payment
 		delete req.session!.accessibilityReqs
 	}
 
@@ -198,9 +201,8 @@ export async function renderConfirmPayment(
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
 			event,
-			fap: session.fap,
 			module,
-			po: session.po,
+			payment: session.payment,
 		})
 	)
 }
@@ -216,86 +218,104 @@ export async function renderOuch(
 	)
 }
 
-export function renderPaymentOptions(
+export async function renderPaymentOptions(
 	req: express.Request,
 	res: express.Response
 ) {
 	const session = req.session!
 
-	res.send(
-		template.render('booking/payment-options', req, res, {
-			fapErrors: req.flash('fapErrors'),
-			poErrors: req.flash('purchaseOrderErrors'),
-			previouslyEntered: session.po || session.fap,
-		})
-	)
+	const user = req.user as model.User
+	const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
+		['organisations', 'search', 'findByDepartmentCode'],
+		{ departmentCode: user.department }) as any
+
+	if (!organisation) {
+		res.redirect('/profile')
+	} else {
+		res.send(
+			template.render('booking/payment-options', req, res, {
+				errors: req.flash('errors'),
+				paymentMethods: organisation.department.paymentMethods,
+				values: req.flash('values')[0] || (session.payment ? { [session.payment.type]: session.payment.value } : {}),
+			})
+		)
+	}
 }
 
-export function validatePurchaseOrder(po: string): string[] {
-	const errors: string[] = []
-	const trimmed = po.trim()
-
-	if (!trimmed.length) {
-		errors.push('errors.po-empty')
-	}
-
-	if (trimmed.length < 3 && trimmed.length) {
-		errors.push('errors.po-too-short')
-	}
-
-	if (trimmed.length >= 20) {
-		errors.push('errors.po-too-long')
-	}
-
-	if (trimmed.match(/[#;.%]/)) {
-		errors.push('errors.po-special-characters')
-	}
-
-	return errors
-}
-
-export function enteredPaymentDetails(
+export async function enteredPaymentDetails(
 	req: express.Request,
 	res: express.Response
 ) {
 	const session = req.session!
+	session.payment = null
 
-	if (req.body['purchase-order']) {
-		const poErrors = validatePurchaseOrder(req.body['purchase-order'])
+	const user = req.user as model.User
+	const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
+		['organisations', 'search', 'findByDepartmentCode'],
+		{ departmentCode: user.department }) as any
 
-		if (poErrors.length) {
-			poErrors.map((error: string) => {
-				req.flash('purchaseOrderErrors', req.__(error))
-			})
-			session.save(() => {
-				res.redirect(`${req.originalUrl}`)
-			})
-			return
-		} else {
-			session.po = req.body['purchase-order'].trim()
-			session.save(() => {
-				res.redirect(`${req.originalUrl}/confirm`)
-			})
-			return
+	let errors: string[] = []
+
+	for (const paymentMethod of organisation.department.paymentMethods) {
+		if (req.body[paymentMethod]) {
+			errors = validate(paymentMethod, req.body[paymentMethod])
+			if (!errors.length) {
+				session.payment = {
+					type: paymentMethod,
+					value: req.body[paymentMethod].trim(),
+				}
+			}
+			break
 		}
 	}
 
-	//TODO: REF LPFG-315 Financial approver booking flow was not updated
-	if (
-		req.body['financial-approver'] &&
-		/^\S+@\S+$/.test(req.body['financial-approver'])
-	) {
-		session.fap = req.body['financial-approver']
-		session.save(() => {
-			res.redirect(`${req.originalUrl}/confirm`)
+	if (!session.payment) {
+		errors.push('errors.empty-payment-method')
+	}
+
+	if (errors.length) {
+		errors.map((error: string) => {
+			req.flash('errors', req.__(error))
 		})
-	} else {
-		req.flash('fapErrors', 'Not valid email address')
+		req.flash('values', req.body)
 		session.save(() => {
 			res.redirect(`${req.originalUrl}`)
 		})
-		return
+	} else {
+		session.save(() => {
+			res.redirect(`${req.originalUrl}/confirm`)
+		})
 	}
+}
+
+export function validate(type: string, po: string): string[] {
+	const errors: string[] = []
+	const trimmed = po.trim()
+
+	switch (type) {
+		case 'PURCHASE_ORDER':
+			if (!trimmed.length) {
+				errors.push('errors.po-empty')
+			}
+			if (trimmed.length < 3 && trimmed.length) {
+				errors.push('errors.po-too-short')
+			}
+			if (trimmed.length >= 20) {
+				errors.push('errors.po-too-long')
+			}
+			if (trimmed.match(/[#;.%]/)) {
+				errors.push('errors.po-special-characters')
+			}
+			break
+		case 'FINANCIAL_APPROVER':
+			if (!/^\S+@\S+$/.test(trimmed)) {
+				errors.push('errors.invalid-email-address')
+			}
+			break
+		default:
+			errors.push('errors.unrecognised-payment-type')
+	}
+	return errors
 }
 
 export async function trySkipBooking(
@@ -362,17 +382,10 @@ export async function tryCompleteBooking(
 	const module = req.module!
 	const event = req.event!
 	const session = req.session!
+	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
-	const extensions: Record<string, any> = {}
-	let paymentOption = '-'
-
-	if (session.po) {
-		extensions[xapi.Extension.PurchaseOrder] = session.po
-		paymentOption = `Purchase Order: ${session.po}`
-	}
-	if (session.fap) {
-		extensions[xapi.Extension.FinancialApprover] = session.fap
-		paymentOption = `Financial Approver: ${session.fap}`
+	const extensions: Record<string, any> = {
+		[xapi.Extension.Payment]: paymentOption,
 	}
 
 	await xapi
@@ -429,8 +442,7 @@ export async function tryCompleteBooking(
 		})
 
 	if (!error) {
-		delete req.session!.po
-		delete req.session!.fap
+		delete req.session!.payment
 		delete req.session!.accessibilityReqs
 		delete req.session!.selectedEventId
 

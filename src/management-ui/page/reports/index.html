@@ -4,9 +4,16 @@
             <h1 class="heading-large">Reports</h1>
             <nav role="navigation">
                 <ul>
+                    {#if $signedInUser.hasAnyRole(['ORGANISATION_REPORTER', 'PROFESSION_REPORTER', 'CSHR_REPORTER'])}
                     <li>
                         <a href="/reports/learner-record">Learner record</a>
                     </li>
+                    {/if}
+                    {#if $signedInUser.hasAnyRole(['DOWNLOAD_BOOKING_FEED'])}
+                    <li>
+                        <a href="/reports/bookings">Bookings</a>
+                    </li>
+                    {/if}
                 </ul>
             </nav>
         </div>
