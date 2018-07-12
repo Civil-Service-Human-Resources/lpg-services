@@ -96,7 +96,7 @@ export class Course {
 
 	getSelectedDate() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId)
+			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(
 					m => m.id === bookedModuleRecord.moduleId

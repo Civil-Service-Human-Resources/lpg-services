@@ -17,6 +17,7 @@
 	"diversity-and-equality": "Diversity and equality",
 	"face-to-face": "Face to face",
 	"link": "Link",
+	"APPROVED": "Approved",
 	"REGISTERED": "Requested",
 	"UNREGISTERED": "Cancelled",
 	"Duration": "Duration",
@@ -326,5 +327,6 @@
 	"paymentMethods_FINANCIAL_APPROVER_type": "Financial approver",
 	"paymentMethods_PURCHASE_ORDER_information": "Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.",
 	"paymentMethods_PURCHASE_ORDER_label": "Purchase order number",
-	"paymentMethods_PURCHASE_ORDER_type": "Purchase order"
+	"paymentMethods_PURCHASE_ORDER_type": "Purchase order",
+	"REQUESTED": "REQUESTED"
 }
