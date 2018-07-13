@@ -15,7 +15,7 @@ export enum nodeDetails {
 	profession = 'audience_area_label',
 	grade = 'audience_grade_label',
 	interest = 'audience_interest_label',
-	mandatory = 'audience_mandatory_label',
+	optional = 'audience_optional_label',
 	frequency = 'audience_frequency_label',
 	required = 'audience_required-by_label',
 }
@@ -25,12 +25,12 @@ export enum pluralizer {
 	department = 'departments',
 	grade = 'grades',
 	interest = 'interests',
-	mandatory = 'mandatory',
+	optional = 'optional',
 	frequency = 'frequency',
 	required = 'required-by',
 }
 
-const Singular: string[] = ['frequency', 'mandatory', 'required']
+const Singular: string[] = ['frequency', 'optional', 'required']
 
 function isDateType(term: string) {
 	return term === 'required-by'

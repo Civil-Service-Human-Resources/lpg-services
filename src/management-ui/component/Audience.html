@@ -57,13 +57,13 @@
             </td>
         </tr>
         <tr>
-            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_mandatory_label')}</td>
-            <td class="key-value-list__value key-value-value--auto lpg-mandatory">
-                <input id="mandatory" type="checkbox" name="mandatory" value="true" checked="{ audience.mandatory === true || audience.mandatory === 'true' ? 'checked' : '' }"
+            <td class="key-value-list__key key-value-list__key--auto">{$i18n('audience_optional_label')}</td>
+            <td class="key-value-list__value key-value-value--auto lpg-optional">
+                <input id="optional" type="checkbox" name="optional" value="true" checked="{ audience.optional === true || audience.optional === 'true' ? 'checked' : '' }"
                     disabled="disabled">
             </td>
             <td >
-                <button name="submit" type="submit" class="button audience__button" value="change_{i}_mandatory">Change</button>
+                <button name="submit" type="submit" class="button audience__button" value="change_{i}_optional">Change</button>
             </td>
         </tr>
         <tr>

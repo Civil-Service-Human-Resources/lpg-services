@@ -424,7 +424,7 @@ export class Audience {
 		audience.departments = data.departments || []
 		audience.grades = data.grades || []
 		audience.interests = data.interests || []
-		audience.mandatory = data.mandatory || false
+		audience.mandatory = data.mandatory || true
 		audience.frequency = data.frequency
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
@@ -436,10 +436,18 @@ export class Audience {
 	departments: string[]
 	grades: string[]
 	interests: string[]
-	mandatory: boolean
+	mandatory = true
 
 	requiredBy?: Date | null
 	frequency?: string
+
+	get optional() {
+		return !this.mandatory
+	}
+
+	set optional(value: boolean) {
+		this.mandatory = !value
+	}
 
 	getRelevance(user: User) {
 		let relevance = -1

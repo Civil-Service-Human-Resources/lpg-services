@@ -3,7 +3,7 @@
 	"audience_area_label": "Area(s) of work",
 	"audience_grade_label": "Grade(s)",
 	"audience_interest_label": "Interest(s)",
-	"audience_mandatory_label": "Mandatory",
+	"audience_optional_label": "Optional",
 	"audience_frequency_label": "Frequency",
 	"audience_required-by_label": "Required By",
 	"elearning": "Online course",
@@ -204,7 +204,7 @@
 		"legal": "Legal",
 		"property": "Property"
 	},
-	"mandatory": {
+	"optional": {
 		"true": "True",
 		"false": "False"
 	},
@@ -328,5 +328,6 @@
 	"paymentMethods_PURCHASE_ORDER_information": "Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.",
 	"paymentMethods_PURCHASE_ORDER_label": "Purchase order number",
 	"paymentMethods_PURCHASE_ORDER_type": "Purchase order",
-	"REQUESTED": "REQUESTED"
+	"REQUESTED": "REQUESTED",
+	"CANCELLED": "CANCELLED"
 }
