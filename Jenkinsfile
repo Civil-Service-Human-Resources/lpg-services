@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     triggers {
-        when { branch "master" }
-        cron('H 02 * * *')
+        cron(env.BRANCH_NAME == 'master' ? '@nightly' : '')
     }
 
     environment{
