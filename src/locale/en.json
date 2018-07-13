@@ -209,6 +209,7 @@
 		"false": "False"
 	},
 	"frequency": {
+		"": "Once",
 		"YEARLY": "Yearly",
 		"THREE_YEARLY": "Three Yearly",
 		"FIVE_YEARLY": "Five Yearly"
