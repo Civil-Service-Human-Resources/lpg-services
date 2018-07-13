@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     triggers {
+        when { branch "master" }
         cron('H 02 * * *')
     }
 
