@@ -424,7 +424,7 @@ export class Audience {
 		audience.departments = data.departments || []
 		audience.grades = data.grades || []
 		audience.interests = data.interests || []
-		audience.mandatory = data.mandatory || true
+		audience.mandatory = data.mandatory === undefined ? true : data.mandatory
 		audience.frequency = data.frequency
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
