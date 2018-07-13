@@ -13,7 +13,8 @@ config:
     order: "sequence"
     # path is relative to the location of the test script
 scenarios:
-  - flow:
+  - name: "Login to LPG"
+    flow:
     - get: 
         url: "/home"
         capture:
@@ -26,7 +27,13 @@ scenarios:
         beforeRequest: "setLoginBody"
     - get:
         url: "/home"
+
+  - name: "Search for a term"
+    flow:
     - get:
         url: "/search?q=commercial"
+
+  - name: "Add to learning plan"
+    flow:
     - get:
         url: "/suggestions-for-you/add/e0HNfmkTSMiRPHVJ9ljnxA?ref=search"
