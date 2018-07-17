@@ -136,6 +136,7 @@ export async function search(req: express.Request, res: express.Response) {
 			courseTypes,
 			departments: departmentData,
 			end,
+			expand: req.query.expand,
 			interests: interestsData,
 			query,
 			range,
@@ -160,9 +161,10 @@ async function getDepartmentData(user: model.User, selectedDepartments: string[]
 
 async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[]) {
 	const allAreasOfWork = await registry.halNode('professions')
+	const userAreasOfWork = (user.otherAreasOfWork || []).map(aow => aow.name)
+		.concat(user.areasOfWork || [])
 
-	const yourAreasOfWork = allAreasOfWork.filter(aow =>
-		(user.areasOfWork || []).indexOf(aow.name) > -1 || (user.otherAreasOfWork || []).indexOf(aow.name) > -1)
+	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.indexOf(aow.name) > -1)
 		.map(aow => aow.name)
 
 	const otherAreasOfWork = allAreasOfWork.filter(aow => yourAreasOfWork.indexOf(aow.name) === -1)
@@ -177,8 +179,9 @@ async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[
 
 async function getInterestsData(user: model.User, selectedInterests: string[]) {
 	const allInterests = await registry.halNode('interests')
+	const userInterests = (user.interests || []).map(interest => interest.name)
 
-	const yourInterests = allInterests.filter(interest => (user.interests || []).indexOf(interest.name) > -1)
+	const yourInterests = allInterests.filter(interest => userInterests.indexOf(interest.name) > -1)
 		.map(interest => interest.name)
 
 	const otherInterests = allInterests.filter(interest => yourInterests.indexOf(interest.name) === -1)

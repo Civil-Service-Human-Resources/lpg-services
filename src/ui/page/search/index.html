@@ -20,11 +20,13 @@
                         <a href="/search?q={searchResults.suggestion}">{searchResults.suggestion}</a>
                     </span>
                 {/if}
-                {#if searchResults && query}
+                {#if searchResults}
                     <p class="lede">There { $req.__n('was', searchResults.totalResults)}
                         <strong class="lpg-search-amount">{ $req.__n('%s result', searchResults.totalResults) }</strong>
-                        for
-                        <strong class="lpg-search-query"> { query }</strong>
+                        {#if query || expand}
+                            for
+                            <strong class="lpg-search-query"> { query || expand }</strong>
+                        {/if}
                     </p>
                 {/if}
             </div>
