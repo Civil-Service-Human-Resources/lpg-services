@@ -589,8 +589,8 @@ export class User {
 	department?: string
 	areasOfWork?: string[]
 	lineManager?: LineManager
-	otherAreasOfWork?: string[]
-	interests?: string[]
+	otherAreasOfWork?: any[]
+	interests?: any[]
 	givenName?: string
 
 	grade?: string
