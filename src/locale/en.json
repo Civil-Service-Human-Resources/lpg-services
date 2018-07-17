@@ -182,16 +182,16 @@
 		"PB3": "Senior Civil Service - Director General",
 		"PS": "Senior Civil Service - Permanent Secretary"
 	},
-	"interests": {
+	"interest": {
 		"contract-management": "Contract management",
 		"leadership": "Leadership"
 	},
-	"departments": {
+	"department": {
 		"hmrc": "HM Revenue & Customs",
 		"dh": "Department of Health & Social Care",
 		"co": "Cabinet Office"
 	},
-	"areas-of-work": {
+	"areaOfWork": {
 		"commercial": "Commercial",
 		"digital": "Digital",
 		"project-delivery": "Project Delivery",

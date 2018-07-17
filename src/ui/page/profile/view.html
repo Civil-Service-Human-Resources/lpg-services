@@ -69,7 +69,7 @@
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_department_label')}</td>
                             <td class="key-value-list__value key-value-list__auto--auto lpg-department">
                                 {#if $signedInUser.department}
-                                    {$signedInUser.department === 'other' ? 'Other' : $i18n('departments')[$signedInUser.department] }
+                                    {$signedInUser.department === 'other' ? 'Other' : $i18n('department')[$signedInUser.department] }
                                 {/if}
                             </td>
                             <td class="key-value-list__item-action">

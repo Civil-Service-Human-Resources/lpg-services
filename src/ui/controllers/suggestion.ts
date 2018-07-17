@@ -87,36 +87,16 @@ export async function suggestionsPage(
 	const user = req.user as model.User
 	const courses = []
 
-	courses.push({key: 'areas-of-work', value: await suggestionsByAreaOfWork(user) })
-	courses.push({key: 'areas-of-work', value: await suggestionsByOtherAreasOfWork(user) })
-	courses.push({key: 'departments', value: await suggestionsByDepartment(user) })
-	courses.push({key: 'interests', value: await suggestionsByInterest(user) })
+	courses.push({key: 'areaOfWork', value: await suggestionsByAreaOfWork(user) })
+	courses.push({key: 'areaOfWork', value: await suggestionsByOtherAreasOfWork(user) })
+	courses.push({key: 'department', value: await suggestionsByDepartment(user) })
+	courses.push({key: 'interest', value: await suggestionsByInterest(user) })
 
 	res.send(
 		template.render('suggested', req, res, {
 			courses,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
-		})
-	)
-}
-
-export async function expandedSuggestionsPage(
-	req: express.Request,
-	res: express.Response
-) {
-	// TODO: redirect to search with filters
-
-	const user = req.user as model.User
-	const areaOfWorktoExpand = req.params.expandedAow
-	const courses = []
-	courses.push({key: 'areas-of-work', value: await suggestionsByAreaOfWork(user, {}, areaOfWorktoExpand) })
-	courses.push({key: 'departments', value: await suggestionsByDepartment(user, {}, areaOfWorktoExpand) })
-
-	res.send(
-		template.render('suggested', req, res, {
-			areasOfWork: user.areasOfWork,
-			courses,
 		})
 	)
 }
