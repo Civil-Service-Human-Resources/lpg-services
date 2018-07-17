@@ -1,10 +1,9 @@
 <aside role="complementary">
     <form autocomplete="nope" name="searchLearning" method="get" action="/search">
         <input type="hidden" id="q" name="q" value="{ query }" />
+
         <div class="govuk-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
-
             <fieldset>
-
                 <legend>
                     <h2 class="heading-medium">Learning type</h2>
                 </legend>
@@ -25,12 +24,96 @@
                 </legend>
 
                 <div class="multiple-choice">
-                        <input type="checkbox" name="cost" value="free" checked="{(cost || []).indexOf('free') > -1 ? 'checked' : ''}"  >
+                        <input id="cost" type="checkbox" name="cost" value="free" checked="{(cost || []).indexOf('free') > -1 ? 'checked' : ''}"  >
                         <label for="cost">Show only free</label>
                     </div>
             </fieldset>
         </div>
 
-        <button type="submit" class="button" >Apply search filters</button>
+        <div class="govuk-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+            <fieldset>
+                <legend>
+                    <h2 class="heading-medium">Your department</h2>
+                </legend>
+                {#each departments.yours as filter}
+                <div class="multiple-choice">
+                    <input type="checkbox" value="{filter.code}" name="department" id="{filter.code}" checked="{departments.selected.indexOf(filter.code) > -1 ? 'checked' : ''}" >
+                    <label for="{filter.code}">{filter.name}</label>
+                </div>
+                {/each}
+            </fieldset>
+        </div>
+
+        <div class="govuk-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox collapse">
+            <fieldset>
+                <legend>
+                    <h2 class="heading-medium">Other departments</h2>
+                </legend>
+                {#each departments.other as filter}
+                <div class="multiple-choice">
+                    <input type="checkbox" value="{filter.code}" name="department" id="{filter.code}" checked="{departments.selected.indexOf(filter.code) > -1 ? 'checked' : ''}" >
+                    <label for="{filter.code}">{filter.name}</label>
+                </div>
+                {/each}
+            </fieldset>
+        </div>
+
+        <div class="govuk-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+            <fieldset>
+                <legend>
+                    <h2 class="heading-medium">Your areas of work</h2>
+                </legend>
+                {#each areasOfWork.yours as filter}
+                <div class="multiple-choice">
+                    <input type="checkbox" value="{filter}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                    <label for="{filter}">{filter}</label>
+                </div>
+                {/each}
+            </fieldset>
+        </div>
+
+        <div class="govuk-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox collapse">
+            <fieldset>
+                <legend>
+                    <h2 class="heading-medium">Other areas of work</h2>
+                </legend>
+                {#each areasOfWork.other as filter}
+                <div class="multiple-choice">
+                    <input type="checkbox" value="{filter.name}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                    <label for="{filter}">{filter}</label>
+                </div>
+                {/each}
+            </fieldset>
+        </div>
+
+        <div class="govuk-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+            <fieldset>
+                <legend>
+                    <h2 class="heading-medium">Your interests</h2>
+                </legend>
+                {#each interests.yours as filter}
+                <div class="multiple-choice">
+                    <input type="checkbox" value="{filter}" name="interest" id="{filter}" checked="{interests.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                    <label for="{filter}">{filter}</label>
+                </div>
+                {/each}
+            </fieldset>
+        </div>
+
+        <div class="govuk-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox collapse">
+            <fieldset>
+                <legend>
+                    <h2 class="heading-medium">Other interests</h2>
+                </legend>
+                {#each interests.other as filter}
+                <div class="multiple-choice">
+                    <input type="checkbox" value="{filter}" name="interest" id="{filter}" checked="{interests.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                    <label for="{filter}">{filter}</label>
+                </div>
+                {/each}
+            </fieldset>
+        </div>
+
+        <button type="submit" class="button">Apply search filters</button>
     </form>
 </aside>

@@ -105,6 +105,8 @@ export async function expandedSuggestionsPage(
 	req: express.Request,
 	res: express.Response
 ) {
+	// TODO: redirect to search with filters
+
 	const user = req.user as model.User
 	const areaOfWorktoExpand = req.params.expandedAow
 	const courses = []
