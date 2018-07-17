@@ -1,0 +1,27 @@
+
+.filter-toggle {
+
+  @include m(shut) {
+    .multiple-choice {
+      display: none;
+    }
+
+    h2 {
+      &::after {
+        content: "\25B2" !important;
+      }
+    }
+  }
+
+  h2 {
+    position: relative;
+    cursor: pointer;
+
+    &::after {
+      position: absolute;
+      right: 0;
+      top: 2px;
+      content: "\25BC";
+    }
+  }
+}

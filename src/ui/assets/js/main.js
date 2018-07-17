@@ -41,6 +41,11 @@ $(document).ready(function() {
       selectElement: selectEl,
     })
   }
+
+  $('.filter-toggle legend').click(function (e) {
+    e.preventDefault()
+    $(this).parents('.filter-toggle').toggleClass('filter-toggle--shut');
+  });
 })
 
 function getCookie(cname) {
