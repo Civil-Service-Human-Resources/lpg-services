@@ -65,32 +65,32 @@ export class Course {
 	getAreasOfWork() {
 		return this.modules
 			.map(module => module.audiences)
-			.reduce((p, c) => p.concat(c))
+			.reduce((p, c) => p.concat(c), [])
 			.map(audience => audience.areasOfWork)
-			.reduce((p, c) => p.concat(c))
+			.reduce((p, c) => p.concat(c), [])
 			.filter((v, i, a) => a.indexOf(v) === i)
 	}
 
 	getCost() {
 		const costArray = this.modules.map(module => module.price)
 		return costArray.length
-			? costArray.reduce((p, c) => (p || 0) + (c || 0))
+			? costArray.reduce((p, c) => (p || 0) + (c || 0), 0)
 			: null
 	}
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
 		return durationArray.length
-			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c))
+			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
 			: null
 	}
 
 	getGrades() {
 		return this.modules
 			.map(module => module.audiences)
-			.reduce((p, c) => p.concat(c))
+			.reduce((p, c) => p.concat(c), [])
 			.map(audience => audience.grades)
-			.reduce((p, c) => p.concat(c))
+			.reduce((p, c) => p.concat(c), [])
 			.filter((v, i, a) => a.indexOf(v) === i)
 	}
 
@@ -191,7 +191,7 @@ export class Course {
 		onlyMandatory?: boolean
 	) {
 		const arrStates: string[] = states.split(',')
-		let hasModuleRecord
+		let hasModuleRecord = false
 
 		if (this.record) {
 			const modules = this.getModules(user)
@@ -204,7 +204,7 @@ export class Course {
 					mr => mr.moduleId === module.id
 				)
 
-				hasModuleRecord = moduleRecord || hasModuleRecord ? true : false
+				hasModuleRecord = !!(moduleRecord || hasModuleRecord)
 
 				if (
 					moduleRecord &&

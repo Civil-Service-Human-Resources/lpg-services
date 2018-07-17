@@ -30,7 +30,7 @@
       {#if home === true }
         <p><a href="/suggestions-for-you">{$i18n('home_page_suggestions_link')}</a></p>
       {:elseif (suggestedLearning.length === 6)}
-       
+          <p><a href="/suggestions-for-you/{title}">Show all suggestions from {title}</a></p>
       {/if}
       </div>
   </div>

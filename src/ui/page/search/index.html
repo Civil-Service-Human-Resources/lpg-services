@@ -32,9 +32,7 @@
 
         <div class="grid-row">
             <div class="column-one-third">
-                {#if searchResults.combinedResults && searchResults.combinedResults.length}
-                    <LeftSearchBox {query} {courseType} {cost} {currentReq} />
-                {/if}
+                <LeftSearchBox {query} {courseType} {cost} {currentReq} {departments} {areasOfWork} {interests} />
             </div>
             <div class="column-two-thirds">
                 <div class="resources">

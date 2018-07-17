@@ -56,16 +56,37 @@ export async function postFeedback(feedback: model.Feedback) {
 }
 
 export async function search(
-	query: string,
 	page: number,
 	size: number,
-	courseType?: string,
-	cost?: string
+	query?: string,
+	courseTypes?: string[],
+	cost?: string,
+	areasOfWork?: string[],
+	departments?: string[],
+	interests?: string[],
 ): Promise<api.SearchResults> {
 	try {
-		const response = await http.get(
-			`/search?query=${query}&page=${page}&size=${size}&type=${courseType}&cost=${cost}`
-		)
+		let url = `/search?page=${page}&size=${size}`
+		if (query) {
+			url += `&query=${query}`
+		}
+		if (cost) {
+			url += `&cost=${cost}`
+		}
+		if (courseTypes) {
+			url += `&type=${courseTypes.join('&type=')}`
+		}
+		if (areasOfWork) {
+			url += `&areasOfWork=${areasOfWork.join('&areasOfWork=')}`
+		}
+		if (departments) {
+			url += `&departments=${departments.join('&departments=')}`
+		}
+		if (interests) {
+			url += `&interests=${interests.join('&interests=')}`
+		}
+
+		const response = await http.get(url)
 		return convertToMixed(response.data) as api.SearchResults
 	} catch (e) {
 		if (e.response.status === 400) {
