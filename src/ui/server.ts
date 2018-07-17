@@ -246,10 +246,6 @@ app.get(
 	asyncHandler(suggestionController.suggestionsPage)
 )
 app.get(
-	'/suggestions-for-you/:expandedAow',
-	asyncHandler(suggestionController.expandedSuggestionsPage)
-)
-app.get(
 	'/suggestions-for-you/add/:courseId',
 	asyncHandler(suggestionController.addToPlan)
 )

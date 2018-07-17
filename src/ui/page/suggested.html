@@ -18,7 +18,7 @@
     {#each courses as courseGroup}
         {#each Object.keys(courseGroup.value) as courseKey}
         {#if courseKey && courseGroup.value[courseKey].length}
-            <SuggestionsSection title={$i18n(`${courseGroup.key}`)[courseKey] || courseKey} suggestedLearning="{courseGroup.value[courseKey]}" home={false}/>
+            <SuggestionsSection title={$i18n(`${courseGroup.key}`)[courseKey] || courseKey} suggestedLearning="{courseGroup.value[courseKey]}" home={false} type="{courseGroup.key}" />
         {/if}
         {/each}
     {/each}
