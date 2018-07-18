@@ -12,6 +12,36 @@
 
 	@include e(details) {
 		margin: 20px 0;
+
+		.summary {
+			margin-left: 10px;
+			&::before {
+				content: "";
+				display: block;
+				width: 0;
+				height: 0;
+				border-top: 5px solid transparent;
+				border-left: 6px solid;
+				border-bottom: 5px solid transparent;
+				position: absolute;
+				left: 0;
+				top: 50%;
+				margin-top: -6px;
+			}
+		}
+
+		&[open] {
+			.summary {
+				&::before {
+					border-left: 5px solid transparent;
+					border-top: 6px solid;
+					border-right: 5px solid transparent;
+					border-bottom: none;
+					margin-top: -3px;
+					margin-left: -3px;
+				}
+			}
+		}
 	}
 
 	@include e(col-heading) {

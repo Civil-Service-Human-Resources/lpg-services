@@ -12,28 +12,30 @@
             {#if errors && errors.length}
                 <Error errorHeading="There was an issue with the data you entered" errors={errors} />
             {/if}
-            <div class="column-two-thirds">
+            <div class="column-full">
+                <div class="u-border-bgrey2 u-pad-b30">&nbsp;</div>
                 <form autocomplete="nope" method="post">
-                    <div class="form-group">
-                        {#each paymentMethods as pm}
+                    {#each paymentMethods as pm}
+                        <div class="form-group u-border-bgrey2 u-pad-b30">
                             <h3 class="heading-small">{$i18n('paymentMethods_' + pm + '_heading')}</h3>
                             {#if pm == 'PURCHASE_ORDER'}
                                 <HowToGetPo/>
                             {/if}
                             <label class="form-label" for="{pm}">{$i18n('paymentMethods_' + pm + '_label')}</label>
                             <input class="form-control" id="{pm}" type="text" name="{pm}" value="{values[pm] || ''}">
-                        {/each}
+                        </div>
+                    {/each}
+
+                    <div class="column-two-thirds">
+                        <div class="grid-row">
+                        <BookingCancellationPolicy/>
+                        <input type="submit" class="button" value="Continue">
+                        <input type="hidden" name="_csrf" value="{_csrf}">
+                        <a class="link--block" href="/suggestions-for-you/add/{course.id}?ref=home">
+                            Add to learning plan
+                        </a>
+                        </div>
                     </div>
-
-                    <BookingCancellationPolicy/>
-
-                    <input type="submit" class="button" value="Continue">
-
-                    <input type="hidden" name="_csrf" value="{_csrf}">
-
-                    <a class="link--block" href="/suggestions-for-you/add/{course.id}?ref=home">
-                        Add to learning plan
-                    </a>
                 </form>
             </div>
         </div>
