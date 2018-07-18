@@ -30,7 +30,6 @@ export function searchResults() {
 
 export function search(searchTerm: string) {
 	browser.url(config.BASE_URL + '/search')
-	browser.pause(5000)
 	browser.waitForVisible(selectors.searchBox, 10000)
 	browser.setValue(selectors.searchBox, '')
 	browser.setValue(selectors.searchBox, searchTerm)
