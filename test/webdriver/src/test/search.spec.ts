@@ -14,7 +14,7 @@ describe('Search page funtionality', () => {
 		browser.close()
 	})
 
-	//TODO: Blocked by LPFG-391
+	// TODO: Blocked by LPFG-391
 	xit('Should add to learning plan from search', async () => {
 		search('the')
 		const courseName = browser.getText(selectors.courseName)
