@@ -445,8 +445,8 @@ export class Audience {
 		return !this.mandatory
 	}
 
-	set optional(value: boolean) {
-		this.mandatory = !value
+	set optional(value: (boolean | string)) {
+		this.mandatory = (!value || value === 'false')
 	}
 
 	getRelevance(user: User) {
