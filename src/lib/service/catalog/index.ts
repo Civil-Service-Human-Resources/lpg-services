@@ -74,7 +74,7 @@ export async function search(
 			url += `&cost=${cost}`
 		}
 		if (courseTypes) {
-			url += `&type=${courseTypes.join('&type=')}`
+			url += `&types=${courseTypes.join('&types=')}`
 		}
 		if (areasOfWork) {
 			url += `&areasOfWork=${areasOfWork.join('&areasOfWork=')}`

@@ -204,6 +204,28 @@
 		"legal": "Legal",
 		"property": "Property"
 	},
+	"interests": {
+		"contract-management": "Contract management",
+		"leadership": "Leadership"
+	},
+	"departments": {
+		"hmrc": "HM Revenue & Customs",
+		"dh": "Department of Health & Social Care",
+		"co": "Cabinet Office"
+	},
+	"areas-of-work": {
+		"commercial": "Commercial",
+		"digital": "Digital",
+		"project-delivery": "Project Delivery",
+		"communications": "Communications",
+		"corporate-finance": "Corporate finance",
+		"finance": "Finance",
+		"fraud-error-debt-grants": "Fraud, error, debt and grants",
+		"human-resources": "Human Resources",
+		"internal-audit": "Internal audit",
+		"legal": "Legal",
+		"property": "Property"
+	},
 	"optional": {
 		"true": "True",
 		"false": "False"
@@ -279,7 +301,7 @@
 	},
 	"courseTypes": {
 		"blog": "Blog",
-		"faceToFace": "Face to face",
+		"face-to-face": "Face to face",
 		"link": "Link",
 		"elearning": "Online",
 		"video": "Video"
@@ -310,9 +332,6 @@
 		"complete": "Module complete"
 	},
 	"file": "file",
-	" areas-of-work": " areas-of-work",
-	" departments": " departments",
-	" interests": " interests",
 	"SCS": "SCS",
 	"cancel": "cancel",
 	"justAdded": "Just added",
