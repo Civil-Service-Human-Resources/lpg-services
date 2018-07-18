@@ -331,5 +331,6 @@
 	"paymentMethods_PURCHASE_ORDER_type": "Purchase order",
 	"REQUESTED": "REQUESTED",
 	"CANCELLED": "CANCELLED",
+	"Cost": "Cost",
 	"SKIPPED": "SKIPPED"
 }
