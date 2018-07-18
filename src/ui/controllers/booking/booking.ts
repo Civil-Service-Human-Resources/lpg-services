@@ -158,8 +158,8 @@ export function selectedDate(req: express.Request, res: express.Response) {
 		if (returnTo) {
 			delete req.session!.returnTo
 		} else {
-			returnTo = `/book/${req.params.courseId}/
-				${req.params.moduleId}/${decodeURIComponent(selected)}/accessibility`
+			returnTo =
+				`/book/${req.params.courseId}/${req.params.moduleId}/${decodeURIComponent(selected)}/accessibility`
 		}
 		req.session!.selectedEventId = selected
 		req.session!.save(() => {
@@ -169,9 +169,14 @@ export function selectedDate(req: express.Request, res: express.Response) {
 }
 
 export async function renderAccessibilityOptions(
-	req: express.Request,
+	ireq: express.Request,
 	res: express.Response
 ) {
+	const req = ireq as extended.CourseRequest
+
+	const course = req.course
+	const module = req.module!
+	const event = req.event!
 	const session = req.session!
 
 	if (req.query.ref === 'summary') {
@@ -181,6 +186,9 @@ export async function renderAccessibilityOptions(
 	res.send(
 		template.render('booking/accessibility', req, res, {
 			accessibilityReqs: session.accessibilityReqs,
+			course,
+			event,
+			module,
 		})
 	)
 }
@@ -243,7 +251,10 @@ export async function renderPaymentOptions(
 		} else {
 			res.send(
 				template.render('booking/payment-options', req, res, {
+					course: req.course!,
 					errors: req.flash('errors'),
+					event: req.event!,
+					module,
 					paymentMethods: organisation.department.paymentMethods,
 					values: req.flash('values')[0] || (session.payment ? { [session.payment.type]: session.payment.value } : {}),
 				})

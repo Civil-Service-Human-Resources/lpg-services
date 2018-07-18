@@ -3,6 +3,7 @@ import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
+import * as registry from "lib/registry"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
@@ -139,10 +140,17 @@ export async function display(ireq: express.Request, res: express.Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 
 	const type = course.getType()
+	let canPayByPO = false
 
 	switch (type) {
 		case 'elearning':
 		case 'face-to-face':
+			if (req.user.department) {
+				const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
+					['organisations', 'search', 'findByDepartmentCode'],
+					{ departmentCode: req.user.department }) as any
+				canPayByPO = organisation.department.paymentMethods.indexOf('PURCHASE_ORDER') > -1
+			}
 		case 'file':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
@@ -162,6 +170,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 
 			res.send(
 				template.render(`course/${type}`, req, res, {
+					canPayByPO,
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
