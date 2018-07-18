@@ -63,7 +63,7 @@ export async function search(
 	cost?: string,
 	areasOfWork?: string[],
 	departments?: string[],
-	interests?: string[],
+	interests?: string[]
 ): Promise<api.SearchResults> {
 	try {
 		let url = `/search?page=${page}&size=${size}`
