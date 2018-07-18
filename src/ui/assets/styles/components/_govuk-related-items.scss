@@ -6,6 +6,10 @@
   padding-left: 8px;
   padding-right: 8px;
 
+  &:first-of-type {
+    margin-top: 0;
+  }
+
   @include m(search) {
     border: 5px solid $grey-2;
     padding: 0;
