@@ -72,7 +72,7 @@ export async function setAudienceNode(
 		collection = fieldValue
 	}
 
-	const extend = module!.audiences[audienceNumber] as any
+	const extend = model.Audience.create(module!.audiences[audienceNumber]) as any
 	extend[nodePlural] = collection
 	module!.audiences[audienceNumber] = extend
 
