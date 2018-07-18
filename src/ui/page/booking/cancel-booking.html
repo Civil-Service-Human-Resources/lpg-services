@@ -53,46 +53,8 @@
                     <label for="other-reason" class="visually-hidden">Other reason</label>
                     <input type="text" id="otherReason" name="otherReason" value="" class="push-bottom">
 
-                    <p><strong>Cancellation policy</strong></p>
-                    <p>If you wish to cancel your booking, the policy is:</p>
-                    <ul  class="booking__list--cancel">
-                        <li>22 days or more before the opening of a course, you will not be charged</li>
-                        <li>14 to 21 days before the opening of a course, you will be charged 30% of the total course cost</li>
-                        <li>Less than 14 days  before the opening of a course, you will be charged 100% of the of the total course cost</li>
-                    </ul>
-  
-                    <details class="booking__details">
-                        <summary><span class="summary">Cancellation policy in full</summary>
-                        <div class="panel panel-border-narrow">
-                            <p>If you wish to cancel your booking, the policy is:</p>
-                            <ul class="booking__list--cancel">
-                                <li>22 days or more before the opening of a course, you will not be charged</li>
-                                <li>14 to 21 days before the opening of a course, you will be charged 30% of the total course cost</li>
-                                <li>Less than 14 days  before the opening of a course, you will be charged 100% of the of the total course cost</li>
-                            </ul>
-                            <p>
-                            <p>The ‘days’ referred to are actual days rather than working days.</p>
-                            <p>The ‘opening’ of the course is the date on which any digital learning or preparatory work is released and made available to you.</p>
-                            <p>We reserve the right to cancel a course if the minimum number of participants has not been reached.</p>
-                            <p>Please ensure that the information you provide for your booking is valid and accurate. Inaccurate booking information may result in your booking being cancelled or your department incurring costs.</p>
-                        </div>
-                    </details>
-                
-                    <details class="booking__details">
-                    <summary><span class="summary">Terms and conditions</span></summary>
-                    <div class="panel panel-border-narrow">
-                            <p>You may not:</p>
-
-                            <ul class="booking__list--cancel">
-                                <li>distribute any materials (whether digital or printed) that you access as part of this course to anyone else</li>
-                                <li>permit anyone else to access this course using the access details that we provide to you</li>
-                                <li>circulate the access details that you are sent to anyone else</li>
-                            </ul>
-
-                            <p>You may access the digital course materials yourself as many times as you wish.</p>
-                            <p>Please ensure that the information you provide for your booking is valid and accurate. Inaccurate booking information may result in your booking being cancelled or your department incurring costs.</p>
-                    </div>
-                    </details>
+                    <BookingCancellationPolicy />
+                    <TermsAndConditions />
                 
                     <div class="notice booking__notice push-bottom">
                     <i class="icon icon-important">
@@ -119,6 +81,8 @@
 	import Page from '../../component/Page.html'
     import Error from '../../component/Error.html'
     import Selects from '../../component/Selects.html'
+    import BookingCancellationPolicy from '../../component/statics/BookingCancellationPolicy.html'
+    import TermsAndConditions from '../../component/statics/TermsAndConditions.html'
 
 	export default {
 		data() {
@@ -129,7 +93,9 @@
 		components: {
 			Page,
             Error,
-            Selects
+            Selects,
+            BookingCancellationPolicy,
+            TermsAndConditions
 		}
 	}
 </script>

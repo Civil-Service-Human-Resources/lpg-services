@@ -1,6 +1,7 @@
 .div-table {
 	width: 100%;
 	margin: 30px 0;
+	display: table;
 
 	@include e(row) {
 		position: relative;

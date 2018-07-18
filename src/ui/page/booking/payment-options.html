@@ -2,8 +2,9 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
+                <a class="link-back" href="/book/{course.id}/{module.id}/{event.id}/accessibility">Back</a>
                 <h1 class="heading-large">
-                    <span class="heading-secondary">Booking a course</span>Payment
+                    Payment details
                 </h1>
             </div>
         </div>
@@ -15,13 +16,24 @@
                 <form autocomplete="nope" method="post">
                     <div class="form-group">
                         {#each paymentMethods as pm}
-                            <p>{$i18n('paymentMethods_' + pm + '_information')}</p>
+                            <h3 class="heading-small">{$i18n('paymentMethods_' + pm + '_heading')}</h3>
+                            {#if pm == 'PURCHASE_ORDER'}
+                                <HowToGetPo/>
+                            {/if}
                             <label class="form-label" for="{pm}">{$i18n('paymentMethods_' + pm + '_label')}</label>
                             <input class="form-control" id="{pm}" type="text" name="{pm}" value="{values[pm] || ''}">
                         {/each}
                     </div>
+
+                    <BookingCancellationPolicy/>
+
                     <input type="submit" class="button" value="Continue">
+
                     <input type="hidden" name="_csrf" value="{_csrf}">
+
+                    <a class="link--block" href="/suggestions-for-you/add/{course.id}?ref=home">
+                        Add to learning plan
+                    </a>
                 </form>
             </div>
         </div>
@@ -31,6 +43,9 @@
 <script>
 	import Page from '../../component/Page.html'
 	import Error from '../../component/Error.html'
+    import HowToGetPo from '../../component/statics/Hidden-howtogetpo.html'
+    import BookingCancellationPolicy from '../../component/statics/BookingCancellationPolicy.html'
+
 	export default {
 		data() {
 			return {
@@ -39,7 +54,9 @@
 
 		components: {
 			Page,
-			Error
+			Error,
+            HowToGetPo,
+            BookingCancellationPolicy
 		}
 	}
 </script>

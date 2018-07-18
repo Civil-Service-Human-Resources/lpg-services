@@ -31,19 +31,19 @@
 
     <div class="grid-row">
         <div class="column-two-thirds">
-            <div class="notice push-bottom">
-              <i class="icon icon-important">
-                <span class="visually-hidden">Warning</span>
-              </i>
-              <strong class="bold-small">
-                By continuing to book, you are confirming you have approval to book this course and the appropriate
-                payment option in place.
-              </strong>
-            </div>
-            <HowToGetPo/>
-
+            {#if canPayByPO}
+                <div class="notice push-bottom">
+                  <i class="icon icon-important">
+                    <span class="visually-hidden">Warning</span>
+                  </i>
+                  <strong class="bold-small">
+                    By proceeding, you are confirming you have gained approval to book this course and have a purchase
+                    order number.
+                  </strong>
+                </div>
+                <HowToGetPo/>
+            {/if}
             <a class="button" href="/book/{course.id}/{module.id}/choose-date">View availability</a>
-
         </div>
     </div>
 </div>
