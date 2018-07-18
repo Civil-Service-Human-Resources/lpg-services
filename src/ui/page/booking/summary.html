@@ -79,7 +79,7 @@
                         </span>
                         <ul class="booking__values">
                             {#if accessibilityReqs && accessibilityReqs.length} {#each accessibilityReqs as requirement } {#if requirement}
-                            <li class="booking__value booking__value--li lpg-access-reqs">{requirement === 'other' ? 'Other' : $i18n('accessibility-requirements')[requirement]}</li>
+                            <li class="booking__value booking__value--li lpg-access-reqs">{requirement.startsWith('Other') ? requirement : $i18n('accessibility-requirements')[requirement]}</li>
                             {:else}
                             <li class="booking__value booking__value--li lpg-no-reqs">None</li>
                             {/if} {/each} {/if}

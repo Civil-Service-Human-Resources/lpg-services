@@ -47,10 +47,18 @@ export function saveAccessibilityOptions(
 	req: express.Request,
 	res: express.Response
 ) {
+	const session = req.session!
+
 	if (Array.isArray(req.body.accessibilityreqs)) {
-		req.session!.accessibilityReqs = [...req.body.accessibilityreqs]
+		session.accessibilityReqs = req.body.accessibilityreqs
 	} else {
-		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
+		session.accessibilityReqs = [req.body.accessibilityreqs]
+	}
+
+	session.otherAccessibilityReqs = req.body.otherDescription || ''
+	if ((session.accessibilityReqs.indexOf('other') > -1 || req.body.otherDescription)
+		&& session.accessibilityReqs.indexOf('other') === -1) {
+		session.accessibilityReqs.push('other')
 	}
 
 	let { returnTo } = req.session!
@@ -86,6 +94,7 @@ export async function renderChooseDate(
 		}
 		delete req.session!.payment
 		delete req.session!.accessibilityReqs
+		delete req.session!.otherAccessibilityReqs
 	}
 
 	if (req.query.ref === 'summary') {
@@ -189,6 +198,7 @@ export async function renderAccessibilityOptions(
 			course,
 			event,
 			module,
+			otherAccessibilityReqs: session.otherAccessibilityReqs,
 		})
 	)
 }
@@ -204,9 +214,14 @@ export async function renderConfirmPayment(
 	const event = req.event!
 	const session = req.session!
 
+	const accessibilityReqs = [...session.accessibilityReqs]
+	if (accessibilityReqs.indexOf('other') > -1) {
+		accessibilityReqs[accessibilityReqs.indexOf('other')] = `Other: ${session.otherAccessibilityReqs || ''}`
+	}
+
 	res.send(
 		template.render('booking/summary', req, res, {
-			accessibilityReqs: session.accessibilityReqs,
+			accessibilityReqs,
 			course,
 			courseDetails: courseController.getCourseDetails(req, course, module),
 			event,
@@ -482,6 +497,7 @@ export async function tryCompleteBooking(
 	if (!error) {
 		delete req.session!.payment
 		delete req.session!.accessibilityReqs
+		delete req.session!.otherAccessibilityReqs
 		delete req.session!.selectedEventId
 
 		res.send(
