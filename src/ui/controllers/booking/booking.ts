@@ -53,12 +53,15 @@ export function saveAccessibilityOptions(
 		req.session!.accessibilityReqs = [req.body.accessibilityreqs]
 	}
 
+	let { returnTo } = req.session!
+	if (returnTo) {
+		delete req.session!.returnTo
+	} else {
+		returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${
+			req.session!.selectedEventId}/payment`
+	}
 	req.session!.save(() => {
-		res.redirect(
-			`/book/${req.params.courseId}/${req.params.moduleId}/${
-				req.session!.selectedEventId
-			}/payment`
-		)
+		res.redirect(returnTo)
 	})
 }
 
@@ -83,6 +86,10 @@ export async function renderChooseDate(
 		}
 		delete req.session!.payment
 		delete req.session!.accessibilityReqs
+	}
+
+	if (req.query.ref === 'summary') {
+		req.session!.returnTo = `/book/${course.id}/${module.id}/${selectedEventId}/confirm`
 	}
 
 	const today = new Date()
@@ -147,13 +154,16 @@ export function selectedDate(req: express.Request, res: express.Response) {
 			)
 		})
 	} else {
+		let { returnTo } = req.session!
+		if (returnTo) {
+			delete req.session!.returnTo
+		} else {
+			returnTo = `/book/${req.params.courseId}/
+				${req.params.moduleId}/${decodeURIComponent(selected)}/accessibility`
+		}
 		req.session!.selectedEventId = selected
 		req.session!.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${
-					req.params.moduleId
-				}/${decodeURIComponent(selected)}/accessibility`
-			)
+			res.redirect(returnTo)
 		})
 	}
 }
@@ -163,6 +173,11 @@ export async function renderAccessibilityOptions(
 	res: express.Response
 ) {
 	const session = req.session!
+
+	if (req.query.ref === 'summary') {
+		session.returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${req.params.eventId}/confirm`
+	}
+
 	res.send(
 		template.render('booking/accessibility', req, res, {
 			accessibilityReqs: session.accessibilityReqs,
@@ -279,7 +294,12 @@ export async function enteredPaymentDetails(
 		})
 	} else {
 		session.save(() => {
-			res.redirect(`${req.originalUrl}/confirm`)
+			const confirmPage = session.payment.type === 'PURCHASE_ORDER' ? 'payment/confirm-po' : 'confirm'
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/${
+					req.params.eventId
+				}/${confirmPage}`
+			)
 		})
 	}
 }

@@ -329,8 +329,8 @@
 	"paymentMethods_PURCHASE_ORDER_information": "Purchase order - you will need to have a valid purchase order number from your finance team to complete this booking. To request a PO number, you will need the provider name and cost from the course description.",
 	"paymentMethods_PURCHASE_ORDER_label": "Purchase order number",
 	"paymentMethods_PURCHASE_ORDER_type": "Purchase order",
-	"REQUESTED": "REQUESTED",
-	"CANCELLED": "CANCELLED",
+	"REQUESTED": "Requested",
+	"CANCELLED": "Cancelled",
 	"Cost": "Cost",
-	"SKIPPED": "SKIPPED"
+	"SKIPPED": "Skipped"
 }
