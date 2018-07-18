@@ -13,7 +13,7 @@ export const selectors: Record<string, string> = {
 	online: '#online',
 	pageHeading: '.heading--page-heading',
 	searchAction: '.result__action',
-	searchBox: '#q',
+	searchBox: '.search-box__input',
 	searchButton: '.search-box__submit',
 	searchNextPage: '.pager__next',
 	searchPagination: '.pager__controls',
@@ -31,6 +31,7 @@ export function searchResults() {
 export function search(searchTerm: string) {
 	browser.url(config.BASE_URL + '/search')
 	browser.waitForVisible(selectors.searchBox, 10000)
+	browser.click(selectors.searchBox)
 	browser.setValue(selectors.searchBox, '')
 	browser.setValue(selectors.searchBox, searchTerm)
 	browser.keys(['Enter'])
