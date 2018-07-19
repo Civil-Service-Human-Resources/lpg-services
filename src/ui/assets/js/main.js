@@ -42,6 +42,8 @@ $(document).ready(function() {
     })
   }
 
+  $('.filter-toggle').not(':has(input[checked])').addClass('filter-toggle--shut');
+
   $('.filter-toggle legend').click(function (e) {
     e.preventDefault()
     $(this).parents('.filter-toggle').toggleClass('filter-toggle--shut');
