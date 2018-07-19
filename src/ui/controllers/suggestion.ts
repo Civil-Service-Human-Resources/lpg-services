@@ -208,59 +208,15 @@ export async function homeSuggestions(
 	user: model.User,
 	learningRecordIn: Record<string, model.Course> = {}
 ) {
-	let learningRecord: Record<string, model.Course> = {}
-	if (Object.keys(learningRecordIn).length > 0) {
-		learningRecord = learningRecordIn
-	} else {
-		const records = await learnerRecord.getLearningRecord(user)
-		learningRecord = records.length ? hashArray(records, 'id') : {}
-	}
-
-	let areaOfWorkSuggestions = await getSuggestions(
+	const learningRecord = await getLearningRecord(user, learningRecordIn)
+	return await getSuggestions(
 		user.department!,
-		[],
-		[],
-		1,
-		learningRecord,
-		user
-	)
-	let departmentSuggestions = await getSuggestions(
-		'',
 		user.areasOfWork || [],
 		[],
-		5,
+		6,
 		learningRecord,
 		user
 	)
-
-	// If either set of suggestions is too small, try and fill up with other suggestions.
-	if (areaOfWorkSuggestions.length < 1) {
-		departmentSuggestions = [
-			...departmentSuggestions,
-			...(await getSuggestions(
-				'',
-				user.areasOfWork || [],
-				[],
-				1,
-				learningRecord,
-				user
-			)),
-		]
-	} else if (departmentSuggestions.length < 5) {
-		areaOfWorkSuggestions = [
-			...areaOfWorkSuggestions,
-			...(await getSuggestions(
-				user.department!,
-				[],
-				[],
-				5 - departmentSuggestions.length,
-				learningRecord,
-				user
-			)),
-		]
-	}
-
-	return [...areaOfWorkSuggestions, ...departmentSuggestions]
 }
 
 async function getSuggestions(
