@@ -254,7 +254,7 @@ export async function renderPaymentOptions(
 			value: `Call off ${callOffPo.id}`,
 		}
 		session.save(() => {
-			res.redirect(`${req.originalUrl}/confirm`)
+			res.redirect(`/book/${req.params.courseId}/${req.params.moduleId}/${req.params.eventId}/confirm`)
 		})
 	} else {
 		const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
