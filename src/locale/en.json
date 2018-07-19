@@ -192,6 +192,7 @@
 		"co": "Cabinet Office"
 	},
 	"areaOfWork": {
+		"analysis": "Analysis",
 		"commercial": "Commercial",
 		"digital": "Digital",
 		"project-delivery": "Project Delivery",
@@ -202,6 +203,7 @@
 		"human-resources": "Human Resources",
 		"internal-audit": "Internal audit",
 		"legal": "Legal",
+		"operational-delivery": "Operational Delivery",
 		"property": "Property"
 	},
 	"interests": {
@@ -214,6 +216,7 @@
 		"co": "Cabinet Office"
 	},
 	"areas-of-work": {
+		"analysis": "Analysis",
 		"commercial": "Commercial",
 		"digital": "Digital",
 		"project-delivery": "Project Delivery",
@@ -224,6 +227,7 @@
 		"human-resources": "Human Resources",
 		"internal-audit": "Internal audit",
 		"legal": "Legal",
+		"operational-delivery": "Operational Delivery",
 		"property": "Property"
 	},
 	"optional": {
