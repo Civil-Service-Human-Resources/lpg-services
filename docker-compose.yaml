@@ -62,7 +62,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: cshr/identity-service:0eb6e0e490c3f90cd79c17092980c533913c4faa
+    image: cshr/identity-service:e4aff54943f71dd6b270b33175606f7884a54ccb
     ports:
       - 8080:8080
       - 8081:8081
