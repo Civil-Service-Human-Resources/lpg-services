@@ -118,10 +118,11 @@ services:
 
   lpg-management:
       container_name: lpg-management
-      image: cshr/lpg-management-ui:latest
+      image: cshr/lpg-management-ui:73b8e1ebcd9b8829a3799bd6831a2bac02dda0e2
       environment:
-        - OAUTH_SERVICE_URL=http://identity:8080
+        - AUTHENTICATION_SERVICE_URL=http://localhost:8080
         - LEARNING_CATALOGUE_SERVICE_URL=http://localhost:9001
+        - CALLBACK_URL=http://lpg-management:3005
       depends_on:
         - identity
         - learning-catalogue
