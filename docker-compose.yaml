@@ -119,6 +119,9 @@ services:
   lpg-management:
       container_name: lpg-management
       image: cshr/lpg-management-ui:latest
+      environment:
+        - OAUTH_SERVICE_URL=http://identity:8080
+        - LEARNING_CATALOGUE_SERVICE_URL=http://localhost:9001
       depends_on:
         - identity
         - learning-catalogue
