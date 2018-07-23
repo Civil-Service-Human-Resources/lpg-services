@@ -50,13 +50,8 @@ export async function getRecord(
 }
 
 export async function getLearningRecord(user: model.User) {
-	const response = await http.get(`/records/${user.id}`, {
-		headers: {Authorization: `Bearer ${user.accessToken}`},
-	})
-
-	const courses: model.Course[] = []
-	for (let record of response.data.records) {
-		record = convert(record)
+	const records = await getRawLearningRecord(user)
+	const promises = records.map(async record => {
 		const course = await catalog.get(record.courseId)
 		if (!course) {
 			logger.warn(
@@ -64,12 +59,19 @@ export async function getLearningRecord(user: model.User) {
 					user.id
 				}, course : ${record.courseId}`
 			)
-			continue
+		} else {
+			course.record = record
 		}
-		course.record = record
-		courses.push(course)
-	}
-	return courses
+		return course
+	})
+	return (await Promise.all(promises)) as model.Course[]
+}
+
+export async function getRawLearningRecord(user: model.User): Promise<CourseRecord[]> {
+	const response = await http.get(`/records/${user.id}`, {
+		headers: {Authorization: `Bearer ${user.accessToken}`},
+	})
+	return response.data.records.map(convert)
 }
 
 function convert(record: CourseRecord) {

@@ -43,7 +43,7 @@
             </fieldset>
         </div>
 
-        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle filter-toggle--shut">
+        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
                     <h2 class="govuk-related-items__heading heading-medium">Other departments</h2>
@@ -71,14 +71,14 @@
             </fieldset>
         </div>
 
-        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle filter-toggle--shut">
+        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
                     <h2 class="govuk-related-items__heading heading-medium">Other areas of work</h2>
                 </legend>
                 {#each areasOfWork.other as filter}
                 <div class="multiple-choice">
-                    <input type="checkbox" value="{filter.name}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                    <input type="checkbox" value="{filter}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
                     <label for="{filter}">{filter}</label>
                 </div>
                 {/each}
@@ -99,7 +99,7 @@
             </fieldset>
         </div>
 
-        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle filter-toggle--shut">
+        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
                     <h2 class="govuk-related-items__heading heading-medium">Other interests</h2>

@@ -103,18 +103,18 @@ export async function search(req: express.Request, res: express.Response) {
 	// rather than polling for each course lets get the learning record for the user
 	const user = req.user as model.User
 
-	const courseRecords = await learnerRecord.getLearningRecord(user)
+	const courseRecords = await learnerRecord.getRawLearningRecord(user)
 
 	searchResults.results.forEach(result => {
 		const cmResult = result as model.CourseModule
 		delete cmResult.course.record
 
 		const courseRecord = courseRecords.find(
-			record => cmResult.course.id === record.id
+			record => cmResult.course.id === record.courseId
 		)
 		if (courseRecord) {
 			// we have a course record add it to the course
-			cmResult.course.record = courseRecord.record
+			cmResult.course.record = courseRecord
 		}
 
 		combinedResults.push(cmResult)

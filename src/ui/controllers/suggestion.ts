@@ -9,9 +9,9 @@ import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/suggestion')
 
-export function hashArray(courses: model.Course[], key: string) {
-	const hash: Record<string, model.Course> = {}
-	for (const entry of courses) {
+export function hashArray<T>(records: T[], key: string) {
+	const hash: Record<string, T> = {}
+	for (const entry of records) {
 		const hashIndex: string = (entry as any)[key]
 		hash[hashIndex] = entry
 	}
@@ -87,10 +87,19 @@ export async function suggestionsPage(
 	const user = req.user as model.User
 	const courses = []
 
-	courses.push({key: 'areaOfWork', value: await suggestionsByAreaOfWork(user) })
-	courses.push({key: 'areaOfWork', value: await suggestionsByOtherAreasOfWork(user) })
-	courses.push({key: 'department', value: await suggestionsByDepartment(user) })
-	courses.push({key: 'interest', value: await suggestionsByInterest(user) })
+	const learningRecord = await getLearningRecord(user)
+
+	const [areaOfWork, otherAreasOfWork, departments, interests] = await Promise.all([
+		suggestionsByAreaOfWork(user, learningRecord),
+		suggestionsByOtherAreasOfWork(user, learningRecord),
+		suggestionsByDepartment(user, learningRecord),
+		suggestionsByInterest(user, learningRecord),
+	])
+
+	courses.push({key: 'areaOfWork', value: areaOfWork })
+	courses.push({key: 'areaOfWork', value: otherAreasOfWork })
+	courses.push({key: 'department', value: departments })
+	courses.push({key: 'interest', value: interests })
 
 	res.send(
 		template.render('suggested', req, res, {
@@ -101,83 +110,85 @@ export async function suggestionsPage(
 	)
 }
 
-export async function getLearningRecord(user: model.User, learningRecordIn: Record<string, model.Course> ) {
-	let learningRecord: Record<string, model.Course> = {}
+export async function getLearningRecord(user: model.User, learningRecordIn:
+		Record<string, learnerRecord.CourseRecord> = {}) {
+	let learningRecord: Record<string, learnerRecord.CourseRecord> = {}
 
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
 	} else {
-		const records = await learnerRecord.getLearningRecord(user)
-		learningRecord = records.length ? hashArray(records, 'id') : {}
+		const records = await learnerRecord.getRawLearningRecord(user)
+		learningRecord = records.length ? hashArray(records, 'courseId') : {}
 	}
-
 	return learningRecord
 }
 
 export async function suggestionsByInterest(
 	user: model.User,
-	learningRecordIn: Record<string, model.Course> = {}
+	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
-
 	const courseSuggestions: Record<string, model.Course[]> = {}
-	for (const interest of user.interests || []) {
-		courseSuggestions[(interest as any).name] = await getSuggestionsByInterest(
-			[interest],
-			6,
-			await getLearningRecord(user, learningRecordIn),
-			user
-		)
-	}
 
+	const promises = (user.interests || []).map(async interest => {
+		courseSuggestions[(interest as any)] =
+			await getSuggestions(
+				'',
+				[],
+				[interest],
+				6,
+				await getLearningRecord(user, learningRecordIn),
+				user
+			)
+	})
+	await Promise.all(promises)
 	return courseSuggestions
 }
 
 export async function suggestionsByAreaOfWork(
 	user: model.User,
-	learningRecordIn: Record<string, model.Course> = {},
-	expand?: string
+	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
-	for (const aow of user.areasOfWork || []) {
+	const promises = (user.areasOfWork || []).map(async aow => {
 		courseSuggestions[(aow as any)] =
 			await getSuggestions(
 				'',
 				[aow],
-				aow === expand ? 10 : 6,
+				[],
+				6,
 				await getLearningRecord(user, learningRecordIn),
 				user
 			)
-	}
-
+	})
+	await Promise.all(promises)
 	return courseSuggestions
 }
 
 export async function suggestionsByOtherAreasOfWork(
 	user: model.User,
-	learningRecordIn: Record<string, model.Course> = {},
-	expand?: string
+	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
-	for (const aow of user.otherAreasOfWork || []) {
-		courseSuggestions[(aow as any).name] =
+	const promises = (user.otherAreasOfWork || []).map(async aow => {
+		courseSuggestions[(aow.name as any)] =
 			await getSuggestions(
 				'',
-				[aow],
-				aow === expand ? 10 : 6,
+				[aow.name],
+				[],
+				6,
 				await getLearningRecord(user, learningRecordIn),
 				user
 			)
-	}
-
+	})
+	await Promise.all(promises)
 	return courseSuggestions
 }
 
 export async function suggestionsByDepartment(
 	user: model.User,
-	learningRecordIn: Record<string, model.Course> = {},
-	expand?: string
+	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
@@ -185,102 +196,38 @@ export async function suggestionsByDepartment(
 		await getSuggestions(
 			user.department!,
 			[],
-			user.department === expand ? 10 : 6,
+			[],
+			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
 		)
-
 	return courseSuggestions
 }
 
 export async function homeSuggestions(
 	user: model.User,
-	learningRecordIn: Record<string, model.Course> = {}
+	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
-	let learningRecord: Record<string, model.Course> = {}
-	if (Object.keys(learningRecordIn).length > 0) {
-		learningRecord = learningRecordIn
-	} else {
-		const records = await learnerRecord.getLearningRecord(user)
-		learningRecord = records.length ? hashArray(records, 'id') : {}
-	}
-
-	let areaOfWorkSuggestions = await getSuggestions(
+	const learningRecord = await getLearningRecord(user, learningRecordIn)
+	return await getSuggestions(
 		user.department!,
-		[],
-		1,
-		learningRecord,
-		user
-	)
-	let departmentSuggestions = await getSuggestions(
-		'',
 		user.areasOfWork || [],
-		5,
+		[],
+		6,
 		learningRecord,
 		user
 	)
-
-	// If either set of suggestions is too small, try and fill up with other suggestions.
-	if (areaOfWorkSuggestions.length < 1) {
-		departmentSuggestions = [
-			...departmentSuggestions,
-			...(await getSuggestions(
-				'',
-				user.areasOfWork || [],
-				1,
-				learningRecord,
-				user
-			)),
-		]
-	} else if (departmentSuggestions.length < 5) {
-		areaOfWorkSuggestions = [
-			...areaOfWorkSuggestions,
-			...(await getSuggestions(
-				user.department!,
-				[],
-				5 - departmentSuggestions.length,
-				learningRecord,
-				user
-			)),
-		]
-	}
-
-	return [...areaOfWorkSuggestions, ...departmentSuggestions]
-}
-
-async function getSuggestionsByInterest(
-	interests: Array<{}>,
-	count: number,
-	learningRecord: Record<string, model.Course>,
-	user: model.User
-): Promise<model.Course[]> {
-	const interestNames = interests.map(interest => (interest as any).name)
-	const params = new catalog.ApiParametersByInterest(interestNames, 0, count)
-	let newSuggestions: model.Course[] = []
-	let hasMore = true
-
-	while (newSuggestions.length < count && hasMore) {
-		const page = await catalog.findSuggestedLearningWithParameters(
-			params.serialize()
-		)
-		newSuggestions = newSuggestions.concat(
-			modifyCourses(page.results, learningRecord, user)
-		)
-		hasMore = page.totalResults > page.size * (page.page + 1)
-		params.page += 1
-	}
-
-	return newSuggestions.slice(0, count)
 }
 
 async function getSuggestions(
 	department: string,
 	areasOfWork: string[],
+	interests: string[],
 	count: number,
-	learningRecord: Record<string, model.Course>,
+	learningRecord: Record<string, learnerRecord.CourseRecord>,
 	user: model.User
 ): Promise<model.Course[]> {
-	const params = new catalog.ApiParameters(areasOfWork, department, 0, count)
+	const params = new catalog.ApiParameters(areasOfWork, department, interests, 0, count)
 
 	let newSuggestions: model.Course[] = []
 	let hasMore = true
@@ -301,18 +248,18 @@ async function getSuggestions(
 
 function modifyCourses(
 	courses: model.Course[],
-	learningRecord: Record<string, model.Course>,
+	learningRecord: Record<string, learnerRecord.CourseRecord>,
 	user: model.User
 ) {
 	const modified: model.Course[] = []
 	for (const course of courses) {
 		const matched = learningRecord[course.id]
-		if (
-			!matched ||
-			(!matched.hasPreference() &&
-				!matched.isComplete(user) &&
-				!matched.isStarted(user))
-		) {
+		if (matched) {
+			course.record = matched
+			if (!(course.hasPreference() || course.isComplete(user) || course.isStarted(user))) {
+				modified.push(course)
+			}
+		} else {
 			modified.push(course)
 		}
 	}
