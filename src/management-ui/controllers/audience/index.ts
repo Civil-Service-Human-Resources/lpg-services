@@ -30,7 +30,7 @@ export enum pluralizer {
 	required = 'required-by',
 }
 
-const Singular: string[] = ['frequency', 'optional', 'required']
+const Singular: string[] = ['frequency', 'optional', 'requiredBy']
 
 function isDateType(term: string) {
 	return term === 'required-by'
