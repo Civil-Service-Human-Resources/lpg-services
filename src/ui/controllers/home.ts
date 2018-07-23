@@ -6,7 +6,6 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as suggestionController from './suggestion'
-import * as config from 'lib/config'
 
 const logger = log4js.getLogger('controllers/home')
 
