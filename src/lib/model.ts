@@ -451,6 +451,11 @@ export class Audience {
 
 	getRelevance(user: User) {
 		let relevance = -1
+
+		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
+			return 0
+		}
+
 		if (
 			user.areasOfWork &&
 			this.areasOfWork.filter(
