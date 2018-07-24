@@ -55,7 +55,12 @@ export async function setAudienceNode(
 	const node = req.params.profileDetail
 	const audienceNumber = req.params.audienceNumber
 
-	const fieldValue = req.body[node]
+	let fieldValue = req.body[node]
+	if (fieldValue === '') {
+		// ensure if field value is an empty string (i.e. unset) we set it to null
+		fieldValue = null
+	}
+
 	if (!module!.audiences[audienceNumber]) {
 		module!.audiences[audienceNumber] = model.Audience.create({})
 	}
