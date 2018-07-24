@@ -64,7 +64,8 @@ export async function getLearningRecord(user: model.User) {
 		}
 		return course
 	})
-	return (await Promise.all(promises)) as model.Course[]
+	return ((await Promise.all(promises)) as model.Course[])
+		.filter(course => !!course)
 }
 
 export async function getRawLearningRecord(user: model.User): Promise<CourseRecord[]> {
