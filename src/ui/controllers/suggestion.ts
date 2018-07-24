@@ -130,11 +130,11 @@ export async function suggestionsByInterest(
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.interests || []).map(async interest => {
-		courseSuggestions[(interest as any)] =
+		courseSuggestions[(interest.name as any)] =
 			await getSuggestions(
 				'',
 				[],
-				[interest],
+				[interest.name],
 				6,
 				await getLearningRecord(user, learningRecordIn),
 				user
