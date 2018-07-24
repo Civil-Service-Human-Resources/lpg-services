@@ -60,9 +60,6 @@ export async function display(req: express.Request, res: express.Response) {
 			return bt - at
 		})
 
-	const requiredLearningTotal = (await catalog.findRequiredLearning(req.user))
-		.totalResults
-
 	const completedRequiredLearning = []
 	const readyForFeedback = await learnerRecord.getReadyForFeedback(
 		learningRecord
@@ -82,7 +79,6 @@ export async function display(req: express.Request, res: express.Response) {
 			completedLearning,
 			completedRequiredLearning,
 			readyForFeedback,
-			requiredLearningTotal,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
 		})
