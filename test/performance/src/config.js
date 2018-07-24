@@ -19,12 +19,14 @@ try {
 function getEnv(obj, attr) {
 	return process.env[attr] || ''
 }
+
 function set(localValue, nonLocalValue) {
 	if (exports.PROFILE === 'local') {
 		return localValue
 	}
 	return nonLocalValue
 }
+
 function warn(msg) {
 	if (process.stdout.isTTY && /-256(color)?$/i.test(process.env.TERM || '')) {
 		console.log(`\u001b[33m${msg}\u001b[0m`)
