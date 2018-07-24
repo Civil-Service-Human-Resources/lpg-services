@@ -196,7 +196,7 @@ export class Course {
 		let hasModuleRecord = false
 
 		if (this.record) {
-			const modules = this.getModules(user)
+			const modules = this.modules
 			for (const module of modules) {
 				const audience = module.getAudience(user)
 				const mandatory = audience ? audience.mandatory : false
