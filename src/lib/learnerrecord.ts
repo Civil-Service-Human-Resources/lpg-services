@@ -52,7 +52,7 @@ export async function getRecord(
 export async function getLearningRecord(user: model.User) {
 	const records = await getRawLearningRecord(user)
 	const promises = records.map(async record => {
-		const course = await catalog.get(record.courseId)
+		const course = await catalog.get(record.courseId, user)
 		if (!course) {
 			logger.warn(
 				`LRS data for course that doesn't exist. User ID: ${

@@ -104,21 +104,22 @@ describe('Course Call to Actions', () => {
 	})
 	it('should return a CourseCallToAction struct', () => {
 		/* tslint:disable:no-unused-expression */
-		expect(constructCourseCallToAction(course, testUser)).to.exist
+		expect(constructCourseCallToAction(course)).to.exist
 		/* tsline:enable */
 	})
 
 	describe('For unrequired courses', () => {
 		describe('That are not in the learning plan', () => {
 			it('isInLearningPlan should be false', () => {
-				expect(constructCourseCallToAction(course, testUser).isInLearningPlan)
-					.to.be.false
+				expect(
+					constructCourseCallToAction(course).isInLearningPlan
+				).to.be.false
 			})
 
 			it('for bookable courses it should return "action_BOOK"', () => {
 				course = initCourse()
 				course.modules = initModules(['faceToFace'])
-				const cta = constructCourseCallToAction(course, testUser)
+				const cta = constructCourseCallToAction(course)
 				expect(cta.message).to.equal('action_BOOK')
 			})
 
@@ -129,7 +130,7 @@ describe('Course Call to Actions', () => {
 
 				it('should return Add (to learning plan)', () => {
 					course.modules = initModules(['file'])
-					const cta = constructCourseCallToAction(course, testUser, modifier)
+					const cta = constructCourseCallToAction(course, modifier)
 					expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Add)
 				})
 			})
@@ -141,7 +142,7 @@ describe('Course Call to Actions', () => {
 
 				it('should not return Add (to learning plan)', () => {
 					course.modules = initModules(['file'])
-					const cta = constructCourseCallToAction(course, testUser, modifier)
+					const cta = constructCourseCallToAction(course, modifier)
 					expect(cta.actionToPlan).to.be.undefined
 				})
 			})
@@ -153,7 +154,7 @@ describe('Course Call to Actions', () => {
 			})
 			it('should be in the learning plan', () => {
 				expect(
-					constructCourseCallToAction(course, testUser).isInLearningPlan
+					constructCourseCallToAction(course).isInLearningPlan
 				).to.be.equal(true)
 			})
 
@@ -163,7 +164,7 @@ describe('Course Call to Actions', () => {
 				})
 				it('should not have any actions to plan', () => {
 					expect(
-						constructCourseCallToAction(course, testUser, modifier).actionToPlan
+						constructCourseCallToAction(course, modifier).actionToPlan
 					).to.be.undefined
 				})
 			})
@@ -174,7 +175,7 @@ describe('Course Call to Actions', () => {
 				describe('for unrequired courses', () => {
 					it('should have actions to plan', () => {
 						expect(
-							constructCourseCallToAction(course, testUser, modifier)
+							constructCourseCallToAction(course, modifier)
 								.actionToPlan
 						).to.exist
 					})
@@ -187,7 +188,7 @@ describe('Course Call to Actions', () => {
 								course.record!.modules.push(initModuleRecord('future'))
 								course.record!.modules[0].state = 'REGISTERED'
 								expect(
-									constructCourseCallToAction(course, testUser, modifier)
+									constructCourseCallToAction(course, modifier)
 										.message
 								).to.be.equal('action_CANCEL')
 							})
@@ -197,15 +198,12 @@ describe('Course Call to Actions', () => {
 
 								const cta = constructCourseCallToAction(
 									course,
-									testUser,
 									modifier
 								)
 
 								expect(cta.url).to.be.undefined
 								expect(cta.message).to.be.undefined
-								expect(cta.actionToPlan!.type).to.be.equal(
-									CourseActionType.Delete
-								)
+								expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Delete)
 							})
 						})
 
@@ -215,7 +213,6 @@ describe('Course Call to Actions', () => {
 
 							const cta = constructCourseCallToAction(
 								course,
-								testUser,
 								modifier
 							)
 
@@ -231,14 +228,14 @@ describe('Course Call to Actions', () => {
 		it('should not have any actions to learning plan on search pages', () => {
 			course.modules = initModules(['file'])
 			course.isRequired = () => true
-			const cta = constructCourseCallToAction(course, testUser, 'search')
+			const cta = constructCourseCallToAction(course, 'search')
 
 			expect(cta.actionToPlan).to.be.undefined
 		})
 		it('should not have any actions to learning plan on home', () => {
 			course.modules = initModules(['file'])
 			course.isRequired = () => true
-			const cta = constructCourseCallToAction(course, testUser, 'home')
+			const cta = constructCourseCallToAction(course, 'home')
 			expect(cta.actionToPlan).to.be.undefined
 		})
 		describe('that are bookable', () => {
@@ -248,13 +245,13 @@ describe('Course Call to Actions', () => {
 				course.isRequired = () => true
 			})
 			it('should return "action_BOOK" for bookable courses', () => {
-				const cta = constructCourseCallToAction(course, testUser)
+				const cta = constructCourseCallToAction(course)
 				expect(cta.message).to.be.equal('action_BOOK')
 			})
 
 			it('should not have cancel actions if booked', () => {
 				course.record!.modules[0] = initModuleRecord('future')
-				const cta = constructCourseCallToAction(course, testUser, 'home')
+				const cta = constructCourseCallToAction(course, 'home')
 
 				expect(cta.message).to.be.equal('action_BOOK')
 			})

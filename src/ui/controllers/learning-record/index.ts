@@ -49,10 +49,10 @@ export async function display(req: express.Request, res: express.Response) {
 
 	const learningRecord = await learnerRecord.getLearningRecord(req.user)
 	const completedLearning = learningRecord
-		.filter(course => course.isComplete(req.user))
+		.filter(course => course.isComplete())
 		.sort((a, b) => {
-			const bcd = b.getCompletionDate(req.user)
-			const acd = a.getCompletionDate(req.user)
+			const bcd = b.getCompletionDate()
+			const acd = a.getCompletionDate()
 
 			const bt = bcd ? bcd.getTime() : 0
 			const at = acd ? acd.getTime() : 0
@@ -67,7 +67,7 @@ export async function display(req: express.Request, res: express.Response) {
 
 	for (let i = 0; i < completedLearning.length; i++) {
 		const course = completedLearning[i]
-		if (course.isRequired(req.user)) {
+		if (course.isRequired()) {
 			completedRequiredLearning.push(course)
 			completedLearning.splice(i, 1)
 			i -= 1
@@ -85,14 +85,15 @@ export async function display(req: express.Request, res: express.Response) {
 	)
 }
 
-export async function record(req: express.Request, res: express.Response) {
+export async function record(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	const courseId = req.query.courseId
 	if (!courseId) {
 		logger.error('Expected a course ID to be present in the query parameters')
 		res.sendStatus(400)
 		return
 	}
-	const course = await catalog.get(courseId)
+	const course = await catalog.get(req.user, courseId)
 	if (!course) {
 		logger.error(`No matching course found for course ID ${courseId}`)
 		res.sendStatus(400)
