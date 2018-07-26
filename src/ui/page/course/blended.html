@@ -13,7 +13,7 @@
                 {/if}
 
                 <div class="discite" id="modules">
-                    {#if course.getMandatoryCount($signedInUser)>0}
+                    {#if course.getMandatoryCount()>0}
                         <p>
                             <strong>You must complete { (modules.length ===course.getMandatoryCount($signedInUser)) ? 'all' : ''} {course.getMandatoryCount($signedInUser)} learning modules to finish this topic.</strong>
                         </p>

@@ -56,6 +56,7 @@ export async function postFeedback(feedback: model.Feedback) {
 }
 
 export async function search(
+	user: model.User,
 	page: number,
 	size: number,
 	query?: string,
@@ -87,7 +88,7 @@ export async function search(
 		}
 
 		const response = await http.get(url)
-		return convertToMixed(response.data) as api.SearchResults
+		return convertToMixed(response.data, user) as api.SearchResults
 	} catch (e) {
 		if (e.response.status === 400) {
 			return {
@@ -109,9 +110,7 @@ export async function findRequiredLearning(
 		const response = await http.get(
 			`/courses?mandatory=true&department=${user.department}`
 		)
-		const data = response.data
-		data.results = data.results.map(model.Course.create)
-		return data as api.PageResults
+		return convert(response.data, user) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
 	}
@@ -131,20 +130,21 @@ export class ApiParameters {
 }
 
 export async function findSuggestedLearningWithParameters(
+	user: model.User,
 	parameters: string
 ): Promise<api.PageResults> {
 	try {
 		const response = await http.get(`/courses?${parameters}`)
-		return convert(response.data) as api.PageResults
+		return convert(response.data, user) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding suggested learning - ${e}`)
 	}
 }
 
-export async function get(id: string) {
+export async function get(id: string, user?: model.User) {
 	try {
 		const response = await http.get(`/courses/${id}`)
-		return model.Course.create(response.data)
+		return model.Course.create(response.data, user)
 	} catch (e) {
 		if (e.response.status === 404) {
 			return null
@@ -162,20 +162,20 @@ export async function listAll(): Promise<api.PageResults> {
 	}
 }
 
-function convert(data: any) {
+function convert(data: any, user?: model.User) {
 	if (data.results) {
-		data.results = data.results.map(model.Course.create)
+		data.results = data.results.map((d: any) => model.Course.create(d, user))
 	}
 	return data
 }
 
-function convertToMixed(data: any) {
+function convertToMixed(data: any, user?: model.User) {
 	if (data.results) {
 		data.results = data.results.map((result: model.Resource) => {
 			return result.courseId === '0'
-				? model.CourseModule.createFromCourse(model.Course.create(result))
+				? model.CourseModule.createFromCourse(model.Course.create(result, user))
 				: model.CourseModule.createFromModule(
-						model.Module.create(result),
+						model.Module.create(result, user),
 						result.course
 				)
 		})

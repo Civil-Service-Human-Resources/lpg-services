@@ -15,8 +15,7 @@
             </td>
             <td>{$i18n(course.getType())}</td>
             <td>{course.getDuration() || '-'}</td>
-            <td>{course.getCompletionDate($signedInUser) ? $datetime.formatDate(course.getCompletionDate($signedInUser)) : ''}</td>
-
+            <td>{course.getCompletionDate() ? $datetime.formatDate(course.getCompletionDate()) : ''}</td>
         </tr>
         {/each}
     </tbody>

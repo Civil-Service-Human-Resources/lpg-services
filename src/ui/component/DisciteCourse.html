@@ -22,8 +22,8 @@
     {/if}
 
     <div class="discite__area">
-        {#if course.nextRequiredBy($signedInUser)}
-            Due by: {$datetime.formatDate(course.nextRequiredBy($signedInUser))}
+        {#if course.nextRequiredBy()}
+            Due by: {$datetime.formatDate(course.nextRequiredBy())}
         {:elseif course.getAreasOfWork().length}
             Work area: {course.getAreasOfWork().map(function(aow) { return $i18n('areaOfWork')[aow]}).join(', ')}
         {/if}

@@ -164,9 +164,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				return {
 					...cm,
 					duration: cm.getDuration(),
-					isMandatory: cm.getAudience(req.user)
-						? cm.getAudience(req.user)!.mandatory
-						: false,
+					isMandatory: cm.isRequired(),
 					state: moduleRecord ? moduleRecord.state : null,
 				}
 			})
@@ -198,7 +196,7 @@ export async function loadCourse(
 ) {
 	const req = ireq as extended.CourseRequest
 	const courseId: string = req.params.courseId
-	const course = await catalog.get(courseId)
+	const course = await catalog.get(courseId, req.user)
 	if (course) {
 		req.course = course
 		next()

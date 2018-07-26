@@ -23,11 +23,10 @@ export interface CallToActionProps {
 
 export function constructCourseCallToAction(
 	course: model.Course,
-	user: model.User,
 	modifier?: string
 ) {
 	const courseType = course.getType()
-	const isRequired: boolean = course.isRequired(user)
+	const isRequired: boolean = course.isRequired()
 	const isHome: boolean = modifier === 'home'
 
 	const callToActionProps: CallToActionProps = {

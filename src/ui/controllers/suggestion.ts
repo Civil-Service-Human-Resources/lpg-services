@@ -136,7 +136,8 @@ export async function suggestionsByInterest(
 				[],
 				[interest.name],
 				6,
-				await getLearningRecord(user, learningRecordIn)
+				await getLearningRecord(user, learningRecordIn),
+				user
 			)
 	})
 	await Promise.all(promises)
@@ -156,7 +157,8 @@ export async function suggestionsByAreaOfWork(
 				[aow],
 				[],
 				6,
-				await getLearningRecord(user, learningRecordIn)
+				await getLearningRecord(user, learningRecordIn),
+				user
 			)
 	})
 	await Promise.all(promises)
@@ -176,7 +178,8 @@ export async function suggestionsByOtherAreasOfWork(
 				[aow.name],
 				[],
 				6,
-				await getLearningRecord(user, learningRecordIn)
+				await getLearningRecord(user, learningRecordIn),
+				user
 			)
 	})
 	await Promise.all(promises)
@@ -195,7 +198,8 @@ export async function suggestionsByDepartment(
 			[],
 			[],
 			6,
-			await getLearningRecord(user, learningRecordIn)
+			await getLearningRecord(user, learningRecordIn),
+			user
 		)
 	return courseSuggestions
 }
@@ -209,7 +213,8 @@ export async function homeSuggestions(
 		user.areasOfWork || [],
 		[],
 		6,
-		learningRecord
+		learningRecord,
+		user
 	)
 }
 
@@ -218,7 +223,8 @@ async function getSuggestions(
 	areasOfWork: string[],
 	interests: string[],
 	count: number,
-	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>
+	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
+	user: model.User
 ): Promise<model.Course[]> {
 	const params = new catalog.ApiParameters(areasOfWork, department, interests, 0, count)
 
@@ -227,6 +233,7 @@ async function getSuggestions(
 
 	while (newSuggestions.length < count && hasMore) {
 		const page = await catalog.findSuggestedLearningWithParameters(
+			user,
 			params.serialize()
 		)
 		newSuggestions = newSuggestions.concat(

@@ -8,14 +8,14 @@ export interface LineManager {
 }
 
 export class Course {
-	static create(data: any) {
+	static create(data: any, user?: User) {
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
 		course.shortDescription = data.shortDescription
 		course.title = data.title
 
-		course.modules = (data.modules || []).map(Module.create)
+		course.modules = (data.modules || []).map((module: any) => Module.create(module, user))
 
 		return course
 	}
@@ -32,26 +32,30 @@ export class Course {
 
 	record?: learnerRecord.CourseRecord
 
+	completionDate: Date
+	complete: boolean
+	started: boolean
+
 	constructor(id: string) {
 		this.id = id
 	}
 
-	isComplete(user: User) {
-		return this.checkModuleStates(user, 'COMPLETED', true, true)
+	isComplete() {
+		return this.checkModuleStates('COMPLETED', true, true)
 	}
 
-	isStarted(user: User) {
-		return this.checkModuleStates(user, 'IN_PROGRESS')
+	isStarted() {
+		return this.checkModuleStates('IN_PROGRESS')
 	}
 
 	hasPreference() {
 		return this.record && this.record.preference
 	}
 
-	getModules(user: User) {
+	getModules() {
 		const modules = []
 		for (const module of this.modules) {
-			if (module.getAudience(user) !== null) {
+			if (module.audience !== null) {
 				modules.push(module)
 			}
 		}
@@ -96,9 +100,7 @@ export class Course {
 
 	getSelectedDate() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(
-				m => !!m.eventId && m.state !== 'SKIPPED'
-			)
+			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(
 					m => m.id === bookedModuleRecord.moduleId
@@ -124,15 +126,15 @@ export class Course {
 		return this.modules[0].type
 	}
 
-	isRequired(user: User) {
-		return this.modules.find(module => module.isRequired(user)) != null
+	isRequired() {
+		return this.modules.find(module => module.isRequired()) != null
 	}
 
-	nextRequiredBy(user: User) {
+	nextRequiredBy() {
 		let next = null
-		const completionDate = this.getCompletionDate(user)
+		const completionDate = this.getCompletionDate()
 		for (const module of this.modules) {
-			const moduleNext = module.nextRequiredBy(user, completionDate)
+			const moduleNext = module.nextRequiredBy(completionDate)
 			if (!next) {
 				next = moduleNext
 			} else if (moduleNext && moduleNext.getTime() < next.getTime()) {
@@ -142,11 +144,11 @@ export class Course {
 		return next
 	}
 
-	getMandatoryCount(user: User) {
-		const modules = this.getModules(user)
+	getMandatoryCount() {
+		const modules = this.getModules()
 		let count = 0
 		modules.forEach(module => {
-			if (module.getAudience(user) && module.getAudience(user)!.mandatory) {
+			if (module.audience && module.audience!.mandatory) {
 				count++
 			}
 		})
@@ -154,8 +156,8 @@ export class Course {
 		return count
 	}
 
-	getCompletionDate(user: User) {
-		if (this.isComplete(user)) {
+	getCompletionDate() {
+		if (this.isComplete()) {
 			let completionDate: Date | undefined
 			for (const moduleRecord of this.record!.modules) {
 				if (!completionDate) {
@@ -172,10 +174,10 @@ export class Course {
 		return undefined
 	}
 
-	shouldRepeat(user: User) {
-		const completionDate = this.getCompletionDate(user)
+	shouldRepeat() {
+		const completionDate = this.getCompletionDate()
 		for (const module of this.modules) {
-			const moduleShouldRepeat = module.shouldRepeat(user, completionDate)
+			const moduleShouldRepeat = module.shouldRepeat(completionDate)
 			if (moduleShouldRepeat) {
 				return true
 			}
@@ -187,7 +189,6 @@ export class Course {
 	// countOnlyMandatory:  ignore optional modules
 
 	private checkModuleStates(
-		user: User,
 		states: string,
 		mustHave?: boolean,
 		onlyMandatory?: boolean
@@ -198,8 +199,8 @@ export class Course {
 		if (this.record) {
 			const modules = this.modules
 			for (const module of modules) {
-				const audience = module.getAudience(user)
-				const mandatory = audience ? audience.mandatory : false
+
+				const mandatory = module.isRequired()
 
 				const moduleRecord = this.record.modules.find(
 					mr => mr.moduleId === module.id
@@ -214,14 +215,13 @@ export class Course {
 				) {
 					if (arrStates.indexOf(moduleRecord.state) < 0 && mustHave) {
 						return false
-					} else if (arrStates.indexOf(moduleRecord.state) >= 0 && !mustHave) {
+					}
+					if (arrStates.indexOf(moduleRecord.state) >= 0 && !mustHave) {
 						return true
 					}
-				} else {
-					if (mandatory) {
-						// mandatory courses that have no record fail completion
-						return false
-					}
+				} else if (mandatory) {
+					// mandatory courses that have no record fail completion
+					return false
 				}
 			}
 			if (hasModuleRecord) {
@@ -297,7 +297,7 @@ export class CourseModule {
 }
 
 export class Module {
-	static create(data: any) {
+	static create(data: any, user?: User) {
 		const module = new Module(data.id, data.type)
 		module.duration = data.duration
 		module.price = data.price
@@ -308,8 +308,24 @@ export class Module {
 		module.description = data.description
 		module.url = data.url
 		module.fileSize = data.fileSize
-		module.audiences = (data.audiences || []).map(Audience.create)
 		module.events = (data.events || []).map(Event.create)
+
+		const audiences = (data.audiences || []).map(Audience.create)
+		module.audiences = audiences
+
+		if (user) {
+			let matchedAudience = null
+			let matchedRelevance = -1
+			for (const audience of audiences) {
+				const relevance = audience.getRelevance(user!)
+				if (relevance > matchedRelevance) {
+					matchedAudience = audience
+					matchedRelevance = relevance
+				}
+			}
+			module.audience = matchedAudience
+		}
+
 		return module
 	}
 
@@ -322,13 +338,14 @@ export class Module {
 	duration: number
 	url?: string
 	fileSize?: number
-	parsedFileSize?: string
 	location?: string
 	price?: number
 	productCode?: string
 	startPage?: string
 
 	audiences: Audience[]
+	audience?: Audience
+
 	events: Event[]
 
 	constructor(id: string, type: string) {
@@ -347,45 +364,29 @@ export class Module {
 		return datetime.formatCourseDuration(this.duration)
 	}
 
-	getAudience(user: User) {
-		let matchedAudience = null
-		let matchedRelevance = -1
-		for (const audience of this.audiences) {
-			const relevance = audience.getRelevance(user)
-			if (relevance > matchedRelevance) {
-				matchedAudience = audience
-				matchedRelevance = relevance
-			}
-		}
-		return matchedAudience
-	}
-
 	getEvent(eventId: string) {
 		return this.events.find(event => event.id === eventId)
 	}
 
-	isRequired(user: User) {
-		const audience = this.getAudience(user)
-		if (audience) {
-			return audience.mandatory
+	isRequired() {
+		if (this.audience) {
+			return this.audience!.mandatory
 		}
 		return false
 	}
 
-	nextRequiredBy(user: User, completionDate?: Date) {
-		const audience = this.getAudience(user)
-		if (!audience) {
-			return null
+	nextRequiredBy(completionDate?: Date) {
+		if (this.audience) {
+			return this.audience!.nextRequiredBy(completionDate)
 		}
-		return audience.nextRequiredBy(completionDate)
+		return null
 	}
 
-	shouldRepeat(user: User, completionDate?: Date) {
-		const audience = this.getAudience(user)
-		if (!audience) {
-			return false
+	shouldRepeat(completionDate?: Date) {
+		if (this.audience) {
+			return this.audience!.shouldRepeat(completionDate)
 		}
-		return audience.shouldRepeat(completionDate)
+		return false
 	}
 }
 
@@ -446,8 +447,8 @@ export class Audience {
 		return !this.mandatory
 	}
 
-	set optional(value: boolean | string) {
-		this.mandatory = !value || value === 'false'
+	set optional(value: (boolean | string)) {
+		this.mandatory = (!value || value === 'false')
 	}
 
 	getRelevance(user: User) {

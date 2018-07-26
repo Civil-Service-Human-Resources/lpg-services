@@ -30,8 +30,8 @@ export async function home(req: express.Request, res: express.Response) {
 			if (learningHash[requiredCourse.id]) {
 				const course = learningHash[requiredCourse.id]
 				const record = course.record!
-				if (course.isComplete(user)) {
-					if (course.shouldRepeat(user)) {
+				if (course.isComplete()) {
+					if (course.shouldRepeat()) {
 						requiredLearning[i].record = record
 					} else {
 						requiredLearning.splice(i, 1)
@@ -52,8 +52,8 @@ export async function home(req: express.Request, res: express.Response) {
 		for (const course of learningRecord) {
 			const record = course.record!
 			if (
-				!course.isComplete(user) &&
-				!course.isRequired(user) &&
+				!course.isComplete() &&
+				!course.isRequired() &&
 				learnerRecord.isActive(record)
 			) {
 				if (!record.state && record.modules && record.modules.length) {
@@ -88,7 +88,7 @@ export async function home(req: express.Request, res: express.Response) {
 		let noOption
 
 		if (req.query.delete) {
-			const courseToDelete = await catalog.get(req.query.delete)
+			const courseToDelete = await catalog.get(req.query.delete, user)
 			confirmTitle = req.__(
 				'learning_confirm_removal_plan_title',
 				courseToDelete!.title
@@ -108,7 +108,7 @@ export async function home(req: express.Request, res: express.Response) {
 		if (req.query.skip || req.query.move) {
 			eventActionDetails = req.query[action].split(',')
 			eventActionDetails.push(action)
-			const module = await catalog.get(eventActionDetails[0])
+			const module = await catalog.get(eventActionDetails[0], user)
 
 			confirmTitle = req.__(
 				'learning_confirm_' + action + '_plan_title',
