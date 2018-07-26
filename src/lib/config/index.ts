@@ -155,7 +155,7 @@ export const REPORT_SERVICE = set({
 	url: env.REPORT_SERVICE_URL || 'http://localhost:9004',
 })
 
-export const LPG_MANAGEMENT_URL = 
-      env.LPG_MANAGEMENT_SERVER || 'http://lpg.local.cshr.digital:3005'
+export const LPG_MANAGEMENT_URL =
+	env.LPG_MANAGEMENT_SERVER || 'http://lpg.local.cshr.digital:3005'
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000
