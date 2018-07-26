@@ -114,7 +114,11 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
 				const module = course.modules.find(m => m.id === moduleRecord.moduleId)
 				if (!module) {
-					logger.debug(`No module found matching user's module record, id = ${moduleRecord.moduleId}`)
+					logger.debug(
+						`No module found matching user's module record, id = ${
+							moduleRecord.moduleId
+						}`
+					)
 				} else {
 					readyForFeedback.push({
 						completionDate: moduleRecord.completionDate,
@@ -131,7 +135,11 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 }
 
 export function isActive(record: CourseRecord) {
-	return record.state !== 'ARCHIVED' && record.state !== 'SKIPPED' && record.preference !== 'DISLIKED'
+	return (
+		record.state !== 'ARCHIVED' &&
+		record.state !== 'SKIPPED' &&
+		record.preference !== 'DISLIKED'
+	)
 }
 
 export interface CourseRecord {

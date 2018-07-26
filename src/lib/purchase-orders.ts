@@ -18,12 +18,11 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function findPurchaseOrder(
-	user: model.User,
-	moduleId: string
-) {
+export async function findPurchaseOrder(user: model.User, moduleId: string) {
 	try {
-		const response = await http.get(`/purchase-orders?department=${user.department}&moduleId=${moduleId}`)
+		const response = await http.get(
+			`/purchase-orders?department=${user.department}&moduleId=${moduleId}`
+		)
 		if (response && response.data) {
 			return response.data
 		}

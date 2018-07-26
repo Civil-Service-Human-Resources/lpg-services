@@ -9,7 +9,9 @@ describe('Should return formatted the date', () => {
 	})
 
 	it('Should return formated date and time', () => {
-		expect(datetime.formatTime(new Date(2018, 0, 1))).to.equal('01 Jan 2018, 00:00')
+		expect(datetime.formatTime(new Date(2018, 0, 1))).to.equal(
+			'01 Jan 2018, 00:00'
+		)
 		expect(datetime.formatTime(new Date(2018, 11, 1))).to.equal(
 			'01 Dec 2018, 00:00'
 		)

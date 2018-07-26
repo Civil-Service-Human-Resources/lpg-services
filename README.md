@@ -1,53 +1,74 @@
-# LPG Services
+LPG Services ·
+[![Build Status](https://travis-ci.org/Civil-Service-Human-Resources/lpg-services.svg?branch=master)](https://travis-ci.org/Civil-Service-Human-Resources/lpg-services)
+=====================
+lpg-services contains the code you need to start building a user interface for government platforms and services.
+## Getting Started
 
-**Getting started**
+### Prerequisites
+Please have the following downloaded and installed:
+* [Docker](https://www.docker.com/get-docker)
+* [node/npm](https://nodejs.org/en/)
+* [Prettier](https://prettier.io/)
+* [TSlint](https://palantir.github.io/tslint/)
 
-To start the services, most of what you need will be in this repo. You will also need:
+Add the following to your `/etc/hosts`
+```
+127.0.0.1    lpg.local.cshr.digital,identity.local.cshr.digital
+```
 
-* Docker
-* prettier
-* tslint
+### Installation
+Clone the application
 
-**In the root dir of this repo, run**
+Navigate to the root of the directory and run the back-end services using docker:  
+```
+docker-compose up
+```
 
-1. `npm install`
-2. `docker-compose up`
+Open a new terminal tab, and run the core LPG application using npm:
+```
+npm install
+npm run build
+npm run start:all
+```
 
-**To build and run the services**
+There are additional npm scripts for the application which can be found in [package.json](https://github.com/Civil-Service-Human-Resources/lpg-services/blob/master/package.json)
 
-There are several npm scripts. Find them in [package.json](package.json)
+### Accessing the app
+The various interfaces of the app accessed via the following URLs:  
 
-* `npm run build`
-* to start the ui: `npm run start:ui`, to start management: `npm run start:management`
-* for dev, you can run `npm run dev:ui` to watch typescript files, sass files and start the server.
+| INTERFACE | DESCRIPTION | URL |
+|--|--|--|
+| LPG UI | Main UI of the platform | http://lpg.local.cshr.digital:3001/home |
+| LPG Management | Internal management of course content. | http://lpg.local.cshr.digital:3003/courses |
+| LPG Management | Content management interface | http://lpg.local.cshr.digital:3005/content-management |
+| Identity | http://localhost:8080 | Identity authentication service |
+| Identity Management | User account admin for managing identity details | http://localhost:8081/management/identities |
 
-**Services**
 
-* [UI](src/ui)
-* [Management UI](src/management-ui)
-
-**[Lib](src/lib)**
+## Technical Overview
+### [Lib](src/lib)
 
 * The templating engine we are currently using is [svelte.technology](https://svelte.technology)@v2.
   See more about how to use it in this project [here](src/lib/ui/README.md)
 
-**Testing**
+### Testing
 
-* [WebdriverIO](test/webdriver)
+#### [WebdriverIO](test/webdriver)
 
 All the services required to run this are npm dependencies. To run against different environments locally you need to set the appropriate environment variable.
 
-**In the webdriver dir of this repo, run**
+In the webdriver dir of this repo, run the following commands:  
+```
+npm install
+npm run build
+npm run test
+```
 
-1. `npm install`
-2. `npm run build`
-3. `npm run test`
-
-**Configure WebdriverIO capabilities**
+#### Configure WebdriverIO capabilities
 
 Browser type, timeouts, services and browser instances can be configured within [wdio.conf.js](test/webdriver/wdio.conf.js)
 
-**Styling**
+## Styling
 
 * scss is being used for css
 * use `npm run watch-sass:ui` to start watching scss files in the ui repo

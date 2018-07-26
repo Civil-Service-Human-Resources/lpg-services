@@ -98,12 +98,15 @@ i18n.configure(app)
 app.use(passport.isAuthenticated)
 app.use('/purchase-orders', passport.hasRole('MANAGE_CALL_OFF_PO'))
 app.use('/courses', passport.hasRole('COURSE_MANAGER'))
-app.use('/reports', passport.hasAnyRole([
-	'DOWNLOAD_BOOKING_FEED',
-	'ORGANISATION_REPORTER',
-	'PROFESSION_REPORTER',
-	'CSHR_REPORTER',
-]))
+app.use(
+	'/reports',
+	passport.hasAnyRole([
+		'DOWNLOAD_BOOKING_FEED',
+		'ORGANISATION_REPORTER',
+		'PROFESSION_REPORTER',
+		'CSHR_REPORTER',
+	])
+)
 
 app.use(expressValidator())
 
@@ -176,8 +179,14 @@ app.get('/courses/:courseId', displayCourseController.displayCourse)
 app.get('/search/create', displayCourseController.loadSearch)
 
 app.get('/purchase-orders', asyncHandler(purchaseOrdersController.index))
-app.get('/purchase-orders/:purchaseOrderId', asyncHandler(purchaseOrdersController.displayEdit))
-app.post('/purchase-orders/:purchaseOrderId', asyncHandler(purchaseOrdersController.doEdit))
+app.get(
+	'/purchase-orders/:purchaseOrderId',
+	asyncHandler(purchaseOrdersController.displayEdit)
+)
+app.post(
+	'/purchase-orders/:purchaseOrderId',
+	asyncHandler(purchaseOrdersController.doEdit)
+)
 
 app.use(
 	(

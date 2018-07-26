@@ -38,7 +38,7 @@ export async function renderCancelBookingPage(
 		return
 	}
 
-	(module as any).record = moduleRecord
+	;(module as any).record = moduleRecord
 
 	const optionType = 'radio'
 	const options = Object.entries(req.__('cancelReasons'))
@@ -122,7 +122,9 @@ export async function tryCancelBooking(
 	course.record = record
 
 	const extensions: Record<string, any> = {}
-	const cancelReason = req.body['other-reason'] ? req.body['cancel-reason'] : req.body['cancel-reason']
+	const cancelReason = req.body['other-reason']
+		? req.body['cancel-reason']
+		: req.body['cancel-reason']
 
 	if (cancelReason) {
 		extensions[xapi.Extension.CancelReason] = cancelReason

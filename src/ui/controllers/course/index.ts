@@ -3,7 +3,7 @@ import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
-import * as registry from "lib/registry"
+import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
@@ -146,10 +146,13 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'elearning':
 		case 'face-to-face':
 			if (req.user.department) {
-				const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
+				const organisation = (await registry.follow(
+					config.REGISTRY_SERVICE_URL,
 					['organisations', 'search', 'findByDepartmentCode'],
-					{ departmentCode: req.user.department }) as any
-				canPayByPO = organisation.department.paymentMethods.indexOf('PURCHASE_ORDER') > -1
+					{departmentCode: req.user.department}
+				)) as any
+				canPayByPO =
+					organisation.department.paymentMethods.indexOf('PURCHASE_ORDER') > -1
 			}
 		case 'file':
 		case 'blended':

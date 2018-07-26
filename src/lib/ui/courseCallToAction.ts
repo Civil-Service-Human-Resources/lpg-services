@@ -57,7 +57,9 @@ export function constructCourseCallToAction(
 		const bookedModule = record.modules && record.modules.find(m => !!m.eventId)
 		const hasEvent = !!bookedModule
 
-		const isBooked = bookedModule && (bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED')
+		const isBooked =
+			bookedModule &&
+			(bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED')
 		const isCancelled = bookedModule && bookedModule.state === 'UNREGISTERED'
 		const isDatePassed = new Date() > course.getSelectedDate()!
 
@@ -93,7 +95,12 @@ export function constructCourseCallToAction(
 				break
 		}
 
-		if (!isRequired && record.state !== 'REGISTERED' && record.state !== 'APPROVED' && isHome) {
+		if (
+			!isRequired &&
+			record.state !== 'REGISTERED' &&
+			record.state !== 'APPROVED' &&
+			isHome
+		) {
 			callToActionProps.actionToPlan = {
 				type: CourseActionType.Delete,
 				url: `/home?delete=${course.id}`,

@@ -19,6 +19,11 @@
         <li>
             <a href="/profile">Profile</a>
         </li>
+        {#if $signedInUser.hasRole('COURSE_MANAGER')}
+        <li>
+            <a href="{$config.LPG_MANAGEMENT_URL}/content-management/">Admin</a>
+        </li>
+        {/if}
         <li>
             <a href="/sign-out">Sign out</a>
         </li>

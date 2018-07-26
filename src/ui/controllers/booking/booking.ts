@@ -1,5 +1,5 @@
 import * as express from 'express'
-import * as config from "lib/config"
+import * as config from 'lib/config'
 import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -56,17 +56,21 @@ export function saveAccessibilityOptions(
 	}
 
 	session.otherAccessibilityReqs = req.body.otherDescription || ''
-	if ((session.accessibilityReqs.indexOf('other') > -1 || req.body.otherDescription)
-		&& session.accessibilityReqs.indexOf('other') === -1) {
+	if (
+		(session.accessibilityReqs.indexOf('other') > -1 ||
+			req.body.otherDescription) &&
+		session.accessibilityReqs.indexOf('other') === -1
+	) {
 		session.accessibilityReqs.push('other')
 	}
 
-	let { returnTo } = req.session!
+	let {returnTo} = req.session!
 	if (returnTo) {
 		delete req.session!.returnTo
 	} else {
 		returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${
-			req.session!.selectedEventId}/payment`
+			req.session!.selectedEventId
+		}/payment`
 	}
 	req.session!.save(() => {
 		res.redirect(returnTo)
@@ -98,7 +102,9 @@ export async function renderChooseDate(
 	}
 
 	if (req.query.ref === 'summary') {
-		req.session!.returnTo = `/book/${course.id}/${module.id}/${selectedEventId}/confirm`
+		req.session!.returnTo = `/book/${course.id}/${
+			module.id
+		}/${selectedEventId}/confirm`
 	}
 
 	const today = new Date()
@@ -163,12 +169,13 @@ export function selectedDate(req: express.Request, res: express.Response) {
 			)
 		})
 	} else {
-		let { returnTo } = req.session!
+		let {returnTo} = req.session!
 		if (returnTo) {
 			delete req.session!.returnTo
 		} else {
-			returnTo =
-				`/book/${req.params.courseId}/${req.params.moduleId}/${decodeURIComponent(selected)}/accessibility`
+			returnTo = `/book/${req.params.courseId}/${
+				req.params.moduleId
+			}/${decodeURIComponent(selected)}/accessibility`
 		}
 		req.session!.selectedEventId = selected
 		req.session!.save(() => {
@@ -189,7 +196,9 @@ export async function renderAccessibilityOptions(
 	const session = req.session!
 
 	if (req.query.ref === 'summary') {
-		session.returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${req.params.eventId}/confirm`
+		session.returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${
+			req.params.eventId
+		}/confirm`
 	}
 
 	res.send(
@@ -216,7 +225,9 @@ export async function renderConfirmPayment(
 
 	const accessibilityReqs = [...session.accessibilityReqs]
 	if (accessibilityReqs.indexOf('other') > -1) {
-		accessibilityReqs[accessibilityReqs.indexOf('other')] = `Other: ${session.otherAccessibilityReqs || ''}`
+		accessibilityReqs[
+			accessibilityReqs.indexOf('other')
+		] = `Other: ${session.otherAccessibilityReqs || ''}`
 	}
 
 	res.send(
@@ -246,7 +257,10 @@ export async function renderPaymentOptions(
 	const module = req.module!
 
 	const user = req.user as model.User
-	const callOffPo = await purchaseOrdersService.findPurchaseOrder(user, module.id)
+	const callOffPo = await purchaseOrdersService.findPurchaseOrder(
+		user,
+		module.id
+	)
 
 	if (callOffPo) {
 		session.payment = {
@@ -254,12 +268,18 @@ export async function renderPaymentOptions(
 			value: `Call off ${callOffPo.id}`,
 		}
 		session.save(() => {
-			res.redirect(`/book/${req.params.courseId}/${req.params.moduleId}/${req.params.eventId}/confirm`)
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/${
+					req.params.eventId
+				}/confirm`
+			)
 		})
 	} else {
-		const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
+		const organisation = (await registry.follow(
+			config.REGISTRY_SERVICE_URL,
 			['organisations', 'search', 'findByDepartmentCode'],
-			{ departmentCode: user.department }) as any
+			{departmentCode: user.department}
+		)) as any
 
 		if (!organisation) {
 			res.redirect('/profile')
@@ -271,12 +291,15 @@ export async function renderPaymentOptions(
 					event: req.event!,
 					module,
 					paymentMethods: organisation.department.paymentMethods,
-					values: req.flash('values')[0] || (session.payment ? { [session.payment.type]: session.payment.value } : {}),
+					values:
+						req.flash('values')[0] ||
+						(session.payment
+							? {[session.payment.type]: session.payment.value}
+							: {}),
 				})
 			)
 		}
 	}
-
 }
 
 export async function enteredPaymentDetails(
@@ -287,9 +310,11 @@ export async function enteredPaymentDetails(
 	session.payment = null
 
 	const user = req.user as model.User
-	const organisation = await registry.follow(config.REGISTRY_SERVICE_URL,
+	const organisation = (await registry.follow(
+		config.REGISTRY_SERVICE_URL,
 		['organisations', 'search', 'findByDepartmentCode'],
-		{ departmentCode: user.department }) as any
+		{departmentCode: user.department}
+	)) as any
 
 	let errors: string[] = []
 
@@ -320,7 +345,10 @@ export async function enteredPaymentDetails(
 		})
 	} else {
 		session.save(() => {
-			const confirmPage = session.payment.type === 'PURCHASE_ORDER' ? 'payment/confirm-po' : 'confirm'
+			const confirmPage =
+				session.payment.type === 'PURCHASE_ORDER'
+					? 'payment/confirm-po'
+					: 'confirm'
 			res.redirect(
 				`/book/${req.params.courseId}/${req.params.moduleId}/${
 					req.params.eventId

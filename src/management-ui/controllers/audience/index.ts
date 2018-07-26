@@ -72,7 +72,7 @@ export async function setAudienceNode(
 	if (Array.isArray(fieldValue)) {
 		collection = fieldValue
 	} else if (!isSingular(nodePlural)) {
-		collection =  fieldValue ? [fieldValue] : []
+		collection = fieldValue ? [fieldValue] : []
 	} else {
 		collection = fieldValue
 	}

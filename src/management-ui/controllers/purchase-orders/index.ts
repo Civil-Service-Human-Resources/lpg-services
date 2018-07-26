@@ -3,16 +3,16 @@ import * as purchaseOrdersService from 'lib/purchase-orders'
 import * as template from 'lib/ui/template'
 
 export async function index(req: express.Request, res: express.Response) {
-
 	const purchaseOrders = await purchaseOrdersService.listAll()
 
-	res.send(template.render('purchase-orders/index', req, res, {
-		purchaseOrders,
-	}))
+	res.send(
+		template.render('purchase-orders/index', req, res, {
+			purchaseOrders,
+		})
+	)
 }
 
 export async function displayEdit(req: express.Request, res: express.Response) {
-
 	const id = req.params.purchaseOrderId
 	let purchaseOrder = null
 
@@ -22,9 +22,11 @@ export async function displayEdit(req: express.Request, res: express.Response) {
 		purchaseOrder = await purchaseOrdersService.get(id)
 	}
 
-	res.send(template.render('purchase-orders/edit', req, res, {
-		purchaseOrder,
-	}))
+	res.send(
+		template.render('purchase-orders/edit', req, res, {
+			purchaseOrder,
+		})
+	)
 }
 
 export async function doEdit(req: express.Request, res: express.Response) {
@@ -37,7 +39,8 @@ export async function doEdit(req: express.Request, res: express.Response) {
 	const modules = po.modules as string
 
 	if (modules) {
-		po.modules = modules.split(',')
+		po.modules = modules
+			.split(',')
 			.map(m => m.trim())
 			.filter(m => !!m)
 	} else {
