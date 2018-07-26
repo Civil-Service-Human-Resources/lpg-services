@@ -136,8 +136,7 @@ export async function suggestionsByInterest(
 				[],
 				[interest.name],
 				6,
-				await getLearningRecord(user, learningRecordIn),
-				user
+				await getLearningRecord(user, learningRecordIn)
 			)
 	})
 	await Promise.all(promises)
@@ -157,8 +156,7 @@ export async function suggestionsByAreaOfWork(
 				[aow],
 				[],
 				6,
-				await getLearningRecord(user, learningRecordIn),
-				user
+				await getLearningRecord(user, learningRecordIn)
 			)
 	})
 	await Promise.all(promises)
@@ -178,8 +176,7 @@ export async function suggestionsByOtherAreasOfWork(
 				[aow.name],
 				[],
 				6,
-				await getLearningRecord(user, learningRecordIn),
-				user
+				await getLearningRecord(user, learningRecordIn)
 			)
 	})
 	await Promise.all(promises)
@@ -198,24 +195,21 @@ export async function suggestionsByDepartment(
 			[],
 			[],
 			6,
-			await getLearningRecord(user, learningRecordIn),
-			user
+			await getLearningRecord(user, learningRecordIn)
 		)
 	return courseSuggestions
 }
 
 export async function homeSuggestions(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	learningRecord: Record<string, model.Course> = {}
 ) {
-	const learningRecord = await getLearningRecord(user, learningRecordIn)
 	return await getSuggestions(
 		user.department!,
 		user.areasOfWork || [],
 		[],
 		6,
-		learningRecord,
-		user
+		learningRecord
 	)
 }
 
@@ -224,8 +218,7 @@ async function getSuggestions(
 	areasOfWork: string[],
 	interests: string[],
 	count: number,
-	learningRecord: Record<string, learnerRecord.CourseRecord>,
-	user: model.User
+	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>
 ): Promise<model.Course[]> {
 	const params = new catalog.ApiParameters(areasOfWork, department, interests, 0, count)
 
@@ -237,7 +230,7 @@ async function getSuggestions(
 			params.serialize()
 		)
 		newSuggestions = newSuggestions.concat(
-			modifyCourses(page.results, learningRecord, user)
+			modifyCourses(page.results, learningRecord)
 		)
 		hasMore = page.totalResults > page.size * (page.page + 1)
 		params.page += 1
@@ -248,18 +241,11 @@ async function getSuggestions(
 
 function modifyCourses(
 	courses: model.Course[],
-	learningRecord: Record<string, learnerRecord.CourseRecord>,
-	user: model.User
+	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>
 ) {
 	const modified: model.Course[] = []
 	for (const course of courses) {
-		const matched = learningRecord[course.id]
-		if (matched) {
-			course.record = matched
-			if (!(course.hasPreference() || course.isComplete(user) || course.isStarted(user))) {
-				modified.push(course)
-			}
-		} else {
+		if (!learningRecord[course.id]) {
 			modified.push(course)
 		}
 	}
