@@ -37,11 +37,15 @@ describe('File validator tests', () => {
 
 	it('should return true for an uploaded file with an extension we support', () => {
 		const testFileExt = '.pptx'
-		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).to.equal(true)
+		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).to.equal(
+			true
+		)
 	})
 
 	it('should return true for an uploaded video with an extension we support', () => {
 		const testFileExt = '.mp4'
-		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).to.equal(true)
+		expect(Object.keys(acceptedFileTypes).indexOf(testFileExt) > -1).to.equal(
+			true
+		)
 	})
 })

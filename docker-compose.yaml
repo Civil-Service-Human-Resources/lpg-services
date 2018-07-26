@@ -116,4 +116,13 @@ services:
     ports:
       - 9004:9004
 
+  lpg-management:
+      container_name: lpg-management
+      image: cshr/lpg-management-ui:latest
+      depends_on:
+        - identity
+        - learning-catalogue
+      ports:
+        - 3005:3005
+
 # /CSHR

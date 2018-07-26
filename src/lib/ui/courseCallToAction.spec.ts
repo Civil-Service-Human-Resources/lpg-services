@@ -111,9 +111,8 @@ describe('Course Call to Actions', () => {
 	describe('For unrequired courses', () => {
 		describe('That are not in the learning plan', () => {
 			it('isInLearningPlan should be false', () => {
-				expect(
-					constructCourseCallToAction(course, testUser).isInLearningPlan
-				).to.be.false
+				expect(constructCourseCallToAction(course, testUser).isInLearningPlan)
+					.to.be.false
 			})
 
 			it('for bookable courses it should return "action_BOOK"', () => {
@@ -204,7 +203,9 @@ describe('Course Call to Actions', () => {
 
 								expect(cta.url).to.be.undefined
 								expect(cta.message).to.be.undefined
-								expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Delete)
+								expect(cta.actionToPlan!.type).to.be.equal(
+									CourseActionType.Delete
+								)
 							})
 						})
 

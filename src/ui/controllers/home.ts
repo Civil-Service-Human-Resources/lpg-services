@@ -6,6 +6,7 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as suggestionController from './suggestion'
+import * as config from 'lib/config'
 
 const logger = log4js.getLogger('controllers/home')
 
@@ -14,7 +15,7 @@ export async function home(req: express.Request, res: express.Response) {
 	try {
 		const user = req.user as model.User
 
-		const [ learningRecord, requiredLearningResults ] = await Promise.all([
+		const [learningRecord, requiredLearningResults] = await Promise.all([
 			learnerRecord.getLearningRecord(user),
 			catalog.findRequiredLearning(user),
 		])
@@ -60,7 +61,9 @@ export async function home(req: express.Request, res: express.Response) {
 					record.state = 'IN_PROGRESS'
 				}
 				if (course.getSelectedDate()) {
-					const bookedModuleRecord = course.record!.modules.find(m => !!m.eventId)
+					const bookedModuleRecord = course.record!.modules.find(
+						m => !!m.eventId
+					)
 					if (bookedModuleRecord) {
 						record.state = bookedModuleRecord.bookingStatus
 					}

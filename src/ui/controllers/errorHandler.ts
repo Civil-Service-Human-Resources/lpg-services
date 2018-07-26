@@ -5,14 +5,28 @@ import * as log4js from 'log4js'
 const logger = log4js.getLogger('controllers/home')
 const nonProductionEnvironments = ['dev', 'test']
 
-export async function handleError(error: Error, request: Request, response: Response, next: NextFunction) {
+export async function handleError(
+	error: Error,
+	request: Request,
+	response: Response,
+	next: NextFunction
+) {
 	try {
-		logger.error('Error handling request for', request.method, request.url, request.body, '\n', error.stack)
+		logger.error(
+			'Error handling request for',
+			request.method,
+			request.url,
+			request.body,
+			'\n',
+			error.stack
+		)
 
 		response.status(500)
 
-		const isNonProduction: boolean =
-			!!(process.env.ENV_PROFILE && nonProductionEnvironments.includes(process.env.ENV_PROFILE))
+		const isNonProduction: boolean = !!(
+			process.env.ENV_PROFILE &&
+			nonProductionEnvironments.includes(process.env.ENV_PROFILE)
+		)
 
 		response.send(
 			template.render('error', request, response, {
@@ -22,7 +36,7 @@ export async function handleError(error: Error, request: Request, response: Resp
 			})
 		)
 	} catch (e) {
-		console.error("Error handling error", error, e)
+		console.error('Error handling error', error, e)
 		next(e)
 	}
 }

@@ -148,10 +148,13 @@ export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
 export const REGISTRY_SERVICE_URL =
 	env.REGISTRY_SERVICE_URL || 'http://localhost:9002'
 
-export const CHECK_LINEMANAGER_URL = REGISTRY_SERVICE_URL + '/civilServants/manager'
+export const CHECK_LINEMANAGER_URL =
+	REGISTRY_SERVICE_URL + '/civilServants/manager'
 
 export const REPORT_SERVICE = set({
 	url: env.REPORT_SERVICE_URL || 'http://localhost:9004',
 })
+
+export const LPG_MANAGEMENT_URL = 'http://lpg.local.cshr.digital:3005'
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000

@@ -45,14 +45,14 @@ declare module 'passport-oauth2' {
 				refreshToken: string,
 				profile: any,
 				verified: VerifyCallback
-			) => void)
+		  ) => void)
 		| ((
 				accessToken: string,
 				refreshToken: string,
 				results: any,
 				profile: any,
 				verified: VerifyCallback
-			) => void)
+		  ) => void)
 	export type VerifyFunctionWithRequest =
 		| ((
 				req: Request,
@@ -60,7 +60,7 @@ declare module 'passport-oauth2' {
 				refreshToken: string,
 				profile: any,
 				verified: VerifyCallback
-			) => void)
+		  ) => void)
 		| ((
 				req: Request,
 				accessToken: string,
@@ -68,7 +68,7 @@ declare module 'passport-oauth2' {
 				results: any,
 				profile: any,
 				verified: VerifyCallback
-			) => void)
+		  ) => void)
 
 	interface _StrategyOptionsBase {
 		authorizationURL: string

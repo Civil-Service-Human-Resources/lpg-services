@@ -2,9 +2,7 @@ import {expect} from 'chai'
 import {validate} from './booking'
 
 describe('Payment validation', () => {
-
 	describe('of type PURCHASE_ORDER', () => {
-
 		const validatePO = (value: string) => validate('PURCHASE_ORDER', value)
 
 		it('should not return any errors for a correct PO', () => {
@@ -20,13 +18,14 @@ describe('Payment validation', () => {
 		})
 
 		it('should return errors.po-special-characters AND errors.po-too-long', () => {
-			expect(validatePO(':this,is#an:invalidPOthatsWayTooLong')
-			).to.eql(['errors.po-too-long', 'errors.po-special-characters'])
+			expect(validatePO(':this,is#an:invalidPOthatsWayTooLong')).to.eql([
+				'errors.po-too-long',
+				'errors.po-special-characters',
+			])
 		})
 	})
 
 	describe('of type FINANCIAL_APPROVER', () => {
-
 		const validateFAP = (value: string) => validate('FINANCIAL_APPROVER', value)
 
 		it('should not return any errors for a correct value', () => {

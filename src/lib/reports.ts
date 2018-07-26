@@ -16,20 +16,16 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function getLearnerRecordReport(
-	user: model.User
-) {
+export async function getLearnerRecordReport(user: model.User) {
 	const response = await http.get(`/learner-record/summaries`, {
-		headers: { Authorization: `Bearer ${user.accessToken}` },
+		headers: {Authorization: `Bearer ${user.accessToken}`},
 	})
 	return response.data
 }
 
-export async function getBookingsReport(
-	user: model.User
-) {
+export async function getBookingsReport(user: model.User) {
 	const response = await http.get(`/learner-record/events`, {
-		headers: { Authorization: `Bearer ${user.accessToken}` },
+		headers: {Authorization: `Bearer ${user.accessToken}`},
 	})
 	return response.data
 }

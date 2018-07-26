@@ -96,7 +96,9 @@ export class Course {
 
 	getSelectedDate() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
+			const bookedModuleRecord = this.record.modules.find(
+				m => !!m.eventId && m.state !== 'SKIPPED'
+			)
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(
 					m => m.id === bookedModuleRecord.moduleId
@@ -196,7 +198,6 @@ export class Course {
 		if (this.record) {
 			const modules = this.getModules(user)
 			for (const module of modules) {
-
 				const audience = module.getAudience(user)
 				const mandatory = audience ? audience.mandatory : false
 
@@ -445,8 +446,8 @@ export class Audience {
 		return !this.mandatory
 	}
 
-	set optional(value: (boolean | string)) {
-		this.mandatory = (!value || value === 'false')
+	set optional(value: boolean | string) {
+		this.mandatory = !value || value === 'false'
 	}
 
 	getRelevance(user: User) {

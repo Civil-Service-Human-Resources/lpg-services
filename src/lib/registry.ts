@@ -37,7 +37,11 @@ export async function halNode(node: string): Promise<any[]> {
 	return (result as any)._embedded[node]
 }
 
-export async function follow(path: string, nodes: string[], templateParameters?: any) {
+export async function follow(
+	path: string,
+	nodes: string[],
+	templateParameters?: any
+) {
 	if (nodes.length === 0) {
 		nodes = ['self']
 	}

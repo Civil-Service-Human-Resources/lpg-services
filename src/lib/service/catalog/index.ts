@@ -177,7 +177,7 @@ function convertToMixed(data: any) {
 				: model.CourseModule.createFromModule(
 						model.Module.create(result),
 						result.course
-				)
+				  )
 		})
 	}
 	return data
