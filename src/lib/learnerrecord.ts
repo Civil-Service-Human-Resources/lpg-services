@@ -1,6 +1,8 @@
 import axios from 'axios'
 import * as axiosLogger from 'lib/axiosLogger'
+import * as datetime from "lib/datetime"
 import * as log4js from 'log4js'
+import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'
 import * as catalog from './service/catalog'
@@ -49,7 +51,7 @@ export async function getRecord(
 	return null
 }
 
-export async function getLearningRecord(user: model.User) {
+export async function getLearningRecord(user: model.User, includeState?: string, ignoreState?: string) {
 	const records = await getRawLearningRecord(user)
 	const promises = records.map(async record => {
 		const course = await catalog.get(record.courseId, user)
@@ -68,20 +70,21 @@ export async function getLearningRecord(user: model.User) {
 		.filter(course => !!course)
 }
 
-export async function getRawLearningRecord(user: model.User): Promise<CourseRecord[]> {
-	const response = await http.get(`/records/${user.id}`, {
+export async function getRawLearningRecord(
+	user: model.User, activityIds?: string[], includeState?: string, ignoreState?: string): Promise<CourseRecord[]> {
+	const params = {
+		activityIds,
+		ignoreState,
+		includeState,
+	}
+	const response = await http.get(`/records/${user.id}?${query.stringify(params)}`, {
 		headers: {Authorization: `Bearer ${user.accessToken}`},
 	})
 	return response.data.records.map(convert)
 }
 
 function convert(record: CourseRecord) {
-	for (const module of record.modules) {
-		if (module.completionDate) {
-			module.completionDate = new Date(module.completionDate)
-		}
-	}
-	return record
+	return new CourseRecord(record)
 }
 
 export interface EventRegistrations {
@@ -107,25 +110,16 @@ export async function getRegistrationsForEvents(
 	return registrations
 }
 
-export async function getReadyForFeedback(learningRecord: model.Course[]) {
+export async function getReadyForFeedback(learningRecord: CourseRecord[]) {
 	const readyForFeedback = []
 	for (const course of learningRecord) {
-		for (const moduleRecord of course.record!.modules) {
-			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
-				const module = course.modules.find(m => m.id === moduleRecord.moduleId)
-				if (!module) {
-					logger.debug(
-						`No module found matching user's module record, id = ${
-							moduleRecord.moduleId
-						}`
-					)
-				} else {
-					readyForFeedback.push({
-						completionDate: moduleRecord.completionDate,
-						course,
-						module,
-					})
-				}
+		for (const module of course.modules) {
+			if (!module.rated && module.state === 'COMPLETED') {
+				readyForFeedback.push({
+					completionDate: module.completionDate,
+					course,
+					module,
+				})
 			}
 		}
 	}
@@ -142,18 +136,82 @@ export function isActive(record: CourseRecord) {
 	)
 }
 
-export interface CourseRecord {
+export class CourseRecord {
 	courseId: string
+	courseTitle: string
 	userId: string
 	modules: ModuleRecord[]
 	preference?: string
 	state?: string
+
+	constructor(data: any) {
+		this.courseId = data.courseId
+		this.courseTitle = data.courseTitle
+		this.userId = data.userId
+		this.modules = data.modules || []
+		this.preference = data.preference
+		this.state = data.state
+
+		for (const module of this.modules) {
+			if (module.completionDate) {
+				module.completionDate = new Date(module.completionDate)
+			}
+			if (module.eventDate) {
+				module.eventDate = new Date(module.eventDate)
+			}
+		}
+	}
+
+	isComplete() {
+		return this.state === 'COMPLETED'
+	}
+
+	getType() {
+		if (!this.modules.length) {
+			return null
+		}
+		if (this.modules.length > 1) {
+			return 'blended'
+		}
+		return this.modules[0].moduleType
+	}
+
+	getDuration() {
+		const durationArray = this.modules.map(m => m.duration || 0)
+		return durationArray.length
+			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
+			: null
+	}
+
+	getCompletionDate() {
+		if (this.isComplete()) {
+			let completionDate: Date | undefined
+			for (const moduleRecord of this.modules) {
+				if (!completionDate) {
+					completionDate = moduleRecord.completionDate
+				} else if (
+					moduleRecord.completionDate &&
+					moduleRecord.completionDate > completionDate
+				) {
+					completionDate = moduleRecord.completionDate
+				}
+			}
+			return completionDate
+		}
+		return undefined
+	}
 }
 
 export interface ModuleRecord {
 	completionDate?: Date
 	eventId?: string
+	eventDate?: Date
 	moduleId: string
+	moduleTitle: string
+	moduleType: string
+	optional: boolean
+	cost?: number
+	duration?: number
 	rated?: boolean
 	state?: string
 	bookingStatus?: string
