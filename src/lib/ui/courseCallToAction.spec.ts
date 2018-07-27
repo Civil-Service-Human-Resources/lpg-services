@@ -4,7 +4,7 @@ import {
 	CourseActionType,
 } from 'lib/ui/courseCallToAction'
 
-import {ModuleRecord} from 'lib/learnerrecord'
+import {CourseRecord, ModuleRecord} from 'lib/learnerrecord'
 import {Course, Module, User} from 'lib/model'
 
 const courseSkeletonData: any = {
@@ -262,12 +262,13 @@ describe('Course Call to Actions', () => {
 export function initCourse(withRecord?: boolean): Course {
 	const c = Course.create(courseSkeletonData)
 	if (withRecord) {
-		c.record = {
+		c.record = new CourseRecord({
 			courseId: c.id,
+			courseTitle: 'title',
 			modules: [],
 			state: 'IN_PROGRESS',
 			userId: testUser.id,
-		}
+		})
 	}
 	return c
 }
@@ -286,5 +287,8 @@ function initModuleRecord(rel: EventRelativeToToday): ModuleRecord {
 	return {
 		eventId: rel,
 		moduleId: 'F2F',
+		moduleTitle: 'module',
+		moduleType: 'link',
+		optional: true,
 	}
 }

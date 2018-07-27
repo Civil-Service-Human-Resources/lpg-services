@@ -47,9 +47,12 @@ export async function courseResult(
 export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 
-	const learningRecord = await learnerRecord.getLearningRecord(req.user)
+	const [requiredLearning, learningRecord] = await Promise.all([
+		catalog.findRequiredLearning(req.user),
+		learnerRecord.getRawLearningRecord(req.user, [], 'COMPLETED'),
+	])
+
 	const completedLearning = learningRecord
-		.filter(course => course.isComplete())
 		.sort((a, b) => {
 			const bcd = b.getCompletionDate()
 			const acd = a.getCompletionDate()
@@ -66,9 +69,10 @@ export async function display(req: express.Request, res: express.Response) {
 	)
 
 	for (let i = 0; i < completedLearning.length; i++) {
-		const course = completedLearning[i]
-		if (course.isRequired()) {
-			completedRequiredLearning.push(course)
+		const courseRecord = completedLearning[i]
+		const course = requiredLearning.results.find(c => c.id === courseRecord.courseId)
+		if (course) {
+			completedRequiredLearning.push(courseRecord)
 			completedLearning.splice(i, 1)
 			i -= 1
 		}

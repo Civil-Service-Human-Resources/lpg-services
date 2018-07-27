@@ -23,7 +23,7 @@ export async function home(req: express.Request, res: express.Response) {
 		const learningHash = suggestionController.hashArray(learningRecord, 'id')
 
 		const suggestedLearning = await suggestionController.homeSuggestions(user, learningHash)
-		const readyForFeedback = await learnerRecord.getReadyForFeedback(learningRecord)
+		const readyForFeedback: model.Course[] = [] //await learnerRecord.getReadyForFeedback(learningRecord)
 
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
