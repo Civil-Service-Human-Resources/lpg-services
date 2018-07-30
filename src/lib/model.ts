@@ -32,20 +32,16 @@ export class Course {
 
 	record?: learnerRecord.CourseRecord
 
-	completionDate: Date
-	complete: boolean
-	started: boolean
-
 	constructor(id: string) {
 		this.id = id
 	}
 
 	isComplete() {
-		return this.checkModuleStates('COMPLETED', true, true)
+		return this.record ? this.record!.state === 'COMPLETED' : false
 	}
 
 	isStarted() {
-		return this.checkModuleStates('IN_PROGRESS')
+		return this.record ? this.record!.state === 'IN_PROGRESS' : false
 	}
 
 	hasPreference() {
@@ -179,53 +175,6 @@ export class Course {
 		for (const module of this.modules) {
 			const moduleShouldRepeat = module.shouldRepeat(completionDate)
 			if (moduleShouldRepeat) {
-				return true
-			}
-		}
-		return false
-	}
-
-	// musthave: allmodules must have state or any module has
-	// countOnlyMandatory:  ignore optional modules
-
-	private checkModuleStates(
-		states: string,
-		mustHave?: boolean,
-		onlyMandatory?: boolean
-	) {
-		const arrStates: string[] = states.split(',')
-		let hasModuleRecord = false
-
-		if (this.record) {
-			const modules = this.modules
-			for (const module of modules) {
-
-				const mandatory = module.isRequired()
-
-				const moduleRecord = this.record.modules.find(
-					mr => mr.moduleId === module.id
-				)
-
-				hasModuleRecord = !!(moduleRecord || hasModuleRecord)
-
-				if (
-					moduleRecord &&
-					moduleRecord.state &&
-					(!onlyMandatory || mandatory)
-				) {
-					if (arrStates.indexOf(moduleRecord.state) < 0 && mustHave) {
-						return false
-					}
-					if (arrStates.indexOf(moduleRecord.state) >= 0 && !mustHave) {
-						return true
-					}
-				} else if (mandatory) {
-					// mandatory courses that have no record fail completion
-					return false
-				}
-			}
-			if (hasModuleRecord) {
-				// need to have at least one module with a record to pass by default
 				return true
 			}
 		}
