@@ -23,17 +23,16 @@ export async function home(req: express.Request, res: express.Response) {
 		const learningHash = suggestionController.hashArray(learningRecord, 'courseId')
 
 		const suggestedLearning = await suggestionController.homeSuggestions(user, learningHash)
-		const readyForFeedback = await learnerRecord.getReadyForFeedback(learningRecord)
+		const readyForFeedback = await learnerRecord.countReadyForFeedback(learningRecord)
 
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
 			if (learningHash[requiredCourse.id]) {
 				const record = learningHash[requiredCourse.id]
 				if (record) {
+					requiredCourse.record = record
 					if (record.isComplete()) {
-						if (requiredCourse.shouldRepeat()) {
-							requiredLearning[i].record = record
-						} else {
+						if (!requiredCourse.shouldRepeat()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
 						}
@@ -41,7 +40,6 @@ export async function home(req: express.Request, res: express.Response) {
 						if (!record.state && record.modules && record.modules.length) {
 							record.state = 'IN_PROGRESS'
 						}
-						requiredLearning[i].record = record
 					}
 					learningRecord.splice(
 						learningRecord.findIndex(value => value.courseId === record.courseId),

@@ -98,8 +98,7 @@ export async function listItemsForFeedback(
 	req: express.Request,
 	res: express.Response
 ) {
-	// FIXME
-	const learningRecord = await learnerRecord.getRawLearningRecord(req.user)
+	const learningRecord = await learnerRecord.getLearningRecord(req.user, undefined, ['COMPLETED'])
 	const readyForFeedback = await learnerRecord.getReadyForFeedback(
 		learningRecord
 	)

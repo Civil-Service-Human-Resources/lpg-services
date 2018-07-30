@@ -6,9 +6,9 @@
                     <h1 class="heading heading-large heading--flush">
                         {$i18n('home_page_title')}
                     </h1>
-                    {#if readyForFeedback.length}
+                    {#if readyForFeedback > 0}
                     <p class="u-space-b5">You can
-                        <a href="/learning-record/feedback">leave feedback on {readyForFeedback.length} item{readyForFeedback.length === 1 ? '' : 's'}</a>.</p>
+                        <a href="/learning-record/feedback">leave feedback on {readyForFeedback} item{readyForFeedback === 1 ? '' : 's'}</a>.</p>
                     {/if}
                 </Search>
             </div>
