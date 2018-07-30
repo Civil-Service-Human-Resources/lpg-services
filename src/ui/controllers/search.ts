@@ -105,7 +105,7 @@ export async function search(ireq: express.Request, res: express.Response) {
 	const searchResults = await catalog.search(user, page, size, query, courseTypes, cost, areasOfWork,
 		departments, interests)
 
-	const courseRecords = await learnerRecord.getRawLearningRecord(user)
+	const courseRecords = await learnerRecord.getRawLearningRecord(user, searchResults.results.map(r => r.course.id))
 
 	searchResults.results.forEach(result => {
 		const cmResult = result as model.CourseModule
