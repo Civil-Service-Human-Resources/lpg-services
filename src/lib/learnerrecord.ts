@@ -55,7 +55,7 @@ export async function getLearningRecord(
 	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[])
 	: Promise<model.Course[]> {
 	const records = await getRawLearningRecord(user, activityIds, includeStates, ignoreStates)
-	const courseIds = records.map(record => record.courseId);
+	const courseIds = records.map(record => record.courseId)
 	const courses = await catalog.list(courseIds, user)
 
 	for (const course of courses) {
