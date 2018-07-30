@@ -64,9 +64,6 @@ export async function display(req: express.Request, res: express.Response) {
 		})
 
 	const completedRequiredLearning = []
-	const readyForFeedback = await learnerRecord.getReadyForFeedback(
-		learningRecord
-	)
 
 	for (let i = 0; i < completedLearning.length; i++) {
 		const courseRecord = completedLearning[i]
@@ -82,7 +79,6 @@ export async function display(req: express.Request, res: express.Response) {
 		template.render('learning-record', req, res, {
 			completedLearning,
 			completedRequiredLearning,
-			readyForFeedback,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
 		})

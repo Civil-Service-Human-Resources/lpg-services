@@ -104,16 +104,37 @@ export async function getRegistrationsForEvents(
 	return registrations
 }
 
-export async function getReadyForFeedback(learningRecord: CourseRecord[]) {
+export async function countReadyForFeedback(learningRecord: CourseRecord[]) {
+	let count = 0
+	for (const courseRecord of learningRecord) {
+		for (const moduleRecord of courseRecord.modules) {
+			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
+				count++
+			}
+		}
+	}
+	return count
+}
+
+export async function getReadyForFeedback(learningRecord: model.Course[]) {
 	const readyForFeedback = []
 	for (const course of learningRecord) {
-		for (const module of course.modules) {
-			if (!module.rated && module.state === 'COMPLETED') {
-				readyForFeedback.push({
-					completionDate: module.completionDate,
-					course,
-					module,
-				})
+		for (const moduleRecord of course.record!.modules) {
+			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
+				const module = course.modules.find(m => m.id === moduleRecord.moduleId)
+				if (!module) {
+					logger.debug(
+						`No module found matching user's module record, id = ${
+							moduleRecord.moduleId
+						}`
+					)
+				} else {
+					readyForFeedback.push({
+						completionDate: moduleRecord.completionDate,
+						course,
+						module,
+					})
+				}
 			}
 		}
 	}
