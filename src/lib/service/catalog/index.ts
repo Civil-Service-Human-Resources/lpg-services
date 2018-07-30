@@ -153,6 +153,18 @@ export async function get(id: string, user?: model.User) {
 	}
 }
 
+export async function list(ids: string[], user?: model.User) {
+	try {
+		const response = await http.get(`/courses?${query.stringify({ courseId: ids })}`)
+		return response.data.map((r: any) => model.Course.create(r, user))
+	} catch (e) {
+		if (e.response.status === 404) {
+			return null
+		}
+		throw new Error(`Error getting course - ${e}`)
+	}
+}
+
 export async function listAll(): Promise<api.PageResults> {
 	try {
 		const response = await http.get(`/courses?size=999&page=0`)

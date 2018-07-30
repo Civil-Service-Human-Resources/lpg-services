@@ -15,60 +15,62 @@ export async function home(req: express.Request, res: express.Response) {
 		const user = req.user as model.User
 
 		const [learningRecord, requiredLearningResults] = await Promise.all([
-			learnerRecord.getLearningRecord(user),
+			learnerRecord.getRawLearningRecord(user),
 			catalog.findRequiredLearning(user),
 		])
 
 		const requiredLearning = requiredLearningResults.results
-		const learningHash = suggestionController.hashArray(learningRecord, 'id')
+		const learningHash = suggestionController.hashArray(learningRecord, 'courseId')
 
 		const suggestedLearning = await suggestionController.homeSuggestions(user, learningHash)
-		const readyForFeedback: model.Course[] = [] //await learnerRecord.getReadyForFeedback(learningRecord)
+		const readyForFeedback = await learnerRecord.getReadyForFeedback(learningRecord)
 
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
 			if (learningHash[requiredCourse.id]) {
-				const course = learningHash[requiredCourse.id]
-				const record = course.record!
-				if (course.isComplete()) {
-					if (course.shouldRepeat()) {
-						requiredLearning[i].record = record
+				const record = learningHash[requiredCourse.id]
+				if (record) {
+					if (record.isComplete()) {
+						if (requiredCourse.shouldRepeat()) {
+							requiredLearning[i].record = record
+						} else {
+							requiredLearning.splice(i, 1)
+							i -= 1
+						}
 					} else {
-						requiredLearning.splice(i, 1)
-						i -= 1
+						if (!record.state && record.modules && record.modules.length) {
+							record.state = 'IN_PROGRESS'
+						}
+						requiredLearning[i].record = record
 					}
-				} else {
-					if (!record.state && record.modules && record.modules.length) {
-						record.state = 'IN_PROGRESS'
-					}
-					requiredLearning[i].record = record
+					learningRecord.splice(
+						learningRecord.findIndex(value => value.courseId === record.courseId),
+						1)
 				}
 			}
 		}
 
-		const bookedLearning: model.Course[] = []
-		let plannedLearning: model.Course[] = []
+		const bookedLearning: learnerRecord.CourseRecord[] = []
+		let plannedLearning: learnerRecord.CourseRecord[] = []
 
-		for (const course of learningRecord) {
-			const record = course.record!
+		for (const record of learningRecord) {
 			if (
-				!course.isComplete() &&
-				!course.isRequired() &&
+				!record.isComplete() &&
 				learnerRecord.isActive(record)
 			) {
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
 				}
-				if (course.getSelectedDate()) {
-					const bookedModuleRecord = course.record!.modules.find(
+				if (record.getSelectedDate()) {
+					const bookedModuleRecord = record.modules.find(
 						m => !!m.eventId
 					)
 					if (bookedModuleRecord) {
 						record.state = bookedModuleRecord.bookingStatus
 					}
-					bookedLearning.push(course)
+					bookedLearning.push(record)
 				} else {
-					plannedLearning.push(course)
+					plannedLearning.push(record)
 				}
 			}
 		}
@@ -78,6 +80,11 @@ export async function home(req: express.Request, res: express.Response) {
 		})
 
 		plannedLearning = [...bookedLearning, ...plannedLearning]
+
+		const courses = await catalog.list(plannedLearning.map(l => l.courseId))
+		for (const course of courses) {
+			course.record = plannedLearning.find(l => l.courseId === course.id)
+		}
 
 		let removeCourseId
 		let confirmTitle
@@ -126,7 +133,7 @@ export async function home(req: express.Request, res: express.Response) {
 				confirmTitle,
 				eventActionDetails,
 				noOption,
-				plannedLearning,
+				plannedLearning: courses,
 				readyForFeedback,
 				removeCourseId,
 				requiredLearning,

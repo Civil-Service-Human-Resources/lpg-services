@@ -51,31 +51,25 @@ export async function getRecord(
 	return null
 }
 
-export async function getLearningRecord(user: model.User, includeState?: string, ignoreState?: string) {
-	const records = await getRawLearningRecord(user)
-	const promises = records.map(async record => {
-		const course = await catalog.get(record.courseId, user)
-		if (!course) {
-			logger.warn(
-				`LRS data for course that doesn't exist. User ID: ${
-					user.id
-				}, course : ${record.courseId}`
-			)
-		} else {
-			course.record = record
-		}
-		return course
-	})
-	return ((await Promise.all(promises)) as model.Course[])
-		.filter(course => !!course)
+export async function getLearningRecord(
+	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[])
+	: Promise<model.Course[]> {
+	const records = await getRawLearningRecord(user, activityIds, includeStates, ignoreStates)
+	const courseIds = records.map(record => record.courseId);
+	const courses = await catalog.list(courseIds, user)
+
+	for (const course of courses) {
+		course.record = records.find(r => r.courseId === course.id)
+	}
+	return courses
 }
 
 export async function getRawLearningRecord(
-	user: model.User, activityIds?: string[], includeState?: string, ignoreState?: string): Promise<CourseRecord[]> {
+	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[]): Promise<CourseRecord[]> {
 	const params = {
-		activityIds,
-		ignoreState,
-		includeState,
+		activityId: activityIds,
+		ignoreState: ignoreStates,
+		includeState: includeStates,
 	}
 	const response = await http.get(`/records/${user.id}?${query.stringify(params)}`, {
 		headers: {Authorization: `Bearer ${user.accessToken}`},
@@ -164,6 +158,15 @@ export class CourseRecord {
 
 	isComplete() {
 		return this.state === 'COMPLETED'
+	}
+
+	getSelectedDate() {
+		for (const moduleRecord of this.modules) {
+			if (moduleRecord.eventDate) {
+				return moduleRecord.eventDate
+			}
+		}
+		return undefined
 	}
 
 	getType() {

@@ -206,7 +206,7 @@ export async function suggestionsByDepartment(
 
 export async function homeSuggestions(
 	user: model.User,
-	learningRecord: Record<string, model.Course> = {}
+	learningRecord: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	return await getSuggestions(
 		user.department!,
