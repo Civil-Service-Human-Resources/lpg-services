@@ -154,6 +154,9 @@ export async function get(id: string, user?: model.User) {
 }
 
 export async function list(ids: string[], user?: model.User) {
+	if (ids.length === 0) {
+		return []
+	}
 	try {
 		const response = await http.get(`/courses?${query.stringify({ courseId: ids })}`)
 		return response.data.map((r: any) => model.Course.create(r, user))

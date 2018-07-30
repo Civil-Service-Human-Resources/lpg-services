@@ -191,16 +191,17 @@ export async function suggestionsByDepartment(
 	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
-
-	courseSuggestions[(user.department as any)] =
-		await getSuggestions(
-			user.department!,
-			[],
-			[],
-			6,
-			await getLearningRecord(user, learningRecordIn),
-			user
-		)
+	if (user.department) {
+		courseSuggestions[(user.department as any)] =
+			await getSuggestions(
+				user.department!,
+				[],
+				[],
+				6,
+				await getLearningRecord(user, learningRecordIn),
+				user
+			)
+	}
 	return courseSuggestions
 }
 
