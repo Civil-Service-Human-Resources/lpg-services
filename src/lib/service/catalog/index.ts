@@ -90,7 +90,7 @@ export async function search(
 		const response = await http.get(url)
 		return convertToMixed(response.data, user) as api.SearchResults
 	} catch (e) {
-		if (e.response.status === 400) {
+		if (e.response && e.response.status === 400) {
 			return {
 				combinedResults: [],
 				page: 0,
@@ -146,7 +146,7 @@ export async function get(id: string, user?: model.User) {
 		const response = await http.get(`/courses/${id}`)
 		return model.Course.create(response.data, user)
 	} catch (e) {
-		if (e.response.status === 404) {
+		if (e.response && e.response.status === 404) {
 			return null
 		}
 		throw new Error(`Error getting course - ${e}`)
@@ -161,7 +161,7 @@ export async function list(ids: string[], user?: model.User) {
 		const response = await http.get(`/courses?${query.stringify({ courseId: ids })}`)
 		return response.data.map((r: any) => model.Course.create(r, user))
 	} catch (e) {
-		if (e.response.status === 404) {
+		if (e.response && e.response.status === 404) {
 			return null
 		}
 		throw new Error(`Error getting course - ${e}`)
