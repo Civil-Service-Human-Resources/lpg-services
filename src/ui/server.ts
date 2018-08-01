@@ -68,10 +68,8 @@ app.use(
 app.use(
 	session({
 		cookie: {
-			domain: '.cshr.digital',
 			httpOnly: true,
 			maxAge: 31536000,
-			sameSite: 'lax',
 			secure: config.PRODUCTION_ENV,
 		},
 		name: 'lpg-ui',
