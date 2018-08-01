@@ -62,7 +62,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: cshr/identity-service:e4aff54943f71dd6b270b33175606f7884a54ccb
+    image: cshr/identity-service:chore-performance-156
     ports:
       - 8080:8080
       - 8081:8081
@@ -75,7 +75,7 @@ services:
         - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
         - LEARNING_CATALOGUE_SERVICE_URL=http://localhost:9001
         - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-      image: cshr/lpg-learner-record:77c2c0e8b2cdcd9f1a127aa671480dc6f68c6e78
+      image: cshr/lpg-learner-record:chore-large-records-139
       depends_on:
         - civil-servant-registry
         - identity
@@ -89,7 +89,7 @@ services:
     command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
     environment:
       - ELASTICSEARCH_URI=http://elasticsearch:9200
-    image: cshr/lpg-learning-catalogue:91135d7833b3aa0028f43cc6f593d9f80fc15a57
+    image: cshr/lpg-learning-catalogue:e3d5694c03c2196f62789789bff549084e430ffb
     ports:
       - 9001:9001
 
@@ -98,7 +98,7 @@ services:
       environment:
         - SPRING_PROFILES_ACTIVE=default
         - OAUTH_SERVICE_URL=http://identity:8080
-      image: cshr/civil-servant-registry-service:4234a089fdeb55056d25b28385279e1f7866c142
+      image: cshr/civil-servant-registry-service:feature-LPFG-394-payment-methods-65
       depends_on:
         - identity
       ports:
@@ -109,7 +109,7 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - LEARNER_RECORD_URL=http://learner-record:9000
-    image: cshr/lpg-report-service:f15aad08b44f0d7dbc3e067a61fcf7341359c0ef
+    image: cshr/lpg-report-service:feature-lpfg-370-booking-feed-csv-report-4
     depends_on:
       - identity
       - learner-record
