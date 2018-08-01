@@ -40,8 +40,8 @@ export const acceptedFileTypes: {
 		values: ['Microsoft Office Word 97-2003 Document'],
 	},
 	'.docx': {
-		keys: ['ZipFileName', 'MIMEType'],
-		values: ['word/numbering.xml', 'Microsoft Macintosh Word'],
+		keys: ['Application', 'ZipFileName', 'MIMEType'],
+		values: ['Microsoft Office Word', 'word/numbering.xml', 'Microsoft Macintosh Word'],
 	},
 	'.mp4': {keys: ['VideoFrameRate'], values: []},
 	'.pdf': {keys: ['PDFVersion'], values: []},
