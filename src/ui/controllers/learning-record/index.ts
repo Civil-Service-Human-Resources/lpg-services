@@ -93,7 +93,7 @@ export async function record(ireq: express.Request, res: express.Response) {
 		res.sendStatus(400)
 		return
 	}
-	const course = await catalog.get(req.user, courseId)
+	const course = await catalog.get(courseId, req.user)
 	if (!course) {
 		logger.error(`No matching course found for course ID ${courseId}`)
 		res.sendStatus(400)
