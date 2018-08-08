@@ -270,7 +270,7 @@ export async function record(
 					type = Type.Event
 				}
 				break
-			case 'link':
+			case 'blog':
 				type = Type.Link
 				break
 			case 'video':

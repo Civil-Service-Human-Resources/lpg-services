@@ -144,7 +144,7 @@ export async function tryCancelBooking(
 	if (!errors) {
 		await notify.bookingCancelled({
 			bookingReference: `${req.user.id}-${event.id}`,
-			cost: module.price,
+			cost: module.cost,
 			courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
 				event.date,
 				true
