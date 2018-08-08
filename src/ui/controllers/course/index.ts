@@ -101,7 +101,7 @@ export async function displayModule(
 		case 'link':
 		case 'file':
 			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
-			res.redirect(module.location! || module.url!)
+			res.redirect(module.url!)
 			break
 		case 'video':
 			const sessionId = await xapi.record(
@@ -165,7 +165,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				return {
 					...cm,
 					duration: cm.getDuration(),
-					isMandatory: cm.isRequired(),
+					isMandatory: !cm.optional,
 					state: moduleRecord ? moduleRecord.state : null,
 				}
 			})
@@ -179,6 +179,10 @@ export async function display(ireq: express.Request, res: express.Response) {
 					modules,
 				})
 			)
+			break
+		case 'link':
+		case 'video':
+			res.redirect(`/courses/${course.id}/${module!.id}`)
 			break
 		default:
 			logger.debug(`Unknown course type: ${type}`)

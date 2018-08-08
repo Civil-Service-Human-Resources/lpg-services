@@ -288,7 +288,7 @@ function initModuleRecord(rel: EventRelativeToToday): ModuleRecord {
 		eventId: rel,
 		moduleId: 'F2F',
 		moduleTitle: 'module',
-		moduleType: 'link',
+		moduleType: 'blog',
 		optional: true,
 	}
 }
