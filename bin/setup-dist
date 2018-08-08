@@ -13,21 +13,10 @@ cp ../src/jasmine.js .
 
 ln -s build node_modules
 
-mkdir management-ui
-mkdir management-ui/assets
 mkdir ui
 mkdir ui/assets
 mkdir ui/assets/styles
 
-
-cd "$dist/management-ui/assets"
-
-ln -s ../../../src/management-ui/assets/img .
-
-cd "$dist/management-ui"
-
-ln -s ../../src/management-ui/component
-ln -s ../../src/management-ui/page
 
 cd "$dist/ui/assets"
 cp ../../../src/ui/assets/styles/video-js.min.css styles

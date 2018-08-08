@@ -99,10 +99,10 @@ export async function displayModule(
 		case 'face-to-face':
 			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 			break
-		case 'link':
+		case 'blog':
 		case 'file':
 			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
-			res.redirect(module.location! || module.url!)
+			res.redirect(module.url!)
 			break
 		case 'video':
 			const sessionId = await xapi.record(
@@ -119,9 +119,9 @@ export async function displayModule(
 					courseDetails: getCourseDetails(req, course, module),
 					module,
 					sessionId,
-					video: module.location!.endsWith('.mp4')
+					video: module.url!.endsWith('.mp4')
 						? null
-						: await youtube.getBasicInfo(module.location!),
+						: await youtube.getBasicInfo(module.url!),
 				})
 			)
 			break
@@ -164,7 +164,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				return {
 					...cm,
 					duration: cm.getDuration(),
-					isMandatory: cm.isRequired(),
+					isMandatory: !cm.optional,
 					state: moduleRecord ? moduleRecord.state : null,
 				}
 			})
@@ -179,7 +179,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				})
 			)
 			break
-		case 'link':
+		case 'blog':
 		case 'video':
 			res.redirect(`/courses/${course.id}/${module!.id}`)
 			break

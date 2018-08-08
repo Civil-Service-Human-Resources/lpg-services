@@ -190,7 +190,7 @@ function convertToMixed(data: any, user?: model.User) {
 			return result.courseId === '0'
 				? model.CourseModule.createFromCourse(model.Course.create(result, user))
 				: model.CourseModule.createFromModule(
-						model.Module.create(result, user),
+						model.Module.create(result),
 						result.course
 				)
 		})
