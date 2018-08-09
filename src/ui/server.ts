@@ -83,7 +83,7 @@ app.use(
 )
 app.use(flash())
 
-app.use(bodyParser.json())
+app.use(bodyParser.json({ strict: false }))
 app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(compression({threshold: 0}))

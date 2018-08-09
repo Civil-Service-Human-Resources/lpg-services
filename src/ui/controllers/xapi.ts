@@ -30,39 +30,14 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		}
 	}
 
-	const body = req.body
+	let body = req.body
 	if (body) {
-		if (body.hasOwnProperty('actor')) {
-			body.actor = agent
-		}
-		if (
-			body.hasOwnProperty('object') &&
-			body.object.objectType === 'Activity'
-		) {
-			body.object.id = `${config.XAPI.moduleBaseUri}/${req.module!.id}`
-			if (body.object.definition) {
-				body.object.definition.type = xapi.Type.ELearning
-			}
-		}
-		if (
-			body.hasOwnProperty('context') &&
-			body.context.hasOwnProperty('contextActivities')
-		) {
-			body.context.contextActivities.parent = [
-				{
-					id: `${config.XAPI.courseBaseUri}/${req.course.id}`,
-				},
-			]
+		if (Array.isArray(body)) {
+			body = body.map(statement => updateStatement(statement, agent, req))
+		} else if (typeof body === 'object') {
+			body = updateStatement(body, agent, req)
 		} else {
-			body.context = {
-				contextActivities: {
-					parent: [
-						{
-							id: `${config.XAPI.courseBaseUri}/${req.course.id}`,
-						},
-					],
-				},
-			}
+			body = new Buffer(body)
 		}
 	}
 
@@ -95,4 +70,40 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			res.sendStatus(500)
 		}
 	}
+}
+
+function updateStatement(statement: any, agent: any, req: extended.CourseRequest) {
+	if (statement.hasOwnProperty('actor')) {
+		statement.actor = agent
+	}
+	if (
+		statement.hasOwnProperty('object') &&
+		statement.object.objectType === 'Activity'
+	) {
+		statement.object.id = `${config.XAPI.moduleBaseUri}/${req.module!.id}`
+		if (statement.object.definition) {
+			statement.object.definition.type = xapi.Type.ELearning
+		}
+	}
+	if (
+		statement.hasOwnProperty('context') &&
+		statement.context.hasOwnProperty('contextActivities')
+	) {
+		statement.context.contextActivities.parent = [
+			{
+				id: `${config.XAPI.courseBaseUri}/${req.course.id}`,
+			},
+		]
+	} else {
+		statement.context = {
+			contextActivities: {
+				parent: [
+					{
+						id: `${config.XAPI.courseBaseUri}/${req.course.id}`,
+					},
+				],
+			},
+		}
+	}
+	return statement
 }
