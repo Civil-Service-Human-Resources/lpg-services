@@ -23,6 +23,7 @@ const filesToSubstitute = [
 	'close_methods.js',
 	'portal_overrides.js',
 	'tincan_wrapper.js',
+	'user.js',
 ]
 
 async function parseMetadata(entry: unzip.Entry) {
@@ -85,6 +86,60 @@ async function parseMetadata(entry: unzip.Entry) {
 					identifier,
 					launchPage,
 					title,
+				}
+			}
+			return {}
+		})
+}
+
+async function parseTincanMetadata(entry: unzip.Entry) {
+	return new Promise(resolve => {
+		let content = ''
+		entry.pipe(
+			new Writable({
+				final: () => {
+					resolve(content)
+				},
+				write: (chunk: any, encoding: any, next: any) => {
+					content += chunk.toString()
+					next()
+				},
+			})
+		)
+	})
+		.then(content => {
+			return new Promise((resolve, reject) => {
+				xml2js.parseString(content, (err, data) => {
+					if (err) {
+						reject(err)
+					} else {
+						resolve(data)
+					}
+				})
+			})
+		})
+		.then((data: any) => {
+			if (data.tincan && data.tincan.activities) {
+				let identifier
+				let title
+				let launchPage
+
+				const activities = data.tincan.activities[0].activity
+
+				if (activities) {
+					for (const activity of activities) {
+						if (activity.$.type === 'http://adlnet.gov/expapi/activities/course') {
+							identifier = activity.$.id
+							title = activity.name ? activity.name[0]._ : null
+							launchPage = activity.launch ? activity.launch[0]._ : null
+							break
+						}
+					}
+					return {
+						identifier,
+						launchPage,
+						title,
+					}
 				}
 			}
 			return {}
@@ -161,6 +216,8 @@ async function upload(uid: string, entry: unzip.Entry) {
 	} else {
 		if (entry.path.endsWith('imsmanifest.xml')) {
 			metadata = await parseMetadata(entry)
+		} else if (entry.path.endsWith('tincan.xml')) {
+			metadata = await parseTincanMetadata(entry)
 		}
 		await doUpload(storagePath, entry)
 	}
