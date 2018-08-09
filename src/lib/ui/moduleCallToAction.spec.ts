@@ -80,22 +80,23 @@ describe('Module call to actions', () => {
 			beforeEach(() => {
 				course = initCourse(false)
 				course.modules = initModules(['faceToFace'])
+				modifier = 'search'
+				cta = constructModuleCta(
+					course.id,
+					course.modules[0],
+					testUser,
+					'',
+					course.record!,
+					modifier
+				)
 			})
 			describe('on the search page', () => {
 				it('should go to the course overview page (modules section) if it is part of a blended course', () => {
-					modifier = 'search'
-					cta = constructModuleCta(
-						course.id,
-						course.modules[0],
-						testUser,
-						'',
-						course.record!,
-						modifier
-					)
 					expect(cta.url).to.contain('#modules')
 				})
 
 				it('should return Add (to learning plan)', () => {
+					console.log(cta)
 					expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Add)
 				})
 			})
