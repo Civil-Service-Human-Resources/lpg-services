@@ -1,4 +1,6 @@
 
+// Storyline support
+
 if (typeof XMLHttpRequest !== 'undefined') {
   window._xhr = XMLHttpRequest;
   window.XMLHttpRequest = function () {
