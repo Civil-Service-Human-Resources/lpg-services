@@ -55,7 +55,7 @@ const corsOptions = {
 	credentials: true,
 	origin: /\.cshr\.digital$/,
 }
-app.options('*', cors(corsOptions))
+app.use(cors(corsOptions))
 
 app.use(
 	log4js.connectLogger(logger, {
