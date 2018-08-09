@@ -51,8 +51,4 @@ describe('Testing templates and templating engine', () => {
 		const pageErrors = readPageDir(uiPageDir)
 		expect(pageErrors.length).to.equal(0)
 	})
-	it('Should not return any errors when compiling management-ui pages', () => {
-		const pageErrors = readPageDir(managementPageDir)
-		expect(pageErrors.length).to.equal(0)
-	})
 })
