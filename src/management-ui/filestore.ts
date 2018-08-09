@@ -24,6 +24,7 @@ const filesToSubstitute = [
 	'portal_overrides.js',
 	'tincan_wrapper.js',
 	'user.js',
+	'Configuration.js',
 ]
 
 async function parseMetadata(entry: unzip.Entry) {
