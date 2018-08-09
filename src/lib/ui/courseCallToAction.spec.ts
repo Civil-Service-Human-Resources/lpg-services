@@ -25,21 +25,12 @@ const moduleData: {[module: string]: any} = {
 		description: '',
 		duration: null,
 		id: 'F2F',
+		optional: true,
 		price: null,
 		productCode: null,
 		title: 'Face to face module',
 		type: 'face-to-face',
 
-		audiences: [
-			{
-				areasOfWork: [],
-				departments: [],
-				frequency: null,
-				grades: [],
-				interests: [],
-				mandatory: false,
-			},
-		],
 		events: [
 			{
 				capacity: 30,
@@ -58,26 +49,17 @@ const moduleData: {[module: string]: any} = {
 	file: {
 		description: 'File',
 		duration: 1000,
+		events: [],
 		fileSize: null,
 		id: 'FILE',
-		type: 'file',
+
+		optional: true,
 
 		price: null,
+		type: 'file',
+
 		title: 'tes',
-
 		url: null,
-
-		audiences: [
-			{
-				areasOfWork: [],
-				departments: [],
-				frequency: null,
-				grades: [],
-				interests: [],
-				mandatory: false,
-			},
-		],
-		events: [],
 	},
 }
 
