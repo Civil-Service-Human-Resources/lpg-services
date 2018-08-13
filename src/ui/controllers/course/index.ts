@@ -94,7 +94,7 @@ export async function displayModule(
 				`${config.CONTENT_URL}/${course.id}/${module.id}/${
 					module.startPage
 				}?title=${module.title || course.title}&endpoint=${config.LPG_UI_SERVER}/courses/${
-					course.id}/${module.id}/xapi/&actor={}`
+					course.id}/${module.id}/xapi/&actor={"name":"Noop"}`
 			)
 			break
 		case 'face-to-face':
