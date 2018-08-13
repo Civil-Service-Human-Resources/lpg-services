@@ -29,7 +29,7 @@ r(function(){
   document.title = title;
 });
 
-var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/.*\/([^/]+)\/([^/]+)\/.*$/);
+var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
 if (!match) {
   throw new Error('Content being accessed on invalid domain');
 }

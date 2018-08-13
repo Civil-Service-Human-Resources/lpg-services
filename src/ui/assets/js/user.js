@@ -14,7 +14,7 @@ if (typeof XMLHttpRequest !== 'undefined') {
 var CLOSE_METHODS = {
 
   csl: function() {
-    var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/.*\/([^/]+)\/([^/]+)\/.*$/);
+    var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
     if (!match) {
       throw new Error('Content being accessed on invalid domain');
     }
@@ -32,6 +32,8 @@ var CLOSE_METHODS = {
     return true;
   }
 };
+
+top.window.close = CLOSE_METHODS['csl'];
 
 function s() {
   var pubSub;
