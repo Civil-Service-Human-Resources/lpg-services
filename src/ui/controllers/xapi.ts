@@ -4,12 +4,20 @@ import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
+import * as querystring from 'querystring'
 
 const logger = log4js.getLogger('controllers/xapi')
 
 export async function proxy(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+	let req = ireq as extended.CourseRequest
 	logger.debug(`Proxying xAPI request to ${req.path}`)
+
+	if (req.query.method) {
+		// This indicates a request has been converted to a POST. The request body will contain headers and parameter
+		// required for actually completing the request.
+		// Not sure why, but someone thought this was a good idea at some point.
+		req = await unwrapPost(req)
+	}
 
 	const agent = {
 		account: {
@@ -22,10 +30,10 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 
 	const query = req.query
 	if (query) {
-		if (query.hasOwnProperty('agent')) {
+		if (query.agent) {
 			query.agent = JSON.stringify(agent)
 		}
-		if (query.hasOwnProperty('activityId')) {
+		if (query.activityId) {
 			query.activityId = `${config.XAPI.moduleBaseUri}/${req.module!.id}`
 		}
 	}
@@ -72,12 +80,33 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 }
 
+async function unwrapPost(req: extended.CourseRequest) {
+	req.method = req.query.method
+	const data =  querystring.parse(req.body)
+
+	req.headers = {
+		'Content-Type': data['Content-Type'],
+		'X-Experience-API-Version': data['X-Experience-API-Version'],
+	}
+
+	req.body = data.content ? JSON.parse(data.content as string) : null
+
+	delete data.Authorization
+	delete data.content
+	delete data['Content-Type']
+	delete data['X-Experience-API-Version']
+
+	req.query = data
+
+	return req
+}
+
 function updateStatement(statement: any, agent: any, req: extended.CourseRequest) {
-	if (statement.hasOwnProperty('actor')) {
+	if (statement.actor) {
 		statement.actor = agent
 	}
 	if (
-		statement.hasOwnProperty('object') &&
+		statement.object &&
 		statement.object.objectType === 'Activity'
 	) {
 		statement.object.id = `${config.XAPI.moduleBaseUri}/${req.module!.id}`
@@ -86,8 +115,8 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 		}
 	}
 	if (
-		statement.hasOwnProperty('context') &&
-		statement.context.hasOwnProperty('contextActivities')
+		statement.context &&
+		statement.context.contextActivities
 	) {
 		statement.context.contextActivities.parent = [
 			{

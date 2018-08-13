@@ -29,8 +29,7 @@ const ALL_GRADES = [
 
 const blob = azure.createBlobService();
 
-const filesToSubstitute = [ 'close_methods.js', 'portal_overrides.js', 'tincan_wrapper.js' ];
-
+const filesToSubstitute = [ 'close_methods.js', 'portal_overrides.js', 'tincan_wrapper.js', 'Configuration.js', 'user.js' ];
 
 async function uploadScormIds(file) {
   const rawData = fs.readFileSync(file);
