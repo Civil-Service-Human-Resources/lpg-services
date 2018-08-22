@@ -121,7 +121,7 @@ export async function displayModule(
 					sessionId,
 					video: module.url!.endsWith('.mp4')
 						? null
-						: await youtube.getBasicInfo(module.url!)
+						: await youtube.getBasicInfo(module.url!),
 				})
 			)
 			break
