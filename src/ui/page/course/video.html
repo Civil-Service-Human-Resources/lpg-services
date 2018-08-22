@@ -7,7 +7,7 @@
             <div class="column-two-thirds">
                 <div class="aspect__container">
                     <div class="video aspect__content">
-						{#if !module.location.endsWith('.mp4') }
+						{#if !module.url.endsWith('.mp4') }
                        		<div id="video-player"></div>
                         	<noscript>
                             	<iframe title="{module.title || course.title}" src="https://www.youtube.com/embed/{video.id}" frameborder="0" scrolling="no"></iframe>
