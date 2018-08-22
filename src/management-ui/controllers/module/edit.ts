@@ -304,8 +304,8 @@ export async function setModule(ireq: express.Request, res: express.Response) {
 			const duration = (await youtube.getDuration(info.id)) || 0
 			if (!duration) {
 				logger.error(`Unable to get duration of module via the YouTube API`)
-				res.sendStatus(500)
-				return
+                res.sendStatus(500)
+                return
 			}
 
 			data.duration = duration
