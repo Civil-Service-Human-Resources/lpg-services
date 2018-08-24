@@ -140,7 +140,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 
-	const type: string = course.getType()
+	const type = course.getType()
 	let canPayByPO = false
 
 	switch (type) {
