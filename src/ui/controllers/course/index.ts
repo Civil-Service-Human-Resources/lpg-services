@@ -87,8 +87,8 @@ export async function displayModule(
 
 	const course = req.course
 	const module = req.module!
-	const type: string = module.type
-	switch (type) {
+
+	switch (module.type) {
 		case 'elearning':
 			res.redirect(
 				`${config.CONTENT_URL}/${course.id}/${module.id}/${
@@ -127,7 +127,7 @@ export async function displayModule(
 			)
 			break
 		default:
-			logger.info(`Unknown module type: ${module.type}`)
+			logger.debug(`Unknown module type: ${module.type}`)
 			res.sendStatus(500)
 	}
 }
