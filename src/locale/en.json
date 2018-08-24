@@ -355,5 +355,6 @@
 	"REQUESTED": "Requested",
 	"CANCELLED": "Cancelled",
 	"Cost": "Cost",
-	"SKIPPED": "Skipped"
+	"SKIPPED": "Skipped",
+	"unknown": "unknown"
 }
