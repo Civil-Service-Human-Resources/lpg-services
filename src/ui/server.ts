@@ -55,7 +55,7 @@ const corsOptions = {
 	credentials: true,
 	origin: /\.cshr\.digital$/,
 }
-app.options('*', cors(corsOptions))
+app.use(cors(corsOptions))
 
 app.use(
 	log4js.connectLogger(logger, {
@@ -83,8 +83,9 @@ app.use(
 )
 app.use(flash())
 
-app.use(bodyParser.json())
+app.use(bodyParser.json({ strict: false }))
 app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 

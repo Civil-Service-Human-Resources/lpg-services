@@ -2,7 +2,7 @@
 var CLOSE_METHODS = {
 
     csl: function() {
-        var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/.*\/([^/]+)\/([^/]+)\/.*$/);
+        var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
         if (!match) {
             throw new Error('Content being accessed on invalid domain');
         }

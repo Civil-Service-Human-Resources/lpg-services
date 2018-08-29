@@ -6,7 +6,8 @@
 	"audience_optional_label": "Optional",
 	"audience_frequency_label": "Frequency",
 	"audience_required-by_label": "Required By",
-	"elearning": "Online course",
+    "Cost": "Cost",
+    "elearning": "Online course",
 	"video": "Video",
 	"website": "Website",
 	"COMPLETED": "Completed",
@@ -354,9 +355,7 @@
 	"paymentMethods_PURCHASE_ORDER_type": "Purchase order",
 	"REQUESTED": "Requested",
 	"CANCELLED": "Cancelled",
-	"Cost": "Cost",
 	"SKIPPED": "Skipped",
-	"blog": "blog",
-	"": "",
-	"unknown": "unknown"
+    "unknown": "unknown",
+    "": ""
 }
