@@ -100,7 +100,7 @@ export async function displayModule(
 		case 'face-to-face':
 			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 			break
-		case 'blog':
+		case 'link':
 		case 'file':
 			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
 			res.redirect(module.url!)
@@ -180,7 +180,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				})
 			)
 			break
-		case 'blog':
+		case 'link':
 		case 'video':
 			res.redirect(`/courses/${course.id}/${module!.id}`)
 			break
