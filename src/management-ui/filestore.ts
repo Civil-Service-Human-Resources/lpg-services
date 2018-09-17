@@ -150,7 +150,8 @@ async function parseTincanMetadata(entry: unzip.Entry) {
 export async function saveContent(
 	course: model.Course,
 	module: model.Module,
-	file: any
+	file: any,
+	user: model.User
 ) {
 	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
 	const currentCourse = await catalog.get(course.id)!
@@ -170,7 +171,7 @@ export async function saveContent(
 		}
 
 		currentModule.startPage = metadata.launchPage
-		await catalog.add(currentCourse!)
+		await catalog.add(currentCourse!, user)
 
 		logger.info(
 			`Upload of ${file.name} complete, startPage set to ${metadata.launchPage}`
@@ -196,7 +197,7 @@ export async function saveContent(
 
 		await doUpload(`${course.id}/${currentModule.id}/${file.name}`, fileData)
 
-		await catalog.add(currentCourse!)
+		await catalog.add(currentCourse!, user)
 		logger.info(`Upload of ${file.name} complete, with no start page`)
 	}
 

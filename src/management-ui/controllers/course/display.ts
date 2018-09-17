@@ -9,7 +9,7 @@ export function displayCourse(ireq: express.Request, res: express.Response) {
 }
 
 export async function index(req: express.Request, res: express.Response) {
-	const result = await catalog.listAll()
+	const result = await catalog.listAll(req.user)
 	res.send(
 		template.render('courses/list', req, res, {
 			courses: result.results,
@@ -18,6 +18,6 @@ export async function index(req: express.Request, res: express.Response) {
 }
 
 export async function loadSearch(ireq: express.Request, res: express.Response) {
-	await catalog.loadSearch()
+	await catalog.loadSearch(ireq.user)
 	res.redirect('/courses')
 }

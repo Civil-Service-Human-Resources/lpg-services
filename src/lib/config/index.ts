@@ -69,10 +69,6 @@ export const CONTENT_URL =
 export const CONTENT_CONTAINER = env.CONTENT_CONTAINER || 'lpgdevcontent'
 
 export const COURSE_CATALOGUE = set({
-	auth: {
-		password: env.COURSE_CATALOGUE_PASS || 'password',
-		username: env.COURSE_CATALOGUE_USER || 'user',
-	},
 	url: env.COURSE_CATALOGUE_URL || 'http://localhost:9001',
 })
 

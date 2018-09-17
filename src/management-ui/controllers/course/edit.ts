@@ -64,12 +64,12 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 			}
 		})
 
-		const id = await catalog.add(course)
+		const id = await catalog.add(course, req.user)
 
 		// now lets upload any files
 		if (session.pendingFiles && session.pendingFiles.length) {
 			// Fire and forget to avoid timeout issues in browser
-			uploadPendingFiles(id, session.pendingFiles).catch(err => {
+			uploadPendingFiles(id, session.pendingFiles, req.user).catch(err => {
 				logger.error('Error uploading ', err)
 			})
 		}
@@ -86,7 +86,7 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 	}
 }
 
-async function uploadPendingFiles(courseId: string, pendingFiles: any[]) {
+async function uploadPendingFiles(courseId: string, pendingFiles: any[], user: model.User) {
 	const course = await catalog.get(courseId)
 	for (const file of pendingFiles) {
 		if (file) {
@@ -105,7 +105,7 @@ async function uploadPendingFiles(courseId: string, pendingFiles: any[]) {
 			//TODO if replacing elearning files remove old files!
 
 			try {
-				await filestore.saveContent(course!, course!.modules[moduleIndex], file)
+				await filestore.saveContent(course!, course!.modules[moduleIndex], file, user)
 			} catch (e) {
 				logger.error(`Error uploading file ${file.path}`, e)
 			}

@@ -10,7 +10,6 @@ import * as api from 'lib/service/catalog/api'
 const logger = log4js.getLogger('catalog')
 
 const http: AxiosInstance = axios.create({
-	auth: config.COURSE_CATALOGUE.auth,
 	baseURL: config.COURSE_CATALOGUE.url,
 	headers: {
 		'Content-Type': 'application/json',
@@ -21,14 +20,14 @@ const http: AxiosInstance = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function loadSearch() {
-	await http.get(`/search/create`)
+export async function loadSearch(user: model.User) {
+	await http.get(`/search/create`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 }
 
-export async function add(course: model.Course) {
+export async function add(course: model.Course, user: model.User) {
 	try {
 		if (course.id) {
-			await http.put(`/courses/${course.id}`, course)
+			await http.put(`/courses/${course.id}`, course, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 			return course.id
 		}
 		const response = await http.post(`/courses`, course)
@@ -42,9 +41,9 @@ export async function add(course: model.Course) {
 	}
 }
 
-export async function postFeedback(feedback: model.Feedback) {
+export async function postFeedback(feedback: model.Feedback, user: model.User) {
 	try {
-		const response = await http.post(`/feedback`, feedback)
+		const response = await http.post(`/feedback`, feedback, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return response.headers.location.match(/.*feedback\/([^/]+)/)[1]
 	} catch (e) {
 		throw new Error(
@@ -87,7 +86,7 @@ export async function search(
 			url += `&interests=${interests.join('&interests=')}`
 		}
 
-		const response = await http.get(url)
+		const response = await http.get(url, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return convertToMixed(response.data, user) as api.SearchResults
 	} catch (e) {
 		if (e.response && e.response.status === 400) {
@@ -108,7 +107,7 @@ export async function findRequiredLearning(
 ): Promise<api.PageResults> {
 	try {
 		const response = await http.get(
-			`/courses?mandatory=true&department=${user.department}`
+			`/courses?mandatory=true&department=${user.department}`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
 		)
 		return convert(response.data, user) as api.PageResults
 	} catch (e) {
@@ -134,7 +133,7 @@ export async function findSuggestedLearningWithParameters(
 	parameters: string
 ): Promise<api.PageResults> {
 	try {
-		const response = await http.get(`/courses?${parameters}`)
+		const response = await http.get(`/courses?${parameters}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return convert(response.data, user) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding suggested learning - ${e}`)
@@ -143,7 +142,7 @@ export async function findSuggestedLearningWithParameters(
 
 export async function get(id: string, user?: model.User) {
 	try {
-		const response = await http.get(`/courses/${id}`)
+		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user!.accessToken}`}})
 		return model.Course.create(response.data, user)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
@@ -158,7 +157,8 @@ export async function list(ids: string[], user?: model.User) {
 		return []
 	}
 	try {
-		const response = await http.get(`/courses?${query.stringify({ courseId: ids })}`)
+		const response = await http.get(`/courses?${query.stringify({ courseId: ids })}`,
+			{headers: {Authorization: `Bearer ${user!.accessToken}`}})
 		return response.data.map((r: any) => model.Course.create(r, user))
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
@@ -168,9 +168,9 @@ export async function list(ids: string[], user?: model.User) {
 	}
 }
 
-export async function listAll(): Promise<api.PageResults> {
+export async function listAll(user: model.User): Promise<api.PageResults> {
 	try {
-		const response = await http.get(`/courses?size=999&page=0`)
+		const response = await http.get(`/courses?size=999&page=0`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return convert(response.data) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error listing all courses - ${e}`)

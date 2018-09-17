@@ -3,7 +3,7 @@ import * as purchaseOrdersService from 'lib/purchase-orders'
 import * as template from 'lib/ui/template'
 
 export async function index(req: express.Request, res: express.Response) {
-	const purchaseOrders = await purchaseOrdersService.listAll()
+	const purchaseOrders = await purchaseOrdersService.listAll(req.user)
 
 	res.send(
 		template.render('purchase-orders/index', req, res, {
@@ -19,7 +19,7 @@ export async function displayEdit(req: express.Request, res: express.Response) {
 	if (id === 'new') {
 		purchaseOrder = {}
 	} else {
-		purchaseOrder = await purchaseOrdersService.get(id)
+		purchaseOrder = await purchaseOrdersService.get(id, req.user)
 	}
 
 	res.send(
@@ -47,7 +47,7 @@ export async function doEdit(req: express.Request, res: express.Response) {
 		delete po.modules
 	}
 
-	await purchaseOrdersService.save(po)
+	await purchaseOrdersService.save(po, req.user)
 
 	res.redirect('/purchase-orders')
 }
