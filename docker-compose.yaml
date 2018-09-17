@@ -88,8 +88,11 @@ services:
     container_name: learning-catalogue
     command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
     environment:
+      - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
     image: cshr/lpg-learning-catalogue:e3d5694c03c2196f62789789bff549084e430ffb
+    depends_on:
+      - identity
     ports:
       - 9001:9001
 
@@ -115,18 +118,5 @@ services:
       - learner-record
     ports:
       - 9004:9004
-
-#  lpg-management:
-#      container_name: lpg-management
-#      image: cshr/lpg-management-ui:73b8e1ebcd9b8829a3799bd6831a2bac02dda0e2
-#      environment:
-#        - AUTHENTICATION_SERVICE_URL=http://localhost:8080
-#        - LEARNING_CATALOGUE_SERVICE_URL=http://localhost:9001
-#        - CALLBACK_URL=http://lpg-management:3005
-#      depends_on:
-#        - identity
-#        - learning-catalogue
-#      ports:
-#        - 3005:3005
 
 # /CSHR
