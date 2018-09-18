@@ -120,7 +120,7 @@ export async function displayModule(
 					courseDetails: getCourseDetails(req, course, module),
 					module,
 					sessionId,
-					video: module.url!.endsWith('.mp4')
+					video: !module.url!.search('/http(.+)youtube(.*)/i')
 						? null
 						: await youtube.getBasicInfo(module.url!),
 				})
