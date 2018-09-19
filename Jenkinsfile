@@ -19,8 +19,9 @@ pipeline {
             steps {
                 unstash 'workspace'
                 script {
+                    def buildUUID = UUID.randomUUID().toString()
                     docker.withRegistry("${env.DOCKER_REGISTRY_URL}", 'docker_registry_credentials') {
-                    def customImage = docker.build("lpg-services:${env.BUILD_ID}")
+                    def customImage = docker.build("lpg-services:"+buildUUID)
                     customImage.push()
                     }
                 }
