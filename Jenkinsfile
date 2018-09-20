@@ -19,9 +19,8 @@ pipeline {
             steps {
                 unstash 'workspace'
                 script {
-                    def buildUUID = UUID.randomUUID().toString()
                     docker.withRegistry("${env.DOCKER_REGISTRY_URL}", 'docker_registry_credentials') {
-                    def customImage = docker.build("lpg-services:"+buildUUID)
+                    def customImage = docker.build("lpg-services:${env.BRANCH_NAME}-${env.BUILD_ID}")
                     customImage.push()
                     }
                 }
@@ -55,10 +54,10 @@ pipeline {
                         sh "terraform --version"
                         sh "terraform init"
                         sh "terraform validate"
-                        sh "terraform plan -target=module.lpg-management -var 'lpg_services_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
-                        sh "terraform apply -target=module.lpg-management -var 'lpg_services_tag_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
-                        sh "terraform plan -target=module.lpg-ui -var 'lpg_services_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
-                        sh "terraform apply -target=module.lpg-ui -var 'lpg_services_tag_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
+                        sh "terraform plan -target=module.lpg-management -var 'lpg_services_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
+                        sh "terraform apply -target=module.lpg-management -var 'lpg_services_tag_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
+                        sh "terraform plan -target=module.lpg-ui -var 'lpg_services_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
+                        sh "terraform apply -target=module.lpg-ui -var 'lpg_services_tag_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
                     }
                 }
             }
@@ -92,10 +91,10 @@ pipeline {
                         sh "terraform --version"
                         sh "terraform init"
                         sh "terraform validate"
-                        sh "terraform plan -target=module.lpg-management -var 'lpg_services_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
-                        sh "terraform apply -target=module.lpg-management -var 'lpg_services_tag_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
-                        sh "terraform plan -target=module.lpg-ui -var 'lpg_services_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
-                        sh "terraform apply -target=module.lpg-ui -var 'lpg_services_tag_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
+                        sh "terraform plan -target=module.lpg-management -var 'lpg_services_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
+                        sh "terraform apply -target=module.lpg-management -var 'lpg_services_tag_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
+                        sh "terraform plan -target=module.lpg-ui -var 'lpg_services_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
+                        sh "terraform apply -target=module.lpg-ui -var 'lpg_services_tag_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
                     }
                 }
             }
@@ -128,10 +127,10 @@ pipeline {
                         sh "terraform --version"
                         sh "terraform init"
                         sh "terraform validate"
-                        sh "terraform plan -target=module.lpg-management -var 'lpg_services_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
-                        sh "terraform apply -target=module.lpg-management -var 'lpg_services_tag_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
-                        sh "terraform plan -target=module.lpg-ui -var 'lpg_services_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
-                        sh "terraform apply -target=module.lpg-ui -var 'lpg_services_tag_tag=${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
+                        sh "terraform plan -target=module.lpg-management -var 'lpg_services_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
+                        sh "terraform apply -target=module.lpg-management -var 'lpg_services_tag_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
+                        sh "terraform plan -target=module.lpg-ui -var 'lpg_services_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}'"
+                        sh "terraform apply -target=module.lpg-ui -var 'lpg_services_tag_tag=${env.BRANCH_NAME}-${env.BUILD_ID}' -var 'docker_registry_server_username=${acr_username}' -var 'docker_registry_server_password=${acr_password}' -auto-approve"
                     }
                 }
             }
