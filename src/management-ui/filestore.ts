@@ -163,6 +163,7 @@ export async function saveContent(
 			true
 		)
 		const metadata = responses.find(result => !!result)
+
 		if (!metadata || !metadata.launchPage) {
 			// 	// TODO: if no launch page...
 			throw new Error(
