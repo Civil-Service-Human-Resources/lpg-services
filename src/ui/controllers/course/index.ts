@@ -91,7 +91,7 @@ export async function displayModule(
 	switch (module.type) {
 		case 'elearning':
 		let endPoint
-		if(module.url) {
+		if (module.url) {
 			endPoint = `${course.id}/${(module.url).substr(module.url.lastIndexOf('/') + 1)}`
 		}
 		res.redirect(
