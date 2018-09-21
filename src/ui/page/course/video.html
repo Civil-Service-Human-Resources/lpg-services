@@ -7,7 +7,7 @@
             <div class="column-two-thirds">
                 <div class="aspect__container">
                     <div class="video aspect__content">
-						{#if module.url.startsWith('https://www.youtube.com') }
+						{#if module.url.startsWith('https://') }
                        		<div id="video-player"></div>
                         	<noscript>
                             	<iframe title="{module.title || course.title}" src="https://www.youtube.com/embed/{video.id}" frameborder="0" scrolling="no"></iframe>
