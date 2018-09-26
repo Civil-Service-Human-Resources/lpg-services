@@ -26,6 +26,7 @@ pipeline {
                 }
             }
         }
+        /* disabled
         stage('Deploy to Integration?')  {
             agent none
             steps {
@@ -34,6 +35,7 @@ pipeline {
                 }
             }
         }
+        disabled */
         stage('Deploy to Integration') {
             agent { label 'master' }
             steps {
@@ -46,7 +48,7 @@ pipeline {
                     usernamePassword(credentialsId: 'docker_registry_credentials', usernameVariable: 'acr_username', passwordVariable: 'acr_password')
                     ]) {
                     sh "set +e; rm -rf lpg-terraform-paas"
-                    sh "git clone https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas.git -b acrmodules --single-branch"
+                    sh "git clone https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas.git"
                     dir("lpg-terraform-paas/environments/master") {
                         sh "ln -s ${SF}/azure/cabinet-azure/00-integration/state.tf state.tf"
                         sh "ln -s ${SF}/azure/cabinet-azure/00-integration/integration-vars.tf integration-vars.tf"
@@ -83,7 +85,7 @@ pipeline {
                     usernamePassword(credentialsId: 'docker_registry_credentials', usernameVariable: 'acr_username', passwordVariable: 'acr_password')
                     ]) {
                     sh "set +e; rm -rf lpg-terraform-paas"
-                    sh "git clone https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas.git -b acrmodules --single-branch"
+                    sh "git clone https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas.git"
                     dir("lpg-terraform-paas/environments/master") {
                         sh "ln -s ${SF}/azure/cabinet-azure/00-staging/state.tf state.tf"
                         sh "ln -s ${SF}/azure/cabinet-azure/00-staging/integration-vars.tf integration-vars.tf"
@@ -119,7 +121,7 @@ pipeline {
                     usernamePassword(credentialsId: 'docker_registry_credentials', usernameVariable: 'acr_username', passwordVariable: 'acr_password')
                     ]) {
                     sh "set +e; rm -rf lpg-terraform-paas"
-                    sh "git clone https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas.git -b acrmodules --single-branch"
+                    sh "git clone https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas.git"
                     dir("lpg-terraform-paas/environments/master") {
                         sh "ln -s ${SF}/azure/cabinet-azure/00-production/state.tf state.tf"
                         sh "ln -s ${SF}/azure/cabinet-azure/00-production/integration-vars.tf integration-vars.tf"
