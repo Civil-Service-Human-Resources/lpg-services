@@ -112,7 +112,7 @@ export async function displayModule(
 			)
 
 			res.send(
-				template.render(`course/video`, req, res, {
+				template.render(`course/display-video`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
@@ -153,6 +153,8 @@ export async function display(ireq: express.Request, res: express.Response) {
 					organisation.department.paymentMethods.indexOf('PURCHASE_ORDER') > -1
 			}
 		case 'file':
+        case 'link':
+        case 'video':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
 			const modules = course.modules.map(cm => {
@@ -176,10 +178,6 @@ export async function display(ireq: express.Request, res: express.Response) {
 					modules,
 				})
 			)
-			break
-		case 'link':
-		case 'video':
-			res.redirect(`/courses/${course.id}/${module!.id}`)
 			break
 		default:
 			logger.debug(`Unknown course type: ${type}`)
