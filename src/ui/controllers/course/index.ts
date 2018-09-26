@@ -154,7 +154,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 			}
 		case 'file':
 		case 'link':
-	        case 'video':
+		case 'video':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
 			const modules = course.modules.map(cm => {
