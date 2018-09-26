@@ -153,8 +153,8 @@ export async function display(ireq: express.Request, res: express.Response) {
 					organisation.department.paymentMethods.indexOf('PURCHASE_ORDER') > -1
 			}
 		case 'file':
-        case 'link':
-        case 'video':
+		case 'link':
+	        case 'video':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
 			const modules = course.modules.map(cm => {
