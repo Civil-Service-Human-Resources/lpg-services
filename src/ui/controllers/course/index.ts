@@ -90,16 +90,8 @@ export async function displayModule(
 
 	switch (module.type) {
 		case 'elearning':
-		let endPoint
-		if (module.url) {
-			endPoint = `${course.id}/${(module.url).substr(module.url.lastIndexOf('/') + 1)}`
-		}
 		res.redirect(
-			`${module.url}/
-			${module.startPage}
-			?title=${module.title || course.title}
-			&module=${module.id}
-			&endpoint=${config.LPG_UI_SERVER}/courses/${endPoint}/xapi/&actor={"name":"Noop"}`
+			`${module.url}/${module.startPage}?title=${module.title || course.title}&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${course.id}/${module.id}/xapi/&actor={"name":"Noop"}`
 		)
 		break
 		case 'face-to-face':
