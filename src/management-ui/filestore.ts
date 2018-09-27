@@ -154,7 +154,7 @@ export async function saveContent(
 	user: model.User
 ) {
 	logger.info(`Starting upload of ${file.name} to ${course.id}/${module.id}`)
-	const currentCourse = await catalog.get(course.id)!
+	const currentCourse = await catalog.get(course.id, user)!
 	const currentModule = currentCourse!.modules.find(m => m.id === module.id)!
 	if (module.type === 'elearning') {
 		const responses = await uploadEntries(
