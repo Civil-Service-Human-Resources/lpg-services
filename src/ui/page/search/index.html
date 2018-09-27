@@ -59,7 +59,7 @@
         <div class="pager">
             <div class="pager__controls">
                 {#if searchResults.page > 0}
-                <a class="pager__prev" href="/search?q={query}{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}&s={searchResults.size}&p={searchResults.page - 1}">Prev</a>
+                <a class="pager__prev" href="/search?q={query}{courseTypes ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments ? '&departments=' + departments.toString().split(',').join('&departments=') : ''}&s={searchResults.size}&p={searchResults.page - 1}">Prev</a>
                 {/if} {#if Math.ceil(searchResults.totalResults/searchResults.size) != 1}
                 <ul class="pager__list">
                     {#each range(Math.ceil(searchResults.totalResults/searchResults.size)) as x}
@@ -67,13 +67,13 @@
                         {#if x === searchResults.page}
                         <span>{x+1}</span>
                         {:else}
-                        <a href="/search?q={query}{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}&s={searchResults.size}&p={x}">{x+1}</a>
+                        <a href="/search?q={query}{courseTypes ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments ? '&departments=' + departments.toString().split(',').join('&departments=') : ''}&s={searchResults.size}&p={x}">{x+1}</a>
                         {/if}
                     </li>
                     {/each}
                 </ul>
                 {/if} {#if searchResults.page != (Math.ceil(searchResults.totalResults/searchResults.size)-1)}
-                <a class="pager__next" href="/search?q={query}{courseType ? '&courseType=' + courseType.split(',').join('&courseType=') : ''}&s={searchResults.size}&p={searchResults.page + 1}">Next</a>
+                <a class="pager__next" href="/search?q={query}{courseTypes ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments ? '&departments=' + departments.toString().split(',').join('&departments=') : ''}&s={searchResults.size}&p={searchResults.page + 1}">Next</a>
                 {/if}
             </div>
             <div class="pager__summary">Showing {((searchResults.page*searchResults.size)+1)} – {((searchResults.page*searchResults.size)+searchResults.results.length)}
