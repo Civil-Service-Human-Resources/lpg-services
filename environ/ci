@@ -40,24 +40,24 @@ docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:${BRANCH_TAG}-${
 docker tag cshr/lpg-services:${TRAVIS_COMMIT} cshr/lpg-services:latest
 docker push cshr/lpg-services
 
-stage "Deploying to the dev2 environment"
-curl --header "Content-Type: application/json" --request POST --data '{}' ${AZURE_DEPLOYMENT_WEB_HOOK_URL}
-curl --header "Content-Type: application/json" --request POST --data '{}' ${MANAGEMENT_DEPLOYMENT_URL}
+#stage "Deploying to the dev2 environment"
+#curl --header "Content-Type: application/json" --request POST --data '{}' ${AZURE_DEPLOYMENT_WEB_HOOK_URL}
+#curl --header "Content-Type: application/json" --request POST --data '{}' ${MANAGEMENT_DEPLOYMENT_URL}
 
-stage "Installing the wdio test dependencies"
-cd test/webdriver
-rm -f node_modules/extension node_modules/page node_modules/test
-yarn
+#stage "Installing the wdio test dependencies"
+#cd test/webdriver
+#rm -f node_modules/extension node_modules/page node_modules/test
+#yarn
 
-stage "Building the wdio test code"
-yarn run build
+#stage "Building the wdio test code"
+#yarn run build
 
 
-stage "Waiting for environment to update"
-../../environ/wait-for-update dev2-lpg ${TRAVIS_COMMIT}
-../../environ/wait-for-update dev2-management ${TRAVIS_COMMIT}
+#stage "Waiting for environment to update"
+#../../environ/wait-for-update dev2-lpg ${TRAVIS_COMMIT}
+#../../environ/wait-for-update dev2-management ${TRAVIS_COMMIT}
 
-stage "Running the wdio tests"
-xvfb-run yarn test
+# stage "Running the wdio tests"
+# xvfb-run yarn test
 
 echo "Total run time: ${SECONDS}s"
