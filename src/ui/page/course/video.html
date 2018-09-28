@@ -8,33 +8,39 @@
                 <div class="aspect__container">
                     <div class="video aspect__content">
 						{#if video != null}
-                       		<div id="video-player"></div>
+                       		<div id="video-player">
+                            </div>
                         	<noscript>
                             	<iframe title="{module.title || course.title}" src="https://www.youtube.com/embed/{video.id}" frameborder="0" scrolling="no"></iframe>
 							</noscript>
 							<input type="hidden" id="video-id" value="{video.id}">
 						{:else}
 						<video id="videojs-player" class="video-js" controls preload="auto" width="640" height="400" data-setup="">
-						  <source src="{ module.url }" type='video/mp4'>
+						  <source src="{ module.url }" type='video/mp4' />
 						  <p class="vjs-no-js">
 							To view this video please enable JavaScript, and consider upgrading to a web browser that
 							<a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
 						  </p>
 						</video>
-                <div>{@html $toHtml(course.description)}</div>
+                        {/if}
+                    </div> <!-- video aspect content end -->
+                    {@html $toHtml(course.description)}
+                </div>
                 {#if course.learningOutcomes}
                 <h2 class="heading-medium">Learning outcomes</h2>
-                <div>{@html $toHtml(course.learningOutcomes)}</div>
+                <div>
+                    {@html $toHtml(course.learningOutcomes)}
+                </div>
                 {/if}
                 <DisciteModule {course} {module}/>
-            </div>
+            </div> <!-- column 2 thirds end -->
             <div class="column-one-third">
                 {#if courseDetails.length} {#each courseDetails as dataRows}
                 <RightBox {dataRows}/>
                 {/each} {/if}
-            </div>
-        </div>
-    </div>
+            </div><!-- one third end -->
+        </div> <!--grid row end-->
+    </div><!-- end container -->
 </Page>
 
 <script>
