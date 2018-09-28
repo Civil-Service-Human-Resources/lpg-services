@@ -91,7 +91,8 @@ export async function displayModule(
 	switch (module.type) {
 		case 'elearning':
 		res.redirect(
-			`${module.url}/${module.startPage}?title=${module.title || course.title}&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${course.id}/${module.id}/xapi/&actor={"name":"Noop"}`
+			`${module.url}/${module.startPage}?title=${module.title || course.title}
+			&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${course.id}/${module.id}/xapi/&actor={"name":"Noop"}`
 		)
 		break
 		case 'face-to-face':
