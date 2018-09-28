@@ -87,7 +87,7 @@ export async function setCourse(ireq: express.Request, res: express.Response) {
 }
 
 async function uploadPendingFiles(courseId: string, pendingFiles: any[], user: model.User) {
-	const course = await catalog.get(courseId)
+	const course = await catalog.get(courseId, user)
 	for (const file of pendingFiles) {
 		if (file) {
 			logger.debug(`Uploading zip content from ${file.path}`)
@@ -185,7 +185,7 @@ export async function loadCourse(ireq: express.Request, res: express.Response) {
 			logger.debug('recreating course')
 			req.course = session.course
 		} else {
-			const course = await catalog.get(courseId)
+			const course = await catalog.get(courseId, req.user)
 			if (!course) {
 				logger.debug(`course ${courseId} not found`)
 				res.sendStatus(404)

@@ -140,9 +140,9 @@ export async function findSuggestedLearningWithParameters(
 	}
 }
 
-export async function get(id: string, user?: model.User) {
+export async function get(id: string, user: model.User) {
 	try {
-		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user!.accessToken}`}})
+		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return model.Course.create(response.data, user)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
@@ -152,13 +152,13 @@ export async function get(id: string, user?: model.User) {
 	}
 }
 
-export async function list(ids: string[], user?: model.User) {
+export async function list(ids: string[], user: model.User) {
 	if (ids.length === 0) {
 		return []
 	}
 	try {
 		const response = await http.get(`/courses?${query.stringify({ courseId: ids })}`,
-			{headers: {Authorization: `Bearer ${user!.accessToken}`}})
+			{headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return response.data.map((r: any) => model.Course.create(r, user))
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
