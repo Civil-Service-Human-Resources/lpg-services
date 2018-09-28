@@ -89,9 +89,6 @@ services:
     command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
-      - ELASTICSEARCH_URI=https://test-elastic.cshr.digital:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=NFE@*CtHLSe%3Dyk8Aan
     image: cshr/lpg-learning-catalogue:7a9a6b68d989bfb699d98471790ca4c5fa4078ff
     depends_on:
       - identity
