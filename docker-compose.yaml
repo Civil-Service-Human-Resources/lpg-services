@@ -62,7 +62,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: cshr/identity-service:e4aff54943f71dd6b270b33175606f7884a54ccb
+    image: cshr/identity-service:81ac40b98e91b51fcdbb836d2a57873cfc887af3
     ports:
       - 8080:8080
       - 8081:8081
@@ -75,7 +75,7 @@ services:
         - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
         - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
         - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-      image: cshr/lpg-learner-record:chore-large-records-139
+      image: cshr/lpg-learner-record:87fbada730d6f6914828739c6c6cf39551f351eb
       depends_on:
         - civil-servant-registry
         - identity
@@ -88,8 +88,10 @@ services:
     container_name: learning-catalogue
     command: ["./wait-for-it.sh", "elasticsearch:9300", "-t", "200", "--", "java", "-jar", "/data/app.jar"]
     environment:
-      - ELASTICSEARCH_URI=http://elasticsearch:9200
-    image: cshr/lpg-learning-catalogue:e3d5694c03c2196f62789789bff549084e430ffb
+      - OAUTH_SERVICE_URL=http://identity:8080
+    image: cshr/lpg-learning-catalogue:7a9a6b68d989bfb699d98471790ca4c5fa4078ff
+    depends_on:
+      - identity
     ports:
       - 9001:9001
 
@@ -98,7 +100,7 @@ services:
       environment:
         - SPRING_PROFILES_ACTIVE=default
         - OAUTH_SERVICE_URL=http://identity:8080
-      image: cshr/civil-servant-registry-service:feature-LPFG-394-payment-methods-65
+      image: cshr/civil-servant-registry-service:cf02713eeec22f2b4bdf70fb7e02aa3074f713c4
       depends_on:
         - identity
       ports:
@@ -115,18 +117,5 @@ services:
       - learner-record
     ports:
       - 9004:9004
-
-#  lpg-management:
-#      container_name: lpg-management
-#      image: cshr/lpg-management-ui:73b8e1ebcd9b8829a3799bd6831a2bac02dda0e2
-#      environment:
-#        - AUTHENTICATION_SERVICE_URL=http://localhost:8080
-#        - LEARNING_CATALOGUE_SERVICE_URL=http://localhost:9001
-#        - CALLBACK_URL=http://lpg-management:3005
-#      depends_on:
-#        - identity
-#        - learning-catalogue
-#      ports:
-#        - 3005:3005
 
 # /CSHR

@@ -83,7 +83,7 @@ export async function submitFeedback(
 			courseId: course.id,
 			moduleId: module.id,
 			userId: req.user.id,
-		})
+		}, req.user)
 		await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
 
 		req.flash('successTitle', req.__('learning_feedback_submitted_title'))

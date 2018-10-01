@@ -79,7 +79,7 @@ export async function home(req: express.Request, res: express.Response) {
 
 		plannedLearning = [...bookedLearning, ...plannedLearning]
 
-		const courses = await catalog.list(plannedLearning.map(l => l.courseId))
+		const courses = await catalog.list(plannedLearning.map(l => l.courseId), user)
 		for (const course of courses) {
 			course.record = plannedLearning.find(l => l.courseId === course.id)
 		}

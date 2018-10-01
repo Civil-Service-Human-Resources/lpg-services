@@ -7,48 +7,57 @@
             <div class="column-two-thirds">
                 <div class="aspect__container">
                     <div class="video aspect__content">
-						{#if !module.url.endsWith('.mp4') }
-                       		<div id="video-player"></div>
+						{#if video != null}
+                       		<div id="video-player">
+                            </div>
                         	<noscript>
                             	<iframe title="{module.title || course.title}" src="https://www.youtube.com/embed/{video.id}" frameborder="0" scrolling="no"></iframe>
 							</noscript>
 							<input type="hidden" id="video-id" value="{video.id}">
 						{:else}
 						<video id="videojs-player" class="video-js" controls preload="auto" width="640" height="400" data-setup="">
-						  <source src="{ module.location }" type='video/mp4'>
+						  <source src="{ module.url }" type='video/mp4' />
 						  <p class="vjs-no-js">
 							To view this video please enable JavaScript, and consider upgrading to a web browser that
 							<a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
 						  </p>
 						</video>
-
-						<script src="js/video.min.js"></script>
-						{/if}
-						<script src="js/video.js"></script>
-
-                        <input type="hidden" id="course-id" value="{course.id}">
-                        <input type="hidden" id="module-id" value="{module.id}">
-						<input type="hidden" id="session-id" value="{sessionId}">
-                    </div>
+                        {/if}
+                    </div> <!-- video aspect content end -->
+                    {@html $toHtml(course.description)}
                 </div>
-            </div>
+                {#if course.learningOutcomes}
+                <h2 class="heading-medium">Learning outcomes</h2>
+                <div>
+                    {@html $toHtml(course.learningOutcomes)}
+                </div>
+                {/if}
+                <DisciteModule {course} {module}/>
+            </div> <!-- column 2 thirds end -->
             <div class="column-one-third">
-            </div>
-        </div>
-    </div>
+                {#if courseDetails.length} {#each courseDetails as dataRows}
+                <RightBox {dataRows}/>
+                {/each} {/if}
+            </div><!-- one third end -->
+        </div> <!--grid row end-->
+    </div><!-- end container -->
 </Page>
 
 <script>
-	import Page from '../../component/Page.html'
+    import Page from '../../component/Page.html'
+    import DisciteModule from '../../component/DisciteModule.html'
+    import RightBox from '../../component/Rightbox.html'
 
-	export default {
-		data() {
-			return {
-			}
-		},
+    export default {
+        data() {
+            return {
+            }
+        },
 
-		components: {
-			Page,
-		}
-	}
+        components: {
+            Page,
+            DisciteModule,
+            RightBox
+        }
+    }
 </script>

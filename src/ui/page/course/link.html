@@ -1,0 +1,42 @@
+<Page title="{module.title || course.title}" {_csrf}>
+    <div class="container">
+        <h1 class="heading-xlarge heading heading--page-heading ">
+            {module.title || course.title}
+        </h1>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <div>{@html $toHtml(course.description)}</div>
+
+                {#if course.learningOutcomes}
+                <h2 class="heading-medium">Learning outcomes</h2>
+                <div>{@html $toHtml(course.learningOutcomes)}</div>
+                {/if}
+                <DisciteModule {course} {module}/>
+            </div>
+            <div class="column-one-third">
+                {#if courseDetails.length} {#each courseDetails as dataRows}
+                <RightBox {dataRows}/>
+                {/each} {/if}
+            </div>
+        </div>
+    </div>
+</Page>
+
+<script>
+    import Page from '../../component/Page.html'
+    import DisciteModule from '../../component/DisciteModule.html'
+    import RightBox from '../../component/Rightbox.html'
+
+    export default {
+        data() {
+            return {
+            }
+        },
+
+        components: {
+            Page,
+            DisciteModule,
+            RightBox
+        }
+    }
+</script>

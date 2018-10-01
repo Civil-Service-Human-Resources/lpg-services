@@ -90,13 +90,11 @@ export async function displayModule(
 
 	switch (module.type) {
 		case 'elearning':
-			res.redirect(
-				`${config.CONTENT_URL}/${course.id}/${module.id}/${
-					module.startPage
-				}?title=${module.title || course.title}&endpoint=${config.LPG_UI_SERVER}/courses/${
-					course.id}/${module.id}/xapi/&actor={"name":"Noop"}`
-			)
-			break
+		res.redirect(
+			`${module.url}/${module.startPage}?title=${module.title || course.title}` +
+			`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${course.id}/${module.id}/xapi/&actor={"name":"Noop"}`
+		)
+		break
 		case 'face-to-face':
 			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 			break
@@ -115,12 +113,12 @@ export async function displayModule(
 			)
 
 			res.send(
-				template.render(`course/video`, req, res, {
+				template.render(`course/display-video`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
 					sessionId,
-					video: module.url!.endsWith('.mp4')
+					video: !module.url!.search('/http(.+)youtube(.*)/i')
 						? null
 						: await youtube.getBasicInfo(module.url!),
 				})
@@ -156,6 +154,8 @@ export async function display(ireq: express.Request, res: express.Response) {
 					organisation.department.paymentMethods.indexOf('PURCHASE_ORDER') > -1
 			}
 		case 'file':
+		case 'link':
+		case 'video':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
 			const modules = course.modules.map(cm => {
@@ -179,10 +179,6 @@ export async function display(ireq: express.Request, res: express.Response) {
 					modules,
 				})
 			)
-			break
-		case 'link':
-		case 'video':
-			res.redirect(`/courses/${course.id}/${module!.id}`)
 			break
 		default:
 			logger.debug(`Unknown course type: ${type}`)
