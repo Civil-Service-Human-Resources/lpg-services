@@ -17,13 +17,12 @@ export class Course {
 
 		course.modules = (data.modules || []).map(Module.create)
 
-	        let audiences = []
+		let audiences = []
+		if(data.course && data.course.audiences) {
+			audiences = (data.course.audiences).map(Audience.create)
+		}
 
-        	if(data.course && data.course.audiences) {
-            		audiences = (data.course.audiences).map(Audience.create)
-        	}
-
-        	course.audiences = audiences
+		course.audiences = audiences
 
 		if (user) {
 			let matchedAudience = null
