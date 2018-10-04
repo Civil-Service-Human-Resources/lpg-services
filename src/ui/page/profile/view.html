@@ -1,8 +1,7 @@
 <Page title="Your profile" {_csrf}>
     <div class="container">
         <h1 class="heading-large">
-            <span class="heading-secondary">Your profile</span>
-            {$i18n('profile_page_title', $signedInUser.givenName || '') }
+            <span class="heading-primary">Your profile</span>
         </h1>
         {#if updateSuccessful}
             <Banner type="confirmation" message={$i18n('profile_updated')} />
@@ -56,6 +55,7 @@
                 <h2 class="heading heading-medium ">
                     Job details
                 </h2>
+                <p class="govuk-body">Job details are required to help create suggestions for your learning</p>
                 <table class="key-value-list key-value-list--auto u-space-b30 table--top">
                     <thead class="visuallyhidden">
                         <tr>
@@ -167,7 +167,6 @@
 <script>
 	import Page from '../../component/Page.html'
 	import Banner from '../../component/Banner.html'
-
 
 	export default {
 		data() {
