@@ -6,7 +6,7 @@ hr.clear {
 }
 
 .column-one-sixth {
-	@include grid-column( 1/6 );
+	@include grid-column(1/6);
 }
 
 .flash-message {
@@ -84,4 +84,9 @@ hr.clear {
 			cursor: pointer;
 		}
 	}
+}
+
+.govuk-body {
+	font-size: 19px;
+	margin-top: 0;
 }
