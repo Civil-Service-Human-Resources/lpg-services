@@ -28,10 +28,7 @@ export function constructModuleCta(
 	modifier?: string
 ): ModuleCallToActionProps {
 	const moduleType: string = module.type
-	const isRequired: boolean =
-		module.audiences.filter((audience: model.Audience) => {
-			return audience.mandatory
-		}).length > 0
+	const isRequired: boolean = !module.optional
 	const isSearch: boolean = modifier === 'search'
 
 	const isInLearningPlan = record !== undefined || isRequired === true
@@ -66,7 +63,7 @@ export function constructModuleCta(
 					)} ${fileHelpers.appropriateFileSize(module.fileSize!)}`
 				}
 				break
-			case 'link':
+			case 'blog':
 				moduleCallToActionProps.learningAction.attribute = `target=_blank`
 				break
 		}

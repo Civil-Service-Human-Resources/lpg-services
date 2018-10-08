@@ -498,7 +498,7 @@ export async function tryCompleteBooking(
 		.bookingRequested({
 			accessibility: accessibilityArray.join(', '),
 			bookingReference: `${req.user.id}-${event.id}`,
-			cost: module.price,
+			cost: module.cost,
 			courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
 				event.date,
 				true
