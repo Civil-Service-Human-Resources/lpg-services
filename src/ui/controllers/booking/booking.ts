@@ -277,7 +277,7 @@ export async function renderPaymentOptions(
 	} else {
 		const organisation = (await registry.follow(
 			config.REGISTRY_SERVICE_URL,
-			['organisations', 'search', 'findByDepartmentCode'],
+			['organisationalUnits', 'search', 'findByDepartmentCode'],
 			{departmentCode: user.department}
 		)) as any
 
@@ -312,7 +312,7 @@ export async function enteredPaymentDetails(
 	const user = req.user as model.User
 	const organisation = (await registry.follow(
 		config.REGISTRY_SERVICE_URL,
-		['organisations', 'search', 'findByDepartmentCode'],
+		['organisationalUnits', 'search', 'findByDepartmentCode'],
 		{departmentCode: user.department}
 	)) as any
 

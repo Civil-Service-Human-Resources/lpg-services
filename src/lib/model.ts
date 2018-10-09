@@ -513,8 +513,8 @@ export class User {
 			data.accessToken
 		)
 
-		user.department = data.organisation
-			? data.organisation.code
+		user.department = data.organisationalUnit
+			? data.organisationalUnit.code
 			: data.department
 		user.givenName = data.fullName ? data.fullName : data.givenName
 		user.grade = data.grade

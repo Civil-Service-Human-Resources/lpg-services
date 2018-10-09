@@ -29,7 +29,7 @@ export interface SignIn {
 export enum nodes {
 	'given-name' = 'fullName',
 	'email-addresss' = 'emailAddress',
-	'department' = 'organisation',
+	'department' = 'organisationalUnit',
 	'grade' = 'grade',
 	'interest' = 'interests',
 	'primary-area-of-work' = 'profession',
@@ -357,7 +357,7 @@ export async function renderEditPage(
 
 			break
 		case 'department':
-			options = haltoObject(await registry.halNode('organisations'))
+			options = haltoObject(await registry.halNode('organisationalUnits'))
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
 			break
