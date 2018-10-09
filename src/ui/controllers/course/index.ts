@@ -147,7 +147,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 			if (req.user.department) {
 				const organisation = (await registry.follow(
 					config.REGISTRY_SERVICE_URL,
-					['organisations', 'search', 'findByDepartmentCode'],
+					['organisationalUnits', 'search', 'findByDepartmentCode'],
 					{departmentCode: req.user.department}
 				)) as any
 				canPayByPO =
