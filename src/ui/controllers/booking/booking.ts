@@ -275,13 +275,13 @@ export async function renderPaymentOptions(
 			)
 		})
 	} else {
-		const organisation = (await registry.follow(
+		const organisationalUnit = (await registry.follow(
 			config.REGISTRY_SERVICE_URL,
 			['organisationalUnits', 'search', 'findByDepartmentCode'],
 			{departmentCode: user.department}
 		)) as any
 
-		if (!organisation) {
+		if (!organisationalUnit) {
 			res.redirect('/profile')
 		} else {
 			res.send(
@@ -290,7 +290,7 @@ export async function renderPaymentOptions(
 					errors: req.flash('errors'),
 					event: req.event!,
 					module,
-					paymentMethods: organisation.department.paymentMethods,
+					paymentMethods: organisationalUnit.paymentMethods,
 					values:
 						req.flash('values')[0] ||
 						(session.payment
@@ -310,7 +310,7 @@ export async function enteredPaymentDetails(
 	session.payment = null
 
 	const user = req.user as model.User
-	const organisation = (await registry.follow(
+	const organisationalUnit = (await registry.follow(
 		config.REGISTRY_SERVICE_URL,
 		['organisationalUnits', 'search', 'findByDepartmentCode'],
 		{departmentCode: user.department}
@@ -318,7 +318,7 @@ export async function enteredPaymentDetails(
 
 	let errors: string[] = []
 
-	for (const paymentMethod of organisation.department.paymentMethods) {
+	for (const paymentMethod of organisationalUnit.paymentMethods) {
 		if (req.body[paymentMethod]) {
 			errors = validate(paymentMethod, req.body[paymentMethod])
 			if (!errors.length) {

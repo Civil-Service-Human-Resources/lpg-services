@@ -145,13 +145,13 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'elearning':
 		case 'face-to-face':
 			if (req.user.department) {
-				const organisation = (await registry.follow(
+				const organisationalUnit = (await registry.follow(
 					config.REGISTRY_SERVICE_URL,
 					['organisationalUnits', 'search', 'findByDepartmentCode'],
 					{departmentCode: req.user.department}
 				)) as any
 				canPayByPO =
-					organisation.department.paymentMethods.indexOf('PURCHASE_ORDER') > -1
+					organisationalUnit.paymentMethods.indexOf('PURCHASE_ORDER') > -1
 			}
 		case 'file':
 		case 'link':
