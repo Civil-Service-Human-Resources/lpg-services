@@ -19,6 +19,10 @@
 .push-bottom {
 	margin-bottom: 30px;
 	display: block;
+
+	&.notice {
+		margin-top: 30px;
+	}
 }
 
 #global-header {
@@ -35,7 +39,6 @@
 				padding: 5px 0;
 				line-height: 1.25;
 				float: none;
-				width: 100%;
 				text-align: left;
 
 				a {
@@ -44,4 +47,14 @@
 			}
 		}
 	}
+}
+
+.resources {
+	color: red;
+}
+
+.heading,
+.discite__description,
+.discite__counter {
+	padding-right: 105px;
 }
