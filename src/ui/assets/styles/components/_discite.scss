@@ -95,7 +95,7 @@ $module: 'discite';
 
 		@include m(search) {
 			@include media(desktop) {
-				width: 100px;
+				width: 200px;
 				float: right;
 				text-align: right;
 			}
@@ -161,14 +161,14 @@ $module: 'discite';
 			padding-right: 0px;
 
 			.heading {
-				padding-right: 105px;
+				padding-right: 205px;
 			}
 		}
 	}
 
 	@include e(counter) {
 		margin-bottom: 0;
-		padding-right: 105px;
+		padding-right: 205px;
 
 		@include m(search) {
 			padding-top: 10px;
