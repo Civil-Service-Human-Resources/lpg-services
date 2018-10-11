@@ -289,8 +289,13 @@ export class ModuleWithCourse extends Module {
 }
 export class Event {
 	static create(data: any) {
-		const date = data.date ? new Date(data.date) : new Date()
-		return new Event(date, data.location, data.capacity, data.id)
+		const orderedDates = data.dateRanges.sort((a: any, b: any) => {
+			return Date.parse(a.date) > Date.parse(b.date)
+		})
+		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
+		const date: any = new Date(orderedDates[0].date + "T" + orderedDates[0].startTime)
+
+		return new Event(date, data.venue.location, data.venue.capacity, data.id)
 	}
 
 	id: string
