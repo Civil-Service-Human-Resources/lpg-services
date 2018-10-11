@@ -103,7 +103,7 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
-    image: cshr/lpg-learning-catalogue:7a9a6b68d989bfb699d98471790ca4c5fa4078ff
+    image: cshr/lpg-learning-catalogue:c072dcdb737d356e960091721665cbc9e1adeea3
     depends_on:
       - identity
     ports:
