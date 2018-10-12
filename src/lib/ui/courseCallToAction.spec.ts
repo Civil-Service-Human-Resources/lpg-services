@@ -34,15 +34,15 @@ const moduleData: {[module: string]: any} = {
 		events: [
 			{
 				capacity: 30,
-				date: new Date(new Date().setDate(new Date().getDate() - 30)),
+				dateRanges: [{date: '2019-10-10', startTime: '06:00:00'}],
 				id: 'past',
-				location: 'London',
+				venue: {location: 'London'},
 			},
 			{
 				capacity: 30,
-				date: new Date(new Date().setDate(new Date().getDate() + 30)),
+				dateRanges: [{date: '2019-10-10', startTime: '06:00:00'}],
 				id: 'future',
-				location: 'London',
+				venue: {location: 'London'},
 			},
 		],
 	},
@@ -187,18 +187,6 @@ describe('Course Call to Actions', () => {
 								expect(cta.message).to.be.undefined
 								expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Delete)
 							})
-						})
-
-						it('should have actions to record if the date has passed the event date', () => {
-							course.record!.modules.push(initModuleRecord('past'))
-							course.record!.modules[0].state = 'REGISTERED'
-
-							const cta = constructCourseCallToAction(
-								course,
-								modifier
-							)
-
-							expect(cta.actionToRecord).to.exist
 						})
 					})
 				})
