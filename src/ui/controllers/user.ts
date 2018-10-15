@@ -372,9 +372,9 @@ export async function renderEditPage(
 		case 'interest':
 			options = haltoObject(await registry.halNode('interests'))
 			optionType = OptionTypes.Checkbox
-            value = req.user.interests.map((interest: {name: string}) => {
-                return interest.name
-            })
+			value = req.user.interests.map((interest: {name: string}) => {
+				return interest.name
+            		})
 			break
 	}
 
