@@ -374,7 +374,7 @@ export async function renderEditPage(
 			optionType = OptionTypes.Checkbox
 			value = req.user.interests.map((interest: {name: string}) => {
 				return interest.name
-            		})
+			})
 			break
 	}
 
