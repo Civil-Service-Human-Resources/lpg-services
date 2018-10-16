@@ -290,9 +290,19 @@ export class ModuleWithCourse extends Module {
 export class Event {
 	static create(data: any) {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
-		const date: any = new Date(data.dateRanges[0].date + "T" + data.dateRanges[0].startTime)
+        let date: any = ''
+        if(data.dateRanges[0]) {
+            date = new Date(data.dateRanges[0].date + "T" + data.dateRanges[0].startTime)
+        }
 
-		return new Event(date, data.venue.location, data.venue.capacity, data.id)
+        let location = ''
+        let capacity = 0
+        if(data.venue){
+            location = data.venue.location
+            capacity = data.venue.capacity
+        }
+
+		return new Event(date, location, capacity, data.id)
 	}
 
 	id: string
