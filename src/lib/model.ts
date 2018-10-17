@@ -293,6 +293,8 @@ export class Event {
         let date: any = ''
         if(data.dateRanges[0]) {
             date = new Date(data.dateRanges[0].date + "T" + data.dateRanges[0].startTime)
+        } else {
+            date = data.date
         }
 
         let location = ''
@@ -300,6 +302,9 @@ export class Event {
         if(data.venue){
             location = data.venue.location
             capacity = data.venue.capacity
+        } else {
+            location = data.location
+            capacity = data.capacity
         }
 
 		return new Event(date, location, capacity, data.id)
