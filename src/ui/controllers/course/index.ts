@@ -147,8 +147,8 @@ export async function display(ireq: express.Request, res: express.Response) {
 			if (req.user.department) {
 				const organisationalUnit = (await registry.follow(
 					config.REGISTRY_SERVICE_URL,
-					['organisationalUnits', 'search', 'findByDepartmentCode'],
-					{departmentCode: req.user.department}
+					['organisationalUnits', 'search', 'findByCode'],
+					{code: req.user.department}
 				)) as any
 				canPayByPO =
 					organisationalUnit.paymentMethods.indexOf('PURCHASE_ORDER') > -1
