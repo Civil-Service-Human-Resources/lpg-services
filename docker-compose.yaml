@@ -3,7 +3,7 @@ services:
   # ElasticSearch
   elasticsearch:
     container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch@sha256:5b2bb3e91379f04a9da7c477314a24b2428fb1a4c20696991dff54b70d1b4ef3
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
     ports:
       - 9200:9200
       - 9300:9300
@@ -103,7 +103,7 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
-    image: cshr/lpg-learning-catalogue:3b4be09ed943f886b3a50d404e793dbca29ca218
+    image: cshr/lpg-learning-catalogue:5b562132bda50f8226fc895006603c6677d6ac86
     depends_on:
       - identity
     ports:
