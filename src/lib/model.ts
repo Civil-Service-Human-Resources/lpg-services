@@ -15,7 +15,23 @@ export class Course {
 		course.shortDescription = data.shortDescription
 		course.title = data.title
 
-		course.modules = (data.modules || []).map((module: any) => Module.create(module, user))
+		course.modules = (data.modules || []).map(Module.create)
+
+		const audiences = (data.audiences || []).map(Audience.create)
+		course.audiences = audiences
+
+		if (user) {
+			let matchedAudience = null
+			let matchedRelevance = -1
+			for (const audience of audiences) {
+				const relevance = audience.getRelevance(user!)
+				if (relevance > matchedRelevance) {
+					matchedAudience = audience
+					matchedRelevance = relevance
+				}
+			}
+			course.audience = matchedAudience
+		}
 
 		return course
 	}
@@ -26,9 +42,11 @@ export class Course {
 	description: string
 	duration: number
 	learningOutcomes: string
-	price: number | string = this.collatePrice() || 'Free'
 
 	modules: Module[]
+
+	audiences: Audience[]
+	audience?: Audience
 
 	record?: learnerRecord.CourseRecord
 
@@ -49,13 +67,7 @@ export class Course {
 	}
 
 	getModules() {
-		const modules = []
-		for (const module of this.modules) {
-			if (module.audience !== null) {
-				modules.push(module)
-			}
-		}
-		return modules
+		return this.modules
 	}
 
 	getActivityId() {
@@ -63,18 +75,13 @@ export class Course {
 	}
 
 	getAreasOfWork() {
-		return this.modules
-			.map(module => module.audiences)
-			.reduce((p, c) => p.concat(c), [])
-			.map(audience => audience.areasOfWork)
-			.reduce((p, c) => p.concat(c), [])
-			.filter((v, i, a) => a.indexOf(v) === i)
+		return this.audience ? this.audience.areasOfWork : []
 	}
 
 	getCost() {
-		const costArray = this.modules.map(module => module.price)
+		const costArray = this.modules.map(module => module.cost || 0)
 		return costArray.length
-			? costArray.reduce((p, c) => (p || 0) + (c || 0), 0)
+			? costArray.reduce((p, c) => p + c, 0)
 			: null
 	}
 
@@ -86,12 +93,7 @@ export class Course {
 	}
 
 	getGrades() {
-		return this.modules
-			.map(module => module.audiences)
-			.reduce((p, c) => p.concat(c), [])
-			.map(audience => audience.grades)
-			.reduce((p, c) => p.concat(c), [])
-			.filter((v, i, a) => a.indexOf(v) === i)
+		return this.audience ? this.audience.grades : []
 	}
 
 	getSelectedDate() {
@@ -123,28 +125,22 @@ export class Course {
 	}
 
 	isRequired() {
-		return this.modules.find(module => module.isRequired()) != null
+		return this.audience ? this.audience.mandatory : false
 	}
 
 	nextRequiredBy() {
-		let next = null
 		const completionDate = this.getCompletionDate()
-		for (const module of this.modules) {
-			const moduleNext = module.nextRequiredBy(completionDate)
-			if (!next) {
-				next = moduleNext
-			} else if (moduleNext && moduleNext.getTime() < next.getTime()) {
-				next = moduleNext
-			}
+		if (this.audience) {
+			return this.audience!.nextRequiredBy(completionDate)
 		}
-		return next
+		return null
 	}
 
 	getMandatoryCount() {
 		const modules = this.getModules()
 		let count = 0
 		modules.forEach(module => {
-			if (module.audience && module.audience!.mandatory) {
+			if (!module.optional) {
 				count++
 			}
 		})
@@ -172,27 +168,13 @@ export class Course {
 
 	shouldRepeat() {
 		const completionDate = this.getCompletionDate()
-		for (const module of this.modules) {
-			const moduleShouldRepeat = module.shouldRepeat(completionDate)
-			if (moduleShouldRepeat) {
-				return true
-			}
+		if (this.audience) {
+			return this.audience!.shouldRepeat(completionDate)
 		}
 		return false
 	}
-
-	private collatePrice() {
-		let price = 0
-		if (this.modules) {
-			this.modules.forEach(module => {
-				if (module.price) {
-					price += module.price
-				}
-			})
-		}
-		return price
-	}
 }
+
 export class Resource {
 	static create(data: any) {
 		const resource = new Resource(data.id)
@@ -246,34 +228,19 @@ export class CourseModule {
 }
 
 export class Module {
-	static create(data: any, user?: User) {
+	static create(data: any) {
 		const module = new Module(data.id, data.type)
 		module.duration = data.duration
-		module.price = data.price
+		module.cost = data.cost
 		module.productCode = data.productCode
-		module.location = data.location
 		module.startPage = data.startPage
 		module.title = data.title
 		module.description = data.description
 		module.url = data.url
+		module.location = data.location
 		module.fileSize = data.fileSize
+		module.optional = data.optional || false
 		module.events = (data.events || []).map(Event.create)
-
-		const audiences = (data.audiences || []).map(Audience.create)
-		module.audiences = audiences
-
-		if (user) {
-			let matchedAudience = null
-			let matchedRelevance = -1
-			for (const audience of audiences) {
-				const relevance = audience.getRelevance(user!)
-				if (relevance > matchedRelevance) {
-					matchedAudience = audience
-					matchedRelevance = relevance
-				}
-			}
-			module.audience = matchedAudience
-		}
 
 		return module
 	}
@@ -285,15 +252,13 @@ export class Module {
 	description: string
 
 	duration: number
+	optional = false
 	url?: string
-	fileSize?: number
 	location?: string
-	price?: number
+	fileSize?: number
+	cost?: number
 	productCode?: string
 	startPage?: string
-
-	audiences: Audience[]
-	audience?: Audience
 
 	events: Event[]
 
@@ -316,27 +281,6 @@ export class Module {
 	getEvent(eventId: string) {
 		return this.events.find(event => event.id === eventId)
 	}
-
-	isRequired() {
-		if (this.audience) {
-			return this.audience!.mandatory
-		}
-		return false
-	}
-
-	nextRequiredBy(completionDate?: Date) {
-		if (this.audience) {
-			return this.audience!.nextRequiredBy(completionDate)
-		}
-		return null
-	}
-
-	shouldRepeat(completionDate?: Date) {
-		if (this.audience) {
-			return this.audience!.shouldRepeat(completionDate)
-		}
-		return false
-	}
 }
 
 export class ModuleWithCourse extends Module {
@@ -345,8 +289,25 @@ export class ModuleWithCourse extends Module {
 }
 export class Event {
 	static create(data: any) {
-		const date = data.date ? new Date(data.date) : new Date()
-		return new Event(date, data.location, data.capacity, data.id)
+		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
+		let date: any = ''
+		if (data.dateRanges[0]) {
+			date = new Date(data.dateRanges[0].date + "T" + data.dateRanges[0].startTime)
+		} else {
+			date = data.date
+		}
+
+		let location = ''
+		let capacity = 0
+		if (data.venue) {
+			location = data.venue.location
+			capacity = data.venue.capacity
+		} else {
+			location = data.location
+			capacity = data.capacity
+		}
+
+		return new Event (date, location, capacity, data.id)
 	}
 
 	id: string

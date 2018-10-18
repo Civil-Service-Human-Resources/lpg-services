@@ -4,7 +4,6 @@ export const selectors: Record<string, string> = {
 	addToPlan: '.lpg-add-from-search',
 	addedNotification: '.banner__heading-large',
 	applyFilter: 'button[class="button"]',
-	blog: '#blog',
 	bookCourse: '.discite__action--search > a',
 	course: '.discite__counter',
 	courseName: '.lpg-course-name',

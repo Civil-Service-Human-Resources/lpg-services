@@ -25,59 +25,41 @@ const moduleData: {[module: string]: any} = {
 		description: '',
 		duration: null,
 		id: 'F2F',
+		optional: true,
 		price: null,
 		productCode: null,
 		title: 'Face to face module',
 		type: 'face-to-face',
 
-		audiences: [
-			{
-				areasOfWork: [],
-				departments: [],
-				frequency: null,
-				grades: [],
-				interests: [],
-				mandatory: false,
-			},
-		],
 		events: [
 			{
 				capacity: 30,
-				date: new Date(new Date().setDate(new Date().getDate() - 30)),
+				dateRanges: [{date: '2019-10-10', startTime: '06:00:00'}],
 				id: 'past',
-				location: 'London',
+				venue: {location: 'London'},
 			},
 			{
 				capacity: 30,
-				date: new Date(new Date().setDate(new Date().getDate() + 30)),
+				dateRanges: [{date: '2019-10-10', startTime: '06:00:00'}],
 				id: 'future',
-				location: 'London',
+				venue: {location: 'London'},
 			},
 		],
 	},
 	file: {
 		description: 'File',
 		duration: 1000,
+		events: [],
 		fileSize: null,
 		id: 'FILE',
-		type: 'file',
+
+		optional: true,
 
 		price: null,
+		type: 'file',
+
 		title: 'tes',
-
 		url: null,
-
-		audiences: [
-			{
-				areasOfWork: [],
-				departments: [],
-				frequency: null,
-				grades: [],
-				interests: [],
-				mandatory: false,
-			},
-		],
-		events: [],
 	},
 }
 
@@ -206,18 +188,6 @@ describe('Course Call to Actions', () => {
 								expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Delete)
 							})
 						})
-
-						it('should have actions to record if the date has passed the event date', () => {
-							course.record!.modules.push(initModuleRecord('past'))
-							course.record!.modules[0].state = 'REGISTERED'
-
-							const cta = constructCourseCallToAction(
-								course,
-								modifier
-							)
-
-							expect(cta.actionToRecord).to.exist
-						})
 					})
 				})
 			})
@@ -288,7 +258,7 @@ function initModuleRecord(rel: EventRelativeToToday): ModuleRecord {
 		eventId: rel,
 		moduleId: 'F2F',
 		moduleTitle: 'module',
-		moduleType: 'link',
+		moduleType: 'blog',
 		optional: true,
 	}
 }
