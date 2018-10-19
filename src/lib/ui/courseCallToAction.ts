@@ -46,7 +46,7 @@ export function constructCourseCallToAction(
 
 	if (course.record && course.record.state !== 'ARCHIVED') {
 		const record = course.record
-		callToActionProps.isInLearningPlan = true
+		callToActionProps.isInLearningPlan =  (!!course.record || isRequired)
 
 		const bookedModule = record.modules && record.modules.find(m => !!m.eventId)
 		const isBooked =
