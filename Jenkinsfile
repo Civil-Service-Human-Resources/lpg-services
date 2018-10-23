@@ -35,7 +35,6 @@ pipeline {
                 }
             }
         }
-        disabled */
         stage('Deploy to Integration') {
             agent { label 'master' }
             steps {
@@ -64,7 +63,6 @@ pipeline {
                 }
             }
         }
-        /* disabled
         stage('Deploy to Staging?')  {
             agent none
             steps {
@@ -138,5 +136,13 @@ pipeline {
             }
         }
         disabled */
+        stage('Post') {
+            agent { label 'master' }
+            post {
+                cleanup {
+                    deleteDir()
+                }
+            }
+        }
     }
 }
