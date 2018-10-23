@@ -95,7 +95,7 @@ if (config.PROFILE === 'prod') {
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': "'self' https://youtube.com https://www.youtube.com",
+					'default-src': "'self' https://youtube.com https://www.youtube.com https://cdn.cshr.digital",
 					'font-src': 'data:',
 					'frame-src': 'https://youtube.com https://www.youtube.com',
 					'img-src': "'self' data: https://www.google-analytics.com",
