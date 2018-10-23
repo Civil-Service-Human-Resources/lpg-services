@@ -136,5 +136,16 @@ pipeline {
             }
         }
         disabled */
+        stage('Post') {
+            agent { label 'master' }
+            steps {
+                echo 'cleanup'
+            }
+            post {
+                cleanup {
+                    deleteDir()
+                }
+            }
+        }
     }
 }
