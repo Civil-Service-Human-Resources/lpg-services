@@ -1,19 +1,31 @@
-LPG Services ·
-[![Build Status](https://travis-ci.org/Civil-Service-Human-Resources/lpg-services.svg?branch=master)](https://travis-ci.org/Civil-Service-Human-Resources/lpg-services)
-=====================
-lpg-services contains the code you need to start building a user interface for government platforms and services.
+LPG Services   
+=====================  
+`lpg-services` contains the code you need to start the Learning Platform for Government application.
 ## Getting Started
-
 ### Prerequisites
+#### Installs
 Please have the following downloaded and installed:
 * [Docker](https://www.docker.com/get-docker)
 * [node/npm](https://nodejs.org/en/)
+* [Keybase](https://keybase.io/)
 * [Prettier](https://prettier.io/)
 * [TSlint](https://palantir.github.io/tslint/)
 
+#### Set up local hosts file
 Add the following to your `/etc/hosts`
 ```
 127.0.0.1    lpg.local.cshr.digital,identity.local.cshr.digital
+```
+#### Keybase
+Request Keybase access from [Yuksel](https://github.com/elxsy) or [Rob](https://github.com/robertmarks), and ensure the application is running and enabled in Finder (`Settings > Advanced > Enable Keybase in Finder`)
+
+#### Docker
+You will need to have an Azure account with access to the team's [ACR](https://azure.microsoft.com/en-gb/services/container-registry/) in order to download any docker images. Please contact [Rob](https://github.com/robertmarks) for help setting up.  
+  
+Download the [azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) and login: 
+```
+brew update && brew install azure-cli
+az login
 ```
 
 ### Installation
@@ -28,10 +40,10 @@ Open a new terminal tab, and run the core LPG application using npm:
 ```
 npm install
 npm run build
-npm run start:all
+npm run start:ui
 ```
 
-There are additional npm scripts for the application which can be found in [package.json](https://github.com/Civil-Service-Human-Resources/lpg-services/blob/master/package.json)
+There are additional npm scripts for the application which can be found in [package.json](https://github.com/Civil-Service-Human-Resources/lpg-services/blob/master/package.json).
 
 ### Accessing the app
 The various interfaces of the app accessed via the following URLs:  
@@ -39,10 +51,9 @@ The various interfaces of the app accessed via the following URLs:
 | INTERFACE | DESCRIPTION | URL |
 |--|--|--|
 | LPG UI | Main UI of the platform | http://lpg.local.cshr.digital:3001/home |
-| LPG Management | Internal management of course content. | http://lpg.local.cshr.digital:3003/courses |
 | LPG Management | Content management interface | http://lpg.local.cshr.digital:3005/content-management |
-| Identity | http://localhost:8080 | Identity authentication service |
-| Identity Management | User account admin for managing identity details | http://localhost:8081/management/identities |
+| Identity | Identity authentication service | http://lpg.local.cshr.digital:8080 |
+| Identity Management | User account admin for managing identity details | http://lpg.local.cshr.digital:8081/management/identities |
 
 
 ## Technical Overview
@@ -52,7 +63,6 @@ The various interfaces of the app accessed via the following URLs:
   See more about how to use it in this project [here](src/lib/ui/README.md)
 
 ### Testing
-
 #### [WebdriverIO](test/webdriver)
 
 All the services required to run this are npm dependencies. To run against different environments locally you need to set the appropriate environment variable.
@@ -65,11 +75,9 @@ npm run test
 ```
 
 #### Configure WebdriverIO capabilities
-
 Browser type, timeouts, services and browser instances can be configured within [wdio.conf.js](test/webdriver/wdio.conf.js)
 
 ## Styling
-
 * scss is being used for css
 * use `npm run watch-sass:ui` to start watching scss files in the ui repo
 * `src/[ui/management-ui]/assets/styles/main.scss` is where all styles are being imported
