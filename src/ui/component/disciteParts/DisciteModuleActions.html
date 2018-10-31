@@ -1,9 +1,12 @@
 <div class="discite__action discite__action--module">
 
 
-    {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
-        {$i18n(cta.learningAction.text)}
-    {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
+    {#if course.status !== "Draft" }
+    
+        {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
+            {$i18n(cta.learningAction.text)}
+        {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
+    {/if}
 
     {#if cta.actionToPlan}
         {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
