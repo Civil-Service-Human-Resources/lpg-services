@@ -1,8 +1,6 @@
 <div class="discite__action discite__action--module">
 
-
-    {#if course.status !== "Draft" }
-    
+    {#if course.status !== "Archive" }   
         {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
             {$i18n(cta.learningAction.text)}
         {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
