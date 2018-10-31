@@ -11,7 +11,11 @@
         {#each courses as record}
         <tr>
             <td>
-                <a href="/courses/{record.courseId}">{record.courseTitle} </a>
+                {#if record.status !== "Archived"}
+                    <a href="/courses/{record.courseId}">{record.courseTitle}</a>
+                {:else}
+                    <p>{record.courseTitle}</p>
+                {/if}
             </td>
             <td>{$i18n(record.getType())}</td>
             <td>{record.getDuration() || '-'}</td>

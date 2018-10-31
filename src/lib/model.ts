@@ -14,6 +14,7 @@ export class Course {
 		course.learningOutcomes = data.learningOutcomes
 		course.shortDescription = data.shortDescription
 		course.title = data.title
+		course.status = data.status
 
 		course.modules = (data.modules || []).map(Module.create)
 
@@ -42,6 +43,7 @@ export class Course {
 	description: string
 	duration: number
 	learningOutcomes: string
+	status: string
 
 	modules: Module[]
 
@@ -307,7 +309,7 @@ export class Event {
 			capacity = data.capacity
 		}
 
-		return new Event (date, location, capacity, data.id)
+		return new Event(date, location, capacity, data.id)
 	}
 
 	id: string
