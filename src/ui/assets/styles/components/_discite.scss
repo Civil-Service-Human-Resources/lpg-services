@@ -11,7 +11,7 @@ $module: 'discite';
 	@include media(desktop) {
 		display: inline-block;
 		float: left;
-		padding: 10px 8px 10px 0;
+		padding: 10px 8px 10px 0; 
 	}
 }
 
@@ -168,7 +168,6 @@ $module: 'discite';
 
 	@include e(counter) {
 		margin-bottom: 0;
-		padding-right: 205px;
 
 		@include m(search) {
 			padding-top: 10px;
