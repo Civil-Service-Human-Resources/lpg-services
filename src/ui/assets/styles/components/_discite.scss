@@ -168,7 +168,6 @@ $module: 'discite';
 
 	@include e(counter) {
 		margin-bottom: 0;
-		padding-right: 205px;
 
 		@include m(search) {
 			padding-top: 10px;
