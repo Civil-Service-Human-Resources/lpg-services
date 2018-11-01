@@ -5,16 +5,9 @@
                 <Search>
                     <h1 class="heading heading-large heading--flush">
                         {$i18n('suggestions_page_title')}
-                    </h1>  
+		    </h1>
+		    <p class="govuk-body">{$i18n('home_page_suggestions', $i18n('proposition_name'))}</p>
                 </Search>
-                <p class="govuk-body">{$i18n('home_page_suggestions', $i18n('proposition_name'))}</p>
-                {#each courses as courseGroup}
-                    {#each Object.keys(courseGroup.value) as courseKey}
-                    {#if courseKey && courseGroup.value[courseKey].length}
-                        <p>{$i18n(`${courseGroup.key}`)[courseKey] || courseKey}</p>
-                    {/if}
-                    {/each}
-                {/each}
                 {#if successTitle}
                 <Banner type="confirmation" title={successTitle} message={successMessage} />
                 {/if}
