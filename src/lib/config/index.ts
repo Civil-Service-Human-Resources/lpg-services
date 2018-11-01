@@ -73,9 +73,7 @@ export const COURSE_CATALOGUE = set({
 })
 
 export const FEEDBACK_RECIPIENTS = [
-	'max@cautionyourblast.com',
-	'richard@cautionyourblast.com',
-	'r.vaughan@kainos.com',
+	env.FEEDBACK_RECIPIENT || 'feedback@cslearning.gov.uk',
 ]
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
