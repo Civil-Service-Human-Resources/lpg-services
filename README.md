@@ -25,7 +25,8 @@ You will need to have an Azure account with access to the team's [ACR](https://a
 Download the [azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) and login: 
 ```
 brew update && brew install azure-cli
-az login
+az login  
+az acr login --name lpgregistry
 ```
 
 ### Installation
