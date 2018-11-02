@@ -31,7 +31,7 @@
 	"home_page_title": "Your learning",
 	"required_section_title": "Required learning",
 	"other_section_title": "Other learning",
-	"home_page_suggestions": "Tailored suggestions from %s, your area of work or your organisation.",
+	"home_page_suggestions": "Tailored suggestions are based on your:",
 	"home_page_learning_plan_link": "See more learning in your Learning plan",
 	"home_page_suggestions_link": "See more suggestions for you",
 	"required_learning_done": "You have completed all your required learning.",
@@ -358,5 +358,6 @@
 	"SKIPPED": "Skipped",
 	"blog": "blog",
 	"": "",
-	"unknown": "unknown"
+	"unknown": "unknown",
+	"otherAreaOfWork": "otherAreaOfWork"
 }
