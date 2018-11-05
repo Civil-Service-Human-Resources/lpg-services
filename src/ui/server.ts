@@ -1,4 +1,3 @@
-import * as appInsights from 'applicationinsights'
 import * as fs from 'fs'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
@@ -35,12 +34,13 @@ import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
 
-appInsights.setup(config.INSTRUMENTATION_KEY).start()
-
 /* tslint:disable:no-var-requires */
+const appInsights = require('applicationinsights')
 const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 /* tslint:enable */
+
+appInsights.setup(config.INSTRUMENTATION_KEY).start()
 
 const {PORT = 3001} = process.env
 
