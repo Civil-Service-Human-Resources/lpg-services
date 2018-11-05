@@ -40,7 +40,15 @@ const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 /* tslint:enable */
 
-appInsights.setup(config.INSTRUMENTATION_KEY).start()
+appInsights.setup(config.INSTRUMENTATION_KEY)
+	.setAutoDependencyCorrelation(true)
+	.setAutoCollectRequests(true)
+	.setAutoCollectPerformance(true)
+	.setAutoCollectExceptions(true)
+	.setAutoCollectDependencies(true)
+	.setAutoCollectConsole(true)
+	.setUseDiskRetryCaching(true)
+	.start()
 
 const {PORT = 3001} = process.env
 
