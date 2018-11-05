@@ -153,3 +153,5 @@ export const LPG_MANAGEMENT_URL =
 	env.LPG_MANAGEMENT_SERVER || 'http://lpg.local.cshr.digital:3005'
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000
+
+export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
