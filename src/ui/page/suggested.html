@@ -6,9 +6,36 @@
                     <h1 class="heading heading-large heading--flush">
                         {$i18n('suggestions_page_title')}
                     </h1>
-                    <p>{$i18n('home_page_suggestions', $i18n('proposition_name'))}</p>
                 </Search>
-
+                <div class="suggestions-links">
+                    <p class="govuk-body">{$i18n('home_page_suggestions', $i18n('proposition_name'))}</p>
+                    <div class="suggestions-wrapper">
+                        {#each courses as courseGroup}
+                            <div class="suggestions-container">
+                                {#if courseGroup.key === "department"}
+                                    <p class="govuk-body header">organisation</p>
+                                {:elseif courseGroup.key === "areaOfWork"}
+                                    <p class="govuk-body header">primary area of work</p>
+                                {:elseif courseGroup.key === "otherAreaOfWork"}
+                                    <p class="govuk-body header">other area of work</p>
+                                {:elseif courseGroup.key === "interest"}
+                                    <p class="govuk-body header">interests</p>
+                                {/if}
+                           
+                            <ul>
+                                {#each Object.keys(courseGroup.value) as courseKey}
+                                    {#if courseKey }
+                                        <li><a href="/suggestions-for-you/#{courseKey}">{$i18n(`${courseGroup.key}`)[courseKey] || courseKey}</a></li>
+                                    {/if}
+                                {/each}
+                            </ul>  
+                             </div>
+                        {/each}
+                    </div>
+                    <div class="change-settings-container">
+                        <p class="govuk-body">You can change the preferences in <a href="/profile">your profile page</a>.</p>
+                    </div>
+                </div>
                 {#if successTitle}
                 <Banner type="confirmation" title={successTitle} message={successMessage} />
                 {/if}
@@ -18,7 +45,7 @@
     {#each courses as courseGroup}
         {#each Object.keys(courseGroup.value) as courseKey}
         {#if courseKey && courseGroup.value[courseKey].length}
-            <SuggestionsSection title={$i18n(`${courseGroup.key}`)[courseKey] || courseKey} code={courseKey} suggestedLearning="{courseGroup.value[courseKey]}" home={false} type="{courseGroup.key}" />
+            <SuggestionsSection id={courseKey} title={$i18n(`${courseGroup.key}`)[courseKey] || courseKey} code={courseKey} suggestedLearning="{courseGroup.value[courseKey]}" home={false} type="{courseGroup.key}" />
         {/if}
         {/each}
     {/each}
