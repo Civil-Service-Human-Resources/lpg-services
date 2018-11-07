@@ -41,6 +41,10 @@
 	@extend %site-width-container;
 	@extend %contain-floats;
 }
+.push-top {
+	margin-top: 50px;
+}
+
 .push-bottom {
 	margin-bottom: 30px;
 	display: block;
