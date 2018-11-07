@@ -10,16 +10,18 @@
                 <div class="suggestions-links">
                     <p class="govuk-body">{$i18n('home_page_suggestions', $i18n('proposition_name'))}</p>
                     <div class="suggestions-wrapper">
+                
                         {#each courses as courseGroup}
+        
                             <div class="suggestions-container">
                                 {#if courseGroup.key === "department"}
-                                    <p class="govuk-body header">organisation</p>
+                                    <p class="govuk-body caps header">organisation</p>
                                 {:elseif courseGroup.key === "areaOfWork"}
-                                    <p class="govuk-body header">primary area of work</p>
+                                    <p class="govuk-body caps header">primary area of work</p>
                                 {:elseif courseGroup.key === "otherAreaOfWork"}
-                                    <p class="govuk-body header">other area of work</p>
+                                    <p class="govuk-body caps header">other area of work</p>
                                 {:elseif courseGroup.key === "interest"}
-                                    <p class="govuk-body header">interests</p>
+                                    <p class="govuk-body caps header">interests</p>
                                 {/if}
                            
                             <ul>
@@ -33,7 +35,9 @@
                         {/each}
                     </div>
                     <div class="change-settings-container">
-                        <p class="govuk-body">You can change the preferences in <a href="/profile">your profile page</a>.</p>
+    
+                            <p class="govuk-body">You can change the preferences in <a href="/profile">your profile page</a>.</p>
+                
                     </div>
                 </div>
                 {#if successTitle}

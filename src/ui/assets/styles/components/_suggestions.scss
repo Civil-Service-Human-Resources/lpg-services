@@ -1,4 +1,4 @@
-suggestions-wrapper {
+.suggestions-wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -24,6 +24,11 @@ suggestions-wrapper {
         margin: 0
     }
 }
+
+.caps {
+    text-transform: capitalize;
+}
+
  @media screen and (min-width: 641px) {
      .suggestions-wrapper {
         flex-direction: row;
