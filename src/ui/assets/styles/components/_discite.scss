@@ -38,7 +38,7 @@ $module: 'discite';
 		@include media(desktop) {
 			padding-right: 300px;
 
-			&.video {
+			&.single {
 				padding-right: 0;
 			}
 		}
