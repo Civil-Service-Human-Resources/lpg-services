@@ -1,13 +1,13 @@
 <div class="discite__item u-clearfix discite__item--module">
     <slot name="main">
-	    <DisciteModuleMain {cta} {course} {module} {cta} {modifier}/>
+	    <DisciteModuleMain {type} {cta} {course} {module} {cta} {modifier}/>
     </slot>
 	<slot name="properties">
-	    <DisciteModuleProperties {cta} {course} {modifier} {module} />
+		
+	    <DisciteModuleProperties {type} {cta} {course} {modifier} {module} /> 
     </slot>
 	<slot name="actions">
         <DisciteModuleActions cta={$constructModuleCta(course.id, module, $req.user)} {course} {module} />
-
     </slot>
 </div>
 <script>
