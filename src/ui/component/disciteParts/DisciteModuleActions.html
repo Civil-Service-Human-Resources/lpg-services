@@ -1,7 +1,10 @@
 <div class="discite__action discite__action--module">
 
-
+    {#if module.type === 'link'}
+    {@html `<a href="${cta.url}" target="_blank" ${cta.learningAction.attribute} >`}
+    {:else}
     {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
+    {/if}
         {$i18n(cta.learningAction.text)}
     {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
 
