@@ -113,7 +113,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:PR-34-2
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:PR-34-3
     depends_on:
       - identity
     ports:
