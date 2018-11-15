@@ -155,3 +155,7 @@ export const LPG_MANAGEMENT_URL =
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000
 
 export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
+export const NOTIFICATION_SERVICE = {
+	timeout: 15000,
+	url: env.NOTIFICATION_SERVICE_URL || 'http://localhost:9005',
+}
