@@ -2,19 +2,13 @@
     <div class="container container--main">
 
         <div class="grid-row ">
-            <div class="column-full">
-                <h1 class="heading-xlarge heading heading--page-heading ">
-                    Search results
-                </h1>
-                <div class="search-box u-space-b30">
-                    <form autocomplete="off" name="searchLearning" method="get" action="/search">
-                        <div class="form-group search-box__group">
-                            <label class="visuallyhidden">Search all available learning</label>
-                            <input class="form-control search-box__input" id="q" type="search" name="q" value="{ query }" placeholder="Search CSL">
-                            <button type="submit" class="search-box__submit">Search</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="column-full no-border">
+                <Search>
+                    <h1 class="heading heading-large heading--flush">
+                        Search results
+                    </h1>
+                </Search>
+                
                 {#if searchResults && searchResults.suggestion}
                     <span class="search__suggestion">Did you mean
                         <a href="/search?q={searchResults.suggestion}">{searchResults.suggestion}</a>
@@ -88,6 +82,7 @@
 	import DisciteModule from '../../component/DisciteModule.html'
 	import DisciteCourse from '../../component/DisciteCourse.html'
 	import LeftSearchBox from '../../component/LeftSearchBox.html'
+    import Search from '../../component/Search.html'
 
 	export default {
 		data() {
@@ -97,6 +92,7 @@
 
 		components: {
 			Page,
+            Search,
 			DisciteModule,
 			DisciteCourse,
 			LeftSearchBox,
