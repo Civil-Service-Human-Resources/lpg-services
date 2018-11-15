@@ -22,6 +22,7 @@
 @import 'components/filter';
 @import 'components/govuk-related-items';
 
+@import 'components/suggestions';
 @import 'components/results';
 @import 'components/booking';
 @import 'components/search';
@@ -41,6 +42,10 @@
 	@extend %site-width-container;
 	@extend %contain-floats;
 }
+.push-top {
+	margin-top: 50px;
+}
+
 .push-bottom {
 	margin-bottom: 30px;
 	display: block;

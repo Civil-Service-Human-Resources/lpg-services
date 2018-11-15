@@ -10,7 +10,7 @@
                 <h2 class="heading-medium">Learning outcomes</h2>
                 <div>{@html $toHtml(course.learningOutcomes)}</div>
                 {/if}
-                <DisciteModule {course} {module}/>
+                <DisciteModule {course} {module} type="single"/>
             </div>
             <div class="column-one-third">
                 {#if courseDetails.length} {#each courseDetails as dataRows}

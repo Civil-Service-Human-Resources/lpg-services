@@ -37,6 +37,10 @@ $module: 'discite';
 
 		@include media(desktop) {
 			padding-right: 300px;
+
+			&.single {
+				padding-right: 0;
+			}
 		}
 
 		@include m(search) {
@@ -57,7 +61,7 @@ $module: 'discite';
 		}
 		@include m(search) {
 			@include media(desktop) {
-				width: calc(100% - 100px);
+				width: calc(100% - 150px);
 			}
 		}
 	}
@@ -204,8 +208,8 @@ $module: 'discite';
 // TODO: Mick, please tidy this up! Love, Matt.
 @include media(desktop) {
 	.discite__main--module {
-		 .discite__description {
+		.discite__description {
 			margin-right: 0px;
-		 }
-	 }
+		}
+	}
 }

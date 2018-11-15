@@ -23,7 +23,7 @@
                 {/if} {#if events && events.length}
 
                 <h2 class="heading-medium u-space-t10 heading--red-top">{ module.title || course.title }</h2>
-                <form autocomplete="nope" method="post" action="/book/{course.id}/{module.id}/choose-date">
+                <form autocomplete="off" method="post" action="/book/{course.id}/{module.id}/choose-date">
                     <div class="div-table div-table--5 lpg-date-table">
                         <div class="div-table__row u-clearfix">
                             <div class="div-table__th">Date</div>

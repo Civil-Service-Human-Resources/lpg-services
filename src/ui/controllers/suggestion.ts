@@ -96,10 +96,10 @@ export async function suggestionsPage(
 		suggestionsByInterest(user, learningRecord),
 	])
 
-	courses.push({key: 'areaOfWork', value: areaOfWork })
-	courses.push({key: 'areaOfWork', value: otherAreasOfWork })
-	courses.push({key: 'department', value: departments })
-	courses.push({key: 'interest', value: interests })
+	courses.push({ key: 'department', value: departments })
+	courses.push({ key: 'areaOfWork', value: areaOfWork })
+	courses.push({ key: 'otherAreaOfWork', value: otherAreasOfWork })
+	courses.push({ key: 'interest', value: interests })
 
 	res.send(
 		template.render('suggested', req, res, {
@@ -111,7 +111,7 @@ export async function suggestionsPage(
 }
 
 export async function getLearningRecord(user: model.User, learningRecordIn:
-		Record<string, learnerRecord.CourseRecord> = {}) {
+	Record<string, learnerRecord.CourseRecord> = {}) {
 	let learningRecord: Record<string, learnerRecord.CourseRecord> = {}
 
 	if (Object.keys(learningRecordIn).length > 0) {
