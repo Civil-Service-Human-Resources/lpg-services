@@ -259,11 +259,15 @@ export async function renderPaymentOptions(
 
 	const user = req.user as model.User
 
-	const organisationalUnit = (await registry.follow(
-		config.REGISTRY_SERVICE_URL,
-		['organisationalUnits', 'search', 'findByCode'],
-		{code: user.department}
-	)) as any
+	let organisationalUnit
+
+	if (user.department) {
+		organisationalUnit = (await registry.follow(
+			config.REGISTRY_SERVICE_URL,
+			['organisationalUnits', 'search', 'findByCode'],
+			{code: user.department}
+		)) as any
+	}
 
 	if (!organisationalUnit) {
 		res.redirect('/profile')
@@ -448,22 +452,10 @@ export async function tryCompleteBooking(
 	const session = req.session!
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
-	// const extensions: Record<string, any> = {
-	// 	[xapi.Extension.Payment]: paymentOption,
-	// }
-
-	// await xapi
-	// 	.record(req, course, xapi.Verb.Registered, extensions, module, event)
-	// 	.catch((e: Error) => {
-	// 		logger.error('Error with XAPI', e)
-	// 	})
-
-
-
-
+	await learnerRecord.bookEvent(course, module, event, req.user)
 
 	logger.debug(
-		'XAPI successfully recorded REGISTERED verb against:',
+		'Successfully booked event in learner record',
 		`user:${req.user}`,
 		`event: ${event.id}`
 	)

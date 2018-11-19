@@ -1,5 +1,13 @@
 version: '3.4'
 services:
+
+  mysql:
+    image: mysql:5.6
+    environment:
+    - MYSQL_ROOT_PASSWORD=password
+    ports:
+    - 3306:3306
+
   # ElasticSearch
   elasticsearch:
     container_name: elasticsearch
@@ -76,22 +84,22 @@ services:
       - 8080:8080
       - 8081:8081
 
-  learner-record:
-    container_name: learner-record
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - OAUTH_SERVICE_URL=http://identity:8080
-      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-      - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
-      - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-    image: lpgregistry.azurecr.io/lpg-learner-record:PR-40-2
-    depends_on:
-      - civil-servant-registry
-      - identity
-      - learning-catalogue
-      - learning-locker-xapi
-    ports:
-      - 9000:9000
+#  learner-record:
+#    container_name: learner-record
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=default
+#      - OAUTH_SERVICE_URL=http://identity:8080
+#      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+#      - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
+#      - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
+#    image: lpgregistry.azurecr.io/lpg-learner-record:PR-40-2
+#    depends_on:
+#      - civil-servant-registry
+#      - identity
+#      - learning-catalogue
+#      - learning-locker-xapi
+#    ports:
+#      - 9000:9000
 
   learning-catalogue:
     container_name: learning-catalogue
@@ -126,15 +134,15 @@ services:
     ports:
       - 9002:9002
 
-  report-service:
-    container_name: report-service
-    environment:
-      - OAUTH_SERVICE_URL=http://identity:8080
-      - LEARNER_RECORD_URL=http://learner-record:9000
-    image: lpgregistry.azurecr.io/lpg-report-service:feature-lpfg-370-booking-feed-csv-report-4
-    depends_on:
-      - identity
-      - learner-record
-    ports:
-      - 9004:9004
+#  report-service:
+#    container_name: report-service
+#    environment:
+#      - OAUTH_SERVICE_URL=http://identity:8080
+#      - LEARNER_RECORD_URL=http://learner-record:9000
+#    image: lpgregistry.azurecr.io/lpg-report-service:feature-lpfg-370-booking-feed-csv-report-4
+#    depends_on:
+#      - identity
+#      - learner-record
+#    ports:
+#      - 9004:9004
 # /CSHR
