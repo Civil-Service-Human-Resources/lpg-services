@@ -102,7 +102,7 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:PR-58-7
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-22
     depends_on:
       - identity
     ports:
@@ -113,7 +113,11 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
+<<<<<<< Updated upstream
     image: lpgregistry.azurecr.io/civil-servant-registry-service:fc2ff2f6fc53be91d56900ec17ba0b7a101b85dd
+=======
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:PR-33-1
+>>>>>>> Stashed changes
     depends_on:
       - identity
     ports:
