@@ -261,8 +261,8 @@ export async function renderPaymentOptions(
 
 	const organisationalUnit = (await registry.follow(
 		config.REGISTRY_SERVICE_URL,
-		['organisationalUnits', 'search', 'findByDepartmentCode'],
-		{departmentCode: user.department}
+		['organisationalUnits', 'search', 'findByCode'],
+		{code: user.department}
 	)) as any
 
 	if (!organisationalUnit) {
@@ -295,8 +295,8 @@ export async function enteredPaymentDetails(
 	const user = req.user as model.User
 	const organisationalUnit = (await registry.follow(
 		config.REGISTRY_SERVICE_URL,
-		['organisationalUnits', 'search', 'findByDepartmentCode'],
-		{departmentCode: user.department}
+		['organisationalUnits', 'search', 'findByCode'],
+		{code: user.department}
 	)) as any
 
 	let errors: string[] = []
@@ -457,6 +457,10 @@ export async function tryCompleteBooking(
 	// 	.catch((e: Error) => {
 	// 		logger.error('Error with XAPI', e)
 	// 	})
+
+
+
+
 
 	logger.debug(
 		'XAPI successfully recorded REGISTERED verb against:',
