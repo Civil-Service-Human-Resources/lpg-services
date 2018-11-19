@@ -1,5 +1,3 @@
-/*tslint:disable*/
-
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as dateTime from 'lib/datetime'
