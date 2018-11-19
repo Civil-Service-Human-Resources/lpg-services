@@ -77,7 +77,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-    image: lpgregistry.azurecr.io/lpg-learner-record:PR-40-2
+    image: lpgregistry.azurecr.io/lpg-learner-record:PR-55-1
     depends_on:
       - civil-servant-registry
       - identity
