@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as axiosLogger from 'lib/axiosLogger'
-import * as datetime from "lib/datetime"
+import * as datetime from 'lib/datetime'
 import * as log4js from 'log4js'
 import * as query from 'querystring'
 import * as config from './config'
@@ -24,6 +24,24 @@ const http = axios.create({
 
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
+
+export async function bookEvent(course: any, module: any, event: any, user: any): Promise<any> {
+	try {
+		return await http.post(`/event/${event.id}/booking/`, {
+			event: `${config.COURSE_CATALOGUE.url}/courses/${course.id}/modules/${module.id}/events/${event.id}`,
+			learner: user.id,
+			learnerEmail: user.userName,
+			status: 'Requested',
+		}, {
+			headers: {
+				Authorization: `Bearer ${user.accessToken}`,
+			},
+		})
+	} catch (e) {
+		logger.error(e)
+		throw new Error(`Unable to book event: ${e}`)
+	}
+}
 
 export async function getRecord(
 	user: model.User,
