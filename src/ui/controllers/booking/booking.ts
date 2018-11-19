@@ -1,10 +1,11 @@
+/*tslint:disable*/
+
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
-import * as purchaseOrdersService from 'lib/purchase-orders'
 import * as registry from 'lib/registry'
 import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
@@ -257,48 +258,30 @@ export async function renderPaymentOptions(
 	const module = req.module!
 
 	const user = req.user as model.User
-	const callOffPo = await purchaseOrdersService.findPurchaseOrder(
-		user,
-		module.id
-	)
 
-	if (callOffPo) {
-		session.payment = {
-			type: 'PURCHASE_ORDER',
-			value: `Call off ${callOffPo.id}`,
-		}
-		session.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/${
-					req.params.eventId
-				}/confirm`
-			)
-		})
+	const organisationalUnit = (await registry.follow(
+		config.REGISTRY_SERVICE_URL,
+		['organisationalUnits', 'search', 'findByDepartmentCode'],
+		{departmentCode: user.department}
+	)) as any
+
+	if (!organisationalUnit) {
+		res.redirect('/profile')
 	} else {
-		const organisationalUnit = (await registry.follow(
-			config.REGISTRY_SERVICE_URL,
-			['organisationalUnits', 'search', 'findByDepartmentCode'],
-			{departmentCode: user.department}
-		)) as any
-
-		if (!organisationalUnit) {
-			res.redirect('/profile')
-		} else {
-			res.send(
-				template.render('booking/payment-options', req, res, {
-					course: req.course!,
-					errors: req.flash('errors'),
-					event: req.event!,
-					module,
-					paymentMethods: organisationalUnit.paymentMethods,
-					values:
-						req.flash('values')[0] ||
-						(session.payment
-							? {[session.payment.type]: session.payment.value}
-							: {}),
-				})
-			)
-		}
+		res.send(
+			template.render('booking/payment-options', req, res, {
+				course: req.course!,
+				errors: req.flash('errors'),
+				event: req.event!,
+				module,
+				paymentMethods: organisationalUnit.paymentMethods,
+				values:
+					req.flash('values')[0] ||
+					(session.payment
+						? {[session.payment.type]: session.payment.value}
+						: {}),
+			})
+		)
 	}
 }
 
@@ -465,15 +448,15 @@ export async function tryCompleteBooking(
 	const session = req.session!
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
-	const extensions: Record<string, any> = {
-		[xapi.Extension.Payment]: paymentOption,
-	}
+	// const extensions: Record<string, any> = {
+	// 	[xapi.Extension.Payment]: paymentOption,
+	// }
 
-	await xapi
-		.record(req, course, xapi.Verb.Registered, extensions, module, event)
-		.catch((e: Error) => {
-			logger.error('Error with XAPI', e)
-		})
+	// await xapi
+	// 	.record(req, course, xapi.Verb.Registered, extensions, module, event)
+	// 	.catch((e: Error) => {
+	// 		logger.error('Error with XAPI', e)
+	// 	})
 
 	logger.debug(
 		'XAPI successfully recorded REGISTERED verb against:',

@@ -8,6 +8,13 @@ services:
       - 9200:9200
       - 9300:9300
     command: 'elasticsearch -E cluster.name=local -E discovery.type=single-node'
+
+  elastichq:
+    image: elastichq/elasticsearch-hq
+    ports:
+    - 5000:5000
+    environment:
+      HQ_DEFAULT_URL: http://elasticsearch:9200
   # /ElasticSearch
 
   # Learning Locker
