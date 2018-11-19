@@ -1,5 +1,13 @@
 version: '3.4'
 services:
+
+  mysql:
+    image: mysql:5.6
+    environment:
+    - MYSQL_ROOT_PASSWORD=password
+    ports:
+    - 3306:3306
+
   # ElasticSearch
   elasticsearch:
     container_name: elasticsearch
