@@ -84,7 +84,7 @@ export async function renderCancelledBookingPage(
 		}
 	}
 
-	const message = error ? confirmedMessage.NotFound : confirmedMessage.Cancelled
+	const message = error ? confirmedMessage.Error : confirmedMessage.Cancelled
 
 	res.send(
 		template.render('booking/confirmed', req, res, {
