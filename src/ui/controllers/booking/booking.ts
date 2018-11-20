@@ -4,6 +4,7 @@ import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
+import * as purchaseOrdersService from 'lib/purchase-orders'
 import * as registry from 'lib/registry'
 import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
@@ -18,7 +19,7 @@ const logger = log4js.getLogger('controllers/booking')
 export enum confirmedMessage {
 	Booked = 'Booked',
 	Cancelled = 'Cancelled',
-	NotFound = 'NotFound',
+	Error = 'Error',
 }
 
 export function recordCheck(
@@ -256,34 +257,54 @@ export async function renderPaymentOptions(
 	const module = req.module!
 
 	const user = req.user as model.User
+	const purchaseOrder = await purchaseOrdersService.findPurchaseOrder(
+		user,
+		module.id
+	)
 
-	let organisationalUnit
+	if (purchaseOrder) {
+		session.purchaseOrder = purchaseOrder
 
-	if (user.department) {
-		organisationalUnit = (await registry.follow(
-			config.REGISTRY_SERVICE_URL,
-			['organisationalUnits', 'search', 'findByCode'],
-			{code: user.department}
-		)) as any
-	}
-
-	if (!organisationalUnit) {
-		res.redirect('/profile')
+		session.payment = {
+			type: 'PURCHASE_ORDER',
+			value: `Call off ${purchaseOrder.id}`,
+		}
+		session.save(() => {
+			res.redirect(
+				`/book/${req.params.courseId}/${req.params.moduleId}/${
+					req.params.eventId
+					}/confirm`
+			)
+		})
 	} else {
-		res.send(
-			template.render('booking/payment-options', req, res, {
-				course: req.course!,
-				errors: req.flash('errors'),
-				event: req.event!,
-				module,
-				paymentMethods: organisationalUnit.paymentMethods,
-				values:
-					req.flash('values')[0] ||
-					(session.payment
-						? {[session.payment.type]: session.payment.value}
-						: {}),
-			})
-		)
+		let organisationalUnit
+
+		if (user.department) {
+			organisationalUnit = (await registry.follow(
+				config.REGISTRY_SERVICE_URL,
+				['organisationalUnits', 'search', 'findByCode'],
+				{code: user.department}
+			)) as any
+		}
+
+		if (!organisationalUnit) {
+			res.redirect('/profile')
+		} else {
+			res.send(
+				template.render('booking/payment-options', req, res, {
+					course: req.course!,
+					errors: req.flash('errors'),
+					event: req.event!,
+					module,
+					paymentMethods: organisationalUnit.paymentMethods,
+					values:
+						req.flash('values')[0] ||
+						(session.payment
+							? {[session.payment.type]: session.payment.value}
+							: {}),
+				})
+			)
+		}
 	}
 }
 
@@ -450,68 +471,75 @@ export async function tryCompleteBooking(
 	const session = req.session!
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
-	await learnerRecord.bookEvent(course, module, event, req.user)
+	const response = await learnerRecord.bookEvent(course, module, event, req.user, req.session!.purchaseOrder)
 
-	logger.debug(
-		'Successfully booked event in learner record',
-		`user:${req.user}`,
-		`event: ${event.id}`
-	)
+	let message
 
-	const accessibilityArray: string[] = []
-	for (const i in session.accessibilityReqs) {
-		if (i) {
-			const requirement = session.accessibilityReqs[i]
-			if (requirement === 'other') {
-				accessibilityArray.push('Other')
-			} else {
-				accessibilityArray.push(
-					res.__(`accessibility-requirements`)[requirement]
-				)
+	if (response.status === 201) {
+		logger.debug(
+			'Successfully booked event in learner record',
+			`user:${req.user}`,
+			`event: ${event.id}`,
+			`response: ${response.status}`
+		)
+
+		const accessibilityArray: string[] = []
+		for (const i in session.accessibilityReqs) {
+			if (i) {
+				const requirement = session.accessibilityReqs[i]
+				if (requirement === 'other') {
+					accessibilityArray.push('Other')
+				} else {
+					accessibilityArray.push(
+						res.__(`accessibility-requirements`)[requirement]
+					)
+				}
 			}
 		}
-	}
-	const error = await notify
-		.bookingRequested({
-			accessibility: accessibilityArray.join(', '),
-			bookingReference: `${req.user.id}-${event.id}`,
-			cost: module.cost,
-			courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
-				event.date,
-				true
-			)} ${
-				module.duration
-					? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
-					: ''
-			}`,
-			courseLocation: event.location,
-			courseTitle: module.title || course.title,
-			email: req.user.userName,
-			eventId: event.id,
-			learnerName: req.user.givenName || req.user.userName,
-			lineManager: req.user.lineManager,
-			location: event.location,
-			paymentOption,
-		})
-		.catch((e: Error) => {
-			logger.error('There was an error with GOV Notify', e)
-			res.redirect('/book/ouch')
-			return true
-		})
-
-	if (!error) {
-		delete req.session!.payment
-		delete req.session!.accessibilityReqs
-		delete req.session!.otherAccessibilityReqs
-		delete req.session!.selectedEventId
-
-		res.send(
-			template.render('booking/confirmed', req, res, {
-				course,
-				event,
-				message: confirmedMessage.Booked,
-				module,
+		await notify
+			.bookingRequested({
+				accessibility: accessibilityArray.join(', '),
+				bookingReference: `${req.user.id}-${event.id}`,
+				cost: module.cost,
+				courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
+					event.date,
+					true
+				)} ${
+					module.duration
+						? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
+						: ''
+					}`,
+				courseLocation: event.location,
+				courseTitle: module.title || course.title,
+				email: req.user.userName,
+				eventId: event.id,
+				learnerName: req.user.givenName || req.user.userName,
+				lineManager: req.user.lineManager,
+				location: event.location,
+				paymentOption,
 			})
-		)
+			.catch((e: Error) => {
+				logger.error('There was an error with GOV Notify', e)
+				res.redirect('/book/ouch')
+				return true
+			})
+
+		message = confirmedMessage.Booked
+	}	else {
+		message = confirmedMessage.Error
 	}
+
+	delete req.session!.payment
+	delete req.session!.accessibilityReqs
+	delete req.session!.otherAccessibilityReqs
+	delete req.session!.selectedEventId
+
+	res.send(
+		template.render('booking/confirmed', req, res, {
+			course,
+			event,
+			message,
+			module,
+		})
+	)
 }
