@@ -1,17 +1,12 @@
 <div class="discite__action discite__action--module">
-    {#if course.status !== "Archived" }   
-        {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
-            {$i18n(cta.learningAction.text)}
-        {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
-    {/if}
-    {#if module.type === 'link'}
+    {#if module.type === 'link' && course.status !== "Archived"}
     {@html `<a href="${cta.url}" target="_blank" ${cta.learningAction.attribute} >`}
     {:else}
     {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
     {/if}
         {$i18n(cta.learningAction.text)}
     {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
-    {#if cta.actionToPlan}
+    {#if cta.actionToPlan && course.status !== "Archived"}
         {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
             <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add to learning plan</a>
             {:else}
