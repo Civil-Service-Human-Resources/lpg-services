@@ -34,7 +34,7 @@ export interface BookingConfirmation {
 	}
 }
 
-export async function bookingCancelled(info: BookingCancellation) {
+export async function bookingCancelled(info: BookingCancellation, accessToken: string) {
 	const notify = new NotificationService(new NotificationServiceConfig())
 
 	const templateData = {...info}
@@ -42,7 +42,7 @@ export async function bookingCancelled(info: BookingCancellation) {
 	await notify
 		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.cancelled, info.email, {
 			personalisation: templateData,
-		})
+		}, accessToken)
 		.catch(reason => {
 			throw new Error(
 				`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
@@ -59,7 +59,7 @@ export async function bookingCancelled(info: BookingCancellation) {
 						...templateData,
 						recipient: info.lineManager.name || info.lineManager.email,
 					},
-				}
+				}, accessToken
 			)
 			.catch(reason => {
 				throw new Error(
@@ -69,7 +69,7 @@ export async function bookingCancelled(info: BookingCancellation) {
 	}
 }
 
-export async function bookingRequested(info: BookingConfirmation) {
+export async function bookingRequested(info: BookingConfirmation, accessToken: string) {
 	const notify = new NotificationService(new NotificationServiceConfig())
 
 	const templateData = {...info}
@@ -77,7 +77,7 @@ export async function bookingRequested(info: BookingConfirmation) {
 	await notify
 		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.confirmed, info.email, {
 			personalisation: templateData,
-		})
+		}, accessToken)
 		.catch(reason => {
 			throw new Error(
 				`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
@@ -94,7 +94,7 @@ export async function bookingRequested(info: BookingConfirmation) {
 						...templateData,
 						recipient: info.lineManager.name || info.lineManager.email,
 					},
-				}
+				}, accessToken
 			)
 			.catch(reason => {
 				throw new Error(

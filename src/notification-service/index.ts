@@ -12,13 +12,17 @@ export class NotificationService {
 		})
 	}
 
-	async sendEmail(templateId: string, email: string, personalisation: object): Promise<AxiosResponse> {
+	async sendEmail(templateId: string, email: string, personalisation: object, accessToken: string):
+		Promise<AxiosResponse> {
 		try {
 			return await this._http.post('/notifications/email', {
 				personalisation,
 				recipient: email,
 				templateId,
 			}, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
 				validateStatus: status => {
 					return status === 200
 				},

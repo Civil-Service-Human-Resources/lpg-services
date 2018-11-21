@@ -161,7 +161,7 @@ export async function tryCancelBooking(
 				email: req.user.userName,
 				learnerName: req.user.givenName || req.user.userName,
 				lineManager: req.user.lineManager,
-			})
+			}, req.user.accessToken)
 
 			req.session!.save(() => {
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
