@@ -35,12 +35,12 @@ export class Course {
 
 			if (course.audience != null) {
 				course.audience!.mandatory = false
-				course.audience.departments.forEach(function (a) {
-					if (a == user.department && course.audience!.type == Audience.Type.REQUIRED_LEARNING) {
+				course.audience.departments.forEach((a) => {
+					if (a === user.department && course.audience!.type === Audience.Type.REQUIRED_LEARNING) {
 						course.audience!.mandatory = true
 					}
 				})
-            		}
+			}
 		}
 
 		return course
@@ -411,11 +411,11 @@ export class Audience {
 
 export namespace Audience {
 	export enum Type {
-		OPEN,
-		CLOSED_COURSE,
-		PRIVATE_COURSE,
-		REQUIRED_LEARNING
-	}
+                OPEN,
+                CLOSED_COURSE,
+                PRIVATE_COURSE,
+                REQUIRED_LEARNING,
+        }
 }
 
 export class Frequency {
