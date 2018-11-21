@@ -33,14 +33,14 @@ export class Course {
 			}
 			course.audience = matchedAudience
 
-            if(course.audience != null) {
-                course.audience!.mandatory = false
-                course.audience.departments.forEach(function (a) {
-                    if(a == user.department && course.audience!.type == Audience.Type.REQUIRED_LEARNING) {
-                        course.audience!.mandatory = true
-                    }
-                })
-            }
+			if (course.audience != null) {
+				course.audience!.mandatory = false
+				course.audience.departments.forEach(function (a) {
+					if (a == user.department && course.audience!.type == Audience.Type.REQUIRED_LEARNING) {
+						course.audience!.mandatory = true
+					}
+				})
+            		}
 		}
 
 		return course
@@ -316,7 +316,7 @@ export class Audience {
 		audience.interests = data.interests || []
 		audience.mandatory = data.mandatory === undefined ? true : data.mandatory
 		audience.frequency = data.frequency
-        audience.type = data.type
+		audience.type = data.type
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
 		}
@@ -330,7 +330,7 @@ export class Audience {
 	mandatory = false
 	requiredBy?: Date | null
 	frequency?: string
-    type: Audience.Type
+	type: Audience.Type
 
 	get optional() {
 		return !this.mandatory
@@ -409,13 +409,13 @@ export class Audience {
 	}
 }
 
-export namespace Audience{
-    export enum Type{
-        OPEN,
-        CLOSED_COURSE,
-        PRIVATE_COURSE,
-        REQUIRED_LEARNING
-    }
+export namespace Audience {
+	export enum Type {
+		OPEN,
+		CLOSED_COURSE,
+		PRIVATE_COURSE,
+		REQUIRED_LEARNING
+	}
 }
 
 export class Frequency {
