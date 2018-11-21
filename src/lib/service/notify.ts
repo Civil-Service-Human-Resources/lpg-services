@@ -75,9 +75,7 @@ export async function bookingRequested(info: BookingConfirmation, accessToken: s
 	const templateData = {...info}
 
 	await notify
-		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.confirmed, info.email, {
-			personalisation: templateData,
-		}, accessToken)
+		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.confirmed, info.email, templateData, accessToken)
 		.catch(reason => {
 			throw new Error(
 				`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
