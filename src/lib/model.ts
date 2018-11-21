@@ -181,37 +181,6 @@ export class Course {
 	}
 }
 
-export class Resource {
-	static create(data: any) {
-		const resource = new Resource(data.id)
-		resource.courseId = data.courseId
-		resource.description = data.description
-		resource.learningOutcomes = data.learningOutcomes
-		resource.shortDescription = data.shortDescription
-		resource.title = data.title
-		resource.type = data.type
-
-		resource.modules = (data.modules || []).map(Module.create)
-		resource.course = (data.course || {}).map(Course.create)
-
-		return resource
-	}
-
-	id: string
-	courseId: string
-	course: Course
-	title: string
-	type: string
-	shortDescription: string
-	description: string
-	learningOutcomes: string
-	modules: Module[]
-
-	constructor(id: string) {
-		this.id = id
-	}
-}
-
 export class CourseModule {
 	static createFromCourse(course: Course) {
 		const courseModule = new CourseModule()
