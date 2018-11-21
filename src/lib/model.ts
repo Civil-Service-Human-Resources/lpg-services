@@ -220,14 +220,6 @@ export class CourseModule {
 		return courseModule
 	}
 
-	static createFromModule(module: Module, course: Course) {
-		const courseModule = new CourseModule()
-		courseModule.module = module
-		courseModule.type = 'module'
-		courseModule.course = Course.create(course)
-		return courseModule
-	}
-
 	course: Course
 	module: Module
 	type: string
