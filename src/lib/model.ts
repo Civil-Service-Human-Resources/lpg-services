@@ -56,6 +56,10 @@ export class Course {
 		this.id = id
 	}
 
+	isArchived() {
+		return this.status ? this.status === 'Archived' : false
+	}
+
 	isComplete() {
 		return this.record ? this.record!.state === 'COMPLETED' : false
 	}
