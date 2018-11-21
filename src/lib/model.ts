@@ -33,10 +33,10 @@ export class Course {
 			}
 			course.audience = matchedAudience
 
-			if (course.audience != null) {
-				course.audience!.mandatory = false
-				course.audience.departments.forEach((a) => {
-					if (a === user.department && course.audience!.type === Audience.Type.REQUIRED_LEARNING) {
+			if (course.audience) {
+				course.audience.mandatory = false
+				course.audience.departments.forEach(a => {
+					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
 						course.audience!.mandatory = true
 					}
 				})
@@ -316,7 +316,7 @@ export class Audience {
 		audience.interests = data.interests || []
 		audience.mandatory = data.mandatory === undefined ? true : data.mandatory
 		audience.frequency = data.frequency
-		audience.type = data.type
+		audience.type = data.type ? data.type.toString() : null
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
 		}
@@ -330,7 +330,7 @@ export class Audience {
 	mandatory = false
 	requiredBy?: Date | null
 	frequency?: string
-	type: Audience.Type
+	type: string
 
 	get optional() {
 		return !this.mandatory
@@ -407,15 +407,6 @@ export class Audience {
 		const lastDate = Frequency.decrement(this.frequency, nextDate)
 		return [lastDate, nextDate]
 	}
-}
-
-export namespace Audience {
-	export enum Type {
-                OPEN,
-                CLOSED_COURSE,
-                PRIVATE_COURSE,
-                REQUIRED_LEARNING,
-        }
 }
 
 export class Frequency {
