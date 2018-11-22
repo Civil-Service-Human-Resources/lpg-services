@@ -26,7 +26,7 @@
                     {#if searchResults.combinedResults && searchResults.combinedResults.length}
                      {#if searchResults}
                     <p class="lede search-lede">
-                       { $req.__n('%s result', searchResults.totalResults) }  found
+                       { $req.__n('%s result', searchResults.totalResults) } found
                     </p>
                 {/if}
                         {#each searchResults.combinedResults as result}
