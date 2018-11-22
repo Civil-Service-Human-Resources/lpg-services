@@ -63,35 +63,35 @@ export async function renderCancelledBookingPage(
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
-	// let error: string = ''
+	let error: string = ''
 
-	// const record = await learnerRecord.getRecord(req.user, course, module, event)
-	//
-	// if (!recordCheck(record, ireq)) {
-	// 	error = req.__('errors.registrationNotFound')
-	// } else {
-	// 	const moduleRecord = record!.modules.find(
-	// 		rm => rm.moduleId === module.id && rm.eventId === event.id
-	// 	)
+	const record = await learnerRecord.getRecord(req.user, course, module, event)
 
-		// if (moduleRecord && moduleRecord.state !== 'UNREGISTERED') {
-		// 	req.flash('cancelBookingError', req.__('errors.cancelBooking'))
-		// 	req.session!.save(() => {
-		// 		res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-		// 	})
-		// 	return
-		// } else if (!moduleRecord) {
-		// 	error = req.__('errors.registrationNotFound')
-		// }
-	// }
+	if (!recordCheck(record, ireq)) {
+		error = req.__('errors.registrationNotFound')
+	} else {
+		const moduleRecord = record!.modules.find(
+			rm => rm.moduleId === module.id && rm.eventId === event.id
+		)
 
-	// const message = error ? confirmedMessage.Error : confirmedMessage.Cancelled
+		if (moduleRecord && moduleRecord.state !== 'UNREGISTERED') {
+			req.flash('cancelBookingError', req.__('errors.cancelBooking'))
+			req.session!.save(() => {
+				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
+			})
+			return
+		} else if (!moduleRecord) {
+			error = req.__('errors.registrationNotFound')
+		}
+	}
+
+	const message = error ? confirmedMessage.Error : confirmedMessage.Cancelled
 
 	res.send(
 		template.render('booking/confirmed', req, res, {
 			course,
 			event,
-			message: confirmedMessage.Cancelled,
+			message,
 			module,
 		})
 	)
