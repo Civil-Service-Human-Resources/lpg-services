@@ -1,6 +1,6 @@
 import * as config from 'lib/config'
-import {NotificationService} from '../notification-service'
-import {NotificationServiceConfig} from '../notification-service/notificationServiceConfig'
+import {NotificationService} from './service/notification-service'
+import {NotificationServiceConfig} from './service/notification-service/notificationServiceConfig'
 // import * as gov from 'notifications-node-client'
 
 export async function record(req: {

@@ -1,5 +1,5 @@
 /* tslint:disable:variable-name */
-import * as config from '../lib/config'
+import * as config from '../../config/index'
 
 export class NotificationServiceConfig {
 	private _url: string

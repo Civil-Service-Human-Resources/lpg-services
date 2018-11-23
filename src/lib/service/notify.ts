@@ -1,6 +1,6 @@
 import * as config from 'lib/config'
-import {NotificationService} from '../../notification-service'
-import {NotificationServiceConfig} from '../../notification-service/notificationServiceConfig'
+import {NotificationService} from './notification-service'
+import {NotificationServiceConfig} from './notification-service/notificationServiceConfig'
 
 export interface BookingCancellation {
 	bookingReference: string

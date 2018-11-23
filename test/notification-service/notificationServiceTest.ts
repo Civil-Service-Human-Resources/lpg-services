@@ -1,8 +1,8 @@
 /* tslint:disable */
 
 import {AxiosInstance, AxiosResponse} from 'axios'
-import {NotificationService} from '../../src/notification-service'
-import {NotificationServiceConfig} from '../../src/notification-service/notificationServiceConfig'
+import {NotificationService} from '../../src/lib/service/notification-service'
+import {NotificationServiceConfig} from '../../src/lib/service/notification-service/notificationServiceConfig'
 import * as sinon from 'sinon'
 import * as chai from 'chai'
 import {expect} from 'chai'
