@@ -13,7 +13,6 @@ export async function record(req: express.Request, res: express.Response) {
 	if (wentWrong || whatDoing) {
 		const param = {pageUrl, wentWrong, whatDoing}
 		try {
-			// const a = 2
 			await feedback.record(param, req.user.accessToken)
 		} catch (err) {
 			logger.error(

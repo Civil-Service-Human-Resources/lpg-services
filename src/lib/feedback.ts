@@ -1,7 +1,6 @@
 import * as config from 'lib/config'
 import {NotificationService} from './service/notification-service'
 import {NotificationServiceConfig} from './service/notification-service/notificationServiceConfig'
-// import * as gov from 'notifications-node-client'
 
 export async function record(req: {
 	pageUrl: string
@@ -13,7 +12,8 @@ export async function record(req: {
 		await notify.sendEmail(
 			config.FEEDBACK_TEMPLATE_ID,
 			recipient,
-			req, accessToken
+			req,
+			accessToken
 		)
 	}
 }
