@@ -40,9 +40,7 @@ export async function bookingCancelled(info: BookingCancellation, accessToken: s
 	const templateData = {...info}
 
 	await notify
-		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.cancelled, info.email, {
-			personalisation: templateData,
-		}, accessToken)
+		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.cancelled, info.email, templateData, accessToken)
 		.catch(reason => {
 			throw new Error(
 				`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
@@ -50,17 +48,13 @@ export async function bookingCancelled(info: BookingCancellation, accessToken: s
 		})
 
 	if (info.lineManager) {
+		const personalisation = {
+				...templateData,
+				recipient: info.lineManager.name || info.lineManager.email,
+		}
 		await notify
 			.sendEmail(
-				config.BOOKING_NOTIFY_TEMPLATE_IDS.cancelledLineManager,
-				info.lineManager.email,
-				{
-					personalisation: {
-						...templateData,
-						recipient: info.lineManager.name || info.lineManager.email,
-					},
-				}, accessToken
-			)
+				config.BOOKING_NOTIFY_TEMPLATE_IDS.cancelledLineManager, info.lineManager.email, personalisation, accessToken)
 			.catch(reason => {
 				throw new Error(
 					`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
@@ -83,17 +77,12 @@ export async function bookingRequested(info: BookingConfirmation, accessToken: s
 		})
 
 	if (info.lineManager) {
-		await notify
-			.sendEmail(
-				config.BOOKING_NOTIFY_TEMPLATE_IDS.confirmedLineManager,
-				info.lineManager.email,
-				{
-					personalisation: {
-						...templateData,
-						recipient: info.lineManager.name || info.lineManager.email,
-					},
-				}, accessToken
-			)
+		const personalisation = {
+			...templateData,
+			recipient: info.lineManager.name || info.lineManager.email,
+		}
+		await notify.sendEmail(
+			config.BOOKING_NOTIFY_TEMPLATE_IDS.confirmedLineManager, info.lineManager.email, personalisation, accessToken)
 			.catch(reason => {
 				throw new Error(
 					`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`

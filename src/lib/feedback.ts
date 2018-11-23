@@ -8,13 +8,12 @@ export async function record(req: {
 	wentWrong: string
 	whatDoing: string
 },                           accessToken: string) {
-	// const notify = new gov.NotifyClient(config.GOV_NOTIFY_API_KEY)
 	const notify = new NotificationService(new NotificationServiceConfig())
 	for (const recipient of config.FEEDBACK_RECIPIENTS) {
 		await notify.sendEmail(
 			config.FEEDBACK_TEMPLATE_ID,
 			recipient,
-			{personalisation: req}, accessToken
+			req, accessToken
 		)
 	}
 }
