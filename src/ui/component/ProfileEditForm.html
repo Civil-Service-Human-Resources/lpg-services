@@ -1,4 +1,4 @@
-<form autocomplete="off" method="post" class="push-bottom push-top" action="/profile/{inputName}">
+<form autocomplete="off" method="post" class="" action="/profile/{inputName}">
     {#if inputName === 'password'}
     <p>
         Password should be at least 8 characters long and contain at least one from 3 of the
@@ -8,7 +8,7 @@
     <div class="form-group">
         {#if options && options.length }
 
-            <Selects {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} />
+            <Selects {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} {lede} />
 
         {:else}
             <label class="form-label" for="{inputName}">New {$i18n('profile_' + inputName + '_label').toLowerCase()}</label>
@@ -17,8 +17,10 @@
     </div>
     <div class="form-group">
         {#if inputName === 'password'}
-            <label class="form-label" for="confirmPassword">Confirm Password</label>
-            <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
+            <fieldset>
+                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
+            </fieldset>
 		{:elseif inputName === 'line-manager'}
             <label class="form-label" for="confirmLineManager">Confirm {$i18n('profile_line-manager_label').toLowerCase()}</label>
             <input class="form-control" id="confirmLineManager" name="confirmLineManager" type="text">
