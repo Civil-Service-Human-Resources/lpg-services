@@ -29,6 +29,7 @@
                             <div class="div-table__th">Date</div>
                             <div class="div-table__th">Time</div>
                             <div class="div-table__th">Location</div>
+                            <div class="div-table__th">Availability</div>
                             <div class="div-table__th"><span class="visuallyhidden">Action</span></div>
                         </div>
                         {#each events as event, index}
@@ -41,22 +42,28 @@
                                 </div>
                                 <div class="div-table__cell">{event.location}</div>
 
-                                <div class="div-table__cell div-table__cell--action">
-                                    <div class="multiple-choice multiple-choice--booking">
-                                        <input id="radio-{event.id}"
-                                        type="radio" name="selected-date"
-                                        class="multiple-choice__input"
-                                        checked="{selectedEventId === event.id ? 'checked' : ''}"
-                                        disabled="{selectedDate ? 'disabled' : ''}"
-                                        value="{event.id}"
-                                        >
-                                        <label for="radio-{event.id}" class="multiple-choice__label">
-                                            <span class="multiple-choice__spanner">
-                                                <span class="visuallyhidden">{$datetime.formatDate(event.date)}, {event.location}</span>
-                                            </span>
-                                        </label>
+                                <div class="div-table__cell">{event.availability} out of {event.capacity} places</div>
+
+                                {#if event.availability > 0}
+                                    <div class="div-table__cell div-table__cell--action">
+                                        <div class="multiple-choice multiple-choice--booking">
+                                            <input id="radio-{event.id}"
+                                            type="radio" name="selected-date"
+                                            class="multiple-choice__input"
+                                            checked="{selectedEventId === event.id ? 'checked' : ''}"
+                                            disabled="{selectedDate ? 'disabled' : ''}"
+                                            value="{event.id}"
+                                            >
+                                            <label for="radio-{event.id}" class="multiple-choice__label">
+                                                <span class="multiple-choice__spanner">
+                                                    <span class="visuallyhidden">{$datetime.formatDate(event.date)}, {event.location}</span>
+                                                </span>
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
+                                {:else}
+                                    <div class="div-table__cell"><a class="link--block" href="#">Update me about availability</a></div>
+                                {/if}
                             </div>
                         {/each}
                     </div>
