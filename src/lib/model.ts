@@ -478,6 +478,12 @@ export class Feedback {
 	relevance: number
 }
 
+class OrganisationalUnit {
+	code: string
+	name: string
+	paymentMethods: string[]
+}
+
 export class User {
 	static create(data: any) {
 		const user = new User(
@@ -488,6 +494,7 @@ export class User {
 			data.accessToken
 		)
 
+		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
 			? data.organisationalUnit.code
 			: data.department
@@ -523,6 +530,7 @@ export class User {
 	otherAreasOfWork?: any[]
 	interests?: any[]
 	givenName?: string
+	organisationalUnit?: OrganisationalUnit
 
 	grade?: string
 
