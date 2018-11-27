@@ -478,7 +478,7 @@ export class Feedback {
 	relevance: number
 }
 
-class OrganisationalUnit {
+export class OrganisationalUnit {
 	code: string
 	name: string
 	paymentMethods: string[]
