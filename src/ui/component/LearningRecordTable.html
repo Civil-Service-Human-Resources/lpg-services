@@ -11,7 +11,7 @@
         {#each courses as record}
         <tr>
             <td>
-                <a href="/courses/{record.courseId}">{record.courseTitle} </a>
+                <a href="/courses/{record.courseId}">{record.courseTitle}</a>
             </td>
             <td>{$i18n(record.getType())}</td>
             <td>{record.getDuration() || '-'}</td>

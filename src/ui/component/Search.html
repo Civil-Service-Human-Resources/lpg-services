@@ -8,7 +8,7 @@
                 <form autocomplete="off" name="searchLearning" method="get" action="/search">
                     <div class="form-group search-box__group ">
                         <label class="visuallyhidden" for="q">Search all available learning</label>
-                        <input class="form-control search-box__input" id="q" type="text" name="q" value="" placeholder="Search CSL">
+                        <input class="form-control search-box__input" id="q" type="text" name="q" value="{ query || '' }" placeholder="Search CSL">
                         <button type="submit" class="search-box__submit">Search</button>
                     </div>
                 </form>
