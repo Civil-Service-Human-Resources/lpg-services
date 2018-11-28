@@ -191,8 +191,8 @@ export async function suggestionsByDepartment(
 	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
-	if (user.department) {
-		courseSuggestions[(user.department as any)] =
+	if (user.organisationalUnit) {
+		courseSuggestions[(user.organisationalUnit.name as any)] =
 			await getSuggestions(
 				user.department!,
 				[],
