@@ -14,6 +14,7 @@ export class Course {
 		course.learningOutcomes = data.learningOutcomes
 		course.shortDescription = data.shortDescription
 		course.title = data.title
+		course.status = data.status
 
 		course.modules = (data.modules || []).map(Module.create)
 
@@ -42,6 +43,7 @@ export class Course {
 	description: string
 	duration: number
 	learningOutcomes: string
+	status: string
 
 	modules: Module[]
 
@@ -52,6 +54,10 @@ export class Course {
 
 	constructor(id: string) {
 		this.id = id
+	}
+
+	isArchived() {
+		return this.status ? this.status === 'Archived' : false
 	}
 
 	isComplete() {
@@ -80,9 +86,7 @@ export class Course {
 
 	getCost() {
 		const costArray = this.modules.map(module => module.cost || 0)
-		return costArray.length
-			? costArray.reduce((p, c) => p + c, 0)
-			: null
+		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : null
 	}
 
 	getDuration() {
@@ -98,7 +102,9 @@ export class Course {
 
 	getSelectedDate() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
+			const bookedModuleRecord = this.record.modules.find(
+				m => !!m.eventId && m.state !== 'SKIPPED'
+			)
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(
 					m => m.id === bookedModuleRecord.moduleId
@@ -292,7 +298,9 @@ export class Event {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
 		let date: any = ''
 		if (data.dateRanges[0]) {
-			date = new Date(data.dateRanges[0].date + "T" + data.dateRanges[0].startTime)
+			date = new Date(
+				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
+			)
 		} else {
 			date = data.date
 		}
@@ -307,7 +315,7 @@ export class Event {
 			capacity = data.capacity
 		}
 
-		return new Event (date, location, capacity, data.id)
+		return new Event(date, location, capacity, data.id)
 	}
 
 	id: string
@@ -357,14 +365,20 @@ export class Audience {
 		return !this.mandatory
 	}
 
-	set optional(value: (boolean | string)) {
-		this.mandatory = (!value || value === 'false')
+	set optional(value: boolean | string) {
+		this.mandatory = !value || value === 'false'
 	}
 
 	getRelevance(user: User) {
 		let relevance = -1
 
-		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
+		if (
+			!(
+				this.areasOfWork.length ||
+				this.departments.length ||
+				this.grades.length
+			)
+		) {
 			return 0
 		}
 
