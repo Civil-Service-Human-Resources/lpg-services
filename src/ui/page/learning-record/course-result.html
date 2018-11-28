@@ -7,12 +7,12 @@
                         {#if record.result}
                             { $i18n('courseResult.' + record.result) }
                         {:else}
-                            { module ? $i18n('moduleResult.complete') : $i18n('courseResult.complete') }
+                            { courseCompleted ? $i18n('courseResult.complete') : $i18n('moduleResult.complete') }
                         {/if}
                     </h1>
                     <div>{ $datetime.formatDate(record.completionDate) }</div>
                     <div>
-                        <strong>{ module.title || course.title }</strong>
+                        <strong>{ courseCompleted ? course.title : module.title }</strong>
                     </div>
                     {#if record.score}
                     <div>Your score</div>
@@ -21,12 +21,12 @@
                     </div>
                     {/if}
                 </div>
-                {#if module}
-                    <p>Do you want to continue to the course overview?</p>
-                    <a class="button" href="/courses/{course.id}">Continue</a>
-                {:else}
+                {#if courseCompleted}
                     <p>Your
                         <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
+                {:else}
+                    <p>Do you want to continue to the course overview?</p>
+                    <a class="button" href="/courses/{course.id}">Continue</a>
                 {/if}
             </div>
         </div>
