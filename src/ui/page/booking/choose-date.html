@@ -42,9 +42,8 @@
                                 </div>
                                 <div class="div-table__cell">{event.location}</div>
 
-                                <div class="div-table__cell">{event.availability} out of {event.capacity} places</div>
-
-                                {#if event.availability > 0}
+                                {#if event.availability > 9}
+                                    <div class="div-table__cell">{event.availability} out of {event.capacity} places</div>
                                     <div class="div-table__cell div-table__cell--action">
                                         <div class="multiple-choice multiple-choice--booking">
                                             <input id="radio-{event.id}"
@@ -62,7 +61,8 @@
                                         </div>
                                     </div>
                                 {:else}
-                                    <div class="div-table__cell"><a class="link--block" href="#">Update me about availability</a></div>
+                                    <div class="div-table__cell">fully booked</div>
+                                    <div class="div-table__cell"></div>
                                 {/if}
                             </div>
                         {/each}
