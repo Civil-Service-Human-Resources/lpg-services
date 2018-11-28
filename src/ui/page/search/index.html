@@ -24,21 +24,21 @@
             <div class="column-two-thirds">
                 <div class="resources">
                     {#if searchResults.combinedResults && searchResults.combinedResults.length}
-                     {#if searchResults}
-                    <p class="lede search-lede">
-                       { $req.__n('%s result', searchResults.totalResults) } found
-                    </p>
-                {/if}
+                        {#if searchResults}
+                            <p class="lede search-lede">
+                                { $req.__n('%s result', searchResults.totalResults) } found
+                            </p>
+                        {/if}
                         {#each searchResults.combinedResults as result}
                             {#if (result.type === "course") }
                                 <DisciteCourse course={result.course} modifier="search"/>
                             {:else}
-                            <DisciteModule
-                                course={result.course}
-                                modifier="search"
-                                module={result.module}
-                                cta={$constructModuleCta(result.course.id, result.module, $req.user, result.module.state, result.course.record, 'search')}>
-                            </DisciteModule>
+                                <DisciteModule
+                                    course={result.course}
+                                    modifier="search"
+                                    module={result.module}
+                                    cta={$constructModuleCta(result.course.id, result.module, $req.user, result.module.state, result.course.record, 'search')}>
+                                </DisciteModule>
                             {/if}
                         {/each} 
                     {/if}
