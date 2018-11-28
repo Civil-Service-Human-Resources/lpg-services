@@ -7,7 +7,6 @@
                         {#if record.result}
                             { $i18n('courseResult.' + record.result) }
                         {:else}
-
                             { module ? $i18n('moduleResult.complete') : $i18n('courseResult.complete') }
                         {/if}
                     </h1>
@@ -22,8 +21,13 @@
                     </div>
                     {/if}
                 </div>
-                <p>Your
-                    <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
+                {#if module}
+                    <p>Do you want to continue to the course overview?</p>
+                    <a class="button" href="/courses/{course.id}">Continue</a>
+                {:else}
+                    <p>Your
+                        <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
+                {/if}
             </div>
         </div>
     </div>
