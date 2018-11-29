@@ -76,13 +76,13 @@ function getHelpers(): {} {
 		constructModuleCta,
 		datetime,
 		fileHelpers,
+		getFirstKey,
+		getKeys,
 		i18n: req.__ ? req.__.bind(req) : null,
+		isEmpty,
 		req,
 		signedInUser: req.user,
 		toHtml,
-        isEmpty,
-        getFirstKey,
-        getKeys,
 	}
 }
 
