@@ -77,7 +77,7 @@
     {/if}
     {#if !$isEmpty(interests)  }
         {#each $getKeys(interests) as interest}
-            <SuggestionsSection id={interest} title={interest}  code={interest}  suggestedLearning="{interests[interest]}" home={false} type="interests" />
+            <SuggestionsSection id={interest} title={interest}  code={interest}  suggestedLearning="{interests[interest]}" home={false} type="interest" />
             <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
         {/each}
     {/if}
