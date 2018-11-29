@@ -43,7 +43,7 @@
                             <p class="govuk-body header">interests</p>
                             {#if !$isEmpty(interests) }
                             <ul>
-                                {#each Object.keys(interests) as interest}
+                                {#each $getKeys(interests) as interest}
                                 <li>
                                     <a href="/suggestions-for-you/#{interest}">{interest}</a>
                                 </li>
@@ -76,7 +76,7 @@
     <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
     {/if}
     {#if !$isEmpty(interests)  }
-        {#each Object.keys(interests) as interest}
+        {#each $getKeys(interests) as interest}
             <SuggestionsSection id={interest} title={interest}  code={interest}  suggestedLearning="{interests[interest]}" home={false} type="interests" />
             <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
         {/each}
