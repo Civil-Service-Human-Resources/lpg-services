@@ -286,7 +286,7 @@ export class Event {
 			location = data.location
 			capacity = data.capacity
 		}
-    
+
 		return new Event (date, location, capacity, availability, data.id)
 	}
 
