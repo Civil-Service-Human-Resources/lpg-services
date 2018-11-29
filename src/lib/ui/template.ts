@@ -125,7 +125,7 @@ export function isEmpty(object: any) {
 }
 
 export function getFirstKey(object: any) {
-    return getKeys(object).pop()
+	return getKeys(object).pop()
 }
 
 export function getKeys(object: any) {
