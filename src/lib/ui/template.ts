@@ -80,6 +80,9 @@ function getHelpers(): {} {
 		req,
 		signedInUser: req.user,
 		toHtml,
+        isEmpty,
+        getFirstKey,
+        getKeys,
 	}
 }
 
@@ -115,4 +118,23 @@ export function render(
 		...getHelpers(),
 	})
 	return component.render(data, {store}).html
+}
+
+export function isEmpty(object: any) {
+    let name
+    for ( name in object ) {
+        return false
+    }
+    return true
+}
+
+export function getFirstKey(object: any) {
+    for( let key in Object.keys(object) ) {
+        return Object.keys(object)[key]
+    }
+    return null
+}
+
+export function getKeys(object: any) {
+    return Object.keys(object)
 }
