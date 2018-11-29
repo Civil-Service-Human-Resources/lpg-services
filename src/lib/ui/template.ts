@@ -123,7 +123,6 @@ export function render(
 export function isEmpty(object: any) {
 	return getKeys(object).length === 0
 }
-ß
 export function getFirstKey(object: any) {
 	return getKeys(object).forEach((element: any) => object[element])
 }
