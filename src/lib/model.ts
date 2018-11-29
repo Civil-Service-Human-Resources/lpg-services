@@ -14,6 +14,7 @@ export class Course {
 		course.learningOutcomes = data.learningOutcomes
 		course.shortDescription = data.shortDescription
 		course.title = data.title
+		course.status = data.status
 
 		course.modules = (data.modules || []).map(Module.create)
 
@@ -31,6 +32,15 @@ export class Course {
 				}
 			}
 			course.audience = matchedAudience
+
+			if (course.audience) {
+				course.audience.mandatory = false
+				course.audience.departments.forEach(a => {
+					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
+						course.audience!.mandatory = true
+					}
+				})
+			}
 		}
 
 		return course
@@ -42,6 +52,7 @@ export class Course {
 	description: string
 	duration: number
 	learningOutcomes: string
+	status: string
 
 	modules: Module[]
 
@@ -52,6 +63,10 @@ export class Course {
 
 	constructor(id: string) {
 		this.id = id
+	}
+
+	isArchived() {
+		return this.status ? this.status === 'Archived' : false
 	}
 
 	isComplete() {
@@ -80,9 +95,7 @@ export class Course {
 
 	getCost() {
 		const costArray = this.modules.map(module => module.cost || 0)
-		return costArray.length
-			? costArray.reduce((p, c) => p + c, 0)
-			: null
+		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : null
 	}
 
 	getDuration() {
@@ -98,7 +111,9 @@ export class Course {
 
 	getSelectedDate() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
+			const bookedModuleRecord = this.record.modules.find(
+				m => !!m.eventId && m.state !== 'SKIPPED'
+			)
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(
 					m => m.id === bookedModuleRecord.moduleId
@@ -175,50 +190,11 @@ export class Course {
 	}
 }
 
-export class Resource {
-	static create(data: any) {
-		const resource = new Resource(data.id)
-		resource.courseId = data.courseId
-		resource.description = data.description
-		resource.learningOutcomes = data.learningOutcomes
-		resource.shortDescription = data.shortDescription
-		resource.title = data.title
-		resource.type = data.type
-
-		resource.modules = (data.modules || []).map(Module.create)
-		resource.course = (data.course || {}).map(Course.create)
-
-		return resource
-	}
-
-	id: string
-	courseId: string
-	course: Course
-	title: string
-	type: string
-	shortDescription: string
-	description: string
-	learningOutcomes: string
-	modules: Module[]
-
-	constructor(id: string) {
-		this.id = id
-	}
-}
-
 export class CourseModule {
 	static createFromCourse(course: Course) {
 		const courseModule = new CourseModule()
 		courseModule.course = course
 		courseModule.type = 'course'
-		return courseModule
-	}
-
-	static createFromModule(module: Module, course: Course) {
-		const courseModule = new CourseModule()
-		courseModule.module = module
-		courseModule.type = 'module'
-		courseModule.course = Course.create(course)
 		return courseModule
 	}
 
@@ -292,7 +268,9 @@ export class Event {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
 		let date: any = ''
 		if (data.dateRanges[0]) {
-			date = new Date(data.dateRanges[0].date + "T" + data.dateRanges[0].startTime)
+			date = new Date(
+				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
+			)
 		} else {
 			date = data.date
 		}
@@ -308,7 +286,7 @@ export class Event {
 			location = data.location
 			capacity = data.capacity
 		}
-
+    
 		return new Event (date, location, capacity, availability, data.id)
 	}
 
@@ -342,6 +320,7 @@ export class Audience {
 		audience.interests = data.interests || []
 		audience.mandatory = data.mandatory === undefined ? true : data.mandatory
 		audience.frequency = data.frequency
+		audience.type = data.type ? data.type.toString() : null
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
 		}
@@ -352,23 +331,29 @@ export class Audience {
 	departments: string[]
 	grades: string[]
 	interests: string[]
-	mandatory = true
-
+	mandatory = false
 	requiredBy?: Date | null
 	frequency?: string
+	type: string
 
 	get optional() {
 		return !this.mandatory
 	}
 
-	set optional(value: (boolean | string)) {
-		this.mandatory = (!value || value === 'false')
+	set optional(value: boolean | string) {
+		this.mandatory = !value || value === 'false'
 	}
 
 	getRelevance(user: User) {
 		let relevance = -1
 
-		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
+		if (
+			!(
+				this.areasOfWork.length ||
+				this.departments.length ||
+				this.grades.length
+			)
+		) {
 			return 0
 		}
 
@@ -468,6 +453,12 @@ export class Feedback {
 	relevance: number
 }
 
+export class OrganisationalUnit {
+	code: string
+	name: string
+	paymentMethods: string[]
+}
+
 export class User {
 	static create(data: any) {
 		const user = new User(
@@ -478,6 +469,7 @@ export class User {
 			data.accessToken
 		)
 
+		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
 			? data.organisationalUnit.code
 			: data.department
@@ -513,6 +505,7 @@ export class User {
 	otherAreasOfWork?: any[]
 	interests?: any[]
 	givenName?: string
+	organisationalUnit?: OrganisationalUnit
 
 	grade?: string
 
