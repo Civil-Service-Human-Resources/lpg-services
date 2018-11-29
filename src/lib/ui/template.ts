@@ -121,20 +121,15 @@ export function render(
 }
 
 export function isEmpty(object: any) {
-    let name
-    for ( name in object ) {
-        return false
-    }
-    return true
+	object.forEach((element: any) => false)
+	return true
 }
 
 export function getFirstKey(object: any) {
-    for( let key in Object.keys(object) ) {
-        return Object.keys(object)[key]
-    }
-    return null
+	Object.keys(object).forEach((element: any) => element)
+	return null
 }
 
 export function getKeys(object: any) {
-    return Object.keys(object)
+	return Object.keys(object)
 }

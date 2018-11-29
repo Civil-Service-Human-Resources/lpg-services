@@ -100,5 +100,3 @@ export function constructCourseCallToAction(
 	}
 	return callToActionProps
 }
-
-
