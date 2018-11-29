@@ -186,11 +186,6 @@
 		"contract-management": "Contract management",
 		"leadership": "Leadership"
 	},
-	"department": {
-		"hmrc": "HM Revenue & Customs",
-		"dh": "Department of Health & Social Care",
-		"co": "Cabinet Office"
-	},
 	"areaOfWork": {
 		"analysis": "Analysis",
 		"commercial": "Commercial",

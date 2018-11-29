@@ -10,29 +10,30 @@
                 <div class="suggestions-links">
                     <p class="govuk-body">{$i18n('home_page_suggestions', $i18n('proposition_name'))}</p>
                     <div class="suggestions-wrapper">
-                
-                        {#each courses as courseGroup}
-        
                             <div class="suggestions-container">
-                                {#if courseGroup.key === "department"}
-                                    <p class="govuk-body caps header">organisation</p>
-                                {:elseif courseGroup.key === "areaOfWork"}
-                                    <p class="govuk-body caps header">primary area of work</p>
-                                {:elseif courseGroup.key === "otherAreaOfWork"}
-                                    <p class="govuk-body caps header">other area of work</p>
-                                {:elseif courseGroup.key === "interest"}
-                                    <p class="govuk-body caps header">interests</p>
-                                {/if}
-                           
-                            <ul>
-                                {#each Object.keys(courseGroup.value) as courseKey}
-                                    {#if courseKey }
-                                        <li><a href="/suggestions-for-you/#{courseKey}">{$i18n(`${courseGroup.key}`)[courseKey] || courseKey}</a></li>
-                                    {/if}
-                                {/each}
-                            </ul>  
+                                <p class="govuk-body caps header">organisation</p>
+                                <p class="govuk-body caps header">primary area of work</p>
+                                <p class="govuk-body caps header">other areas of work</p>
+                                <p class="govuk-body caps header">interests</p>
+                                <ul>
+                                    <li>{#if department }
+                                        <a href="/suggestions-for-you/#{department.key}">{$signedInUser.organisationalUnit.name}</a>
+                                        {/if}
+                                    </li>
+                                    <li>{#if areaOfWork }
+                                        <a href="/suggestions-for-you/#{areaOfWork.key}">{areaOfWork.key}</a>
+                                        {/if}
+                                    </li>
+                                    <li>{#if otherAreasOfWork }
+                                        <a href="/suggestions-for-you/#{otherAreasOfWork.key}">{otherAreasOfWork.key}</a>
+                                        {/if}
+                                    </li>
+                                    <li>{#if interests }
+                                        <a href="/suggestions-for-you/#{interests.key}">{interests.key}</a>
+                                        {/if}
+                                    </li>
+                                </ul>
                              </div>
-                        {/each}
                     </div>
                     <div class="change-settings-container">
     
@@ -46,13 +47,22 @@
             </div>
         </div>
     </div>
-    {#each courses as courseGroup}
-        {#each Object.keys(courseGroup.value) as courseKey}
-        {#if courseKey && courseGroup.value[courseKey].length}
-            <SuggestionsSection id={courseKey} title={$i18n(`${courseGroup.key}`)[courseKey] || courseKey} code={courseKey} suggestedLearning="{courseGroup.value[courseKey]}" home={false} type="{courseGroup.key}" />
-        {/if}
-        {/each}
-    {/each}
+
+    {#if department }
+    <SuggestionsSection id={department.key} title={$signedInUser.organisationalUnit.name} code={department.key} suggestedLearning="departments.value}" home={false} type="department" />
+    {/if}
+    {#if areaOfWork }
+    <SuggestionsSection id={areaOfWork.key} title={areaOfWork.key} code={areaOfWork.key} suggestedLearning="areaOfWork.value}" home={false} type="areaOfWork" />
+    {/if}
+    {#if otherAreasOfWork }
+    <SuggestionsSection id={otherAreasOfWork.key} title={otherAreasOfWork.key} code={otherAreasOfWork.key} suggestedLearning="otherAreasOfWork.value}" home={false} type="otherAreasOfWork" />
+    {/if}
+    {#if interests }
+    <SuggestionsSection id={interests.key} title={interests.key} code={interests.key} suggestedLearning="interests.value}" home={false} type="interests" />
+    {/if}
+
+
+
 </Page>
 
 <script>
