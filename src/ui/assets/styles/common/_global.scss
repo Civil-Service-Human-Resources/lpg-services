@@ -9,6 +9,10 @@ hr.clear {
 	@include grid-column(1/6);
 }
 
+.search-lede {
+	font-size: 19px;
+}
+
 .flash-message {
 	background: #28a197;
 	color: #fff;

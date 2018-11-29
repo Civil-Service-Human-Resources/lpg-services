@@ -20,16 +20,22 @@ axiosLogger.axiosResponseLogger(http, logger)
 export async function findPurchaseOrder(user: model.User, moduleId: string) {
 	try {
 		const response = await http.get(
-			`/purchase-orders?department=${user.department}&moduleId=${moduleId}`,
-			{headers: {Authorization: `Bearer ${user.accessToken}`}}
+			`/purchase-orders/?department=${user.department}&moduleId=${moduleId}`,
+			{
+				headers: {
+					Authorization: `Bearer ${user.accessToken}`,
+				},
+				validateStatus: status => {
+					return status === 200 || status === 404
+				},
+			}
 		)
 		if (response && response.data) {
 			return response.data
 		}
 	} catch (e) {
-		logger.info('Error searching for call off PO, ignoring', e)
+		logger.error('Error searching for call off PO, ignoring', e)
 	}
-	return null
 }
 
 export async function listAll(user: model.User) {
