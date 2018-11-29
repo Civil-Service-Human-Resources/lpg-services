@@ -121,13 +121,12 @@ export function render(
 }
 
 export function isEmpty(object: any) {
-	object.forEach((element: any) => false)
+	object.forEach((element: any) => { return false })
 	return true
 }
 
 export function getFirstKey(object: any) {
-	Object.keys(object).forEach((element: any) => element)
-	return null
+	Object.keys(object).forEach((element: any) => { return element })
 }
 
 export function getKeys(object: any) {
