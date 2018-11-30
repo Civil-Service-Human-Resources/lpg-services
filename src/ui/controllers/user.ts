@@ -42,6 +42,7 @@ const logger = log4js.getLogger('controllers/user')
 
 // This super slick regex is by Andrew Clark from:
 // https://stackoverflow.com/questions/6739676/regular-expression-matching-at-least-n-of-m-groups
+//
 // Keep it in sync with the regex on WSO2.
 
 const validPassword = /(?!([a-zA-Z]*|[a-z\d]*|[^A-Z\d]*|[A-Z\d]*|[^a-z\d]*|[^a-zA-Z]*)$).{8,}/
