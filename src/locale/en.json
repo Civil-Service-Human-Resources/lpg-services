@@ -353,5 +353,9 @@
 	"blog": "blog",
 	"": "",
 	"unknown": "unknown",
-	"otherAreaOfWork": "otherAreaOfWork"
+	"otherAreaOfWork": "otherAreaOfWork",
+	"profile_line-manager": "profile_line-manager",
+	"line-manager": "line-manager",
+	"department": "department",
+	"grade": "grade"
 }
