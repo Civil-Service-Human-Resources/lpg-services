@@ -12,7 +12,10 @@
                     </h1>
                     <div>{ $datetime.formatDate(record.completionDate) }</div>
                     <div>
-                        <strong>{ courseCompleted ? course.title : module.title }</strong>
+                        <strong>{ courseCompleted ? course.title : module.title} ({course.title})</strong>
+                    </div>
+                    <div>
+                        <p>{modulesCompleted} out of {course.modules.length} completed</p>
                     </div>
                     {#if record.score}
                     <div>Your score</div>

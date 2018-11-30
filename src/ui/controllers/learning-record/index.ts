@@ -31,10 +31,13 @@ export async function courseResult(
 			res.redirect('/home')
 		} else {
 			let courseCompleted = true
+			let modulesCompleted = 0
 			course.modules.forEach(m => {
-				const record = courseRecord!.modules.find(mr => m.id === mr.moduleId)
-				if (!record || record.state !== 'COMPLETED') {
+				const r = courseRecord!.modules.find(mr => m.id === mr.moduleId)
+				if (!r || r.state !== 'COMPLETED') {
 					courseCompleted = false
+				} else {
+					modulesCompleted++
 				}
 			})
 
@@ -43,6 +46,7 @@ export async function courseResult(
 					course,
 					courseCompleted,
 					module,
+					modulesCompleted,
 					record: moduleRecord,
 				})
 			)
