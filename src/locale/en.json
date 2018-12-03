@@ -165,10 +165,10 @@
 	"G7": "Grade 7",
 	"HEO": "Higher executive officer",
 	"SEO": "Senior executive officer",
-	"PB1": "Senior Civil Service - Deputy director",
-	"PB2": "Senior Civil Service - Director",
-	"PB3": "Senior Civil Service - Director general",
-	"PS": "Senior Civil Service - Permanent secretary",
+	"PB1": "SCS - deputy director",
+	"PB2": "SCS - director",
+	"PB3": "SCS - director general",
+	"PS": "SCS - permanent secretary",
 	"grades": {
 		"AA": "Administrative assistant",
 		"AO": "Administrative officer",
@@ -177,10 +177,10 @@
 		"G7": "Grade 7",
 		"HEO": "Higher executive officer",
 		"SEO": "Senior executive officer",
-		"PB1": "Senior Civil Service - Deputy director",
-		"PB2": "Senior Civil Service - Director",
-		"PB3": "Senior Civil Service - Director general",
-		"PS": "Senior Civil Service - Permanent secretary"
+		"PB1": "SCS - deputy director",
+		"PB2": "SCS - director",
+		"PB3": "SCS - director general",
+		"PS": "SCS - permanent secretary"
 	},
 	"interest": {
 		"contract-management": "Contract management",
