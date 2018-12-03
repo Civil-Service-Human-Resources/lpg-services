@@ -85,25 +85,22 @@ export async function suggestionsPage(
 	res: express.Response
 ) {
 	const user = req.user as model.User
-	const courses = []
 
 	const learningRecord = await getLearningRecord(user)
 
-	const [areaOfWork, otherAreasOfWork, departments, interests] = await Promise.all([
+	const [areaOfWork, otherAreasOfWork, department, interests] = await Promise.all([
 		suggestionsByAreaOfWork(user, learningRecord),
 		suggestionsByOtherAreasOfWork(user, learningRecord),
 		suggestionsByDepartment(user, learningRecord),
 		suggestionsByInterest(user, learningRecord),
 	])
 
-	courses.push({ key: 'department', value: departments })
-	courses.push({ key: 'areaOfWork', value: areaOfWork })
-	courses.push({ key: 'otherAreaOfWork', value: otherAreasOfWork })
-	courses.push({ key: 'interest', value: interests })
-
 	res.send(
 		template.render('suggested', req, res, {
-			courses,
+			areaOfWork,
+			department,
+			interests,
+			otherAreasOfWork,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
 		})
@@ -191,8 +188,8 @@ export async function suggestionsByDepartment(
 	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
-	if (user.organisationalUnit) {
-		courseSuggestions[(user.organisationalUnit.name as any)] =
+	if (user.department) {
+		courseSuggestions[(user.department as any)] =
 			await getSuggestions(
 				user.department!,
 				[],
