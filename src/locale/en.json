@@ -260,6 +260,7 @@
 	"learning_confirm_move_yes_option": "Yes, add it",
 	"learning_confirm_move_no_option": "No",
 	"learning_skipped_title": "%s",
+	"learning_removed_from_suggestions": "This has been removed from your suggested courses.",
 	"learning_skipped_from_plan_message": "This has been removed from your learning plan",
 	"learning_removed_from_plan_message": "This has been removed from your learning plan",
 	"feedback_content_title": "Content",
