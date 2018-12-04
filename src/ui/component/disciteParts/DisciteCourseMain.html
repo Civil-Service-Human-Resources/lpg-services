@@ -1,12 +1,11 @@
 <div class="discite__main {modifier ? `discite__main--${modifier}` : '' }">
-
     {#if course.getType() === 'link'}
-        <a target="_blank" href="/courses/{course.id}">
-            <h3 class="heading discite__heading lpg-course-name">{course.title}</h3>
-        </a>
+        <h3 class="heading discite__heading lpg-course-name">
+            <a tabindex="1" target="_blank" href="/courses/{course.id}">{course.title}</a>
+        </h3> 
     {:else}
-        <a class="lpg-course-link" href="/courses/{course.id}">
-            <h3 class="heading discite__heading lpg-course-name">{course.title}</h3>
-        </a>
+        <h3 class="heading discite__heading lpg-course-name">
+            <a tabindex="2" class="lpg-course-link" href="/courses/{course.id}">{course.title}</a>
+        </h3>   
     {/if}
 </div>
