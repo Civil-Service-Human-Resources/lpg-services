@@ -127,6 +127,7 @@ export async function home(req: express.Request, res: express.Response) {
 
 		res.send(
 			template.render('home', req, res, {
+				bookedLearning,
 				confirmMessage,
 				confirmTitle,
 				eventActionDetails,

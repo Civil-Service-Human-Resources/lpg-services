@@ -205,7 +205,12 @@ $module: 'discite';
 	}
 }
 
-// TODO: Mick, please tidy this up! Love, Matt.
+.discite__item--event{
+	width: 100%;
+	padding-left: 20px;
+	box-sizing: border-box;
+}
+
 @include media(desktop) {
 	.discite__main--module {
 		.discite__description {

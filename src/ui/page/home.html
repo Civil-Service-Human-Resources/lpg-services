@@ -56,6 +56,7 @@
                 <div class="resources lpg-other-courses">
                     {#each plannedLearning as course}
                         {#if course.id !== successId}
+                        {JSON.stringify(course)}
                             <DisciteCourse course={course} modifier="home" />
                         {:else}
                             <DisciteCourse {successId} course={course} modifier="home" />
@@ -63,7 +64,7 @@
                     {/each}
                 </div>
                 {:else}
-                <p>{$i18n('no_planned_learning_yet')}</p>
+                    <p>{$i18n('no_planned_learning_yet')}</p>
                 {/if}
             </div>
         </div>
