@@ -30,10 +30,23 @@ export async function courseResult(
 		if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
 			res.redirect('/home')
 		} else {
+			let courseCompleted = true
+			let modulesCompleted = 0
+			course.modules.forEach(m => {
+				const r = courseRecord!.modules.find(mr => m.id === mr.moduleId)
+				if (!r || r.state !== 'COMPLETED') {
+					courseCompleted = false
+				} else {
+					modulesCompleted++
+				}
+			})
+
 			res.send(
 				template.render('learning-record/course-result', req, res, {
 					course,
+					courseCompleted,
 					module,
+					modulesCompleted,
 					record: moduleRecord,
 				})
 			)

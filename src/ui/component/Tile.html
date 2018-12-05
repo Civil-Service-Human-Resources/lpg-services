@@ -26,7 +26,6 @@
                 <span class="tile__value">{course.getDuration()}</span>
             </li>
 
-
             <li class="tile__property">
                 <span class="tile__key">Cost</span>
                 <span class="tile__value">&pound;{course.getCost() || 'Free'}</span>
@@ -38,11 +37,10 @@
 	</p>
 	<p class="tile__actions">
 		<a href="/suggestions-for-you/add/{course.id}{home ? '?ref=home' :''}">
-			Add to learning plan
+			Add <span class="visually-hidden">{course.title}</span> to learning plan
 		</a>
 		<a href="/suggestions-for-you/remove/{course.id}{home ? '?ref=home' :''}">
-			Remove
-			<span class="visuallyhidden">from suggested learning list</span>
+			Remove <span class="visually-hidden">{course.title} from suggested learning list</span>
 		</a>
 	</p>
 </div>
