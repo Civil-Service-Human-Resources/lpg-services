@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as axiosLogger from 'lib/axiosLogger'
-import * as datetime from "lib/datetime"
+import * as datetime from 'lib/datetime'
 import * as log4js from 'log4js'
 import * as query from 'querystring'
 import * as config from './config'
@@ -24,6 +24,51 @@ const http = axios.create({
 
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
+
+export async function cancelBooking(event: any, user: any): Promise<any> {
+	const data: any = {
+		status: 'Cancelled',
+	}
+	try {
+		return await http.patch(`/event/${event.id}/learner/${user.id}/`, data, {
+			headers: {
+				Authorization: `Bearer ${user.accessToken}`,
+			},
+			validateStatus: status => {
+				return status === 200 || status === 400 || status === 404
+			},
+		})
+	} catch (e) {
+		logger.error(e)
+	}
+}
+
+export async function bookEvent(course: any, module: any, event: any, user: any, purchaseOrder: any): Promise<any> {
+	const data: any = {
+		event: `${config.COURSE_CATALOGUE.url}/courses/${course.id}/modules/${module.id}/events/${event.id}`,
+		learner: user.id,
+		learnerEmail: user.userName,
+	}
+
+	if (purchaseOrder) {
+		data.paymentDetails = `${config.COURSE_CATALOGUE.url}/purchase-orders/${purchaseOrder.id}`
+		data.status = 'Confirmed'
+	} else {
+		data.status = 'Requested'
+	}
+	try {
+		return await http.post(`/event/${event.id}/booking/`, data, {
+			headers: {
+				Authorization: `Bearer ${user.accessToken}`,
+			},
+			validateStatus: status => {
+				return status === 201 || status === 400
+			},
+		})
+	} catch (e) {
+		logger.error(e)
+	}
+}
 
 export async function getRecord(
 	user: model.User,

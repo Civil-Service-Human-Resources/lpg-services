@@ -12,9 +12,9 @@
                         {module.title || course.title}
                     </h2>
                 </div>
-                {:elseif message === 'NotFound'}
-                <Error errorHeading="Request not found">
-                {error}
+                {:elseif message === 'Error'}
+                <Error errorHeading="There was a problem with your booking">
+                Please contact your line manager.
                 </Error>
                 {/if}
 

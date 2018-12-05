@@ -19,7 +19,7 @@ const logger = log4js.getLogger('controllers/booking')
 export enum confirmedMessage {
 	Booked = 'Booked',
 	Cancelled = 'Cancelled',
-	NotFound = 'NotFound',
+	Error = 'Error',
 }
 
 export function recordCheck(
@@ -257,29 +257,35 @@ export async function renderPaymentOptions(
 	const module = req.module!
 
 	const user = req.user as model.User
-	const callOffPo = await purchaseOrdersService.findPurchaseOrder(
+	const purchaseOrder = await purchaseOrdersService.findPurchaseOrder(
 		user,
 		module.id
 	)
 
-	if (callOffPo) {
+	if (purchaseOrder) {
+		session.purchaseOrder = purchaseOrder
+
 		session.payment = {
 			type: 'PURCHASE_ORDER',
-			value: `Call off ${callOffPo.id}`,
+			value: `Call off ${purchaseOrder.id}`,
 		}
 		session.save(() => {
 			res.redirect(
 				`/book/${req.params.courseId}/${req.params.moduleId}/${
 					req.params.eventId
-				}/confirm`
+					}/confirm`
 			)
 		})
 	} else {
-		const organisationalUnit = (await registry.follow(
-			config.REGISTRY_SERVICE_URL,
-			['organisationalUnits', 'search', 'findByDepartmentCode'],
-			{departmentCode: user.department}
-		)) as any
+		let organisationalUnit
+
+		if (user.department) {
+			organisationalUnit = (await registry.follow(
+				config.REGISTRY_SERVICE_URL,
+				['organisationalUnits', 'search', 'findByCode'],
+				{code: user.department}
+			)) as any
+		}
 
 		if (!organisationalUnit) {
 			res.redirect('/profile')
@@ -312,8 +318,8 @@ export async function enteredPaymentDetails(
 	const user = req.user as model.User
 	const organisationalUnit = (await registry.follow(
 		config.REGISTRY_SERVICE_URL,
-		['organisationalUnits', 'search', 'findByDepartmentCode'],
-		{departmentCode: user.department}
+		['organisationalUnits', 'search', 'findByCode'],
+		{code: user.department}
 	)) as any
 
 	let errors: string[] = []
@@ -465,76 +471,75 @@ export async function tryCompleteBooking(
 	const session = req.session!
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
-	const extensions: Record<string, any> = {
-		[xapi.Extension.Payment]: paymentOption,
-	}
+	const response = await learnerRecord.bookEvent(course, module, event, req.user, req.session!.purchaseOrder)
 
-	await xapi
-		.record(req, course, xapi.Verb.Registered, extensions, module, event)
-		.catch((e: Error) => {
-			logger.error('Error with XAPI', e)
-		})
+	let message
 
-	logger.debug(
-		'XAPI successfully recorded REGISTERED verb against:',
-		`user:${req.user}`,
-		`event: ${event.id}`
-	)
+	if (response.status === 201) {
+		logger.debug(
+			'Successfully booked event in learner record',
+			`user:${req.user}`,
+			`event: ${event.id}`,
+			`response: ${response.status}`
+		)
 
-	const accessibilityArray: string[] = []
-	for (const i in session.accessibilityReqs) {
-		if (i) {
-			const requirement = session.accessibilityReqs[i]
-			if (requirement === 'other') {
-				accessibilityArray.push('Other')
-			} else {
-				accessibilityArray.push(
-					res.__(`accessibility-requirements`)[requirement]
-				)
+		const accessibilityArray: string[] = []
+		for (const i in session.accessibilityReqs) {
+			if (i) {
+				const requirement = session.accessibilityReqs[i]
+				if (requirement === 'other') {
+					accessibilityArray.push('Other')
+				} else {
+					accessibilityArray.push(
+						res.__(`accessibility-requirements`)[requirement]
+					)
+				}
 			}
 		}
-	}
-	const error = await notify
-		.bookingRequested({
-			accessibility: accessibilityArray.join(', '),
-			bookingReference: `${req.user.id}-${event.id}`,
-			cost: module.cost,
-			courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
-				event.date,
-				true
-			)} ${
-				module.duration
-					? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
-					: ''
-			}`,
-			courseLocation: event.location,
-			courseTitle: module.title || course.title,
-			email: req.user.userName,
-			eventId: event.id,
-			learnerName: req.user.givenName || req.user.userName,
-			lineManager: req.user.lineManager,
-			location: event.location,
-			paymentOption,
-		})
-		.catch((e: Error) => {
-			logger.error('There was an error with GOV Notify', e)
-			res.redirect('/book/ouch')
-			return true
-		})
-
-	if (!error) {
-		delete req.session!.payment
-		delete req.session!.accessibilityReqs
-		delete req.session!.otherAccessibilityReqs
-		delete req.session!.selectedEventId
-
-		res.send(
-			template.render('booking/confirmed', req, res, {
-				course,
-				event,
-				message: confirmedMessage.Booked,
-				module,
+		await notify
+			.bookingRequested({
+				accessibility: accessibilityArray.join(', '),
+				bookingReference: `${req.user.id}-${event.id}`,
+				cost: module.cost,
+				courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
+					event.date,
+					true
+				)} ${
+					module.duration
+						? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
+						: ''
+					}`,
+				courseLocation: event.location,
+				courseTitle: module.title || course.title,
+				email: req.user.userName,
+				eventId: event.id,
+				learnerName: req.user.givenName || req.user.userName,
+				lineManager: req.user.lineManager,
+				location: event.location,
+				paymentOption,
 			})
-		)
+			.catch((e: Error) => {
+				logger.error('There was an error with GOV Notify', e)
+				res.redirect('/book/ouch')
+				return true
+			})
+
+		message = confirmedMessage.Booked
+	}	else {
+		message = confirmedMessage.Error
 	}
+
+	delete req.session!.payment
+	delete req.session!.accessibilityReqs
+	delete req.session!.otherAccessibilityReqs
+	delete req.session!.selectedEventId
+
+	res.send(
+		template.render('booking/confirmed', req, res, {
+			course,
+			event,
+			message,
+			module,
+		})
+	)
 }
