@@ -131,6 +131,8 @@ export async function home(req: express.Request, res: express.Response) {
 				confirmMessage,
 				confirmTitle,
 				eventActionDetails,
+				getModuleForEvent,
+				isEventBookedForGivenCourse,
 				noOption,
 				plannedLearning: courses,
 				readyForFeedback,
@@ -147,6 +149,20 @@ export async function home(req: express.Request, res: express.Response) {
 		console.error("Error building user's home page", e)
 		throw new Error(`Error building user's home page - ${e}`)
 	}
+}
+
+function filterCourseByEvent(course: model.Course) {
+	return course.record && course.record.modules.filter(
+		(module: any) => module.moduleType === 'face-to-face' && module.eventId
+	)
+}
+
+export function isEventBookedForGivenCourse(course: model.Course) {
+	return filterCourseByEvent(course)!.length > 0
+}
+
+export function getModuleForEvent(course: model.Course) {
+	return filterCourseByEvent(course)!.pop()
 }
 
 export function index(req: express.Request, res: express.Response) {

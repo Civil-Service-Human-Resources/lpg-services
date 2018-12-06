@@ -33,10 +33,24 @@
         <DisciteCourseActions cta={($constructCourseCallToAction(course, modifier))} {course} {modifier} {module} today={modifier === home ? new Date() : null} />
     </slot>
 
-
-        <div class="discite__item--event">
-            <span class="meta">{test}</span>
-        </div>
+    {#if modifier === "home"}
+        {#if booked === true}
+            <div class="discite__item--event">
+                <div class="discite__item--main">
+                        <h3 class="heading discite__heading"><a href="" class="govuk-body govuk-link">{bookedModule.moduleTitle}</a></h3>
+                        <p class="govuk-body">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
+                        <a href="">Cancel booking</a>
+                </div>
+                <div class="course-details">
+                    <p class="govuk-body">{bookedModule.moduleType}</p>
+                    <p class="govuk-body">{bookedModule.moduleDuration}</p>
+                </div>
+                <div class="discite__property-item discite__status--home">
+                    <span class="badge badge--discite badge--info">{bookedModule.bookingStatus}</span>
+                </div>
+            </div>
+        {/if}
+    {/if}
 </div>
 
 <script>

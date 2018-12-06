@@ -209,6 +209,24 @@ $module: 'discite';
 	width: 100%;
 	padding-left: 20px;
 	box-sizing: border-box;
+	display: flex;
+	justify-content: flex-end;
+
+	.discite__status--home {
+		width: 89px;
+	}
+
+	.course-details {
+		width: 101px;
+	}
+
+	.discite__item--main {
+		flex-basis: auto;
+	}
+}
+
+.badge:first-letter {
+	text-transform: uppercase;
 }
 
 @include media(desktop) {

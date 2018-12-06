@@ -32,7 +32,6 @@
 
             </div>
         </div>
-
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading-medium heading heading--red-top lpg-required-learning">
@@ -54,12 +53,12 @@
                 </h2>
                 {#if plannedLearning.length}
                 <div class="resources lpg-other-courses">
+
                     {#each plannedLearning as course}
                         {#if course.id !== successId}
-                        {JSON.stringify(course)}
-                            <DisciteCourse course={course} modifier="home" />
+                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} course={course} modifier="home" />
                         {:else}
-                            <DisciteCourse {successId} course={course} modifier="home" />
+                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} {successId} course={course} modifier="home" />
                         {/if}
                     {/each}
                 </div>
