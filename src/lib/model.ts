@@ -277,29 +277,33 @@ export class Event {
 
 		let location = ''
 		let capacity = 0
+		let availability = 0
 		if (data.venue) {
 			location = data.venue.location
 			capacity = data.venue.capacity
+			availability = data.venue.availability
 		} else {
 			location = data.location
 			capacity = data.capacity
 		}
 
-		return new Event(date, location, capacity, data.id)
+		return new Event (date, location, capacity, availability, data.id)
 	}
 
 	id: string
 	date: Date
 	location: string
 	capacity: number
+	availability: number
 
-	constructor(date: Date, location: string, capacity: number, id?: string) {
+	constructor(date: Date, location: string, capacity: number, availability: number, id?: string) {
 		if (id) {
 			this.id = id!
 		}
 		this.date = date
 		this.location = location
 		this.capacity = capacity
+		this.availability = availability
 	}
 
 	getActivityId() {
