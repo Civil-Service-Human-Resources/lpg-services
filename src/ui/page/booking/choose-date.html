@@ -41,7 +41,7 @@
                                     { module.duration ? 'to ' + $datetime.addSeconds(event.date, module.duration, true) : ''}
                                 </div>
                                 <div class="div-table__cell">{event.location}</div>
-
+                                
                                 {#if event.availability > 0}
                                     <div class="div-table__cell">{event.availability} out of {event.capacity} places</div>
                                     <div class="div-table__cell div-table__cell--action">
