@@ -1,7 +1,8 @@
 <Page title="Learning record" {_csrf}>
     <div class="container">
         <h1 class="heading-xlarge small-margin">Learning record</h1>
-        <p class="govuk-body">This is a record of the learning you have completed.If a course has modules it will only appear in your learning record when all its modules have been completed.</p>
+        <p class="govuk-body">This is a record of the learning you have completed.</p>
+        <p class="govuk-body no-margin">If a course has modules it will only appear in your learning record when all its modules have been completed.</p>
 
         <div class="grid-row">
             <div class="column-full">
@@ -19,7 +20,7 @@
                 <LearningRecordTable courses={completedRequiredLearning} />
                 <p>You have completed {completedRequiredLearning.length} of your required learning courses.</p>
                 {:else}
-                <p>You haven't completed any required learning courses yet.</p>
+                <p class="no-margin">You haven't completed any required learning courses yet.</p>
                 {/if}
             </div>
         </div>
