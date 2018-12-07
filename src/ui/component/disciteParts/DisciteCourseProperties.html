@@ -3,9 +3,8 @@
         <li class="discite__property-item">
             {#if course.record && course.record.state && course.record.state !== 'RETRIEVED' && course.record.state !== 'ARCHIVED' || successId}
             <div class="discite__status {modifier ? `discite__status--${modifier}` : ''}">
-                <span class="badge badge--discite badge--{successId ? 'success' : 'info'}">{$i18n(successId ? 'justAdded' : course.record.state)}</span>
-                {#if course.getSelectedDate()}
-                <span class="meta">{$datetime.formatDate(course.getSelectedDate())}</span>
+                {#if !course.getSelectedDate()}
+                    <span class="badge badge--discite badge--{successId ? 'success' : 'info'}">{$i18n(successId ? 'justAdded' : course.record.state)}</span>
                 {/if}
             </div>
             {/if}
@@ -18,9 +17,9 @@
             <span class="visuallyhidden">Duration:</span> {course.getDuration() || ''}
         </li>
         {#if !course.isRequired()}
-        <li class="discite__property-item">
-            <span class="visuallyhidden">Cost:</span> &pound;{course.getCost() || 'Free'}
-        </li>
+            <li class="discite__property-item">
+                <span class="visuallyhidden">Cost:</span> &pound;{course.getCost() || 'Free'}
+            </li>
         {/if}
     </ul>
 </div>

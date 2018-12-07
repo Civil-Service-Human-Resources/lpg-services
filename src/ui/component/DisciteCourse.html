@@ -37,13 +37,21 @@
         {#if booked === true}
             <div class="discite__item--event">
                 <div class="discite__item--main">
-                        <h3 class="heading discite__heading"><a href="" class="govuk-body govuk-link">{bookedModule.moduleTitle}</a></h3>
-                        <p class="govuk-body">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
-                        <a href="">Cancel booking</a>
+                    <h3 class="heading discite__heading"><a href="/courses/{course.id}" class="govuk-body govuk-link">{bookedModule.moduleTitle}</a></h3>
+                    <p class="govuk-body">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
+                    <a href={$constructCourseCallToAction(course).url}>Cancel booking</a>
                 </div>
                 <div class="course-details">
-                    <p class="govuk-body">{bookedModule.moduleType}</p>
-                    <p class="govuk-body">{bookedModule.moduleDuration}</p>
+                    <p class="govuk-body no-margin"><span class="visuallyhidden">Type:</span>
+                        {#if bookedModule.moduleType === 'face-to-face'}
+                            Face to face
+                        {:else}
+                            {bookedModule.moduleType}
+                        {/if}
+                    </p>
+                    <p class="govuk-body"> <span class="visuallyhidden">Duration: </span>
+                        {duration}
+                    </p>
                 </div>
                 <div class="discite__property-item discite__status--home">
                     <span class="badge badge--discite badge--info">{bookedModule.bookingStatus}</span>
@@ -58,7 +66,6 @@
 	import DisciteCourseProperties from './disciteParts/DisciteCourseProperties.html'
     import DisciteCourseMain from './disciteParts/DisciteCourseMain.html'
 
-
 	export default {
 		data() {
 			return {
@@ -68,7 +75,7 @@
 		components: {
 		    DisciteCourseActions,
 		    DisciteCourseProperties,
-		    DisciteCourseMain
+		    DisciteCourseMain,
 		}
 	}
 </script>

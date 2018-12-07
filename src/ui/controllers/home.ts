@@ -6,6 +6,7 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as suggestionController from './suggestion'
+import * as datetime from 'lib/datetime'
 
 const logger = log4js.getLogger('controllers/home')
 
@@ -131,6 +132,7 @@ export async function home(req: express.Request, res: express.Response) {
 				confirmMessage,
 				confirmTitle,
 				eventActionDetails,
+				formatEventDuration,
 				getModuleForEvent,
 				isEventBookedForGivenCourse,
 				noOption,
@@ -149,6 +151,10 @@ export async function home(req: express.Request, res: express.Response) {
 		console.error("Error building user's home page", e)
 		throw new Error(`Error building user's home page - ${e}`)
 	}
+}
+
+function formatEventDuration(duration: number) {
+	return datetime.formatCourseDuration(duration)
 }
 
 function filterCourseByEvent(course: model.Course) {

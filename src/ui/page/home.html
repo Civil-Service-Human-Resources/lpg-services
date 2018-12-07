@@ -56,7 +56,8 @@
 
                     {#each plannedLearning as course}
                         {#if course.id !== successId}
-                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} course={course} modifier="home" />
+
+                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} course={course} duration={formatEventDuration(course.modules[0].duration)} modifier="home" />
                         {:else}
                             <DisciteCourse booked={isEventBookedForGivenCourse(course)} {successId} course={course} modifier="home" />
                         {/if}
