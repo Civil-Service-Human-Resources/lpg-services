@@ -210,7 +210,8 @@ $module: 'discite';
 	padding-left: 20px;
 	box-sizing: border-box;
 	display: flex;
-	justify-content: flex-end;
+	flex-wrap: wrap;
+	justify-content: flex-start;
 
 	.discite__status--home {
 		width: 89px;
@@ -219,8 +220,8 @@ $module: 'discite';
 	.course-details {
 		width: 190px;
 
-		.govuk-body {
-			font-size: 16px;
+		.no-margin {
+			margin: 0;
 		}
 
 		.module-type {
@@ -230,12 +231,27 @@ $module: 'discite';
 	}
 
 	.discite__item--main {
-		flex: 1;
+		width: 100%;
+		padding-right: 5px;
 	}
 }
 
 .badge:first-letter {
 	text-transform: uppercase;
+}
+
+@media screen and (min-width: 641px) {
+	.discite__item--event {
+		width: 100%;
+		flex-wrap: nowrap;
+		justify-content: flex-end;
+
+		.discite__item--main {
+			flex: 1;
+			width: auto;
+		}
+	}
+
 }
 
 @include media(desktop) {
