@@ -106,7 +106,12 @@ export class Course {
 	}
 
 	getGrades() {
-		return this.audience ? this.audience.grades : []
+		return this.audiences ? this.mergeGrades() : []
+	}
+
+	mergeGrades() {
+		const grades = this.audiences.map(a => a.grades)
+		return [].concat.apply([], grades)
 	}
 
 	getSelectedDate() {

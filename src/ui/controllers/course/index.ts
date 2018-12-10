@@ -27,7 +27,7 @@ export function getCourseDetails(
 	course: model.Course,
 	module?: model.Module
 ): CourseDetail[] {
-	const levels = course.getGrades().map(grade => req.__(grade))
+	const grades = course.getGrades()
 	const keyAreas = course.getAreasOfWork().map(areaOfWork => req.__(areaOfWork))
 
 	const duration = course.getDuration()
@@ -58,10 +58,10 @@ export function getCourseDetails(
 			value: location,
 		})
 	}
-	if (levels.length) {
+	if (grades.length) {
 		dataRows.push({
-			label: req.__('Level'),
-			value: levels.join(', '),
+			label: req.__('Grades'),
+			value: grades.join(', '),
 		})
 	}
 	if (cost) {
