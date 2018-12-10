@@ -113,17 +113,6 @@ export async function renderChooseDate(
 		.filter(a => a.date > today)
 		.sort((a, b) => a.date.getTime() - b.date.getTime())
 
-	const registrations = await learnerRecord.getRegistrationsForEvents(
-		events.map((event: any) => {
-			return event.id
-		}),
-		req.user
-	)
-
-	events.map((event: any) => {
-		event.availability = event.capacity - registrations[event.id]
-	})
-
 	res.send(
 		template.render('booking/choose-date', req, res, {
 			accessibilityReqs: req.session!.accessibilityReqs,

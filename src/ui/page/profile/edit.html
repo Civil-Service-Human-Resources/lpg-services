@@ -2,9 +2,13 @@
     <div class="container">
         <div class="grid-row">
             <div class="{inputName === 'areas-of-work' ? 'column-full' : 'column-two-thirds' }">
-                <h1 class="heading-large">
-                    <span class="heading-primary">Your {$i18n('profile_' + inputName + '_label').toLowerCase()}</span>
-                </h1>
+                {#if  ($i18n(inputName) === 'line-manager') }
+                    <h1 class="heading-large"><span class="heading-primary">Add your line manager's email</span></h1>
+                        <p class="govuk-body">To add a line manager, they must be registered with the service.</p>
+                    {:else}
+                        <h1 class="heading-large"><span class="heading-primary">Your {$i18n('profile_' + inputName + '_label').toLowerCase()}</span></h1>
+                    {/if}
+              
                 {#if lede}
                     <p class="lede">
                         {lede}
@@ -27,7 +31,7 @@
 
                 {/if}
 
-                <ProfileEditForm {options} {optionType} {inputName} label="{$i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
+                <ProfileEditForm {options} {optionType} {inputName} {lede} label="{$i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
             </div>
         </div>
     </div>
