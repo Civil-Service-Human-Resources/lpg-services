@@ -9,6 +9,10 @@ hr.clear {
 	@include grid-column(1/6);
 }
 
+.search-lede {
+	font-size: 19px;
+}
+
 .flash-message {
 	background: #28a197;
 	color: #fff;
@@ -95,6 +99,14 @@ hr.clear {
 	margin-bottom: 0;
 }
 
+.small-margin {
+	margin-bottom: 30px;
+}
+
 .hint {
 	color: $hint;
+}
+
+.back-to-top {
+    text-align: right;
 }

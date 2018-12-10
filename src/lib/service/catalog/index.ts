@@ -66,7 +66,7 @@ export async function search(
 	interests?: string[]
 ): Promise<api.SearchResults> {
 	try {
-		let url = `/search?page=${page}&size=${size}`
+		let url = `/search/courses?page=${page}&size=${size}`
 		if (query) {
 			url += `&query=${query}`
 		}
@@ -186,13 +186,8 @@ function convert(data: any, user?: model.User) {
 
 function convertToMixed(data: any, user?: model.User) {
 	if (data.results) {
-		data.results = data.results.map((result: model.Resource) => {
-			return result.courseId === '0'
-				? model.CourseModule.createFromCourse(model.Course.create(result, user))
-				: model.CourseModule.createFromModule(
-						model.Module.create(result),
-						result.course
-				)
+		data.results = data.results.map((result: model.Course) => {
+			return model.CourseModule.createFromCourse(model.Course.create(result, user))
 		})
 	}
 	return data

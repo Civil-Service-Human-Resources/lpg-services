@@ -76,7 +76,10 @@ function getHelpers(): {} {
 		constructModuleCta,
 		datetime,
 		fileHelpers,
+		getFirstKey,
+		getKeys,
 		i18n: req.__ ? req.__.bind(req) : null,
+		isEmpty,
 		req,
 		signedInUser: req.user,
 		toHtml,
@@ -115,4 +118,16 @@ export function render(
 		...getHelpers(),
 	})
 	return component.render(data, {store}).html
+}
+
+export function isEmpty(object: any) {
+	return getKeys(object).length === 0
+}
+
+export function getFirstKey(object: any) {
+	return getKeys(object).pop()
+}
+
+export function getKeys(object: any) {
+	return Object.keys(object)
 }

@@ -1,7 +1,10 @@
 import axios from 'axios'
 import * as config from 'lib/config'
+import * as log4js from 'log4js'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
+
+const logger = log4js.getLogger('registry')
 
 const http = axios.create({
 	baseURL: config.CHECK_LINEMANAGER_URL,
@@ -61,6 +64,7 @@ export async function follow(
 
 		builder.getResource((error, document) => {
 			if (error) {
+				logger.error(error)
 				reject(false)
 			} else {
 				resolve(document)
