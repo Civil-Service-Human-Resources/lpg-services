@@ -70,7 +70,7 @@ export async function removeFromSuggestions(
 		)
 		req.flash(
 			'successMessage',
-			req.__('learning_removed_from_plan_message', course.title)
+			req.__('learning_removed_from_suggestions', course.title)
 		)
 	} catch (err) {
 		logger.error('Error recording xAPI statement', err)
@@ -88,7 +88,12 @@ export async function suggestionsPage(
 
 	const learningRecord = await getLearningRecord(user)
 
-	const [areaOfWork, otherAreasOfWork, department, interests] = await Promise.all([
+	const [
+		areaOfWork,
+		otherAreasOfWork,
+		department,
+		interests,
+	] = await Promise.all([
 		suggestionsByAreaOfWork(user, learningRecord),
 		suggestionsByOtherAreasOfWork(user, learningRecord),
 		suggestionsByDepartment(user, learningRecord),
@@ -107,8 +112,10 @@ export async function suggestionsPage(
 	)
 }
 
-export async function getLearningRecord(user: model.User, learningRecordIn:
-	Record<string, learnerRecord.CourseRecord> = {}) {
+export async function getLearningRecord(
+	user: model.User,
+	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+) {
 	let learningRecord: Record<string, learnerRecord.CourseRecord> = {}
 
 	if (Object.keys(learningRecordIn).length > 0) {
@@ -127,15 +134,14 @@ export async function suggestionsByInterest(
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.interests || []).map(async interest => {
-		courseSuggestions[(interest.name as any)] =
-			await getSuggestions(
-				'',
-				[],
-				[interest.name],
-				6,
-				await getLearningRecord(user, learningRecordIn),
-				user
-			)
+		courseSuggestions[interest.name as any] = await getSuggestions(
+			'',
+			[],
+			[interest.name],
+			6,
+			await getLearningRecord(user, learningRecordIn),
+			user
+		)
 	})
 	await Promise.all(promises)
 	return courseSuggestions
@@ -148,15 +154,14 @@ export async function suggestionsByAreaOfWork(
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.areasOfWork || []).map(async aow => {
-		courseSuggestions[(aow as any)] =
-			await getSuggestions(
-				'',
-				[aow],
-				[],
-				6,
-				await getLearningRecord(user, learningRecordIn),
-				user
-			)
+		courseSuggestions[aow as any] = await getSuggestions(
+			'',
+			[aow],
+			[],
+			6,
+			await getLearningRecord(user, learningRecordIn),
+			user
+		)
 	})
 	await Promise.all(promises)
 	return courseSuggestions
@@ -169,15 +174,14 @@ export async function suggestionsByOtherAreasOfWork(
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.otherAreasOfWork || []).map(async aow => {
-		courseSuggestions[(aow.name as any)] =
-			await getSuggestions(
-				'',
-				[aow.name],
-				[],
-				6,
-				await getLearningRecord(user, learningRecordIn),
-				user
-			)
+		courseSuggestions[aow.name as any] = await getSuggestions(
+			'',
+			[aow.name],
+			[],
+			6,
+			await getLearningRecord(user, learningRecordIn),
+			user
+		)
 	})
 	await Promise.all(promises)
 	return courseSuggestions
@@ -189,15 +193,14 @@ export async function suggestionsByDepartment(
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 	if (user.department) {
-		courseSuggestions[(user.department as any)] =
-			await getSuggestions(
-				user.department!,
-				[],
-				[],
-				6,
-				await getLearningRecord(user, learningRecordIn),
-				user
-			)
+		courseSuggestions[user.department as any] = await getSuggestions(
+			user.department!,
+			[],
+			[],
+			6,
+			await getLearningRecord(user, learningRecordIn),
+			user
+		)
 	}
 	return courseSuggestions
 }
@@ -224,7 +227,13 @@ async function getSuggestions(
 	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
 	user: model.User
 ): Promise<model.Course[]> {
-	const params = new catalog.ApiParameters(areasOfWork, department, interests, 0, count)
+	const params = new catalog.ApiParameters(
+		areasOfWork,
+		department,
+		interests,
+		0,
+		count
+	)
 
 	let newSuggestions: model.Course[] = []
 	let hasMore = true
