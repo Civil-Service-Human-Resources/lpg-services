@@ -134,3 +134,17 @@ export async function profile(token: string) {
 			})
 	)
 }
+
+export async function getRaw(path: string) {
+	const result = await new Promise((resolve, reject) => {
+		http
+			.get(config.REGISTRY_SERVICE_URL + path)
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
