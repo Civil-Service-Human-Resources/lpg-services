@@ -1,9 +1,9 @@
 {#if optionType === 'typeahead'}
     <TypeAhead {options} {inputName} {script} {label} {value} />
 {:elseif optionType === 'checkbox'}
-    <Checkboxes {options} {inputName} {script} {value} />
+    <Checkboxes {options} {inputName} {script} {value} {lede} />
 {:elseif optionType === 'radio'}
-	<NewRadios {options} {inputName} {script} {value} />
+	<NewRadios {options} {inputName} {script} {value} {lede} />
 {/if}
 
 <script>
