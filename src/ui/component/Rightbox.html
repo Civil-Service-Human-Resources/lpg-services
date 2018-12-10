@@ -6,7 +6,11 @@
             {#each dataRows.dataRows as row}
             <tr>
                 <th class="lpg-related-items__th">{row.label}</th>
-                <td class="lpg-related-items__td">{row.value}</td>
+                {#if row.label === "Cost"}
+                    <td class="lpg-related-items__td">{row.value} (ex VAT)</td>
+                {:else}
+                    <td class="lpg-related-items__td">{row.value}</td>
+                {/if} 
             </tr>
             {/each}
         {/if}
