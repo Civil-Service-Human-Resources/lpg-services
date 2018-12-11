@@ -5,7 +5,6 @@
 $space: 5px;
 $space-class-values: (5, 10, 15, 30, 45);
 
-
 /* Global footer */
 $proposition-border: #2e3133;
 // Based on GOV.UK brand blue but slightly lighter so it hits contrast on the
@@ -20,6 +19,7 @@ $footer-link: #454a4c;
 $footer-link-hover: #171819;
 $footer-text: $footer-link;
 $optional-text: $footer-text;
+$flash-message: #005ea5;
 
 $grey: #aaa;
 $light-grey: #f8f8f8;
