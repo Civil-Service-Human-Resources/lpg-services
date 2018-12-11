@@ -4,14 +4,14 @@
             <th class="table--fix-first">Course title</th>
             <th>Type</th>
             <th>Duration</th>
-            <th>Completion date</th>
+            <th>Date completed</th>
         </tr>
     </thead>
     <tbody>
         {#each courses as record}
         <tr>
             <td>
-                <a href="/courses/{record.courseId}">{record.courseTitle} </a>
+                <a href="/courses/{record.courseId}">{record.courseTitle}</a>
             </td>
             <td>{$i18n(record.getType())}</td>
             <td>{record.getDuration() || '-'}</td>

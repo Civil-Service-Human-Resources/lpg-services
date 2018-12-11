@@ -78,6 +78,10 @@
 	}
 }
 
+body {
+	position: relative;
+}
+
 body:not(.js-enabled) {
 	.js-only {
 		* {
