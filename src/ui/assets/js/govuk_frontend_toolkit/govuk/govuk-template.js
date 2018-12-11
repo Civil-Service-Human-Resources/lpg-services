@@ -17,10 +17,12 @@
 				if (targetClass.indexOf('js-visible') !== -1) {
 					target.setAttribute(
 						'class',
-						targetClass.replace(/(^|\s)js-visible(\s|$)/, '')
+						targetClass.replace(/(^|\s)js-visible(\s|$)/, ''),
+						(document.getElementById('visiblyHidden').innerHTML = 'Closed')
 					)
 				} else {
 					target.setAttribute('class', targetClass + ' js-visible')
+					document.getElementById('visiblyHidden').innerHTML = 'Open'
 				}
 				if (sourceClass.indexOf('js-hidden') !== -1) {
 					this.setAttribute(

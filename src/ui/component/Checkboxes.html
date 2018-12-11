@@ -1,8 +1,15 @@
 <fieldset class="u-space-b30">
+{#if lede}
+    <legend>
+        <p class="lede">
+            {lede}
+        </p>
+    </legend>
+{/if}
 	{#each options as option}
         <div class="multiple-choice">
-            <input id="{option[0]}" type="checkbox" name="{inputName}" value="{option[0]}" checked="{(value || []).indexOf(option[1]) > -1 ? 'checked' : ''}">
-            <label for="{option[0]}">{option[1]}</label>
+            <input id="{option[1]}" type="checkbox" name="{inputName}" value="{option[0]}" checked="{(value || []).indexOf(option[1]) > -1 ? 'checked' : ''}">
+            <label for="{option[1]}">{option[1]}</label>
         </div>
     {/each}
 </fieldset>

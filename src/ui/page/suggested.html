@@ -10,34 +10,51 @@
                 <div class="suggestions-links">
                     <p class="govuk-body">{$i18n('home_page_suggestions', $i18n('proposition_name'))}</p>
                     <div class="suggestions-wrapper">
-                
-                        {#each courses as courseGroup}
-        
-                            <div class="suggestions-container">
-                                {#if courseGroup.key === "department"}
-                                    <p class="govuk-body caps header">organisation</p>
-                                {:elseif courseGroup.key === "areaOfWork"}
-                                    <p class="govuk-body caps header">primary area of work</p>
-                                {:elseif courseGroup.key === "otherAreaOfWork"}
-                                    <p class="govuk-body caps header">other area of work</p>
-                                {:elseif courseGroup.key === "interest"}
-                                    <p class="govuk-body caps header">interests</p>
-                                {/if}
-                           
+                        <div class="suggestions-container">
+                            <p class="govuk-body header">organisation</p>
+                            {#if !$isEmpty(department) }
                             <ul>
-                                {#each Object.keys(courseGroup.value) as courseKey}
-                                    {#if courseKey }
-                                        <li><a href="/suggestions-for-you/#{courseKey}">{$i18n(`${courseGroup.key}`)[courseKey] || courseKey}</a></li>
-                                    {/if}
+                                <li>
+                                    <a href="/suggestions-for-you/#{$getFirstKey(department)}">{$signedInUser.organisationalUnit.name}</a>
+                                </li>
+                            </ul>
+                            {/if}
+                        </div>
+                        <div class="suggestions-container">
+                            <p class="govuk-body header">primary area of work</p>
+                            {#if !$isEmpty(areaOfWork) }
+                            <ul>
+                                <li>
+                                    <a href="/suggestions-for-you/#{$getFirstKey(areaOfWork)}">{$getFirstKey(areaOfWork)}</a>
+                                </li>
+                            </ul>
+                            {/if}
+                        </div>
+                        <div class="suggestions-container">
+                            <p class="govuk-body header">other areas of work</p>
+                            {#if !$isEmpty(otherAreasOfWork) }
+                            <ul>
+                                <li>
+                                    <a href="/suggestions-for-you/#{$getFirstKey(otherAreasOfWork)}">{$getFirstKey(otherAreasOfWork)}</a>
+                                </li>
+                            </ul>
+                            {/if}
+                        </div>
+                        <div class="suggestions-container">
+                            <p class="govuk-body header">interests</p>
+                            {#if !$isEmpty(interests) }
+                            <ul>
+                                {#each $getKeys(interests) as interest}
+                                <li>
+                                    <a href="/suggestions-for-you/#{interest}">{interest}</a>
+                                </li>
                                 {/each}
-                            </ul>  
-                             </div>
-                        {/each}
+                            </ul>
+                            {/if}
+                        </div>
                     </div>
                     <div class="change-settings-container">
-    
-                            <p class="govuk-body">You can change the preferences in <a href="/profile">your profile page</a>.</p>
-                
+                        <p class="govuk-body">You can change the preferences in <a href="/profile">your profile page</a>.</p>
                     </div>
                 </div>
                 {#if successTitle}
@@ -46,13 +63,24 @@
             </div>
         </div>
     </div>
-    {#each courses as courseGroup}
-        {#each Object.keys(courseGroup.value) as courseKey}
-        {#if courseKey && courseGroup.value[courseKey].length}
-            <SuggestionsSection id={courseKey} title={$i18n(`${courseGroup.key}`)[courseKey] || courseKey} code={courseKey} suggestedLearning="{courseGroup.value[courseKey]}" home={false} type="{courseGroup.key}" />
-        {/if}
+    {#if !$isEmpty(department)  }
+    <SuggestionsSection id={$getFirstKey(department)} title={$signedInUser.organisationalUnit.name} code={$getFirstKey(department)} suggestedLearning="{department[$getFirstKey(department)]}" home={false} type="department" />
+    <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+    {/if}
+    {#if !$isEmpty(areaOfWork)  }
+    <SuggestionsSection id={$getFirstKey(areaOfWork)} title={$getFirstKey(areaOfWork)}  code={$getFirstKey(areaOfWork)}  suggestedLearning="{areaOfWork[$getFirstKey(areaOfWork)]}" home={false} type="areaOfWork" />
+    <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+    {/if}
+    {#if !$isEmpty(otherAreasOfWork)  }
+    <SuggestionsSection id={$getFirstKey(otherAreasOfWork)} title={$getFirstKey(otherAreasOfWork)}  code={$getFirstKey(otherAreasOfWork)}  suggestedLearning="{otherAreasOfWork[$getFirstKey(otherAreasOfWork)]}" home={false} type="otherAreasOfWork" />
+    <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+    {/if}
+    {#if !$isEmpty(interests)  }
+        {#each $getKeys(interests) as interest}
+            <SuggestionsSection id={interest} title={interest}  code={interest}  suggestedLearning="{interests[interest]}" home={false} type="interest" />
+            <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
         {/each}
-    {/each}
+    {/if}
 </Page>
 
 <script>
