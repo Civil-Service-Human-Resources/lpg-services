@@ -384,10 +384,11 @@ export async function renderEditPage(
 		var selectEl = document.querySelector('.type-ahead')
 		if (selectEl) {
 			accessibleAutocomplete.enhanceSelectElement({
-				autoselect: true,
-				defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
+				autoselect: false,
+				defaultValue: '',
 				minLength: 1,
 				selectElement: selectEl,
+				showAllValues: true
 			})
 		}
     </script>`
