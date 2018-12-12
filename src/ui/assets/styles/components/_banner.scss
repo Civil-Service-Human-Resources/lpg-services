@@ -32,7 +32,7 @@
 	}
 
 	@include m(info) {
-		background: $govuk-blue;
+		background: $flash-message;
 	}
 
 	@include m(warning) {
