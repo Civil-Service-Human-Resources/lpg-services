@@ -28,8 +28,18 @@ $wrapper-width: 275px;
 	}
 
 	@include e(input) {
-		position: absolute;
-		opacity: 0;
+		position: fixed;
+		margin-right: 42px;
+		top: 45px;
+		z-index: -1;
+
+		&:focus {
+			outline: 0;
+		}
+
+		&:focus + label {
+			outline: 3px solid $focus;
+		}
 	}
 
 	@include e(wrapper) {
@@ -37,7 +47,7 @@ $wrapper-width: 275px;
 		height: $bar-height;
 		clear: both;
 		padding: 10px 0;
-
+		position: relative;
 		& > label {
 			position: relative;
 			width: $bar-width;
