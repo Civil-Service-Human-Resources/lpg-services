@@ -354,5 +354,7 @@
 	"": "",
 	"unknown": "unknown",
 	"otherAreaOfWork": "otherAreaOfWork",
-	"department": "department"
+	"department": "department",
+	"primary-area-of-work": "primary-area-of-work",
+	"learning_removed_from_suggestions": "learning removed from suggestions"
 }
