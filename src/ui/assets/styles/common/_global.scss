@@ -14,7 +14,7 @@ hr.clear {
 }
 
 .flash-message {
-	background: #28a197;
+	background: $flash-message;
 	color: #fff;
 	margin-top: 1em;
 	padding: 1em;
@@ -108,5 +108,5 @@ hr.clear {
 }
 
 .back-to-top {
-    text-align: right;
+	text-align: right;
 }

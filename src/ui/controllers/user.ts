@@ -378,20 +378,6 @@ export async function renderEditPage(
 			break
 	}
 
-	const script = `
-	<script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
-	<script type="text/javascript">
-		var selectEl = document.querySelector('.type-ahead')
-		if (selectEl) {
-			accessibleAutocomplete.enhanceSelectElement({
-				autoselect: true,
-				defaultValue: selectEl.options[selectEl.options.selectedIndex].innerHTML,
-				minLength: 1,
-				selectElement: selectEl,
-			})
-		}
-    </script>`
-
 	res.send(
 		template.render('profile/edit', req, res, {
 			...res.locals,
@@ -401,7 +387,6 @@ export async function renderEditPage(
 			lede,
 			optionType,
 			options: Object.entries(options),
-			script,
 			value,
 		})
 	)
