@@ -15,9 +15,6 @@
         <li>
             <a href="/profile">Profile</a>
         </li>
-        <li>
-            <a href="/skills">Skills</a>
-        </li>
         {#if $signedInUser.hasRole('COURSE_MANAGER')}
         <li>
             <a href="{$config.LPG_MANAGEMENT_URL}/content-management/">Admin</a>
