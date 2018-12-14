@@ -31,6 +31,7 @@ import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
+import * as skillsController from './controllers/skills'
 
 import * as errorController from './controllers/errorHandler'
 
@@ -40,7 +41,8 @@ const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 /* tslint:enable */
 
-appInsights.setup(config.INSTRUMENTATION_KEY)
+appInsights
+	.setup(config.INSTRUMENTATION_KEY)
 	.setAutoDependencyCorrelation(true)
 	.setAutoCollectRequests(true)
 	.setAutoCollectPerformance(true)
@@ -94,7 +96,7 @@ app.use(
 )
 app.use(flash())
 
-app.use(bodyParser.json({ strict: false }))
+app.use(bodyParser.json({strict: false}))
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.text())
 
@@ -259,6 +261,8 @@ app.get(
 	'/suggestions-for-you/remove/:courseId',
 	asyncHandler(suggestionController.removeFromSuggestions)
 )
+
+app.get('/skills', asyncHandler(skillsController.skills))
 
 app.get('/home', asyncHandler(homeController.home))
 

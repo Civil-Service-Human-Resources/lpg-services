@@ -80,6 +80,21 @@
 
 body {
 	position: relative;
+	min-height: 100vh;
+}
+
+.bottom-main {
+	padding-bottom: 400px;
+}
+
+@media (min-width: 641px) {
+	main {
+		font-size: 19px;
+		line-height: 1.31579;
+	}
+	.bottom-main {
+		padding-bottom: 320px;
+	}
 }
 
 body:not(.js-enabled) {
