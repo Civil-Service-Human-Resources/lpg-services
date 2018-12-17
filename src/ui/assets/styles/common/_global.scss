@@ -84,6 +84,7 @@ hr.clear {
 		font-size: inherit;
 		border: none;
 		background: none;
+
 		&:hover {
 			cursor: pointer;
 		}
@@ -101,6 +102,10 @@ hr.clear {
 			font-size: 24px;
 		}
 	}
+}
+
+.skills-list {
+	margin-bottom: 30px;
 }
 
 .govuk-body {
