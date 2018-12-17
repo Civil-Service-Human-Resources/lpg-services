@@ -1,0 +1,31 @@
+.column-full {
+	.back-button {
+		color: $font-color;
+		font-size: 19px;
+		text-decoration: none;
+		border-bottom: 1px solid $font-color;
+		display: inline-block;
+		position: relative;
+		margin-top: 15px;
+		margin-bottom: 15px;
+		padding-left: 14px;
+
+		&:before {
+			display: block;
+			width: 0;
+			height: 0;
+			border-style: solid;
+			border-color: transparent;
+			-webkit-clip-path: polygon(0% 50%, 100% 100%, 100% 0%);
+			clip-path: polygon(0% 50%, 100% 100%, 100% 0%);
+			border-width: 5px 6px 5px 0;
+			border-right-color: inherit;
+			content: '';
+			position: absolute;
+			top: -1px;
+			bottom: 1px;
+			left: 0;
+			margin: auto;
+		}
+	}
+}

@@ -1,11 +1,13 @@
 <Page title="Skills" {_csrf}>
 	<div class="container container--main">
-        <div class="grid-row ">
+		<BackButton link="/profile" />
+        <div class="grid-row ">		
 		  	<div class="column-two-thirds">
 				<h1 class="heading heading-large">Choose which area to measure</h1>
 				<p class="govuk-body">If you can't see the area you want to measure, you can add it in your <a href="/profile">profile</a></p>
 				<form action="/skills/index" method="post">
 					<fieldset class="u-space-b30">
+					  	<input type="hidden" name="_csrf" value="{_csrf}">
 						{#if $signedInUser.organisationalUnit.name}
 							<div class="multiple-choice">
 								<input type="radio" value="{$signedInUser.organisationalUnit.name}" id="{$signedInUser.organisationalUnit.name}" name="quizSelector" />
@@ -21,6 +23,7 @@
 							</div>
 						{/if}
 						{#if $signedInUser.otherAreasOfWork}
+					
 							{#each $signedInUser.otherAreasOfWork as aow}
 								<div class="multiple-choice">
 									<input type="radio" value="{aow.name}" id="{aow.name}" name="quizSelector" />
@@ -39,6 +42,7 @@
 							{/each}
 						{/if}
 					</fieldset>
+					<button type="submit" class="button">Continue</button>
 				</form>
 			</div>
 			<div class="column-one-third">
@@ -49,6 +53,7 @@
 
 <script>
 	import Page from '../../component/Page.html'
+	import BackButton from '../../component/BackButton.html'
 
 	export default {
 		data() {
@@ -58,6 +63,7 @@
 
 		components: {
 			Page,
+			BackButton
 		}
 	}
 </script>

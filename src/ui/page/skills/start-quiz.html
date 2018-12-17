@@ -1,0 +1,31 @@
+<Page title="Skills" {_csrf}>
+	<div class="container container--main">
+		<BackButton link="/skills/" />
+        <div class="grid-row ">		
+		  	<div class="column-two-thirds">
+				<h1 class="heading heading-large">Measure your skills quiz</h1>
+				<p class="govuk-body">If you can't see the area you want to measure, you can add it in your <a href="/profile">profile</a></p>
+				
+			</div>
+			<div class="column-one-third">
+			</div>
+		</div>
+	</div>
+</Page>
+
+<script>
+	import Page from '../../component/Page.html'
+	import BackButton from '../../component/BackButton.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			BackButton
+		}
+	}
+</script>

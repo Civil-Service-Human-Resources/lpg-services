@@ -36,3 +36,7 @@ export async function skills(req: express.Request, res: express.Response) {
 		throw new Error(`Error building user's home page - ${e}`)
 	}
 }
+
+export async function startQuiz(req: express.Request, res: express.Response) {
+	res.send(template.render('skills/start-quiz', req, res, {}))
+}
