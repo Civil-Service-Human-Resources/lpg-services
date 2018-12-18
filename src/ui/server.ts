@@ -264,6 +264,7 @@ app.get(
 
 app.get('/skills', asyncHandler(skillsController.skills))
 app.post('/skills/index', asyncHandler(skillsController.startQuiz))
+app.get('/skills/choose', asyncHandler(skillsController.chooseQuiz))
 
 app.get('/home', asyncHandler(homeController.home))
 
