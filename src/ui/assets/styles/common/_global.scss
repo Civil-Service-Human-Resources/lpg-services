@@ -136,3 +136,12 @@ hr.clear {
 .multiple-choice .quiz + label::after {
 	top: 21px;
 }
+
+.heading-light {
+	color: $hint;
+	font-weight: normal;
+
+	& + .heading-large {
+		margin-top: 0;
+	}
+}

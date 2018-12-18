@@ -44,3 +44,8 @@ export async function startQuiz(req: express.Request, res: express.Response) {
 export async function chooseQuiz(req: express.Request, res: express.Response) {
 	res.send(template.render('skills/choose-quiz', req, res, {}))
 }
+
+export async function questions(req: express.Request, res: express.Response) {
+	console.log('function fired')
+	res.send(template.render('skills/questions', req, res, {}))
+}
