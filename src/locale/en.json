@@ -353,5 +353,8 @@
 	"blog": "blog",
 	"": "",
 	"unknown": "unknown",
-	"otherAreaOfWork": "otherAreaOfWork"
+	"otherAreaOfWork": "otherAreaOfWork",
+	"department": "department",
+	"primary-area-of-work": "primary-area-of-work",
+	"learning_removed_from_suggestions": "learning removed from suggestions"
 }

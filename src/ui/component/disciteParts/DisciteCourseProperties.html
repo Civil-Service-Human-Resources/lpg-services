@@ -17,9 +17,9 @@
             <span class="visuallyhidden">Duration:</span> {course.getDuration() || ''}
         </li>
         {#if !course.isRequired()}
-            <li class="discite__property-item">
-                <span class="visuallyhidden">Cost:</span> &pound;{course.getCost() || 'Free'}
-            </li>
+        <li class="discite__property-item">
+            <span class="visuallyhidden">Cost:</span> &pound;{#if !course.getCost()}Free{:else}{course.getCost() + ' (ex VAT)'}{/if}
+        </li>
         {/if}
     </ul>
 </div>

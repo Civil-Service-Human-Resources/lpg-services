@@ -1,9 +1,8 @@
-
 .govuk-box-highlight {
-
+	background-color: $flash-message;
 	&.results {
 		padding: 1em;
-		background-color: $govuk-blue;
+		background-color: $flash-message;
 
 		h1 {
 			@extend .heading-large;

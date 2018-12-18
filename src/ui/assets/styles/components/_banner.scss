@@ -6,7 +6,7 @@
 	margin-bottom: 30px;
 
 	// Default
-	background-color: $light-blue;
+	background-color: $flash-message;
 
 	@include e(action) {
 		display: inline-block;
@@ -28,11 +28,11 @@
 	}
 
 	@include m(confirmation) {
-		background-color: $turquoise;
+		background-color: $flash-message;
 	}
 
 	@include m(info) {
-		background: $govuk-blue;
+		background: $flash-message;
 	}
 
 	@include m(warning) {
