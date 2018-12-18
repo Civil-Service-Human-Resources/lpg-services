@@ -128,3 +128,11 @@ hr.clear {
 .back-to-top {
 	text-align: right;
 }
+
+.multiple-choice .quiz + label::before {
+	top: 12px;
+}
+
+.multiple-choice .quiz + label::after {
+	top: 21px;
+}
