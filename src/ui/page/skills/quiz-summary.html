@@ -3,14 +3,18 @@
 		<BackButton link="/skills/questions" />
         <div class="grid-row ">		
 		  	<div class="column-two-thirds">
-				<h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
-                {#if question}
-                    <h2 class="heading heading-large ">Question {question.number} of {question.total}</h2>
-                {:else}
-                    <h2 class="heading heading-large ">Question # of #</h2>
-                {/if} 
+				<h1 class="heading heading-large">Policy awareness quiz:</h1>
+				<h2 class="heading-medium">Your quiz result:</h2>
+				{#if quiz.completed}
+					<Banner type="confirmation" message="You scored 6 outr of 9 on this awareness quiz" />
+				{/if}
             </div>
 			<div class="column-one-third">
+				<div class="right-menu">
+					<h4 class="heading-small">Actions</h4>
+					<a href="">Share with your line manager</a>
+					<a href="">Retake this quiz</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -20,6 +24,7 @@
 	import Page from '../../component/Page.html'
 	import BackButton from '../../component/BackButton.html'
     import QuizQuestion from '../../component/QuizQuestion.html'
+	import Banner from '../../component/Banner.html'
 
 	export default {
 		data() {
@@ -30,7 +35,8 @@
 		components: {
 			Page,
 			BackButton,
-            QuizQuestion
+            QuizQuestion,
+			Banner
 		}
 	}
 </script>
