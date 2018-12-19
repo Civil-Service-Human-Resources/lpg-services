@@ -1,13 +1,13 @@
-
 .govuk-box-highlight {
-
+	background-color: $flash-message;
 	&.results {
 		padding: 1em;
+		background-color: $flash-message;
 
 		h1 {
 			@extend .heading-large;
 			margin-top: 0;
-			text-transform: capitalize;
+			text-transform: none;
 		}
 
 		div {
