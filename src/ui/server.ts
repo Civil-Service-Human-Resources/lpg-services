@@ -266,6 +266,7 @@ app.get('/skills', asyncHandler(skillsController.skills))
 app.post('/skills/start-quiz', asyncHandler(skillsController.startQuiz))
 app.get('/skills/choose-quiz', asyncHandler(skillsController.chooseQuiz))
 app.post('/skills/questions', asyncHandler(skillsController.questions))
+app.get('/skills/summary', asyncHandler(skillsController.quizSummary))
 
 app.get('/home', asyncHandler(homeController.home))
 

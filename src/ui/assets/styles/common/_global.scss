@@ -145,3 +145,10 @@ hr.clear {
 		margin-top: 0;
 	}
 }
+
+.right-menu {
+	margin-top: 50px;
+	border: 1px solid $alt-header-color;
+	border-top: 8px solid $cs-red;
+	padding: 0 10px 10px 10px;
+}
