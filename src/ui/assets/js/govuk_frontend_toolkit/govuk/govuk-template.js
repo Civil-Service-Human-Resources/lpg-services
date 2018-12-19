@@ -18,11 +18,11 @@
 					target.setAttribute(
 						'class',
 						targetClass.replace(/(^|\s)js-visible(\s|$)/, ''),
-						(document.getElementById('visiblyHidden').innerHTML = 'Closed')
+						(document.getElementById('visiblyHidden').innerHTML = 'Select to expand')
 					)
 				} else {
 					target.setAttribute('class', targetClass + ' js-visible')
-					document.getElementById('visiblyHidden').innerHTML = 'Open'
+					document.getElementById('visiblyHidden').innerHTML = 'Select to close'
 				}
 				if (sourceClass.indexOf('js-hidden') !== -1) {
 					this.setAttribute(
