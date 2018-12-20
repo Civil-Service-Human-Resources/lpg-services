@@ -60,7 +60,11 @@
                         {/if}
                         <li class="booking__panel__row">
                             <span class="booking__key">Amount</span>
+                            {#if module.cost}
                             <span class="booking__value lpg-confirm-price">&pound;{module.cost} (ex VAT)</span>
+                            {:else}
+                            <span class="booking__value lpg-confirm-price">&pound;Free (ex VAT)</span>
+                            {/if}
                         </li>
                     </ul>
                 </div>
