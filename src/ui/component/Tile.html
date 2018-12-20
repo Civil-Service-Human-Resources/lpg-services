@@ -1,9 +1,9 @@
 <div class="tile">
-	<h4 class="heading-small">
+	<h3 class="heading-small">
 		<a href="/courses/{course.id}">
 			{course.title}
 		</a>
-	</h4>
+	</h3>
 	{#if home}
 	<p class="tile__attribution">{isLast ? 'Department:' : 'Work area: '}
 	{#if isLast}
@@ -20,17 +20,15 @@
                 <span class="tile__key">Type</span>
                 <span class="tile__value">{$i18n(course.getType())}</span>
             </li>
-
             <li class="tile__property">
                 <span class="tile__key">Duration</span>
                 <span class="tile__value">{course.getDuration()}</span>
             </li>
-
             <li class="tile__property">
-                <span class="tile__key">Cost</span>
-                <span class="tile__value">&pound;{course.getCost() || 'Free'}</span>
+                <span class="tile__key">Cost</span>	
+                <span class="tile__value">&pound;{#if !course.getCost()}Free{:else}{course.getCost() + ' (ex VAT)'}{/if}
+				</span>
             </li>
-
     </ul>
 	<p>
 		{course.shortDescription}

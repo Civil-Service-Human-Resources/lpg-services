@@ -14,7 +14,7 @@ hr.clear {
 }
 
 .flash-message {
-	background: #28a197;
+	background: $flash-message;
 	color: #fff;
 	margin-top: 1em;
 	padding: 1em;
@@ -90,6 +90,10 @@ hr.clear {
 	}
 }
 
+.description {
+	margin-top: 0;
+}
+
 .govuk-body {
 	font-size: 19px;
 	margin-top: 0;
@@ -99,10 +103,14 @@ hr.clear {
 	margin-bottom: 0;
 }
 
+.small-margin {
+	margin-bottom: 30px;
+}
+
 .hint {
 	color: $hint;
 }
 
 .back-to-top {
-    text-align: right;
+	text-align: right;
 }

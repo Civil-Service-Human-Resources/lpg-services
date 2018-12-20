@@ -354,9 +354,11 @@
 	"": "",
 	"unknown": "unknown",
 	"otherAreaOfWork": "otherAreaOfWork",
-	"profile_line-manager": "profile_line-manager",
 	"line-manager": "line-manager",
 	"department": "department",
 	"grade": "grade",
 	"other-areas-of-work": "other-areas-of-work"
+	"department": "department",
+	"primary-area-of-work": "primary-area-of-work",
+	"learning_removed_from_suggestions": "This has been removed from your suggested courses"
 }
