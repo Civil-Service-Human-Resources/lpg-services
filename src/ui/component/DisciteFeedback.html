@@ -1,14 +1,14 @@
 <div class="discite__item u-clearfix ">
     <div class="discite__main discite__main--module ">
-        <a href="/courses/{course.id}/{module.id}">
-            <h3 class="heading bold-small heading--text">
+        <h3 class="heading bold-small heading--text">
+            <a href="/courses/{course.id}/{module.id}">
                 {#if module.title}
-                {module.title}
+                    {module.title}
                 {:else}
-                {course.title}
+                    {course.title}
                 {/if}
-            </h3>
-        </a>
+            </a>
+        </h3>
         {#if course.modules.length==1}
         <p class="discite__description">{course.shortDescription}</p>
         {:else}
@@ -25,7 +25,6 @@
     <div class="discite__action discite__action--module">
         <a href="/learning-record/{course.id}/{module.id}/feedback?ignore=true">I do not want to leave feedback</a>
     </div>
-
     <div class="discite__properties  u-clearfix">
         <ul class="discite__property ">
             <li class="discite__property-item">
