@@ -287,7 +287,7 @@ export class Event {
 			capacity = data.capacity
 		}
 
-		return new Event (date, location, capacity, availability, data.id)
+		return new Event (date, location, capacity, availability, data.status, data.id)
 	}
 
 	id: string
@@ -295,8 +295,9 @@ export class Event {
 	location: string
 	capacity: number
 	availability: number
+	status: string
 
-	constructor(date: Date, location: string, capacity: number, availability: number, id?: string) {
+	constructor(date: Date, location: string, capacity: number, availability: number, status: string, id?: string) {
 		if (id) {
 			this.id = id!
 		}
@@ -304,6 +305,7 @@ export class Event {
 		this.location = location
 		this.capacity = capacity
 		this.availability = availability
+		this.status = status
 	}
 
 	getActivityId() {
