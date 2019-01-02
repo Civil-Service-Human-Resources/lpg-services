@@ -460,7 +460,8 @@ export async function tryCompleteBooking(
 	const session = req.session!
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
-	const response = await learnerRecord.bookEvent(course, module, event, req.user, req.session!.purchaseOrder)
+	const response = await learnerRecord.bookEvent(
+		course, module, event, req.user, req.session!.purchaseOrder, session.payment.value)
 
 	let message
 
