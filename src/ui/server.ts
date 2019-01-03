@@ -27,6 +27,7 @@ import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
 import * as learningRecordFeedbackController from './controllers/learning-record/feedback'
+import * as profileController from './controllers/profile'
 import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
@@ -185,6 +186,12 @@ app.use(passport.hasRole('LEARNER'))
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
+
+app.get('/profile/name', profileController.addName)
+app.post('/profile/name', profileController.updateName)
+app.get('/profile/organisation', profileController.addOrganisation)
+app.post('/profile/organisation', profileController.updateOrganisation)
+
 
 // disabled for now
 // app.get(

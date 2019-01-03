@@ -1,0 +1,41 @@
+<Page title="Enter your name" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large"><span class="heading-primary">Enter your name</span></h1>
+                {#if (error)}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    Please enter your name.
+                </div>
+                {/if}
+
+                <form autocomplete="off" method="post" action="/profile/name">
+                    <div class="form-group">
+                        <fieldset>
+                            <label class="form-label" for="name">Name</label>
+                            <input class="form-control" id="name" name="name" type="text" value="{name || ''}">
+                        </fieldset>
+                    </div>
+
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+	import Page from '../../component/Page.html'
+	import Banner from '../../component/Banner.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page
+		}
+	}
+</script>
