@@ -1,0 +1,41 @@
+<Page title="Your primary area of work" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large"><span class="heading-primary">Your primary area of work</span></h1>
+
+                <form autocomplete="off" method="post" action="/profile/profession">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+
+                    <div class="form-group">
+                        <fieldset class="u-space-b30">
+                            {#each professions as profession}
+                            <div class="multiple-choice">
+                                <input id="{profession.name}" type="radio" name="profession" value="{profession._links.self.href}">
+                                <label for="{profession.name}">{profession.name}</label>
+                            </div>
+                            {/each}
+                        </fieldset>
+                    </div>
+
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+	import Page from '../../component/Page.html'
+	import Banner from '../../component/Banner.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page
+		}
+	}
+</script>
