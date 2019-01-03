@@ -191,7 +191,14 @@ app.get('/profile/name', profileController.addName)
 app.post('/profile/name', profileController.updateName)
 app.get('/profile/organisation', profileController.addOrganisation)
 app.post('/profile/organisation', profileController.updateOrganisation)
-
+app.get('/profile/profession', profileController.addProfession)
+app.post('/profile/profession', profileController.updateProfession)
+app.get('/profile/otherAreasOfWork', profileController.addOtherAreasOfWork)
+app.post('/profile/otherAreasOfWork', profileController.updateOtherAreasOfWork)
+app.get('/profile/interests', profileController.addInterests)
+app.post('/profile/interests', profileController.updateInterests)
+app.get('/profile/grade', profileController.addGrade)
+app.post('/profile/grade', profileController.updateGrade)
 
 // disabled for now
 // app.get(

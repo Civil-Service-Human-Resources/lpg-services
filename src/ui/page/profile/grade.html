@@ -1,0 +1,41 @@
+<Page title="Your grade" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large"><span class="heading-primary">Your grade</span></h1>
+
+                <form autocomplete="off" method="post" action="/profile/grade">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+
+                    <div class="form-group">
+                        <fieldset class="u-space-b30">
+                            {#each grades as grade}
+                            <div class="multiple-choice">
+                                <input id="{grade.name}" type="radio" name="grade" value="{grade._links.self.href}">
+                                <label for="{grade.name}">{grade.name}</label>
+                            </div>
+                            {/each}
+                        </fieldset>
+                    </div>
+
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+	import Page from '../../component/Page.html'
+	import Banner from '../../component/Banner.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page
+		}
+	}
+</script>
