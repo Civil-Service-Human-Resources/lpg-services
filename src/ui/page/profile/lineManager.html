@@ -1,0 +1,50 @@
+<Page title="Add your line manager's email address" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large"><span class="heading-primary">Add your line manager's email address</span></h1>
+                {#if (errors)}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    {#each errors as error}
+                    <div class="error-message">{$i18n(error)}</div>
+                    {/each}
+                </div>
+                {/if}
+
+                <form autocomplete="off" method="post" action="/profile/lineManager">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <div class="form-group">
+                        <fieldset>
+                            <label class="form-label" for="email">Line manager's email address</label>
+                            <input class="form-control" id="email" name="email" type="text" value="{email || ''}">
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group">
+                        <fieldset>
+                            <label class="form-label" for="confirm">Confirm line manager's email address</label>
+                            <input class="form-control" id="confirm" name="confirm" type="text" value="{confirm || ''}">
+                        </fieldset>
+                    </div>
+
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+	import Page from '../../component/Page.html'
+	import Banner from '../../component/Banner.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page
+		}
+	}
+</script>

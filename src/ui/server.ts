@@ -199,6 +199,8 @@ app.get('/profile/interests', profileController.addInterests)
 app.post('/profile/interests', profileController.updateInterests)
 app.get('/profile/grade', profileController.addGrade)
 app.post('/profile/grade', profileController.updateGrade)
+app.get('/profile/lineManager', profileController.addLineManager)
+app.post('/profile/lineManager', profileController.updateLineManager)
 
 // disabled for now
 // app.get(
