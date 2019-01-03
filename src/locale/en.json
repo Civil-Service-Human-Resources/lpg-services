@@ -357,5 +357,16 @@
 	"department": "department",
 	"primary-area-of-work": "primary-area-of-work",
 	"learning_removed_from_suggestions": "This has been removed from your suggested courses.",
-	"other-areas-of-work": "other-areas-of-work"
+	"profile": {
+		"lineManager": {
+			"email": {
+				"empty": "Line manager email address is required.",
+				"invalid": "Please enter a valid email address."
+			},
+			"confirm": {
+				"empty": "Please confirm your line manager's email address.",
+				"match": "Fields do not match."
+			}
+		}
+	}
 }

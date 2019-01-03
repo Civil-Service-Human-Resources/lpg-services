@@ -2,6 +2,8 @@
 import {Request, Response} from 'express'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
+import {IsEmail, IsNotEmpty, validate} from 'class-validator'
+import * as _ from 'lodash'
 
 export function addName(request: Request, response: Response) {
 	response.send(template.render('profile/name', request, response, {}))
@@ -143,4 +145,73 @@ export async function updateGrade(request: Request, response: Response) {
 	response.send(template.render('profile/grade', request, response, {
 		grade,
 	}))
+}
+
+export function addLineManager(request: Request, response: Response) {
+	response.send(template.render('profile/lineManager', request, response, {}))
+}
+
+export async function updateLineManager(request: Request, response: Response) {
+	const lineManager = new LineManagerForm(request.body)
+
+	const errors = await lineManager.validate()
+
+	if (errors.length) {
+		response.send(template.render('profile/lineManager', request, response, {
+			errors,
+			email: lineManager.email,
+			confirm: lineManager.confirm
+		}))
+	}
+
+	try {
+		await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
+	} catch (error) {
+		throw new Error(error)
+	}
+	response.send(template.render('profile/lineManager', request, response, {
+		email: lineManager.email,
+		confirm: lineManager.confirm
+	}))
+}
+
+class LineManagerForm {
+	@IsEmail({},{
+		message: 'profile.lineManager.email.invalid'
+	})
+	@IsNotEmpty({
+		message: 'profile.lineManager.email.empty'
+	})
+	private readonly _email: string
+
+	@IsNotEmpty({
+		message: 'profile.lineManager.confirm.empty'
+	})
+	private readonly _confirm: string
+
+	constructor(data: {email: string, confirm: string}) {
+		this._email = data.email
+		this._confirm = data.confirm
+	}
+
+	get email(): string {
+		return this._email
+	}
+
+	get confirm(): string {
+		return this._confirm
+	}
+
+	async validate() {
+		const errors = await validate(this)
+		let messages =  _.flatten(errors.map((error) => {
+			return Object.values(error.constraints)
+		}))
+
+		if (this._email !== this._confirm) {
+			messages.push("profile.lineManager.confirm.match")
+		}
+
+		return messages
+	}
 }
