@@ -2,7 +2,10 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large"><span class="heading-primary">Add your line manager's email address</span></h1>
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Set up your profile</span>
+                    <span class="heading-primary">Add your line manager's email address</span>
+                </h1>
                 {#if (errors)}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     {#each errors as error}
@@ -10,6 +13,8 @@
                     {/each}
                 </div>
                 {/if}
+                <p>You can skip this by leaving the boxes blank.<br>
+                To add a line manager, they must be registered with the service.</p>
 
                 <form autocomplete="off" method="post" action="/profile/lineManager">
                     <input type="hidden" name="_csrf" value="{_csrf}">
