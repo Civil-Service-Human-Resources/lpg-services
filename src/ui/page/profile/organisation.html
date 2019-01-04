@@ -2,7 +2,10 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large"><span class="heading-primary">Your organisation</span></h1>
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Set up your profile</span>
+                    <span class="heading-primary">Your organisation</span>
+                </h1>
                 {#if (error)}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <div class="error-message">Please enter your organisation.</div>
@@ -12,7 +15,9 @@
                 <form autocomplete="off" method="post" action="/profile/organisation">
                     <div class="form-group">
                         <fieldset>
-                            <label class="form-label" for="organisation">Organisation</label>
+                            <label class="form-label" for="organisation">Organisation
+                                <span class="form-hint">Start typing to find your organisation name</span>
+                            </label>
                             <input class="form-control" id="organisation" name="organisation" type="text" value="{organisation || ''}">
                         </fieldset>
                     </div>
