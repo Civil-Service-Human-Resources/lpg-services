@@ -4,6 +4,13 @@
             <div class="column-full">
                 <h1 class="heading-large"><span class="heading-primary">Your interests</span></h1>
 
+                {#if (error)}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    <div class="error-message">Please select your interests.</div>
+                </div>
+                {/if}
+
+
                 <form autocomplete="off" method="post" action="/profile/interests">
                     <input type="hidden" name="_csrf" value="{_csrf}">
 
