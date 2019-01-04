@@ -2,8 +2,12 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large"><span class="heading-primary">Your grade</span></h1>
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Set up your profile</span>
+                    <span class="heading-primary">Your grade</span>
+                </h1>
 
+                <p>You can skip this question by not selecting an option.</p>
                 <form autocomplete="off" method="post" action="/profile/grade">
                     <input type="hidden" name="_csrf" value="{_csrf}">
 

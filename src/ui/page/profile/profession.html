@@ -2,7 +2,10 @@
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
-                <h1 class="heading-large"><span class="heading-primary">Your primary area of work</span></h1>
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Set up your profile</span>
+                    <span class="heading-primary">Your primary area of work</span>
+                </h1>
 
                 {#if (error)}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
@@ -15,6 +18,7 @@
 
                     <div class="form-group">
                         <fieldset class="u-space-b30">
+                            <span class="form-label">Select the area of work that is relevant to your job.</span>
                             {#each professions as profession}
                             <div class="multiple-choice">
                                 <input id="{profession.name}" type="radio" name="profession" value="{profession._links.self.href}">
