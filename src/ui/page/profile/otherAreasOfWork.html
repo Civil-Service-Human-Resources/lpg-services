@@ -1,4 +1,4 @@
-<Page title="Your other areas of work" {_csrf}>
+<PageNoNav title="Your other areas of work" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
@@ -29,9 +29,9 @@
             </div>
         </div>
     </div>
-</Page>
+</PageNoNav>
 <script>
-	import Page from '../../component/Page.html'
+	import PageNoNav from '../../component/PageNoNav.html'
 
 	export default {
 		data() {
@@ -40,7 +40,7 @@
 		},
 
 		components: {
-			Page
+			PageNoNav
 		}
 	}
 </script>
