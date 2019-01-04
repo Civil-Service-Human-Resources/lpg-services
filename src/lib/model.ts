@@ -287,7 +287,12 @@ export class Event {
 			capacity = data.capacity
 		}
 
-		return new Event (date, location, capacity, availability, data.status, data.id)
+		let status = 'Active'
+		if (data.status) {
+			status = data.status
+		}
+
+		return new Event (date, location, capacity, availability, status, data.id)
 	}
 
 	id: string
