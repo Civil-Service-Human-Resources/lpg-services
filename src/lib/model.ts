@@ -287,10 +287,7 @@ export class Event {
 			capacity = data.capacity
 		}
 
-		let status = 'Active'
-		if (data.status) {
-			status = data.status
-		}
+		const status = data.status ? data.status : 'Active'
 
 		return new Event (date, location, capacity, availability, status, data.id)
 	}
