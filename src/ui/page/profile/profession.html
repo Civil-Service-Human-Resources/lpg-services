@@ -1,4 +1,4 @@
-<Page title="Your primary area of work" {_csrf}>
+<PageNoNav title="Your primary area of work" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
@@ -29,10 +29,9 @@
             </div>
         </div>
     </div>
-</Page>
+</PageNoNav>
 <script>
-	import Page from '../../component/Page.html'
-	import Banner from '../../component/Banner.html'
+	import PageNoNav from '../../component/PageNoNav.html'
 
 	export default {
 		data() {
@@ -41,7 +40,7 @@
 		},
 
 		components: {
-			Page
+			PageNoNav
 		}
 	}
 </script>
