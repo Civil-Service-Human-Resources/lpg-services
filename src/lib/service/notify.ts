@@ -73,7 +73,7 @@ export async function bookingRequested(info: BookingConfirmation) {
 	const templateData = {...info}
 
 	await notify
-		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.confirmed, info.email, {
+		.sendEmail(config.BOOKING_NOTIFY_TEMPLATE_IDS.requested, info.email, {
 			personalisation: templateData,
 		})
 		.catch(reason => {
