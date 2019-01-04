@@ -1,9 +1,8 @@
-/* tslint:disable */
+import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
+import * as _ from 'lodash'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
-import {IsEmail, IsNotEmpty, validate} from 'class-validator'
-import * as _ from 'lodash'
 
 export function addName(request: Request, response: Response) {
 	response.send(template.render('profile/name', request, response, {}))
@@ -64,19 +63,19 @@ export async function addProfession(request: Request, response: Response) {
 	const professions = await getOptions("professions")
 
 	response.send(template.render('profile/profession', request, response, {
-		professions: professions
+		professions,
 	}))
 }
 
 export async function updateProfession(request: Request, response: Response) {
 	const profession = request.body.profession
 
-	if(!profession) {
+	if (!profession) {
 			const professions = await getOptions("professions")
 			response.send(template.render('profile/profession', request, response, {
 				error: true,
 				profession,
-				professions
+				professions,
 			}))
 	} else {
 		try {
@@ -96,7 +95,7 @@ export async function updateProfession(request: Request, response: Response) {
 export async function addOtherAreasOfWork(request: Request, response: Response) {
 	const professions = await getOptions("professions")
 	response.send(template.render('profile/otherAreasOfWork', request, response, {
-		professions
+		professions,
 	}))
 }
 
@@ -107,12 +106,12 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		const professions = await getOptions("professions")
 		response.send(template.render('profile/otherAreasOfWork', request, response, {
 			error: true,
-			professions
+			professions,
 		}))
 	} else {
 		try {
 			await registry.patch('civilServants', {
-				otherAreasOfWork
+				otherAreasOfWork,
 			}, request.user.accessToken)
 		} catch (error) {
 			throw new Error(error)
@@ -127,7 +126,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 export async function addInterests(request: Request, response: Response) {
 	const interests = await getOptions("interests")
 	response.send(template.render('profile/interests', request, response, {
-		interests
+		interests,
 	}))
 }
 
@@ -135,15 +134,15 @@ export async function updateInterests(request: Request, response: Response) {
 	const interests = request.body.interests
 
 	if (!interests) {
-		const interests = await getOptions("interests")
+		const options = await getOptions("interests")
 		response.send(template.render('profile/interests', request, response, {
 			error: true,
-			interests
+			interests: options,
 		}))
 	} else {
 		try {
 			await registry.patch('civilServants', {
-				interests
+				interests,
 			}, request.user.accessToken)
 		} catch (error) {
 			throw new Error(error)
@@ -157,14 +156,14 @@ export async function updateInterests(request: Request, response: Response) {
 export async function addGrade(request: Request, response: Response) {
 	const grades = await getOptions('grades')
 	response.send(template.render('profile/grade', request, response, {
-		grades
+		grades,
 	}))
 }
 
 export async function updateGrade(request: Request, response: Response) {
 	const grade = request.body.grade
 
-	if(grade){
+	if (grade) {
 		try {
 			await registry.patch('civilServants', {
 				grade,
@@ -190,9 +189,9 @@ export async function updateLineManager(request: Request, response: Response) {
 
 		if (errors.length) {
 			response.send(template.render('profile/lineManager', request, response, {
-				errors,
+				confirm: lineManager.confirm,
 				email: lineManager.email,
-				confirm: lineManager.confirm
+				errors,
 			}))
 			return
 		}
@@ -217,24 +216,26 @@ function sortList(list: any) {
 	return list.sort((a: any, b: any) => {
 		if (a.name === "I don't know") { return 1 }
 		if (b.name === "I don't know") { return -1 }
-		if(a.name < b.name) { return -1; }
-		if(a.name > b.name) { return 1; }
-		return 0;
+		if (a.name < b.name) { return -1 }
+		if (a.name > b.name) { return 1 }
+		return 0
 	})
 }
 
 class LineManagerForm {
-	@IsEmail({},{
-		message: 'profile.lineManager.email.invalid'
+	@IsEmail({}, {
+		message: 'profile.lineManager.email.invalid',
 	})
 	@IsNotEmpty({
-		message: 'profile.lineManager.email.empty'
+		message: 'profile.lineManager.email.empty',
 	})
+	/* tslint:disable-next-line:variable-name */
 	private readonly _email: string
 
 	@IsNotEmpty({
-		message: 'profile.lineManager.confirm.empty'
+		message: 'profile.lineManager.confirm.empty',
 	})
+	/* tslint:disable-next-line:variable-name */
 	private readonly _confirm: string
 
 	constructor(data: {email: string, confirm: string}) {
@@ -256,7 +257,7 @@ class LineManagerForm {
 
 	async validate() {
 		const errors = await validate(this)
-		let messages =  _.flatten(errors.map((error) => {
+		const messages = _.flatten(errors.map(error => {
 			return Object.values(error.constraints)
 		}))
 
