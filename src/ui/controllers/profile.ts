@@ -17,18 +17,20 @@ export async function updateName(request: Request, response: Response) {
 			error: true,
 			name,
 		}))
-	}
+		return
+	} else {
+		try {
+			await registry.patch('civilServants', {
+				fullName: request.body.name,
+			}, request.user.accessToken)
+		} catch (error) {
+			throw new Error(error)
+		}
 
-	try {
-		await registry.patch('civilServants', {
-			fullName: request.body.name,
-		}, request.user.accessToken)
-	} catch (error) {
-		throw new Error(error)
+		request.session!.save(() =>
+			response.redirect('/profile/organisation')
+		)
 	}
-	response.send(template.render('profile/name', request, response, {
-		name,
-	}))
 }
 
 export function addOrganisation(request: Request, response: Response) {
@@ -43,44 +45,56 @@ export async function updateOrganisation(request: Request, response: Response) {
 			error: true,
 			organisation,
 		}))
+		return
+	} else {
+		try {
+			await registry.patch('civilServants', {
+				organisationalUnit: request.body.organisation,
+			}, request.user.accessToken)
+		} catch (error) {
+			throw new Error(error)
+		}
+		request.session!.save(() =>
+			response.redirect('/profile/profession')
+		)
 	}
-
-	try {
-		await registry.patch('civilServants', {
-			organisationalUnit: request.body.organisation,
-		}, request.user.accessToken)
-	} catch (error) {
-		throw new Error(error)
-	}
-	response.send(template.render('profile/organisation', request, response, {
-		organisation,
-	}))
 }
 
 export async function addProfession(request: Request, response: Response) {
-	const professions = await registry.halNode("professions")
+	const professions = await getOptions("professions")
+
 	response.send(template.render('profile/profession', request, response, {
-		professions
+		professions: professions
 	}))
 }
 
 export async function updateProfession(request: Request, response: Response) {
 	const profession = request.body.profession
 
-	try {
-		await registry.patch('civilServants', {
-			profession,
-		}, request.user.accessToken)
-	} catch (error) {
-		throw new Error(error)
+	if(!profession) {
+			const professions = await getOptions("professions")
+			response.send(template.render('profile/profession', request, response, {
+				error: true,
+				profession,
+				professions
+			}))
+	} else {
+		try {
+			await registry.patch('civilServants', {
+				profession,
+			}, request.user.accessToken)
+		} catch (error) {
+			throw new Error(error)
+		}
+
+		request.session!.save(() =>
+			response.redirect('/profile/otherAreasOfWork')
+		)
 	}
-	response.send(template.render('profile/profession', request, response, {
-		profession,
-	}))
 }
 
 export async function addOtherAreasOfWork(request: Request, response: Response) {
-	const professions = await registry.halNode("professions")
+	const professions = await getOptions("professions")
 	response.send(template.render('profile/otherAreasOfWork', request, response, {
 		professions
 	}))
@@ -89,21 +103,29 @@ export async function addOtherAreasOfWork(request: Request, response: Response) 
 export async function updateOtherAreasOfWork(request: Request, response: Response) {
 	const otherAreasOfWork = request.body.otherAreasOfWork
 
-	try {
-		await registry.patch('civilServants', {
-			otherAreasOfWork
-		}, request.user.accessToken)
-	} catch (error) {
-		throw new Error(error)
-	}
+	if (!otherAreasOfWork) {
+		const professions = await getOptions("professions")
+		response.send(template.render('profile/otherAreasOfWork', request, response, {
+			error: true,
+			professions
+		}))
+	} else {
+		try {
+			await registry.patch('civilServants', {
+				otherAreasOfWork
+			}, request.user.accessToken)
+		} catch (error) {
+			throw new Error(error)
+		}
 
-	response.send(template.render('profile/otherAreasOfWork', request, response, {
-		otherAreasOfWork
-	}))
+		request.session!.save(() =>
+			response.redirect('/profile/interests')
+		)
+	}
 }
 
 export async function addInterests(request: Request, response: Response) {
-	const interests = await registry.halNode("interests")
+	const interests = await getOptions("interests")
 	response.send(template.render('profile/interests', request, response, {
 		interests
 	}))
@@ -112,21 +134,28 @@ export async function addInterests(request: Request, response: Response) {
 export async function updateInterests(request: Request, response: Response) {
 	const interests = request.body.interests
 
-	try {
-		await registry.patch('civilServants', {
+	if (!interests) {
+		const interests = await getOptions("interests")
+		response.send(template.render('profile/interests', request, response, {
+			error: true,
 			interests
-		}, request.user.accessToken)
-	} catch (error) {
-		throw new Error(error)
+		}))
+	} else {
+		try {
+			await registry.patch('civilServants', {
+				interests
+			}, request.user.accessToken)
+		} catch (error) {
+			throw new Error(error)
+		}
+		request.session!.save(() =>
+			response.redirect('/profile/grade')
+		)
 	}
-
-	response.send(template.render('profile/interests', request, response, {
-		interests
-	}))
 }
 
 export async function addGrade(request: Request, response: Response) {
-	const grades = await registry.halNode("grades")
+	const grades = await getOptions('grades')
 	response.send(template.render('profile/grade', request, response, {
 		grades
 	}))
@@ -135,16 +164,18 @@ export async function addGrade(request: Request, response: Response) {
 export async function updateGrade(request: Request, response: Response) {
 	const grade = request.body.grade
 
-	try {
-		await registry.patch('civilServants', {
-			grade,
-		}, request.user.accessToken)
-	} catch (error) {
-		throw new Error(error)
+	if(grade){
+		try {
+			await registry.patch('civilServants', {
+				grade,
+			}, request.user.accessToken)
+		} catch (error) {
+			throw new Error(error)
+		}
 	}
-	response.send(template.render('profile/grade', request, response, {
-		grade,
-	}))
+	request.session!.save(() =>
+		response.redirect('/profile/lineManager')
+	)
 }
 
 export function addLineManager(request: Request, response: Response) {
@@ -154,25 +185,42 @@ export function addLineManager(request: Request, response: Response) {
 export async function updateLineManager(request: Request, response: Response) {
 	const lineManager = new LineManagerForm(request.body)
 
-	const errors = await lineManager.validate()
+	if (lineManager.isPresent()) {
+		const errors = await lineManager.validate()
 
-	if (errors.length) {
-		response.send(template.render('profile/lineManager', request, response, {
-			errors,
-			email: lineManager.email,
-			confirm: lineManager.confirm
-		}))
+		if (errors.length) {
+			response.send(template.render('profile/lineManager', request, response, {
+				errors,
+				email: lineManager.email,
+				confirm: lineManager.confirm
+			}))
+			return
+		}
+
+		try {
+			await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
+		} catch (error) {
+			throw new Error(error)
+		}
 	}
 
-	try {
-		await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
-	} catch (error) {
-		throw new Error(error)
-	}
-	response.send(template.render('profile/lineManager', request, response, {
-		email: lineManager.email,
-		confirm: lineManager.confirm
-	}))
+	request.session!.save(() =>
+		response.redirect('/home')
+	)
+}
+
+async function getOptions(type: string) {
+	return sortList(await registry.halNode(type))
+}
+
+function sortList(list: any) {
+	return list.sort((a: any, b: any) => {
+		if (a.name === "I don't know") { return 1 }
+		if (b.name === "I don't know") { return -1 }
+		if(a.name < b.name) { return -1; }
+		if(a.name > b.name) { return 1; }
+		return 0;
+	})
 }
 
 class LineManagerForm {
@@ -200,6 +248,10 @@ class LineManagerForm {
 
 	get confirm(): string {
 		return this._confirm
+	}
+
+	isPresent() {
+		return (this._email || this._confirm)
 	}
 
 	async validate() {
