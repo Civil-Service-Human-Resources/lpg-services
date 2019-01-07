@@ -15,10 +15,7 @@
                 <form autocomplete="off" method="post" action="/profile/organisation">
                     <div class="form-group">
                         <fieldset>
-                            <label class="form-label" for="organisation">Organisation
-                                <span class="form-hint">Start typing to find your organisation name</span>
-                            </label>
-                            <input class="form-control" id="organisation" name="organisation" type="text" value="{organisation || ''}">
+                            <TypeAhead {options} {inputName} {script} {label} {value} />
                         </fieldset>
                     </div>
 
@@ -31,6 +28,7 @@
 </PageNoNav>
 <script>
 	import PageNoNav from '../../component/PageNoNav.html'
+    import TypeAhead from '../../component/TypeAhead.html'
 
 	export default {
 		data() {
@@ -39,7 +37,8 @@
 		},
 
 		components: {
-			PageNoNav
+            PageNoNav,
+            TypeAhead
 		}
 	}
 </script>

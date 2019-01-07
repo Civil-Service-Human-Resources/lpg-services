@@ -1,5 +1,6 @@
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
+import * as config from 'lib/config'
 import * as _ from 'lodash'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
@@ -32,19 +33,40 @@ export async function updateName(request: Request, response: Response) {
 	}
 }
 
-export function addOrganisation(request: Request, response: Response) {
-	response.send(template.render('profile/organisation', request, response, {}))
+export async function addOrganisation(request: Request, response: Response) {
+	const options: {[prop: string]: any} = {}
+	const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat')
+	organisations.data.map((x: any) => {
+		options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+	})
+
+	const value = request.user.department
+
+	response.send(template.render('profile/organisation', request, response, {
+		inputName: 'organisation',
+		label: 'Organisation',
+		options: Object.entries(options),
+		value,
+	}))
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
-	const organisation = request.body.organisation
+	const value = request.body.organisation
 
-	if (!organisation) {
+	if (!value) {
+		const options: {[prop: string]: any} = {}
+		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat')
+		organisations.data.map((x: any) => {
+			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+		})
+
 		response.send(template.render('profile/organisation', request, response, {
 			error: true,
-			organisation,
+			inputName: 'organisation',
+			label: 'Organisation',
+			options: Object.entries(options),
+			value,
 		}))
-		return
 	} else {
 		try {
 			await registry.patch('civilServants', {
