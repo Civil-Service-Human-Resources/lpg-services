@@ -7,7 +7,7 @@ import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
 
 log4js.configure(config.LOGGING)
-const logger = log4js.getLogger('server')
+const logger = log4js.getLogger('profile')
 
 const defaultRedirectUrl = '/home'
 
@@ -39,7 +39,7 @@ export async function updateName(request: Request, response: Response) {
 		setLocalProfile(request, 'givenName', name)
 
 		request.session!.save(() =>
-			response.redirect(request.body.originalUrl || defaultRedirectUrl)
+			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
@@ -107,7 +107,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 		}
 
 		request.session!.save(() =>
-			response.redirect(request.body.originalUrl || defaultRedirectUrl)
+			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
@@ -152,7 +152,7 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 
 		request.session!.save(() =>
-			response.redirect(request.body.originalUrl || defaultRedirectUrl)
+			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
@@ -200,7 +200,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		}
 
 		request.session!.save(() =>
-			response.redirect(request.body.originalUrl || defaultRedirectUrl)
+			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
@@ -319,7 +319,7 @@ export async function updateLineManager(request: Request, response: Response) {
 	}
 
 	request.session!.save(() =>
-		response.redirect(request.body.originalUrl || defaultRedirectUrl)
+		response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 	)
 }
 
