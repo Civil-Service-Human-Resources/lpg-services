@@ -1,12 +1,21 @@
+/* tslint:disable */
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import * as _ from 'lodash'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
+import * as log4js from 'log4js'
+
+log4js.configure(config.LOGGING)
+const logger = log4js.getLogger('server')
+
+const defaultRedirectUrl = '/home'
 
 export function addName(request: Request, response: Response) {
-	response.send(template.render('profile/name', request, response, {}))
+	response.send(template.render('profile/name', request, response, {
+		originalUrl: request.query.originalUrl,
+	}))
 }
 
 export async function updateName(request: Request, response: Response) {
@@ -16,19 +25,22 @@ export async function updateName(request: Request, response: Response) {
 		response.send(template.render('profile/name', request, response, {
 			error: true,
 			name,
+			originalUrl: request.body.originalUrl,
 		}))
-		return
 	} else {
 		try {
 			await registry.patch('civilServants', {
 				fullName: request.body.name,
 			}, request.user.accessToken)
 		} catch (error) {
+			logger.error(error)
 			throw new Error(error)
 		}
 
+		setLocalProfile(request, 'givenName', name)
+
 		request.session!.save(() =>
-			response.redirect('/profile/organisation')
+			response.redirect(request.body.originalUrl || defaultRedirectUrl)
 		)
 	}
 }
@@ -47,6 +59,7 @@ export async function addOrganisation(request: Request, response: Response) {
 		label: 'Organisation',
 		options: Object.entries(options),
 		value,
+		originalUrl: request.query.originalUrl,
 	}))
 }
 
@@ -66,6 +79,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 			label: 'Organisation',
 			options: Object.entries(options),
 			value,
+			originalUrl: request.body.originalUrl,
 		}))
 	} else {
 		try {
@@ -73,10 +87,28 @@ export async function updateOrganisation(request: Request, response: Response) {
 				organisationalUnit: request.body.organisation,
 			}, request.user.accessToken)
 		} catch (error) {
+			logger.error(error)
 			throw new Error(error)
 		}
+
+		try {
+			const response: any = await registry.getWithoutHal(value)
+		 	const organisationalUnit = {
+				code: response.data.code,
+			  name: response.data.name,
+			  paymentMethods: response.data.paymentMethods
+		  }
+
+			setLocalProfile(request, 'department', organisationalUnit.code)
+			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
+		}
+
 		request.session!.save(() =>
-			response.redirect('/profile/profession')
+			response.redirect(request.body.originalUrl || defaultRedirectUrl)
 		)
 	}
 }
@@ -86,6 +118,7 @@ export async function addProfession(request: Request, response: Response) {
 
 	response.send(template.render('profile/profession', request, response, {
 		professions,
+		originalUrl: request.query.originalUrl
 	}))
 }
 
@@ -96,6 +129,7 @@ export async function updateProfession(request: Request, response: Response) {
 			const professions = await getOptions("professions")
 			response.send(template.render('profile/profession', request, response, {
 				error: true,
+				originalUrl: request.body.originalUrl,
 				profession,
 				professions,
 			}))
@@ -108,8 +142,18 @@ export async function updateProfession(request: Request, response: Response) {
 			throw new Error(error)
 		}
 
+		try {
+			const response: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
+			const data = response.data
+
+			setLocalProfile(request, 'areasOfWork', [data.id, data.name])
+		} catch (error) {
+			logger.error(error)
+			throw new Error(error)
+		}
+
 		request.session!.save(() =>
-			response.redirect('/profile/otherAreasOfWork')
+			response.redirect(request.body.originalUrl || defaultRedirectUrl)
 		)
 	}
 }
@@ -117,6 +161,7 @@ export async function updateProfession(request: Request, response: Response) {
 export async function addOtherAreasOfWork(request: Request, response: Response) {
 	const professions = await getOptions("professions")
 	response.send(template.render('profile/otherAreasOfWork', request, response, {
+		originalUrl: request.query.originalUrl,
 		professions,
 	}))
 }
@@ -128,19 +173,35 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		const professions = await getOptions("professions")
 		response.send(template.render('profile/otherAreasOfWork', request, response, {
 			error: true,
+			originalUrl: request.body.originalUrl,
 			professions,
 		}))
 	} else {
+			const values: string[] = [].concat(otherAreasOfWork)
 		try {
 			await registry.patch('civilServants', {
-				otherAreasOfWork,
+				otherAreasOfWork: values,
 			}, request.user.accessToken)
 		} catch (error) {
+			logger.error(error)
+			throw new Error(error)
+		}
+
+		try {
+			const professions = []
+			for (const profession of values) {
+				const response: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
+				professions.push({id: response.data.id, name: response.data.name})
+			}
+
+			setLocalProfile(request, 'otherAreasOfWork', professions)
+		} catch (error) {
+			logger.error(error)
 			throw new Error(error)
 		}
 
 		request.session!.save(() =>
-			response.redirect('/profile/interests')
+			response.redirect(request.body.originalUrl || defaultRedirectUrl)
 		)
 	}
 }
@@ -149,6 +210,7 @@ export async function addInterests(request: Request, response: Response) {
 	const interests = await getOptions("interests")
 	response.send(template.render('profile/interests', request, response, {
 		interests,
+		originalUrl: request.query.originalUrl,
 	}))
 }
 
@@ -160,17 +222,33 @@ export async function updateInterests(request: Request, response: Response) {
 		response.send(template.render('profile/interests', request, response, {
 			error: true,
 			interests: options,
+			originalUrl: request.body.originalUrl,
 		}))
 	} else {
+		const values: string[] = [].concat(interests)
 		try {
 			await registry.patch('civilServants', {
-				interests,
+				interests: values,
 			}, request.user.accessToken)
 		} catch (error) {
+			logger.error(error)
 			throw new Error(error)
 		}
+
+		try {
+			const updatedInterests = []
+			for (const interest of values) {
+				const response: any = await registry.getWithoutHal(interest.replace(config.REGISTRY_SERVICE_URL, ''))
+				updatedInterests.push({name: response.data.name})
+			}
+			setLocalProfile(request, 'interests', updatedInterests)
+		} catch (error) {
+			logger.error(error)
+			throw new Error(error)
+		}
+
 		request.session!.save(() =>
-			response.redirect('/profile/grade')
+			response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`)
 		)
 	}
 }
@@ -179,6 +257,7 @@ export async function addGrade(request: Request, response: Response) {
 	const grades = await getOptions('grades')
 	response.send(template.render('profile/grade', request, response, {
 		grades,
+		originalUrl: request.query.originalUrl,
 	}))
 }
 
@@ -189,18 +268,30 @@ export async function updateGrade(request: Request, response: Response) {
 		try {
 			await registry.patch('civilServants', {
 				grade,
+				originalUrl: request.body.originalUrl
 			}, request.user.accessToken)
 		} catch (error) {
+			logger.error(error)
+			throw new Error(error)
+		}
+
+		try {
+			const response: any = await registry.getWithoutHal(grade.replace(config.REGISTRY_SERVICE_URL, ''))
+			setLocalProfile(request, 'grade', {code: response.data.code, name: response.data.name})
+		} catch (error) {
+			logger.error(error)
 			throw new Error(error)
 		}
 	}
 	request.session!.save(() =>
-		response.redirect('/profile/lineManager')
+		response.redirect(`/profile/lineManager?originalUrl=${request.body.originalUrl}`)
 	)
 }
 
 export function addLineManager(request: Request, response: Response) {
-	response.send(template.render('profile/lineManager', request, response, {}))
+	response.send(template.render('profile/lineManager', request, response, {
+		originalUrl: request.query.originalUrl
+	}))
 }
 
 export async function updateLineManager(request: Request, response: Response) {
@@ -214,19 +305,22 @@ export async function updateLineManager(request: Request, response: Response) {
 				confirm: lineManager.confirm,
 				email: lineManager.email,
 				errors,
+				originalUrl: request.body.originalUrl
 			}))
 			return
 		}
 
-		try {
-			await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
-		} catch (error) {
-			throw new Error(error)
+		const res: any = await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
+		if (res.status !== 200) {
+			logger.error(res)
+			throw new Error(res)
 		}
+
+		setLocalProfile(request, 'lineManager', { email: lineManager.email })
 	}
 
 	request.session!.save(() =>
-		response.redirect('/home')
+		response.redirect(request.body.originalUrl || defaultRedirectUrl)
 	)
 }
 
@@ -242,6 +336,14 @@ function sortList(list: any) {
 		if (a.name > b.name) { return 1 }
 		return 0
 	})
+}
+
+function setLocalProfile(request: Request, key: string, value: any) {
+	const user: any = JSON.parse(request.session!.passport.user)
+	user[key] = value
+	request.session!.passport.user = JSON.stringify(user)
+
+	request.session!.save(() => {})
 }
 
 class LineManagerForm {
