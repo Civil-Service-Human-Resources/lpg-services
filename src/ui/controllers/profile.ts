@@ -1,11 +1,10 @@
-/* tslint:disable */
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import * as _ from 'lodash'
+import * as log4js from 'log4js'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
-import * as log4js from 'log4js'
 
 log4js.configure(config.LOGGING)
 const logger = log4js.getLogger('server')
@@ -58,8 +57,8 @@ export async function addOrganisation(request: Request, response: Response) {
 		inputName: 'organisation',
 		label: 'Organisation',
 		options: Object.entries(options),
-		value,
 		originalUrl: request.query.originalUrl,
+		value,
 	}))
 }
 
@@ -78,8 +77,8 @@ export async function updateOrganisation(request: Request, response: Response) {
 			inputName: 'organisation',
 			label: 'Organisation',
 			options: Object.entries(options),
-			value,
 			originalUrl: request.body.originalUrl,
+			value,
 		}))
 	} else {
 		try {
@@ -92,12 +91,12 @@ export async function updateOrganisation(request: Request, response: Response) {
 		}
 
 		try {
-			const response: any = await registry.getWithoutHal(value)
-		 	const organisationalUnit = {
-				code: response.data.code,
-			  name: response.data.name,
-			  paymentMethods: response.data.paymentMethods
-		  }
+			const organisationResponse: any = await registry.getWithoutHal(value)
+			const organisationalUnit = {
+				code: organisationResponse.data.code,
+				name: organisationResponse.data.name,
+				paymentMethods: organisationResponse.data.paymentMethods,
+			}
 
 			setLocalProfile(request, 'department', organisationalUnit.code)
 			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
@@ -117,8 +116,8 @@ export async function addProfession(request: Request, response: Response) {
 	const professions = await getOptions("professions")
 
 	response.send(template.render('profile/profession', request, response, {
+		originalUrl: request.query.originalUrl,
 		professions,
-		originalUrl: request.query.originalUrl
 	}))
 }
 
@@ -143,8 +142,8 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 
 		try {
-			const response: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
-			const data = response.data
+			const professionResponse: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
+			const data = professionResponse.data
 
 			setLocalProfile(request, 'areasOfWork', [data.id, data.name])
 		} catch (error) {
@@ -177,7 +176,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 			professions,
 		}))
 	} else {
-			const values: string[] = [].concat(otherAreasOfWork)
+		const values: string[] = [].concat(otherAreasOfWork)
 		try {
 			await registry.patch('civilServants', {
 				otherAreasOfWork: values,
@@ -190,8 +189,8 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		try {
 			const professions = []
 			for (const profession of values) {
-				const response: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
-				professions.push({id: response.data.id, name: response.data.name})
+				const professionResponse: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
+				professions.push({id: professionResponse.data.id, name: professionResponse.data.name})
 			}
 
 			setLocalProfile(request, 'otherAreasOfWork', professions)
@@ -238,8 +237,8 @@ export async function updateInterests(request: Request, response: Response) {
 		try {
 			const updatedInterests = []
 			for (const interest of values) {
-				const response: any = await registry.getWithoutHal(interest.replace(config.REGISTRY_SERVICE_URL, ''))
-				updatedInterests.push({name: response.data.name})
+				const interestResponse: any = await registry.getWithoutHal(interest.replace(config.REGISTRY_SERVICE_URL, ''))
+				updatedInterests.push({name: interestResponse.data.name})
 			}
 			setLocalProfile(request, 'interests', updatedInterests)
 		} catch (error) {
@@ -268,7 +267,7 @@ export async function updateGrade(request: Request, response: Response) {
 		try {
 			await registry.patch('civilServants', {
 				grade,
-				originalUrl: request.body.originalUrl
+				originalUrl: request.body.originalUrl,
 			}, request.user.accessToken)
 		} catch (error) {
 			logger.error(error)
@@ -276,8 +275,8 @@ export async function updateGrade(request: Request, response: Response) {
 		}
 
 		try {
-			const response: any = await registry.getWithoutHal(grade.replace(config.REGISTRY_SERVICE_URL, ''))
-			setLocalProfile(request, 'grade', {code: response.data.code, name: response.data.name})
+			const gradeResponse: any = await registry.getWithoutHal(grade.replace(config.REGISTRY_SERVICE_URL, ''))
+			setLocalProfile(request, 'grade', {code: gradeResponse.data.code, name: gradeResponse.data.name})
 		} catch (error) {
 			logger.error(error)
 			throw new Error(error)
@@ -290,7 +289,7 @@ export async function updateGrade(request: Request, response: Response) {
 
 export function addLineManager(request: Request, response: Response) {
 	response.send(template.render('profile/lineManager', request, response, {
-		originalUrl: request.query.originalUrl
+		originalUrl: request.query.originalUrl,
 	}))
 }
 
@@ -305,7 +304,7 @@ export async function updateLineManager(request: Request, response: Response) {
 				confirm: lineManager.confirm,
 				email: lineManager.email,
 				errors,
-				originalUrl: request.body.originalUrl
+				originalUrl: request.body.originalUrl,
 			}))
 			return
 		}
@@ -343,6 +342,7 @@ function setLocalProfile(request: Request, key: string, value: any) {
 	user[key] = value
 	request.session!.passport.user = JSON.stringify(user)
 
+	/* tslint:disable-next-line:no-empty */
 	request.session!.save(() => {})
 }
 
