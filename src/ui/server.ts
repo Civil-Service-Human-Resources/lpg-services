@@ -1,15 +1,12 @@
-import * as fs from 'fs'
-import * as config from 'lib/config'
-import * as log4js from 'log4js'
-
-log4js.configure(config.LOGGING)
-
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
+import * as fs from 'fs'
+import * as config from 'lib/config'
+import * as log4js from 'log4js'
 
 import * as lusca from 'lusca'
 import * as path from 'path'
@@ -17,7 +14,6 @@ import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
-import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
 import * as template from 'lib/ui/template'
 
@@ -34,6 +30,8 @@ import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
+
+log4js.configure(config.LOGGING)
 
 /* tslint:disable:no-var-requires */
 const appInsights = require('applicationinsights')
@@ -183,6 +181,82 @@ app.post('/feedback.record', asyncHandler(feedbackController.record))
 app.use(passport.isAuthenticated)
 app.use(passport.hasRole('LEARNER'))
 
+app.use(
+	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+		/* tslint:disable */
+
+		const profileSections: {name: string, path: string, isPresent: any}[] = [
+			{
+				name: 'givenName',
+				path: '/profile/name',
+				isPresent: (user: any) => {
+					return Boolean(user.givenName)
+				}
+			},
+			{
+				name: 'organisationalUnit',
+				path: '/profile/organisation',
+				isPresent: (user: any) => {
+					return Boolean(user.organisationalUnit &&  user.organisationalUnit.name)
+				}
+			},
+			{
+				name: 'department',
+				path: '/profile/organisation',
+				isPresent: (user: any) => {
+					return Boolean(user.department)
+				}
+			},
+			{
+				name: 'areasOfWork',
+				path:'/profile/profession',
+				isPresent: (user: any) => {
+					return Boolean(user.areasOfWork && user.areasOfWork.length)
+				}
+			},
+			{
+				name: 'otherAreasOfWork',
+				path: '/profile/otherAreasOfWork',
+				isPresent: (user: any) => {
+					return Boolean(user.otherAreasOfWork.length)
+				}
+			},
+			{
+				name: 'interests',
+				path: '/profile/interests',
+				isPresent: (user: any) => {
+					return Boolean(user.interests.length)
+				}
+			}
+		]
+
+		const isProfileRequest = () => {
+			return profileSections.filter((entry) => {
+				return entry.path === req.path
+			}).length
+		}
+
+		if (!isProfileRequest()) {
+			try {
+				for (const section of profileSections) {
+					if (!section.isPresent(req.user)) {
+						req.session!.save(() => {
+							res.redirect(`${section.path}?originalUrl=${req.originalUrl}`)
+						})
+						return
+					}
+				}
+			}
+			catch (error) {
+				logger.error(error)
+				next(error)
+			}
+		}
+
+		next()
+	}
+)
+
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
@@ -219,17 +293,19 @@ app.post(
 	asyncHandler(userController.tryUpdateProfile)
 )
 
-app.use(
-	(req: express.Request, res: express.Response, next: express.NextFunction) => {
-		const user = req.user as model.User
-		if (!user.hasCompleteProfile()) {
-			logger.debug('Incomplete profile, redirecting user')
-			res.redirect('/profile')
-		} else {
-			next()
-		}
-	}
-)
+
+
+// app.use(
+// 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
+// 		const user = req.user as model.User
+// 		if (!user.hasCompleteProfile()) {
+// 			logger.debug('Incomplete profile, redirecting user')
+// 			res.redirect('/profile')
+// 		} else {
+// 			next()
+// 		}
+// 	}
+// )
 
 app.get('/courses/:courseId', asyncHandler(courseController.display))
 
