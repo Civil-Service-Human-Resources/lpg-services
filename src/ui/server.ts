@@ -104,7 +104,6 @@ app.use(compression({threshold: 0}))
 if (config.PROFILE === 'prod') {
 	app.use(
 		lusca({
-			csrf: true,
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
