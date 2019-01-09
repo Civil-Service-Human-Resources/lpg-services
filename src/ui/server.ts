@@ -40,7 +40,8 @@ const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 /* tslint:enable */
 
-appInsights.setup(config.INSTRUMENTATION_KEY)
+appInsights
+	.setup(config.INSTRUMENTATION_KEY)
 	.setAutoDependencyCorrelation(true)
 	.setAutoCollectRequests(true)
 	.setAutoCollectPerformance(true)
@@ -94,7 +95,7 @@ app.use(
 )
 app.use(flash())
 
-app.use(bodyParser.json({ strict: false }))
+app.use(bodyParser.json({strict: false}))
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.text())
 
@@ -103,6 +104,7 @@ app.use(compression({threshold: 0}))
 if (config.PROFILE === 'prod') {
 	app.use(
 		lusca({
+			csrf: true,
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
