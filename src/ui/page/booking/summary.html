@@ -43,7 +43,7 @@
                         <a href="/book/{course.id}/{module.id}/{event.id}/payment?ref=summary" class="booking__change lpg-change-payment">Edit</a>
                     </h3>
                     <ul>
-                        {#if payment.value != ""}
+                        {#if module.cost}
                             <li class="booking__panel__row">
                                 <span class="booking__key">Payment method</span>
                                 <span class="booking__value lpg-payment-method">
