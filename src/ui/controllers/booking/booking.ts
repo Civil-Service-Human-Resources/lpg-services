@@ -493,33 +493,36 @@ export async function tryCompleteBooking(
 				}
 			}
 		}
-		await notify
-			.bookingRequested({
-				accessibility: accessibilityArray.join(', '),
-				bookingReference: `${req.user.id}-${event.id}`,
-				cost: module.cost,
-				courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
-					event.date,
-					true
-				)} ${
-					module.duration
-						? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
-						: ''
-					}`,
-				courseLocation: event.location,
-				courseTitle: module.title || course.title,
-				email: req.user.userName,
-				eventId: event.id,
-				learnerName: req.user.givenName || req.user.userName,
-				lineManager: req.user.lineManager,
-				location: event.location,
-				paymentOption,
-			})
-			.catch((e: Error) => {
-				logger.error('There was an error with GOV Notify', e)
-				res.redirect('/book/ouch')
-				return true
-			})
+
+		if (module.cost !== 0) {
+			await notify
+				.bookingRequested({
+					accessibility: accessibilityArray.join(', '),
+					bookingReference: `${req.user.id}-${event.id}`,
+					cost: module.cost,
+					courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
+						event.date,
+						true
+					)} ${
+						module.duration
+							? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
+							: ''
+						}`,
+					courseLocation: event.location,
+					courseTitle: module.title || course.title,
+					email: req.user.userName,
+					eventId: event.id,
+					learnerName: req.user.givenName || req.user.userName,
+					lineManager: req.user.lineManager,
+					location: event.location,
+					paymentOption,
+				})
+				.catch((e: Error) => {
+					logger.error('There was an error with GOV Notify', e)
+					res.redirect('/book/ouch')
+					return true
+				})
+		}
 
 		message = confirmedMessage.Booked
 	}	else {

@@ -35,21 +35,21 @@
                 </div>
             </div>
         </div>
-        {#if payment.value != ""}
-            <div class="grid-row">
-                <div class="column-full">
-                    <div class="booking__panel">
-                        <h3 class="heading-small">
-                            Payment details
-                            <a href="/book/{course.id}/{module.id}/{event.id}/payment?ref=summary" class="booking__change lpg-change-payment">Edit</a>
-                        </h3>
-                        <ul>
+        <div class="grid-row">
+            <div class="column-full">
+                <div class="booking__panel">
+                    <h3 class="heading-small">
+                        Payment details
+                        <a href="/book/{course.id}/{module.id}/{event.id}/payment?ref=summary" class="booking__change lpg-change-payment">Edit</a>
+                    </h3>
+                    <ul>
+                        {#if payment.value != ""}
                             <li class="booking__panel__row">
                                 <span class="booking__key">Payment method</span>
                                 <span class="booking__value lpg-payment-method">
                                     { $i18n('paymentMethods_' + payment.type + '_type' ) }
                                     {#if payment.value.indexOf('Call off') > -1}
-                                       &nbsp;(Call off)
+                                        &nbsp;(Call off)
                                     {/if}
                                 </span>
                             </li>
@@ -59,19 +59,19 @@
                                     <span class="booking__value lpg-po-number">{payment.value}</span>
                                 </li>
                             {/if}
-                            <li class="booking__panel__row">
-                                <span class="booking__key">Amount</span>
-                                {#if module.cost}
+                        {/if}
+                        <li class="booking__panel__row">
+                            <span class="booking__key">Amount</span>
+                            {#if module.cost}
                                 <span class="booking__value lpg-confirm-price">&pound;{module.cost} (ex VAT)</span>
-                                {:else}
+                            {:else}
                                 <span class="booking__value lpg-confirm-price">&pound;Free (ex VAT)</span>
-                                {/if}
-                            </li>
-                        </ul>
-                    </div>
+                            {/if}
+                        </li>
+                    </ul>
                 </div>
             </div>
-        {/if}
+        </div>
         <div class="grid-row">
             <div class="column-full">
                 <div class="booking__panel">
