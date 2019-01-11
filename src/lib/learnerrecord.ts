@@ -54,6 +54,8 @@ export async function bookEvent(
 	if (purchaseOrder) {
 		data.paymentDetails = `${config.COURSE_CATALOGUE.url}/purchase-orders/${purchaseOrder.id}`
 		data.status = 'Confirmed'
+	} else if (module.cost === 0) {
+		data.status = 'Confirmed'
 	} else {
 		data.status = 'Requested'
 		data.poNumber = poNumber
