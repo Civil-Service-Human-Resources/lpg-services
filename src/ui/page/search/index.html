@@ -40,7 +40,9 @@
                                     cta={$constructModuleCta(result.course.id, result.module, $req.user, result.module.state, result.course.record, 'search')}>
                                 </DisciteModule>
                             {/if}
-                        {/each} 
+                        {/each}
+                    {:else}
+                        <p class="govuk-body">No results</p> 
                     {/if}
                 </div>
             </div>
