@@ -38,7 +38,7 @@
             <div class="discite__item--main">
                 <h3 class="heading discite__heading"><a href="/courses/{course.id}" class="govuk-link">{bookedModule.moduleTitle}</a></h3>
                 <p class="discite__property-item">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
-                {#if bookedModule.bookingStatus !=="CANCELLED"}
+                {#if bookedModule.bookingStatus !== "CANCELLED"}
                     <a class="discite__property-item" href={$constructCourseCallToAction(course).url}>Cancel booking</a>
                 {/if}
             </div>
