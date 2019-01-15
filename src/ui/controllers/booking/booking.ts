@@ -460,8 +460,24 @@ export async function tryCompleteBooking(
 	const session = req.session!
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
+	const accessibilityArray: string[] = []
+	for (const i in session.accessibilityReqs) {
+		if (i) {
+			const requirement = session.accessibilityReqs[i]
+			if (requirement === 'other') {
+				accessibilityArray.push('Other')
+			} else {
+				accessibilityArray.push(
+					res.__(`accessibility-requirements`)[requirement]
+				)
+			}
+		}
+	}
+
+	const accessibilityOptions = accessibilityArray.join(', ')
+
 	const response = await learnerRecord.bookEvent(
-		course, module, event, req.user, req.session!.purchaseOrder, session.payment.value)
+		course, module, event, req.user, req.session!.purchaseOrder, session.payment.value, accessibilityOptions)
 
 	let message
 
@@ -473,19 +489,6 @@ export async function tryCompleteBooking(
 			`response: ${response.status}`
 		)
 
-		const accessibilityArray: string[] = []
-		for (const i in session.accessibilityReqs) {
-			if (i) {
-				const requirement = session.accessibilityReqs[i]
-				if (requirement === 'other') {
-					accessibilityArray.push('Other')
-				} else {
-					accessibilityArray.push(
-						res.__(`accessibility-requirements`)[requirement]
-					)
-				}
-			}
-		}
 		await notify
 			.bookingRequested({
 				accessibility: accessibilityArray.join(', '),
