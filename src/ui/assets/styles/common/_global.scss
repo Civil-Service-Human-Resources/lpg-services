@@ -70,6 +70,12 @@ hr.clear {
 	}
 }
 
+@media all and (max-width: 670px) {
+	.zero-result {
+		margin-top: 10px;
+	}
+}
+
 .table {
 	margin-bottom: 30px;
 	@include m(top) {
