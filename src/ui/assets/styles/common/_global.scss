@@ -35,6 +35,11 @@ hr.clear {
 	cursor: not-allowed;
 }
 
+.no-results {
+	list-style-type: disc;
+	list-style-position: inside;
+}
+
 .aspect {
 	@include e(container) {
 		height: 0;
