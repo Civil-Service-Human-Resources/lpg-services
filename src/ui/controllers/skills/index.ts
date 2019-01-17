@@ -38,17 +38,17 @@ export async function skills(req: express.Request, res: express.Response) {
 }
 
 export async function startQuiz(req: express.Request, res: express.Response) {
-	res.send(template.render('skills/start-quiz', req, res, {}))
+	res.send(template.render('skills/start-quiz', req, res))
 }
 
 export async function chooseQuiz(req: express.Request, res: express.Response) {
-	res.send(template.render('skills/choose-quiz', req, res, {}))
+	res.send(template.render('skills/choose-quiz', req, res))
 }
 
 export async function questions(req: express.Request, res: express.Response) {
-	res.send(template.render('skills/questions', req, res, {}))
+	res.send(template.render('skills/questions', req, res))
 }
 
 export async function quizSummary(req: express.Request, res: express.Response) {
-	res.send(template.render('skills/quiz-summary', req, res, {}))
+	res.send(template.render('skills/quiz-summary', req, res))
 }
