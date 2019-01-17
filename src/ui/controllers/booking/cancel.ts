@@ -40,7 +40,7 @@ export async function renderCancelBookingPage(
 	(module as any).record = moduleRecord
 
 	const optionType = 'radio'
-	const options = Object.entries(req.__('cancelReasons'))
+	const options = Object.entries((await learnerRecord.getCancellationReasons(req.user)).data)
 
 	res.send(
 		template.render('booking/cancel-booking', req, res, {
@@ -129,7 +129,7 @@ export async function tryCancelBooking(
 		extensions[xapi.Extension.CancelReason] = cancelReason
 	}
 
-	const result = await learnerRecord.cancelBooking(event, req.user)
+	const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
 
 	const response: any = {
 		404: async () => {
