@@ -85,6 +85,15 @@ export async function search(
 		if (interests) {
 			url += `&interests=${interests.join('&interests=')}`
 		}
+		if (user.department) {
+			url += `&profileDepartment=${user.department}`
+		}
+		if (user.grade) {
+			url += `&profileGrade=${user.grade}`
+		}
+		if (user.areasOfWork) {
+			url += `&profileAreaOfWork=${user.areasOfWork.join('&profileAreaOfWork=')}`
+		}
 
 		const response = await http.get(url, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return convertToMixed(response.data, user) as api.SearchResults
