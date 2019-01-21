@@ -89,10 +89,10 @@ export async function search(
 			url += `&profileDepartment=${user.department}`
 		}
 		if (user.grade) {
-			url += `&profileGrade=${user.grade}`
+			url += `&profileGrade=${user.grade.code}`
 		}
 		if (user.areasOfWork) {
-			url += `&profileAreaOfWork=${user.areasOfWork.join('&profileAreaOfWork=')}`
+			url += `&profileAreasOfWork=${user.areasOfWork.join('&profileAreasOfWork=')}`
 		}
 
 		const response = await http.get(url, {headers: {Authorization: `Bearer ${user.accessToken}`}})

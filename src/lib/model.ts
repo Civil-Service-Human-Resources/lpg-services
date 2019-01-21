@@ -524,7 +524,7 @@ export class User {
 	givenName?: string
 	organisationalUnit?: OrganisationalUnit
 
-	grade?: string
+	grade?: any
 
 	constructor(
 		id: string,
