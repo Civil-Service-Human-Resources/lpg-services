@@ -1,19 +1,32 @@
 <nav id="proposition-menu">
-    <ul id="proposition-links">
+   <ul id="proposition-links">
         {#if $signedInUser} {#if $signedInUser.hasCompleteProfile()}
-        <li>
-            <a href="/home">Home</a>
-        </li>
-        <li>
-            <a href="/suggestions-for-you">{$i18n('suggestions_page_title')}</a>
-        </li>
-        <li>
-            <a href="/learning-record">Learning record</a>
-        </li>
+            {#if $req.originalUrl.includes("/home")}
+                <li class="active"><a href="/home">Home</a></li>
+            {:else}
+                <li><a href="/home">Home</a></li>
+            {/if}
+            {#if $req.originalUrl.includes("/suggestions-for-you")}
+                <li class="active"><a href="/suggestions-for-you">{$i18n('suggestions_page_title')}</a></li>
+            {:else}
+                <li><a href="/suggestions-for-you">{$i18n('suggestions_page_title')}</a></li>
+            {/if}
+            {#if $req.originalUrl.includes("/learning-record")}
+                <li class="active"><a href="/learning-record">Learning record</a></li>
+            {:else}
+                <li><a href="/learning-record">Learning record</a></li>
+            {/if}
         {/if}
-        <li>
-            <a href="/profile">Profile</a>
-        </li>
+        {#if $req.originalUrl.includes("/profile")}
+            <li class="active"><a href="/profile">Profile</a></li>
+        {:else}
+            <li><a href="/profile">Profile</a></li>
+        {/if} 
+        {#if $req.originalUrl.includes("/skills")}
+            <li class="active"><a href="/skills">Skills</a></li>
+        {:else}
+            <li><a href="/skills">Skills</a></li>
+        {/if} 
         {#if $signedInUser.hasRole('COURSE_MANAGER')}
         <li>
             <a href="{$config.LPG_MANAGEMENT_URL}/content-management/">Admin</a>
