@@ -94,6 +94,14 @@ export async function search(
 		if (user.areasOfWork) {
 			url += `&profileAreasOfWork=${user.areasOfWork.join('&profileAreasOfWork=')}`
 		}
+		if (user.otherAreasOfWork) {
+			for (const areaOfWork of user.otherAreasOfWork) {
+				url += `&profileAreasOfWork=${areaOfWork.name}`
+			}
+		}
+		if (user.interests) {
+			url += `&profileInterests=${user.interests.join('&profileInterests=')}`
+		}
 
 		const response = await http.get(url, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return convertToMixed(response.data, user) as api.SearchResults
