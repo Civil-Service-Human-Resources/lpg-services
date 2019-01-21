@@ -357,5 +357,6 @@
 	"department": "department",
 	"primary-area-of-work": "primary-area-of-work",
 	"learning_removed_from_suggestions": "This has been removed from your suggested courses.",
-	"other-areas-of-work": "other-areas-of-work"
+	"other-areas-of-work": "other-areas-of-work",
+	"given-name": "given-name"
 }
