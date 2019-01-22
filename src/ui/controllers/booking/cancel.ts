@@ -1,10 +1,8 @@
 import {confirmedMessage, recordCheck} from './booking'
 
 import * as express from 'express'
-import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
