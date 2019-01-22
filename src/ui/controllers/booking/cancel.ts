@@ -145,24 +145,6 @@ export async function tryCancelBooking(
 			})
 		},
 		200: async () => {
-			await notify.bookingCancelled({
-				bookingReference: `${req.user.id}-${event.id}`,
-				cost: module.cost,
-				courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
-					event.date,
-					true
-				)} ${
-					module.duration
-						? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
-						: ''
-					}`,
-				courseLocation: event.location,
-				courseTitle: module.title || course.title,
-				email: req.user.userName,
-				learnerName: req.user.givenName || req.user.userName,
-				lineManager: req.user.lineManager,
-			})
-
 			req.session!.save(() => {
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
 			})
