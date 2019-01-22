@@ -86,10 +86,10 @@ export async function search(
 			url += `&interests=${interests.join('&interests=')}`
 		}
 		if (user.department) {
-			url += `&profileDepartment=${user.department}`
+			url += `&profileDepartments=${user.department}`
 		}
 		if (user.grade) {
-			url += `&profileGrade=${user.grade.code}`
+			url += `&profileGrades=${user.grade.code}`
 		}
 		if (user.areasOfWork) {
 			url += `&profileAreasOfWork=${user.areasOfWork.join('&profileAreasOfWork=')}`
