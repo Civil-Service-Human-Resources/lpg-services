@@ -148,5 +148,6 @@ export async function tryCancelBooking(
 			})
 		},
 	}
+
 	await response[result.status]()
 }
