@@ -180,21 +180,11 @@ app.get('/status', (req, res) => {
 app.post('/feedback.record', asyncHandler(feedbackController.record))
 
 app.use(passport.isAuthenticated)
-app.use(passport.hasRole('LEARNER'))
+app.use(passport.sendUnauthorisedIfUserIsSupplier())
 
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
-
-// disabled for now
-// app.get(
-// 	'/profile/areas-of-work',
-// 	asyncHandler(userController.newRenderAreasOfWorkPage)
-// )
-// app.get(
-// 	'/profile/areas-of-work/*',
-// 	asyncHandler(userController.newRenderAreasOfWorkPage)
-// )
 
 app.get('/profile/:profileDetail', userController.renderEditPage)
 

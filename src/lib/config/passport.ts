@@ -116,6 +116,19 @@ export function hasRole(role: string) {
 	}
 }
 
+export function sendUnauthorisedIfUserIsSupplier() {
+	return (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction
+	) => {
+		if (req.user && hasAnyRole(["SUPPLIER_AUTHOR", "SUPPLIER_REPORTER"])) {
+			res.sendStatus(401)
+		}
+		return next()
+	}
+}
+
 export function hasAnyRole(roles: string[]) {
 	return (
 		req: express.Request,
