@@ -9,6 +9,8 @@
 	text-align: center;
 	vertical-align: middle;
 	white-space: nowrap;
+	text-transform: lowercase;
+
 	// Default badge
 	background-color: $white;
 	color: $text-colour;
@@ -16,6 +18,10 @@
 
 	&:empty {
 		display: none;
+	}
+
+	.badge:first-letter {
+		text-transform: uppercase;
 	}
 
 	@include m(success) {
