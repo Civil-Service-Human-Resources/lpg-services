@@ -1,7 +1,10 @@
 <Page title="Payment details" {_csrf}>
     <div class="container">
         <div class="grid-row">
-            <div class="column-full">
+            <div class="column-with-back-button column-full">
+                <p class="no-margin">
+                    <a class="link-back" href="/book/{course.id}/{module.id}/{event.id}/payment">Back</a>
+                </p>
                 <h1 class="heading-large">
                     Payment details
                 </h1>
@@ -14,8 +17,6 @@
                 <div class="push-bottom">
                     <a href='{url}/confirm' class="button">Confirm and continue</a>
                 </div>
-
-                <a href="{url}/payment">Edit PO number</a>
             </div>
         </div>
     </div>
