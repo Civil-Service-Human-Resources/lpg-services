@@ -74,15 +74,11 @@ export async function bookEvent(
 }
 
 export async function getCancellationReasons(user: any): Promise<any> {
-	try {
-		return await http.get(`/event/booking/userCancellationReasons`, {
-			headers: {
-				Authorization: `Bearer ${user.accessToken}`,
-			},
-		})
-	} catch (e) {
-		logger.error(e)
-	}
+	return await http.get(`/event/booking/userCancellationReasons`, {
+		headers: {
+			Authorization: `Bearer ${user.accessToken}`,
+		},
+	})
 }
 
 export async function getRecord(

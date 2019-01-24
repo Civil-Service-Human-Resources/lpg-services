@@ -1,5 +1,6 @@
 import {confirmedMessage, recordCheck} from './booking'
 
+import {NextFunction} from "express"
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -11,7 +12,8 @@ const logger = log4js.getLogger('controllers/booking/cancel')
 
 export async function renderCancelBookingPage(
 	ireq: express.Request,
-	res: express.Response
+	res: express.Response,
+	next: NextFunction
 ) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
@@ -38,18 +40,23 @@ export async function renderCancelBookingPage(
 	(module as any).record = moduleRecord
 
 	const optionType = 'radio'
-	const options = Object.entries((await learnerRecord.getCancellationReasons(req.user)).data)
 
-	res.send(
-		template.render('booking/cancel-booking', req, res, {
-			course,
-			error: req.flash('cancelBookingError')[0],
-			event,
-			module,
-			optionType,
-			options,
+	await learnerRecord.getCancellationReasons(req.user)
+		.then(request => {
+			const options = Object.entries(request.data)
+			res.send(
+				template.render('booking/cancel-booking', req, res, {
+					course,
+					error: req.flash('cancelBookingError')[0],
+					event,
+					module,
+					optionType,
+					options,
+				})
+			)
 		})
-	)
+		.catch(error => next(error))
+
 }
 
 export async function renderCancelledBookingPage(
