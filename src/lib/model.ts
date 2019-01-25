@@ -349,7 +349,7 @@ export class Audience {
 	interests: string[]
 	mandatory = false
 	requiredBy?: Date | null
-	frequency?: string
+	frequency?: number
 	type: string
 
 	get optional() {
@@ -430,29 +430,28 @@ export class Audience {
 }
 
 export class Frequency {
-	static FiveYearly: 'FIVE_YEARLY'
-	static ThreeYearly: 'THREE_YEARLY'
-	static Yearly: 'YEARLY'
+	static increment(frequency: number, date: Date) {
+		let newYear = date.getFullYear() + frequency / 12
+		let newMonth = date.getMonth() +  frequency % 12
 
-	static increment(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() + step, date.getMonth(), date.getDate())
-	}
-
-	static decrement(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() - step, date.getMonth(), date.getDate())
-	}
-
-	private static getStep(frequency: string) {
-		switch (frequency) {
-			case Frequency.FiveYearly:
-				return 5
-			case Frequency.ThreeYearly:
-				return 3
-			default:
-				return 1
+		if (newMonth > 12) {
+			newYear++
+			newMonth -= 12
 		}
+
+		return new Date(newYear, newMonth, date.getDate())
+	}
+
+	static decrement(frequency: number, date: Date) {
+		let newYear = date.getFullYear() - frequency / 12
+		let newMonth = date.getMonth() - frequency % 12
+
+		if (newMonth <= 0) {
+			newYear--
+			newMonth = 12 + newMonth
+		}
+
+		return new Date(newYear, newMonth, date.getDate())
 	}
 }
 
