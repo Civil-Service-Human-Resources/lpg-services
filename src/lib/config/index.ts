@@ -59,6 +59,10 @@ export const BOOKING_NOTIFY_TEMPLATE_IDS = {
 	requested: 'ae678ea1-ae7a-42f3-aa27-037336b346c4',
 }
 
+export const LEARNING_NOTIFY_TEMPLATE_IDS = {
+	requiredLineManager: '3f50f0eb-4c47-4e37-8a44-1628faa41924',
+}
+
 export const BOOKING_NOTIFY_RECIPIENTS = [
 	'r.vaughan@kainos.com',
 	'richard@cautionyourblast.com',

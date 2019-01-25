@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as catalog from 'lib/service/catalog'
+import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
@@ -40,6 +41,15 @@ export async function courseResult(
 					modulesCompleted++
 				}
 			})
+
+			if (courseCompleted && course.isRequired() && req.user.lineManager) {
+				await notify.requiredLearningCompleted({
+					courseTitle: course.title,
+					learner: req.user.givenName ? req.user.givenName : req.user.userName,
+					manager: req.user.lineManager.name ? req.user.lineManager.name : req.user.lineManager.email,
+					managerEmail: req.user.lineManager.email,
+				}).catch(error => logger.error('An error occurred while notifying the line manager'))
+			}
 
 			res.send(
 				template.render('learning-record/course-result', req, res, {

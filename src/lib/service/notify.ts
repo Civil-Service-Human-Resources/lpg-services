@@ -33,6 +33,13 @@ export interface BookingConfirmation {
 	}
 }
 
+export interface RequiredLearningCompleted {
+	manager: string,
+	managerEmail: string,
+	learner: string
+	courseTitle: string
+}
+
 export async function bookingCancelled(info: BookingCancellation) {
 	const notify = new gov.NotifyClient(config.GOV_NOTIFY_API_KEY)
 
@@ -99,5 +106,17 @@ export async function bookingRequested(info: BookingConfirmation) {
 					`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
 				)
 			})
+	}
+}
+
+export async function requiredLearningCompleted(info: RequiredLearningCompleted) {
+	const notify = new gov.NotifyClient(config.GOV_NOTIFY_API_KEY)
+	const templateData = {...info}
+
+	if (info.managerEmail) {
+		await notify.sendEmail(config.LEARNING_NOTIFY_TEMPLATE_IDS.requiredLineManager, info.managerEmail,{
+					personalisation: templateData,
+				}
+			)
 	}
 }
