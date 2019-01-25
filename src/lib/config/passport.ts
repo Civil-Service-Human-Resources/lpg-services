@@ -103,42 +103,16 @@ export function isAuthenticated(
 	})
 }
 
-export function hasRole(role: string) {
-	return (
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
-		if (req.user && req.user.hasRole(role)) {
-			return next()
-		}
-		res.sendStatus(401)
-	}
-}
-
 export function sendUnauthorisedIfUserIsSupplier() {
 	return (
 		req: express.Request,
 		res: express.Response,
 		next: express.NextFunction
 	) => {
-		if (req.user && hasAnyRole(["SUPPLIER_AUTHOR", "SUPPLIER_REPORTER"])) {
+		if (req.user && req.user.hasAnyRole(["SUPPLIER_AUTHOR", "SUPPLIER_REPORTER"])) {
 			res.sendStatus(401)
 		}
 		return next()
-	}
-}
-
-export function hasAnyRole(roles: string[]) {
-	return (
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
-		if (req.user && req.user.hasAnyRole(roles)) {
-			return next()
-		}
-		res.sendStatus(401)
 	}
 }
 
