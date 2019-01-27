@@ -93,3 +93,12 @@
 		border: none;
 	}
 }
+
+input.form-control {
+	height: 33px;
+
+	@include media(641px) {
+		height: 37px;
+		padding: 6px 4px 4px;
+	}
+}
