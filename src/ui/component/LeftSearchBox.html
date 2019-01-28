@@ -1,6 +1,8 @@
 <aside role="complementary">
     <form autocomplete="off" name="searchLearning" method="get" action="/search">
         <input type="hidden" id="query" name="q" value="{ query }" />
+        <button type="submit" class="button">Apply search filters</button>
+        <a class="clear-filters" href="/search?q={query}">Clear all filters</a>
         <div class="lpg-related-items form-group govuk-related-items--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
@@ -114,5 +116,6 @@
         </div>
 
         <button type="submit" class="button">Apply search filters</button>
+        <a class="clear-filters" href="/search?q={query}">Clear all filters</a>
     </form>
 </aside>

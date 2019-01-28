@@ -1,4 +1,16 @@
 .leftSearchBox {
+<<<<<<< HEAD
+=======
+	clear: left;
+
+	legend {
+		padding-left: 8px;
+		padding-right: 8px;
+		font-weight: bold;
+		background: $alt-color;
+		width: 100%;
+	}
+>>>>>>> added clear filters link
 
     legend {
         padding-left: 8px;
@@ -20,6 +32,7 @@
             margin-left:8px;
         }
 
+<<<<<<< HEAD
         label {
             margin-left:45px;
             &:before {
@@ -38,3 +51,16 @@
         }
     }
 }
+=======
+.filters {
+	.heading-small {
+		margin-top: 6px;
+	}
+}
+
+.clear-filters {
+	float: left;
+	clear: left;
+	padding: 10px 0;
+}
+>>>>>>> added clear filters link
