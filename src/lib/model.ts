@@ -1,6 +1,7 @@
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import * as moment from 'moment'
 import {Duration} from 'moment'
 
 export interface LineManager {
@@ -336,7 +337,7 @@ export class Audience {
 		audience.grades = data.grades || []
 		audience.interests = data.interests || []
 		audience.mandatory = data.mandatory === undefined ? true : data.mandatory
-		audience.frequency = data.frequency
+		audience.frequency = data.frequency ? moment.duration(data.frequency) : undefined
 		audience.type = data.type ? data.type.toString() : null
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
