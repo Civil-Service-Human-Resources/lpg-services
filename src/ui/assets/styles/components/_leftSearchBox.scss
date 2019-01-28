@@ -1,4 +1,6 @@
 .leftSearchBox {
+	clear: left;
+
 	legend {
 		padding-left: 8px;
 		padding-right: 8px;
@@ -35,4 +37,10 @@
 	.heading-small {
 		margin-top: 6px;
 	}
+}
+
+.clear-filters {
+	float: left;
+	clear: left;
+	padding: 10px 0;
 }
