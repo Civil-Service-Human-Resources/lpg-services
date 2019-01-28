@@ -1,5 +1,4 @@
 .badge {
-	border-radius: 2px;
 	display: inline-block;
 	font-weight: 700;
 	line-height: 1;
@@ -14,7 +13,6 @@
 	// Default badge
 	background-color: $white;
 	color: $text-colour;
-	border: 1px solid $border-colour;
 
 	&:empty {
 		display: none;
