@@ -1,6 +1,7 @@
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import {Duration} from 'moment'
 
 export interface LineManager {
 	email: string
@@ -349,7 +350,7 @@ export class Audience {
 	interests: string[]
 	mandatory = false
 	requiredBy?: Date | null
-	frequency?: number
+	frequency?: Duration
 	type: string
 
 	get optional() {
@@ -430,21 +431,13 @@ export class Audience {
 }
 
 export class Frequency {
-	static increment(frequency: number, date: Date) {
-		let newYear = date.getFullYear() + frequency / 12
-		let newMonth = date.getMonth() +  frequency % 12
-
-		if (newMonth > 12) {
-			newYear++
-			newMonth -= 12
-		}
-
-		return new Date(newYear, newMonth, date.getDate())
+	static increment(frequency: Duration, date: Date) {
+		return new Date(date.getFullYear() + frequency.years(), date.getMonth() + frequency.months(), date.getDate())
 	}
 
-	static decrement(frequency: number, date: Date) {
-		let newYear = date.getFullYear() - frequency / 12
-		let newMonth = date.getMonth() - frequency % 12
+	static decrement(frequency: Duration, date: Date) {
+		let newYear = date.getFullYear() - frequency.years()
+		let newMonth = date.getMonth() - frequency.months()
 
 		if (newMonth <= 0) {
 			newYear--
