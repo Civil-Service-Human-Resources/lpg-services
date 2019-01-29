@@ -1,6 +1,4 @@
 .leftSearchBox {
-<<<<<<< HEAD
-=======
 	clear: left;
 
 	legend {
@@ -10,48 +8,31 @@
 		background: $alt-color;
 		width: 100%;
 	}
->>>>>>> added clear filters link
 
-    legend {
-        padding-left: 8px;
-        padding-right: 8px;
-        font-weight:bold;
-        background: $alt-color;
-        width: 100%;
-    }
+	div.multiple-choice {
+		padding: 2px 0px 2px 0px;
+		margin-top: 8px;
 
-    div.multiple-choice {
-        padding:2px 0px 2px 0px;
-        margin-top:8px;
+		margin-bottom: 0px;
+		border-bottom: 1px solid $alt-color;
+		width: 100%;
 
-        margin-bottom:0px;
-        border-bottom: 1px  solid $grey-2;
-        width: 100%;
+		input {
+			margin-left: 8px;
+		}
 
-        input {
-            margin-left:8px;
-        }
-
-<<<<<<< HEAD
-        label {
-            margin-left:45px;
-            &:before {
-                left:8px;
-            }
-            &:after {
-                left:16px;
-            }
-        }
-
-    }
-
-    .filters {
-        .heading-small {
-            margin-top: 6px;
-        }
-    }
+		label {
+			margin-left: 45px;
+			&:before {
+				left: 8px;
+			}
+			&:after {
+				left: 16px;
+			}
+		}
+	}
 }
-=======
+
 .filters {
 	.heading-small {
 		margin-top: 6px;
@@ -64,4 +45,42 @@
 	width: 100%;
 	margin: 10px 0;
 }
->>>>>>> added clear filters link
+
+.hide-filters {
+	position: absolute;
+	left: -9999px;
+}
+
+.filter-label {
+	font-weight: 16px;
+	text-align: center;
+	background-color: $alt-color;
+	display: block;
+	padding: 10px 0;
+	font-weight: bold;
+	margin-bottom: 35px;
+
+	&:before {
+		content: 'Show ';
+	}
+
+	@include media(641px) {
+		display: none;
+	}
+}
+
+.filter-form {
+	display: none;
+
+	@include media(641px) {
+		display: block;
+	}
+}
+
+.hide-filters:checked + .filter-label:before {
+	content: 'Hide ';
+}
+
+.hide-filters:checked ~ .filter-form {
+	display: block;
+}
