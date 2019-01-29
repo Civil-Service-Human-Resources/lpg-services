@@ -304,8 +304,11 @@ a.menu {
 	border-bottom: 1px solid $border;
 	padding-bottom: 15px;
 
-	@include media(desktop) {
+	@include media(641px) {
 		margin: 0 30px;
+	}
+
+	@include media(desktop) {
 		border-bottom: none;
 		padding-bottom: 0;
 	}
