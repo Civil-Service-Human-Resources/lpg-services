@@ -129,4 +129,8 @@ hr.clear {
 .lpg-course-duration,
 .lpg-course-cost {
 	font-weight: bold;
+
+	&::first-letter {
+		text-transform: uppercase;
+	}
 }
