@@ -295,7 +295,7 @@ export async function renderPaymentOptions(
 			)) as any
 		}
 
-		if (!organisationalUnit) {
+		if (!organisationalUnit || !user.lineManager) {
 			res.redirect('/profile')
 		} else {
 			res.send(
