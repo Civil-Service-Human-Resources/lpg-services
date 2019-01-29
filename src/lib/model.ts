@@ -433,7 +433,15 @@ export class Audience {
 
 export class Frequency {
 	static increment(frequency: Duration, date: Date) {
-		return new Date(date.getFullYear() + frequency.years(), date.getMonth() + frequency.months(), date.getDate())
+		let newYear = date.getFullYear() + frequency.years()
+		let newMonth = date.getMonth() + frequency.months()
+
+		if (newMonth > 12) {
+			newYear++
+			newMonth -= 12
+		}
+
+		return new Date(newYear, newMonth, date.getDate())
 	}
 
 	static decrement(frequency: Duration, date: Date) {
