@@ -17,9 +17,9 @@
 		border-bottom: 1px solid $alt-color;
 		width: 100%;
 
-		input {
-			margin-left: 8px;
-		}
+        input {
+            margin-left: 8px;
+        }
 
 		label {
 			margin-left: 45px;
@@ -44,4 +44,43 @@
 	clear: left;
 	width: 100%;
 	margin: 10px 0;
+}
+
+.hide-filters {
+	position: absolute;
+	left: -9999px;
+}
+
+.filter-label {
+	font-weight: 16px;
+	text-align: center;
+	background-color: $alt-color;
+	display: block;
+	padding: 10px 0;
+	font-weight: bold;
+	margin-bottom: 35px;
+
+	&:before {
+		content: 'Show ';
+	}
+
+	@include media(641px) {
+		display: none;
+	}
+}
+
+.filter-form {
+	display: none;
+
+	@include media(641px) {
+		display: block;
+	}
+}
+
+.hide-filters:checked + .filter-label:before {
+	content: 'Hide ';
+}
+
+.hide-filters:checked ~ .filter-form {
+	display: block;
 }
