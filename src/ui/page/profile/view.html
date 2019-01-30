@@ -4,7 +4,7 @@
             <span class="heading-primary">Your profile</span>
         </h1>
         {#if updateSuccessful}
-            <Banner type="confirmation" message={$i18n('profile_updated')} />
+            <Banner type="confirmation" customClass={'profile-banner'} message={$i18n('profile_updated')} />
         {/if}
         <div class="grid-row">
             <div class="column-full">
