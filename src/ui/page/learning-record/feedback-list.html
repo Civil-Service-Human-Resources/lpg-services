@@ -10,7 +10,7 @@
         <div class="grid-row">
             <div class="column-full">
                 {#if successTitle}
-                <Banner type="confirmation" title={successTitle} message={successMessage} />
+                    <Banner type="confirmation" title={successTitle} message={successMessage} />
                 {/if}
             </div>
         </div>
@@ -18,7 +18,7 @@
         <div class="grid-row">
             <div class="column-full">
                 {#each readyForFeedback as forFeedback}
-                <DisciteFeedback course={forFeedback.course} module={forFeedback.module} />
+                    <DisciteFeedback course={forFeedback.course} module={forFeedback.module} />
                 {/each}
             </div>
         </div>
