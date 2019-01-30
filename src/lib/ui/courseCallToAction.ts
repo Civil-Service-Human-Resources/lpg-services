@@ -52,7 +52,6 @@ export function constructCourseCallToAction(
 		const isBooked =
 			bookedModule &&
 			(bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED')
-		const isCancelled = bookedModule && bookedModule.state === 'UNREGISTERED'
 		const isDatePassed = new Date() > course.getSelectedDate()!
 
 		switch (courseType) {
@@ -75,9 +74,6 @@ export function constructCourseCallToAction(
 						}/${record.modules[0].eventId}/cancel`
 						callToActionProps.message = `action_CANCEL`
 					}
-				} else if (isCancelled) {
-					delete callToActionProps.url
-					delete callToActionProps.message
 				}
 				break
 			default:

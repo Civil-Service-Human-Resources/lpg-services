@@ -11,8 +11,8 @@
     {#if cta.actionToPlan && !course.isArchived() }
         {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
             <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add to learning plan</a>
-            {:else}
-               <span>{cta.message}</span>
+        {:else}
+            <span>{cta.message}</span>
         {/if}
     {/if}
 </div>
