@@ -32,7 +32,6 @@
 
             </div>
         </div>
-
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading-medium heading heading--red-top lpg-required-learning">
@@ -54,25 +53,22 @@
                 </h2>
                 {#if plannedLearning.length}
                 <div class="resources lpg-other-courses">
+
                     {#each plannedLearning as course}
                         {#if course.id !== successId}
-                            <DisciteCourse course={course} modifier="home" />
+                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} course={course} duration={formatEventDuration(course.modules[0].duration)} modifier="home" />
                         {:else}
-                            <DisciteCourse {successId} course={course} modifier="home" />
+                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} duration={formatEventDuration(course.modules[0].duration)} {successId} course={course} modifier="home" />
                         {/if}
                     {/each}
                 </div>
                 {:else}
-                <p>{$i18n('no_planned_learning_yet')}</p>
+                    <p>{$i18n('no_planned_learning_yet')}</p>
                 {/if}
             </div>
         </div>
     </div>
     <Skills />
-    <div class="fullbleed fullbleed--grey home__suggested">
-        <SuggestionsSection title="{$i18n('suggestions_page_title')}" lede="{$i18n('home_page_suggestions', $i18n('proposition_name'))}"
-            {suggestedLearning} home={true} />
-    </div>
 </Page>
 <script>
     import Page from '../component/Page.html'

@@ -33,14 +33,15 @@
                             <div class="div-table__th"><span class="visuallyhidden">Action</span></div>
                         </div>
                         {#each events as event, index}
-                            <div class="div-table__row u-clearfix lpg-date-row">
-                                <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
+                            {#if event.status == "Active"}
+                                <div class="div-table__row u-clearfix lpg-date-row">
+                                    <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
 
-                                <div class="div-table__cell">
-                                    {$datetime.formatTime(event.date, true)}
-                                    { module.duration ? 'to ' + $datetime.addSeconds(event.date, module.duration, true) : ''}
-                                </div>
-                                <div class="div-table__cell">{event.location}</div>
+                                    <div class="div-table__cell">
+                                        {$datetime.formatTime(event.date, true)}
+                                        { module.duration ? 'to ' + $datetime.addSeconds(event.date, module.duration, true) : ''}
+                                    </div>
+                                    <div class="div-table__cell">{event.location}</div>
 
                                 {#if event.availability > 0}
                                     <div class="div-table__cell">{event.availability} out of {event.capacity} places</div>
@@ -64,7 +65,8 @@
                                     <div class="div-table__cell">Fully booked</div>
                                     <div class="div-table__cell"></div>
                                 {/if}
-                            </div>
+                                </div>
+                            {/if}
                         {/each}
                     </div>
 

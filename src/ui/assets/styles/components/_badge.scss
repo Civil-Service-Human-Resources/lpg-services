@@ -1,5 +1,4 @@
 .badge {
-	border-radius: 2px;
 	display: inline-block;
 	font-weight: 700;
 	line-height: 1;
@@ -9,13 +8,18 @@
 	text-align: center;
 	vertical-align: middle;
 	white-space: nowrap;
+	text-transform: lowercase;
+
 	// Default badge
 	background-color: $white;
 	color: $text-colour;
-	border: 1px solid $border-colour;
 
 	&:empty {
 		display: none;
+	}
+
+	.badge:first-letter {
+		text-transform: uppercase;
 	}
 
 	@include m(success) {

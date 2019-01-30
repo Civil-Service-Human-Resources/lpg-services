@@ -3,14 +3,12 @@
         <div class="grid-row">
             <div class="{inputName === 'areas-of-work' ? 'column-full' : 'column-two-thirds' }">
                 {#if  ($i18n(inputName) === 'line-manager') }
-                    <h1 class="heading-large"><span class="heading-primary">Add your line manager's email</span></h1>
-                        <p class="govuk-body">To add a line manager, they must be registered with the service.</p>
-                    {:else}
-                        <h1 class="heading-large"><span class="heading-primary">Your {$i18n('profile_' + inputName + '_label').toLowerCase()}</span></h1>
-                    {/if}
-              
+                <h1 class="heading-large"><span class="heading-primary">Add your line manager's email</span></h1>
+                    <p class="govuk-body">To add a line manager, they must be registered with the service.</p>
+                {:else}
+                    <h1 class="heading-large"><span class="heading-primary">Your {$i18n('profile_' + inputName + '_label').toLowerCase()}</span></h1>
+                {/if}
                 {#if (error || errorEmpty)}
-
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                         Update failed

@@ -33,14 +33,40 @@
         <DisciteCourseActions cta={($constructCourseCallToAction(course, modifier))} {course} {modifier} {module} today={modifier === home ? new Date() : null} />
     </slot>
 
-
+    {#if modifier === "home" && booked === true}
+        <div class="discite__item--event">
+            <div class="discite__item--main">
+                <h3 class="heading discite__heading"><a href="/courses/{course.id}" class="govuk-link">{bookedModule.moduleTitle}</a></h3>
+                <p class="discite__property-item">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
+                {#if bookedModule.bookingStatus !== "CANCELLED"}
+                    <a class="discite__property-item" href={$constructCourseCallToAction(course).url}>Cancel booking</a>
+                {/if}
+            </div>
+            <div class="course-details">
+                <p class="discite__property-item no-margin"><span>Type:</span>
+                    <span class="lpg-course-type">
+                        {#if bookedModule.moduleType === 'face-to-face'}
+                           Face to face
+                        {:else}
+                            {bookedModule.moduleType}
+                        {/if}
+                    </span>
+                </p>
+                <p class="discite__property-item no-margin"> <span>Duration: </span>
+                    <span class="lpg-course-duration">{duration}</span>
+                </p>
+            </div>
+            <div class="discite__property-item discite__status--home">
+                <span class="badge badge--discite badge--info">{bookedModule.bookingStatus}</span>
+            </div>
+        </div>
+    {/if}
 </div>
 
 <script>
 	import DisciteCourseActions from './disciteParts/DisciteCourseActions.html'
 	import DisciteCourseProperties from './disciteParts/DisciteCourseProperties.html'
     import DisciteCourseMain from './disciteParts/DisciteCourseMain.html'
-
 
 	export default {
 		data() {
@@ -51,7 +77,7 @@
 		components: {
 		    DisciteCourseActions,
 		    DisciteCourseProperties,
-		    DisciteCourseMain
+		    DisciteCourseMain,
 		}
 	}
 </script>

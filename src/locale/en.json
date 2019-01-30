@@ -333,13 +333,6 @@
 	"SCS": "SCS",
 	"cancel": "cancel",
 	"justAdded": "Just added",
-	"cancelReasons": {
-		"work-priorities": "Other work priorities",
-		"illness": "Illness",
-		"family-bereavement": "Family Bereavement",
-		"prefer-not-to-say": "Prefer not to say",
-		"Other": "Other"
-	},
 	"paymentMethods_FINANCIAL_APPROVER_heading": "Financial approver",
 	"paymentMethods_FINANCIAL_APPROVER_label": "Financial approver email address",
 	"paymentMethods_FINANCIAL_APPROVER_type": "Financial approver",
@@ -356,6 +349,6 @@
 	"otherAreaOfWork": "otherAreaOfWork",
 	"department": "department",
 	"primary-area-of-work": "primary-area-of-work",
-	"learning_removed_from_suggestions": "learning removed from suggestions",
+	"learning_removed_from_suggestions": "This has been removed from your suggested courses.",
 	"other-areas-of-work": "other-areas-of-work"
 }

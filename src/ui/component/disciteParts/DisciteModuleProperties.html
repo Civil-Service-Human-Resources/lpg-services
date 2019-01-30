@@ -2,14 +2,17 @@
     <div class="discite__properties {modifier ? `discite__properties--${modifier}` : ''} u-clearfix">
         <ul class="discite__property {modifier ? `discite__property--${modifier}` : ''}">
             <li class="discite__property-item">
-                <span class="visuallyhidden">Type:</span> {$i18n(module.type)}
+                <span>Type:</span>
+                <span class="lpg-course-type">{$i18n(module.type)}</span>
             </li>
             <li class="discite__property-item">
-                <span class="visuallyhidden">Duration:</span> {module.duration || ''}
+                <span>Duration:</span>
+                <span class="lpg-course-duration"> {module.duration || ''}</span>
             </li>
             {#if module.type !== 'file'}
                 <li class="discite__property-item">
-                    <span class="visuallyhidden">Cost:</span> &pound;{module.price || 'Free'}
+                    <span>Cost:</span>
+                    <span class="lpg-course-cost">&pound;{module.cost || 'Free'}</span>
                 </li>
             {/if}
         </ul>

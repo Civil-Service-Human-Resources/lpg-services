@@ -44,7 +44,7 @@ $module: 'discite';
 		}
 
 		@include m(search) {
-			padding-right: 100px;
+			padding-right: 130px;
 		}
 	}
 
@@ -109,6 +109,9 @@ $module: 'discite';
 	@include e(property-item) {
 		// div.discite__property-item
 		@include core-16;
+		&::first-letter {
+			text-transform: uppercase;
+		}
 	}
 
 	@include e(status) {
@@ -205,7 +208,54 @@ $module: 'discite';
 	}
 }
 
-// TODO: Mick, please tidy this up! Love, Matt.
+.discite__item--event {
+	width: 100%;
+	padding-left: 20px;
+	box-sizing: border-box;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+
+	.discite__status--home {
+		width: 89px;
+	}
+
+	.course-details {
+		width: 190px;
+
+		.no-margin {
+			margin: 0;
+		}
+
+		.module-type {
+			font-size: 16px;
+			margin: 0;
+		}
+	}
+
+	.discite__item--main {
+		width: 100%;
+		padding-right: 5px;
+	}
+}
+
+.badge:first-letter {
+	text-transform: uppercase;
+}
+
+@media screen and (min-width: 641px) {
+	.discite__item--event {
+		width: 100%;
+		flex-wrap: nowrap;
+		justify-content: flex-end;
+
+		.discite__item--main {
+			flex: 1;
+			width: auto;
+		}
+	}
+}
+
 @include media(desktop) {
 	.discite__main--module {
 		.discite__description {

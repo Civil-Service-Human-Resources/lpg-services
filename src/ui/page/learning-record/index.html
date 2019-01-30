@@ -2,12 +2,11 @@
     <div class="container">
         <h1 class="heading-xlarge small-margin">Learning record</h1>
         <p class="govuk-body">This is a record of the learning you have completed.</p>
-        <p class="govuk-body no-margin">If a course has modules it will only appear in your learning record when all its modules have been completed.</p>
-
+        <p class="govuk-body no-margin">A course will only appear in your learning record once you have completed all the modules that are required.</p>
         <div class="grid-row">
             <div class="column-full">
                 {#if successTitle}
-                <Banner type="confirmation" title={successTitle} message={successMessage} />
+                    <Banner type="confirmation" title={successTitle} message={successMessage} />
                 {/if}
             </div>
         </div>
