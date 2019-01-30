@@ -1,10 +1,9 @@
 import {confirmedMessage, recordCheck} from './booking'
 
+import {NextFunction} from "express"
 import * as express from 'express'
-import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
@@ -13,7 +12,8 @@ const logger = log4js.getLogger('controllers/booking/cancel')
 
 export async function renderCancelBookingPage(
 	ireq: express.Request,
-	res: express.Response
+	res: express.Response,
+	next: NextFunction
 ) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
@@ -40,18 +40,23 @@ export async function renderCancelBookingPage(
 	(module as any).record = moduleRecord
 
 	const optionType = 'radio'
-	const options = Object.entries(req.__('cancelReasons'))
 
-	res.send(
-		template.render('booking/cancel-booking', req, res, {
-			course,
-			error: req.flash('cancelBookingError')[0],
-			event,
-			module,
-			optionType,
-			options,
+	await learnerRecord.getCancellationReasons(req.user)
+		.then(request => {
+			const options = Object.entries(request.data)
+			res.send(
+				template.render('booking/cancel-booking', req, res, {
+					course,
+					error: req.flash('cancelBookingError')[0],
+					event,
+					module,
+					optionType,
+					options,
+				})
+			)
 		})
-	)
+		.catch(error => next(error))
+
 }
 
 export async function renderCancelledBookingPage(
@@ -129,7 +134,7 @@ export async function tryCancelBooking(
 		extensions[xapi.Extension.CancelReason] = cancelReason
 	}
 
-	const result = await learnerRecord.cancelBooking(event, req.user)
+	const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
 
 	const response: any = {
 		404: async () => {
@@ -145,28 +150,11 @@ export async function tryCancelBooking(
 			})
 		},
 		200: async () => {
-			await notify.bookingCancelled({
-				bookingReference: `${req.user.id}-${event.id}`,
-				cost: module.cost,
-				courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
-					event.date,
-					true
-				)} ${
-					module.duration
-						? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
-						: ''
-					}`,
-				courseLocation: event.location,
-				courseTitle: module.title || course.title,
-				email: req.user.userName,
-				learnerName: req.user.givenName || req.user.userName,
-				lineManager: req.user.lineManager,
-			})
-
 			req.session!.save(() => {
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
 			})
 		},
 	}
+
 	await response[result.status]()
 }
