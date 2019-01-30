@@ -53,18 +53,15 @@ export function formatCourseDuration(d: number) {
 		}
 		out += `${hours} hour${hours > 1 ? 's' : ''}`
 	}
-	const [minutes, seconds] = divmod(hourSeconds, 60)
+	const [minutes] = divmod(hourSeconds, 60)
 	if (minutes) {
 		if (out) {
 			out += ' '
 		}
 		out += `${minutes} minute${minutes > 1 ? 's' : ''}`
 	}
-	if (seconds) {
-		if (out) {
-			out += ' '
-		}
-		out += `${seconds} second${seconds > 1 ? 's' : ''}`
+	if (minutes === 0 && hours === 0 && days === 0) {
+		out += `1 minute`
 	}
 	return out
 }
