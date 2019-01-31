@@ -63,7 +63,8 @@
                     {/each}
                 </div>
                 {:else}
-                    <p>{$i18n('no_planned_learning_yet')}</p>
+                    <p class="govuk-body">There is currently no learning in your plan.</p>
+                    <p class="govuk-body">You can add learning by checking <a href="/suggestions-for-you">Suggestions for you</a> or <a href="/search?q=">searching for a specific course</a>.</p>
                 {/if}
             </div>
         </div>
