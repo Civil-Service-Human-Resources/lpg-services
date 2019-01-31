@@ -114,3 +114,24 @@ hr.clear {
 .back-to-top {
 	text-align: right;
 }
+
+.banner.profile-banner {
+	text-align: center;
+	margin-bottom: 0;
+	margin-top: 40px;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.lpg-course-type,
+.lpg-course-duration,
+.lpg-course-cost {
+	font-weight: bold;
+	display: inline-block;
+
+	&::first-letter {
+		text-transform: capitalize;
+	}
+}

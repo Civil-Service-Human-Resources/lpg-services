@@ -15,7 +15,7 @@
 		"sass:ui": "node-sass src/ui/assets/styles/main.scss dist/ui/assets/styles/main.css --output-style compressed",
 		"start:all": "npm run start:ui",
 		"start:ui": "cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
-		"test": "find dist -name '*.spec.js' | NODE_ICU_DATA=node_modules/full-icu xargs node_modules/mocha/bin/mocha --exit",
+		"test": "find dist -name '*.spec.js' | NODE_ICU_DATA=node_modules/full-icu xargs node_modules/mocha/bin/mocha --timeout 10000 --exit",
 		"watch": "./bin/tsc -w",
 		"watch-sass:ui": "node-sass -w -r src/ui/assets/styles -o dist/ui/assets/styles --output-style compressed"
 	},
