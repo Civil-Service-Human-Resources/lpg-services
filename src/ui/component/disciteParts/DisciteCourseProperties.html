@@ -10,16 +10,18 @@
             {/if}
         </li>
         <li class="discite__property-item">
-            <span class="visuallyhidden">Type:</span>
+            <span>Type:</span>
             <span class="lpg-course-type">{$i18n(course.getType() || '' )}</span>
         </li>
         <li class="discite__property-item">
-            <span class="visuallyhidden">Duration:</span> {course.getDuration() || ''}
+            <span>Duration:</span> 
+            <span class="lpg-course-duration">{course.getDuration() || ''}</span>
         </li>
         {#if !course.isRequired()}
-        <li class="discite__property-item">
-            <span class="visuallyhidden">Cost:</span> &pound;{#if !course.getCost()}Free{:else}{course.getCost() + ' (ex VAT)'}{/if}
-        </li>
+            <li class="discite__property-item">
+                <span>Cost:</span>
+                <span class="lpg-course-cost">&pound;{#if !course.getCost()}Free{:else}{course.getCost() + ' (ex VAT)'}{/if}</span>
+            </li>
         {/if}
     </ul>
 </div>

@@ -44,7 +44,7 @@ $module: 'discite';
 		}
 
 		@include m(search) {
-			padding-right: 100px;
+			padding-right: 130px;
 		}
 	}
 
@@ -109,6 +109,9 @@ $module: 'discite';
 	@include e(property-item) {
 		// div.discite__property-item
 		@include core-16;
+		&::first-letter {
+			text-transform: uppercase;
+		}
 	}
 
 	@include e(status) {
@@ -251,7 +254,6 @@ $module: 'discite';
 			width: auto;
 		}
 	}
-
 }
 
 @include media(desktop) {

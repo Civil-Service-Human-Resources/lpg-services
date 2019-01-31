@@ -43,15 +43,17 @@
                 {/if}
             </div>
             <div class="course-details">
-                <p class="discite__property-item no-margin"><span class="visuallyhidden">Type:</span>
-                    {#if bookedModule.moduleType === 'face-to-face'}
-                        Face to face
-                    {:else}
-                        {bookedModule.moduleType}
-                    {/if}
+                <p class="discite__property-item no-margin"><span>Type:</span>
+                    <span class="lpg-course-type">
+                        {#if bookedModule.moduleType === 'face-to-face'}
+                           Face to face
+                        {:else}
+                            {bookedModule.moduleType}
+                        {/if}
+                    </span>
                 </p>
-                <p class="discite__property-item no-margin"> <span class="visuallyhidden">Duration: </span>
-                    {duration}
+                <p class="discite__property-item no-margin"> <span>Duration: </span>
+                    <span class="lpg-course-duration">{duration}</span>
                 </p>
             </div>
             <div class="discite__property-item discite__status--home">

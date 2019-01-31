@@ -25,8 +25,9 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function cancelBooking(event: any, user: any): Promise<any> {
+export async function cancelBooking(event: any, cancellationReason: any, user: any): Promise<any> {
 	const data: any = {
+		cancellationReason,
 		status: 'Cancelled',
 	}
 	try {
@@ -54,6 +55,8 @@ export async function bookEvent(
 	if (purchaseOrder) {
 		data.paymentDetails = `${config.COURSE_CATALOGUE.url}/purchase-orders/${purchaseOrder.id}`
 		data.status = 'Confirmed'
+	} else if (module.cost === 0) {
+		data.status = 'Confirmed'
 	} else {
 		data.status = 'Requested'
 		data.poNumber = poNumber
@@ -70,6 +73,14 @@ export async function bookEvent(
 	} catch (e) {
 		logger.error(e)
 	}
+}
+
+export async function getCancellationReasons(user: any): Promise<any> {
+	return await http.get(`/event/booking/userCancellationReasons`, {
+		headers: {
+			Authorization: `Bearer ${user.accessToken}`,
+		},
+	})
 }
 
 export async function getRecord(
