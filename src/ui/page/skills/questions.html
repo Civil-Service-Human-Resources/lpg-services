@@ -10,14 +10,18 @@
                     <h2 class="heading heading-large ">Question # of #</h2>
                 {/if}
                     
-				<form action="skills/questions" method="post">
-					<fieldset>
-                        <form>
-                            <fieldset class="form-group">
-                                <QuizQuestion />
-                            </fieldset>
-                        </form>
-					</fieldset>
+				<form action="skills/questions" method="post" class="question-form">
+                    <fieldset class="form-group">
+                        {#if results}
+                            {#each results as question}
+                                {#if question.question.correctIndices > 1}
+                                    <QuizQuestion type="checkbox" question={question.question.question} answers={question.question.answers} />
+                                {:else}
+                                    <QuizQuestion type="radio"  question={question.question.question} answers={question.question.answers} />
+                                {/if}
+                            {/each}
+                        {/if}
+                    </fieldset>
                     <button type="submit" class="button">Continue</button>
 				</form>
             </div>
