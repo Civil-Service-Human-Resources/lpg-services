@@ -102,7 +102,7 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:PR-63-5
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:PR-80-1
     depends_on:
       - identity
     ports:

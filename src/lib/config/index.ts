@@ -54,9 +54,8 @@ export const AUTHENTICATION = set({
 export const BOOKING_NOTIFY_TEMPLATE_IDS = {
 	cancelled: 'cc525c34-1a31-4fa1-ab19-862fd223caab',
 	cancelledLineManager: 'c00fac77-8448-41c9-b15c-23361ccef419',
-	confirmed: '8efb52bd-9ada-402e-8fab-84a751bf4a71',
-	confirmedLineManager: '659f8f61-d326-428e-996d-f890b61a2f96',
 	requested: 'ae678ea1-ae7a-42f3-aa27-037336b346c4',
+	requestedLineManager: '659f8f61-d326-428e-996d-f890b61a2f96',
 }
 
 export const BOOKING_NOTIFY_RECIPIENTS = [
