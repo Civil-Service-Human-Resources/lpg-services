@@ -17,6 +17,12 @@ hr.clear {
 	font-size: 19px;
 }
 
+.profile-container {
+	.heading-large {
+		margin-top: 20px;
+	}
+}
+
 .flash-message {
 	background: $flash-message;
 	color: #fff;
@@ -133,4 +139,9 @@ hr.clear {
 .lpg-course-duration,
 .lpg-course-cost {
 	font-weight: bold;
+	display: inline-block;
+
+	&::first-letter {
+		text-transform: capitalize;
+	}
 }
