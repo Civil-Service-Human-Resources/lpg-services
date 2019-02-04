@@ -145,6 +145,7 @@ hr.clear {
 	text-align: right;
 }
 
+
 .banner.profile-banner {
 	text-align: center;
 	margin-bottom: 0;
@@ -164,4 +165,12 @@ hr.clear {
 	&::first-letter {
 		text-transform: capitalize;
 	}
+}
+
+.multiple-choice .quiz + label::before {
+	top: 12px;
+}
+
+.multiple-choice .quiz + label::after {
+	top: 21px;
 }

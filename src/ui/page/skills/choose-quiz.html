@@ -3,8 +3,23 @@
 		<BackButton link="/skills/start-quiz" />
         <div class="grid-row ">		
 		  	<div class="column-two-thirds">
-				<h1 class="heading heading-large">Choose</h1>
-				
+				<h1 class="heading heading-large">Choose your quiz</h1>
+				<form action="skills/questions" method="post">
+					<fieldset>
+						<div class="multiple-choice">
+							<input type="radio" value="quick" id="quick" name="quizSelector" class="quiz" />
+							<label class="label-area" for="quick">The quick general awareness quiz covering all 3 Policy themes<br/>(9 questions- around 10 minutes)</label>
+						</div>
+						<div class="multiple-choice">
+							<input type="radio" value="full" id="full" name="quizSelector" class="quiz" />
+							<label class="label-area" for="quick">The full general awareness quiz covering all 3 Policy themes<br/>(25 to 30 questions - around 30 minutes)</label>
+						</div>
+						<div class="multiple-choice">
+							<input type="radio" value="custom" id="custom" name="quizSelector" class="quiz" />
+							<label class="label-area" for="quick">Customise your quiz - choose from the 3 Policy themes<br/>(Between 10 and 50 questions - around 10 to 45 minutes)</label>
+						</div>
+					</fieldset>
+				</form>
             </div>
 			<div class="column-one-third">
 			</div>
