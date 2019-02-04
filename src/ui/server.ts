@@ -31,6 +31,7 @@ import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
+import * as skillsController from './controllers/skills'
 
 import * as errorController from './controllers/errorHandler'
 
@@ -260,6 +261,8 @@ app.get(
 	'/suggestions-for-you/remove/:courseId',
 	asyncHandler(suggestionController.removeFromSuggestions)
 )
+
+app.get('/skills', asyncHandler(skillsController.skills))
 
 app.get('/home', asyncHandler(homeController.home))
 

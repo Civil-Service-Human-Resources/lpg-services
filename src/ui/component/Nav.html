@@ -26,7 +26,7 @@
             <li class="active"><a href="/skills">Skills</a></li>
         {:else}
             <li><a href="/skills">Skills</a></li>
-        {/if} 
+        {/if}
         {#if $signedInUser.hasRole('COURSE_MANAGER')}
         <li>
             <a href="{$config.LPG_MANAGEMENT_URL}/content-management/">Admin</a>
