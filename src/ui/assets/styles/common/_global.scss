@@ -100,8 +100,23 @@ hr.clear {
 	}
 }
 
+
 .description {
 	margin-top: 0;
+}
+
+.skills-container {
+	margin-bottom: 60px;
+
+	.skills {
+		padding: 20px;
+		background-color: $light-grey;
+
+		.govuk-body {
+			font-size: 24px;
+		}
+	}
+
 }
 
 .govuk-body {
