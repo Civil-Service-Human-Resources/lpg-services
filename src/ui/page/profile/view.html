@@ -38,9 +38,7 @@
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_password_label')}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-password">••••••••</td>
                             <td class="key-value-list__item-action">
-                                <a href="/profile/password" class="visuallyhidden">Change
-                                    <span class="visuallyhidden"> your password</span>
-                                </a>
+                                <a href="{$config.AUTHENTICATION.serviceUrl}/account/password">Change</a>
                             </td>
                         </tr>
                     </tbody>
@@ -68,7 +66,7 @@
                             <td class="key-value-list__key key-value-list__key--auto ">{$i18n('profile_primary-area-of-work_label')}</td>
                             <td class="key-value-list__value key-value-list__value--auto lpg-areas-of-work">
                                 {#if $signedInUser.areasOfWork}
-                                    {$signedInUser.areasOfWork[1]}
+                                    {$signedInUser.areasOfWork[0]}
                                 {/if}
                             </td>
                             <td class="key-value-list__item-action">
