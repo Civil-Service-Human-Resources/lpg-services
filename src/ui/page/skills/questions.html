@@ -1,0 +1,47 @@
+<Page title="Skills" {_csrf}>
+	<div class="container container--main">
+		<BackButton link="/skills/start-quiz" />
+        <div class="grid-row ">		
+		  	<div class="column-two-thirds">
+				<h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
+                {#if question}
+                    <h2 class="heading heading-large ">Question {question.number} of {question.total}</h2>
+                {:else}
+                    <h2 class="heading heading-large ">Question # of #</h2>
+                {/if}
+                    
+				<form action="skills/questions" method="post">
+					<fieldset>
+                        <form>
+                            <fieldset class="form-group">
+                                <QuizQuestion />
+                            </fieldset>
+                        </form>
+					</fieldset>
+                    <button type="submit" class="button">Continue</button>
+				</form>
+            </div>
+			<div class="column-one-third">
+			</div>
+		</div>
+	</div>
+</Page>
+
+<script>
+	import Page from '../../component/Page.html'
+	import BackButton from '../../component/BackButton.html'
+    import QuizQuestion from '../../component/QuizQuestion.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			BackButton,
+            QuizQuestion
+		}
+	}
+</script>
