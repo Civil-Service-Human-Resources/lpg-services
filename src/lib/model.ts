@@ -301,6 +301,7 @@ export class Event {
 	capacity: number
 	availability: number
 	status: string
+	isLearnerBooked: boolean
 
 	constructor(
 		date: Date,
@@ -318,6 +319,7 @@ export class Event {
 		this.capacity = capacity
 		this.availability = availability
 		this.status = status
+		this.isLearnerBooked = false
 	}
 
 	getActivityId() {
