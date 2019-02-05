@@ -120,6 +120,18 @@ export async function renderChooseDate(
 		.filter(a => a.date > today)
 		.sort((a, b) => a.date.getTime() - b.date.getTime())
 
+	for (const event of events) {
+		await learnerRecord.getActiveBooking(event.id, req.user)
+			.then(e => {
+				if (e.status === 200) {
+					event.isLearnerBooked = true
+				} else {
+					event.isLearnerBooked = false
+				}
+			})
+			.catch(error => logger.error(error))
+	}
+
 	res.send(
 		template.render('booking/choose-date', req, res, {
 			accessibilityReqs: req.session!.accessibilityReqs,

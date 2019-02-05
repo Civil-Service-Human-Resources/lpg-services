@@ -82,6 +82,17 @@ export async function bookEvent(
 	}
 }
 
+export async function getActiveBooking(eventId: string, user: any): Promise<any> {
+	return await http.get(`/event/${eventId}/booking/${user.id}/active`, {
+		headers: {
+			Authorization: `Bearer ${user.accessToken}`,
+		},
+		validateStatus: status => {
+			return status === 200 || status === 404
+		},
+	})
+}
+
 export async function getCancellationReasons(user: any): Promise<any> {
 	return await http.get(`/event/booking/userCancellationReasons`, {
 		headers: {
