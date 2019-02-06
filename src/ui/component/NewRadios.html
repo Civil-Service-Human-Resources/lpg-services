@@ -9,7 +9,7 @@
     {#each options as option}
         {#if inputName === "primary-area-of-work"}
             <div class="multiple-choice">
-                <input id="{option[1].name}" type="radio" name="{inputName}" value="{option[1].name}" checked="{value == (option[1].name || option[0].name) ? 'checked' : ''}">
+                <input id="{option[1].name}" type="radio" name="{inputName}" value="/professions/{option[1].id}" checked="{value == (option[1].name || option[0].name) ? 'checked' : ''}">
                 <label for="{option[1].name}">{option[1].name}</label>
             </div>
         {:else}
