@@ -30,10 +30,6 @@
 					width: auto;
 					float: none;
 				}
-
-				.content {
-					margin: 0 15px;
-				}
 			}
 			.header-logo {
 				margin-top: 2px;
@@ -114,109 +110,6 @@
 		a#proposition-name:focus {
 			color: $text-colour;
 		}
-		a.menu {
-			@include core-16;
-			color: $white;
-			display: block;
-			float: right;
-			text-decoration: none;
-			padding-top: 6px;
-			@include media(desktop) {
-				display: none;
-			}
-			&:hover {
-				text-decoration: underline;
-			}
-			&:after {
-				display: inline-block;
-				font-size: 8px;
-				height: 8px;
-				padding-left: 5px;
-				vertical-align: middle;
-				content: ' \25BC';
-			}
-			&.js-hidden:after {
-				content: ' \25B2';
-			}
-		}
-		#proposition-menu {
-			margin-top: 5px;
-
-			// Some headers (Whitehall) don't have a propsition name, offset as if they did.
-			&.no-proposition-name {
-				@include media(desktop) {
-					margin-top: 37px;
-					// 37px is the amount of margin required to line up the nav list with the top of the search box
-				}
-			}
-		}
-		#proposition-link,
-		#proposition-links {
-			clear: both;
-			@extend %contain-floats;
-			margin: 2px 0 0 0;
-			padding: 0;
-
-			.js-enabled & {
-				display: none;
-				@include media(desktop) {
-					display: block;
-				}
-				&.js-visible {
-					display: block;
-				}
-			}
-
-			li {
-				float: left;
-				width: 50%;
-				padding: 3px 0;
-				border-bottom: 1px solid $proposition-border;
-
-				@include media(desktop) {
-					display: block;
-					width: auto;
-					padding: 0 15px 0 0;
-					border-bottom: 0;
-
-					&.clear-child {
-						clear: left;
-					}
-				}
-			}
-
-			a {
-				color: $white;
-				text-decoration: none;
-				@include bold-14;
-
-				@include media(desktop) {
-					@include bold-16;
-					line-height: 23px;
-				}
-
-				&:hover {
-					text-decoration: underline;
-				}
-				&.active {
-					color: $proposition-active-nav;
-				}
-				&:focus {
-					color: $black;
-				}
-			}
-		}
-
-		#proposition-link {
-			float: right;
-			line-height: 22px;
-			.js-enabled & {
-				display: block;
-			}
-			@include media(desktop) {
-				float: none;
-			}
-		}
 	}
 }
 
@@ -243,5 +136,192 @@
 		@include core-16;
 		margin-top: 0;
 		margin-bottom: 0;
+	}
+}
+
+a.menu {
+	@include core-16;
+	color: $black;
+	display: block;
+	float: right;
+	text-decoration: none;
+	padding-top: 6px;
+	margin-right: 15px;
+	font-weight: bold;
+	position: relative;
+	top: 5px;
+
+	@include media(desktop) {
+		display: none;
+	}
+	&:hover {
+		text-decoration: underline;
+	}
+	&:after {
+		display: inline-block;
+		font-size: 8px;
+		height: 8px;
+		padding-left: 5px;
+		vertical-align: middle;
+		content: ' \25BC';
+	}
+	&.js-hidden:after {
+		content: ' \25B2';
+	}
+}
+#proposition-menu {
+	padding: 10px 0 0 0;
+	border-bottom: none;
+}
+
+#proposition-link,
+#proposition-links {
+	@extend %contain-floats;
+	padding: 0;
+	list-style-type: none;
+
+	.js-enabled & {
+		display: none;
+		@include media(desktop) {
+			display: block;
+		}
+		&.js-visible {
+			display: block;
+		}
+	}
+
+	li {
+		padding-left: 15px;
+		margin-left: -15px;
+		margin-bottom: 10px;
+		float: left;
+		clear: left;
+
+		@include media(desktop) {
+			float: left;
+			clear: none;
+			width: 50%;
+			padding: 0;
+			margin-bottom: 0;
+			margin-left: 0;
+			padding-bottom: 10px;
+		}
+
+		&:hover {
+			color: $flash-message;
+			border-left: 3px solid $flash-message;
+
+			@include media(desktop) {
+				border-bottom: 3px solid $flash-message;
+				border-left: none;
+				padding-bottom: 7px;
+			}
+
+			a {
+				margin-left: -3px;
+
+				@include media(desktop) {
+					margin-left: 0;
+				}
+			}
+		}
+
+		&.active {
+			border-left: 3px solid $flash-message;
+
+			@include media(desktop) {
+				border-bottom: 3px solid $flash-message;
+				border-left: none;
+				padding-bottom: 7px;
+			}
+
+			a {
+				color: $flash-message;
+				margin-left: -3px;
+
+				@include media(desktop) {
+					margin-left: 0;
+				}
+			}
+		}
+
+		@include media(desktop) {
+			display: block;
+			width: auto;
+			border-bottom: 0;
+			margin-right: 15px;
+			font-weight: 700;
+			color: #0b0c0c;
+			&.clear-child {
+				clear: left;
+			}
+
+			a {
+				display: block;
+			}
+		}
+	}
+
+	a {
+		color: $black;
+		text-decoration: none;
+		@include bold-16;
+
+		@include media(desktop) {
+			@include bold-16;
+			line-height: 23px;
+		}
+
+		&.active {
+			color: $proposition-active-nav;
+		}
+		&:hover {
+			color: $flash-message;
+			text-decoration: none;
+		}
+	}
+}
+
+#proposition-link {
+	float: right;
+	line-height: 22px;
+	.js-enabled & {
+		display: block;
+	}
+	@include media(desktop) {
+		float: none;
+	}
+}
+
+@media screen and (min-width: 769px) {
+	#proposition-menu {
+		border-bottom: 1px solid $border;
+	}
+}
+
+.nav-container {
+	margin: 0 15px;
+	border-bottom: 1px solid $border;
+	padding-bottom: 15px;
+
+	@include media(641px) {
+		margin: 0 30px;
+	}
+
+	@include media(desktop) {
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+
+	@include media(1020px) {
+		margin: 0 auto;
+	}
+}
+
+a.js-header-toggle.menu.js-hidden {
+	display: block;
+
+	@include media(desktop) {
+		display: none;
 	}
 }
