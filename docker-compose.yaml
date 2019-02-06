@@ -40,6 +40,8 @@ services:
   mongodb:
     container_name: mongodb
     image: mongo@sha256:fbb95eaa5a0c84d0d2098775f166003c568a79f993d91309cee7cda4135bbbfd
+    ports:
+      - 27017:27017
 
   redis:
     container_name: redis

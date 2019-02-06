@@ -328,13 +328,15 @@ export async function renderEditPage(
 	let optionType: string = ''
 	let value = null
 	let lede
+	let response: any
 	switch (inputName) {
 		case 'given-name':
 			value = req.user.givenName
 			break
 		case 'primary-area-of-work':
 			lede = req.__('register_area_page_intro')
-			options = haltoObject(await registry.halNode('professions'))
+			response = await registry.getWithoutHal('/professions/tree')
+			options = response.data
 			optionType = OptionTypes.Radio
 			value = req.user.areasOfWork
 			break
@@ -357,7 +359,7 @@ export async function renderEditPage(
 
 			break
 		case 'department':
-			const response: any = await registry.getWithoutHal('/organisationalUnits/flat')
+			response = await registry.getWithoutHal('/organisationalUnits/flat')
 			response.data.map((x: any) => {
 				options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 			})
