@@ -92,6 +92,6 @@ export async function quizSummary(req: express.Request, res: express.Response) {
 	}
 	req.session!.questions = [questionsSet]
 	res.send(
-		template.render('skills/questions', req, res, {results: questionsSet})
+		template.render('skills/quiz-summary', req, res, {results: questionsSet})
 	)
 }
