@@ -13,13 +13,7 @@
 				<form action="skills/questions" method="post" class="question-form">
                     <fieldset class="form-group">
                         {#if results}
-                            {#each results as question}
-                                {#if question.question.correctIndices > 1}
-                                    <QuizQuestion type="checkbox" question={question.question.question} answers={question.question.answers} />
-                                {:else}
-                                    <QuizQuestion type="radio"  question={question.question.question} answers={question.question.answers} />
-                                {/if}
-                            {/each}
+                            <QuizQuestion question={results[0].question} />
                         {/if}
                     </fieldset>
                     <button type="submit" class="button">Continue</button>

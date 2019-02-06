@@ -4,10 +4,10 @@
         <div class="grid-row ">		
 		  	<div class="column-two-thirds">
 				<h1 class="heading heading-large">Policy awareness quiz:</h1>
-				<h2 class="heading-medium">Your quiz resultsv b</h2>
-				<!--{#if quiz.completed}-->
-					<Banner type="confirmation" message="You scored 6 outr of 9 on this awareness quiz" />
-				<!--{/if}-->
+				<h2 class="heading-medium">Your quiz results</h2>
+				{#if results}
+					<Banner type="confirmation" message="You scored 6 out of 9 on this awareness quiz" />
+				{/if}
             </div>
 			<div class="column-one-third">
 				<div class="right-menu">
@@ -15,6 +15,17 @@
 					<a href="">Share with your line manager</a>
 					<a href="">Retake this quiz</a>
 				</div>
+			</div>
+			<div class="column-full">
+				{#if results}
+					<div class="summary-container">
+						{#each results as result, y}
+							<div class="question-container ">
+								<QuizQuestion question={result.question} group={y} summary=false  class="correct"/>
+							</div>
+						{/each}
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>

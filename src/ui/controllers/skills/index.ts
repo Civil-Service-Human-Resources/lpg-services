@@ -73,5 +73,23 @@ export async function questions(req: express.Request, res: express.Response) {
 }
 
 export async function quizSummary(req: express.Request, res: express.Response) {
-	res.send(template.render('skills/quiz-summary', req, res))
+	const numberOfQuestions = 10
+	const jsonString = JSON.parse(
+		fs.readFileSync(
+			path.join(__dirname, '../../../../../src/questions.json'),
+			'utf8'
+		)
+	)
+	const questionsSet: any = []
+	let count = 1
+	while (questionsSet.length < numberOfQuestions) {
+		const randomQuestion =
+			jsonString[Math.floor(Math.random() * jsonString.length)]
+		if (!questionsSet.includes(randomQuestion)) {
+			questionsSet.push({questionNumber: count, question: randomQuestion})
+			count++
+		}
+	}
+	req.session!.questions = [questionsSet]
+	res.send(template.render('skills/quiz-summary', req, res,{results: questionsSet}))
 }
