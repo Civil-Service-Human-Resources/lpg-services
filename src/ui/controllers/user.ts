@@ -335,8 +335,12 @@ export async function renderEditPage(
 			break
 		case 'primary-area-of-work':
 			lede = req.__('register_area_page_intro')
-			response = await registry.getWithoutHal('/professions/tree')
-			options = response.data
+			if (req.session!.flash.children) {
+				options = req.session!.flash.children
+			} else {
+				response = await registry.getWithoutHal('/professions/tree')
+				options = response.data
+			}
 			optionType = OptionTypes.Radio
 			value = req.user.areasOfWork
 			break
@@ -435,13 +439,32 @@ export async function tryUpdateProfile(
 ) {
 	const validFields = validateForm(req)
 
-	if (!validFields) {
-		req.flash('profileErrorEmpty', req.__('errors.profileErrorEmpty'))
-		req.session!.save(() => {
-			res.redirect(`/profile/${req.params.profileDetail}`)
+	if (req.body['primary-area-of-work']) {
+		const areaOfWork = req.body['primary-area-of-work']
+
+		const response: any = await registry.getWithoutHal('/professions/tree')
+		const options: any  = response.data
+		let children: any = []
+
+		options.forEach((option: any) => {
+			if (option.id === +areaOfWork.substr(areaOfWork.length - 1) && option.children) {
+				children = option.children
+			}
 		})
 
-		return
+		if (children.length > 0) {
+			req.session!.flash = {children}
+			return req.session!.save(() => {
+				res.redirect('/profile/primary-area-of-work')
+			})
+		}
+	}
+
+	if (!validFields) {
+		req.flash('profileErrorEmpty', req.__('errors.profileErrorEmpty'))
+		return req.session!.save(() => {
+			res.redirect(`/profile/${req.params.profileDetail}`)
+		})
 	} else {
 		await updateProfile(req, res)
 	}
@@ -477,10 +500,9 @@ export async function patchAndUpdate(
 
 		if (errorMessage) {
 			req.flash('profileError', errorMessage)
-			req.session!.save(() => {
+			return req.session!.save(() => {
 				res.redirect(`/profile/${inputName}`)
 			})
-			return
 		}
 	} else if (response) {
 		// seems like we have to get the profile again to get values
@@ -488,20 +510,18 @@ export async function patchAndUpdate(
 		const profile = await registry.profile(req.user.accessToken)
 		await updateUserObject(req, profile as Record<string, string>)
 		req.flash('profile-updated', 'profile-updated')
-		req.session!.save(() => {
+		return req.session!.save(() => {
 			res.redirect('/profile')
 		})
-		return
 	} else {
 		req.flash(
 			'profileError',
 			`Server error. Update failed, please try again or contact the
 <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>`
 		)
-		req.session!.save(() => {
+		return req.session!.save(() => {
 			res.redirect(`/profile/${input}`)
 		})
-		return
 	}
 }
 
