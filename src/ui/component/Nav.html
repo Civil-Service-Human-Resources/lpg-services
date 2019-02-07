@@ -32,6 +32,11 @@
             <a href="{$config.LPG_MANAGEMENT_URL}/content-management/">Admin</a>
         </li>
         {/if}
+       {#if $signedInUser.isAdmin()}
+       <li>
+           <a href="{$config.LPG_MANAGEMENT_URL}/content-management/">Admin</a>
+       </li>
+       {/if}
         <li>
             <a href="/sign-out">Sign out</a>
         </li>
