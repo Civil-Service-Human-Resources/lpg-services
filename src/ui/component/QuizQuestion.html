@@ -1,5 +1,5 @@
 <div class="answers">
-    <h3 class="heading-medium">{question.question}</h3>
+    <h3 class="heading-medium">{question.question}</h3>{#if summary}<span class="icon"></span><label for={group}>Expand</label><input id={group} type="checkbox" class="expand"/>{/if}
     {#each question.answers as answers, x}
         <div class="multiple-choice">
             {#if question.correctIndices.length > 1}
@@ -23,9 +23,5 @@
         </div>
     {/each}
 </div>
-{#if summary}
-    <div class="correct">
-        <span class="icon"></span>
-    </div>
-{/if}
+
 
