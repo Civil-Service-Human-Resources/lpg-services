@@ -1,7 +1,10 @@
 <Page title="Change your {$i18n('profile_' + inputName + '_label').toLowerCase()}" {_csrf}>
-    <div class="container">
+    <div class="profile-container container">
         <div class="grid-row">
             <div class="{inputName === 'areas-of-work' ? 'column-full' : 'column-two-thirds' }">
+                <p class="no-margin">
+                    <a class="link-back" href="/profile">Back</a>
+                </p>
                 {#if  ($i18n(inputName) === 'line-manager') }
                 <h1 class="heading-large"><span class="heading-primary">Add your line manager's email</span></h1>
                     <p class="govuk-body">To add a line manager, they must be registered with the service.</p>
