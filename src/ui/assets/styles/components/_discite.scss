@@ -125,7 +125,7 @@ $module: 'discite';
 
 		@include media(mobile) {
 			left: 50%;
-			text-align: left;
+			text-align: right;
 		}
 		@include media(tablet) {
 			width: 100%;
