@@ -1,5 +1,8 @@
 <Page title="Leave details feedback" {_csrf}>
     <div class="container">
+        <p class="no-margin">
+            <a class="link-back" href="/learning-record/feedback">Back</a>
+        </p>
         <h1 class="heading-xlarge">Leave feedback</h1>
 
         {#if invalidFeedback}
@@ -83,9 +86,6 @@
                     <div class="form-group">
                         <button type="submit" class="button">Leave feedback</button>
                     </div>
-                    <p>
-                        <a class="link-back" href="/learning-record">Back</a>
-                    </p>
                 </div>
             </div>
             <input type="hidden" name="_csrf" value="{_csrf}">
