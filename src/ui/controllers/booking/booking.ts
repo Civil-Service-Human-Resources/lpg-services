@@ -70,10 +70,12 @@ export function saveAccessibilityOptions(
 		delete ireq.session!.returnTo
 	} else if (req.module!.cost === 0) {
 		session.payment = {
-			type: "",
-			value: "",
+			type: '',
+			value: '',
 		}
-		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${ireq.params.eventId}/confirm`
+		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
+			ireq.params.eventId
+		}/confirm`
 	} else {
 		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
 			ireq.session!.selectedEventId
@@ -269,7 +271,7 @@ export async function renderPaymentOptions(
 			res.redirect(
 				`/book/${req.params.courseId}/${req.params.moduleId}/${
 					req.params.eventId
-					}/confirm`
+				}/confirm`
 			)
 		})
 	} else {
@@ -445,12 +447,16 @@ export async function tryMoveBooking(
 	})
 }
 
-export function renderConfirmPo(req: express.Request, res: express.Response) {
+export function renderConfirmPo(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	res.send(
 		template.render('booking/confirm-po', req, res, {
-			po: req.session!.po,
-			url: `/book/${req.params.courseId}/${req.params.moduleId}/${
-				req.params.eventId
+			course: req.course,
+			event: req.event!,
+			module: req.module!,
+			po: ireq.session!.po,
+			url: `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
+				ireq.params.eventId
 			}`,
 		})
 	)
@@ -468,7 +474,13 @@ export async function tryCompleteBooking(
 	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
 	const response = await learnerRecord.bookEvent(
-		course, module, event, req.user, req.session!.purchaseOrder, session.payment.value)
+		course,
+		module,
+		event,
+		req.user,
+		req.session!.purchaseOrder,
+		session.payment.value
+	)
 
 	let message
 
@@ -507,7 +519,7 @@ export async function tryCompleteBooking(
 						module.duration
 							? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
 							: ''
-						}`,
+					}`,
 					courseLocation: event.location,
 					courseTitle: module.title || course.title,
 					email: req.user.userName,
@@ -525,7 +537,7 @@ export async function tryCompleteBooking(
 		}
 
 		message = confirmedMessage.Booked
-	}	else {
+	} else {
 		message = confirmedMessage.Error
 	}
 
