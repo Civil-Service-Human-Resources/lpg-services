@@ -447,12 +447,16 @@ export async function tryMoveBooking(
 	})
 }
 
-export function renderConfirmPo(req: express.Request, res: express.Response) {
+export function renderConfirmPo(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	res.send(
 		template.render('booking/confirm-po', req, res, {
-			po: req.session!.po,
-			url: `/book/${req.params.courseId}/${req.params.moduleId}/${
-				req.params.eventId
+			course: req.course,
+			event: req.event!,
+			module: req.module!,
+			po: ireq.session!.po,
+			url: `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
+				ireq.params.eventId
 			}`,
 		})
 	)
