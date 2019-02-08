@@ -1,5 +1,5 @@
 <div class="answers">
-    <h3 class="heading-medium">{question.question}</h3>{#if summary}<span class="icon"></span><input id={group} type="checkbox" class="expand"/><label class="expand-label" for={group}> answer</label>{/if}
+    <h3 class="heading-medium">{#if summary}Q{group+1}: {/if}<span class="light">{question.question}</span></h3>{#if summary}<span class="icon"></span><input id={group} type="checkbox" class="expand"/><label class="expand-label" for={group}> answer</label>{/if}
     <div class="question-contents">
         {#each question.answers as answers, x}
             <div class="multiple-choice">

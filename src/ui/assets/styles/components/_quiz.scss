@@ -22,10 +22,11 @@
   background-repeat: no-repeat;
   background-position: left;
   background-size: contain;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   display: block;
-  padding-left: 25px;
+  padding-left: 30px;
+  margin-left: 10px;
 
   &::after {
     content: 'Correct';
@@ -62,8 +63,15 @@
     width: 66%;
   }
 
+}
+
+.summary-container {
   .question-contents {
     display: none;
+  }
+
+  .light {
+    font-weight: normal;
   }
 
   .expand-label {
@@ -78,9 +86,7 @@
     {
 
     }
-
-  }
-
+}
 
 
   .expand:checked ~ .question-contents {

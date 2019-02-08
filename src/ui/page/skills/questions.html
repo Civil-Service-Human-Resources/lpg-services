@@ -2,7 +2,7 @@
 	<div class="container container--main">
 		<BackButton link="/skills/start-quiz" />
         <div class="grid-row ">		
-		  	<div class="column-two-thirds">
+		  	<div class="column-full">
 				<h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
                 {#if question}
                     <h2 class="heading heading-large ">Question {question.number} of {question.total}</h2>
@@ -21,8 +21,6 @@
                     <button type="submit" class="button">Continue</button>
 				</form>
             </div>
-			<div class="column-one-third">
-			</div>
 		</div>
 	</div>
 </Page>
