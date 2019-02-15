@@ -1,3 +1,7 @@
+body {
+	min-width: 360px;
+}
+
 hr.clear {
 	clear: both;
 	display: block;
@@ -11,6 +15,12 @@ hr.clear {
 
 .search-lede {
 	font-size: 19px;
+}
+
+.profile-container {
+	.heading-large {
+		margin-top: 20px;
+	}
 }
 
 .flash-message {
@@ -122,5 +132,22 @@ hr.clear {
 
 	p {
 		margin-bottom: 0;
+	}
+}
+
+.custom-column-with-button {
+	.headind-xlarge {
+		margin-top: 20px;
+  }
+}
+
+.lpg-course-type,
+.lpg-course-duration,
+.lpg-course-cost {
+	font-weight: bold;
+	display: inline-block;
+
+	&::first-letter {
+		text-transform: capitalize;
 	}
 }

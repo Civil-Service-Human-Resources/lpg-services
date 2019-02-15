@@ -51,7 +51,7 @@ export async function bookingCancelled(info: BookingCancellation) {
 		})
 		.catch(reason => {
 			throw new Error(
-				`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
+				`Got unexpected response status ${reason} when posting booking cancellation to GOV Notify`
 			)
 		})
 
@@ -69,7 +69,7 @@ export async function bookingCancelled(info: BookingCancellation) {
 			)
 			.catch(reason => {
 				throw new Error(
-					`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
+					`Got unexpected response status ${reason} when posting booking cancellation to GOV Notify`
 				)
 			})
 	}
@@ -85,14 +85,14 @@ export async function bookingRequested(info: BookingConfirmation) {
 		})
 		.catch(reason => {
 			throw new Error(
-				`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
+				`Got unexpected response status ${reason} when posting booking request to GOV Notify`
 			)
 		})
 
 	if (info.lineManager) {
 		await notify
 			.sendEmail(
-				config.BOOKING_NOTIFY_TEMPLATE_IDS.confirmedLineManager,
+				config.BOOKING_NOTIFY_TEMPLATE_IDS.requestedLineManager,
 				info.lineManager.email,
 				{
 					personalisation: {
@@ -103,7 +103,7 @@ export async function bookingRequested(info: BookingConfirmation) {
 			)
 			.catch(reason => {
 				throw new Error(
-					`Got unexpected response status ${reason} when posting booking confirmation to GOV Notify`
+					`Got unexpected response status ${reason} when posting booking request to GOV Notify`
 				)
 			})
 	}

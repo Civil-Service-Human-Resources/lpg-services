@@ -36,7 +36,10 @@ export class Course {
 			if (course.audience) {
 				course.audience.mandatory = false
 				course.audience.departments.forEach(a => {
-					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
+					if (
+						a === user.department &&
+						course.audience!.type === 'REQUIRED_LEARNING'
+					) {
 						course.audience!.mandatory = true
 					}
 				})
@@ -289,7 +292,7 @@ export class Event {
 
 		const status = data.status ? data.status : 'Active'
 
-		return new Event (date, location, capacity, availability, status, data.id)
+		return new Event(date, location, capacity, availability, status, data.id)
 	}
 
 	id: string
@@ -299,7 +302,14 @@ export class Event {
 	availability: number
 	status: string
 
-	constructor(date: Date, location: string, capacity: number, availability: number, status: string, id?: string) {
+	constructor(
+		date: Date,
+		location: string,
+		capacity: number,
+		availability: number,
+		status: string,
+		id?: string
+	) {
 		if (id) {
 			this.id = id!
 		}
@@ -473,7 +483,8 @@ export class User {
 			data.accessToken
 		)
 
-		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
+		user.organisationalUnit =
+			data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
 			? data.organisationalUnit.code
 			: data.department
@@ -538,5 +549,17 @@ export class User {
 
 	hasAnyRole(roles: string[]) {
 		return this.roles && this.roles.some(value => roles.indexOf(value) > -1)
+	}
+
+	isAdmin() {
+		return (
+			this.hasRole('LEARNING_MANAGER') ||
+			this.hasRole('CSL_AUTHOR') ||
+			this.hasRole('PROFESSION_AUTHOR') ||
+			this.hasRole('ORGANISATION_AUTHOR') ||
+			this.hasRole('KPMG_SUPPLIER_AUTHOR') ||
+			this.hasRole('KORNFERRY_SUPPLIER_AUTHOR') ||
+			this.hasRole('KNOWLEDGEPOOL_SUPPLIER_AUTHOR')
+		)
 	}
 }
