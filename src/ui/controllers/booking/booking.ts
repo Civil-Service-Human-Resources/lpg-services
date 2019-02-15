@@ -42,35 +42,44 @@ export function recordCheck(
 }
 
 export function saveAccessibilityOptions(
-	req: express.Request,
+	ireq: express.Request,
 	res: express.Response
 ) {
-	const session = req.session!
+	const session = ireq.session!
+	const req = ireq as extended.CourseRequest
 
-	if (Array.isArray(req.body.accessibilityreqs)) {
-		session.accessibilityReqs = req.body.accessibilityreqs
+	if (Array.isArray(ireq.body.accessibilityreqs)) {
+		session.accessibilityReqs = ireq.body.accessibilityreqs
 	} else {
-		session.accessibilityReqs = [req.body.accessibilityreqs]
+		session.accessibilityReqs = [ireq.body.accessibilityreqs]
 	}
 
-	session.otherAccessibilityReqs = req.body.otherDescription || ''
+	session.otherAccessibilityReqs = ireq.body.otherDescription || ''
 	if (
 		(session.accessibilityReqs.indexOf('other') > -1 ||
-			req.body.otherDescription) &&
+			ireq.body.otherDescription) &&
 		session.accessibilityReqs.indexOf('other') === -1
 	) {
 		session.accessibilityReqs.push('other')
 	}
 
-	let {returnTo} = req.session!
+	let {returnTo} = ireq.session!
 	if (returnTo) {
-		delete req.session!.returnTo
+		delete ireq.session!.returnTo
+	} else if (req.module!.cost === 0) {
+		session.payment = {
+			type: '',
+			value: '',
+		}
+		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
+			ireq.params.eventId
+		}/confirm`
 	} else {
-		returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${
-			req.session!.selectedEventId
+		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
+			ireq.session!.selectedEventId
 		}/payment`
 	}
-	req.session!.save(() => {
+	ireq.session!.save(() => {
 		res.redirect(returnTo)
 	})
 }
@@ -260,7 +269,7 @@ export async function renderPaymentOptions(
 			res.redirect(
 				`/book/${req.params.courseId}/${req.params.moduleId}/${
 					req.params.eventId
-					}/confirm`
+				}/confirm`
 			)
 		})
 	} else {
@@ -436,12 +445,16 @@ export async function tryMoveBooking(
 	})
 }
 
-export function renderConfirmPo(req: express.Request, res: express.Response) {
+export function renderConfirmPo(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	res.send(
 		template.render('booking/confirm-po', req, res, {
-			po: req.session!.po,
-			url: `/book/${req.params.courseId}/${req.params.moduleId}/${
-				req.params.eventId
+			course: req.course,
+			event: req.event!,
+			module: req.module!,
+			po: ireq.session!.po,
+			url: `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
+				ireq.params.eventId
 			}`,
 		})
 	)
@@ -474,7 +487,14 @@ export async function tryCompleteBooking(
 	const accessibilityOptions = accessibilityArray.join(', ')
 
 	const response = await learnerRecord.bookEvent(
-		course, module, event, req.user, req.session!.purchaseOrder, session.payment.value, accessibilityOptions)
+		course,
+		module,
+		event,
+		req.user,
+		req.session!.purchaseOrder,
+		session.payment.value,
+		accessibilityOptions
+	)
 
 	let message
 
@@ -487,7 +507,7 @@ export async function tryCompleteBooking(
 		)
 
 		message = confirmedMessage.Booked
-	}	else {
+	} else {
 		message = confirmedMessage.Error
 	}
 
