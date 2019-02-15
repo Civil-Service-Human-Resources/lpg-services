@@ -1,5 +1,8 @@
 <Page title="Leave details feedback" {_csrf}>
-    <div class="container container container--main">
+    <div class="custom-column-with-button container container--main">
+        <p class="no-margin">
+            <a class="link-back" href="/home">Back</a> 
+        </p>
         <h1 class="heading-xlarge">Leave feedback</h1>
         <div>
             <p>By leaving feedback, you’re helping us understand how to improve the learning.</p>
@@ -7,7 +10,7 @@
         <div class="grid-row">
             <div class="column-full">
                 {#if successTitle}
-                <Banner type="confirmation" title={successTitle} message={successMessage} />
+                    <Banner type="confirmation" title={successTitle} message={successMessage} />
                 {/if}
             </div>
         </div>
@@ -15,7 +18,7 @@
         <div class="grid-row">
             <div class="column-full">
                 {#each readyForFeedback as forFeedback}
-                <DisciteFeedback course={forFeedback.course} module={forFeedback.module} />
+                    <DisciteFeedback course={forFeedback.course} module={forFeedback.module} />
                 {/each}
             </div>
         </div>
