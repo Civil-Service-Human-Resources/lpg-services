@@ -27,6 +27,7 @@
 		"@types/connect-flash": "0.0.34",
 		"@types/cors": "2.8.3",
 		"@types/dotenv": "4.0.2",
+		"@types/express-validator": "3.0.0",
 		"@types/google-protobuf": "3.2.7",
 		"@types/helmet": "0.0.37",
 		"@types/i18n": "0.8.3",
