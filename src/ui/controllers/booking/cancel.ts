@@ -37,7 +37,7 @@ export async function renderCancelBookingPage(
 		res.sendStatus(400)
 		return
 	}
-	;(module as any).record = moduleRecord
+	(module as any).record = moduleRecord
 
 	const optionType = 'radio'
 
