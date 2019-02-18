@@ -20,5 +20,7 @@
 		"strictNullChecks": true,
 		"target": "ESNext"
 	},
+	"lib": ["es6"],
 	"include": ["src/**/*"]
+
 }
