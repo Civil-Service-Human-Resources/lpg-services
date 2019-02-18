@@ -154,4 +154,5 @@ export const LPG_MANAGEMENT_URL =
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000
 
-export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
+export const INSTRUMENTATION_KEY =
+	env.instrumentation_key || 'instrumentation_key'

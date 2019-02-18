@@ -1,6 +1,6 @@
 import {confirmedMessage, recordCheck} from './booking'
 
-import {NextFunction} from "express"
+import {NextFunction} from 'express'
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -37,11 +37,12 @@ export async function renderCancelBookingPage(
 		res.sendStatus(400)
 		return
 	}
-	(module as any).record = moduleRecord
+	;(module as any).record = moduleRecord
 
 	const optionType = 'radio'
 
-	await learnerRecord.getCancellationReasons(req.user)
+	await learnerRecord
+		.getCancellationReasons(req.user)
 		.then(request => {
 			const options = Object.entries(request.data)
 			res.send(
@@ -56,7 +57,6 @@ export async function renderCancelBookingPage(
 			)
 		})
 		.catch(error => next(error))
-
 }
 
 export async function renderCancelledBookingPage(
@@ -134,18 +134,25 @@ export async function tryCancelBooking(
 		extensions[xapi.Extension.CancelReason] = cancelReason
 	}
 
-	const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
+	const result = await learnerRecord.cancelBooking(
+		event,
+		cancelReason,
+		req.user
+	)
 
 	const response: any = {
 		404: async () => {
 			req.session!.save(() => {
-				req.flash('cancelBookingError', "The booking could not be found.")
+				req.flash('cancelBookingError', 'The booking could not be found.')
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 			})
 		},
 		400: async () => {
 			req.session!.save(() => {
-				req.flash('cancelBookingError', "An error occurred while trying to cancel your booking.")
+				req.flash(
+					'cancelBookingError',
+					'An error occurred while trying to cancel your booking.'
+				)
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 			})
 		},

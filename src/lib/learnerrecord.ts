@@ -25,7 +25,11 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function cancelBooking(event: any, cancellationReason: any, user: any): Promise<any> {
+export async function cancelBooking(
+	event: any,
+	cancellationReason: any,
+	user: any
+): Promise<any> {
 	const data: any = {
 		cancellationReason,
 		status: 'Cancelled',
@@ -45,15 +49,25 @@ export async function cancelBooking(event: any, cancellationReason: any, user: a
 }
 
 export async function bookEvent(
-	course: any, module: any, event: any, user: any, purchaseOrder: any, poNumber: any): Promise<any> {
+	course: any,
+	module: any,
+	event: any,
+	user: any,
+	purchaseOrder: any,
+	poNumber: any
+): Promise<any> {
 	const data: any = {
-		event: `${config.COURSE_CATALOGUE.url}/courses/${course.id}/modules/${module.id}/events/${event.id}`,
+		event: `${config.COURSE_CATALOGUE.url}/courses/${course.id}/modules/${
+			module.id
+		}/events/${event.id}`,
 		learner: user.id,
 		learnerEmail: user.userName,
 	}
 
 	if (purchaseOrder) {
-		data.paymentDetails = `${config.COURSE_CATALOGUE.url}/purchase-orders/${purchaseOrder.id}`
+		data.paymentDetails = `${config.COURSE_CATALOGUE.url}/purchase-orders/${
+			purchaseOrder.id
+		}`
 		data.status = 'Confirmed'
 	} else if (module.cost === 0) {
 		data.status = 'Confirmed'
@@ -110,9 +124,17 @@ export async function getRecord(
 }
 
 export async function getLearningRecord(
-	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[])
-	: Promise<model.Course[]> {
-	const records = await getRawLearningRecord(user, activityIds, includeStates, ignoreStates)
+	user: model.User,
+	activityIds?: string[],
+	includeStates?: string[],
+	ignoreStates?: string[]
+): Promise<model.Course[]> {
+	const records = await getRawLearningRecord(
+		user,
+		activityIds,
+		includeStates,
+		ignoreStates
+	)
 	const courseIds = records.map(record => record.courseId)
 	const courses = await catalog.list(courseIds, user)
 
@@ -123,15 +145,22 @@ export async function getLearningRecord(
 }
 
 export async function getRawLearningRecord(
-	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[]): Promise<CourseRecord[]> {
+	user: model.User,
+	activityIds?: string[],
+	includeStates?: string[],
+	ignoreStates?: string[]
+): Promise<CourseRecord[]> {
 	const params = {
 		activityId: activityIds,
 		ignoreState: ignoreStates,
 		includeState: includeStates,
 	}
-	const response = await http.get(`/records/${user.id}?${query.stringify(params)}`, {
-		headers: {Authorization: `Bearer ${user.accessToken}`},
-	})
+	const response = await http.get(
+		`/records/${user.id}?${query.stringify(params)}`,
+		{
+			headers: {Authorization: `Bearer ${user.accessToken}`},
+		}
+	)
 	return response.data.records.map(convert)
 }
 

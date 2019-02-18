@@ -357,9 +357,12 @@ export async function renderEditPage(
 
 			break
 		case 'department':
-			const response: any = await registry.getWithoutHal('/organisationalUnits/flat')
+			const response: any = await registry.getWithoutHal(
+				'/organisationalUnits/flat'
+			)
 			response.data.map((x: any) => {
-				options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+				options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] =
+					x.formattedName
 			})
 			optionType = OptionTypes.Typeahead
 			value = req.user.department
