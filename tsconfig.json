@@ -21,9 +21,8 @@
 		"target": "ESNext"
 	},
 	"include": ["src/**/*"],
-    "exclude": [
-		"node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts",
-		"node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts",
-		"node_modules/@types/node/index.d.ts"
+	"exclude": [
+		"node_modules",
+		"typings"
 	]
 }
