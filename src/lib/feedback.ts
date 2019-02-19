@@ -1,24 +1,19 @@
 import * as config from 'lib/config'
-import * as gov from 'notifications-node-client'
+import {NotificationService} from './service/notification-service'
+import {NotificationServiceConfig} from './service/notification-service/notificationServiceConfig'
 
 export async function record(req: {
 	pageUrl: string
 	wentWrong: string
 	whatDoing: string
-}) {
-	const notify = new gov.NotifyClient(config.GOV_NOTIFY_API_KEY)
+},                           accessToken: string) {
+	const notify = new NotificationService(new NotificationServiceConfig())
 	for (const recipient of config.FEEDBACK_RECIPIENTS) {
-		const resp = await notify.sendEmail(
+		await notify.sendEmail(
 			config.FEEDBACK_TEMPLATE_ID,
 			recipient,
-			{personalisation: req}
+			req,
+			accessToken
 		)
-		if (resp.statusCode !== 201) {
-			throw new Error(
-				`Got unexpected response status ${
-					resp.statusCode
-				} when posting feedback to GOV Notify`
-			)
-		}
 	}
 }

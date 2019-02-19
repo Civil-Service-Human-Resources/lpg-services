@@ -528,7 +528,7 @@ export async function tryCompleteBooking(
 					lineManager: req.user.lineManager,
 					location: event.location,
 					paymentOption,
-				})
+				}, req.user.accessToken)
 				.catch((e: Error) => {
 					logger.error('There was an error with GOV Notify', e)
 					res.redirect('/book/ouch')
