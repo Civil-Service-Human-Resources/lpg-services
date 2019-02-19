@@ -45,8 +45,15 @@ export async function cancelBooking(event: any, cancellationReason: any, user: a
 }
 
 export async function bookEvent(
-	course: any, module: any, event: any, user: any, purchaseOrder: any, poNumber: any): Promise<any> {
+	course: any,
+	module: any,
+	event: any,
+	user: any,
+	purchaseOrder: any,
+	poNumber: any,
+	accessibilityOptions: any): Promise<any> {
 	const data: any = {
+		accessibilityOptions,
 		event: `${config.COURSE_CATALOGUE.url}/courses/${course.id}/modules/${module.id}/events/${event.id}`,
 		learner: user.id,
 		learnerEmail: user.userName,
