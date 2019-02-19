@@ -19,7 +19,7 @@
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
 		"target": "ESNext",
-        "skipLibCheck": true
+		"skipLibCheck": true
 	},
 	"include": ["src/**/*"]
 }
