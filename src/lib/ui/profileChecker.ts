@@ -23,7 +23,7 @@ export class ProfileChecker {
 		}),
 		new ProfileSection('otherAreasOfWork', '/profile/otherAreasOfWork', (user: User) => {
 			return Boolean(user.otherAreasOfWork && user.otherAreasOfWork.length)
-		})
+		}),
 	]
 
 	isProfileRequest(request: Request) {
