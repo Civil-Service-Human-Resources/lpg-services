@@ -200,7 +200,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		}
 
 		request.session!.save(() =>
-			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+			response.redirect(`/profile/interests?originalUrl=${request.body.originalUrl}`)
 		)
 	}
 }
