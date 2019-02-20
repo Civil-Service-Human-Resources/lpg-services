@@ -23,7 +23,6 @@ describe('ProfileChecker tests', () => {
 			'/profile/organisation',
 			'/profile/profession',
 			'/profile/otherAreasOfWork',
-			'/profile/interests',
 		]
 
 		for (const path of paths) {
@@ -183,8 +182,9 @@ describe('ProfileChecker tests', () => {
 		const next = <NextFunction> {}
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
+		next = sinon.stub()
 		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/interests?originalUrl=/home')
+		expect(next).to.have.been.calledOnce
 	})
 
 	it('should call next if mandatory sections of profile are complete', () => {
