@@ -179,10 +179,9 @@ describe('ProfileChecker tests', () => {
 
 		const response = mockRes()
 		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
 		const check = profileChecker.checkProfile()
+		const next = sinon.stub()
 		check(request, response, next)
-		next = sinon.stub()
 		/* tslint:disable-next-line:no-unused-expression */
 		expect(next).to.have.been.calledOnce
 	})
