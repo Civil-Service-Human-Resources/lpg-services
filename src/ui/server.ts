@@ -165,6 +165,8 @@ app.get('/privacy', (req, res) => {
 
 app.get('/cookies', homeController.cookies)
 
+app.get('/contact-us', homeController.contactUs)
+
 app.get('/status', (req, res) => {
 	let version = 'unknown'
 	try {

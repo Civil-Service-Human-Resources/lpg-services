@@ -1,0 +1,43 @@
+<Page title="Contact Us" {_csrf}>
+    <div class="container container--main">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-xlarge heading heading--page-heading ">
+                    Contact Us
+                </h1>
+            </div>
+        </div>
+
+        <div class="grid-row">
+            <div class="column-full">
+                <p class="govuk-body">By Telephone: {contactNumber}</p>
+                <p class="govuk-body">By Email: <a href="mailto:feedback@cslearning.gov.uk">{contactEmail}</a></p>
+            </div>
+        </div>
+
+    </div>
+</Page>
+<script>
+    import Page from '../component/Page.html'
+    import Banner from '../component/Banner.html'
+    import Search from '../component/Search.html'
+    import SuggestionsSection from '../component/SuggestionsSection.html'
+    import DisciteCourse from '../component/DisciteCourse.html'
+    import DisciteModule from '../component/DisciteModule.html'
+
+
+    export default {
+        data() {
+            return {
+            }
+        },
+
+        components: {
+            Banner,
+            Search,
+            SuggestionsSection,
+            DisciteCourse,
+            Page,
+        }
+    };
+</script>
