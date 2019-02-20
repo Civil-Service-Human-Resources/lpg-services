@@ -216,14 +216,7 @@ export async function addInterests(request: Request, response: Response) {
 export async function updateInterests(request: Request, response: Response) {
 	const interests = request.body.interests
 
-	if (!interests) {
-		const options = await getOptions("interests")
-		response.send(template.render('profile/interests', request, response, {
-			error: true,
-			interests: options,
-			originalUrl: request.body.originalUrl,
-		}))
-	} else {
+	if (interests) {
 		const values: string[] = [].concat(interests)
 		try {
 			await registry.patch('civilServants', {
@@ -245,11 +238,10 @@ export async function updateInterests(request: Request, response: Response) {
 			logger.error(error)
 			throw new Error(error)
 		}
-
-		request.session!.save(() =>
-			response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`)
-		)
 	}
+	request.session!.save(() =>
+		response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`)
+	)
 }
 
 export async function addGrade(request: Request, response: Response) {
@@ -319,7 +311,7 @@ export async function updateLineManager(request: Request, response: Response) {
 	}
 
 	request.session!.save(() =>
-		response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+		response.redirect((request.body.originalUrl !== "undefined") ? request.body.originalUrl : defaultRedirectUrl)
 	)
 }
 
@@ -378,17 +370,18 @@ class LineManagerForm {
 	isPresent() {
 		return (this._email || this._confirm)
 	}
-
 	async validate() {
 		const errors = await validate(this)
+		/*tslint:disable*/
 		const messages = _.flatten(errors.map(error => {
 			return Object.values(error.constraints)
 		}))
-
+		/*tslint:enable*/
 		if (this._email !== this._confirm) {
 			messages.push("profile.lineManager.confirm.match")
 		}
 
 		return messages
 	}
+
 }

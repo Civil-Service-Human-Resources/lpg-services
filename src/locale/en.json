@@ -358,7 +358,7 @@
 	"primary-area-of-work": "primary-area-of-work",
 	"learning_removed_from_suggestions": "This has been removed from your suggested courses.",
 	"other-areas-of-work": "other-areas-of-work",
-	"given-name": "given-name"
+	"given-name": "given-name",
 	"profile": {
 		"lineManager": {
 			"email": {
@@ -370,5 +370,8 @@
 				"match": "Fields do not match."
 			}
 		}
-	}
+	},
+	"profile_undefined_label": "profile_undefined_label",
+	"undefined": "undefined",
+	"line-manager": "line-manager"
 }
