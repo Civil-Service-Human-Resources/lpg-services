@@ -107,7 +107,7 @@ if (config.PROFILE === 'prod') {
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': "'self' https://cdn.cshr.digital",
+					'default-src': "'self' https://cdn.learn.civilservice.gov.uk",
 					'font-src': 'data:',
 					'frame-src': 'https://youtube.com https://www.youtube.com',
 					'img-src': "'self' data: https://www.google-analytics.com",
