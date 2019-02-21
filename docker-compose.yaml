@@ -64,7 +64,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: lpgregistry.azurecr.io/identity-service:master-31
+    image: lpgregistry.azurecr.io/identity-service:master-29
     ports:
       - 8080:8080
       - 8081:8081
