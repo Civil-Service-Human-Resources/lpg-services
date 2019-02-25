@@ -458,6 +458,7 @@ export async function tryUpdateProfile(
 				res.redirect('/profile/primary-area-of-work')
 			})
 		}
+		delete req.session!.flash.children
 	}
 
 	if (!validFields) {
