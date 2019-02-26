@@ -66,7 +66,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: lpgregistry.azurecr.io/identity-service:master-34
+    image: lpgregistry.azurecr.io/identity-service:master-36
     ports:
       - 8080:8080
       - 8081:8081
@@ -116,7 +116,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:PR-48-2
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-17
     depends_on:
       - identity
     ports:
@@ -128,6 +128,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - LEARNER_RECORD_URL=http://learner-record:9000
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+      - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
     image: lpgregistry.azurecr.io/lpg-report-service:master-7
     depends_on:
       - identity

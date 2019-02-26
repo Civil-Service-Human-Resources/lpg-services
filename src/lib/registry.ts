@@ -23,7 +23,9 @@ export async function get(node: string): Promise<{}> {
 			.from(config.REGISTRY_SERVICE_URL)
 			.jsonHal()
 			.follow(node, 'self')
-			.getResource((error, document) => {
+			.withRequestOptions({
+				qs: { size: 100, page: 0},
+			})			.getResource((error, document) => {
 				if (error) {
 					reject(false)
 				} else {

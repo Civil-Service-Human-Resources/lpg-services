@@ -335,12 +335,7 @@ export async function renderEditPage(
 			break
 		case 'primary-area-of-work':
 			lede = req.__('register_area_page_intro')
-			if (req.session!.flash.children) {
-				options = req.session!.flash.children
-			} else {
-				response = await registry.getWithoutHal('/professions/tree')
-				options = response.data
-			}
+			options = haltoObject(await registry.halNode('professions'))
 			optionType = OptionTypes.Radio
 			value = req.user.areasOfWork
 			break
