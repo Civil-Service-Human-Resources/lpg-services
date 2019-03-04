@@ -29,13 +29,13 @@ r(function(){
   document.title = title;
 });
 
-var match = window.location.toString().match(/(https?):\/\/([^-]*)-?cdn\.cshr\.digital\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
+var match = window.location.toString().match(/(https?):\/\/([^-]*)-?learn\.civilservice\.gov\.uk\/[^/]+\/([^/]+)\/([^/]+)\/.*$/);
 if (!match) {
   throw new Error('Content being accessed on invalid domain');
 }
 var scheme = match[1];
 var env = !!match[2] ? match[2] + '-' : '';
-var host = env + 'lpg.' +'cshr.digital/';
+var host = env + 'learn.' +'civilservice.gov.uk/';
 var path = 'learning-record/' + match[3] + '/' + match[4];
 
 if (match[2] === 'local') {
