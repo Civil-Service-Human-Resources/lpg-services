@@ -65,7 +65,7 @@ app.enable('trust proxy')
 const corsOptions = {
 	allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
 	credentials: true,
-	origin: /\.cshr\.digital$/,
+	origin: /\.civilservice\.gov\.uk$/,
 }
 app.use(cors(corsOptions))
 
