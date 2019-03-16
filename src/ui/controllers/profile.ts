@@ -300,13 +300,30 @@ export async function updateLineManager(request: Request, response: Response) {
 			}))
 			return
 		}
-
 		const res: any = await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
-		if (res.status !== 200) {
-			logger.error(res)
-			throw new Error(res)
-		}
+		if (res.status === 404) {
+			errors.push("errors.lineManagerMissing")
 
+			response.send(template.render('profile/lineManager', request, response, {
+				confirm: lineManager.confirm,
+				email: lineManager.email,
+				errors,
+				originalUrl: request.body.originalUrl,
+			}))
+			return
+		} else if (res.status === 400) {
+			errors.push('errors.lineManagerIsUser')
+
+			response.send(template.render('profile/lineManager', request, response, {
+				confirm: lineManager.confirm,
+				email: lineManager.email,
+				errors,
+				originalUrl: request.body.originalUrl,
+			}))
+			return
+		} else  {
+			logger.error("")
+		}
 		setLocalProfile(request, 'lineManager', { email: lineManager.email })
 	}
 

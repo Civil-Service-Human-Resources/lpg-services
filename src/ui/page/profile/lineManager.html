@@ -8,10 +8,16 @@
                 </h1>
                 {#if (errors)}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-                    {#each errors as error}
-                    <div class="error-message">{$i18n(error)}</div>
-                    {/each}
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                        Update failed
+                    </h2>
+                    <p>
+                        {#each errors as error}
+                            <div class="error-message">{$i18n(error)}</div>
+                        {/each}
+                    </p>
                 </div>
+
                 {/if}
                 <p>You can skip this by leaving the boxes blank.<br>
                 To add a line manager, they must be registered with the service.</p>
