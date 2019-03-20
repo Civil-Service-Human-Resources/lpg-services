@@ -321,7 +321,9 @@ export async function updateLineManager(request: Request, response: Response) {
 				originalUrl: request.body.originalUrl,
 			}))
 			return
-		} else  {
+		} else if (res.status === 200)  {
+			setLocalProfile(request, 'lineManager', { email: lineManager.email })
+		} else {
 			logger.error(res)
 			throw new Error(res)
 		}
