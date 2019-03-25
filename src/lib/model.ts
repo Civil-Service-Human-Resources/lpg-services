@@ -1,6 +1,8 @@
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import * as moment from 'moment'
+import {Duration} from 'moment'
 
 export interface LineManager {
 	email: string
@@ -36,7 +38,10 @@ export class Course {
 			if (course.audience) {
 				course.audience.mandatory = false
 				course.audience.departments.forEach(a => {
-					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
+					if (
+						a === user.department &&
+						course.audience!.type === 'REQUIRED_LEARNING'
+					) {
 						course.audience!.mandatory = true
 					}
 				})
@@ -289,7 +294,7 @@ export class Event {
 
 		const status = data.status ? data.status : 'Active'
 
-		return new Event (date, location, capacity, availability, status, data.id)
+		return new Event(date, location, capacity, availability, status, data.id)
 	}
 
 	id: string
@@ -298,8 +303,16 @@ export class Event {
 	capacity: number
 	availability: number
 	status: string
+	isLearnerBooked: boolean
 
-	constructor(date: Date, location: string, capacity: number, availability: number, status: string, id?: string) {
+	constructor(
+		date: Date,
+		location: string,
+		capacity: number,
+		availability: number,
+		status: string,
+		id?: string
+	) {
 		if (id) {
 			this.id = id!
 		}
@@ -308,6 +321,7 @@ export class Event {
 		this.capacity = capacity
 		this.availability = availability
 		this.status = status
+		this.isLearnerBooked = false
 	}
 
 	getActivityId() {
@@ -323,7 +337,7 @@ export class Audience {
 		audience.grades = data.grades || []
 		audience.interests = data.interests || []
 		audience.mandatory = data.mandatory === undefined ? true : data.mandatory
-		audience.frequency = data.frequency
+		audience.frequency = data.frequency ? moment.duration(data.frequency) : undefined
 		audience.type = data.type ? data.type.toString() : null
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
@@ -337,7 +351,7 @@ export class Audience {
 	interests: string[]
 	mandatory = false
 	requiredBy?: Date | null
-	frequency?: string
+	frequency?: Duration
 	type: string
 
 	get optional() {
@@ -418,29 +432,12 @@ export class Audience {
 }
 
 export class Frequency {
-	static FiveYearly: 'FIVE_YEARLY'
-	static ThreeYearly: 'THREE_YEARLY'
-	static Yearly: 'YEARLY'
-
-	static increment(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() + step, date.getMonth(), date.getDate())
+	static increment(frequency: Duration, date: Date) {
+		return new Date(date.getFullYear() + frequency.years(), date.getMonth() + frequency.months(), date.getDate())
 	}
 
-	static decrement(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() - step, date.getMonth(), date.getDate())
-	}
-
-	private static getStep(frequency: string) {
-		switch (frequency) {
-			case Frequency.FiveYearly:
-				return 5
-			case Frequency.ThreeYearly:
-				return 3
-			default:
-				return 1
-		}
+	static decrement(frequency: Duration, date: Date) {
+		return new Date(date.getFullYear() - frequency.years(), date.getMonth() - frequency.months(), date.getDate())
 	}
 }
 
@@ -473,7 +470,8 @@ export class User {
 			data.accessToken
 		)
 
-		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
+		user.organisationalUnit =
+			data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
 			? data.organisationalUnit.code
 			: data.department
@@ -511,7 +509,7 @@ export class User {
 	givenName?: string
 	organisationalUnit?: OrganisationalUnit
 
-	grade?: string
+	grade?: any
 
 	constructor(
 		id: string,
@@ -538,5 +536,17 @@ export class User {
 
 	hasAnyRole(roles: string[]) {
 		return this.roles && this.roles.some(value => roles.indexOf(value) > -1)
+	}
+
+	isAdmin() {
+		return (
+			this.hasRole('LEARNING_MANAGER') ||
+			this.hasRole('CSL_AUTHOR') ||
+			this.hasRole('PROFESSION_AUTHOR') ||
+			this.hasRole('ORGANISATION_AUTHOR') ||
+			this.hasRole('KPMG_SUPPLIER_AUTHOR') ||
+			this.hasRole('KORNFERRY_SUPPLIER_AUTHOR') ||
+			this.hasRole('KNOWLEDGEPOOL_SUPPLIER_AUTHOR')
+		)
 	}
 }

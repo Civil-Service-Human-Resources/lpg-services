@@ -1,4 +1,3 @@
-
 <header role="banner" id="global-header" class="with-proposition">
     <div class="header-wrapper container">
         <div class="header-global">
@@ -11,7 +10,8 @@
         </div>
         <div class="header-proposition">
             <div class="content">
-                 <a href="/" title="Go to the Learning Platform homepage" id="proposition-name">Civil Service Learning</a>
+                <a href="#proposition-links" class="js-header-toggle menu"><span class="visually-hidden" id="visiblyHidden">Select to expand</span> Menu</a>
+                <a href="/" title="Go to the Learning Platform homepage" id="proposition-name">Civil Service Learning</a>
             </div>
         </div>
     </div>
@@ -21,20 +21,14 @@
 <div class="phase-banner">
     <p><strong class="phase-tag">BETA</strong> <a class="lpg-feedback-link" href="https://www.smartsurvey.co.uk/s/CSHR-Privatebeta/" target="_blank">Complete our survey to help us improve our new service (opens in new window)</a>.</p>
 </div>
-<div class="content nav-container with-proposition">
-    <a href="#proposition-links" class="js-header-toggle menu"><span class="visually-hidden" id="visiblyHidden">Select to expand</span> Menu</a>
-    <Nav/>
-</div>  
-<script>
-	import Nav from './Nav.html';
 
+<script>
 	export default {
 		data() {
 			return {
 			}
 		},
 		components: {
-			Nav
 		}
 	};
 </script>
