@@ -174,7 +174,7 @@ describe('Course Call to Actions', () => {
 										.message
 								).to.be.equal('action_CANCEL')
 							})
-							it('should show "Remove" but not "cancel" for UNREGISTERED courses', () => {
+							it('should show "Remove" and "Book" for UNREGISTERED courses', () => {
 								course.record!.modules.push(initModuleRecord('future'))
 								course.record!.modules[0].state = 'UNREGISTERED'
 
@@ -183,8 +183,8 @@ describe('Course Call to Actions', () => {
 									modifier
 								)
 
-								expect(cta.url).to.be.undefined
-								expect(cta.message).to.be.undefined
+								expect(cta.url).to.be.equal(`/book/${course.id}/${course.modules[0].id}/choose-date`)
+								expect(cta.message).to.be.equal('action_BOOK')
 								expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Delete)
 							})
 						})

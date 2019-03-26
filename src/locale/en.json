@@ -35,6 +35,7 @@
 	"home_page_learning_plan_link": "See more learning in your Learning plan",
 	"home_page_suggestions_link": "See more suggestions for you",
 	"required_learning_done": "You have completed all your required learning.",
+	"no_planned_learning_yet": "You don't have any planned learning yet.",
 	"learning_plan_page_title": "Learning plan",
 	"label_in_progress": "In progress",
 	"label_is_booked": "Booked",
@@ -332,6 +333,13 @@
 	"SCS": "SCS",
 	"cancel": "cancel",
 	"justAdded": "Just added",
+	"cancelReasons": {
+		"work-priorities": "Other work priorities",
+		"illness": "Illness",
+		"family-bereavement": "Family Bereavement",
+		"prefer-not-to-say": "Prefer not to say",
+		"Other": "Other"
+	},
 	"paymentMethods_FINANCIAL_APPROVER_heading": "Financial approver",
 	"paymentMethods_FINANCIAL_APPROVER_label": "Financial approver email address",
 	"paymentMethods_FINANCIAL_APPROVER_type": "Financial approver",
@@ -349,5 +357,21 @@
 	"department": "department",
 	"primary-area-of-work": "primary-area-of-work",
 	"learning_removed_from_suggestions": "This has been removed from your suggested courses.",
-	"other-areas-of-work": "other-areas-of-work"
+	"other-areas-of-work": "other-areas-of-work",
+	"given-name": "given-name",
+	"profile": {
+		"lineManager": {
+			"email": {
+				"empty": "Line manager email address is required.",
+				"invalid": "Please enter a valid email address."
+			},
+			"confirm": {
+				"empty": "Please confirm your line manager's email address.",
+				"match": "Fields do not match."
+			}
+		}
+	},
+	"profile_undefined_label": "profile_undefined_label",
+	"undefined": "undefined",
+	"line-manager": "line-manager"
 }
