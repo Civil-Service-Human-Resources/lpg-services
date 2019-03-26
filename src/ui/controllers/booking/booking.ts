@@ -1,12 +1,10 @@
 import * as express from 'express'
 import * as config from 'lib/config'
-import * as dateTime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as purchaseOrdersService from 'lib/purchase-orders'
 import * as registry from 'lib/registry'
-import * as notify from 'lib/service/notify'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 
@@ -121,6 +119,18 @@ export async function renderChooseDate(
 	const events = (module.events || [])
 		.filter(a => a.date > today)
 		.sort((a, b) => a.date.getTime() - b.date.getTime())
+
+	for (const event of events) {
+		await learnerRecord.getActiveBooking(event.id, req.user)
+			.then(e => {
+				if (e.status === 200) {
+					event.isLearnerBooked = true
+				} else {
+					event.isLearnerBooked = false
+				}
+			})
+			.catch(error => logger.error(error))
+	}
 
 	res.send(
 		template.render('booking/choose-date', req, res, {
@@ -285,7 +295,7 @@ export async function renderPaymentOptions(
 			)) as any
 		}
 
-		if (!organisationalUnit) {
+		if (!organisationalUnit || !user.lineManager) {
 			res.redirect('/profile')
 		} else {
 			res.send(
@@ -447,12 +457,16 @@ export async function tryMoveBooking(
 	})
 }
 
-export function renderConfirmPo(req: express.Request, res: express.Response) {
+export function renderConfirmPo(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 	res.send(
 		template.render('booking/confirm-po', req, res, {
-			po: req.session!.po,
-			url: `/book/${req.params.courseId}/${req.params.moduleId}/${
-				req.params.eventId
+			course: req.course,
+			event: req.event!,
+			module: req.module!,
+			po: ireq.session!.po,
+			url: `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
+				ireq.params.eventId
 			}`,
 		})
 	)
@@ -467,15 +481,30 @@ export async function tryCompleteBooking(
 	const module = req.module!
 	const event = req.event!
 	const session = req.session!
-	const paymentOption = `${session.payment.type}: ${session.payment.value}`
 
+	const accessibilityArray: string[] = []
+	for (const i in session.accessibilityReqs) {
+		if (i) {
+			const requirement = session.accessibilityReqs[i]
+			if (requirement === 'other') {
+				accessibilityArray.push(session.otherAccessibilityReqs)
+			} else {
+				accessibilityArray.push(
+					res.__(`accessibility-requirements`)[requirement]
+				)
+			}
+		}
+	}
+
+	const accessibilityOptions = accessibilityArray.join(', ')
 	const response = await learnerRecord.bookEvent(
 		course,
 		module,
 		event,
 		req.user,
 		req.session!.purchaseOrder,
-		session.payment.value
+		session.payment.value,
+		accessibilityOptions
 	)
 
 	let message
@@ -487,50 +516,6 @@ export async function tryCompleteBooking(
 			`event: ${event.id}`,
 			`response: ${response.status}`
 		)
-
-		const accessibilityArray: string[] = []
-		for (const i in session.accessibilityReqs) {
-			if (i) {
-				const requirement = session.accessibilityReqs[i]
-				if (requirement === 'other') {
-					accessibilityArray.push('Other')
-				} else {
-					accessibilityArray.push(
-						res.__(`accessibility-requirements`)[requirement]
-					)
-				}
-			}
-		}
-
-		if (module.cost !== 0) {
-			await notify
-				.bookingRequested({
-					accessibility: accessibilityArray.join(', '),
-					bookingReference: `${req.user.id}-${event.id}`,
-					cost: module.cost,
-					courseDate: `${dateTime.formatDate(event.date)} ${dateTime.formatTime(
-						event.date,
-						true
-					)} ${
-						module.duration
-							? 'to ' + dateTime.addSeconds(event.date, module.duration, true)
-							: ''
-					}`,
-					courseLocation: event.location,
-					courseTitle: module.title || course.title,
-					email: req.user.userName,
-					eventId: event.id,
-					learnerName: req.user.givenName || req.user.userName,
-					lineManager: req.user.lineManager,
-					location: event.location,
-					paymentOption,
-				})
-				.catch((e: Error) => {
-					logger.error('There was an error with GOV Notify', e)
-					res.redirect('/book/ouch')
-					return true
-				})
-		}
 
 		message = confirmedMessage.Booked
 	} else {

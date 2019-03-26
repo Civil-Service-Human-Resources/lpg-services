@@ -7,9 +7,9 @@
         </legend>
     {/if}
     {#each options as option}
-        <div class="multiple-choice">    
-            <input id="{option[1]}" type="radio" name="{inputName}" value="{option[0]}" checked="{value == (option[1] || option[0]) ? 'checked' : ''}">
-            <label for="{option[1]}">{option[1]}</label>
-        </div>
+            <div class="multiple-choice">
+                <input id="{option[1]}" type="radio" name="{inputName}" value="{option[0]}" checked="{value == (option[1] || option[0]) ? 'checked' : ''}">
+                <label for="{option[1]}">{option[1]}</label>
+            </div>
     {/each}
 </fieldset>

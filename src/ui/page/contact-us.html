@@ -1,0 +1,43 @@
+<Page title="Contact us" {_csrf}>
+    <div class="container container--main">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-xlarge heading heading--page-heading ">
+                    Contact us
+                </h1>
+            </div>
+        </div>
+
+        <div class="grid-row">
+            <div class="column-full">
+                <p class="govuk-body">You can contact the helpdesk on <a href="tel:{contactNumber}">{contactNumber}</a> or by email on <a href="mailto:support@civilservicelearning.uk">{contactEmail}</a>.</p>
+                <p class="govuk-body">The helpdesk phone service is available Monday to Friday 8:30am to 5:30pm except all UK bank holidays.</p>
+            </div>
+        </div>
+
+    </div>
+</Page>
+<script>
+    import Page from '../component/Page.html'
+    import Banner from '../component/Banner.html'
+    import Search from '../component/Search.html'
+    import SuggestionsSection from '../component/SuggestionsSection.html'
+    import DisciteCourse from '../component/DisciteCourse.html'
+    import DisciteModule from '../component/DisciteModule.html'
+
+
+    export default {
+        data() {
+            return {
+            }
+        },
+
+        components: {
+            Banner,
+            Search,
+            SuggestionsSection,
+            DisciteCourse,
+            Page,
+        }
+    };
+</script>

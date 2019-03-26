@@ -1,6 +1,8 @@
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import * as moment from 'moment'
+import {Duration} from 'moment'
 
 export interface LineManager {
 	email: string
@@ -301,6 +303,7 @@ export class Event {
 	capacity: number
 	availability: number
 	status: string
+	isLearnerBooked: boolean
 
 	constructor(
 		date: Date,
@@ -318,6 +321,7 @@ export class Event {
 		this.capacity = capacity
 		this.availability = availability
 		this.status = status
+		this.isLearnerBooked = false
 	}
 
 	getActivityId() {
@@ -333,7 +337,7 @@ export class Audience {
 		audience.grades = data.grades || []
 		audience.interests = data.interests || []
 		audience.mandatory = data.mandatory === undefined ? true : data.mandatory
-		audience.frequency = data.frequency
+		audience.frequency = data.frequency ? moment.duration(data.frequency) : undefined
 		audience.type = data.type ? data.type.toString() : null
 		if (data.requiredBy) {
 			audience.requiredBy = new Date(data.requiredBy)
@@ -347,7 +351,7 @@ export class Audience {
 	interests: string[]
 	mandatory = false
 	requiredBy?: Date | null
-	frequency?: string
+	frequency?: Duration
 	type: string
 
 	get optional() {
@@ -428,29 +432,12 @@ export class Audience {
 }
 
 export class Frequency {
-	static FiveYearly: 'FIVE_YEARLY'
-	static ThreeYearly: 'THREE_YEARLY'
-	static Yearly: 'YEARLY'
-
-	static increment(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() + step, date.getMonth(), date.getDate())
+	static increment(frequency: Duration, date: Date) {
+		return new Date(date.getFullYear() + frequency.years(), date.getMonth() + frequency.months(), date.getDate())
 	}
 
-	static decrement(frequency: string, date: Date) {
-		const step = this.getStep(frequency)
-		return new Date(date.getFullYear() - step, date.getMonth(), date.getDate())
-	}
-
-	private static getStep(frequency: string) {
-		switch (frequency) {
-			case Frequency.FiveYearly:
-				return 5
-			case Frequency.ThreeYearly:
-				return 3
-			default:
-				return 1
-		}
+	static decrement(frequency: Duration, date: Date) {
+		return new Date(date.getFullYear() - frequency.years(), date.getMonth() - frequency.months(), date.getDate())
 	}
 }
 
@@ -522,7 +509,7 @@ export class User {
 	givenName?: string
 	organisationalUnit?: OrganisationalUnit
 
-	grade?: string
+	grade?: any
 
 	constructor(
 		id: string,
