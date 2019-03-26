@@ -154,7 +154,7 @@ export const LPG_MANAGEMENT_URL =
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000
 
-export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
+export const APPINSIGHTS_INSTRUMENTATIONKEY = env.appinsights_instrumentationkey || 'appinsights_instrumentationkey'
 
 export const CONTACT_EMAIL = env.CONTACT_EMAIL || 'support@civilservicelearning.uk'
 

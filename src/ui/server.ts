@@ -41,7 +41,7 @@ const favicon = require('serve-favicon')
 /* tslint:enable */
 
 appInsights
-	.setup(config.INSTRUMENTATION_KEY)
+	.setup(config.APPINSIGHTS_INSTRUMENTATIONKEY)
 	.setAutoDependencyCorrelation(true)
 	.setAutoCollectRequests(true)
 	.setAutoCollectPerformance(true)
