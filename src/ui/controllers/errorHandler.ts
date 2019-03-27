@@ -11,6 +11,11 @@ export async function handleError(
 	response: Response,
 	next: NextFunction
 ) {
+	// @ts-ignore
+	if (error.response && error.response.status === 401) {
+		return response.redirect('/sign-out')
+	}
+
 	try {
 		logger.error(
 			'Error handling request for',
