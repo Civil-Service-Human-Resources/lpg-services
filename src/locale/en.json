@@ -357,8 +357,6 @@
 	"department": "department",
 	"primary-area-of-work": "primary-area-of-work",
 	"learning_removed_from_suggestions": "This has been removed from your suggested courses.",
-	"other-areas-of-work": "other-areas-of-work",
-    "Commercial": "Commercial",
 	"given-name": "given-name",
 	"profile": {
 		"lineManager": {
@@ -374,5 +372,7 @@
 	},
 	"profile_undefined_label": "profile_undefined_label",
 	"undefined": "undefined",
-	"line-manager": "line-manager"
+	"line-manager": "line-manager",
+	"other-areas-of-work": "other-areas-of-work",
+	"Commercial": "Commercial"
 }
