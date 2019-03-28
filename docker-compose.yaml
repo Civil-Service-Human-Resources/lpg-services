@@ -105,7 +105,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-52
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:chore-fix-swagger-compile-issue-1
     depends_on:
       - identity
     ports:
