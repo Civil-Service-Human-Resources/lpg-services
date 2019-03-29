@@ -18,7 +18,8 @@
                 {#if completedRequiredLearning.length}
                     <LearningRecordTable courses={completedRequiredLearning} />
                     {#if requiredLearning.results.length > 0}
-                        <p class="no-margin">You have completed {completedRequiredLearning.length} of your required learning courses this year and have <a href="/home">{requiredLearning.results.length} more</a> to do.</p>
+                        <p class="no-margin">You have completed {completedRequiredLearning.length} of your required learning courses this
+                            year and have <a href="/home">{requiredLearning.results.length - completedRequiredLearning.length} more</a> to do.</p>
                     {:else}
                         <p class="no-margin">You have completed all of your required learning for this reporting year.</p>
                     {/if}
