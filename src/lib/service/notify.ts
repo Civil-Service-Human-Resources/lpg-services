@@ -114,7 +114,7 @@ export async function requiredLearningCompleted(info: RequiredLearningCompleted)
 	const templateData = {...info}
 
 	if (info.managerEmail) {
-		await notify.sendEmail(config.LEARNING_NOTIFY_TEMPLATE_IDS.requiredLineManager, info.managerEmail,{
+		await notify.sendEmail(config.LEARNING_NOTIFY_TEMPLATE_IDS.requiredLineManager, info.managerEmail, {
 					personalisation: templateData,
 				}
 			)
