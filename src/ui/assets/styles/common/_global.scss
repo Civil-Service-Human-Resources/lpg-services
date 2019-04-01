@@ -1,3 +1,7 @@
+#content {
+	padding-bottom: 400px !important;
+}
+
 body {
 	min-width: 360px;
 }
@@ -35,6 +39,11 @@ hr.clear {
 	cursor: not-allowed;
 }
 
+.no-results {
+	list-style-type: disc;
+	list-style-position: inside;
+}
+
 .aspect {
 	@include e(container) {
 		height: 0;
@@ -62,6 +71,12 @@ hr.clear {
 	@extend %contain-floats;
 	@include m(grey) {
 		background-color: $grey-4;
+	}
+}
+
+@media all and (max-width: 670px) {
+	.zero-result {
+		margin-top: 10px;
 	}
 }
 

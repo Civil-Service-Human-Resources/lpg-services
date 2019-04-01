@@ -40,6 +40,8 @@ services:
   mongodb:
     container_name: mongodb
     image: mongo@sha256:fbb95eaa5a0c84d0d2098775f166003c568a79f993d91309cee7cda4135bbbfd
+    ports:
+      - 27017:27017
 
   redis:
     container_name: redis
@@ -64,7 +66,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: lpgregistry.azurecr.io/identity-service:master-29
+    image: lpgregistry.azurecr.io/identity-service:master-39
     ports:
       - 8080:8080
       - 8081:8081
@@ -77,7 +79,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-    image: lpgregistry.azurecr.io/lpg-learner-record:master-41
+    image: lpgregistry.azurecr.io/lpg-learner-record:master-51
     depends_on:
       - civil-servant-registry
       - identity
@@ -102,7 +104,8 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-36
+      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:chore-fix-swagger-compile-issue-1
     depends_on:
       - identity
     ports:
@@ -113,7 +116,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:PR-48-2
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-20
     depends_on:
       - identity
     ports:
@@ -124,7 +127,9 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - LEARNER_RECORD_URL=http://learner-record:9000
-    image: lpgregistry.azurecr.io/lpg-report-service:master-5
+      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+      - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
+    image: lpgregistry.azurecr.io/lpg-report-service:master-11
     depends_on:
       - identity
       - learner-record

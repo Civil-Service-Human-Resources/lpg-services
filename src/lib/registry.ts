@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, {AxiosResponse} from 'axios'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as traverson from 'traverson'
@@ -23,7 +23,9 @@ export async function get(node: string): Promise<{}> {
 			.from(config.REGISTRY_SERVICE_URL)
 			.jsonHal()
 			.follow(node, 'self')
-			.getResource((error, document) => {
+			.withRequestOptions({
+				qs: { size: 100, page: 0},
+			})			.getResource((error, document) => {
 				if (error) {
 					reject(false)
 				} else {
@@ -135,16 +137,10 @@ export async function profile(token: string) {
 	)
 }
 
-export async function getWithoutHal(path: string) {
-	const result = await new Promise((resolve, reject) => {
-		http
-			.get(config.REGISTRY_SERVICE_URL + path)
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-	return result
+export async function getWithoutHal(path: string): Promise<AxiosResponse> {
+	try {
+		return await http.get(config.REGISTRY_SERVICE_URL + path)
+	}	catch (error) {
+		throw new Error(error)
+	}
 }

@@ -1,10 +1,14 @@
 <aside role="complementary">
-    <form autocomplete="off" name="searchLearning" method="get" action="/search">
+    <input type="checkbox" id="hide-filter" class="hide-filters" />
+    <label class="filter-label"for="hide-filter">search filters</label>
+    <form class="filter-form" autocomplete="off" name="searchLearning" method="get" action="/search">
         <input type="hidden" id="query" name="q" value="{ query }" />
-        <div class="lpg-related-items form-group govuk-related-items--search leftSearchBox">
+        <button type="submit" class="button">Apply search filters</button>
+        <a class="clear-filters" href="/search?q={query}">Clear all filters</a>
+        <div class="lpg-related-items form-group govuk-related-items--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-medium">Learning type</h2>
+                    <h2 class="govuk-related-items__heading heading-small">Learning type</h2>
                 </legend>
                 {#each Object.entries($i18n('courseTypes')) as filter}
                     <div class="multiple-choice">
@@ -15,11 +19,11 @@
             </fieldset>
         </div>
 
-        <div class="lpg-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+        <div class="lpg-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
 
                 <legend>
-                    <h3 class="govuk-related-items__heading heading-medium">Cost</h3>
+                    <h3 class="govuk-related-items__heading heading-small">Cost</h3>
                 </legend>
 
                 <div class="multiple-choice">
@@ -29,10 +33,10 @@
             </fieldset>
         </div>
 
-        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-medium">Your department</h2>
+                    <h2 class="govuk-related-items__heading heading-small">Your department</h2>
                 </legend>
                 {#each departments.yours as filter}
                 <div class="multiple-choice">
@@ -46,7 +50,7 @@
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-medium">Other departments</h2>
+                    <h2 class="govuk-related-items__heading heading-small">Other departments</h2>
                 </legend>
                 {#each departments.other as filter}
                 <div class="multiple-choice">
@@ -57,10 +61,10 @@
             </fieldset>
         </div>
 
-        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-medium">Your areas of work</h2>
+                    <h2 class="govuk-related-items__heading heading-small">Your areas of work</h2>
                 </legend>
                 {#each areasOfWork.yours as filter}
                 <div class="multiple-choice">
@@ -74,7 +78,7 @@
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-medium">Other areas of work</h2>
+                    <h2 class="govuk-related-items__heading heading-small">Other areas of work</h2>
                 </legend>
                 {#each areasOfWork.other as filter}
                 <div class="multiple-choice">
@@ -85,10 +89,10 @@
             </fieldset>
         </div>
 
-        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox">
+        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-medium">Your interests</h2>
+                    <h2 class="govuk-related-items__heading heading-small">Your interests</h2>
                 </legend>
                 {#each interests.yours as filter}
                 <div class="multiple-choice">
@@ -102,7 +106,7 @@
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-medium">Other interests</h2>
+                    <h2 class="govuk-related-items__heading heading-small">Other interests</h2>
                 </legend>
                 {#each interests.other as filter}
                 <div class="multiple-choice">
@@ -114,5 +118,6 @@
         </div>
 
         <button type="submit" class="button">Apply search filters</button>
+        <a class="clear-filters" href="/search?q={query}">Clear all filters</a>
     </form>
 </aside>
