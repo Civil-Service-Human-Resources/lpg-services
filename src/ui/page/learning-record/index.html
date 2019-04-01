@@ -17,7 +17,7 @@
                 </h2>
                 {#if completedRequiredLearning.length}
                     <LearningRecordTable courses={completedRequiredLearning} />
-                    {#if requiredLearning.results.length > 0}
+                    {#if requiredLearning.results.length - completedRequiredLearning.length > 0}
                         <p class="no-margin">You have completed {completedRequiredLearning.length} of your required learning courses this
                             year and have <a href="/home">{requiredLearning.results.length - completedRequiredLearning.length} more</a> to do.</p>
                     {:else}
