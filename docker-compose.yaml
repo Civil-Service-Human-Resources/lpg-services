@@ -79,7 +79,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-    image: lpgregistry.azurecr.io/lpg-learner-record:master-51
+    image: lpgregistry.azurecr.io/lpg-learner-record:master-53
     depends_on:
       - civil-servant-registry
       - identity
@@ -105,7 +105,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:chore-fix-swagger-compile-issue-1
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-53
     depends_on:
       - identity
     ports:
@@ -135,4 +135,14 @@ services:
       - learner-record
     ports:
       - 9004:9004
-# /CSHR
+
+  notification-service:
+    container_name: notification-service
+    environment:
+      - OAUTH_SERVICE_URL=http://identity:8080
+    image: lpgregistry.azurecr.io/notification-service:PR-2-7
+    depends_on:
+      - identity
+    ports:
+      - 9005:9005
+ /CSHR
