@@ -16,6 +16,10 @@
                 </li>
             {/if}
         </ul>
+        {#if bookedModule.moduleType === 'face-to-face'}
+            Face to face
+        {:else}
         <div class="discite__status"><span class="badge badge--info ">{module.state ? $i18n(module.state) : ''}</span></div>
+        {/if}
     </div>
 {/if}
