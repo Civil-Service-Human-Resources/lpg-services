@@ -37,8 +37,8 @@
         <div class="discite__item--event">
             <div class="discite__item--main">
                 <h3 class="heading discite__heading"><a href="/courses/{course.id}" class="govuk-link">{bookedModule.moduleTitle}</a></h3>
-                {#if bookedModule.bookingStatus !== "CANCELLED"}
-                    <p class="discite__property-item">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
+                <p class="discite__property-item">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
+                {#if bookedModule.state !== "Unregistered"}
                     <a class="discite__property-item" href="/book/{course.id}/{bookedModule.moduleId}/{bookedModule.eventId}/cancel">Cancel booking</a>
                 {/if}
             </div>
@@ -57,7 +57,7 @@
                 </p>
             </div>
             <div class="discite__property-item discite__status--home">
-                <span class="badge badge--discite badge--info">{bookedModule.bookingStatus}</span>
+                <span class="badge badge--discite badge--info">{bookedModule.state ? $i18n(bookedModule.state) : ''}</span>
             </div>
         </div>
     {/if}

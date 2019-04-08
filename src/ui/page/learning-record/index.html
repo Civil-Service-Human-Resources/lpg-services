@@ -1,8 +1,9 @@
 <Page title="Learning record" {_csrf}>
     <div class="container">
         <h1 class="heading-xlarge small-margin">Learning record</h1>
-        <p class="govuk-body">This is a record of the learning you have completed.</p>
-        <p class="govuk-body no-margin">A course will only appear in your learning record once you have completed all the modules that are required.</p>
+        <p class="govuk-body no-margin">This is a record of the learning you have completed.</p>
+        <p class="govuk-body">A course will only appear in your learning record once you have completed all the modules that are required.</p>
+        <p class="govuk-body no-margin">To review the learning you have completed on <strong>Civil Service Learning</strong>, you can <a target="_blank" href="https://civilservicelearning.civilservice.gov.uk/user?tab=completed-training">check your training records on CSL (opens in new window)</a>.</p>
         <div class="grid-row">
             <div class="column-full">
                 {#if successTitle}
@@ -16,10 +17,20 @@
                     Required learning from your organisation
                 </h2>
                 {#if completedRequiredLearning.length}
-                <LearningRecordTable courses={completedRequiredLearning} />
-                <p>You have completed {completedRequiredLearning.length} of your required learning courses.</p>
+                    <LearningRecordTable courses={completedRequiredLearning} />
+                    {#if requiredLearning.results.length - completedRequiredLearning.length > 0}
+                        <p class="no-margin">You have completed {completedRequiredLearning.length} of your required learning courses this
+                            year and have <a href="/home">{requiredLearning.results.length - completedRequiredLearning.length} more</a> to do.</p>
+                    {:else}
+                        <p class="no-margin">You have completed all of your required learning for this reporting year.</p>
+                    {/if}
                 {:else}
-                <p class="no-margin">You haven't completed any required learning courses yet.</p>
+                    <p>You haven't completed any required learning courses yet.</p>
+                    {#if requiredLearning.results.length > 0}
+                        <p class="no-margin">You have <a href="/home">{requiredLearning.results.length} course{#if requiredLearning.results.length > 1}s{/if}</a> to complete for this reporting year.</p>
+                    {:else}
+                        <p class="no-margin">You have completed all of your required learning for this reporting year.</p>
+                    {/if}
                 {/if}
             </div>
         </div>
