@@ -242,7 +242,7 @@ async function getSuggestions(
 	while (newSuggestions.length < count && hasMore) {
 		const page = await catalog.findSuggestedLearningWithParameters(
 			user,
-			params.serialize()
+			params.serialize() as string
 		)
 		newSuggestions = newSuggestions.concat(
 			modifyCourses(page.results, learningRecord)
