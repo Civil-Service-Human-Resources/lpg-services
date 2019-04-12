@@ -2,11 +2,11 @@ import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
+import {ApiParameters} from 'lib/service/catalog'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
-import {ApiParameters} from "lib/service/catalog"
 
 const logger = log4js.getLogger('controllers/suggestion')
 
