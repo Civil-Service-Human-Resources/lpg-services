@@ -6,6 +6,7 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
+import {ApiParameters} from "lib/service/catalog"
 
 const logger = log4js.getLogger('controllers/suggestion')
 
@@ -233,7 +234,7 @@ async function getSuggestions(
 	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
 	user: model.User
 ): Promise<model.Course[]> {
-	const params = new catalog.ApiParameters(
+	const params: ApiParameters = new catalog.ApiParameters(
 		areasOfWork,
 		department,
 		interests,

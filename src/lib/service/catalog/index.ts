@@ -137,7 +137,7 @@ export class ApiParameters {
 		public areaOfWork: string[],
 		public department: string,
 		public interest: string[],
-		public grade: any,
+		public grade: string,
 		public page: number = 0,
 		public size: number = 6
 	) {}
