@@ -139,6 +139,7 @@ export async function suggestionsByInterest(
 			'',
 			[],
 			[interest.name],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -159,6 +160,7 @@ export async function suggestionsByAreaOfWork(
 			'',
 			[aow],
 			[],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -179,6 +181,7 @@ export async function suggestionsByOtherAreasOfWork(
 			'',
 			[aow.name],
 			[],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -198,6 +201,7 @@ export async function suggestionsByDepartment(
 			user.department!,
 			[],
 			[],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -214,6 +218,7 @@ export async function homeSuggestions(
 		user.department!,
 		user.areasOfWork || [],
 		[],
+		user.grade ? user.grade.code : '',
 		6,
 		learningRecord,
 		user
@@ -224,6 +229,7 @@ async function getSuggestions(
 	department: string,
 	areasOfWork: string[],
 	interests: string[],
+	grade: string,
 	count: number,
 	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
 	user: model.User
@@ -232,6 +238,7 @@ async function getSuggestions(
 		areasOfWork,
 		department,
 		interests,
+		grade,
 		0,
 		count
 	)
