@@ -141,7 +141,7 @@ export class ApiParameters {
 		public size: number = 6
 	) {}
 	serialize(): string {
-		return query.stringify(this)
+		return query.stringify(this) as any
 	}
 }
 
