@@ -81,7 +81,7 @@ app.use(
 	session({
 		cookie: {
 			httpOnly: true,
-			maxAge: 15768000,
+			maxAge: config.COOKIE.maxAge,
 			secure: config.PRODUCTION_ENV,
 		},
 		name: 'lpg-ui',

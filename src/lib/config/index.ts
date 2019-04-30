@@ -51,6 +51,10 @@ export const AUTHENTICATION = set({
 	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 
+export const COOKIE = set({
+	maxAge: Number(env.COOKIE_AGE_IN_SECONDS) || 15768000,
+})
+
 export const BOOKING_NOTIFY_TEMPLATE_IDS = {
 	cancelled: 'cc525c34-1a31-4fa1-ab19-862fd223caab',
 	cancelledLineManager: 'c00fac77-8448-41c9-b15c-23361ccef419',
