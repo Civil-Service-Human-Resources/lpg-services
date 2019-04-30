@@ -19,11 +19,11 @@
 
                     <div class="form-group">
                         <fieldset class="u-space-b30">
-                            <span class="form-label">Select the area of work that is relevant to your job.</span>
+                            <p class="lede">Select the area of work that is relevant to your job.</p>
                             {#each professions as profession}
                             <div class="multiple-choice">
-                                <input id="{profession.name}" type="radio" name="profession" value="{profession._links.self.href}">
-                                <label for="{profession.name}">{profession.name}</label>
+                                <input id="{profession[1].name}" type="radio" name="profession" value="/professions/{profession[1].id}" checked="{value == (profession[1].name || profession[0].name) ? 'checked' : ''}">
+                                <label for="{profession[1].name}">{profession[1].name}</label>
                             </div>
                             {/each}
                         </fieldset>

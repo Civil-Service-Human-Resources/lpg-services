@@ -113,8 +113,8 @@ export async function updateOrganisation(request: Request, response: Response) {
 }
 
 export async function addProfession(request: Request, response: Response) {
-	const professions = await getOptions("professions")
-
+	const options = await registry.getWithoutHal('/professions/tree')
+	const professions =  Object.entries(options.data)
 	response.send(template.render('profile/profession', request, response, {
 		originalUrl: request.query.originalUrl,
 		professions,
