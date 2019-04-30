@@ -129,12 +129,14 @@ export function hasAnyRole(roles: string[]) {
 	}
 }
 
-export function logout(
+export async function logout(
 	authenticationServiceUrl: string,
 	callbackUrl: string,
 	req: express.Request,
-	res: express.Response
+	res: express.Response,
+	accessToken: string
 ) {
 	req.logout()
+	await identity.logout(accessToken)
 	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
 }

@@ -401,6 +401,7 @@ export function resetPassword(req: express.Request, res: express.Response) {
 }
 
 export function signIn(req: express.Request, res: express.Response) {
+	req.logout()
 	const sessionDataKey = req.query.sessionDataKey
 	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
 
@@ -419,12 +420,13 @@ export function signIn(req: express.Request, res: express.Response) {
 	}
 }
 
-export function signOut(req: express.Request, res: express.Response) {
-	passport.logout(
+export async function signOut(req: express.Request, res: express.Response) {
+	await passport.logout(
 		config.AUTHENTICATION.serviceUrl,
 		config.LPG_UI_SERVER,
 		req,
-		res
+		res,
+		req.user.accessToken
 	)
 }
 
