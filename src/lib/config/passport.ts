@@ -1,11 +1,11 @@
 import * as express from 'express'
+import * as config from "lib/config/index"
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as log4js from 'log4js'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
-import * as config from "lib/config/index"
 
 const logger = log4js.getLogger('config/passport')
 
