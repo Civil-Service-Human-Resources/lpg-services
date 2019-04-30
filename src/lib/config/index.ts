@@ -52,7 +52,7 @@ export const AUTHENTICATION = set({
 })
 
 export const COOKIE = set({
-	maxAge: Number(env.COOKIE_AGE_IN_SECONDS) || 15768000,
+	maxAge: Number(env.COOKIE_AGE_IN_MILLISECONDS) || 15768000,
 })
 
 export const BOOKING_NOTIFY_TEMPLATE_IDS = {
