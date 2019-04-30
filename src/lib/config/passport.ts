@@ -5,6 +5,7 @@ import * as registry from 'lib/registry'
 import * as log4js from 'log4js'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
+import * as config from "lib/config/index"
 
 const logger = log4js.getLogger('config/passport')
 
@@ -93,13 +94,15 @@ export function isAuthenticated(
 	res: express.Response,
 	next: express.NextFunction
 ) {
-	if (req.isAuthenticated()) {
+	const authenticated = req.isAuthenticated()
+	if (authenticated) {
 		return next()
 	}
 	const session = req.session!
 	session.redirectTo = req.originalUrl
+	const authenticationServiceUrl = config.AUTHENTICATION.serviceUrl
 	session.save(() => {
-		res.redirect('/authenticate')
+		res.redirect(`${authenticationServiceUrl}/logout`)
 	})
 }
 
