@@ -113,20 +113,19 @@ export async function updateOrganisation(request: Request, response: Response) {
 }
 
 export async function addProfession(request: Request, response: Response) {
-	// const options = await registry.getWithoutHal('/professions/tree')
-	// const professions =  Object.entries(options.data)
-	// response.send(template.render('profile/profession', request, response, {
-	// 	originalUrl: request.query.originalUrl,
-	// 	professions,
-	// }))
+
 	let options: {[prop: string]: any}
 	let res: any
-	res = await registry.getWithoutHal('/professions/tree')
-	options = res.data
 
-	res.send(template.render('profile/profession', request, response, {
-		options: Object.entries(options),
+	if (request.session!.flash.children) {
+		options = request.session!.flash.children
+	} else {
+		res = await registry.getWithoutHal('/professions/tree')
+		options = res.data
+	}
+	response.send(template.render('profile/profession', request, response, {
 		originalUrl: request.query.originalUrl,
+		professions: Object.entries(options),
 		})
 	)
 }
