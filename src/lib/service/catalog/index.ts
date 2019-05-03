@@ -137,11 +137,12 @@ export class ApiParameters {
 		public areaOfWork: string[],
 		public department: string,
 		public interest: string[],
+		public grade: string,
 		public page: number = 0,
 		public size: number = 6
 	) {}
 	serialize(): string {
-		return query.stringify(this)
+		return query.stringify(this as any)
 	}
 }
 

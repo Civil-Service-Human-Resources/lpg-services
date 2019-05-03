@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
+import {ApiParameters} from "lib/service/catalog"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
@@ -138,6 +139,7 @@ export async function suggestionsByInterest(
 			'',
 			[],
 			[interest.name],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -158,6 +160,7 @@ export async function suggestionsByAreaOfWork(
 			'',
 			[aow],
 			[],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -178,6 +181,7 @@ export async function suggestionsByOtherAreasOfWork(
 			'',
 			[aow.name],
 			[],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -197,6 +201,7 @@ export async function suggestionsByDepartment(
 			user.department!,
 			[],
 			[],
+			user.grade ? user.grade.code : '',
 			6,
 			await getLearningRecord(user, learningRecordIn),
 			user
@@ -213,6 +218,7 @@ export async function homeSuggestions(
 		user.department!,
 		user.areasOfWork || [],
 		[],
+		user.grade ? user.grade.code : '',
 		6,
 		learningRecord,
 		user
@@ -223,14 +229,16 @@ async function getSuggestions(
 	department: string,
 	areasOfWork: string[],
 	interests: string[],
+	grade: string,
 	count: number,
 	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
 	user: model.User
 ): Promise<model.Course[]> {
-	const params = new catalog.ApiParameters(
+	const params: ApiParameters = new catalog.ApiParameters(
 		areasOfWork,
 		department,
 		interests,
+		grade,
 		0,
 		count
 	)
@@ -241,7 +249,7 @@ async function getSuggestions(
 	while (newSuggestions.length < count && hasMore) {
 		const page = await catalog.findSuggestedLearningWithParameters(
 			user,
-			params.serialize()
+			params.serialize() as string
 		)
 		newSuggestions = newSuggestions.concat(
 			modifyCourses(page.results, learningRecord)
