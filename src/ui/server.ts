@@ -81,7 +81,7 @@ app.use(
 	session({
 		cookie: {
 			httpOnly: true,
-			maxAge: 31536000,
+			maxAge: config.COOKIE.maxAge,
 			secure: config.PRODUCTION_ENV,
 		},
 		name: 'lpg-ui',
@@ -156,7 +156,7 @@ app.use(lusca.csrf())
 
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
-app.get('/sign-out', userController.signOut)
+app.get('/sign-out', asyncHandler(userController.signOut))
 app.get('/reset-password', userController.resetPassword)
 
 app.get('/privacy', (req, res) => {
