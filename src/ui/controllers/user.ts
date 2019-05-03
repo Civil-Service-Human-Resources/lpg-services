@@ -401,6 +401,7 @@ export function resetPassword(req: express.Request, res: express.Response) {
 }
 
 export function signIn(req: express.Request, res: express.Response) {
+	req.logout()
 	const sessionDataKey = req.query.sessionDataKey
 	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
 
