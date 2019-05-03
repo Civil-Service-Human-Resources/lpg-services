@@ -15,7 +15,6 @@
 		margin-top: 8px;
 
 		margin-bottom: 0px;
-		border-bottom: 1px solid $alt-color;
 		width: 100%;
 
         input {
@@ -38,6 +37,10 @@
 	.heading-small {
 		margin-top: 6px;
 	}
+}
+
+.filter-headings {
+	margin: 15px 0 12px 0;
 }
 
 .clear-filters {
