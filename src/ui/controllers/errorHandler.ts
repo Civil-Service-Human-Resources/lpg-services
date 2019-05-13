@@ -6,7 +6,7 @@ const logger = log4js.getLogger('controllers/home')
 const nonProductionEnvironments = ['dev', 'test']
 
 export async function handleError(
-	error: Error,
+	error: any,
 	request: Request,
 	response: Response,
 	next: NextFunction
@@ -20,7 +20,9 @@ export async function handleError(
 			'\n',
 			error.stack
 		)
-
+		if (error.response && error.response.status === 401) {
+			return response.redirect('/log-out')
+		}
 		response.status(500)
 
 		const isNonProduction: boolean = !!(
