@@ -8,10 +8,11 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as suggestionController from './suggestion'
+import {NextFunction} from "express"
 
 const logger = log4js.getLogger('controllers/home')
 
-export async function home(req: express.Request, res: express.Response) {
+export async function home(req: express.Request, res: express.Response, next: NextFunction) {
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
@@ -159,7 +160,7 @@ export async function home(req: express.Request, res: express.Response) {
 		)
 	} catch (e) {
 		console.error("Error building user's home page", e)
-		throw new Error(`Error building user's home page - ${e}`)
+		next(e)
 	}
 }
 
