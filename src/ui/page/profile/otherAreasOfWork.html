@@ -24,7 +24,7 @@
                         <fieldset class="u-space-b30">
                             {#each professions as profession}
                             <div class="multiple-choice">
-                                <input id="{profession.name}" type="checkbox" name="otherAreasOfWork" value="{profession._links.self.href}">
+                                <input id="{profession.name}" type="checkbox" name="otherAreasOfWork" value="{profession.id}">
                                 <label for="{profession.name}">{profession.name}</label>
                             </div>
                             {/each}

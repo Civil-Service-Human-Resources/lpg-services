@@ -117,7 +117,7 @@ export async function addProfession(request: Request, response: Response) {
 	let options: {[prop: string]: any}
 	let res: any
 
-	if (request.session!.flash.children) {
+	if (request.session!.flash && request.session!.flash.children) {
 		options = request.session!.flash.children
 	} else {
 		res = await registry.getWithoutHal('/professions/tree')
@@ -142,6 +142,30 @@ export async function updateProfession(request: Request, response: Response) {
 				professions,
 			}))
 	} else {
+		const professionsTree: any = await registry.getWithoutHal('/professions/tree')
+		const options: any  = professionsTree.data
+		let children: any = []
+
+		const areaOfWorkId = profession.split("/professions/").pop()
+		options.forEach((option: any) => {
+			option.children.forEach((child: any) => {
+				// tslint:disable-next-line
+				if (child.id == areaOfWorkId && child.children) {
+					children = child.children
+				}
+			})
+			// tslint:disable-next-line
+			if (option.id == areaOfWorkId && option.children) {
+				children = option.children
+			}
+		})
+		if (children.length > 0) {
+			request.session!.flash = {children}
+			return request.session!.save(() => {
+				response.redirect(`/profile/profession?originalUrl=${request.body.originalUrl}`)
+			})
+		}
+		delete request.session!.flash.children
 		try {
 			await registry.patch('civilServants', {
 				profession,
@@ -167,11 +191,15 @@ export async function updateProfession(request: Request, response: Response) {
 }
 
 export async function addOtherAreasOfWork(request: Request, response: Response) {
-	const professions = await getOptions("professions")
+	const foo = await getOptions("professions")
+	console.log(foo)
+	const professionsTree: any = await registry.getWithoutHal('/professions/tree')
+	const professions = professionsTree.data
 	response.send(template.render('profile/otherAreasOfWork', request, response, {
 		originalUrl: request.query.originalUrl,
 		professions,
 	}))
+	console.log(professionsTree)
 }
 
 export async function updateOtherAreasOfWork(request: Request, response: Response) {
@@ -198,7 +226,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		try {
 			const professions = []
 			for (const profession of values) {
-				const professionResponse: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
+				const professionResponse: any = await registry.getWithoutHal('/professions/' + profession)
 				professions.push({id: professionResponse.data.id, name: professionResponse.data.name})
 			}
 
