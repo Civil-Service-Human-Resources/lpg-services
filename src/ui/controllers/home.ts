@@ -8,11 +8,10 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as log4js from 'log4js'
 import * as suggestionController from './suggestion'
-import {NextFunction} from "express"
 
 const logger = log4js.getLogger('controllers/home')
 
-export async function home(req: express.Request, res: express.Response, next: NextFunction) {
+export async function home(req: express.Request, res: express.Response, next: express.NextFunction) {
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
