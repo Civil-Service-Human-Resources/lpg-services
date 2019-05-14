@@ -104,6 +104,9 @@ function validateForm(req: express.Request) {
 
 export function viewProfile(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
+	if (ireq.session!.flash && ireq.session!.flash.children) {
+		delete ireq.session!.flash.children
+	}
 	res.send(
 		template.render('profile/view', req, res, {
 			updateSuccessful: req.flash('profile-updated').length > 0,

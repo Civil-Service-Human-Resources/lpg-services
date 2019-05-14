@@ -123,6 +123,7 @@ export async function addProfession(request: Request, response: Response) {
 		res = await registry.getWithoutHal('/professions/tree')
 		options = res.data
 	}
+
 	response.send(template.render('profile/profession', request, response, {
 		originalUrl: request.query.originalUrl,
 		professions: Object.entries(options),
