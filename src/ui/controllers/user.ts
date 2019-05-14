@@ -346,21 +346,17 @@ export async function renderEditPage(
 			value = req.user.areasOfWork
 			break
 		case 'other-areas-of-work':
-			options = haltoObject(await registry.halNode('professions'))
-			if (req.user.areasOfWork) {
-				const profession: string = Object.values(
-					req.user.areasOfWork
-				)[0].toString()
-				const indexOfProfession: number = Object.values(options).indexOf(
-					profession
-				)
-				delete options[Object.keys(options)[indexOfProfession]]
+			response = await registry.getWithoutHal('/professions/tree')
+			response.data.map((x: any) => {
+				options['/professions/' + x.id] = x.name
+			})
+			if (req.user.otherAreasOfWork) {
+				value = req.user.otherAreasOfWork.map((otherAreasOfWork: {name: string}) => {
+					return otherAreasOfWork.name
+				})
 			}
 
 			optionType = OptionTypes.Checkbox
-			value = req.user.otherAreasOfWork.map((aow: {name: string}) => {
-				return aow.name
-			})
 
 			break
 		case 'department':
@@ -449,8 +445,16 @@ export async function tryUpdateProfile(
 		const options: any  = response.data
 		let children: any = []
 
+		const areaOfWorkId = areaOfWork.split("/professions/").pop()
 		options.forEach((option: any) => {
-			if (option.id === +areaOfWork.substr(areaOfWork.length - 1) && option.children) {
+			option.children.forEach((child: any) => {
+				// tslint:disable-next-line
+				if (child.id == areaOfWorkId && child.children) {
+					children = child.children
+				}
+			})
+			// tslint:disable-next-line
+			if (option.id == areaOfWorkId && option.children) {
 				children = option.children
 			}
 		})
@@ -473,7 +477,6 @@ export async function tryUpdateProfile(
 		await updateProfile(req, res)
 	}
 }
-
 export async function patchAndUpdate(
 	node: string,
 	value: string,
