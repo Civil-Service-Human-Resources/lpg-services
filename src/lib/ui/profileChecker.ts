@@ -33,7 +33,7 @@ export class ProfileChecker {
 	}
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
-			if (!this.isProfileRequest(request)) {
+			if (!this.isProfileRequest(request) && config.PROFILE !== 'local') {
 				try {
 					for (const section of this._profileSections) {
 						if (!section.isPresent(request.user)) {
