@@ -1,0 +1,119 @@
+.question-form {
+
+  .question {
+    width: 100%;
+    float: none;
+  }
+
+  .multiple-choice {
+    width: 100%;
+  }
+}
+
+.expand {
+  position: absolute;
+  left: -9999px;
+}
+
+.icon {
+  float: left;
+  margin-top:12px;
+  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='53px' height='43px' viewBox='0 0 53 43' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' stroke-linecap='square'%3E%3Cg id='Right' transform='translate(29.087616, 23.020182) rotate(-19.000000) translate(-29.087616, -23.020182) translate(5.087616, 2.520182)' fill-rule='nonzero' stroke='%2300823B' stroke-width='7'%3E%3Cpath d='M0.0585858586,15.8896396 L8.72929293,29.9211712' id='Line'%3E%3C/path%3E%3Cpath d='M14.2892056,37.0242982 L42.1842151,3.78032035' id='Line-2' transform='translate(28.236710, 20.402309) rotate(20.000000) translate(-28.236710, -20.402309) '%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left;
+  background-size: contain;
+  width: 22px;
+  height: 22px;
+  display: block;
+  padding-left: 30px;
+  margin-left: 10px;
+
+  &::after {
+    content: 'Correct';
+    margin-top: 2px;
+    display: block;
+  }
+}
+
+.incorrect {
+  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='36px' height='36px' viewBox='0 0 36 36' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd' stroke-linecap='square'%3E%3Cg id='Wrong' transform='translate(4.957338, 4.717437)' fill-rule='nonzero' stroke='%23AF292E' stroke-width='7'%3E%3Cpath d='M0.606764462,25.7278391 L25.4785593,0.368817914' id='Line-4' transform='translate(13.042662, 13.048329) rotate(90.555737) translate(-13.042662, -13.048329) '%3E%3C/path%3E%3Cpath d='M0.606764462,25.7278391 L25.4785593,0.368817914' id='Line-4-Copy' transform='translate(13.042662, 13.048329) rotate(0.555737) translate(-13.042662, -13.048329) '%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 22px;
+  height: 22px;
+  display: block;
+  padding-left: 30px;
+  &::after {
+    content: 'Incorrect';
+    margin-top: 2px;
+    display: block;
+  }
+}
+
+
+.answers {
+  float: left;
+  box-sizing: border-box;
+  width: 100%;
+
+  .heading-medium {
+    float:left;
+    max-width: 66%;
+    width: 66%;
+  }
+
+}
+
+.summary-container {
+  .question-contents {
+    display: none;
+  }
+
+  .light {
+    font-weight: normal;
+  }
+
+  .expand-label {
+    float: right;
+    margin-top: 12px;
+
+    &:before {
+      content: 'Show';
+    }
+
+    &:after
+    {
+
+    }
+  }
+
+
+  .expand:checked ~ .question-contents {
+    display: block;
+  }
+
+  .expand:checked + .expand-label:before {
+    content: 'Hide';
+  }
+
+}
+
+.dont-know {
+  margin-bottom:20px;
+}
+
+.question-container {
+  padding: 20px 0;
+  border-bottom: 1px solid $border;
+  float: left;
+  width: 100%;
+
+  .heading-medium {
+    margin: 10px 0;
+  }
+
+  .multiple-choice {
+    width: 100%;
+  }
+}

@@ -29,6 +29,7 @@ import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
+import * as skillsController from './controllers/skills'
 
 import * as errorController from './controllers/errorHandler'
 
@@ -257,6 +258,13 @@ app.get(
 	'/suggestions-for-you/remove/:courseId',
 	asyncHandler(suggestionController.removeFromSuggestions)
 )
+
+app.get('/skills', asyncHandler(skillsController.startQuiz))
+// app.post('/skills/start-quiz', asyncHandler(skillsController.startQuiz))
+app.get('/skills/choose-quiz', asyncHandler(skillsController.chooseQuiz))
+app.post('/skills/questions', asyncHandler(skillsController.questions))
+// app.post('/skills/questions', asyncHandler(skillsController.questions))
+app.get('/skills/summary', asyncHandler(skillsController.quizSummary))
 
 app.get('/home', asyncHandler(homeController.home))
 

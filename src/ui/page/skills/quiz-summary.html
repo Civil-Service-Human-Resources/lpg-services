@@ -1,0 +1,51 @@
+<Page title="Skills" {_csrf}>
+    <div class="container container--main">
+        <BackButton link="/skills/questions" />
+        <div class="grid-row ">
+            <div class="column-two-thirds">
+                <h1 class="heading heading-large">Policy awareness quiz:</h1>
+                <h2 class="heading-medium">Your quiz results</h2>
+                {#if results}
+                <Banner type="confirmation" message="You scored 6 out of 9 on this awareness quiz" />
+                {/if}
+            </div>
+            <div class="column-one-third">
+                <div class="right-menu">
+                    <h4 class="heading-small">Actions</h4>
+                    <a href="">Share with your line manager</a>
+                    <a href="">Retake this quiz</a>
+                </div>
+            </div>
+            <div class="column-full">
+                {#if results}
+                <div class="summary-container">
+                    {#each results as result, y}
+                    <div class="question-container ">
+                        <QuizQuestion question={result.question} group={y} summary=false  class="correct"/>
+                    </div>
+                    {/each}
+                </div>
+                {/if}
+            </div>
+        </div>
+    </div>
+</Page>
+
+<script>
+    import Page from '../../component/Page.html'
+    import BackButton from '../../component/BackButton.html'
+    import QuizQuestion from '../../component/QuizQuestion.html'
+    import Banner from '../../component/Banner.html'
+    export default {
+        data() {
+            return {
+            }
+        },
+        components: {
+            Page,
+            BackButton,
+            QuizQuestion,
+            Banner
+        }
+    }
+</script>
