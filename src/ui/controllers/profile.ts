@@ -166,7 +166,9 @@ export async function updateProfession(request: Request, response: Response) {
 				response.redirect(`/profile/profession?originalUrl=${request.body.originalUrl}`)
 			})
 		}
-		delete request.session!.flash.children
+		if (request.session!.flash && request.session!.flash.children) {
+			delete request.session!.flash.children
+		}
 		try {
 			await registry.patch('civilServants', {
 				profession,
