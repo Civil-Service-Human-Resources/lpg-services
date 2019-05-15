@@ -7,9 +7,16 @@
         </legend>
     {/if}
     {#each options as option}
-        <div class="multiple-choice">    
-            <input id="{option[1]}" type="radio" name="{inputName}" value="{option[0]}" checked="{value == (option[1] || option[0]) ? 'checked' : ''}">
-            <label for="{option[1]}">{option[1]}</label>
-        </div>
+        {#if inputName === "primary-area-of-work"}
+            <div class="multiple-choice">
+                <input id="{option[1].name}" type="radio" name="{inputName}" value="/professions/{option[1].id}" checked="{value == (option[1].name || option[0].name) ? 'checked' : ''}">
+                <label for="{option[1].name}">{option[1].name}</label>
+            </div>
+        {:else}
+            <div class="multiple-choice">
+                <input id="{option[1]}" type="radio" name="{inputName}" value="{option[0]}" checked="{value == (option[1] || option[0]) ? 'checked' : ''}">
+                <label for="{option[1]}">{option[1]}</label>
+            </div>
+        {/if}
     {/each}
 </fieldset>

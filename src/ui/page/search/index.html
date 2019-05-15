@@ -39,7 +39,18 @@
                                     cta={$constructModuleCta(result.course.id, result.module, $req.user, result.module.state, result.course.record, 'search')}>
                                 </DisciteModule>
                             {/if}
-                        {/each} 
+                        {/each}
+                    {:else}
+                        <p class="zero-result lede"><strong>0</strong> results found</p>
+                        <h2 class="heading-medium">Please try:</h2>
+                        <ul class="no-results">
+                            <li>searching again using different words</li>
+                            <li>removing your filters</li>
+                        </ul>
+                        <h2 class="heading-medium">You can:</h2>
+                         <ul class="no-results">
+                            <li>view <a href="suggestions-for-you">suggestions for you</a></li>
+                         </ul>
                     {/if}
                 </div>
             </div>

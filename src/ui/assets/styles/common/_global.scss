@@ -1,3 +1,7 @@
+body {
+	min-width: 360px;
+}
+
 hr.clear {
 	clear: both;
 	display: block;
@@ -13,6 +17,12 @@ hr.clear {
 	font-size: 19px;
 }
 
+.profile-container {
+	.heading-large {
+		margin-top: 20px;
+	}
+}
+
 .flash-message {
 	background: $flash-message;
 	color: #fff;
@@ -23,6 +33,11 @@ hr.clear {
 
 .disabled {
 	cursor: not-allowed;
+}
+
+.no-results {
+	list-style-type: disc;
+	list-style-position: inside;
 }
 
 .aspect {
@@ -52,6 +67,12 @@ hr.clear {
 	@extend %contain-floats;
 	@include m(grey) {
 		background-color: $grey-4;
+	}
+}
+
+@media all and (max-width: 670px) {
+	.zero-result {
+		margin-top: 10px;
 	}
 }
 
@@ -140,6 +161,12 @@ hr.clear {
 	p {
 		margin-bottom: 0;
 	}
+}
+
+.custom-column-with-button {
+	.headind-xlarge {
+		margin-top: 20px;
+  }
 }
 
 .lpg-course-type,

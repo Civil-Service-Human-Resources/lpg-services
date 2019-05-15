@@ -1,0 +1,62 @@
+<PageNoNav title="Add your line manager's email address" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Set up your profile</span>
+                    <span class="heading-primary">Add your line manager's email address</span>
+                </h1>
+                {#if (errors)}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                        Update failed
+                    </h2>
+                    <p>
+                        {#each errors as error}
+                            <div class="error-message">{$i18n(error)}</div>
+                        {/each}
+                    </p>
+                </div>
+
+                {/if}
+                <p>You can skip this by leaving the boxes blank.<br>
+                To add a line manager, they must be registered with the service.</p>
+
+                <form autocomplete="off" method="post" action="/profile/lineManager">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <input type="hidden" name="originalUrl" value="{originalUrl}">
+
+                    <div class="form-group">
+                        <fieldset>
+                            <label class="form-label" for="email">Line manager's email address</label>
+                            <input class="form-control" id="email" name="email" type="text" value="{email || ''}">
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group">
+                        <fieldset>
+                            <label class="form-label" for="confirm">Confirm line manager's email address</label>
+                            <input class="form-control" id="confirm" name="confirm" type="text" value="{confirm || ''}">
+                        </fieldset>
+                    </div>
+
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</PageNoNav>
+<script>
+	import PageNoNav from '../../component/PageNoNav.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			PageNoNav
+		}
+	}
+</script>

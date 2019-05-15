@@ -51,6 +51,10 @@ export const AUTHENTICATION = set({
 	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 
+export const COOKIE = set({
+	maxAge: Number(env.COOKIE_AGE_IN_MILLISECONDS) || 15768000,
+})
+
 export const BOOKING_NOTIFY_TEMPLATE_IDS = {
 	cancelled: 'cc525c34-1a31-4fa1-ab19-862fd223caab',
 	cancelledLineManager: 'c00fac77-8448-41c9-b15c-23361ccef419',
@@ -155,3 +159,7 @@ export const LPG_MANAGEMENT_URL =
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 15000
 
 export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
+
+export const CONTACT_EMAIL = env.CONTACT_EMAIL || 'support@civilservicelearning.uk'
+
+export const CONTACT_NUMBER = env.CONTACT_NUMBER || '020 3640 7985'

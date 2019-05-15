@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as config from "lib/config/index"
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
@@ -93,13 +94,15 @@ export function isAuthenticated(
 	res: express.Response,
 	next: express.NextFunction
 ) {
-	if (req.isAuthenticated()) {
+	const authenticated = req.isAuthenticated()
+	if (authenticated) {
 		return next()
 	}
 	const session = req.session!
 	session.redirectTo = req.originalUrl
+	const authenticationServiceUrl = config.AUTHENTICATION.serviceUrl
 	session.save(() => {
-		res.redirect('/authenticate')
+		res.redirect(`${authenticationServiceUrl}/logout`)
 	})
 }
 
@@ -129,12 +132,14 @@ export function hasAnyRole(roles: string[]) {
 	}
 }
 
-export function logout(
+export async function logout(
 	authenticationServiceUrl: string,
 	callbackUrl: string,
 	req: express.Request,
-	res: express.Response
+	res: express.Response,
+	accessToken: string
 ) {
 	req.logout()
+	await identity.logout(accessToken)
 	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
 }

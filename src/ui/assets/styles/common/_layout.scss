@@ -86,7 +86,7 @@
 
 	@include m(border) {
 		@include m(bgrey2) {
-			border-bottom: 1px solid #bfc1c3;
+			border-bottom: none;
 		}
 	}
 }

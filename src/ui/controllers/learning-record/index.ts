@@ -65,22 +65,23 @@ export async function display(req: express.Request, res: express.Response) {
 		learnerRecord.getRawLearningRecord(req.user, [], ['COMPLETED']),
 	])
 
-	const completedLearning = learningRecord
-		.sort((a, b) => {
-			const bcd = b.getCompletionDate()
-			const acd = a.getCompletionDate()
+	const completedLearning = learningRecord.sort((a, b) => {
+		const bcd = b.getCompletionDate()
+		const acd = a.getCompletionDate()
 
-			const bt = bcd ? bcd.getTime() : 0
-			const at = acd ? acd.getTime() : 0
+		const bt = bcd ? bcd.getTime() : 0
+		const at = acd ? acd.getTime() : 0
 
-			return bt - at
-		})
+		return bt - at
+	})
 
 	const completedRequiredLearning = []
 
 	for (let i = 0; i < completedLearning.length; i++) {
 		const courseRecord = completedLearning[i]
-		const course = requiredLearning.results.find(c => c.id === courseRecord.courseId)
+		const course = requiredLearning.results.find(
+			c => c.id === courseRecord.courseId
+		)
 		if (course) {
 			completedRequiredLearning.push(courseRecord)
 			completedLearning.splice(i, 1)
@@ -92,6 +93,7 @@ export async function display(req: express.Request, res: express.Response) {
 		template.render('learning-record', req, res, {
 			completedLearning,
 			completedRequiredLearning,
+			requiredLearning,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
 		})

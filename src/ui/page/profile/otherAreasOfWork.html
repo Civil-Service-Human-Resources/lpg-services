@@ -1,0 +1,53 @@
+<PageNoNav title="Your other areas of work" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Set up your profile</span>
+                    <span class="heading-primary">Your other areas of work</span>
+                </h1>
+
+                {#if (error)}
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                    <div class="error-message">Please select your other areas of work.</div>
+                </div>
+                {/if}
+
+                <p>Select the other areas of work that are relevant to your job.</p>
+
+                <form autocomplete="off" method="post" action="/profile/otherAreasOfWork">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <input type="hidden" name="originalUrl" value="{originalUrl}">
+
+
+                    <div class="form-group">
+                        <fieldset class="u-space-b30">
+                            {#each professions as profession}
+                            <div class="multiple-choice">
+                                <input id="{profession.name}" type="checkbox" name="otherAreasOfWork" value="{profession.id}">
+                                <label for="{profession.name}">{profession.name}</label>
+                            </div>
+                            {/each}
+                        </fieldset>
+                    </div>
+
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</PageNoNav>
+<script>
+	import PageNoNav from '../../component/PageNoNav.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			PageNoNav
+		}
+	}
+</script>

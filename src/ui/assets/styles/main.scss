@@ -42,6 +42,10 @@
 	@extend %site-width-container;
 	@extend %contain-floats;
 }
+
+.phase-banner__content {
+	word-break: normal;
+}
 .push-top {
 	margin-top: 50px;
 }

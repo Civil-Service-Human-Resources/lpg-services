@@ -87,7 +87,7 @@ $module: 'discite';
 
 	@include e(property) {
 		// ul.discite__property the actual data about the discite thing
-		width: 50%;
+		width: 150px;
 		float: left;
 
 		.badge {
@@ -125,7 +125,7 @@ $module: 'discite';
 
 		@include media(mobile) {
 			left: 50%;
-			text-align: left;
+			text-align: right;
 		}
 		@include media(tablet) {
 			width: 100%;

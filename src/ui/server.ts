@@ -1,15 +1,12 @@
-import * as fs from 'fs'
-import * as config from 'lib/config'
-import * as log4js from 'log4js'
-
-log4js.configure(config.LOGGING)
-
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
+import * as fs from 'fs'
+import * as config from 'lib/config'
+import * as log4js from 'log4js'
 
 import * as lusca from 'lusca'
 import * as path from 'path'
@@ -17,8 +14,8 @@ import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
-import * as model from 'lib/model'
 import * as i18n from 'lib/service/translation'
+import {ProfileChecker} from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
 
 import * as bookingRouter from './controllers/booking/routes'
@@ -27,6 +24,7 @@ import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
 import * as learningRecordFeedbackController from './controllers/learning-record/feedback'
+import * as profileController from './controllers/profile'
 import * as searchController from './controllers/search'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
@@ -34,6 +32,8 @@ import * as xApiController from './controllers/xapi'
 import * as skillsController from './controllers/skills'
 
 import * as errorController from './controllers/errorHandler'
+
+log4js.configure(config.LOGGING)
 
 /* tslint:disable:no-var-requires */
 const appInsights = require('applicationinsights')
@@ -66,7 +66,7 @@ app.enable('trust proxy')
 const corsOptions = {
 	allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
 	credentials: true,
-	origin: /\.cshr\.digital$/,
+	origin: /\.civilservice\.gov\.uk$/,
 }
 app.use(cors(corsOptions))
 
@@ -82,7 +82,7 @@ app.use(
 	session({
 		cookie: {
 			httpOnly: true,
-			maxAge: 31536000,
+			maxAge: config.COOKIE.maxAge,
 			secure: config.PRODUCTION_ENV,
 		},
 		name: 'lpg-ui',
@@ -108,7 +108,7 @@ if (config.PROFILE === 'prod') {
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': "'self' https://cdn.cshr.digital",
+					'default-src': "'self' https://cdn.learn.civilservice.gov.uk",
 					'font-src': 'data:',
 					'frame-src': 'https://youtube.com https://www.youtube.com',
 					'img-src': "'self' data: https://www.google-analytics.com",
@@ -157,7 +157,7 @@ app.use(lusca.csrf())
 
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
-app.get('/sign-out', userController.signOut)
+app.get('/sign-out', asyncHandler(userController.signOut))
 app.get('/reset-password', userController.resetPassword)
 
 app.get('/privacy', (req, res) => {
@@ -165,6 +165,8 @@ app.get('/privacy', (req, res) => {
 })
 
 app.get('/cookies', homeController.cookies)
+
+app.get('/contact-us', homeController.contactUs)
 
 app.get('/status', (req, res) => {
 	let version = 'unknown'
@@ -183,37 +185,32 @@ app.post('/feedback.record', asyncHandler(feedbackController.record))
 app.use(passport.isAuthenticated)
 app.use(passport.hasRole('LEARNER'))
 
+app.use(new ProfileChecker().checkProfile())
+
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 
 app.get('/profile', userController.viewProfile)
 
-// disabled for now
-// app.get(
-// 	'/profile/areas-of-work',
-// 	asyncHandler(userController.newRenderAreasOfWorkPage)
-// )
-// app.get(
-// 	'/profile/areas-of-work/*',
-// 	asyncHandler(userController.newRenderAreasOfWorkPage)
-// )
+app.get('/profile/name', profileController.addName)
+app.post('/profile/name', profileController.updateName)
+app.get('/profile/organisation', profileController.addOrganisation)
+app.post('/profile/organisation', profileController.updateOrganisation)
+app.get('/profile/profession', profileController.addProfession)
+app.post('/profile/profession', profileController.updateProfession)
+app.get('/profile/otherAreasOfWork', profileController.addOtherAreasOfWork)
+app.post('/profile/otherAreasOfWork', profileController.updateOtherAreasOfWork)
+app.get('/profile/interests', profileController.addInterests)
+app.post('/profile/interests', profileController.updateInterests)
+app.get('/profile/grade', profileController.addGrade)
+app.post('/profile/grade', profileController.updateGrade)
+app.get('/profile/lineManager', profileController.addLineManager)
+app.post('/profile/lineManager', profileController.updateLineManager)
 
 app.get('/profile/:profileDetail', userController.renderEditPage)
 
 app.post(
 	'/profile/:profileDetail',
 	asyncHandler(userController.tryUpdateProfile)
-)
-
-app.use(
-	(req: express.Request, res: express.Response, next: express.NextFunction) => {
-		const user = req.user as model.User
-		if (!user.hasCompleteProfile()) {
-			logger.debug('Incomplete profile, redirecting user')
-			res.redirect('/profile')
-		} else {
-			next()
-		}
-	}
 )
 
 app.get('/courses/:courseId', asyncHandler(courseController.display))

@@ -104,6 +104,9 @@ function validateForm(req: express.Request) {
 
 export function viewProfile(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
+	if (ireq.session!.flash && ireq.session!.flash.children) {
+		delete ireq.session!.flash.children
+	}
 	res.send(
 		template.render('profile/view', req, res, {
 			updateSuccessful: req.flash('profile-updated').length > 0,
@@ -328,36 +331,39 @@ export async function renderEditPage(
 	let optionType: string = ''
 	let value = null
 	let lede
+	let response: any
 	switch (inputName) {
 		case 'given-name':
 			value = req.user.givenName
 			break
 		case 'primary-area-of-work':
 			lede = req.__('register_area_page_intro')
-			options = haltoObject(await registry.halNode('professions'))
+			// options = haltoObject(await registry.halNode('professions'))
+			if (req.session!.flash.children) {
+				options = req.session!.flash.children
+			} else {
+				response = await registry.getWithoutHal('/professions/tree')
+				options = response.data
+			}
 			optionType = OptionTypes.Radio
 			value = req.user.areasOfWork
 			break
 		case 'other-areas-of-work':
-			options = haltoObject(await registry.halNode('professions'))
-			if (req.user.areasOfWork) {
-				const profession: string = Object.values(
-					req.user.areasOfWork
-				)[0].toString()
-				const indexOfProfession: number = Object.values(options).indexOf(
-					profession
-				)
-				delete options[Object.keys(options)[indexOfProfession]]
+			response = await registry.getWithoutHal('/professions/tree')
+			response.data.map((x: any) => {
+				options['/professions/' + x.id] = x.name
+			})
+			if (req.user.otherAreasOfWork) {
+				value = req.user.otherAreasOfWork.map((otherAreasOfWork: {name: string}) => {
+					return otherAreasOfWork.name
+				})
 			}
 
 			optionType = OptionTypes.Checkbox
-			value = req.user.otherAreasOfWork.map((aow: {name: string}) => {
-				return aow.name
-			})
 
 			break
 		case 'department':
-			const response: any = await registry.getWithoutHal('/organisationalUnits/flat')
+			response = await registry.getWithoutHal('/organisationalUnits/flat')
 			response.data.map((x: any) => {
 				options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 			})
@@ -400,6 +406,7 @@ export function resetPassword(req: express.Request, res: express.Response) {
 }
 
 export function signIn(req: express.Request, res: express.Response) {
+	req.logout()
 	const sessionDataKey = req.query.sessionDataKey
 	const loginFailed = req.query.authFailureMsg === 'login.fail.message'
 
@@ -418,12 +425,13 @@ export function signIn(req: express.Request, res: express.Response) {
 	}
 }
 
-export function signOut(req: express.Request, res: express.Response) {
-	passport.logout(
+export async function signOut(req: express.Request, res: express.Response) {
+	await passport.logout(
 		config.AUTHENTICATION.serviceUrl,
 		config.LPG_UI_SERVER,
 		req,
-		res
+		res,
+		req.user.accessToken
 	)
 }
 
@@ -433,18 +441,45 @@ export async function tryUpdateProfile(
 ) {
 	const validFields = validateForm(req)
 
-	if (!validFields) {
-		req.flash('profileErrorEmpty', req.__('errors.profileErrorEmpty'))
-		req.session!.save(() => {
-			res.redirect(`/profile/${req.params.profileDetail}`)
+	if (req.body['primary-area-of-work']) {
+		const areaOfWork = req.body['primary-area-of-work']
+
+		const response: any = await registry.getWithoutHal('/professions/tree')
+		const options: any  = response.data
+		let children: any = []
+
+		const areaOfWorkId = areaOfWork.split("/professions/").pop()
+		options.forEach((option: any) => {
+			option.children.forEach((child: any) => {
+				// tslint:disable-next-line
+				if (child.id == areaOfWorkId && child.children) {
+					children = child.children
+				}
+			})
+			// tslint:disable-next-line
+			if (option.id == areaOfWorkId && option.children) {
+				children = option.children
+			}
 		})
 
-		return
+		if (children.length > 0) {
+			req.session!.flash = {children}
+			return req.session!.save(() => {
+				res.redirect('/profile/primary-area-of-work')
+			})
+		}
+		delete req.session!.flash.children
+	}
+
+	if (!validFields) {
+		req.flash('profileErrorEmpty', req.__('errors.profileErrorEmpty'))
+		return req.session!.save(() => {
+			res.redirect(`/profile/${req.params.profileDetail}`)
+		})
 	} else {
 		await updateProfile(req, res)
 	}
 }
-
 export async function patchAndUpdate(
 	node: string,
 	value: string,
@@ -475,10 +510,9 @@ export async function patchAndUpdate(
 
 		if (errorMessage) {
 			req.flash('profileError', errorMessage)
-			req.session!.save(() => {
+			return req.session!.save(() => {
 				res.redirect(`/profile/${inputName}`)
 			})
-			return
 		}
 	} else if (response) {
 		// seems like we have to get the profile again to get values
@@ -486,20 +520,18 @@ export async function patchAndUpdate(
 		const profile = await registry.profile(req.user.accessToken)
 		await updateUserObject(req, profile as Record<string, string>)
 		req.flash('profile-updated', 'profile-updated')
-		req.session!.save(() => {
+		return req.session!.save(() => {
 			res.redirect('/profile')
 		})
-		return
 	} else {
 		req.flash(
 			'profileError',
 			`Server error. Update failed, please try again or contact the
 <a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>`
 		)
-		req.session!.save(() => {
+		return req.session!.save(() => {
 			res.redirect(`/profile/${input}`)
 		})
-		return
 	}
 }
 

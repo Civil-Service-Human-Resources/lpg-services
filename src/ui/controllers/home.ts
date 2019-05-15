@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -10,7 +11,7 @@ import * as suggestionController from './suggestion'
 
 const logger = log4js.getLogger('controllers/home')
 
-export async function home(req: express.Request, res: express.Response) {
+export async function home(req: express.Request, res: express.Response, next: express.NextFunction) {
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
@@ -158,7 +159,7 @@ export async function home(req: express.Request, res: express.Response) {
 		)
 	} catch (e) {
 		console.error("Error building user's home page", e)
-		throw new Error(`Error building user's home page - ${e}`)
+		next(e)
 	}
 }
 
@@ -196,4 +197,11 @@ export function cookies(ireq: express.Request, res: express.Response) {
 
 	const req = ireq as extended.CourseRequest
 	res.send(template.render('/cookies', req, res, {}))
+}
+
+export function contactUs(req: express.Request, res: express.Response) {
+	res.send(template.render('/contact-us', req, res, {
+		contactEmail: config.CONTACT_EMAIL,
+		contactNumber: config.CONTACT_NUMBER,
+	}))
 }
