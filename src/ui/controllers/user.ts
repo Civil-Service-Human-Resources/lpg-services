@@ -343,14 +343,14 @@ export async function renderEditPage(
 				options = req.session!.flash.children
 			} else {
 				response = await registry.getWithoutHal('/professions/tree')
-				options = response.data
+				options = sortList(response.data)
 			}
 			optionType = OptionTypes.Radio
 			value = req.user.areasOfWork
 			break
 		case 'other-areas-of-work':
 			response = await registry.getWithoutHal('/professions/tree')
-			response.data.map((x: any) => {
+			sortList(response.data).map((x: any) => {
 				options['/professions/' + x.id] = x.name
 			})
 			if (req.user.otherAreasOfWork) {
@@ -597,4 +597,13 @@ export async function updateProfile(
 	} else {
 		await patchAndUpdate(node, fieldValue, inputName, req, res)
 	}
+}
+function sortList(list: any) {
+	return list.sort((a: any, b: any) => {
+		if (a.name === "I don't know") { return 1 }
+		if (b.name === "I don't know") { return -1 }
+		if (a.name < b.name) { return -1 }
+		if (a.name > b.name) { return 1 }
+		return 0
+	})
 }
