@@ -22,6 +22,6 @@ export class Quiz {
 	constructor(questions: Question[]) {
 		this.questions = questions
 		this.questionCount = questions.length
-		this.answers = [];
+		this.answers = []
 	}
 }
