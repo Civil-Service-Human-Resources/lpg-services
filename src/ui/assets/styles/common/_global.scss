@@ -162,3 +162,44 @@ hr.clear {
 		text-transform: capitalize;
 	}
 }
+
+.skills-container {
+	margin-bottom: 60px;
+
+	.skills {
+		padding: 20px;
+		background-color: $light-grey;
+
+		.govuk-body {
+			font-size: 24px;
+		}
+	}
+}
+
+.skills-list {
+	margin-bottom: 30px;
+}
+
+.multiple-choice .quiz + label::before {
+	top: 12px;
+}
+
+.multiple-choice .quiz + label::after {
+	top: 21px;
+}
+
+.heading-light {
+	color: $hint;
+	font-weight: normal;
+
+	& + .heading-large {
+		margin-top: 0;
+	}
+}
+
+.right-menu {
+	margin-top: 50px;
+	border: 1px solid $alt-header-color;
+	border-top: 8px solid $cs-red;
+	padding: 0 10px 10px 10px;
+}

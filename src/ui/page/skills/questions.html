@@ -1,0 +1,39 @@
+<Page title="Skills" {_csrf}>
+    <div class="container container--main">
+        <div class="grid-row ">
+            <div class="column-full">
+                <h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
+                {#if question}
+                <h2 class="heading heading-large ">Question {index+1} of {count}</h2>
+                {:else}
+                <h2 class="heading heading-large ">Question # of #</h2>
+                {/if}
+                <form action="skills/questions/{index}" method="post" class="question-form">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <fieldset class="form-group">
+                        <QuizQuestion question={question} type={type} />
+                    </fieldset>
+                    <div class="dont-know">
+                        <a href="/skills/questions/{index+1}">I don't know</a>
+                    </div>
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+
+<script>
+    import Page from '../../component/Page.html'
+    import QuizQuestion from '../../component/QuizQuestion.html'
+    export default {
+        data() {
+            return {
+            }
+        },
+        components: {
+            Page,
+            QuizQuestion
+        }
+    }
+</script>

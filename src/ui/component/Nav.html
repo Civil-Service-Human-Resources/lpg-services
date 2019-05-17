@@ -22,6 +22,11 @@
         {:else}
             <li><a href="/profile">Profile</a></li>
         {/if}
+       {#if $req.originalUrl.includes("/skills")}
+        <li class="active"><a href="/skills">Skills</a></li>
+       {:else}
+        <li><a href="/skills">Skills</a></li>
+       {/if}
        {#if $signedInUser.isAdmin()}
        <li>
            <a href="{$config.LPG_MANAGEMENT_URL}/content-management/">Admin</a>

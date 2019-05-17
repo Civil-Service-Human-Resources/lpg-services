@@ -1,0 +1,53 @@
+<Page title="Skills">
+    <div class="container container--main">
+        <div class="grid-row ">
+            <div class="column-two-thirds">
+                <h1 class="heading heading-large">Policy awareness quiz:</h1>
+                <h2 class="heading-medium">Your quiz results</h2>
+                <Banner type="confirmation" message="You scored {correct} out of {quiz.questionCount} on this awareness quiz" />
+            </div>
+            <div class="column-full">
+                <div class="summary-container">
+                    {#each quiz.questions as question, y}
+                    <div class="question-container ">
+                        <div class="answers">
+                            <h3 class="heading-medium">Q{y+1}: <span class="light">{question.value}</span></h3>
+                            {#if question.correct}
+                            <span class="icon correct"></span>
+                            {:else}
+                            <span class="icon incorrect"></span>
+                            {/if}
+                            <input id=qs{y} type="checkbox" class="expand"/>
+                            <label class="expand-label" for=qs{y}> answer</label>
+                            <div class="question-contents">
+                                {#each question.choices as choice, x}
+                                <div class="multiple-choice">
+                                    <input type="{choice.type}" value={choice.value} name="q{y+1}c{x+1}" id="q{y+1}c{x+1}" disabled="disabled"
+                                           checked="{choice.checked}" />
+                                    <label for=q{y+1}c{x+1}>{choice.value}</label>
+                                </div>
+                                {/each}
+                            </div>
+                        </div>
+                    </div>
+                    {/each}
+                </div>
+            </div>
+        </div>
+    </div>
+</Page>
+
+<script>
+    import Page from '../../component/Page.html'
+    import Banner from '../../component/Banner.html'
+    export default {
+        data() {
+            return {
+            }
+        },
+        components: {
+            Page,
+            Banner
+        }
+    }
+</script>

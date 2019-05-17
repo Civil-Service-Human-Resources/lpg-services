@@ -1,0 +1,11 @@
+<div class="answers">
+    <h3 class="heading-medium"><span class="light">{question.value}</span></h3>
+    <div class="question-contents">
+        {#each question.choices as choice, x}
+        <div class="multiple-choice">
+            <input type="{type}" value={choice.value} name="answers" id="{x}" />
+            <label for={x}>{choice.value}</label>
+        </div>
+        {/each}
+    </div>
+</div>
