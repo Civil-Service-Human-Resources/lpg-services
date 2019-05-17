@@ -26,3 +26,12 @@ export async function searchQuiz(professionId: number, limit: number): Promise<Q
 		throw new Error('Error searching quizzes')
 	}
 }
+
+export async function getPurchaseOrder(code: string): Promise<boolean> {
+	try {
+		const response = await http.get(`/purchaseOrders/${code}`)
+		return response.status === 200
+	} catch (e) {
+		throw new Error('Error getting purchase order')
+	}
+}
