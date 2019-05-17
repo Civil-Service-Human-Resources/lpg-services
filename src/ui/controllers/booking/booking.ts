@@ -1,10 +1,7 @@
 import * as express from 'express'
-import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
-import * as purchaseOrdersService from 'lib/purchase-orders'
-import * as registry from 'lib/registry'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 
@@ -13,6 +10,7 @@ import * as courseController from '../course/index'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/booking')
+const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
 
 export enum confirmedMessage {
 	Booked = 'Booked',
@@ -252,7 +250,6 @@ export async function renderConfirmPayment(
 
 export async function renderOuch(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	console.log('reached')
 	res.send(template.render('booking/ouch', req, res, {}))
 }
 
@@ -265,54 +262,23 @@ export async function renderPaymentOptions(
 	const module = req.module!
 
 	const user = req.user as model.User
-	const purchaseOrder = await purchaseOrdersService.findPurchaseOrder(
-		user,
-		module.id
-	)
 
-	if (purchaseOrder) {
-		session.purchaseOrder = purchaseOrder
-
-		session.payment = {
-			type: 'PURCHASE_ORDER',
-			value: `Call off ${purchaseOrder.id}`,
-		}
-		session.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/${
-					req.params.eventId
-				}/confirm`
-			)
-		})
+	if (!user.department || !user.lineManager) {
+		res.redirect('/profile')
 	} else {
-		let organisationalUnit
-
-		if (user.department) {
-			organisationalUnit = (await registry.follow(
-				config.REGISTRY_SERVICE_URL,
-				['organisationalUnits', 'search', 'findByCode'],
-				{code: user.department}
-			)) as any
-		}
-
-		if (!organisationalUnit || !user.lineManager) {
-			res.redirect('/profile')
-		} else {
-			res.send(
-				template.render('booking/payment-options', req, res, {
-					course: req.course!,
-					errors: req.flash('errors'),
-					event: req.event!,
-					module,
-					paymentMethods: organisationalUnit.paymentMethods,
-					values:
-						req.flash('values')[0] ||
-						(session.payment
-							? {[session.payment.type]: session.payment.value}
-							: {}),
-				})
-			)
-		}
+		res.send(
+			template.render('booking/payment-options', req, res, {
+				course: req.course!,
+				errors: req.flash('errors'),
+				event: req.event!,
+				module,
+				values:
+					req.flash('values')[0] ||
+					(session.payment
+						? {[session.payment.type]: session.payment.value}
+						: {}),
+			})
+		)
 	}
 }
 
@@ -322,26 +288,16 @@ export async function enteredPaymentDetails(
 ) {
 	const session = req.session!
 	session.payment = null
-
-	const user = req.user as model.User
-	const organisationalUnit = (await registry.follow(
-		config.REGISTRY_SERVICE_URL,
-		['organisationalUnits', 'search', 'findByCode'],
-		{code: user.department}
-	)) as any
-
 	let errors: string[] = []
 
-	for (const paymentMethod of organisationalUnit.paymentMethods) {
-		if (req.body[paymentMethod]) {
-			errors = validate(paymentMethod, req.body[paymentMethod])
-			if (!errors.length) {
-				session.payment = {
-					type: paymentMethod,
-					value: req.body[paymentMethod].trim(),
-				}
+
+	if (req.body[PURCHASE_ORDER]) {
+		errors = validate(PURCHASE_ORDER, req.body[PURCHASE_ORDER])
+		if (!errors.length) {
+			session.payment = {
+				type: PURCHASE_ORDER,
+				value: req.body[PURCHASE_ORDER].trim(),
 			}
-			break
 		}
 	}
 
@@ -360,7 +316,7 @@ export async function enteredPaymentDetails(
 	} else {
 		session.save(() => {
 			const confirmPage =
-				session.payment.type === 'PURCHASE_ORDER'
+				session.payment.type === PURCHASE_ORDER
 					? 'payment/confirm-po'
 					: 'confirm'
 			res.redirect(
@@ -377,7 +333,7 @@ export function validate(type: string, po: string): string[] {
 	const trimmed = po.trim()
 
 	switch (type) {
-		case 'PURCHASE_ORDER':
+		case PURCHASE_ORDER:
 			if (!trimmed.length) {
 				errors.push('errors.po-empty')
 			}
@@ -502,7 +458,6 @@ export async function tryCompleteBooking(
 		module,
 		event,
 		req.user,
-		req.session!.purchaseOrder,
 		session.payment.value,
 		accessibilityOptions
 	)
