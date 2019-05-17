@@ -1,22 +1,20 @@
 <Page title="Skills" {_csrf}>
     <div class="container container--main">
-        <BackButton link="/skills/start-quiz" />
         <div class="grid-row ">
             <div class="column-full">
                 <h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
                 {#if question}
-                <h2 class="heading heading-large ">Question {question.number} of {question.total}</h2>
+                <h2 class="heading heading-large ">Question {index+1} of {count}</h2>
                 {:else}
                 <h2 class="heading heading-large ">Question # of #</h2>
                 {/if}
-                <form action="skills/questions" method="post" class="question-form">
+                <form action="skills/questions/{index}" method="post" class="question-form">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
                     <fieldset class="form-group">
-                        {#if results}
-                        <QuizQuestion question={results[0].question} />
-                        {/if}
+                        <QuizQuestion question={question} type={type} />
                     </fieldset>
                     <div class="dont-know">
-                        <a href="/skills/questions">I don't know</a>
+                        <a href="/skills/questions/{index+1}">I don't know</a>
                     </div>
                     <button type="submit" class="button">Continue</button>
                 </form>
@@ -27,7 +25,6 @@
 
 <script>
     import Page from '../../component/Page.html'
-    import BackButton from '../../component/BackButton.html'
     import QuizQuestion from '../../component/QuizQuestion.html'
     export default {
         data() {
@@ -36,7 +33,6 @@
         },
         components: {
             Page,
-            BackButton,
             QuizQuestion
         }
     }

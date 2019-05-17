@@ -1,26 +1,10 @@
 <div class="answers">
-    <h3 class="heading-medium">{#if summary}Q{group+1}: {/if}<span class="light">{question.question}</span></h3>{#if summary}<span class="icon"></span><input id={group} type="checkbox" class="expand"/><label class="expand-label" for={group}> answer</label>{/if}
+    <h3 class="heading-medium"><span class="light">{question.value}</span></h3>
     <div class="question-contents">
-        {#each question.answers as answers, x}
+        {#each question.choices as choice, x}
         <div class="multiple-choice">
-            {#if question.correctIndices.length > 1}
-            {#if question.correctIndices.includes(x) && summary}
-            <input type="checkbox" value={answers} name={"answers"+group} id={answers+x} checked="checked" disabled="disabled" />
-            {:elseif summary }
-            <input type="checkbox" value={answers} name={"answers"+group} id={answers+x} disabled="disabled" />
-            {:else}
-            <input type="checkbox" value={answers} name={"answers"+group} id={answers+x} />
-            {/if}
-            {:else}
-            {#if question.correctIndices.includes(x) && summary}
-            <input type="radio" value={answers} name={"answers"+group} id={answers+x} checked="checked" disabled="disabled" />
-            {:elseif summary}
-            <input type="radio" value={answers} name={"answers"+group} id={answers+x} disabled="disabled" />
-            {:else}
-            <input type="radio" value={answers} name={"answers"+group} id={answers+x} />
-            {/if}
-            {/if}
-            <label for={answers+x}>{answers}</label>
+            <input type="{type}" value={choice.value} name="answers" id="{x}" />
+            <label for={x}>{choice.value}</label>
         </div>
         {/each}
     </div>

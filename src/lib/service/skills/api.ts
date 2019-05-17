@@ -1,9 +1,7 @@
-export interface Profession {
-	id: number
-}
-
 export interface Choice {
 	value: string
+	type?: string
+	checked?: boolean
 }
 
 export interface Question {
@@ -12,11 +10,18 @@ export interface Question {
 	learningName: string
 	learningReference: string
 	choices: Choice[]
+	answers: Choice[]
+	correct?: boolean
 }
 
-export interface Quiz {
-	profession: Profession
+export class Quiz {
 	questions: Question[]
 	questionCount?: number
-	answers?: any []
+	answers: any []
+
+	constructor(questions: Question[]) {
+		this.questions = questions
+		this.questionCount = questions.length
+		this.answers = [];
+	}
 }

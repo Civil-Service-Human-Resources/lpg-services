@@ -3,7 +3,7 @@ import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 
-import {Quiz} from "lib/service/skills/api"
+import {Question, Quiz} from "lib/service/skills/api"
 
 const logger = log4js.getLogger('skills')
 
@@ -20,8 +20,8 @@ axiosLogger.axiosResponseLogger(http, logger)
 
 export async function searchQuiz(professionId: number, limit: number): Promise<Quiz> {
 	try {
-		const response = await http.get(`/quizzes/professionId=${professionId}&limit=${limit}`)
-		return response.data as Quiz
+		const response = await http.get(`/quizzes?professionId=${professionId}&limit=${limit}`)
+		return new Quiz(response.data as Question[])
 	} catch (e) {
 		throw new Error('Error searching quizzes')
 	}
