@@ -1,14 +1,13 @@
 <Page title="Skills" {_csrf}>
     <div class="container container--main">
-        <BackButton link="/skills/start-quiz" />
         <div class="grid-row ">
             <div class="column-two-thirds">
                 <h1 class="heading heading-large">Choose your quiz</h1>
-                <form action="skills/questions" method="post">
+                <form action="skills/start-quiz" method="post">
                     <input type="hidden" name="_csrf" value="{_csrf}">
                     <fieldset class="form-group">
                         <div class="multiple-choice">
-                            <input type="radio" value="10" id="limit-10" name="limit" class="quiz" />
+                            <input type="radio" value="10" id="limit-10" name="limit" class="quiz" checked="checked" />
                             <label class="label-area" for="limit-10">The quick general awareness quiz covering all 3 Policy themes<br/>(10 questions)</label>
                         </div>
                         <div class="multiple-choice">
