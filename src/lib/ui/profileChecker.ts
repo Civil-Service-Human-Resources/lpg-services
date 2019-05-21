@@ -33,7 +33,7 @@ export class ProfileChecker {
 	}
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
-			if (false) {
+			if (!this.isProfileRequest(request)) {
 				try {
 					for (const section of this._profileSections) {
 						if (!section.isPresent(request.user)) {
