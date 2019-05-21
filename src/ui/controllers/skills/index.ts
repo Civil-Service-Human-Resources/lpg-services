@@ -1,13 +1,13 @@
 import * as express from 'express'
 import * as model from 'lib/model'
 import * as skillsApi from "lib/service/skills"
-import {Choice, Question} from "lib/service/skills/api";
+import {Choice, Question} from "lib/service/skills/api"
 import * as template from 'lib/ui/template'
 
 export function introduction(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
 	// @ts-ignore
-	const show  = user.areasOfWork[0] === 22 || user.areasOfWork[1].toLocaleLowerCase() === 'policy';
+	const show  = user.areasOfWork[0] === 22 || user.areasOfWork[1].toLocaleLowerCase() === 'policy'
 	res.send(template.render('skills/introduction', req, res, {show}))
 }
 
@@ -42,7 +42,7 @@ export async function answerQuestion(req: express.Request, res: express.Response
 		res.redirect(`/skills/summary`)
 	}
 
-	req.session!.quiz.answers[index] = req.body.answers;
+	req.session!.quiz.answers[index] = req.body.answers
 	index++
 	res.redirect(`/skills/questions/${index}`)
 }
@@ -68,7 +68,7 @@ export async function quizSummary(req: express.Request, res: express.Response) {
 }
 
 function getType(type: string) {
-	return type === 'MULTIPLE' ? 'checkbox' : 'radio';
+	return type === 'MULTIPLE' ? 'checkbox' : 'radio'
 }
 
 function getDecision(question: Question, answers: any) {
