@@ -1,12 +1,12 @@
 import axios from 'axios'
 import * as axiosLogger from 'lib/axiosLogger'
 import * as datetime from 'lib/datetime'
+import {getPurchaseOrder} from "lib/service/skills"
 import * as log4js from 'log4js'
 import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'
 import * as catalog from './service/catalog'
-import {getPurchaseOrder} from "lib/service/skills";
 
 export enum CourseState {
 	Completed = 'COMPLETED',
