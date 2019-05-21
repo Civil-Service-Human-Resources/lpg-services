@@ -54,10 +54,8 @@
                             <li class="booking__panel__row">
                                 <span class="booking__key">Payment method</span>
                                 <span class="booking__value lpg-payment-method">
-                                    { $i18n('paymentMethods_' + payment.type + '_type' ) }
-                                    {#if payment.value.indexOf('Call off') > -1}
-                                        &nbsp;(Call off)
-                                    {/if}
+                                <span class="booking__value lpg-po-number">Purchase Order</span>
+
                                 </span>
                             </li>
                             {#if payment.type == 'PURCHASE_ORDER'}
