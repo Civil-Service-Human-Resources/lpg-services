@@ -29,8 +29,12 @@ export async function searchQuiz(professionId: number, limit: number): Promise<Q
 
 export async function getPurchaseOrder(code: string): Promise<boolean> {
 	try {
-		const response = await http.get(`/purchaseOrders/${code}`)
-		return response.status === 200
+		return await http.get(`/purchaseOrders/${code}`)
+			.then(response => {
+				return response.status === 200
+			}).catch(() => {
+				return false
+			})
 	} catch (e) {
 		throw new Error('Error getting purchase order')
 	}
