@@ -289,8 +289,6 @@ export async function enteredPaymentDetails(
 	const session = req.session!
 	session.payment = null
 	let errors: string[] = []
-
-
 	if (req.body[PURCHASE_ORDER]) {
 		errors = validate(PURCHASE_ORDER, req.body[PURCHASE_ORDER])
 		if (!errors.length) {
