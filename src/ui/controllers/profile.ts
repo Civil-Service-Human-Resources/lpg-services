@@ -121,7 +121,7 @@ export async function addProfession(request: Request, response: Response) {
 		options = request.session!.flash.children
 	} else {
 		res = await registry.getWithoutHal('/professions/tree')
-		options = res.data
+		options = sortList(res.data)
 	}
 
 	response.send(template.render('profile/profession', request, response, {
@@ -144,7 +144,7 @@ export async function updateProfession(request: Request, response: Response) {
 			}))
 	} else {
 		const professionsTree: any = await registry.getWithoutHal('/professions/tree')
-		const options: any  = professionsTree.data
+		const options: any  = sortList(professionsTree.data)
 		let children: any = []
 
 		const areaOfWorkId = profession.split("/professions/").pop()
@@ -194,15 +194,12 @@ export async function updateProfession(request: Request, response: Response) {
 }
 
 export async function addOtherAreasOfWork(request: Request, response: Response) {
-	const foo = await getOptions("professions")
-	console.log(foo)
 	const professionsTree: any = await registry.getWithoutHal('/professions/tree')
-	const professions = professionsTree.data
+	const professions = sortList(professionsTree.data)
 	response.send(template.render('profile/otherAreasOfWork', request, response, {
 		originalUrl: request.query.originalUrl,
 		professions,
 	}))
-	console.log(professionsTree)
 }
 
 export async function updateOtherAreasOfWork(request: Request, response: Response) {
@@ -216,7 +213,9 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 			professions,
 		}))
 	} else {
-		const values: string[] = [].concat(otherAreasOfWork)
+		const values: string[] = [].concat(otherAreasOfWork).map(value => {
+			return "/professions/" + value
+		})
 		try {
 			await registry.patch('civilServants', {
 				otherAreasOfWork: values,
@@ -229,7 +228,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		try {
 			const professions = []
 			for (const profession of values) {
-				const professionResponse: any = await registry.getWithoutHal('/professions/' + profession)
+				const professionResponse: any = await registry.getWithoutHal(profession)
 				professions.push({id: professionResponse.data.id, name: professionResponse.data.name})
 			}
 

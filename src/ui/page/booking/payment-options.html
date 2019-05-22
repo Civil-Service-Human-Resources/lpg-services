@@ -13,18 +13,11 @@
                 <Error errorHeading="There was an issue with the data you entered" errors={errors} />
             {/if}
             <div class="column-full">
-                <div class="u-border-bgrey2 u-pad-b30">&nbsp;</div>
                 <form autocomplete="off" method="post">
-                    {#each paymentMethods as pm}
-                        <div class="form-group u-border-bgrey2 u-pad-b30">
-                            <h3 class="heading-small">{$i18n('paymentMethods_' + pm + '_heading')}</h3>
-                            {#if pm == 'PURCHASE_ORDER'}
-                                <HowToGetPo/>
-                            {/if}
-                            <label class="form-label" for="{pm}">{$i18n('paymentMethods_' + pm + '_label')}</label>
-                            <input class="form-control" id="{pm}" type="text" name="{pm}" value="{values[pm] || ''}">
-                        </div>
-                    {/each}
+                    <div class="form-group u-border-bgrey2 u-pad-b30">
+                        <HowToGetPo/>
+                        <input class="form-control" id="PURCHASE_ORDER" type="text" name="PURCHASE_ORDER" value="{values[pm] || ''}">
+                    </div>
 
                     <div class="column-two-thirds">
                         <div class="grid-row">

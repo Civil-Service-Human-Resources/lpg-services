@@ -1,6 +1,7 @@
 import axios from 'axios'
 import * as axiosLogger from 'lib/axiosLogger'
 import * as datetime from 'lib/datetime'
+import {getPurchaseOrder} from "lib/service/skills"
 import * as log4js from 'log4js'
 import * as query from 'querystring'
 import * as config from './config'
@@ -49,8 +50,7 @@ export async function bookEvent(
 	module: any,
 	event: any,
 	user: any,
-	purchaseOrder: any,
-	poNumber: any,
+	poNumber: string,
 	accessibilityOptions: any): Promise<any> {
 	const data: any = {
 		accessibilityOptions,
@@ -59,8 +59,9 @@ export async function bookEvent(
 		learnerEmail: user.userName,
 	}
 
+	const purchaseOrder = await getPurchaseOrder(poNumber)
 	if (purchaseOrder) {
-		data.paymentDetails = `${config.COURSE_CATALOGUE.url}/purchase-orders/${purchaseOrder.id}`
+		data.paymentDetails = `${config.REGISTRY_SERVICE_URL}/purchaseOrders/${poNumber}`
 		data.status = 'Confirmed'
 	} else if (module.cost === 0) {
 		data.status = 'Confirmed'
