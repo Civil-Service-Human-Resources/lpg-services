@@ -30,9 +30,10 @@ export async function nextQuestion(req: express.Request, res: express.Response) 
 	const question = req.session!.quiz.questions[index]
 	const count = req.session!.quiz.questionCount
 	const type = getType(question.type)
-
+	const theme = req.session!.quiz.questions[index].theme
+	const why = req.session!.quiz.questions[index].why
 	res.send(
-		template.render('skills/questions', req, res, {index, question, count, type})
+		template.render('skills/questions', req, res, {index, question, count, type, theme, why})
 	)
 }
 
