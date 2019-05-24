@@ -1,6 +1,12 @@
 <div class="answers">
-    <h3 class="heading-medium"><span class="light">{question.value}</span></h3>
     <div class="question-contents">
+        <h1><strong>{question.theme}</strong></h1>
+        <p>{question.value}</p>
+        {#if type === "checkbox"}
+        <p><strong>Select all correct answers</strong></p>
+        {:else}
+        <p><strong>Select one answer</strong></p>
+        {/if}
         {#each question.choices as choice, x}
         <div class="multiple-choice">
             <input type="{type}" value={choice.value} name="answers" id="{x}" />

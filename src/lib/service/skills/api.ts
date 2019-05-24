@@ -7,6 +7,8 @@ export interface Choice {
 export interface Question {
 	type: string
 	value: string
+	theme: string
+	why: string
 	learningName: string
 	learningReference: string
 	choices: Choice[]
