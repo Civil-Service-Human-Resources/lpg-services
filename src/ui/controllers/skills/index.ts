@@ -45,7 +45,9 @@ export async function answerQuestion(req: express.Request, res: express.Response
 
 	req.session!.quiz.answers[index] = req.body.answers
 	index++
-	res.redirect(`/skills/questions/${index}`)
+	req.session!.save(() => {
+		res.redirect(`/skills/questions/${index}`)
+	})
 }
 
 export async function quizSummary(req: express.Request, res: express.Response) {
@@ -84,7 +86,6 @@ function getDecision(question: Question, answers: any) {
 	}
 	question.answers.forEach((choice: Choice) => {
 		if (!answers.includes(choice.value)) {
-			console.log(choice.value, answers, "returning false")
 			return false
 		}
 	})
