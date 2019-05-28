@@ -11,19 +11,20 @@
                     {#each quiz.questions as question, y}
                     <div class="question-container ">
                         <div class="answers">
-                            <h3 class="heading-medium">Q{y+1}: <span class="light">{question.value}</span></h3>
+                            <h3 class="heading-medium">Q{y+1}: <span class="light">{question.theme}</span></h3>
                             {#if question.correct}
                             <span class="icon correct"></span>
                             {:else}
                             <span class="icon incorrect"></span>
                             {/if}
+                            <h1 class="heading-medium">{question.value}</h1>
                             <input id=qs{y} type="checkbox" class="expand"/>
                             <label class="expand-label" for=qs{y}> answer</label>
                             <div class="question-contents">
                                 {#each question.choices as choice, x}
                                 <div class="multiple-choice">
                                     <input type="{choice.type}" value={choice.value} name="q{y+1}c{x+1}" id="q{y+1}c{x+1}" disabled="disabled"
-                                           checked="{choice.checked}" />
+                                           checked="{choice.checked}"/>
                                     <label for=q{y+1}c{x+1}>{choice.value}</label>
                                 </div>
                                 {/each}
