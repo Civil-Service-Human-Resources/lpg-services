@@ -14,6 +14,7 @@ export interface Question {
 	choices: Choice[]
 	answers: Choice[]
 	correct?: boolean
+	correctAnswers: string
 }
 
 export class Quiz {
