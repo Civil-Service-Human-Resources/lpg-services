@@ -1,7 +1,7 @@
 <Page title="Skills">
     <div class="container container--main">
-        <div class="grid-row ">
-            <div class="column-two-thirds">
+        <div class="grid-row">
+            <div class="govuk-grid-column-two-thirds">
                 <h1 class="heading heading-large">Policy awareness quiz:</h1>
                 <h2 class="heading-medium">Your quiz results</h2>
                 <Banner type="confirmation" message="You scored {correct} out of {quiz.questionCount} on this awareness quiz" />
@@ -9,7 +9,7 @@
             <div class="column-full">
                 <div class="summary-container">
                     {#each quiz.questions as question, y}
-                    <div class="question-container ">
+                    <div class="question-container">
                         <div class="answers">
                             <h3 class="heading-medium">Q{y+1}: <span class="light">{question.theme}</span></h3>
                             {#if question.correct}
@@ -17,9 +17,9 @@
                             {:else}
                             <span class="icon incorrect"></span>
                             {/if}
-                            <h1 class="heading-medium">{question.value}</h1>
                             <input id=qs{y} type="checkbox" class="expand"/>
                             <label class="expand-label" for=qs{y}> answer</label>
+                            <h3 class="question-text">{question.value}</h3>
                             <div class="question-contents">
                                 {#each question.choices as choice, x}
                                 <div class="multiple-choice">
@@ -28,6 +28,11 @@
                                     <label for=q{y+1}c{x+1}>{choice.value}</label>
                                 </div>
                                 {/each}
+                                <h3 class="question-text"><strong>The correct answer/s:</strong></h3>
+                                <h3 class="question-text"><span class="light">{question.correctAnswers}</span></h3>
+                                <h3 class="question-text"><strong>Here's why:</strong></h3>
+                                <h3 class="question-text"><span class="light">{question.why}</span></h3>
+                                <h3 class="question-text"><strong>Suggested learning based on this question:</strong></h3>
                             </div>
                         </div>
                     </div>

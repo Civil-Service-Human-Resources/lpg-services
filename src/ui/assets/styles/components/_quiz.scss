@@ -83,6 +83,13 @@
     }
   }
 
+  .question-text {
+    float: left;
+    margin: 10px 0;
+    content: 'Show';
+    box-sizing: border-box;
+    width: 100%;
+  }
 
   .expand:checked ~ .question-contents {
     display: block;
