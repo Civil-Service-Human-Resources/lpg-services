@@ -20,7 +20,7 @@ axiosLogger.axiosResponseLogger(http, logger)
 
 export async function searchQuiz(professionId: number, limit: number): Promise<Quiz> {
 	try {
-		const response = await http.get(`/quizzes?professionId=${1}&limit=${limit}`)
+		const response = await http.get(`/quizzes?professionId=${professionId}&limit=${limit}`)
 		return new Quiz(response.data as Question[])
 	} catch (e) {
 		throw new Error('Error searching quizzes')

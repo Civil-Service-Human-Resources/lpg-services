@@ -2,6 +2,7 @@ export interface Choice {
 	value: string
 	type?: string
 	checked?: boolean
+	questionLetter: string
 }
 
 export interface Question {
