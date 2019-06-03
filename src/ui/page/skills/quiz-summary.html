@@ -1,12 +1,12 @@
 <Page title="Skills">
     <div class="container container--main">
         <div class="grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="heading heading-large">Policy awareness quiz:</h1>
-                <h2 class="heading-medium">Your quiz results</h2>
-                <Banner type="confirmation" message="You scored {correct} out of {quiz.questionCount} on this awareness quiz" />
-            </div>
             <div class="column-full">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="heading heading-large">Policy awareness quiz:</h1>
+                    <h2 class="heading-medium">Your quiz results</h2>
+                    <Banner type="confirmation" message="You scored {correct} out of {quiz.questionCount} on this awareness quiz" />
+                </div>
                 <div class="summary-container">
                     {#each quiz.questions as question, y}
                     <div class="question-container">
