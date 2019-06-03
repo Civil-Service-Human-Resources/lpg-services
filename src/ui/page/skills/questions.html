@@ -2,6 +2,13 @@
     <div class="container container--main">
         <div class="grid-row ">
             <div class="column-full">
+                <p class="no-margin">
+                    {#if index > 0}
+                    <a class="link-back" href="/skills/questions/{index-1}">Back</a>
+                    {:else}
+                    <a class="link-back" href="/skills/choose-quiz">Back</a>
+                    {/if}
+                </p>
                 <h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
                 {#if question}
                 <h2 class="heading heading-large ">Question {index+1} of {count}</h2>

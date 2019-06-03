@@ -11,28 +11,37 @@
                     {#each quiz.questions as question, y}
                     <div class="question-container">
                         <div class="answers">
+                            {#if question.theme}
                             <h3 class="heading-medium">Q{y+1}: <span class="light">{question.theme}</span></h3>
+                            {/if}
                             {#if question.correct}
-                            <span class="icon correct"></span>
+                            <span class="summary-icon correct"></span>
                             {:else}
-                            <span class="icon incorrect"></span>
+                            <span class="summary-icon incorrect"></span>
                             {/if}
                             <input id=qs{y} type="checkbox" class="expand"/>
-                            <label class="expand-label" for=qs{y}> answer</label>
+                            <label class="expand-label govuk-link" for=qs{y}> answer</label>
                             <h3 class="question-text">{question.value}</h3>
                             <div class="question-contents">
                                 {#each question.choices as choice, x}
                                 <div class="multiple-choice">
                                     <input type="{choice.type}" value={choice.value} name="q{y+1}c{x+1}" id="q{y+1}c{x+1}" disabled="disabled"
                                            checked="{choice.checked}"/>
-                                    <label for=q{y+1}c{x+1}>{choice.value}</label>
+                                    <label for=q{y+1}c{x+1}>{choice.questionLetter}{choice.value}</label>
                                 </div>
                                 {/each}
+                                {#if question.correctAnswers}
                                 <h3 class="question-text"><strong>The correct answer/s:</strong></h3>
                                 <h3 class="question-text"><span class="light">{question.correctAnswers}</span></h3>
+                                {/if}
+                                {#if question.why}
                                 <h3 class="question-text"><strong>Here's why:</strong></h3>
                                 <h3 class="question-text"><span class="light">{question.why}</span></h3>
+                                {/if}
+                                {#if question.learningName}
                                 <h3 class="question-text"><strong>Suggested learning based on this question:</strong></h3>
+                                <h3 class="question-text"><a href="{question.learningReference}">{question.learningName}</a></h3>
+                                {/if}
                             </div>
                         </div>
                     </div>

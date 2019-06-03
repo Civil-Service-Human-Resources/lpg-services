@@ -10,7 +10,7 @@
         {#each question.choices as choice, x}
         <div class="multiple-choice">
             <input type="{type}" value={choice.value} name="answers" id="{x}" />
-            <label for={x}>{choice.value}</label>
+            <label for={x}>{choice.questionLetter}{choice.value}</label>
         </div>
         {/each}
     </div>

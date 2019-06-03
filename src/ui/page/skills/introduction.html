@@ -1,9 +1,20 @@
 <Page title="Skills" {_csrf}>
     <div class="container container--main">
-        <div class="grid-row ">
+            <h1 class="heading-xlarge small-margin">Measure your skills quiz</h1>
+            {#if (error || errorEmpty)}
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
+                    There was a problem
+                </h2>
+                <p>
+                    There are no quiz questions available for your profession.
+                </p>
+            </div>
+
+            {/if}
+            <div class="grid-row ">
             <div class="column-two-thirds">
-                <!--{#if show }-->
-                <h1 class="heading heading-large">Measure your skills quiz</h1>
+                {#if show }
                 <p class="govuk-body">This quiz is based on the <a
                         href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/776403/Policy_Profession_Standards_JAN19.pdf"
                         target="_blank">policy profession standards (opens a new tab)</a>. The standards are grouped
@@ -19,9 +30,12 @@
                 <div class="button-container">
                     <a href="/skills/choose-quiz" class="button">Start now</a>
                 </div>
-                <!--{:else}-->
-                <!--<h1 class="heading heading-large">A skills quiz is not yet available</h1>-->
-                <!--{/if}-->
+                {:else}
+                    <p class="govuk-body no-margin">A skills quiz is not yet available for your profession. Please try again later.</p>
+                    <div class="button-container">
+                        <a href="/home" class="button">Return</a>
+                    </div>
+                {/if}
             </div>
             <div class="column-one-third">
             </div>
