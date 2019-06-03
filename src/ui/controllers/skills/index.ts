@@ -88,21 +88,16 @@ export async function quizSummary(req: express.Request, res: express.Response) {
 	}
 	const quiz = req.session!.quiz
 	let correct: number = 0
-	// For each question on summary page
 	quiz.questions.forEach((question: Question, index: number) => {
 		const type: string = getType(question.type)
-		// For each choice in question
 		question.choices.forEach((choice: Choice) => {
 			choice.type = type
-			// Set radio buttons/check boxes to "checked", if user chose that answer
 			choice.checked = quiz.answers[index] && quiz.answers[index].includes(choice.value)
 		})
-		// Check if user answered question correctly
 		question.correct = getDecision(question, quiz.answers[index])
 		if (question.correct) {
 			correct++
 		}
-		// Set and display the correct answers for question
 		setCorrectAnswers(question, question.answers)
 	})
 	res.send(
