@@ -4,7 +4,7 @@ import * as config from '../config'
 import {User} from '../model'
 
 log4js.configure(config.LOGGING)
-// const logger = log4js.getLogger('profileChecker')
+const logger = log4js.getLogger('profileChecker')
 
 export class ProfileChecker {
 	/* tslint:disable:variable-name */
@@ -33,21 +33,21 @@ export class ProfileChecker {
 	}
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
-			// if (!this.isProfileRequest(request) ) {
-			// 	try {
-			// 		for (const section of this._profileSections) {
-			// 			if (!section.isPresent(request.user)) {
-			// 				request.session!.save(() => {
-			// 					response.redirect(`${section.path}?originalUrl=${request.originalUrl}`)
-			// 				})
-			// 				return
-			// 			}
-			// 		}
-			// 	}	catch (error) {
-			// 		logger.error(error)
-			// 		next(error)
-			// 	}
-			// }
+			if (!this.isProfileRequest(request) ) {
+				try {
+					for (const section of this._profileSections) {
+						if (!section.isPresent(request.user)) {
+							request.session!.save(() => {
+								response.redirect(`${section.path}?originalUrl=${request.originalUrl}`)
+							})
+							return
+						}
+					}
+				}	catch (error) {
+					logger.error(error)
+					next(error)
+				}
+			}
 
 			next()
 		}
