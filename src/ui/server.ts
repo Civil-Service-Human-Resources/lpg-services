@@ -185,7 +185,9 @@ app.post('/feedback.record', asyncHandler(feedbackController.record))
 app.use(passport.isAuthenticated)
 app.use(passport.hasRole('LEARNER'))
 
-app.use(new ProfileChecker().checkProfile())
+if (config.PROFILE !== 'local') {
+	app.use(new ProfileChecker().checkProfile())
+}
 
 app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
 

@@ -79,7 +79,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-    image: lpgregistry.azurecr.io/lpg-learner-record:master-62
+    image: lpgregistry.azurecr.io/lpg-learner-record:master-63
     depends_on:
       - civil-servant-registry
       - identity
@@ -116,7 +116,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-29
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-30
     depends_on:
       - identity
     ports:

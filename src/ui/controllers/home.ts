@@ -135,7 +135,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			yesOption = req.__('learning_confirm_' + action + '_yes_option')
 			noOption = req.__('learning_confirm_' + action + '_no_option')
 		}
-
 		res.send(
 			template.render('home', req, res, {
 				bookedLearning,
