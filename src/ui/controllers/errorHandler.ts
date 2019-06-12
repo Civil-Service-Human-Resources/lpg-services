@@ -21,7 +21,7 @@ export async function handleError(
 			error.stack
 		)
 		if (error.response && error.response.status === 401) {
-			return response.redirect('/log-out')
+			return response.redirect('/sign-out')
 		}
 		response.status(500)
 
