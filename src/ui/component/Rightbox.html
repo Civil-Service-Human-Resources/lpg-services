@@ -5,12 +5,14 @@
         {#if dataRows.dataRows.length}
             {#each dataRows.dataRows as row}
             <tr>
-                <th class="lpg-related-items__th">{row.label}</th>
-                {#if row.label === "Cost"}
-                    <td class="lpg-related-items__td">{row.value} (ex VAT)</td>
-                {:else}
-                    <td class="lpg-related-items__td">{row.value}</td>
-                {/if} 
+                {#if row.value !== '-'}
+                    <th class="lpg-related-items__th">{row.label}</th>
+                    {#if row.label === "Cost"}
+                        <td class="lpg-related-items__td">{row.value} (ex VAT)</td>
+                    {:else}
+                        <td class="lpg-related-items__td">{row.value}</td>
+                    {/if}
+                {/if}
             </tr>
             {/each}
         {/if}

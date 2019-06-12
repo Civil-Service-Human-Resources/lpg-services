@@ -20,10 +20,12 @@
                 <span class="tile__key">Type</span>
                 <span class="tile__value">{$i18n(course.getType())}</span>
             </li>
-            <li class="tile__property">
+			{#if course.getDuration() && course.getDuration() !== '-' }
+			<li class="tile__property">
                 <span class="tile__key">Duration</span>
                 <span class="tile__value">{course.getDuration()}</span>
             </li>
+			{/if}
             <li class="tile__property">
                 <span class="tile__key">Cost</span>	
                 <span class="tile__value">&pound;{#if !course.getCost()}Free{:else}{course.getCost() + ' (ex VAT)'}{/if}
