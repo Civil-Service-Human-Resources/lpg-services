@@ -13,10 +13,12 @@
             <span>Type:</span>
             <span class="lpg-course-type">{$i18n(course.getType() || '' )}</span>
         </li>
+        {#if course.getDuration() && course.getDuration() !== '-' }
         <li class="discite__property-item">
             <span>Duration:</span> 
             <span class="lpg-course-duration">{course.getDuration() || ''}</span>
         </li>
+        {/if}
         {#if !course.isRequired()}
             <li class="discite__property-item">
                 <span>Cost:</span>

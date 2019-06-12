@@ -5,10 +5,13 @@
                 <span>Type:</span>
                 <span class="lpg-course-type">{$i18n(module.type)}</span>
             </li>
+            {#if module.duration !== '-' }
             <li class="discite__property-item">
+                {module.duration}
                 <span>Duration:</span>
                 <span class="lpg-course-duration"> {module.duration || ''}</span>
             </li>
+            {/if}
             {#if module.type !== 'file'}
                 <li class="discite__property-item">
                     <span>Cost:</span>

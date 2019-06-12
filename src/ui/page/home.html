@@ -54,12 +54,10 @@
                 {#if plannedLearning.length}
                 <div class="resources lpg-other-courses">
                     {#each plannedLearning as course}
-                        {#if course.modules.length > 0}
-                            {#if course.id !== successId}
-                                <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} course={course} duration={formatEventDuration(course.modules[0].duration)} modifier="home" />
-                            {:else}
-                                <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} duration={formatEventDuration(course.modules[0].duration)} {successId} course={course} modifier="home" />
-                            {/if}
+                        {#if course.id !== successId}
+                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} course={course} duration={formatEventDuration(course.modules[0] ? course.modules[0].duration : 0)} modifier="home" />
+                        {:else}
+                            <DisciteCourse booked={isEventBookedForGivenCourse(course)} bookedModule={getModuleForEvent(course)} duration={formatEventDuration(course.modules[0] ? course.modules[0].duration : 0)} {successId} course={course} modifier="home" />
                         {/if}
                     {/each}
                 </div>

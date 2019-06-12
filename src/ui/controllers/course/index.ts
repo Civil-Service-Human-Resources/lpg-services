@@ -188,8 +188,12 @@ export async function display(ireq: express.Request, res: express.Response) {
 			res.redirect(`/courses/${course.id}/${module!.id}`)
 			break
 		default:
-			logger.debug(`Unknown course type: ${type}`)
-			res.sendStatus(500)
+			res.send(
+				template.render(`course/noModuleCourse`, req, res, {
+					course,
+				})
+			)
+			break
 	}
 }
 
