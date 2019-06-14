@@ -66,7 +66,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
-    image: lpgregistry.azurecr.io/identity-service:master-43
+    image: lpgregistry.azurecr.io/identity-service:master-44
     ports:
       - 8080:8080
       - 8081:8081
@@ -79,7 +79,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-    image: lpgregistry.azurecr.io/lpg-learner-record:master-63
+    image: lpgregistry.azurecr.io/lpg-learner-record:master-64
     depends_on:
       - civil-servant-registry
       - identity
@@ -105,7 +105,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-57
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-58
     depends_on:
       - identity
     ports:
@@ -116,7 +116,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-30
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-31
     depends_on:
       - identity
     ports:
@@ -129,7 +129,7 @@ services:
       - LEARNER_RECORD_URL=http://learner-record:9000
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
-    image: lpgregistry.azurecr.io/lpg-report-service:master-15
+    image: lpgregistry.azurecr.io/lpg-report-service:master-16
     depends_on:
       - identity
       - learner-record
