@@ -52,7 +52,7 @@
                         {/if}
                     </span>
                 </p>
-                {#if duration !== '-'}
+                {#if duration && duration !== '-' }
                 <p class="discite__property-item no-margin"> <span>Duration: </span>
                     <span class="lpg-course-duration">{duration}</span>
                 </p>

@@ -27,10 +27,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			'courseId'
 		)
 
-		const suggestedLearning = await suggestionController.homeSuggestions(
-			user,
-			learningHash
-		)
 		const readyForFeedback = await learnerRecord.countReadyForFeedback(
 			learningRecord
 		)
@@ -152,7 +148,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				successId: req.flash('successId')[0],
 				successMessage: req.flash('successMessage')[0],
 				successTitle: req.flash('successTitle')[0],
-				suggestedLearning,
 				yesOption,
 			})
 		)

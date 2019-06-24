@@ -1092,7 +1092,7 @@
             <div class="content">
                 <a class="js-header-toggle menu" href="#proposition-links">Menu</a>
                 <nav id="proposition-menu">
-                    <!-- <ul id="proposition-links">
+                    <ul id="proposition-links">
                         <li>
                             <a href="/search">Search</a>
                         </li>
@@ -1102,7 +1102,7 @@
                         <li>
                             <a href="/sign-out">Sign out</a>
                         </li>
-                    </ul> -->
+                    </ul>
                 </nav>
             </div>
         </div>
@@ -1124,6 +1124,7 @@
                     <p id="error-stack">{error}</p>
                     {:else}
                     <p id="generic-error" class="lede">Something went horribly wrong. But don't worry, we're looking into it.</p>
+                    <p class="generic-error">Please <a href="/sign-out">log-out</a> and try again.</p>
                     <p id="error-message">Please wait a few minutes and try again.</p>
                     {/if}
                 </div>
