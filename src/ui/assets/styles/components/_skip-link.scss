@@ -1,0 +1,44 @@
+.govuk-skip-link {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	margin: 0 !important;
+	overflow: hidden !important;
+	clip: rect(0 0 0 0) !important;
+	-webkit-clip-path: inset(50%) !important;
+	clip-path: inset(50%) !important;
+	white-space: nowrap !important;
+	font-family: "nta",Arial,sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: 14px;
+	font-size: .875rem;
+	line-height: 1.14286;
+	display: block;
+	padding: 10px 15px;
+}
+
+@media all and (min-width: 40.0625em) {
+	.govuk-skip-link {
+		font-size: 16px;
+		line-height: 1.25;
+	}
+}
+
+.govuk-skip-link:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 0;
+    background-color: #ffbf47;
+}
+
+.govuk-skip-link:active, .govuk-skip-link:focus {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: inherit !important;
+    overflow: visible !important;
+    clip: auto !important;
+    -webkit-clip-path: none !important;
+    clip-path: none !important;
+    white-space: inherit !important;
+}
