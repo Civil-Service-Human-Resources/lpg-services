@@ -30,7 +30,7 @@ export function constructCourseCallToAction(
 	const isHome: boolean = modifier === 'home'
 
 	const callToActionProps: CallToActionProps = {
-		accessibilityHelper: ' this course',
+		accessibilityHelper: ` ${course.title}`,
 		isInLearningPlan: isRequired,
 		message:
 			courseType === 'face-to-face' ? 'action_BOOK' : 'action_NOT_STARTED',
@@ -46,7 +46,7 @@ export function constructCourseCallToAction(
 
 	if (course.record && course.record.state !== 'ARCHIVED') {
 		const record = course.record
-		callToActionProps.isInLearningPlan =  (!!course.record || isRequired)
+		callToActionProps.isInLearningPlan = (!!course.record || isRequired)
 
 		const bookedModule = record.modules && record.modules.find(m => !!m.eventId)
 		const isBooked =
@@ -61,17 +61,17 @@ export function constructCourseCallToAction(
 						callToActionProps.actionToRecord = {
 							move: `/home?move=${course.id},${
 								course.record.modules[0].moduleId
-							},${course.record.modules[0].eventId}`,
+								},${course.record.modules[0].eventId}`,
 							skip: `/home?skip=${course.id},${
 								course.record.modules[0].moduleId
-							},${course.record.modules[0].eventId}`,
+								},${course.record.modules[0].eventId}`,
 						}
 						delete callToActionProps.url
 						delete callToActionProps.message
 					} else {
 						callToActionProps.url = `/book/${course.id}/${
 							record.modules[0].moduleId
-						}/${record.modules[0].eventId}/cancel`
+							}/${record.modules[0].eventId}/cancel`
 						callToActionProps.message = `action_CANCEL`
 					}
 				}

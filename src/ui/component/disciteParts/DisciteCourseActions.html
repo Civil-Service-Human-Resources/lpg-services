@@ -15,10 +15,10 @@
 
     {#if cta.actionToPlan}
         {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
-            <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add to learning plan</a>
+            <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add <span class="visually-hidden">{course.title}</span> to learning plan</a>
         {:elseif (cta.actionToPlan.url && cta.actionToPlan.type === 'Delete')}
             <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">
-                Remove <span class="visuallyhidden">from learning plan</span>
+                Remove <span class="visuallyhidden">{course.title}> from learning plan</span>
             </a>
         {/if}
     {/if}
