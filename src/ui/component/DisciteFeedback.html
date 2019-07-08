@@ -23,7 +23,15 @@
         {/if}
     </div>
     <div class="discite__action discite__action--module">
-        <a href="/learning-record/{course.id}/{module.id}/feedback?ignore=true">I do not want to leave feedback</a>
+        <a href="/learning-record/{course.id}/{module.id}/feedback?ignore=true">I do not want to leave feedback for 
+            <span class="visually-hidden">for 
+                {#if module.title}
+                    {module.title}
+                {:else}
+                    {course.title}
+                {/if}
+            </span>
+        </a>
     </div>
     <div class="discite__properties  u-clearfix">
         <ul class="discite__property ">
