@@ -10,7 +10,7 @@
     {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
     {#if cta.actionToPlan && !course.isArchived() }
         {#if (cta.actionToPlan.url && cta.actionToPlan.type === 'Add')}
-            <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add to learning plan</a>
+            <a class="lpg-add-from-search" href="{cta.actionToPlan.url}">Add <span class="visually-hidden">{course.title}</span> to learning plan</a>
         {:else}
             <span>{cta.message}</span>
         {/if}
