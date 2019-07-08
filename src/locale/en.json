@@ -305,9 +305,7 @@
 		"video": "Video"
 	},
 	"errors": {
-		"profileErrorEmpty": {
-			"primary-area-of-work": "Fields cannot be empty"
-		},
+		"profileErrorEmpty": "Fields cannot be empty",
 		"passwordUnmatched": "Password does not match the confirmation.",
 		"passwordLength": "Password length should be at least 8 characters.",
 		"passwordNotMetReq": "Password did not meet requirements",
