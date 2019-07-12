@@ -14,13 +14,13 @@ services:
   learning-locker-api-worker:
     command: ['node', '/opt/learning-locker/worker/dist/server']
     container_name: learning-locker-api-worker
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     working_dir: /opt/learning-locker
 
   learning-locker-ui:
     command: ['/opt/learning-locker/run-ui.sh']
     container_name: learning-locker-ui
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     ports:
       - 3000:3000
     working_dir: /opt/learning-locker
@@ -32,7 +32,7 @@ services:
       - mongodb
       - redis
       - learning-locker-api-worker
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     ports:
       - 8083:8083
     working_dir: /opt/xapi-service
@@ -57,92 +57,92 @@ services:
       - mongodb
     environment:
       - NODE_PATH=/opt/learning-locker
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
+    image: cshr/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
     working_dir: /opt/learning-locker
   # /Learning Locker
 
   # CSHR
-  identity:
-    container_name: identity
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-    image: lpgregistry.azurecr.io/identity-service:master-44
-    ports:
-      - 8080:8080
-      - 8081:8081
+  # identity:
+  #   container_name: identity
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=default
+  #   image: lpgregistry.azurecr.io/identity-service:master-44
+  #   ports:
+  #     - 8080:8080
+  #     - 8081:8081
 
-  learner-record:
-    container_name: learner-record
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - OAUTH_SERVICE_URL=http://identity:8080
-      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-      - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
-      - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
-    image: lpgregistry.azurecr.io/lpg-learner-record:master-64
-    depends_on:
-      - civil-servant-registry
-      - identity
-      - learning-catalogue
-      - learning-locker-xapi
-    ports:
-      - 9000:9000
+  # learner-record:
+  #   container_name: learner-record
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=default
+  #     - OAUTH_SERVICE_URL=http://identity:8080
+  #     - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+  #     - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
+  #     - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
+  #   image: lpgregistry.azurecr.io/lpg-learner-record:master-64
+  #   depends_on:
+  #     - civil-servant-registry
+  #     - identity
+  #     - learning-catalogue
+  #     - learning-locker-xapi
+  #   ports:
+  #     - 9000:9000
 
-  learning-catalogue:
-    container_name: learning-catalogue
-    command:
-      [
-        './wait-for-it.sh',
-        'elasticsearch:9300',
-        '-t',
-        '200',
-        '--',
-        'java',
-        '-jar',
-        '/data/app.jar',
-      ]
-    environment:
-      - OAUTH_SERVICE_URL=http://identity:8080
-      - ELASTICSEARCH_URI=http://elasticsearch:9200
-      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-58
-    depends_on:
-      - identity
-    ports:
-      - 9001:9001
+  # learning-catalogue:
+  #   container_name: learning-catalogue
+  #   command:
+  #     [
+  #       './wait-for-it.sh',
+  #       'elasticsearch:9300',
+  #       '-t',
+  #       '200',
+  #       '--',
+  #       'java',
+  #       '-jar',
+  #       '/data/app.jar',
+  #     ]
+  #   environment:
+  #     - OAUTH_SERVICE_URL=http://identity:8080
+  #     - ELASTICSEARCH_URI=http://elasticsearch:9200
+  #     - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+  #   image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-58
+  #   depends_on:
+  #     - identity
+  #   ports:
+  #     - 9001:9001
 
-  civil-servant-registry:
-    container_name: civil-servant-registry
-    environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-31
-    depends_on:
-      - identity
-    ports:
-      - 9002:9002
+  # civil-servant-registry:
+  #   container_name: civil-servant-registry
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=default
+  #     - OAUTH_SERVICE_URL=http://identity:8080
+  #   image: lpgregistry.azurecr.io/civil-servant-registry-service:master-31
+  #   depends_on:
+  #     - identity
+  #   ports:
+  #     - 9002:9002
 
-  report-service:
-    container_name: report-service
-    environment:
-      - OAUTH_SERVICE_URL=http://identity:8080
-      - LEARNER_RECORD_URL=http://learner-record:9000
-      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-      - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
-    image: lpgregistry.azurecr.io/lpg-report-service:master-16
-    depends_on:
-      - identity
-      - learner-record
-    ports:
-      - 9004:9004
+  # report-service:
+  #   container_name: report-service
+  #   environment:
+  #     - OAUTH_SERVICE_URL=http://identity:8080
+  #     - LEARNER_RECORD_URL=http://learner-record:9000
+  #     - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+  #     - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
+  #   image: lpgregistry.azurecr.io/lpg-report-service:master-16
+  #   depends_on:
+  #     - identity
+  #     - learner-record
+  #   ports:
+  #     - 9004:9004
 
-  notification-service:
-    container_name: notification-service
-    environment:
-      - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/notification-service:PR-2-7
-    depends_on:
-      - identity
-    ports:
-      - 9005:9005
+  # notification-service:
+  #   container_name: notification-service
+  #   environment:
+  #     - OAUTH_SERVICE_URL=http://identity:8080
+  #   image: lpgregistry.azurecr.io/notification-service:PR-2-7
+  #   depends_on:
+  #     - identity
+  #   ports:
+  #     - 9005:9005
 # /CSHR
