@@ -14,4 +14,3 @@ yarn.lock
 files
 data.json
 modules.json
-docker-compose.yaml
