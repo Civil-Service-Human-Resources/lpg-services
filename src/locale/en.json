@@ -368,11 +368,17 @@
 				"empty": "Please confirm your line manager's email address.",
 				"match": "Fields do not match."
 			}
-		}
+		},
+		"primary-area-of-work": "Primary area of work is required",
+		"department": "Organisation is required",
+		"given-name": "Your name is required",
+		"other-areas-of-work": "Your other areas of work are required",
+		"interest": "Your interests are required"
 	},
 	"profile_undefined_label": "profile_undefined_label",
 	"undefined": "undefined",
 	"line-manager": "line-manager",
 	"other-areas-of-work": "other-areas-of-work",
-	"Commercial": "Commercial"
+	"Commercial": "Commercial",
+	"profile_primary-area-of-work": "profile_primary-area-of-work"
 }

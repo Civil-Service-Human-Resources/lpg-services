@@ -16,17 +16,10 @@
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
                         Update failed
                     </h2>
-                    <p>
-                        {#if error}
-                            {@html error}
-                        {:elseif errorEmpty}
-                            {@html errorEmpty}
-                        {/if}
-                    </p>
+                    <p class="error-message">{$i18n('profile.' + inputName)}</p>
                 </div>
 
                 {/if}
-
                 <ProfileEditForm {options} {optionType} {inputName} {lede} label="{$i18n('profile_' + inputName + '_label')}" {value} {_csrf}/>
             </div>
         </div>
