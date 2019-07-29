@@ -18,11 +18,16 @@
   </div>
 
   <div class="grid-row grid-row--suggested">
+
+   {#if suggestedLearning.slice(3,suggestedLearning.length) > 0}
       {#each suggestedLearning.slice(3,suggestedLearning.length) as course, index}
       <div class="column-third">
           <Tile {home} {course} isLast="{home && suggestedLearning.length === (index + 4)}"/>
       </div>
       {/each}
+    {/else}
+    <p>Currently, there are no suggestions based on your grade and profile preference. You can <a href="/search">search for a course</a>.</p>
+     {/if}
   </div>
 
   <div class="grid-row">

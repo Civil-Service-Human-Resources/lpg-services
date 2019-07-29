@@ -17,6 +17,9 @@ Please have the following downloaded and installed:
 * [Prettier](https://prettier.io/)
 * [TSlint](https://palantir.github.io/tslint/)
 
+
+test
+
 #### Set up local hosts file
 Add the following to your `/etc/hosts`
 ```
