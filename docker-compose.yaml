@@ -105,7 +105,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-61
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-2
     depends_on:
       - identity
     ports:
@@ -116,7 +116,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-3
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-4
     depends_on:
       - identity
     ports:
