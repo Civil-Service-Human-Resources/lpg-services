@@ -175,8 +175,8 @@ export async function list(ids: string[], user: model.User) {
 		return []
 	}
 	try {
-		const response = await http.get(`/courses?${query.stringify({ courseId: ids })}`,
-			{headers: {Authorization: `Bearer ${user.accessToken}`}})
+		const response = await http.post(`/courses/getIds`,
+			ids, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return response.data.map((r: any) => model.Course.create(r, user))
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
