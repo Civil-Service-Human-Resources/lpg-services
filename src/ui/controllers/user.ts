@@ -327,7 +327,7 @@ export async function renderEditPage(
 	res: express.Response
 ) {
 	const inputName = req.params.profileDetail
-	let options: {[prop: string]: any} = {}
+	let options: { [prop: string]: any } = {}
 	let optionType: string = ''
 	let value = null
 	let lede
@@ -349,12 +349,13 @@ export async function renderEditPage(
 			value = req.user.areasOfWork
 			break
 		case 'other-areas-of-work':
+			lede = 'Select any other areas of work.'
 			response = await registry.getWithoutHal('/professions/tree')
 			sortList(response.data).map((x: any) => {
 				options['/professions/' + x.id] = x.name
 			})
 			if (req.user.otherAreasOfWork) {
-				value = req.user.otherAreasOfWork.map((otherAreasOfWork: {name: string}) => {
+				value = req.user.otherAreasOfWork.map((otherAreasOfWork: { name: string }) => {
 					return otherAreasOfWork.name
 				})
 			}
@@ -371,6 +372,7 @@ export async function renderEditPage(
 			value = req.user.department
 			break
 		case 'grade':
+			lede = 'Please select your grade'
 			options = haltoObject(await registry.halNode('grades'))
 			optionType = OptionTypes.Radio
 			value = req.user.grade ? req.user.grade.name : ''
@@ -379,9 +381,10 @@ export async function renderEditPage(
 			value = req.user.name
 			break
 		case 'interest':
+			lede = 'Please select your interests'
 			options = haltoObject(await registry.halNode('interests'))
 			optionType = OptionTypes.Checkbox
-			value = req.user.interests.map((interest: {name: string}) => {
+			value = req.user.interests.map((interest: { name: string }) => {
 				return interest.name
 			})
 			break
@@ -445,7 +448,7 @@ export async function tryUpdateProfile(
 		const areaOfWork = req.body['primary-area-of-work']
 
 		const response: any = await registry.getWithoutHal('/professions/tree')
-		const options: any  = response.data
+		const options: any = response.data
 		let children: any = []
 
 		const areaOfWorkId = areaOfWork.split("/professions/").pop()
@@ -463,7 +466,7 @@ export async function tryUpdateProfile(
 		})
 
 		if (children.length > 0) {
-			req.session!.flash = {children}
+			req.session!.flash = { children }
 			return req.session!.save(() => {
 				res.redirect('/profile/primary-area-of-work')
 			})
