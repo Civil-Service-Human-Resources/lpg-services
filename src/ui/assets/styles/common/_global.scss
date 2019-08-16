@@ -5,6 +5,30 @@ hr.clear {
 	visibility: hidden;
 }
 
+a:focus {
+	background-color: $focus;
+	outline: 3px solid transparent;
+	box-shadow: 0 -2px $focus, 0 4px $gds-black;
+	text-decoration: none;
+}
+
+input:focus, textarea:focus, select:focus, button:focus, .button:focus {
+    outline: 3px solid $focus !important;
+    outline-offset: 0;
+}
+
+.multiple-choice [type=radio]:focus+label::before, .multiple-choice [type=checkbox]:focus+label::before {
+    -webkit-box-shadow: 0 0 0 4px $focus;
+    -moz-box-shadow: 0 0 0 4px $focus;
+    box-shadow: 0 0 0 4px $focus;
+}
+
+ #global-header #logo:focus {
+	background-color: $focus;
+	outline: 3px solid $focus;
+ }
+
+
 .column-one-sixth {
 	@include grid-column(1/6);
 }
