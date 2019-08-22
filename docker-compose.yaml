@@ -10,6 +10,19 @@ services:
     command: 'elasticsearch -E cluster.name=local -E discovery.type=single-node'
   # /ElasticSearch
 
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+
   # Learning Locker
   learning-locker-api-worker:
     command: ['node', '/opt/learning-locker/worker/dist/server']
@@ -105,7 +118,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-61
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-3
     depends_on:
       - identity
     ports:
@@ -116,7 +129,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-3
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-4
     depends_on:
       - identity
     ports:

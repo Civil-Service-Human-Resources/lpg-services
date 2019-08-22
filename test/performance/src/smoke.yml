@@ -1,8 +1,11 @@
 config:
-  target: 'https://test-lpg.cshr.digital'
+  target: 'http://localhost:3001'
+  variables:
+    identityUrl:
+      - "http://localhost:8080/login"
   phases:
-    - duration: 200
-      arrivalRate: 1
+    - duration: 1500
+      arrivalCount: 500
   processor: "./artilleryfunc.js"
   defaults:
   payload:
@@ -11,29 +14,24 @@ config:
       - "username"
       - "password"
     order: "sequence"
-    # path is relative to the location of the test script
 scenarios:
   - name: "Login to LPG"
     flow:
-    - get: 
+    - get:
         url: "/home"
         capture:
           selector: "input[type='hidden']"
           as: "csrf"
     - post:
-        url: "https://test-identity.cshr.digital/login"
+        url: "{{ identityUrl }}"
         username: "{{ username }}"
         password: "{{ password }}"
         beforeRequest: "setLoginBody"
     - get:
         url: "/home"
-
-  - name: "Search for a term"
-    flow:
     - get:
         url: "/search?q=commercial"
-
-  - name: "Add to learning plan"
-    flow:
     - get:
         url: "/suggestions-for-you/add/e0HNfmkTSMiRPHVJ9ljnxA?ref=search"
+    - get:
+        url: "/courses/E-5tkB8fQN-IrK4dKpzwsg/cV1QRIfiS9-kBqN5rxALoQ"
