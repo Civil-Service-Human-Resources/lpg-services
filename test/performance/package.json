@@ -2,7 +2,8 @@
   "name": "lpg-performance-test",
   "version": "0.0.1",
   "scripts": {
-    "smoke": "npm -v"
+    "smoke": "npm -v",
+    "report": "npm -v"
   },
   "dependencies": {
     "artillery": "1.6.0-15",
