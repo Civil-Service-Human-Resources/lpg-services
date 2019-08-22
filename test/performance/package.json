@@ -1,0 +1,12 @@
+{
+  "name": "lpg-performance-test",
+  "version": "0.0.1",
+  "scripts": {
+    "smoke": "npm -v"
+  },
+  "dependencies": {
+    "artillery": "1.6.0-15",
+    "dotenv": "4.0.0"
+  },
+  "description": "Currently stubbing out the smoke command to instead output npm version. This needs to be replaced with env specific call to the smoke tests."
+}
