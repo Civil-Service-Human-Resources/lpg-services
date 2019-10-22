@@ -34,6 +34,17 @@ brew update && brew install azure-cli
 az login  
 az acr login --name lpgregistry
 ```
+#### Nodemon
+Install nodemon globally using the following command: 
+```
+npm install -g nodemon
+```
+Edit the Run/Debug configuration in Intellij by adding the following to the 'Node parameters'
+
+```aidl
+/usr/local/bin/nodemon --ext html,js,ts
+```
+
 
 ### Installation <a name = "installation"></a>
 Clone the application
