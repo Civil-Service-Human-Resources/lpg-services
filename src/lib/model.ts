@@ -87,7 +87,6 @@ export class Course {
 	}
 
 	getModules() {
-		// this.getAssociatedLearning()
 		return this.modules
 	}
 
@@ -174,16 +173,6 @@ export class Course {
 
 		return count
 	}
-
-	getAssociatedLearning()
-	{
-		const modules = this.getModules()
-		for(let module in modules)
-		{
-			console.log(module)
-		}
-	}
-
 
 	getCompletionDate() {
 		if (this.isComplete()) {

@@ -11,11 +11,6 @@ import * as log4js from 'log4js'
 const logger = log4js.getLogger('controllers/suggestion')
 
 export function hashArray<T>(records: T[], key: string) {
-	console.log("*********** Records ***********");
-	console.log(records);
-	console.log("*********** hash index *********");
-	console.log((records[0] as any)[key]);
-
 	const hash: Record<string, T> = {}
 	for (const entry of records) {
 		const hashIndex: string = (entry as any)[key]

@@ -38,7 +38,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			if (learningHash[requiredCourse.id]) {
 				const record = learningHash[requiredCourse.id]
 				if (record) {
-                    console.log(record)
 					requiredCourse.record = record
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeat()) {
