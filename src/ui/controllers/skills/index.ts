@@ -70,7 +70,7 @@ export async function nextQuestion(req: express.Request, res: express.Response) 
 }
 
 export async function answerQuestion(req: express.Request, res: express.Response) {
-	let index: number = req.params.questionIndex
+	let index: number = parseInt(req.params.questionIndex, 0)
 	if (index > req.session!.quiz.questionCount - 1) {
 		res.redirect(`/skills/summary`)
 	}
