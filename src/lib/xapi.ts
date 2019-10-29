@@ -4,7 +4,7 @@ import * as config from 'lib/config'
 import * as featureConfig from 'lib/config/featureConfig'
 import * as datetime from 'lib/datetime'
 import * as model from 'lib/model'
-import * as log4js from "log4js";
+import * as log4js from "log4js"
 const logger = log4js.getLogger('controllers/home')
 export enum Placement {
 	Context,
@@ -288,11 +288,11 @@ export async function record(
 		type = Type.Course
 	}
 
-	if (!featureConfig.DB.PERSIST_ELEARNING_EXPERIENCED_STATEMENTS){
-		if (type == Type.ELearning && verb == Verb.Experienced){
+	if (!featureConfig.DB.PERSIST_ELEARNING_EXPERIENCED_STATEMENTS) {
+		if (type === Type.ELearning && verb === Verb.Experienced) {
 			logger.debug("filtering out the eperienced elearning statements")
 			console.log("filtering out the eperienced elearning statements")
-			return;
+			return
 		}
 	}
 

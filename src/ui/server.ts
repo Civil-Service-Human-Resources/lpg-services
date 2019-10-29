@@ -131,12 +131,12 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
-let default_src;
+let defaultSrc
 
 if (config.PROFILE === 'prod') {
-	default_src = "'self' https://cdn.learn.civilservice.gov.uk/"
+	defaultSrc = "'self' https://cdn.learn.civilservice.gov.uk/"
 } else {
-	default_src = "'self' https://staging-cdn.cshr.digital/"
+	defaultSrc = "'self' https://staging-cdn.cshr.digital/"
 }
 
 app.use(
@@ -144,7 +144,7 @@ app.use(
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': default_src,
+					'default-src': defaultSrc,
 					'font-src': 'data:',
 					'frame-src': 'https://youtube.com https://www.youtube.com',
 					'img-src': "'self' data: https://www.google-analytics.com",
@@ -161,7 +161,6 @@ app.use(
 			xssProtection: true,
 		})
 	)
-
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
