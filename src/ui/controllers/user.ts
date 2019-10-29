@@ -38,6 +38,17 @@ export enum nodes {
 	'password' = 'password',
 }
 
+function getNodeByName(name: string) {
+	const keys = Object.keys(nodes)
+	keys.forEach((element, index) => {
+		if (element === name) {
+			return Object.values(nodes)[index]
+		}
+	})
+
+	return ''
+}
+
 const logger = log4js.getLogger('controllers/user')
 
 // This super slick regex is by Andrew Clark from:
@@ -186,7 +197,7 @@ export async function newRenderAreasOfWorkPage(
 	res: express.Response
 ) {
 	const lede = req.__('register_area_page_intro')
-	let selectedArr = []
+	let selectedArr: any = []
 	let currentLevel: number = 0
 	let selected: number
 	let levels: Level[][] = []
@@ -547,7 +558,7 @@ export async function updateProfile(
 	let inputName = req.params.profileDetail
 	let fieldValue = req.body[inputName]
 
-	const node = nodes[inputName]
+	const node = getNodeByName(inputName)
 
 	let errorMessage = ''
 
