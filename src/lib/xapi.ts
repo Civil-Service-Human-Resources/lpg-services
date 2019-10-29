@@ -1,9 +1,11 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
+import * as featureConfig from 'lib/config/featureConfig'
 import * as datetime from 'lib/datetime'
 import * as model from 'lib/model'
-
+import * as log4js from "log4js";
+const logger = log4js.getLogger('controllers/home')
 export enum Placement {
 	Context,
 	Result,
@@ -285,6 +287,18 @@ export async function record(
 	} else {
 		type = Type.Course
 	}
+
+	if (!featureConfig.DB.PERSIST_ELEARNING_EXPERIENCED_STATEMENTS){
+		if (type == Type.ELearning && verb == Verb.Experienced){
+			logger.debug("filtering out the eperienced elearning statements")
+			console.log("filtering out the eperienced elearning statements")
+			return;
+		}
+	}
+
+	logger.debug("should not run if eperienced elearning statements")
+	console.log("should not run if eperienced elearning statements")
+
 	const payload: Statement = {
 		actor: {
 			account: {

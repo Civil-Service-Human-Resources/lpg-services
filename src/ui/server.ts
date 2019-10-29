@@ -131,13 +131,20 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
+let default_src;
+
 if (config.PROFILE === 'prod') {
-	app.use(
+	default_src = "'self' https://cdn.learn.civilservice.gov.uk/"
+} else {
+	default_src = "'self' https://staging-cdn.cshr.digital/"
+}
+
+app.use(
 		lusca({
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': "'self' https://cdn.learn.civilservice.gov.uk",
+					'default-src': default_src,
 					'font-src': 'data:',
 					'frame-src': 'https://youtube.com https://www.youtube.com',
 					'img-src': "'self' data: https://www.google-analytics.com",
@@ -154,7 +161,7 @@ if (config.PROFILE === 'prod') {
 			xssProtection: true,
 		})
 	)
-}
+
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
