@@ -163,3 +163,9 @@ export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_k
 export const CONTACT_EMAIL = env.CONTACT_EMAIL || 'support@civilservicelearning.uk'
 
 export const CONTACT_NUMBER = env.CONTACT_NUMBER || '020 3640 7985'
+
+export const REDIS = set({
+	host: env.REDIS_HOST || 'localhost',
+	password: env.REDIS_PASSWORD || '',
+	port: +(env.REDIS_PORT || '6379'),
+})

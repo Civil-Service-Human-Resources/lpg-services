@@ -1,5 +1,6 @@
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
+import * as connectRedis from 'connect-redis'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
@@ -7,11 +8,11 @@ import * as session from 'express-session'
 import * as fs from 'fs'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
+import * as redis from 'redis'
 
 import * as lusca from 'lusca'
 import * as path from 'path'
 import * as serveStatic from 'serve-static'
-import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
@@ -57,7 +58,14 @@ const {PORT = 3001} = process.env
 const logger = log4js.getLogger('server')
 
 const app = express()
-const FileStore = sessionFileStore(session)
+
+const RedisStore = connectRedis(session)
+const redisClient = redis.createClient({
+	auth_pass: config.REDIS.password,
+	host: config.REDIS.host,
+	no_ready_check: true,
+	port: config.REDIS.port,
+})
 
 app.disable('x-powered-by')
 app.disable('etag')
@@ -89,8 +97,8 @@ app.use(
 		resave: true,
 		saveUninitialized: true,
 		secret: config.SESSION_SECRET,
-		store: new FileStore({
-			path: process.env.NOW ? `/tmp/sessions` : `.sessions`,
+		store: new RedisStore({
+			client: redisClient,
 		}),
 	})
 )
