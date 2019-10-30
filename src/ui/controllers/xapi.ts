@@ -10,8 +10,7 @@ const logger = log4js.getLogger('controllers/xapi')
 
 export async function proxy(ireq: express.Request, res: express.Response) {
 	let req = ireq as extended.CourseRequest
-	logger.info(`Proxying xAPI request to ${req.path}`)
-	logger.info(`Request query ${JSON.stringify(req.query)}`)
+	logger.debug(`Proxying xAPI request to ${req.path}`)
 
 	if (req.query.method) {
 		// This indicates a request has been converted to a POST. The request body will contain headers and parameter
@@ -42,13 +41,15 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	let body = req.body
 	if (body) {
 		if (Array.isArray(body)) {
-			logger.info(`[ARRAY] Proxy body is: ${body.toString()}`)
 			body = body.map(statement => updateStatement(statement, agent, req))
 		} else if (typeof body === 'object') {
-			logger.info(`[OBJ] Proxy body is: ${JSON.stringify(body)}`)
+			// Introduced filtering to remove excess elearning experienced statements being persisted in Cosmos DB
+			if (req.path === '/statements' && body.verb && body.verb.id && body.verb.id === xapi.Verb.Experienced) {
+				logger.info(`Filtered e-learning experienced statement: ${req.query.module}`)
+				return res.sendStatus(200)
+			}
 			body = updateStatement(body, agent, req)
 		} else {
-			logger.info(`[BUFFER] Proxy body is: ${body}`)
 			body = new Buffer(body)
 		}
 	}
