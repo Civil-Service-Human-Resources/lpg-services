@@ -47,7 +47,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			// Introduced filtering to remove excess elearning experienced statements being persisted in Cosmos DB
 			if (!featureConfig.DB.PERSIST_ELEARNING_EXPERIENCED_STATEMENTS) {
 				if (req.path === '/statements' && body.verb && body.verb.id && body.verb.id === xapi.Verb.Experienced) {
-					logger.info(`Filtered e-learning experienced statement: ${req.query.module}`)
+					logger.debug(`Filtered e-learning experienced statement: ${req.query.module}`)
 					return res.sendStatus(200)
 				}
 			}
