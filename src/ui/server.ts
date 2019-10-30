@@ -148,7 +148,7 @@ app.use(
 			},
 			hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
 			nosniff: true,
-			referrerPolicy: 'same-origin',
+			referrerPolicy: 'origin',
 			xframe: 'SAMEORIGIN',
 			xssProtection: true,
 		})
