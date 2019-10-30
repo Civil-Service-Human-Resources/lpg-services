@@ -13,6 +13,7 @@ import * as redis from 'redis'
 import * as lusca from 'lusca'
 import * as path from 'path'
 import * as serveStatic from 'serve-static'
+import * as sessionFileStore from 'session-file-store'
 
 import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
@@ -59,14 +60,6 @@ const logger = log4js.getLogger('server')
 
 const app = express()
 
-const RedisStore = connectRedis(session)
-const redisClient = redis.createClient({
-	auth_pass: config.REDIS.password,
-	host: config.REDIS.host,
-	no_ready_check: true,
-	port: config.REDIS.port,
-})
-
 app.disable('x-powered-by')
 app.disable('etag')
 app.enable('trust proxy')
@@ -85,23 +78,51 @@ app.use(
 		nolog: '\\.js|\\.css|\\.gif|\\.jpg|\\.png|\\.ico$',
 	})
 )
+if (config.PROFILE === 'local') {
+	const FileStore = sessionFileStore(session)
+	app.use(
+		session({
+			cookie: {
+				httpOnly: true,
+				maxAge: config.COOKIE.maxAge,
+				secure: config.PRODUCTION_ENV,
+			},
+			name: 'lpg-ui',
+			resave: true,
+			saveUninitialized: true,
+			secret: config.SESSION_SECRET,
+			store: new FileStore({
+				path: process.env.NOW ? `/tmp/sessions` : `.sessions`,
+			}),
+		})
+	)
+}
 
-app.use(
-	session({
-		cookie: {
-			httpOnly: true,
-			maxAge: config.COOKIE.maxAge,
-			secure: config.PRODUCTION_ENV,
-		},
-		name: 'lpg-ui',
-		resave: true,
-		saveUninitialized: true,
-		secret: config.SESSION_SECRET,
-		store: new RedisStore({
-			client: redisClient,
-		}),
+if (config.PROFILE !== 'local') {
+	const RedisStore = connectRedis(session)
+	const redisClient = redis.createClient({
+		auth_pass: config.REDIS.password,
+		host: config.REDIS.host,
+		no_ready_check: true,
+		port: config.REDIS.port,
 	})
-)
+	app.use(
+		session({
+			cookie: {
+				httpOnly: true,
+				maxAge: config.COOKIE.maxAge,
+				secure: config.PRODUCTION_ENV,
+			},
+			name: 'lpg-ui',
+			resave: true,
+			saveUninitialized: true,
+			secret: config.SESSION_SECRET,
+			store: new RedisStore({
+				client: redisClient,
+			}),
+		})
+	)
+}
 app.use(flash())
 
 app.use(bodyParser.json({strict: false}))
