@@ -191,16 +191,6 @@ export function parseRoles(traversonResult: any): [Level[], string] | void {
 		return
 	}
 }
-function getNodeByName(name: string) {
-	const keys = Object.keys(nodes)
-	keys.forEach((element, index) => {
-		if (element === name) {
-			return Object.values(nodes)[index]
-		}
-	})
-
-	return ''
-}
 
 export async function newRenderAreasOfWorkPage(
 	req: express.Request,
