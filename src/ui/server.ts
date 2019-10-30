@@ -136,7 +136,7 @@ let defaultSrc
 if (config.PROFILE === 'prod') {
 	defaultSrc = "'self' https://cdn.learn.civilservice.gov.uk/"
 } else {
-	defaultSrc = "'self' https://integration-cdn.cshr.digital"
+	defaultSrc = "'self' https://staging-cdn.cshr.digital"
 }
 
 app.use(
