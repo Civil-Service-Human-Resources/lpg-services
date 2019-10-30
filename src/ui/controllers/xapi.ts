@@ -1,6 +1,7 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
+import * as featureConfig from 'lib/config/featureConfig'
 import * as extended from 'lib/extended'
 import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
@@ -44,9 +45,11 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			body = body.map(statement => updateStatement(statement, agent, req))
 		} else if (typeof body === 'object') {
 			// Introduced filtering to remove excess elearning experienced statements being persisted in Cosmos DB
-			if (req.path === '/statements' && body.verb && body.verb.id && body.verb.id === xapi.Verb.Experienced) {
-				logger.info(`Filtered e-learning experienced statement: ${req.query.module}`)
-				return res.sendStatus(200)
+			if (!featureConfig.DB.PERSIST_ELEARNING_EXPERIENCED_STATEMENTS) {
+				if (req.path === '/statements' && body.verb && body.verb.id && body.verb.id === xapi.Verb.Experienced) {
+					logger.info(`Filtered e-learning experienced statement: ${req.query.module}`)
+					return res.sendStatus(200)
+				}
 			}
 			body = updateStatement(body, agent, req)
 		} else {
