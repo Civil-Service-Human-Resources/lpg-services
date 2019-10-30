@@ -1,7 +1,6 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
-import * as featureConfig from 'lib/config/featureConfig'
 import * as datetime from 'lib/datetime'
 import * as model from 'lib/model'
 import * as log4js from "log4js"
