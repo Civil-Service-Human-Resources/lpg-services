@@ -131,20 +131,12 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
-let defaultSrc
-
-if (config.PROFILE === 'prod') {
-	defaultSrc = "'self' https://cdn.learn.civilservice.gov.uk/"
-} else {
-	defaultSrc = "'self' https://staging-cdn.cshr.digital"
-}
-
 app.use(
 		lusca({
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': defaultSrc,
+					'default-src': "'self' https://staging-cdn.cshr.digital",
 					'font-src': 'data:',
 					'frame-src': 'https://youtube.com https://www.youtube.com',
 					'img-src': "'self' data: https://www.google-analytics.com",
