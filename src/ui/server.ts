@@ -159,9 +159,9 @@ app.use(
 		res.setHeader('Cache-Control', 'private, no-cache, no-store, max-age=0')
 		res.setHeader('Pragma', 'no-cache')
 		res.setHeader('Expires', '0')
-		res.setHeader('Access-Control-Allow-Origin', 'https://staging-cdn.cshr.digital')
+		res.setHeader('Access-Control-Allow-Origin', '*')
 		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-		res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
+		res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,x-experience-api-version')
 		next()
 	}
 )
