@@ -257,6 +257,7 @@ export async function record(
 	event?: model.Event,
 	resultData?: Record<string, any>
 ) {
+	logger.info(`This is xapi record for ${course}`)
 	if (!Labels[verb]) {
 		throw new Error(`Unknown xAPI verb: ${verb}`)
 	}
