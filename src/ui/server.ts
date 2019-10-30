@@ -131,37 +131,36 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
-app.use(
+if (config.PROFILE === 'prod') {
+	app.use(
 		lusca({
 			csp: {
 				policy: {
 					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': "'self' https://staging-cdn.cshr.digital",
+					'default-src': "'self' https://cdn.learn.civilservice.gov.uk",
 					'font-src': 'data:',
 					'frame-src': 'https://youtube.com https://www.youtube.com',
 					'img-src': "'self' data: https://www.google-analytics.com",
 					'script-src':
-						"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
-						"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
+					"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
+					"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
 					'style-src': "'self' 'unsafe-inline'",
 				},
 			},
 			hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
 			nosniff: true,
-			referrerPolicy: 'origin',
+			referrerPolicy: 'same-origin',
 			xframe: 'SAMEORIGIN',
 			xssProtection: true,
 		})
 	)
+}
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
 		res.setHeader('Cache-Control', 'private, no-cache, no-store, max-age=0')
 		res.setHeader('Pragma', 'no-cache')
 		res.setHeader('Expires', '0')
-		res.setHeader('Access-Control-Allow-Origin', '*')
-		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-		res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,x-experience-api-version')
 		next()
 	}
 )
