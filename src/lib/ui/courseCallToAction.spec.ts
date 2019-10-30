@@ -34,7 +34,7 @@ const moduleData: {[module: string]: any} = {
 		events: [
 			{
 				capacity: 30,
-				dateRanges: [{date: '2020-10-10', startTime: '06:00:00'}],
+				dateRanges: [{date: '2019-10-10', startTime: '06:00:00'}],
 				id: 'past',
 				venue: {location: 'London'},
 			},
