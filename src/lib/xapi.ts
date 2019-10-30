@@ -289,17 +289,6 @@ export async function record(
 		type = Type.Course
 	}
 
-	if (!featureConfig.DB.PERSIST_ELEARNING_EXPERIENCED_STATEMENTS) {
-		if (type === Type.ELearning && verb === Verb.Experienced) {
-			logger.debug("filtering out the eperienced elearning statements")
-			console.log("filtering out the eperienced elearning statements")
-			return
-		}
-	}
-
-	logger.debug("should not run if eperienced elearning statements")
-	console.log("should not run if eperienced elearning statements")
-
 	const payload: Statement = {
 		actor: {
 			account: {
