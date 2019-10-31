@@ -40,13 +40,14 @@ export enum nodes {
 
 function getNodeByName(name: string) {
 	const keys = Object.keys(nodes)
+	let node = ''
 	keys.forEach((element, index) => {
 		if (element === name) {
-			return Object.values(nodes)[index]
+			node = Object.values(nodes)[index]
 		}
 	})
 
-	return ''
+	return node
 }
 
 const logger = log4js.getLogger('controllers/user')
