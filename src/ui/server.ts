@@ -20,6 +20,7 @@ import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
 
+import * as maintenanceMiddleware from 'lib/service/maintenance'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
 import * as feedbackController from './controllers/feedback'
@@ -33,7 +34,6 @@ import * as skillsController from './controllers/skills'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
-import * as maintenanceMiddleware from 'lib/service/maintenance'
 
 import * as errorController from './controllers/errorHandler'
 
