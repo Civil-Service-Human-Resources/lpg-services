@@ -26,12 +26,14 @@ import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
 import * as learningRecordFeedbackController from './controllers/learning-record/feedback'
+import * as maintenanceController from './controllers/maintenance'
 import * as profileController from './controllers/profile'
 import * as searchController from './controllers/search'
 import * as skillsController from './controllers/skills'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
+import * as maintenanceMiddleware from 'lib/service/maintenance'
 
 import * as errorController from './controllers/errorHandler'
 
@@ -70,6 +72,8 @@ const corsOptions = {
 	origin: /\.civilservice\.gov\.uk$/,
 }
 app.use(cors(corsOptions))
+
+app.use(maintenanceMiddleware.processMaintenance)
 
 app.use(
 	log4js.connectLogger(logger, {
@@ -184,6 +188,7 @@ app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
 
 app.use(lusca.csrf())
 
+app.get('/maintenance', maintenanceController.maintenancePage)
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', asyncHandler(userController.signOut))

@@ -70,6 +70,7 @@
 	},
 	"dependencies": {
 		"@types/connect-redis": "0.0.11",
+		"@types/cookies": "^0.7.4",
 		"@types/redis": "^2.8.14",
 		"app-root-path": "^2.1.0",
 		"applicationinsights": "1.0.6",
@@ -79,6 +80,7 @@
 		"compression": "1.7.1",
 		"connect-flash": "0.1.1",
 		"connect-redis": "^4.0.3",
+		"cookies": "^0.8.0",
 		"cors": "2.8.4",
 		"dist-exiftool": "10.53.0",
 		"dotenv": "5.0.0",
