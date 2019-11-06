@@ -171,7 +171,7 @@ export const REDIS = set({
 })
 
 export const MAINTENANCE = set({
-	enabled: Boolean(env.MAINTENANCE_ENABLED || 'false'),
+	enabled: JSON.parse(env.MAINTENANCE_ENABLED || 'false'),
 	maintenanceWindowMessage: env.MAINTENANCE_WINDOW_MESSAGE || 'message',
 	overrideTokenName: env.MAINTENANCE_TOKEN_NAME || 'token',
 	overrideTokenValue: env.MAINTENANCE_TOKEN_VALUE || 'token_value',
