@@ -2,21 +2,20 @@ import * as Cookies from 'cookies'
 import * as express from 'express'
 import { MAINTENANCE } from "lib/config/index"
 
-const MAINTENANCE_URL = "/maintenance"
-const ASSETS_PATH = "/assets"
-const AUTHENTICATE_PATH = "/authenticate"
-
 export async function processMaintenance(
 	req: express.Request,
 	res: express.Response,
 	next: express.NextFunction) {
+		const MAINTENANCE_URL = "/maintenance"
 		const cookies = new Cookies(req, res)
-		if (shouldRedirectToMaintenancePage(req, cookies)) {
+		const overrideCookie = cookies.get(MAINTENANCE.overrideTokenName)
+
+		if (shouldRedirectToMaintenancePage(req.url, overrideCookie, MAINTENANCE_URL, MAINTENANCE)) {
 			res.redirect(MAINTENANCE_URL)
 			return
 		}
 
-		if (shouldRedirectToMainPage(req)) {
+		if (shouldRedirectToMainPage(req.url, MAINTENANCE_URL, MAINTENANCE)) {
 			res.redirect("/")
 			return
 		}
@@ -24,26 +23,38 @@ export async function processMaintenance(
 		next()
 }
 
-function shouldRedirectToMaintenancePage(req: express.Request, cookies: Cookies) {
-	return MAINTENANCE.enabled &&
-		!isMaintenaceRequest(req) &&
-		!isWhiteListedRequest(req) &&
-		!isMaintenanceOverrideCookiePresent(req, cookies)
+export function shouldRedirectToMaintenancePage(
+	reqUrl: string,
+	maintenanceOverrideCookie: string | undefined,
+	maintenanceUrl: string,
+	maintenanceConfig: any) {
+	return maintenanceConfig.enabled &&
+		!isMaintenanceRequest(reqUrl, maintenanceUrl) &&
+		!isWhiteListedRequest(reqUrl) &&
+		!isMaintenanceOverrideCookiePresent(maintenanceOverrideCookie, maintenanceConfig)
 }
 
-function shouldRedirectToMainPage(req: express.Request): boolean {
-	return !MAINTENANCE.enabled && isMaintenaceRequest(req)
+export function shouldRedirectToMainPage(
+	reqUrl: string,
+	maintenanceUrl: string,
+	maintenanceConfig: any): boolean {
+	return !maintenanceConfig.enabled && isMaintenanceRequest(reqUrl, maintenanceUrl)
 }
 
-function isMaintenaceRequest(req: express.Request): boolean {
-	return req.url === MAINTENANCE_URL
+export function isMaintenanceRequest(reqUrl: string, maintenanceUrl: string): boolean {
+	return reqUrl === maintenanceUrl
 }
 
-function isWhiteListedRequest(req: express.Request): boolean  {
-	return req.url.startsWith(ASSETS_PATH) ||
-			req.url.startsWith(AUTHENTICATE_PATH)
+export function isWhiteListedRequest(reqUrl: string): boolean  {
+	const ASSETS_PATH = "/assets"
+	const AUTHENTICATE_PATH = "/authenticate"
+
+	return reqUrl.startsWith(ASSETS_PATH) ||
+			reqUrl.startsWith(AUTHENTICATE_PATH)
 }
 
-function isMaintenanceOverrideCookiePresent(req: express.Request, cookies: Cookies): boolean {
-	return cookies.get(MAINTENANCE.overrideTokenName) === MAINTENANCE.overrideTokenValue
+export function isMaintenanceOverrideCookiePresent(
+	maintenanceOverrideCookie: string | undefined,
+	config: any): boolean {
+	return maintenanceOverrideCookie === config.overrideTokenValue
 }
