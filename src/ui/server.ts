@@ -20,7 +20,7 @@ import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
 
-import * as maintenanceMiddleware from 'lib/service/maintenance'
+import * as maintenanceService from 'lib/service/maintenance'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
 import * as feedbackController from './controllers/feedback'
@@ -73,7 +73,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-app.use(maintenanceMiddleware.processMaintenance)
+app.use(maintenanceService.processMaintenance)
 
 app.use(
 	log4js.connectLogger(logger, {
