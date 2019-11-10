@@ -480,6 +480,7 @@ export class User {
 			data.accessToken
 		)
 
+		user.userId = data.userId
 		user.organisationalUnit =
 			data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
@@ -518,6 +519,7 @@ export class User {
 	interests?: any[]
 	givenName?: string
 	organisationalUnit?: OrganisationalUnit
+	userId: string
 
 	grade?: any
 
