@@ -14,6 +14,7 @@ appInsights
 .start()
 
 /* tslint:enable */
+
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as connectRedis from 'connect-redis'

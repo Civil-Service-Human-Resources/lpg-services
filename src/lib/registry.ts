@@ -102,9 +102,8 @@ export async function checkLineManager(data: any, token: string) {
 export async function patch(node: string, data: any, token: string) {
 	const result = await new Promise((resolve, reject) =>
 		traverson
-			.from(config.REGISTRY_SERVICE_URL)
-			.jsonHal()
-			.follow(node, 'me', 'self')
+			.from(config.REGISTRY_SERVICE_URL + node)
+			.json()
 			.withRequestOptions({
 				auth: {
 					bearer: token,
@@ -112,9 +111,9 @@ export async function patch(node: string, data: any, token: string) {
 			})
 			.patch(data, (error, document) => {
 				if (error) {
-					reject(false)
+					reject(error)
 				} else {
-					resolve(true)
+					resolve(document)
 				}
 			})
 	)
@@ -125,9 +124,8 @@ export async function patch(node: string, data: any, token: string) {
 export async function profile(token: string) {
 	return await new Promise((resolve, reject) =>
 		traverson
-			.from(config.REGISTRY_SERVICE_URL)
-			.jsonHal()
-			.follow('civilServants', 'me')
+			.from(config.REGISTRY_SERVICE_URL + '/civilServants/me')
+			.json()
 			.withRequestOptions({
 				auth: {
 					bearer: token,
