@@ -374,8 +374,9 @@ export async function patchAndUpdate(
 			? await registry.patch('/civilServants/' + req.user.userId, call, req.user.accessToken)
 			: await registry.checkLineManager(call, req.user.accessToken)
 
-	const responseStatus = (response as any).status
+	const responseStatus = (response as any).status || (response as any).statusCode
 	const requestWasSuccessful = responseStatus === 200
+
 	if (node === 'lineManager' && !requestWasSuccessful) {
 		const inputName = 'line-manager'
 		let errorMessage = null
