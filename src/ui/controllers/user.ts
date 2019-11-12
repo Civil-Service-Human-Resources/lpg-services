@@ -198,6 +198,147 @@ export function parseRoles(traversonResult: any): [Level[], string] | void {
 	}
 }
 
+export async function newRenderAreasOfWorkPage(
+	req: express.Request,
+	res: express.Response
+) {
+	const lede = req.__('register_area_page_intro')
+	let selectedArr: any = []
+	let currentLevel: number = 0
+	let selected: number
+	let levels: Level[][] = []
+	let prevLevelUrl
+
+	if (req.query.select) {
+		const arrUpdate = req.query.select.split('/')
+		await patchAndUpdate(
+			arrUpdate[0],
+			req.query.select,
+			'areas-of-work',
+			req,
+			res
+		)
+		return
+	}
+
+	if (req.params[0]) {
+		/* set the 'progress' vars */
+		selectedArr = req.params[0].split('/')
+		currentLevel = selectedArr.length
+		selected = selectedArr[currentLevel - 1] || 0
+	}
+
+	if (currentLevel === 0) {
+		/* if the user hasn't selected anything, start from the beginning and reset 'levels' vars */
+		req.session!.levels = []
+		levels = []
+
+		const parsed = parseProfessions(await registry.get('professions'))
+
+		if (parsed) {
+			levels.push(parsed[0])
+			req.session!.prevLevelUrl = parsed[1]
+		}
+	} else {
+		/* if the user has selected levels or there are req.params[0] */
+		levels = req.session!.levels
+		const followPath: string[] = []
+
+		prevLevelUrl = levels[currentLevel! - 1][selected!].url
+		if (levels.length === currentLevel) {
+			if (selectedArr.length! > 1) {
+				followPath.push('children')
+			}
+		} else {
+			/* If they don't match up, start from the beginning and reconstruct the path.
+			 * This may happen when they use the url to navigate to a level
+			 * or go backwards
+			 */
+
+			prevLevelUrl = levels[currentLevel - 1][selected!].url
+
+			selectedArr.forEach((selection: number, index: number) => {
+				if (index > 0) {
+					followPath.push('children')
+				}
+			})
+		}
+
+		const traversonResult = await registry.follow(prevLevelUrl, followPath)
+
+		if (levels.length === 0) {
+			/* if there are no levels saved, use parseProfessions method since the response contains 'professions' key */
+			const parsed = parseProfessions(traversonResult)
+			if (parsed) {
+				levels.push(parsed[0])
+				req.session!.prevLevelUrl = parsed[1]
+			}
+		} else {
+			/* if there are levels saved, use parseRoles method since the response contains 'jobRoles' key */
+			const parsed = parseRoles(traversonResult)
+
+			if (parsed) {
+				/* only set the results to the appropriate level*/
+				levels[selectedArr.length] = parsed[0]
+				req.session!.prevLevelUrl = parsed[1]
+			}
+		}
+	}
+
+	if (selectedArr) {
+		/* Slice the array to the amount of levels the user should see and save the levels to session */
+		levels = levels.slice(0, selectedArr.length + 1)
+		req.session!.levels = levels
+	}
+
+	res.send(
+		template.render('profile/edit', req, res, {
+			currentLevel,
+			inputName: 'areas-of-work',
+			lede,
+			levels,
+			...res.locals,
+			selected: selected!,
+			selectedArr,
+		})
+	)
+}
+
+export function renderAreasOfWorkPage(
+	req: express.Request,
+	res: express.Response
+) {
+	if (req.query.select) {
+		// const selectedLevel = req.query.select
+		//TODO: LPFG-49,241 - send request to profile service to update profile
+
+		res.redirect('/profile')
+	}
+	const lede = req.__('register_area_page_intro')
+	let selectedArr
+	let currentLevel
+	let selected
+	if (req.params[0]) {
+		selected = req.params[0]
+		selectedArr = req.params[0].split('/')
+		currentLevel = selectedArr.length
+	}
+
+	const levelsToShow: any[] = []
+
+	res.send(
+		template.render('profile/edit', req, res, {
+			currentLevel,
+			inputName: 'other-areas-of-work',
+			lede,
+			levels: levelsToShow,
+			...res.locals,
+			selected,
+			selectedArr,
+		})
+	)
+}
+
 export async function renderEditPage(
 	req: express.Request,
 	res: express.Response
