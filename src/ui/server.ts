@@ -1,5 +1,6 @@
 /* tslint:disable:no-var-requires */
 const appInsights = require('applicationinsights')
+import * as config from 'lib/config'
 
 appInsights
 	.setup(config.INSTRUMENTATION_KEY)
@@ -20,7 +21,6 @@ import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as fs from 'fs'
-import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as redis from 'redis'
 
