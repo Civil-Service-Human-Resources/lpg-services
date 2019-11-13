@@ -29,6 +29,8 @@ import * as path from 'path'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
+import * as corsConfig from 'lib/config/corsConfig'
+import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
@@ -66,11 +68,7 @@ app.disable('x-powered-by')
 app.disable('etag')
 app.enable('trust proxy')
 
-const corsOptions = {
-	allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
-	credentials: true,
-	origin: /\.civilservice\.gov\.uk$/,
-}
+const corsOptions = corsConfig.setCorsOptions()
 app.use(cors(corsOptions))
 
 app.use(
@@ -133,30 +131,19 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
-if (config.PROFILE === 'prod') {
-	app.use(
-		lusca({
-			csp: {
-				policy: {
-					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': "'self' https://cdn.learn.civilservice.gov.uk",
-					'font-src': 'data:',
-					'frame-src': 'https://youtube.com https://www.youtube.com',
-					'img-src': "'self' data: https://www.google-analytics.com",
-					'script-src':
-					"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
-					"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
-					'style-src': "'self' 'unsafe-inline'",
-				},
-			},
-			hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
-			nosniff: true,
-			referrerPolicy: 'same-origin',
-			xframe: 'SAMEORIGIN',
-			xssProtection: true,
-		})
-	)
-}
+const luscaPolicy = luscaConfig.setCspPolicy()
+app.use(
+	lusca({
+		csp: {
+			policy: luscaPolicy,
+		},
+		hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
+		nosniff: true,
+		referrerPolicy: 'same-origin',
+		xframe: 'SAMEORIGIN',
+		xssProtection: true,
+	})
+)
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
