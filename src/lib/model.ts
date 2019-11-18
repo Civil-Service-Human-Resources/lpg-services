@@ -160,6 +160,7 @@ export class Course {
 		return null
 	}
 
+
 	getMandatoryCount() {
 		const modules = this.getModules()
 		let count = 0
@@ -194,7 +195,7 @@ export class Course {
 		const completionDate = this.getCompletionDate()
 		if (this.audience) {
 			return this.audience!.shouldRepeat(completionDate)
-		}
+	}
 		return false
 	}
 }
