@@ -26,9 +26,9 @@
 }
 
 .govuk-skip-link:focus {
-    outline: 3px solid #ffbf47;
+	outline: 3px solid $focus;
     outline-offset: 0;
-    background-color: #ffbf47;
+	background-color: $focus;
 }
 
 .govuk-skip-link:active, .govuk-skip-link:focus {
