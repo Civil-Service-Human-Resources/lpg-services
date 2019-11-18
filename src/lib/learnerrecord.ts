@@ -240,7 +240,7 @@ export class CourseRecord {
 	userId: string
 	modules: ModuleRecord[]
 	preference?: string
-	state?: string
+	state?: string | undefined
 
 	constructor(data: any) {
 		this.courseId = data.courseId
