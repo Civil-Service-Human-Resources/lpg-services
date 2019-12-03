@@ -95,6 +95,11 @@
 			text-decoration: none;
 			border-bottom-color: $white;
 		}
+		&:focus {
+			background-image: url('/img/gov.uk_logotype_crown_invert_trans.png');
+			color: black;
+			border-bottom: 0px;
+		}
 	}
 	.header-proposition {
 		padding-top: 10px;
@@ -112,12 +117,13 @@
 		}
 		a#proposition-name:focus {
 			color: $text-colour;
+			border-bottom: 0px;
+			text-decoration: none;
 		}
 	}
 }
 
 /* Global header bar */
-
 #global-header-bar {
 	@extend %site-width-container;
 	height: 10px;
