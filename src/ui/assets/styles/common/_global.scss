@@ -12,6 +12,10 @@ a:focus {
 	text-decoration: none;
 }
 
+a:hover {
+	color: $govuk-link-hover-colour;
+}
+
 input:focus, textarea:focus, select:focus, button:focus, .button:focus {
     outline: 3px solid $focus !important;
     outline-offset: 0;
