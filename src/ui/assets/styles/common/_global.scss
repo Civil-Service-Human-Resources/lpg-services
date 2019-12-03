@@ -15,6 +15,7 @@ a:focus {
 input:focus, textarea:focus, select:focus, button:focus, .button:focus {
     outline: 3px solid $focus !important;
     outline-offset: 0;
+	box-shadow: inset 0 0 0 2px;
 }
 
 .multiple-choice [type=radio]:focus+label::before, .multiple-choice [type=checkbox]:focus+label::before {
