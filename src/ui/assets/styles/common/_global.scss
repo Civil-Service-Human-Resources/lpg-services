@@ -293,5 +293,10 @@ input.multiple-choice__input:checked + label::after {
 
 .multiple-choice [type=checkbox]+label::after {
 	top: 11px !important;
-	left: 10px !important;
+	left: 9px !important;
+}
+
+.multiple-choice [type=checkbox]+label::before {
+	width: 33px !important;;
+	height: 33px !important;;
 }
