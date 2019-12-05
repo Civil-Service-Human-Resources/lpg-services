@@ -38,17 +38,17 @@ export enum nodes {
 	'password' = 'password',
 }
 
-function getNodeByName(name: string) {
-	const keys = Object.keys(nodes)
-	let node = ''
-	keys.forEach((element, index) => {
-		if (element === name) {
-			node = Object.values(nodes)[index]
-		}
-	})
-
-	return node
-}
+// function getNodeByName(name: string) {
+// // 	const keys = Object.keys(nodes)
+// // 	let node = ''
+// // 	keys.forEach((element, index) => {
+// // 		if (element === name) {
+// // 			node = Object.values(nodes)[index]
+// // 		}
+// // 	})
+// //
+// // 	return node
+// // }
 
 const logger = log4js.getLogger('controllers/user')
 
