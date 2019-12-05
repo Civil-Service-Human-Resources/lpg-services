@@ -3,7 +3,8 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as model from 'lib/model'
-
+import * as log4js from "log4js"
+const logger = log4js.getLogger('lib/xapi')
 export enum Placement {
 	Context,
 	Result,
@@ -255,6 +256,7 @@ export async function record(
 	event?: model.Event,
 	resultData?: Record<string, any>
 ) {
+	logger.debug(`This is xapi record for ${course}`)
 	if (!Labels[verb]) {
 		throw new Error(`Unknown xAPI verb: ${verb}`)
 	}
@@ -285,6 +287,7 @@ export async function record(
 	} else {
 		type = Type.Course
 	}
+
 	const payload: Statement = {
 		actor: {
 			account: {

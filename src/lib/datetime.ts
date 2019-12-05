@@ -37,7 +37,6 @@ function ensureFullICU() {
 }
 
 export function formatCourseDuration(d: number) {
-	console.log(d)
 	if (!d) {
 		return '-'
 	}

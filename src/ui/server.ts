@@ -1,18 +1,36 @@
+/* tslint:disable:no-var-requires */
+const appInsights = require('applicationinsights')
+import * as config from 'lib/config'
+
+appInsights
+	.setup(config.INSTRUMENTATION_KEY)
+	.setAutoDependencyCorrelation(true)
+	.setAutoCollectRequests(true)
+	.setAutoCollectPerformance(true)
+	.setAutoCollectExceptions(true)
+	.setAutoCollectDependencies(true)
+	.setAutoCollectConsole(true)
+	.setUseDiskRetryCaching(true)
+	.start()('serve-favicon')
+/* tslint:enable */
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
+import * as connectRedis from 'connect-redis'
 import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as fs from 'fs'
-import * as config from 'lib/config'
 import * as log4js from 'log4js'
+import * as redis from 'redis'
 
 import * as lusca from 'lusca'
 import * as path from 'path'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
+import * as corsConfig from 'lib/config/corsConfig'
+import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
 import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
@@ -36,38 +54,21 @@ import * as errorController from './controllers/errorHandler'
 log4js.configure(config.LOGGING)
 
 /* tslint:disable:no-var-requires */
-const appInsights = require('applicationinsights')
 const flash = require('connect-flash')
 const favicon = require('serve-favicon')
 /* tslint:enable */
-
-appInsights
-	.setup(config.INSTRUMENTATION_KEY)
-	.setAutoDependencyCorrelation(true)
-	.setAutoCollectRequests(true)
-	.setAutoCollectPerformance(true)
-	.setAutoCollectExceptions(true)
-	.setAutoCollectDependencies(true)
-	.setAutoCollectConsole(true)
-	.setUseDiskRetryCaching(true)
-	.start()
 
 const {PORT = 3001} = process.env
 
 const logger = log4js.getLogger('server')
 
 const app = express()
-const FileStore = sessionFileStore(session)
 
 app.disable('x-powered-by')
 app.disable('etag')
 app.enable('trust proxy')
 
-const corsOptions = {
-	allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
-	credentials: true,
-	origin: /\.civilservice\.gov\.uk$/,
-}
+const corsOptions = corsConfig.setCorsOptions()
 app.use(cors(corsOptions))
 
 app.use(
@@ -77,23 +78,51 @@ app.use(
 		nolog: '\\.js|\\.css|\\.gif|\\.jpg|\\.png|\\.ico$',
 	})
 )
+if (config.PROFILE === 'local') {
+	const FileStore = sessionFileStore(session)
+	app.use(
+		session({
+			cookie: {
+				httpOnly: true,
+				maxAge: config.COOKIE.maxAge,
+				secure: config.PRODUCTION_ENV,
+			},
+			name: 'lpg-ui',
+			resave: true,
+			saveUninitialized: true,
+			secret: config.SESSION_SECRET,
+			store: new FileStore({
+				path: process.env.NOW ? `/tmp/sessions` : `.sessions`,
+			}),
+		})
+	)
+}
 
-app.use(
-	session({
-		cookie: {
-			httpOnly: true,
-			maxAge: config.COOKIE.maxAge,
-			secure: config.PRODUCTION_ENV,
-		},
-		name: 'lpg-ui',
-		resave: true,
-		saveUninitialized: true,
-		secret: config.SESSION_SECRET,
-		store: new FileStore({
-			path: process.env.NOW ? `/tmp/sessions` : `.sessions`,
-		}),
+if (config.PROFILE !== 'local') {
+	const RedisStore = connectRedis(session)
+	const redisClient = redis.createClient({
+		auth_pass: config.REDIS.password,
+		host: config.REDIS.host,
+		no_ready_check: true,
+		port: config.REDIS.port,
 	})
-)
+	app.use(
+		session({
+			cookie: {
+				httpOnly: true,
+				maxAge: config.COOKIE.maxAge,
+				secure: config.PRODUCTION_ENV,
+			},
+			name: 'lpg-ui',
+			resave: true,
+			saveUninitialized: true,
+			secret: config.SESSION_SECRET,
+			store: new RedisStore({
+				client: redisClient,
+			}),
+		})
+	)
+}
 app.use(flash())
 
 app.use(bodyParser.json({strict: false}))
@@ -102,30 +131,19 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
-if (config.PROFILE === 'prod') {
-	app.use(
-		lusca({
-			csp: {
-				policy: {
-					'child-src': 'https://youtube.com https://www.youtube.com',
-					'default-src': "'self' https://cdn.learn.civilservice.gov.uk",
-					'font-src': 'data:',
-					'frame-src': 'https://youtube.com https://www.youtube.com',
-					'img-src': "'self' data: https://www.google-analytics.com",
-					'script-src':
-						"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
-						"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
-					'style-src': "'self' 'unsafe-inline'",
-				},
-			},
-			hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
-			nosniff: true,
-			referrerPolicy: 'same-origin',
-			xframe: 'SAMEORIGIN',
-			xssProtection: true,
-		})
-	)
-}
+const luscaPolicy = luscaConfig.setCspPolicy()
+app.use(
+	lusca({
+		csp: {
+			policy: luscaPolicy,
+		},
+		hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
+		nosniff: true,
+		referrerPolicy: 'same-origin',
+		xframe: 'SAMEORIGIN',
+		xssProtection: true,
+	})
+)
 
 app.use(
 	(req: express.Request, res: express.Response, next: express.NextFunction) => {
