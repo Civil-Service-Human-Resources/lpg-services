@@ -571,8 +571,6 @@ export async function updateProfile(
 
 	// @ts-ignore
 	const node = nodes[inputName]
-
-
 	let errorMessage = ''
 
 	switch (node) {
