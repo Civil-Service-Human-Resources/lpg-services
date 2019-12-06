@@ -1,4 +1,5 @@
 import axios from 'axios'
+import * as https from 'https'
 import * as config from './config'
 
 function create(token: string) {
@@ -8,6 +9,12 @@ function create(token: string) {
 			'Authorization': `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
+		httpsAgent: new https.Agent({
+			keepAlive: true,
+			maxFreeSockets: 10,
+			maxSockets: 100,
+			rejectUnauthorized: false,
+		}),
 		timeout: config.REQUEST_TIMEOUT,
 	})
 

@@ -67,6 +67,9 @@ const validEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 
 const http = axios.create({
 	httpsAgent: new https.Agent({
+		keepAlive: true,
+		maxFreeSockets: 10,
+		maxSockets: 100,
 		rejectUnauthorized: false,
 	}),
 })

@@ -1,11 +1,11 @@
 import axios, {AxiosInstance} from 'axios'
-import * as log4js from 'log4js'
-import * as query from 'querystring'
-
+import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
+import * as log4js from 'log4js'
+import * as query from 'querystring'
 
 const logger = log4js.getLogger('catalog')
 
@@ -14,6 +14,12 @@ const http: AxiosInstance = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
+	httpsAgent: new https.Agent({
+		keepAlive: true,
+		maxFreeSockets: 10,
+		maxSockets: 100,
+		rejectUnauthorized: false,
+	}),
 	timeout: config.REQUEST_TIMEOUT,
 })
 
