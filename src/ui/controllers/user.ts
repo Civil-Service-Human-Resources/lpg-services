@@ -72,6 +72,7 @@ const http = axios.create({
 		maxSockets: 100,
 		rejectUnauthorized: false,
 	}),
+	timeout: config.REQUEST_TIMEOUT,
 })
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
