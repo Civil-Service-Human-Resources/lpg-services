@@ -1,4 +1,5 @@
 import axios from 'axios'
+import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as log4js from 'log4js'
 import * as config from './config'
@@ -11,6 +12,12 @@ const http = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
+	httpsAgent: new https.Agent({
+		keepAlive: true,
+		maxFreeSockets: 10,
+		maxSockets: 100,
+		rejectUnauthorized: false,
+	}),
 	timeout: config.REQUEST_TIMEOUT,
 })
 
