@@ -91,8 +91,8 @@ export async function displayModule(
 	switch (module.type) {
 		case 'elearning':
 			res.redirect(
-				`${module.url}/${module.startPage}?title=${module.title ||
-				course.title}` +
+				`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
+				encodeURIComponent(course.title)}` +
 				`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
 					course.id
 				}/${module.id}/xapi/&actor={"name":"Noop"}`
