@@ -165,11 +165,11 @@ passport.configure(
 )
 i18n.configure(app)
 
+app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
+
 app.param('courseId', asyncHandler(courseController.loadCourse))
 app.param('moduleId', asyncHandler(courseController.loadModule))
 app.param('eventId', asyncHandler(courseController.loadEvent))
-
-app.use('/courses/:courseId/:moduleId/xapi', asyncHandler(xApiController.proxy))
 
 app.use(lusca.csrf())
 
