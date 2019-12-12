@@ -35,7 +35,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 			query.agent = JSON.stringify(agent)
 		}
 		if (query.activityId) {
-			query.activityId = `${config.XAPI.moduleBaseUri}/${req.params.moduleId}`
+			query.activityId = `${config.XAPI.moduleBaseUri}/${req.params.proxyModuleId}`
 		}
 	}
 
@@ -117,7 +117,7 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 		statement.object &&
 		statement.object.objectType === 'Activity'
 	) {
-		statement.object.id = `${config.XAPI.moduleBaseUri}/${req.params.moduleId}`
+		statement.object.id = `${config.XAPI.moduleBaseUri}/${req.params.proxyModuleId}`
 		if (statement.object.definition) {
 			statement.object.definition.type = xapi.Type.ELearning
 		}
@@ -128,7 +128,7 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 	) {
 		statement.context.contextActivities.parent = [
 			{
-				id: `${config.XAPI.courseBaseUri}/${req.params.courseId}`,
+				id: `${config.XAPI.courseBaseUri}/${req.params.proxyCourseId}`,
 			},
 		]
 	} else {
@@ -136,7 +136,7 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 			contextActivities: {
 				parent: [
 					{
-						id: `${config.XAPI.courseBaseUri}/${req.params.courseId}`,
+						id: `${config.XAPI.courseBaseUri}/${req.params.proxyCourseId}`,
 					},
 				],
 			},
