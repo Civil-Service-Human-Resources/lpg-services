@@ -1,0 +1,44 @@
+<Page title="Confirm Change of Email" {_csrf}>
+    <div class="container">
+        <h1 class="heading-large">
+            <span class="heading-primary">Confirm change of Email</span>
+        </h1>
+        <div class="grid-row">
+            <div class="column-full">
+                <h2 class="heading heading-medium">
+                    Are you sure you want to update your email?
+                </h2>
+                <p class="govuk-body">Change your email</p>
+                <table class="key-value-list key-value-list--auto u-space-b30 table--top">
+                    <tbody>
+                        <tr>
+                            <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_email_label')}</td>
+                            <td class="key-value-list__value key-value-list__value--auto lpg-email-address">{$signedInUser.userName}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <form autocomplete="off" method="post" action="/profile/email">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <input type="hidden" name="originalUrl" value="{originalUrl}">
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+    import Page from '../../component/Page.html'
+    import Banner from '../../component/Banner.html'
+
+    export default {
+        data() {
+            return {
+            }
+        },
+
+        components: {
+            Page,
+            Banner
+        }
+    }
+</script>
