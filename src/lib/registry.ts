@@ -20,6 +20,14 @@ const http = axios.create({
 	timeout: config.REQUEST_TIMEOUT,
 })
 
+const httpCsrs = axios.create({
+	baseURL: config.REGISTRY_SERVICE_URL,
+	headers: {
+		'Content-Type': 'application/json',
+	},
+	timeout: config.REQUEST_TIMEOUT,
+})
+
 // register the traverson-hal plug-in for media type 'application/hal+json'
 traverson.registerMediaType(hal.mediaType, hal)
 
@@ -87,6 +95,22 @@ export async function checkLineManager(data: any, token: string) {
 	const result = await new Promise((resolve, reject) => {
 		http
 			.patch(`?email=${data.lineManager}`, null, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
+
+export function updateOrganisation(data: any, token: string) {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+			.patch(`/civilServants/org`, data, {
 				headers: {Authorization: `Bearer ${token}`},
 			})
 			.then((response: any) => {
