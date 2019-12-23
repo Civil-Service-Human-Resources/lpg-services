@@ -383,6 +383,37 @@ export async function updateLineManager(request: Request, response: Response) {
 	)
 }
 
+export function addEmail(request: Request, response: Response) {
+	response.send(template.render('profile/email', request, response, {
+		originalUrl: request.query.originalUrl,
+	}))
+}
+
+export async function updateEmail(request: Request, response: Response) {
+	try {
+		await registry.patch('civilServants', {
+			organisationalUnit: "",
+		}, request.user.accessToken)
+	} catch (error) {
+		logger.error(error)
+		throw new Error(error)
+	}
+
+	try {
+		setLocalProfile(request, 'department', "")
+		setLocalProfile(request, 'organisationalUnit', "")
+
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+
+	const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
+	request.session!.save(() =>
+		response.redirect(changeEmailURL.toString())
+	)
+}
+
 async function getOptions(type: string) {
 	return sortList(await registry.halNode(type))
 }

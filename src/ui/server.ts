@@ -226,6 +226,8 @@ app.get('/profile/grade', profileController.addGrade)
 app.post('/profile/grade', profileController.updateGrade)
 app.get('/profile/lineManager', profileController.addLineManager)
 app.post('/profile/lineManager', profileController.updateLineManager)
+app.get('/profile/email', profileController.addEmail)
+app.post('/profile/email', profileController.updateEmail)
 
 app.get('/profile/:profileDetail', userController.renderEditPage)
 
