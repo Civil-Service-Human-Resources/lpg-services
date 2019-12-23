@@ -389,10 +389,10 @@ export function addEmail(request: Request, response: Response) {
 	}))
 }
 
-export async function updateEmail(request: Request, response: Response) {
+export function updateEmail(request: Request, response: Response) {
 	try {
-		await registry.patch('civilServants', {
-			organisationalUnit: "",
+		registry.updateOrganisation( {
+			organisation: null,
 		}, request.user.accessToken)
 	} catch (error) {
 		logger.error(error)
@@ -400,8 +400,8 @@ export async function updateEmail(request: Request, response: Response) {
 	}
 
 	try {
-		setLocalProfile(request, 'department', "")
-		setLocalProfile(request, 'organisationalUnit', "")
+		setLocalProfile(request, 'department', null)
+		setLocalProfile(request, 'organisationalUnit', null)
 
 	} catch (error) {
 		console.log(error)
