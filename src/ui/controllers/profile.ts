@@ -389,29 +389,25 @@ export function addEmail(request: Request, response: Response) {
 	}))
 }
 
-export function updateEmail(request: Request, response: Response) {
+export async function updateEmail(request: Request, response: Response) {
 	try {
-		registry.updateOrganisation( {
-			organisation: null,
-		}, request.user.accessToken)
+		const deleteOrgResponse: any = await registry.deleteOrganisation(request.user.accessToken)
+		if (deleteOrgResponse.status === 204) {
+			setLocalProfile(request, 'department', null)
+			setLocalProfile(request, 'organisationalUnit', null)
+			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
+			request.session!.save(() =>
+				response.redirect(changeEmailURL.toString())
+			)
+		} else {
+			const error: Error = new Error("Unable to update email")
+			logger.error(error.message)
+			throw error
+		}
 	} catch (error) {
 		logger.error(error)
 		throw new Error(error)
 	}
-
-	try {
-		setLocalProfile(request, 'department', null)
-		setLocalProfile(request, 'organisationalUnit', null)
-
-	} catch (error) {
-		console.log(error)
-		throw new Error(error)
-	}
-
-	const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
-	request.session!.save(() =>
-		response.redirect(changeEmailURL.toString())
-	)
 }
 
 async function getOptions(type: string) {
