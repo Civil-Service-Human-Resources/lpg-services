@@ -107,10 +107,10 @@ export async function checkLineManager(data: any, token: string) {
 	return result
 }
 
-export function updateOrganisation(data: any, token: string) {
+export function deleteOrganisation(token: string) {
 	const result = new Promise((resolve, reject) => {
 		httpCsrs
-			.patch(`/civilServants/org`, data, {
+			.delete(`/civilServants/org`, {
 				headers: {Authorization: `Bearer ${token}`},
 			})
 			.then((response: any) => {
