@@ -391,8 +391,9 @@ export function addEmail(request: Request, response: Response) {
 
 export async function updateEmail(request: Request, response: Response) {
 	try {
-		const deleteOrgResponse: any = await registry.deleteOrganisation(request.user.accessToken)
-		if (deleteOrgResponse.status === 204) {
+		const dto = {forceOrgChange: true}
+		const updateResponse: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
+		if (updateResponse.status === 204) {
 			setLocalProfile(request, 'department', null)
 			setLocalProfile(request, 'organisationalUnit', null)
 			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
@@ -400,7 +401,7 @@ export async function updateEmail(request: Request, response: Response) {
 				response.redirect(changeEmailURL.toString())
 			)
 		} else {
-			const error: Error = new Error("Unable to update email")
+			const error: Error = new Error("Unable to update force org reset flag")
 			logger.error(error.message)
 			throw error
 		}

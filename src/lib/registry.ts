@@ -121,6 +121,38 @@ export function deleteOrganisation(token: string) {
 	return result
 }
 
+export function getForceOrgResetFlag(token: string) {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+			.get(`/civilServants/org/reset`, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
+
+export function updateForceOrgResetFlag(token: string, data: any) {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+			.patch(`/civilServants/org/reset`, data, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
+
 export async function patch(node: string, data: any, token: string) {
 	const result = await new Promise((resolve, reject) =>
 		traverson
