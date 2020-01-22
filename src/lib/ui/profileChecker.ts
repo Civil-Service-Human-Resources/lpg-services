@@ -31,7 +31,6 @@ export class ProfileChecker {
 			return entry.path === request.path
 		}).length)
 	}
-
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
 			if (!this.isProfileRequest(request) ) {
