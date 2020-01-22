@@ -98,7 +98,6 @@ export async function updateOrganisation(request: Request, response: Response) {
 			logger.error(error)
 			throw new Error(error)
 		}
-
 		try {
 			const organisationResponse: any = await registry.getWithoutHal(value)
 			const organisationalUnit = {
@@ -106,18 +105,22 @@ export async function updateOrganisation(request: Request, response: Response) {
 				name: organisationResponse.data.name,
 				paymentMethods: organisationResponse.data.paymentMethods,
 			}
-
+			const dto = { forceOrgChange: false}
+			try {
+				await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
+			} catch (error) {
+				console.log(error)
+				throw new Error(error)
+			}
 			setLocalProfile(request, 'department', organisationalUnit.code)
 			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-
+			request.session!.save(() =>
+				response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+			)
 		} catch (error) {
 			console.log(error)
 			throw new Error(error)
 		}
-
-		request.session!.save(() =>
-			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
-		)
 	}
 }
 
@@ -392,19 +395,18 @@ export function addEmail(request: Request, response: Response) {
 export async function updateEmail(request: Request, response: Response) {
 	try {
 		const dto = {forceOrgChange: true}
-		const updateResponse: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
-		if (updateResponse.status === 204) {
-			setLocalProfile(request, 'department', null)
-			setLocalProfile(request, 'organisationalUnit', null)
-			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
-			request.session!.save(() =>
-				response.redirect(changeEmailURL.toString())
-			)
-		} else {
-			const error: Error = new Error("Unable to update force org reset flag")
-			logger.error(error.message)
-			throw error
+		try {
+			await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
 		}
+		setLocalProfile(request, 'department', null)
+		setLocalProfile(request, 'organisationalUnit', null)
+		const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
+		request.session!.save(() =>
+				response.redirect(changeEmailURL.toString())
+		)
 	} catch (error) {
 		logger.error(error)
 		throw new Error(error)
