@@ -1,6 +1,5 @@
 import {NextFunction, Request, Response} from 'express'
 import * as log4js from 'log4js'
-import * as registry from '../../lib/registry'
 import * as config from '../config'
 import {User} from '../model'
 
@@ -33,10 +32,6 @@ export class ProfileChecker {
 		}).length)
 	}
 
-	isForceOrgChange(request: Request) {
-		return registry.getForceOrgResetFlag(request.user.token)
-	}
-
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
 			if (!this.isProfileRequest(request) ) {
@@ -45,12 +40,6 @@ export class ProfileChecker {
 						if (!section.isPresent(request.user)) {
 							request.session!.save(() => {
 								response.redirect(`${section.path}?originalUrl=${request.originalUrl}`)
-							})
-							return
-						}
-						if (this.isForceOrgChange(request)) {
-							request.session!.save(() => {
-								response.redirect(`/profile/organisation?originalUrl=${request.originalUrl}`)
 							})
 							return
 						}
