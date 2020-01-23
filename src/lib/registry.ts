@@ -107,6 +107,22 @@ export async function checkLineManager(data: any, token: string) {
 	return result
 }
 
+export function getForceOrgResetFlag(token: string) {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+			.get(`/civilServants/org/reset`, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
+
 export function updateForceOrgResetFlag(token: string, data: any) {
 	const result = new Promise((resolve, reject) => {
 		httpCsrs
