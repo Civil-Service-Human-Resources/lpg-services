@@ -62,6 +62,24 @@ export async function addOrganisation(request: Request, response: Response) {
 	}))
 }
 
+export async function addOrganisationsForCurrentFamily(request: Request, response: Response, currentFamily: string) {
+	const options: {[prop: string]: any} = {}
+	const organisations: any = await registry.getWithoutHal('/organisationalUnits/family/' + currentFamily)
+	organisations.data.map((x: any) => {
+		options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+	})
+
+	const value = request.user.department
+
+	response.send(template.render('profile/organisation', request, response, {
+		inputName: 'organisation',
+		label: 'Organisation',
+		options: Object.entries(options),
+		originalUrl: request.query.originalUrl,
+		value,
+	}))
+}
+
 export async function enterToken(request: Request, response: Response) {
 	const organisation = request.body.organisation
 
