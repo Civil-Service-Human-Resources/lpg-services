@@ -25,6 +25,7 @@ SCIM2_HEADERS['Content-Type'] = 'application/json'
 const http = axios.create({
 	httpsAgent: new https.Agent({
 		keepAlive: true,
+		maxFreeSockets: 1000,
 	}),
 })
 
