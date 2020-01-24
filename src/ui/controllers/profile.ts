@@ -67,22 +67,22 @@ export async function addOrganisation(request: Request, response: Response) {
 }
 
 export async function enterToken(request: Request, response: Response) {
-	const organisation = request.body.organisation
-
+	console.log(request.body)
 	response.send(template.render('profile/enterToken', request, response, {
-		organisation,
-		originalUrl: request.body.originalUrl,
+		originalUrl: request.query.originalUrl,
+		org: request.body.org,
+		organisation: request.body.organisation,
 	}))
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
-	const value = request.body.organisation
+ 	const value = request.body.organisation
+	const email = request.user.userName
+	const domain = email.split("@")[1]
 
 	if (!value) {
 		const options: {[prop: string]: any} = {}
-		const email = request.user.userName
-		const domain = email.split("@")[1]
-		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
+		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat')
 		organisations.data.map((x: any) => {
 			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 		})
@@ -96,35 +96,119 @@ export async function updateOrganisation(request: Request, response: Response) {
 			value,
 		}))
 	} else {
-		try {
-			await registry.patch('civilServants', {
-				organisationalUnit: request.body.organisation,
-			}, request.user.accessToken)
-		} catch (error) {
-			logger.error(error)
-			throw new Error(error)
-		}
+
+		let organisationalUnit
+
 		try {
 			const organisationResponse: any = await registry.getWithoutHal(value)
-			const organisationalUnit = {
+			 	organisationalUnit = {
 				code: organisationResponse.data.code,
 				name: organisationResponse.data.name,
 				paymentMethods: organisationResponse.data.paymentMethods,
-			}
-			const dto = { forceOrgChange: false}
-			const res: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
-			if (res.status === 204) {
-				setLocalProfile(request, 'department', organisationalUnit.code)
-				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-				setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
-				request.session!.save(() =>
-						response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
-				)
 			}
 		} catch (error) {
 			console.log(error)
 			throw new Error(error)
 		}
+
+		try {
+			const checkTokenPersonResponse: any = await registry.isTokenizedUser(organisationalUnit.code, domain)
+			if (checkTokenPersonResponse) {
+				// request.session!.save(() =>
+					// response.redirect(`/profile/enterToken?originalUrl=${request.body.originalUrl}&organisation=${value}`)
+				response.send(template.render('profile/enterToken', request, response, {
+					originalUrl: request.body.originalUrl,
+					org: value,
+					organisation: organisationalUnit.name,
+				}))
+				// )
+			}
+		} catch (error) {
+			if (error.response.status === 404) {
+				setLocalProfile(request, 'department', organisationalUnit.code)
+				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+				try {
+					// make the check
+					await registry.patch('civilServants', {
+						organisationalUnit: request.body.organisation,
+					}, request.user.accessToken)
+				} catch (error) {
+					logger.error(error)
+					throw new Error(error)
+				}
+				request.session!.save(() =>
+					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+				)
+			} else {
+				throw new Error(error)
+			}
+			console.log(error)
+		}
+	}
+}
+
+function displayTokenPage(request: Request, response: Response, errMsg: string, value: string, organisation: string) {
+	response.send(template.render(`profile/enterToken`, request, response, {
+		error: true,
+		msg: errMsg,
+		originalUrl: request.body.originalUrl,
+		org: value,
+		organisation: organisation,
+	}))
+}
+
+export async function checkTokenValidity(request: Request, response: Response) {
+	const value = request.body.org
+	let organisationalUnit
+	try {
+		const organisationResponse: any = await registry.getWithoutHal(value)
+		organisationalUnit = {
+			code: organisationResponse.data.code,
+			name: organisationResponse.data.name,
+			paymentMethods: organisationResponse.data.paymentMethods,
+		}
+
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+	const code = organisationalUnit.code
+	const domain = request.user.userName.split("@")[1]
+	const token = request.body.token
+	const accessToken = request.user.accessToken
+	console.log(response)
+
+	if (!token) {
+			displayTokenPage(request, response, "Please don't leave the token blank", value, organisationalUnit.name)
+	} else {
+			const checkTokenValidResponse: any = await registry.updateToken(code, domain, token, false, accessToken)
+			console.log(checkTokenValidResponse)
+			if (checkTokenValidResponse === "NONE") {
+				// call the insert function in CSRS to update tokini
+				setLocalProfile(request, 'department', organisationalUnit.code)
+				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+				try {
+					// make the check
+					await registry.patch('civilServants', {
+						organisationalUnit: request.body.org,
+					}, request.user.accessToken)
+				} catch (error) {
+					logger.error(error)
+					throw new Error(error)
+				}
+				request.session!.save(() =>
+					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+				)
+			} else if (checkTokenValidResponse === "Token not found") {
+				// setLocalProfile(request, 'tokenzied', null)
+				displayTokenPage(request, response, "Please make sure you entered the correct token", value, organisationalUnit.name)
+			} else if (checkTokenValidResponse === "Not enough space") {
+				// setLocalProfile(request, 'tokenzied', null)
+				displayTokenPage(request, response, "Sorry, there is no enough spaces. Contact the office", value, organisationalUnit.name)
+			} else {
+				// setLocalProfile(request, 'tokenzied', null)
+				displayTokenPage(request, response, "Sorry, something went wrong. We are working on it", value, organisationalUnit.name)
+			}
 	}
 }
 
