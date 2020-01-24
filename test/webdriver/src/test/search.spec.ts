@@ -42,6 +42,16 @@ describe('Search page funtionality', () => {
 		expect(browser.isVisible(selectors.searchButton)).toBe(true)
 	})
 
+	it('Should displayaa the search button on the suggested page', () => {
+		browser.url(config.BASE_URL + '/suggestions-for-you')
+		expect(browser.isVisible(selectors.searchButton)).toBe(true)
+	})
+
+	it('Should displayaa the search button on the suggested page', () => {
+		browser.url(config.BASE_URL + '/suggestions-for-you')
+		expect(browser.isVisible(selectors.searchButton)).toBe(true)
+	})
+
 	it('Should allow the user to search for a valid term and return results', () => {
 		const searchTerm = 'something'
 		search(searchTerm)

@@ -4,6 +4,8 @@ import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
+// import * as model from "lib/model";
+// import * as model from "lib/model";
 
 const logger = log4js.getLogger('registry')
 
@@ -237,4 +239,97 @@ export async function getWithoutHal(path: string): Promise<AxiosResponse> {
 	}	catch (error) {
 		throw new Error(error)
 	}
+}
+
+// export async function isTokenizedUser(org: string, domain: string): Promise<AxiosResponse> {
+// 	try {
+// 		return await http.get(config.REGISTRY_SERVICE_URL + org)
+// 	}	catch (error) {
+// 		throw new Error(error)
+// 	}
+// }
+
+export async function isTokenizedUser(
+	code: string,
+	domain: string
+) {
+
+		let tokenziedUser = false
+		await http.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
+			params: {
+				code,
+				domain,
+			},
+		}).then(e => {
+			if (e.status === 200) {
+				tokenziedUser = true
+			} else {
+				tokenziedUser = false
+			}
+		})
+
+		return tokenziedUser
+		console.log("test")
+	}
+
+export async function isValidToken(
+    code: string,
+    domain: string,
+    token: string
+) {
+
+		let validToken = false
+		await http.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
+			params: {
+				code,
+				domain,
+				token,
+			},
+		}).then(e => {
+			if (e.status === 200) {
+				validToken = true
+			} else {
+				validToken = false
+			}
+		})
+
+	return validToken
+}
+
+export async function updateToken(
+	code: string,
+	domain: string,
+	token: string,
+	removeUser: boolean,
+	accessToken: string
+) {
+
+	const url = config.REGISTRY_SERVICE_URL + `/agencyTokens`
+
+	const data = JSON.stringify({
+		domain: domain,
+		token: token,
+		code: code,
+		removeUser: removeUser,
+	})
+
+	let errorMsg = ""
+	try {
+		await http.put(url, data, {
+			headers: {Authorization: `Bearer ${accessToken}`},
+		})
+		errorMsg = "NONE"
+	} catch (error) {
+		if (error.response.status === 404) {
+			errorMsg = "Token not found"
+		} else if (error.response.status === 409) {
+			errorMsg = "Not enough space"
+		} else if (error.response.status === 500) {
+			errorMsg = "Server error"
+		} else {
+			throw new Error(error)
+		}
+	}
+
+	return errorMsg
 }

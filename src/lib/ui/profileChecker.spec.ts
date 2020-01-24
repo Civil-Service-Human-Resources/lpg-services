@@ -7,6 +7,7 @@ import * as sinon from 'sinon'
 import * as sinonChai from 'sinon-chai'
 import {mockReq, mockRes} from 'sinon-express-mock'
 import {ProfileChecker} from './profileChecker'
+// import {enterToken} from '../../ui/controllers/profile'
 
 chai.use(sinonChai)
 
@@ -57,6 +58,26 @@ describe('ProfileChecker tests', () => {
 			originalUrl: '/home',
 			user: {
 				forceOrgChange: new ForceOrgChange(false),
+				givenName: 'Test User',
+			},
+		})
+		request.session!.save = callback => {
+			callback(undefined)
+		}
+
+		const response = mockRes()
+		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
+		const next = <NextFunction> {}
+		const check = profileChecker.checkProfile()
+		check(request, response, next)
+		/* tslint:disable-next-line:no-unused-expression */
+		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
+	})
+
+	it('should redirect to profile  page if organisationalUnit is missing from profile', () => {
+		const request = mockReq({
+			originalUrl: '/home',
+			user: {
 				givenName: 'Test User',
 			},
 		})
@@ -190,6 +211,29 @@ describe('ProfileChecker tests', () => {
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
 		expect(next).to.have.been.calledOnce
+	})
+
+	it('The profile checker should not stop the redirection to the token page', () => {
+		const request = mockReq({
+			originalUrl: '/home',
+			user: {
+				givenName: 'Test User',
+			},
+		})
+		request.session!.save = callback => {
+			callback(undefined)
+		}
+
+		const next = <NextFunction> {}
+		const response = mockRes()
+		response.redirect('profile/enterToken')
+
+		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
+		const check = profileChecker.checkProfile()
+		check(request, response, next)
+		/* tslint:disable-next-line:no-unused-expression */
+		console.log(response.redirect.callCount)
+		expect(response.redirect).to.have.been.calledWithExactly('profile/enterToken')
 	})
 
 	it('should call next if mandatory sections of profile are complete', () => {
