@@ -1,4 +1,4 @@
-<Page title="Enter token" {_csrf}>
+<PageNoNav title="Enter token" {_csrf}>
     <div class="profile-container container">
         <div class="grid-row">
             <div class="column-with-back-button column-full">
@@ -12,31 +12,31 @@
                 </h1>
                 {#if (error)}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-                    <div class="error-message">Please enter the correct organisation token</div>
+                    <div class="error-message">{msg}</div>
                 </div>
                 {/if}
 
                 <p class="lede">{organisation} requires you to supply a token to set it as your organisation</p>
 
-                <form autocomplete="off" method="post" action="/profile/organisation">
+                <form autocomplete="off" method="post" action="/profile/enterToken">
                     <div class="form-group">
                         <fieldset>
                             <label class="form-label" for="token"><strong>Token</strong></label>
                             <input class="form-control width-10" id="token" name="token" type="text">
                         </fieldset>
                     </div>
-
                     <input type="hidden" name="_csrf" value="{_csrf}">
                     <input type="hidden" name="originalUrl" value="{originalUrl}">
+                    <input type="hidden" name="org" value="{org}">
                     <button type="submit" class="button">Submit</button>
                 </form>
             </div>
             <div class="column-one-third"></div>
         </div>
     </div>
-</Page>
+</PageNoNav>
 <script>
-    import Page from '../../component/Page.html'
+    import PageNoNav from '../../component/PageNoNav.html'
 
     export default {
         data() {
@@ -45,7 +45,7 @@
         },
 
         components: {
-            Page,
+            PageNoNav
         }
     }
 </script>

@@ -506,6 +506,7 @@ export class User {
 		}
 		user.otherAreasOfWork = data.otherAreasOfWork
 		user.interests = data.interests
+		user.tokenzied = data.tokenzied
 
 		if (data.lineManagerEmailAddress) {
 			user.lineManager = {
@@ -531,6 +532,7 @@ export class User {
 	otherAreasOfWork?: any[]
 	interests?: any[]
 	givenName?: string
+	tokenzied?: string
 	organisationalUnit?: OrganisationalUnit
 	forceOrgChange: ForceOrgChange
 
