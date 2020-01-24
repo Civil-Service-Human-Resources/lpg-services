@@ -373,7 +373,8 @@
 		"department": "Organisation is required",
 		"given-name": "Your name is required",
 		"other-areas-of-work": "Your other areas of work are required",
-		"interest": "Your interests are required"
+		"interest": "Your interests are required",
+		"line-manager": "profile.line-manager"
 	},
 	"profile_undefined_label": "profile_undefined_label",
 	"undefined": "undefined",

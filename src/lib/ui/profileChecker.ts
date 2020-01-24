@@ -19,6 +19,9 @@ export class ProfileChecker {
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
 			return (Boolean (!user.forceOrgChange.isForceOrgChange()) && (Boolean(user.department)))
 		}),
+		// new ProfileSection('enterToken', '/profile/enterToken', (user: User) => {
+		// 	return Boolean(user.tokenzied)
+		// }),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
 			return Boolean(user.areasOfWork && user.areasOfWork.length)
 		}),
@@ -27,25 +30,29 @@ export class ProfileChecker {
 		}),
 	]
 	isProfileRequest(request: Request) {
+		console.log(request.path)
 		return Boolean(this._profileSections.filter(entry => {
+			console.log(entry.path)
 			return entry.path === request.path
 		}).length)
 	}
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
-			if (!this.isProfileRequest(request) ) {
-				try {
-					for (const section of this._profileSections) {
-						if (!section.isPresent(request.user)) {
-							request.session!.save(() => {
-								response.redirect(`${section.path}?originalUrl=${request.originalUrl}`)
-							})
-							return
+			if (!this.isProfileRequest(request)) {
+				if (request.path !== "/profile/enterToken" ) {
+					try {
+						for (const section of this._profileSections) {
+							if (!section.isPresent(request.user)) {
+								request.session!.save(() => {
+									response.redirect(`${section.path}?originalUrl=${request.originalUrl}`)
+								})
+								return
+							}
 						}
+					}	catch (error) {
+						logger.error(error)
+						next(error)
 					}
-				}	catch (error) {
-					logger.error(error)
-					next(error)
 				}
 			}
 
