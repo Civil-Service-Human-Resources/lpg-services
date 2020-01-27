@@ -280,10 +280,6 @@ export class Event {
 			date = data.date
 		}
 
-		const start;
-		const end;
-
-		
 		let location = ''
 		let capacity = 0
 		let availability = 0
