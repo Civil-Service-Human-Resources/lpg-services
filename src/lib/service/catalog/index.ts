@@ -16,7 +16,6 @@ const http: AxiosInstance = axios.create({
 	},
 	httpsAgent: new https.Agent({
 		keepAlive: true,
-		maxFreeSockets: 1000,
 	}),
 	timeout: config.REQUEST_TIMEOUT,
 })
