@@ -16,7 +16,7 @@
         {#if course.getDuration() && course.getDuration() !== '-' }
         <li class="discite__property-item">
             <span>Duration:</span> 
-            <span class="lpg-course-duration">{course.getDuration() || ''}</span>
+            <span class="lpg-course-duration">{course.getDuration() || '66'}</span>
         </li>
         {/if}
         {#if !course.isRequired()}

@@ -38,8 +38,8 @@
                             <div class="date-and-time-value-container">
                                 <span class="booking__value">
                                     {#each event.dateRanges as dateRange, index}
-                                        {$datetime.formatDate(dateRange.date)}  at {$datetime.removeSeconds(dateRange.startTime)} to {$datetime.removeSeconds(dateRange.endTime)}
-                                        <br />
+                                        {$datetime.formatDate(dateRange.date)} at {$datetime.removeSeconds(dateRange.startTime)} to {$datetime.removeSeconds(dateRange.endTime)}
+                                        <br/>
                                     {/each}
                                 </span>
                             </div>
