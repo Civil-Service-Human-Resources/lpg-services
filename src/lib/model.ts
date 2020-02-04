@@ -130,7 +130,7 @@ export class Course {
 				if (bookedModule) {
 					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
 					if (event) {
-						return event.date
+						return event.startDate
 					}
 				}
 			}
@@ -301,15 +301,18 @@ export class ModuleWithCourse extends Module {
 export class Event {
 	static create(data: any) {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
-		let date: any = ''
+		let startDate: any = ''
+		let endDate: any = ''
 		let dateRanges: any = ''
+
 		if (data.dateRanges[0]) {
 			dateRanges = data.dateRanges
-			date = new Date(
+			startDate = new Date(
 				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
 			)
-		} else {
-			date = data.date
+			endDate = new Date(
+				data.dateRanges[0].date + 'T' + data.dateRanges[0].endTime
+			)
 		}
 
 		let location = ''
@@ -326,13 +329,11 @@ export class Event {
 
 		const status = data.status ? data.status : 'Active'
 
-		return new Event(date, dateRanges, location, capacity, availability, status, data.id)
+		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}
 
 	id: string
 	date: Date
-	// create daterangetres
-	dateRanges: Date[]
 	location: string
 	capacity: number
 	availability: number
@@ -340,7 +341,8 @@ export class Event {
 	isLearnerBooked: boolean
 
 	constructor(
-		date: Date,
+		startDate: Date,
+		endDate: Date,
 		dateRanges: Date[],
 		location: string,
 		capacity: number,
@@ -351,7 +353,8 @@ export class Event {
 		if (id) {
 			this.id = id!
 		}
-		this.date = date
+		this.startDate = startDate
+		this.endDate = endDate
 		this.dateRanges = dateRanges
 		this.location = location
 		this.capacity = capacity
