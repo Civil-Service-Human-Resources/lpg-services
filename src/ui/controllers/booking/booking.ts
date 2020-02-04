@@ -116,8 +116,8 @@ export async function renderChooseDate(
 	const today = new Date()
 
 	const events = (module.events || [])
-		.filter(a => a.date > today)
-		.sort((a, b) => a.date.getTime() - b.date.getTime())
+		.filter(a => a.startDate > today)
+		.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
 	for (const event of events) {
 		await learnerRecord.getActiveBooking(event.id, req.user)

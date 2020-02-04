@@ -19,7 +19,7 @@ const timeFormat = new Intl.DateTimeFormat('en-GB', {
 	hour: 'numeric',
 	minute: '2-digit',
 	month: 'short',
-	timeZone: 'Europe/London',
+	timeZone: 'UTC',
 	year: 'numeric',
 })
 
