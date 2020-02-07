@@ -5,6 +5,36 @@ hr.clear {
 	visibility: hidden;
 }
 
+a:focus {
+	background-color: $focus;
+	outline: 3px solid transparent;
+	box-shadow: 0 -2px $focus, 0 4px $gds-black;
+	text-decoration: none;
+}
+
+a:hover {
+	color: $govuk-link-hover-colour;
+}
+
+input:focus, textarea:focus, select:focus, button:focus, .button:focus {
+	outline: 3px solid $focus !important;
+	outline-offset: 0;
+	box-shadow: inset 0 0 0 2px;
+}
+
+.multiple-choice [type=radio]:focus+label::before, .multiple-choice [type=checkbox]:focus+label::before {
+	-webkit-box-shadow: 0 0 0 4px $focus;
+	-moz-box-shadow: 0 0 0 4px $focus;
+	box-shadow: 0 0 0 4px $focus;
+	border-width: 4px;
+}
+
+
+#global-header #logo:focus {
+	background-color: $focus;
+	outline: 3px solid $focus;
+}
+
 .column-one-sixth {
 	@include grid-column(1/6);
 }
@@ -227,3 +257,73 @@ input:focus, textarea:focus, select:focus, button:focus, .button:focus {
 	padding: 0 10px 10px 10px;
 }
 
+.multiple-choice__input[type= "radio"]{
+	cursor: pointer !important;
+	position: absolute !important;
+	z-index: 1 !important;
+	top: 2px !important;
+	left: 2px !important;
+	width: 44px !important;
+	height: 44px !important;
+	margin: 0 !important;
+	opacity: 0 !important;
+}
+input.multiple-choice[type= "radio"] label::before {
+	content: "" !important;
+	-webkit-box-sizing: border-box !important;
+	box-sizing: border-box !important;
+	position: absolute !important;
+	top: 11px !important;
+	left: 10px !important;
+	width: 40px !important;
+	height: 40px !important;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	background: transparent;
+}
+
+input.multiple-choice[type= "radio"] label::after {
+	content: "";
+	position: absolute;
+	top: 10px !important;
+	left: 11px !important;
+	width: 0 !important;
+	height: 0 !important;
+	border: 10px solid currentColor !important;
+	border-radius: 50% !important;
+	opacity: 0 !important;
+	background: currentColor !important;
+}
+
+input.multiple-choice__input:checked + label::after {
+	opacity: 1 !important;
+}
+
+.multiple-choice [type=radio]:focus+label::after {
+
+	top: 9px !important;
+	left: 9px !important;
+}
+
+.multiple-choice [type=radio]:focus+label::before {
+
+	width: 34px;
+	height: 34px;
+	top: -2px !important;
+	left: -2px !important;
+}
+
+.multiple-choice [type=checkbox]+label::after {
+	top: 11px !important;
+	left: 9px !important;
+}
+
+.multiple-choice [type=checkbox]+label::before {
+	width: 33px !important;;
+	height: 33px !important;;
+}
+
+.link--block {
+	width: auto;
+	display: inline-block;
+}

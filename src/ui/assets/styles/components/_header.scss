@@ -7,7 +7,7 @@
 		//max-width: 990px; //only use with logo image
 		margin: 0 auto;
 		padding-top: 8px;
-		padding-bottom: 8px;
+		padding-bottom: 6px;
 		@extend %contain-floats;
 		@include media(tablet) {
 			padding-left: $gutter-half;
@@ -32,7 +32,7 @@
 				}
 			}
 			.header-logo {
-				margin-top: 2px;
+				margin-top: 1px;
 			}
 		}
 	}
@@ -56,6 +56,9 @@
 				}
 				.content {
 					margin: 0 15px;
+					margin-top: 4px;
+					font-weight: 700;
+					display: inline-block;
 				}
 			}
 		}
@@ -66,7 +69,7 @@
 		overflow: visible;
 		color: $white;
 		font-weight: bold;
-		font-size: 27px;
+		font-size: 30px;
 		line-height: 1;
 		text-decoration: none;
 		text-rendering: optimizeLegibility;
@@ -92,6 +95,11 @@
 			text-decoration: none;
 			border-bottom-color: $white;
 		}
+		&:focus {
+			background-image: url('/img/gov.uk_logotype_crown_invert_trans.png');
+			color: black;
+			border-bottom: 0px;
+		}
 	}
 	.header-proposition {
 		padding-top: 10px;
@@ -109,6 +117,8 @@
 		}
 		a#proposition-name:focus {
 			color: $text-colour;
+			border-bottom: 0px;
+			text-decoration: none;
 		}
 	}
 }
@@ -324,4 +334,11 @@ a.js-header-toggle.menu.js-hidden {
 	@include media(desktop) {
 		display: none;
 	}
+}
+
+.phase-tag
+{
+	background-color: #1d70b8 !important;
+	padding: 4px 8px 1px 8px !important;
+	margin-right: 10px !important;
 }
