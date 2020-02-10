@@ -66,6 +66,7 @@ services:
     container_name: identity
     environment:
       - SPRING_PROFILES_ACTIVE=default
+      - APPINSIGHTS_INSTRUMENTATIONKEY=key
     image: lpgregistry.azurecr.io/identity-service:master-4
     ports:
       - 8080:8080
@@ -79,6 +80,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
+      - APPINSIGHTS_INSTRUMENTATIONKEY=key
     image: lpgregistry.azurecr.io/lpg-learner-record:master-5
     depends_on:
       - civil-servant-registry
@@ -105,6 +107,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+      - APPINSIGHTS_INSTRUMENTATIONKEY=key
     image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-7
     depends_on:
       - identity
@@ -116,6 +119,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
+      - APPINSIGHTS_INSTRUMENTATIONKEY=key
     image: lpgregistry.azurecr.io/civil-servant-registry-service:master-8
     depends_on:
       - identity
@@ -129,6 +133,7 @@ services:
       - LEARNER_RECORD_URL=http://learner-record:9000
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
+      - APPINSIGHTS_INSTRUMENTATIONKEY=key
     image: lpgregistry.azurecr.io/lpg-report-service:master-3
     depends_on:
       - identity
@@ -140,6 +145,7 @@ services:
     container_name: notification-service
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
+      - APPINSIGHTS_INSTRUMENTATIONKEY=key
     image: lpgregistry.azurecr.io/notification-service:master-5
     depends_on:
       - identity
