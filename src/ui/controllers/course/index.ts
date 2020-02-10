@@ -172,7 +172,16 @@ export async function display(ireq: express.Request, res: express.Response) {
 					state: moduleRecord ? moduleRecord.state : null,
 				}
 			})
+			let recordState = "none"
 
+			if (record && record.modules) {
+				const faceToFaceModules = record.modules.filter(moduleFiltered => moduleFiltered.moduleType === "face-to-face")
+
+				if ( faceToFaceModules.length !== 0) {
+					// @ts-ignore
+					recordState = faceToFaceModules[0].state
+				}
+			}
 			res.send(
 				template.render(`course/${type}`, req, res, {
 					canPayByPO,
@@ -180,6 +189,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 					courseDetails: getCourseDetails(req, course, module),
 					module,
 					modules,
+					recordState,
 				})
 			)
 			break

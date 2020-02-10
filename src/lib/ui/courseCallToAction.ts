@@ -76,6 +76,61 @@ export function constructCourseCallToAction(
 					}
 				}
 				break
+			case 'blended':
+				let isFaceToFacePassed = false
+				let isCourseModuleCompleted = true
+				const OptionalModules = []
+				const nonOptionalnotStartedCourses = []
+				const iDsOfNonOptionalnotStartedCourses = []
+				for (const moduleCourse of course.getModules()) {
+					const isModuleInLearningRecord = record.modules.find(recordModule => recordModule.moduleId === moduleCourse.id)
+					for (const moduleRecord of record.modules) {
+						const isItemAlreadyInArray = iDsOfNonOptionalnotStartedCourses.includes(moduleRecord.moduleId)
+						const isModuleCompleted = moduleRecord.state !== "COMPLETED"
+						if (!isModuleInLearningRecord && !moduleCourse.optional && !isItemAlreadyInArray && isModuleCompleted) {
+							nonOptionalnotStartedCourses.push(moduleCourse)
+							iDsOfNonOptionalnotStartedCourses.push(moduleRecord.moduleId)
+						}
+					}
+					if (moduleCourse.optional) {
+						OptionalModules.push(moduleCourse)
+					}
+				}
+				if (record.modules && record.modules.length > 0 && nonOptionalnotStartedCourses.length === 0) {
+					for (const module of record.modules) {
+						if (module.moduleType === 'face-to-face') {
+							if (isBooked) {
+								if (isDatePassed) {
+									isFaceToFacePassed = true
+								}
+							}
+						} else {
+							const courseOptionalModule = OptionalModules.find(optionalModule => optionalModule.title === module.moduleTitle)
+							if (module.state !== "COMPLETED" && !courseOptionalModule) {
+								isCourseModuleCompleted = false
+								break
+							}
+						}
+					}
+				}
+				if (isFaceToFacePassed && isCourseModuleCompleted) {
+					callToActionProps.message = ""
+					const faceToFaceModule = record.modules.find(recordModule => recordModule.moduleType === 'face-to-face')
+					callToActionProps.actionToRecord = {
+						move: `/home?move=${course.id},${
+							// @ts-ignore
+							faceToFaceModule.moduleId
+							// @ts-ignore
+							},${faceToFaceModule.eventId}`,
+						// @ts-ignore
+						skip: `/home?skip=${course.id},${
+							// @ts-ignore
+							faceToFaceModule.moduleId
+							// @ts-ignore
+							},${faceToFaceModule.eventId}`,
+					}
+				}
+				break
 			default:
 				break
 		}

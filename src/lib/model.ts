@@ -90,6 +90,10 @@ export class Course {
 		return this.modules
 	}
 
+	isAssociatedLearningModule(id: number) {
+		return this.modules[id].associatedLearning
+	}
+
 	getActivityId() {
 		return `${config.XAPI.courseBaseUri}/${this.id}`
 	}
@@ -222,6 +226,7 @@ export class Module {
 		module.fileSize = data.fileSize
 		module.optional = data.optional || false
 		module.events = (data.events || []).map(Event.create)
+		module.associatedLearning = data.associatedLearning
 
 		return module
 	}
@@ -234,6 +239,7 @@ export class Module {
 
 	duration: number
 	optional = false
+	associatedLearning = false
 	url?: string
 	location?: string
 	fileSize?: number
@@ -261,6 +267,10 @@ export class Module {
 
 	getEvent(eventId: string) {
 		return this.events.find(event => event.id === eventId)
+	}
+
+	isAssociatedLearning() {
+		return this.associatedLearning
 	}
 }
 
