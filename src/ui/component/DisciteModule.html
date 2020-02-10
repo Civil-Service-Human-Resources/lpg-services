@@ -1,29 +1,35 @@
 <div class="discite__item u-clearfix discite__item--module">
     <slot name="main">
-	    <DisciteModuleMain {type} {cta} {course} {module} {cta} {modifier}/>
+        <DisciteModuleMain {type} {cta} {course} {module} {cta} {modifier}/>
     </slot>
-	<slot name="properties">
-		
-	    <DisciteModuleProperties {type} {cta} {course} {modifier} {module} /> 
+    <slot name="properties">
+        <DisciteModuleProperties {type} {cta} {course} {modifier} {module} />
     </slot>
-	<slot name="actions">
-        <DisciteModuleActions cta={$constructModuleCta(course.id, module, $req.user)} {course} {module} />
-    </slot>
+
+    {#if recordState}
+        {#if recordState != "APPROVED" && module.associatedLearning}
+            <p style="display: inline-block ">Available on confirmation of a booking</p>
+        {:else}
+            <slot name="actions">
+                <DisciteModuleActions cta={$constructModuleCta(course.id, module, $req.user)} {course} {module}/>
+            </slot>
+        {/if}
+    {/if}
 </div>
 <script>
-	import DisciteModuleMain from './disciteParts/DisciteModuleMain.html'
-	import DisciteModuleProperties from './disciteParts/DisciteModuleProperties.html'
-	import DisciteModuleActions from './disciteParts/DisciteModuleActions.html'
+    import DisciteModuleMain from './disciteParts/DisciteModuleMain.html'
+    import DisciteModuleProperties from './disciteParts/DisciteModuleProperties.html'
+    import DisciteModuleActions from './disciteParts/DisciteModuleActions.html'
 
-	export default {
-		data() {
-			return {
-			}
-		},
-		components: {
-		    DisciteModuleActions,
-		    DisciteModuleMain,
-		    DisciteModuleProperties
-		}
-	};
+    export default {
+        data() {
+            return {
+            }
+        },
+        components: {
+            DisciteModuleActions,
+            DisciteModuleMain,
+            DisciteModuleProperties
+        }
+    };
 </script>
