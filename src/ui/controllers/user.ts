@@ -380,7 +380,7 @@ export async function renderEditPage(
 		case 'department':
 			const email = req.user.userName
 			const domain = email.split("@")[1]
-			response = await registry.getWithoutHal('/organisationalUnits/flat' + domain + '/')
+			response = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
 			response.data.map((x: any) => {
 				options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 			})
