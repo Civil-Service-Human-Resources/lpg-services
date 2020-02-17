@@ -151,6 +151,10 @@ export function formatTime(d: number | Date, timeOnly?: boolean) {
 	return timeFormat.format(d)
 }
 
+export function removeSeconds(t: any) {
+	return t.substring(0, t.length - 3);
+}
+
 export function parseMP4Duration(duration: string) {
 	if (duration.endsWith(' s')) {
 		const seconds = Math.round(parseInt(duration.replace(' s', ''), 10))
