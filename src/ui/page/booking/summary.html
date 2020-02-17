@@ -1,5 +1,5 @@
 <Page title="Confirm" {_csrf}>
-    <div class="container">
+    <div class="container summary-page">
         <div class="grid-row">
             <div class="custom-column-with-button column-full">
                 <p class="no-margin">
@@ -27,22 +27,24 @@
                             <span class="booking__value">{module.title || course.title}</span>
                         </li>
                         <li class="booking__panel__row">
-                            {#if event.dateRanges.length > 1 }
-                                <span class="booking__key">Dates:</span>
-                            {:else}
-                                <span class="booking__key">Date:</span>
-                            {/if}
+                            <div class="date-and-time-container">
+                                {#if event.dateRanges.length > 1 }
+                                <span class="vertical-center booking__key">Dates and Times:</span>
+                                {:else}
+                                <span class="vertical-center booking__key">Date and Time:</span>
+                                {/if}
+                            </div>
 
-                            <span class="booking__value lpg-booking-date">
-                                {#each event.dateRanges as dateRange, index}
-                                    {$datetime.formatDate(dateRange.date)}
-                                    <br>
-                                {/each}
-                            </span>
-                        </li>
-                        <li class="booking__panel__row">
-                            <span class="booking__key">Time</span>
-                            <span class="booking__value">{course.getDuration()}</span>
+                            <div class="date-and-time-value-container">
+                                <span class="booking__value">
+                                    {#each event.dateRanges as dateRange, index}
+                                        {$datetime.formatDate(dateRange.date)}  at {$datetime.removeSeconds(dateRange.startTime)} to {$datetime.removeSeconds(dateRange.endTime)}
+                                        <br>
+                                    {/each}
+                                </span>
+                            </div>
+
+
                         </li>
                         <li class="booking__panel__row">
                             <span class="booking__key">Location</span>
