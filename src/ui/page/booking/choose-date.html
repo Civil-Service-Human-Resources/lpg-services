@@ -35,7 +35,12 @@
                         {#each events as event, index}
                             {#if event.status == "Active"}
                                 <div class="div-table__row u-clearfix lpg-date-row">
-                                    <div class="div-table__cell lpg-date">{$datetime.formatDate(event.date)}</div>
+                                    <div class="div-table__cell lpg-date">
+                                        {#each event.dateRanges as dateRange, index}
+                                            {$datetime.formatDate(dateRange.date)}
+                                            <br>
+                                        {/each}
+                                    </div>
 
                                     <div class="div-table__cell">
                                         {$datetime.formatTime(event.date, true)}
