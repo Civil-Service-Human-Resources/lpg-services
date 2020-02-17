@@ -43,8 +43,10 @@
                                     </div>
 
                                     <div class="div-table__cell">
-                                        {$datetime.formatTime(event.date, true)}
-                                        { module.duration ? 'to ' + $datetime.addSeconds(event.date, module.duration, true) : ''}
+                                        {#each event.dateRanges as dateRange, index}
+                                            {$datetime.removeSeconds(dateRange.startTime)} to {$datetime.removeSeconds(dateRange.endTime)}
+                                            <br>
+                                        {/each}
                                     </div>
                                     <div class="div-table__cell">{event.location}</div>
 
