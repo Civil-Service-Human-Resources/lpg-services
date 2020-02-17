@@ -29,6 +29,7 @@
         {/if}
     </div>
 
+
     <slot name="actions">
         <DisciteCourseActions cta={($constructCourseCallToAction(course, modifier))} {course} {modifier} {module} today={modifier === home ? new Date() : null} />
     </slot>
@@ -37,7 +38,17 @@
         <div class="discite__item--event">
             <div class="discite__item--main">
                 <h3 class="heading discite__heading"><a href="/courses/{course.id}" class="govuk-link">{bookedModule.moduleTitle}</a></h3>
-                <p class="discite__property-item">Start date: {$datetime.formatDate(course.getSelectedDate())}</p>
+                <p class="discite__property-item">
+                    {#if course.getDateRanges().length > 1 }
+                        <span>Dates:</span>
+                    {:else}
+                        <span>Date:</span>
+                    {/if}
+                    {#each course.getDateRanges() as dateRange, index}
+                        {$datetime.formatDate(dateRange.date)}
+                        <br>
+                    {/each}
+                </p>
                 {#if bookedModule.state !== "Unregistered"}
                     <a class="discite__property-item" href="/book/{course.id}/{bookedModule.moduleId}/{bookedModule.eventId}/cancel">Cancel booking</a>
                 {/if}
