@@ -138,6 +138,26 @@ export class Course {
 		return null
 	}
 
+	getDateRanges() {
+		if (this.record) {
+			const bookedModuleRecord = this.record.modules.find(
+				m => !!m.eventId && m.state !== 'SKIPPED'
+			)
+			if (bookedModuleRecord) {
+				const bookedModule = this.modules.find(
+					m => m.id === bookedModuleRecord.moduleId
+				)
+				if (bookedModule) {
+					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
+					if (event) {
+						return event.dateRanges
+					}
+				}
+			}
+		}
+		return null
+	}
+
 	getType() {
 		if (!this.modules.length) {
 			return 'unknown'
@@ -282,7 +302,9 @@ export class Event {
 	static create(data: any) {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
 		let date: any = ''
+		let dateRanges: any = ''
 		if (data.dateRanges[0]) {
+			dateRanges = data.dateRanges
 			date = new Date(
 				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
 			)
@@ -304,11 +326,13 @@ export class Event {
 
 		const status = data.status ? data.status : 'Active'
 
-		return new Event(date, location, capacity, availability, status, data.id)
+		return new Event(date, dateRanges, location, capacity, availability, status, data.id)
 	}
 
 	id: string
 	date: Date
+	// create daterangetres
+	dateRanges: Date[]
 	location: string
 	capacity: number
 	availability: number
@@ -317,6 +341,7 @@ export class Event {
 
 	constructor(
 		date: Date,
+		dateRanges: Date[],
 		location: string,
 		capacity: number,
 		availability: number,
@@ -327,6 +352,7 @@ export class Event {
 			this.id = id!
 		}
 		this.date = date
+		this.dateRanges = dateRanges
 		this.location = location
 		this.capacity = capacity
 		this.availability = availability
