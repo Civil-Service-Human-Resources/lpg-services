@@ -27,8 +27,18 @@
                             <span class="booking__value">{module.title || course.title}</span>
                         </li>
                         <li class="booking__panel__row">
-                            <span class="booking__key">Start date</span>
-                            <span class="booking__value lpg-booking-date">{$datetime.formatDate(event.date)}</span>
+                            {#if event.dateRanges.length > 1 }
+                                <span class="booking__key">Dates:</span>
+                            {:else}
+                                <span class="booking__key">Date:</span>
+                            {/if}
+
+                            <span class="booking__value lpg-booking-date">
+                                {#each event.dateRanges as dateRange, index}
+                                    {$datetime.formatDate(dateRange.date)}
+                                    <br>
+                                {/each}
+                            </span>
                         </li>
                         <li class="booking__panel__row">
                             <span class="booking__key">Time</span>
