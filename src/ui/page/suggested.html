@@ -75,14 +75,18 @@
     {/if}
     {#if !$isEmpty(otherAreasOfWork)  }
     {#each $getKeys(otherAreasOfWork) as otherAreaOfWork}
-        <SuggestionsSection id={otherAreaOfWork} title={otherAreaOfWork}  code={otherAreaOfWork}  suggestedLearning="{otherAreasOfWork[otherAreaOfWork]}" home={false} type="areaOfWork" />
-        <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+        {#if !$isEmpty(otherAreasOfWork[otherAreaOfWork])  }
+            <SuggestionsSection id={otherAreaOfWork} title={otherAreaOfWork}  code={otherAreaOfWork}  suggestedLearning="{otherAreasOfWork[otherAreaOfWork]}" home={false} type="areaOfWork" />
+            <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+        {/if}
     {/each}
     {/if}
     {#if !$isEmpty(interests)  }
         {#each $getKeys(interests) as interest}
+        {#if !$isEmpty(interests[interest])  }
             <SuggestionsSection id={interest} title={interest}  code={interest}  suggestedLearning="{interests[interest]}" home={false} type="interest" />
             <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+         {/if}
         {/each}
     {/if}
 </Page>
