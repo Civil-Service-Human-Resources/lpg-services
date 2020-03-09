@@ -154,3 +154,16 @@ body:not(.js-enabled) {
 }.width-10 {
 	max-width: 23ex;
 }
+
+.chose-date .time-header {
+	margin-left: 48%;
+}
+
+.chose-date .date-value {
+	width: 50%;
+	display: inline-block;
+}
+
+.no-margin-bottom.discite__property-item {
+	margin-bottom: 0;
+}
