@@ -38,17 +38,21 @@
         <div class="discite__item--event">
             <div class="discite__item--main">
                 <h3 class="heading discite__heading"><a href="/courses/{course.id}" class="govuk-link">{bookedModule.moduleTitle}</a></h3>
-                <p class="discite__property-item">
+<!--                <p class="discite__property-item no-margin-bottom">Booking Reference: ABC123</p>-->
+                <p class="discite__property-item no-margin-bottom">
                     {#if course.getDateRanges().length > 1 }
                         <span>Dates:</span>
                     {:else}
                         <span>Date:</span>
                     {/if}
-                    {#each course.getDateRanges() as dateRange, index}
-                        {$datetime.formatDate(dateRange.date)}
-                        <br>
-                    {/each}
                 </p>
+                <ul>
+                    {#each course.getDateRanges() as dateRange, index}
+                    <li class="discite__property-item">
+                        {$datetime.formatDate(dateRange.date)}
+                    </li>
+                    {/each}
+                </ul>
                 {#if bookedModule.state !== "Unregistered"}
                     <a class="discite__property-item" href="/book/{course.id}/{bookedModule.moduleId}/{bookedModule.eventId}/cancel">Cancel booking</a>
                 {/if}
