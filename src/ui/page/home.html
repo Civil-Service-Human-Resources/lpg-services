@@ -41,7 +41,7 @@
                 {#if requiredLearning.length}
                 <div class="resources">
                     {#each requiredLearning as course}
-                    <DisciteCourse course={course} modifier="home" />
+                        <DisciteCourse course={course} modifier="home" />
                     {/each}
                 </div>
                 {:else}
