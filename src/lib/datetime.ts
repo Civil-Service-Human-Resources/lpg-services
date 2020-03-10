@@ -69,7 +69,7 @@ export function formatCourseDuration(d: number) {
 	}
 	let out = ''
 	// treat a day as 8 hours
-	const [days, daySeconds] = divmod(d, 28800)
+	const [days, daySeconds] = divmod(d, 25200)
 	if (days) {
 		out += `${days} day${days > 1 ? 's' : ''}`
 	}
