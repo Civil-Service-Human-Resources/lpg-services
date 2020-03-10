@@ -109,22 +109,10 @@ export class Course {
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
-		let containsFaceToFaceModule: boolean = false
-
 		// tslint:disable-next-line:prefer-for-of
-		for (let i = 0; i < this.modules.length; i++) {
-			if (this.modules[i].type === "face-to-face") {
-				containsFaceToFaceModule = true
-				console.log("The course contains Face-To-Face module: " + containsFaceToFaceModule)
-			}
-		}
-
-		if (containsFaceToFaceModule) {
-			// tslint:disable-next-line:prefer-for-of
 			for (let i = 0; i < this.modules.length; i++) {
 				if (this.modules[i].type === "face-to-face") {
 					const faceToFaceModule = this.modules[i]
-					console.log(faceToFaceModule)
 					if (faceToFaceModule.events[0]) {
 						const startTimeHours = faceToFaceModule.events[0].startDate.getHours()
 						const startTimeHoursInMinutes = startTimeHours * 60 + faceToFaceModule.events[0].startDate.getMinutes()
@@ -132,30 +120,19 @@ export class Course {
 						const endTimeHoursInMinutes = endTimeHours * 60 + faceToFaceModule.events[0].endDate.getMinutes()
 						const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
 						const durationInSeconds = durationInMinutes * 60
-						durationArray.push(durationInSeconds)
-						console.log(durationInMinutes)
+ 						durationArray[0] = durationInSeconds
 					}
 				}
 			}
 
-			return durationArray.length
-				? datetime.formatCourseDurationForCourseInlcFaceToFace(durationArray.reduce((p, c) => p + c, 0))
-				: null
+		let totalDuration = 0
+		// tslint:disable-next-line:prefer-for-of
+		for (let i = 0; i < durationArray.length; i++) {
+			totalDuration += durationArray[i]
 		}
 
-
-		// let courseTotalDuration = 0
-
-		// tslint:disable-next-line:prefer-for-of
-		// for (let i = 0; i < durationArray.length; i++) {
-		// 	courseTotalDuration += durationArray[i]
-		// }
-		//
-		// return courseTotalDuration.toString()
-
-
 		return durationArray.length
-			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
+			? datetime.formatCourseDuration(Number(totalDuration))
 			: null
 	}
 
@@ -331,18 +308,8 @@ export class Module {
 			const endTimeHours = this.events[0].endDate.getHours()
 			const endTimeHoursInMinutes = endTimeHours * 60 + this.events[0].endDate.getMinutes()
 			const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
-			if (durationInMinutes > 60 ) {
-				const durationInHours = Math.floor(durationInMinutes / 60)
-				const durationInMinutesLeft = durationInMinutes - (durationInHours * 60)
-				let returnTime = durationInHours + " hours "
-				if (durationInMinutesLeft !== 0 ) {
-					returnTime += " and " + durationInMinutesLeft + " minutes"
-				}
-
-				return returnTime
-			} else {
-				return durationInMinutes + " minutes"
-			}
+			const durationInSeconds = durationInMinutes * 60
+			this.duration = durationInSeconds
 		}
 
 		if (!this.duration) {
