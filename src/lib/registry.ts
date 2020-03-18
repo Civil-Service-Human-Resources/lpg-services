@@ -198,7 +198,7 @@ export async function patch(node: string, data: any, token: string) {
 			})
 			.patch(data, (error, document) => {
 				if (error) {
-					reject(false)
+					resolve(false)
 				} else {
 					resolve(true)
 				}
