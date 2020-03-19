@@ -398,8 +398,18 @@ export function addEmail(request: Request, response: Response) {
 
 export async function updateEmail(request: Request, response: Response) {
 	try {
-		const dto = {forceOrgChange: true}
 		try {
+			const email = request.user.userName
+			const oldDomain = email.split("@")[1]
+			const oldOrgCodeResponse: any = await registry.getOrgCode(request.user.accessToken)
+			const oldOrgCode: string = oldOrgCodeResponse.data.code
+			const oldTokenResponse: any = await registry.getAgencyTokenByDomainAndOrgCode(request.user.accessToken, oldDomain, oldOrgCode)
+			const oldToken: string = oldTokenResponse.data.token
+
+			const quotaDTO = {domain: oldDomain, token: oldToken, code: oldOrgCode, removeUser: true}
+			await registry.updateAvailableSpacesOnAgencyToken(request.user.accessToken, quotaDTO)
+
+			const dto = {forceOrgChange: true}
 			await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
 		} catch (error) {
 			console.log(error)
