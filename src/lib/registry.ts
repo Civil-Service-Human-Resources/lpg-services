@@ -137,6 +137,54 @@ export function updateForceOrgResetFlag(token: string, data: any) {
 	return result
 }
 
+export function getOrgCode(token: string) {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+			.get(`/civilServants/org`, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
+
+export function getAgencyTokenByDomainAndOrgCode(token: string, domain: string, orgCode: string) {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+			.get(`/agencyTokens?domain=${domain}&code=${orgCode}`, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
+
+export function updateAvailableSpacesOnAgencyToken(token: string, data: any) {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+			.put(`/agencyTokens`, data, {
+				headers: {Authorization: `Bearer ${token}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
+	})
+	return result
+}
+
 export async function patch(node: string, data: any, token: string) {
 	const result = await new Promise((resolve, reject) =>
 		traverson
