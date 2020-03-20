@@ -378,7 +378,9 @@ export async function renderEditPage(
 
 			break
 		case 'department':
-			response = await registry.getWithoutHal('/organisationalUnits/flat')
+			const email = req.user.userName
+			const domain = email.split("@")[1]
+			response = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
 			response.data.map((x: any) => {
 				options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 			})
@@ -564,6 +566,8 @@ export async function updateProfile(
 	const node = getNodeByName(inputName)
 
 	let errorMessage = ''
+	let response: any
+	let index: number = 0;
 
 	switch (node) {
 		case 'interests':
@@ -572,7 +576,17 @@ export async function updateProfile(
 			}
 			break
 		case 'otherAreasOfWork':
-			if (!Array.isArray(fieldValue)) {
+			response = await registry.getWithoutHal('/professions/tree')
+			for(let i = 0; i < response.data.length; i++) {
+				if (response.data[i].name === "I don't know") {
+					index = response.data[i].id
+					break
+				}
+			}
+			if (Array.isArray(fieldValue) &&
+				fieldValue[fieldValue.length - 1] === '/professions/' + index) {
+				errorMessage = req.__('errors.otherareaofworksidontknowmultiselection')
+			} else {
 				fieldValue = [fieldValue]
 			}
 			break
