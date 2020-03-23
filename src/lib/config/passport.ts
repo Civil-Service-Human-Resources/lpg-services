@@ -142,4 +142,5 @@ export async function logout(
 	req.logout()
 	await identity.logout(accessToken)
 	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
+	res.end()
 }

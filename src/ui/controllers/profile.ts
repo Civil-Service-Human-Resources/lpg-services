@@ -1,6 +1,7 @@
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
+import * as identity from 'lib/identity'
 import * as _ from 'lodash'
 import * as log4js from 'log4js'
 import * as registry from '../../lib/registry'
@@ -398,29 +399,30 @@ export function addEmail(request: Request, response: Response) {
 
 export async function updateEmail(request: Request, response: Response) {
 	try {
-		try {
-			const email = request.user.userName
-			const oldDomain = email.split("@")[1]
-			const oldOrgCodeResponse: any = await registry.getOrgCode(request.user.accessToken)
-			const oldOrgCode: string = oldOrgCodeResponse.data.code
-			const oldTokenResponse: any = await registry.getAgencyTokenByDomainAndOrgCode(request.user.accessToken, oldDomain, oldOrgCode)
-			const oldToken: string = oldTokenResponse.data.token
-
-			const quotaDTO = {domain: oldDomain, token: oldToken, code: oldOrgCode, removeUser: true}
-			await registry.updateAvailableSpacesOnAgencyToken(request.user.accessToken, quotaDTO)
-
-			const dto = {forceOrgChange: true}
-			await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
+		const email = request.user.userName
+		const oldDomain = email.split("@")[1]
+		await identity.isWhitelisted(request.user.accessToken, oldDomain)
+			.then(e => {
+				if (e.status === 200) {
+					if (e === "false") {
+						adjustTokenQuota(request, oldDomain)
+					}
+				}
+			})
+			.catch(error => {
+				logger.error(error)
+				throw new Error(error)
+			})
+		const dto = {forceOrgChange: true}
+		await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
 		setLocalProfile(request, 'department', null)
 		setLocalProfile(request, 'organisationalUnit', null)
 		const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
-		request.session!.save(() =>
+		request.login(request.user, () => {
+			request.session!.save(() =>
 				response.redirect(changeEmailURL.toString())
-		)
+			)
+		})
 	} catch (error) {
 		logger.error(error)
 		throw new Error(error)
@@ -448,6 +450,26 @@ function setLocalProfile(request: Request, key: string, value: any) {
 
 	/* tslint:disable-next-line:no-empty */
 	request.session!.save(() => {})
+}
+
+function adjustTokenQuota(request: Request, oldDomain: string) {
+	const oldOrgCodeResponse: any = registry.getOrgCode(request.user.accessToken)
+	if (oldOrgCodeResponse.status === 404) {
+		console.log("org code not found")
+		throw new Error("Org code not found")
+	} else {
+		const oldOrgCode = oldOrgCodeResponse.toString()
+		// tslint:disable-next-line:max-line-length
+		const oldTokenResponse: any = registry.getAgencyTokenByDomainAndOrgCode(request.user.accessToken, oldDomain, oldOrgCode)
+		if (oldTokenResponse.status === 404) {
+			console.log("token not found")
+			throw new Error("token not found")
+		} else {
+			const oldToken: string = oldTokenResponse.data.token
+			const quotaDTO = {domain: oldDomain, token: oldToken, code: oldOrgCode, removeUser: true}
+			registry.updateAvailableSpacesOnAgencyToken(request.user.accessToken, quotaDTO)
+		}
+	}
 }
 
 class LineManagerForm {
