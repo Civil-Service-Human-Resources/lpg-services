@@ -31,3 +31,9 @@ export async function logout(token: string) {
 	const response = await http.get(`/oauth/logout`)
 	return response.data
 }
+
+export async function isWhitelisted(token: string, domain: string) {
+	const http = create(token)
+	const response = await http.get(`/domain/isWhitelisted/` + domain + `/`)
+	return response.data
+}
