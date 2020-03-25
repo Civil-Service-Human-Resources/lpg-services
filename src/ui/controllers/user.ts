@@ -120,9 +120,6 @@ function validateForm(req: express.Request) {
 }
 
 export function viewProfile(ireq: express.Request, res: express.Response) {
-	ireq.login(ireq.user, () => {
-		return true
-	})
 	const req = ireq as extended.CourseRequest
 	if (ireq.session!.flash && ireq.session!.flash.children) {
 		delete ireq.session!.flash.children
