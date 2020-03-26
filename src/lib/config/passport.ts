@@ -40,7 +40,7 @@ export function configure(
 			try {
 				const identityDetails = await identity.getDetails(accessToken)
 				const regDetails = await registry.profile(accessToken)
-				const askToSetOrg = await registry.getForceOrgResetFlag(accessToken)
+				const askToSetOrg: boolean = await registry.getForceOrgResetFlag(accessToken)
 				const forceOrgChange = new ForceOrgChange(askToSetOrg)
 
 				const combined = {
