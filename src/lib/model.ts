@@ -489,8 +489,11 @@ export class User {
 			Array.isArray(data.roles) ? data.roles : [data.roles],
 			data.accessToken
 		)
-
-		user.forceOrgChange = data.forceOrgChange.data ? true : false
+		if (data.forceOrgChange) {
+			user.forceOrgChange = new ForceOrgChange(true)
+		} else {
+			user.forceOrgChange = new ForceOrgChange(false)
+		}
 		user.organisationalUnit =
 			data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
@@ -529,7 +532,7 @@ export class User {
 	interests?: any[]
 	givenName?: string
 	organisationalUnit?: OrganisationalUnit
-	forceOrgChange: boolean
+	forceOrgChange: ForceOrgChange
 
 	grade?: any
 
