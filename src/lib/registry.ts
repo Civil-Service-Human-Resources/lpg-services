@@ -106,7 +106,7 @@ export async function checkLineManager(data: any, token: string) {
 }
 
 export function getForceOrgResetFlag(token: string) {
-	const result = new Promise((resolve, reject) => {
+	const result = new Promise<boolean>((resolve, reject) => {
 		httpCsrs
 			.get(`/civilServants/org/reset`, {
 				headers: {Authorization: `Bearer ${token}`},

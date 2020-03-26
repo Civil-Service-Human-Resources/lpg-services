@@ -1,6 +1,5 @@
 import {NextFunction, Request, Response} from 'express'
 import * as log4js from 'log4js'
-import * as registry from '../../lib/registry'
 import * as config from '../config'
 import {User} from '../model'
 
@@ -14,7 +13,7 @@ export class ProfileChecker {
 			return Boolean(user.givenName)
 		}),
 		new ProfileSection('organisationalUnit', '/profile/organisation', (user: User) => {
-			return Boolean(user.organisationalUnit &&  user.organisationalUnit.name && this.isForceOrgChange(user.accessToken))
+			return Boolean(user.organisationalUnit &&  user.organisationalUnit.name && user.forceOrgChange.isForceOrgChange)
 		}),
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
 			return Boolean(user.department)
@@ -26,9 +25,6 @@ export class ProfileChecker {
 			return Boolean(user.otherAreasOfWork && user.otherAreasOfWork.length)
 		}),
 	]
-	isForceOrgChange(token: string) {
-		return registry.getForceOrgResetFlag(token)
-	}
 	isProfileRequest(request: Request) {
 		return Boolean(this._profileSections.filter(entry => {
 			return entry.path === request.path
