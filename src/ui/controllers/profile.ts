@@ -2,6 +2,7 @@ import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import * as identity from 'lib/identity'
+import {ForceOrgChange} from "lib/model"
 import * as _ from 'lodash'
 import * as log4js from 'log4js'
 import * as registry from '../../lib/registry'
@@ -115,7 +116,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 			if (res.status === 204) {
 				setLocalProfile(request, 'department', organisationalUnit.code)
 				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-				setLocalProfile(request, 'forceOrgChange', false)
+				setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
 				request.session!.save(() =>
 						response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 				)
