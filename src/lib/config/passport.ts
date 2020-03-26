@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as config from "lib/config/index"
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
+import {ForceOrgChange} from "lib/model"
 import * as registry from 'lib/registry'
 import * as log4js from 'log4js'
 import * as passport from 'passport'
@@ -39,11 +40,14 @@ export function configure(
 			try {
 				const identityDetails = await identity.getDetails(accessToken)
 				const regDetails = await registry.profile(accessToken)
+				const askToSetOrg = await registry.getForceOrgResetFlag(accessToken)
+				const forceOrgChange = new ForceOrgChange(askToSetOrg)
 
 				const combined = {
 					...profile,
 					...identityDetails,
 					...regDetails,
+					...forceOrgChange,
 				}
 				const user = model.User.create(combined)
 				return cb(null, user)

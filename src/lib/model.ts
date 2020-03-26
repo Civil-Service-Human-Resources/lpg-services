@@ -464,6 +464,16 @@ export class Feedback {
 	relevance: number
 }
 
+export class ForceOrgChange {
+	forceOrgChange: boolean
+	constructor(forceOrgChange: boolean) {
+		this.forceOrgChange = forceOrgChange
+	}
+	isForceOrgChange() {
+		return this.forceOrgChange
+	}
+}
+
 export class OrganisationalUnit {
 	code: string
 	name: string
@@ -480,6 +490,7 @@ export class User {
 			data.accessToken
 		)
 
+		user.forceOrgChange = data.forceOrgChange || new ForceOrgChange(false)
 		user.organisationalUnit =
 			data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
@@ -518,6 +529,7 @@ export class User {
 	interests?: any[]
 	givenName?: string
 	organisationalUnit?: OrganisationalUnit
+	forceOrgChange: ForceOrgChange
 
 	grade?: any
 
