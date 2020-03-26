@@ -36,6 +36,7 @@ export enum nodes {
 	'other-areas-of-work' = 'otherAreasOfWork',
 	'line-manager' = 'lineManager',
 	'password' = 'password',
+	'forceOrgChange' = 'forceOrgChange',
 }
 
 function getNodeByName(name: string) {
