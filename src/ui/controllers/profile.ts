@@ -2,7 +2,6 @@ import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import * as identity from 'lib/identity'
-import {ForceOrgChange} from "lib/model"
 import * as _ from 'lodash'
 import * as log4js from 'log4js'
 import * as registry from '../../lib/registry'
@@ -120,8 +119,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 			}
 			setLocalProfile(request, 'department', organisationalUnit.code)
 			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-			const forceOrgChange: ForceOrgChange = new ForceOrgChange(false)
-			setLocalProfile(request, 'forceOrgChange', forceOrgChange)
+			setLocalProfile(request, 'forceOrgChange', false)
 			request.session!.save(() =>
 				response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 			)
@@ -416,7 +414,7 @@ export async function updateEmail(request: Request, response: Response) {
 				logger.error(error)
 				throw new Error(error)
 			})
-		const dto = { forceOrgChange: false}
+		const dto = { forceOrgChange: true}
 		try {
 			await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
 		} catch (error) {
@@ -425,8 +423,7 @@ export async function updateEmail(request: Request, response: Response) {
 		}
 		setLocalProfile(request, 'department', null)
 		setLocalProfile(request, 'organisationalUnit', null)
-		const forceOrgChange: ForceOrgChange = new ForceOrgChange(false)
-		setLocalProfile(request, 'forceOrgChange', forceOrgChange)
+		setLocalProfile(request, 'forceOrgChange', true)
 		const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
 		request.login(request.user, () => {
 			request.session!.save(() =>

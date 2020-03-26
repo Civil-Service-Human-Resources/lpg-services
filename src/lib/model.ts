@@ -490,7 +490,7 @@ export class User {
 			data.accessToken
 		)
 
-		user.forceOrgChange = data.forceOrgChange || new ForceOrgChange(false)
+		user.forceOrgChange = data.forceOrgChange.data ? true : false
 		user.organisationalUnit =
 			data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit
@@ -529,7 +529,7 @@ export class User {
 	interests?: any[]
 	givenName?: string
 	organisationalUnit?: OrganisationalUnit
-	forceOrgChange: ForceOrgChange
+	forceOrgChange: boolean
 
 	grade?: any
 

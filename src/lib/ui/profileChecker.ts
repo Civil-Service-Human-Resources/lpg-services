@@ -13,10 +13,18 @@ export class ProfileChecker {
 			return Boolean(user.givenName)
 		}),
 		new ProfileSection('organisationalUnit', '/profile/organisation', (user: User) => {
-			return Boolean(user.organisationalUnit &&  user.organisationalUnit.name && user.forceOrgChange.isForceOrgChange)
+			if (user.forceOrgChange) {
+				return Boolean(true)
+			} else {
+				return Boolean(user.organisationalUnit &&  user.organisationalUnit.name)
+			}
 		}),
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
-			return Boolean(user.department)
+			if (user.forceOrgChange) {
+				return Boolean(true)
+			} else {
+				return Boolean(user.department)
+			}
 		}),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
 			return Boolean(user.areasOfWork && user.areasOfWork.length)
