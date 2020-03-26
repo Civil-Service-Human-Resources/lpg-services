@@ -13,18 +13,12 @@ export class ProfileChecker {
 			return Boolean(user.givenName)
 		}),
 		new ProfileSection('organisationalUnit', '/profile/organisation', (user: User) => {
-			if (user.forceOrgChange) {
-				return Boolean(true)
-			} else {
-				return Boolean(user.organisationalUnit &&  user.organisationalUnit.name)
-			}
+			// tslint:disable-next-line:max-line-length
+			return (Boolean (!user.forceOrgChange.isForceOrgChange()) || (Boolean(user.organisationalUnit &&  user.organisationalUnit.name)))
 		}),
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
-			if (user.forceOrgChange) {
-				return Boolean(true)
-			} else {
-				return Boolean(user.department)
-			}
+			// tslint:disable-next-line:max-line-length
+			return (Boolean (!user.forceOrgChange.isForceOrgChange()) || (Boolean(user.department)))
 		}),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
 			return Boolean(user.areasOfWork && user.areasOfWork.length)
