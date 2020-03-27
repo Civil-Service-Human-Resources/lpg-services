@@ -47,7 +47,7 @@ export function configure(
 					...profile,
 					...identityDetails,
 					...regDetails,
-					...forceOrgChange,
+					forceOrgChange,
 				}
 				const user = model.User.create(combined)
 				return cb(null, user)
@@ -65,7 +65,13 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
-		done(null, model.User.create(JSON.parse(data)))
+		let user: model.User
+		try {
+			user =  model.User.create(JSON.parse(data))
+		} catch (error) {
+			done(error, user)
+		}
+		done(null, user)
 	})
 
 	app.all(

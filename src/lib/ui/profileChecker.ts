@@ -14,11 +14,10 @@ export class ProfileChecker {
 		}),
 		new ProfileSection('organisationalUnit', '/profile/organisation', (user: User) => {
 			// tslint:disable-next-line:max-line-length
-			return (Boolean (!user.forceOrgChange.isForceOrgChange()) || (Boolean(user.organisationalUnit &&  user.organisationalUnit.name)))
+			return (Boolean (!user.forceOrgChange.isForceOrgChange()) && (Boolean(user.organisationalUnit &&  user.organisationalUnit.name)))
 		}),
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
-			// tslint:disable-next-line:max-line-length
-			return (Boolean (!user.forceOrgChange.isForceOrgChange()) || (Boolean(user.department)))
+			return (Boolean (!user.forceOrgChange.isForceOrgChange()) && (Boolean(user.department)))
 		}),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
 			return Boolean(user.areasOfWork && user.areasOfWork.length)
