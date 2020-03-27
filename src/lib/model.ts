@@ -489,7 +489,7 @@ export class User {
 			Array.isArray(data.roles) ? data.roles : [data.roles],
 			data.accessToken
 		)
-		if (data.forceOrgChange) {
+		if (data.forceOrgChange.forceOrgChange) {
 			user.forceOrgChange = new ForceOrgChange(true)
 		} else {
 			user.forceOrgChange = new ForceOrgChange(false)
