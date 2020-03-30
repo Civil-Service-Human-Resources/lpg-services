@@ -65,6 +65,7 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
+		// @ts-ignore
 		let user: model.User
 		try {
 			user =  model.User.create(JSON.parse(data))
