@@ -231,4 +231,45 @@ describe('ProfileChecker tests', () => {
 		/* tslint:disable-next-line:no-unused-expression */
 		expect(next).to.have.been.calledOnce
 	})
+
+	it('should call set organisation if mandatory sections of profile are complete and forceOrgChangeFlag is true', () => {
+		const request = mockReq({
+			originalUrl: '/home',
+			user: {
+				areasOfWork: [
+					1, 'Analysis',
+				],
+				department: 'co',
+				forceOrgChange: new ForceOrgChange(true),
+				givenName: 'Test User',
+				interests: [
+					{
+						name: 'Leadership',
+					},
+				],
+				organisationalUnit: {
+					code: 'co',
+					name: 'Cabinet Office',
+					paymentMethods: [],
+				},
+				otherAreasOfWork: [
+					{
+						id: 2,
+						name: 'Commercial',
+					},
+				],
+			},
+		})
+		request.session!.save = callback => {
+			callback(undefined)
+		}
+
+		const response = mockRes()
+		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
+		const next = <NextFunction> {}
+		const check = profileChecker.checkProfile()
+		check(request, response, next)
+		/* tslint:disable-next-line:no-unused-expression */
+		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
+	})
 })
