@@ -39,7 +39,7 @@
                                 <span class="booking__value">
                                     {#each event.dateRanges as dateRange, index}
                                         {$datetime.formatDate(dateRange.date)}  at {$datetime.removeSeconds(dateRange.startTime)} to {$datetime.removeSeconds(dateRange.endTime)}
-                                        <br>
+                                        <br />
                                     {/each}
                                 </span>
                             </div>
