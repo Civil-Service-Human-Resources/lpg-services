@@ -152,7 +152,7 @@ export function formatTime(d: number | Date, timeOnly?: boolean) {
 }
 
 export function removeSeconds(t: any) {
-	return t.substring(0, t.length - 3);
+	return t.substring(0, t.length - 3)
 }
 
 export function parseMP4Duration(duration: string) {
