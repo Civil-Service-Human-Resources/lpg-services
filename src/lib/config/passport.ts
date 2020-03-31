@@ -70,8 +70,7 @@ export function configure(
 			user =  model.User.create(JSON.parse(data))
 			done(null, user)
 		} catch (error) {
-			// @ts-ignore
-			done(error, null)
+			done(error, undefined)
 		}
 	})
 
