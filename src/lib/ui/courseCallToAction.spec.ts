@@ -5,8 +5,7 @@ import {
 } from 'lib/ui/courseCallToAction'
 
 import {CourseRecord, ModuleRecord} from 'lib/learnerrecord'
-import {Course, Module, User} from 'lib/model'
-import {ForceOrgChange} from 'lib/model'
+import {Course, ForceOrgChange, Module, User} from 'lib/model'
 
 const courseSkeletonData: any = {
 	id: 'UT0',
