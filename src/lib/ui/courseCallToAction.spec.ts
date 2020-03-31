@@ -6,6 +6,7 @@ import {
 
 import {CourseRecord, ModuleRecord} from 'lib/learnerrecord'
 import {Course, Module, User} from 'lib/model'
+import {ForceOrgChange} from 'lib/model'
 
 const courseSkeletonData: any = {
 	id: 'UT0',
@@ -76,6 +77,8 @@ export const testUser = User.create({
 	roles: ['LEARNER'],
 
 	sessionIndex: '',
+
+	forceOrgChange: new ForceOrgChange(false),
 })
 
 describe('Course Call to Actions', () => {
