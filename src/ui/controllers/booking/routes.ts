@@ -4,6 +4,7 @@ import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as bookingController from './booking'
 import * as cancelBookingController from './cancel'
+import * as errorPageController from './errorPageHandler'
 
 export const router: express.Router = express.Router()
 
@@ -85,4 +86,14 @@ router.get(
 router.get(
 	'/book/cancelled',
 	asyncHandler(cancelBookingController.renderCancelledBookingPage)
+)
+
+router.get(
+		'/notFound',
+		asyncHandler(errorPageController.render404)
+)
+
+router.get(
+		'/unauthorized',
+		asyncHandler(errorPageController.render401)
 )

@@ -14,3 +14,4 @@ yarn.lock
 files
 data.json
 modules.json
+**/*.iml

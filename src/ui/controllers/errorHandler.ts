@@ -20,10 +20,13 @@ export async function handleError(
 			'\n',
 			error.stack
 		)
-		if (error.response && error.response.status === 401) {
-			return response.redirect('/sign-out')
+		if (error.response && error.response.status === 404) {
+			return response.redirect('/notFound')
+		} else if (error.response && error.response.status === 401) {
+			return response.redirect('/unauthorized')
+		} else if (error.response && error.response.isServer) {
+			response.status(500)
 		}
-		response.status(500)
 
 		const isNonProduction: boolean = !!(
 			process.env.ENV_PROFILE &&
