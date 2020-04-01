@@ -110,7 +110,7 @@ export class Course {
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
 		// tslint:disable-next-line:prefer-for-of
-			for (let i = 0; i < this.modules.length; i++) {
+		for (let i = 0; i < this.modules.length; i++) {
 				if (this.modules[i].type === "face-to-face") {
 					const faceToFaceModule = this.modules[i]
 					if (faceToFaceModule.events[0]) {
@@ -120,7 +120,8 @@ export class Course {
 						const endTimeHoursInMinutes = endTimeHours * 60 + faceToFaceModule.events[0].endDate.getMinutes()
 						const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
 						const durationInSeconds = durationInMinutes * 60
- 						durationArray[0] = durationInSeconds
+						// tslint:disable-next-line:indent
+ 					durationArray[0] = durationInSeconds
 					}
 				}
 			}
