@@ -47,7 +47,7 @@ export async function updateName(request: Request, response: Response) {
 }
 
 export async function addOrganisation(request: Request, response: Response) {
-	const options: {[prop: string]: any} = {}
+	const options: { [prop: string]: any } = {}
 	const email = request.user.userName
 	const domain = email.split("@")[1]
 	const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
@@ -69,20 +69,21 @@ export async function addOrganisation(request: Request, response: Response) {
 export async function enterToken(request: Request, response: Response) {
 	console.log(request.body)
 	response.send(template.render('profile/enterToken', request, response, {
-		originalUrl: request.query.originalUrl,
 		org: request.body.org,
 		organisation: request.body.organisation,
+		originalUrl: request.query.originalUrl,
 	}))
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
- 	const value = request.body.organisation
-	const email = request.user.userName
-	const domain = email.split("@")[1]
+
+	const value = request.body.organisation
 
 	if (!value) {
-		const options: {[prop: string]: any} = {}
-		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat')
+		const options: { [prop: string]: any } = {}
+		const email = request.user.userName
+		const domain = email.split("@")[1]
+		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
 		organisations.data.map((x: any) => {
 			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 		})
@@ -98,10 +99,12 @@ export async function updateOrganisation(request: Request, response: Response) {
 	} else {
 
 		let organisationalUnit
+		const email = request.user.userName
+		const domain = email.split("@")[1]
 
 		try {
 			const organisationResponse: any = await registry.getWithoutHal(value)
-			 	organisationalUnit = {
+			organisationalUnit = {
 				code: organisationResponse.data.code,
 				name: organisationResponse.data.name,
 				paymentMethods: organisationResponse.data.paymentMethods,
@@ -114,14 +117,11 @@ export async function updateOrganisation(request: Request, response: Response) {
 		try {
 			const checkTokenPersonResponse: any = await registry.isTokenizedUser(organisationalUnit.code, domain)
 			if (checkTokenPersonResponse) {
-				// request.session!.save(() =>
-					// response.redirect(`/profile/enterToken?originalUrl=${request.body.originalUrl}&organisation=${value}`)
 				response.send(template.render('profile/enterToken', request, response, {
-					originalUrl: request.body.originalUrl,
 					org: value,
 					organisation: organisationalUnit.name,
+					originalUrl: request.body.originalUrl,
 				}))
-				// )
 			}
 		} catch (error) {
 			if (error.response.status === 404) {
@@ -137,12 +137,28 @@ export async function updateOrganisation(request: Request, response: Response) {
 					throw new Error(error)
 				}
 				request.session!.save(() =>
-					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+						response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 				)
 			} else {
 				throw new Error(error)
 			}
 			console.log(error)
+		}
+
+		try {
+			const dto = {forceOrgChange: false}
+			const res: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
+			if (res.status === 204) {
+				setLocalProfile(request, 'department', organisationalUnit.code)
+				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+				setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
+				request.session!.save(() =>
+						response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+				)
+			}
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
 		}
 	}
 }
@@ -151,15 +167,17 @@ function displayTokenPage(request: Request, response: Response, errMsg: string, 
 	response.send(template.render(`profile/enterToken`, request, response, {
 		error: true,
 		msg: errMsg,
-		originalUrl: request.body.originalUrl,
 		org: value,
-		organisation: organisation,
+		organisation,
+		originalUrl: request.body.originalUrl,
 	}))
 }
 
 export async function checkTokenValidity(request: Request, response: Response) {
+
 	const value = request.body.org
 	let organisationalUnit
+
 	try {
 		const organisationResponse: any = await registry.getWithoutHal(value)
 		organisationalUnit = {
@@ -172,31 +190,30 @@ export async function checkTokenValidity(request: Request, response: Response) {
 		console.log(error)
 		throw new Error(error)
 	}
+
 	const code = organisationalUnit.code
 	const domain = request.user.userName.split("@")[1]
 	const token = request.body.token
 	const accessToken = request.user.accessToken
-	console.log(response)
 
 	if (!token) {
 			displayTokenPage(request, response, "Please don't leave the token blank", value, organisationalUnit.name)
 	} else {
-			const checkTokenValidResponse: any = await registry.updateToken(code, domain, token, false, accessToken)
-			console.log(checkTokenValidResponse)
-			if (checkTokenValidResponse === "NONE") {
-				// call the insert function in CSRS to update tokini
-				setLocalProfile(request, 'department', organisationalUnit.code)
-				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-				try {
-					// make the check
-					await registry.patch('civilServants', {
-						organisationalUnit: request.body.org,
-					}, request.user.accessToken)
-				} catch (error) {
-					logger.error(error)
-					throw new Error(error)
-				}
-				request.session!.save(() =>
+		const checkTokenValidResponse: any = await registry.updateToken(code, domain, token, false, accessToken)
+		if (checkTokenValidResponse === "NONE") {
+			// call the insert function in CSRS to update tokini
+			setLocalProfile(request, 'department', organisationalUnit.code)
+			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+			try {
+				// make the check
+				await registry.patch('civilServants', {
+					organisationalUnit: request.body.org,
+				}, request.user.accessToken)
+			} catch (error) {
+				logger.error(error)
+				throw new Error(error)
+			}
+			request.session!.save(() =>
 					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 				)
 			} else if (checkTokenValidResponse === "Token not found") {
@@ -214,7 +231,7 @@ export async function checkTokenValidity(request: Request, response: Response) {
 
 export async function addProfession(request: Request, response: Response) {
 
-	let options: {[prop: string]: any}
+	let options: { [prop: string]: any }
 	let res: any
 
 	if (request.session!.flash && request.session!.flash.children) {
@@ -225,9 +242,9 @@ export async function addProfession(request: Request, response: Response) {
 	}
 
 	response.send(template.render('profile/profession', request, response, {
-		originalUrl: request.query.originalUrl,
-		professions: Object.entries(options),
-		})
+				originalUrl: request.query.originalUrl,
+				professions: Object.entries(options),
+			})
 	)
 }
 
@@ -235,16 +252,16 @@ export async function updateProfession(request: Request, response: Response) {
 	const profession = request.body.profession
 
 	if (!profession) {
-			const professions = await getOptions("professions")
-			response.send(template.render('profile/profession', request, response, {
-				error: true,
-				originalUrl: request.body.originalUrl,
-				profession,
-				professions,
-			}))
+		const professions = await getOptions("professions")
+		response.send(template.render('profile/profession', request, response, {
+			error: true,
+			originalUrl: request.body.originalUrl,
+			profession,
+			professions,
+		}))
 	} else {
 		const professionsTree: any = await registry.getWithoutHal('/professions/tree')
-		const options: any  = sortList(professionsTree.data)
+		const options: any = sortList(professionsTree.data)
 		let children: any = []
 
 		const areaOfWorkId = profession.split("/professions/").pop()
@@ -288,7 +305,7 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 
 		request.session!.save(() =>
-			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+				response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
@@ -339,7 +356,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		}
 
 		request.session!.save(() =>
-			response.redirect(`/profile/interests?originalUrl=${request.body.originalUrl}`)
+				response.redirect(`/profile/interests?originalUrl=${request.body.originalUrl}`)
 		)
 	}
 }
@@ -379,7 +396,7 @@ export async function updateInterests(request: Request, response: Response) {
 		}
 	}
 	request.session!.save(() =>
-		response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`)
+			response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`)
 	)
 }
 
@@ -414,7 +431,7 @@ export async function updateGrade(request: Request, response: Response) {
 		}
 	}
 	request.session!.save(() =>
-		response.redirect(`/profile/lineManager?originalUrl=${request.body.originalUrl}`)
+			response.redirect(`/profile/lineManager?originalUrl=${request.body.originalUrl}`)
 	)
 }
 
@@ -460,17 +477,17 @@ export async function updateLineManager(request: Request, response: Response) {
 				originalUrl: request.body.originalUrl,
 			}))
 			return
-		} else if (res.status === 200)  {
-			setLocalProfile(request, 'lineManager', { email: lineManager.email })
+		} else if (res.status === 200) {
+			setLocalProfile(request, 'lineManager', {email: lineManager.email})
 		} else {
 			logger.error(res)
 			throw new Error(res)
 		}
-		setLocalProfile(request, 'lineManager', { email: lineManager.email })
+		setLocalProfile(request, 'lineManager', {email: lineManager.email})
 	}
 
 	request.session!.save(() =>
-		response.redirect((request.body.originalUrl !== "undefined") ? request.body.originalUrl : defaultRedirectUrl)
+			response.redirect((request.body.originalUrl !== "undefined") ? request.body.originalUrl : defaultRedirectUrl)
 	)
 }
 
@@ -485,18 +502,18 @@ export async function updateEmail(request: Request, response: Response) {
 		const email = request.user.userName
 		const oldDomain = email.split("@")[1]
 		await identity.isWhitelisted(request.user.accessToken, oldDomain)
-			.then(e => {
-				if (e.status === 200) {
-					if (e === "false") {
-						adjustTokenQuota(request, oldDomain)
-					}
+		.then(e => {
+			if (e.status === 200) {
+				if (e === "false") {
+					adjustTokenQuota(request, oldDomain)
 				}
-			})
-			.catch(error => {
-				logger.error(error)
-				throw new Error(error)
-			})
-		const dto = { forceOrgChange: true}
+			}
+		})
+		.catch(error => {
+			logger.error(error)
+			throw new Error(error)
+		})
+		const dto = {forceOrgChange: true}
 		const res: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
 		if (res.status === 204) {
 			setLocalProfile(request, 'department', null)
@@ -505,7 +522,7 @@ export async function updateEmail(request: Request, response: Response) {
 			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
 			request.login(request.user, () => {
 				request.session!.save(() =>
-					response.redirect(changeEmailURL.toString())
+						response.redirect(changeEmailURL.toString())
 				)
 			})
 		}
@@ -521,10 +538,18 @@ async function getOptions(type: string) {
 
 function sortList(list: any) {
 	return list.sort((a: any, b: any) => {
-		if (a.name === "I don't know") { return 1 }
-		if (b.name === "I don't know") { return -1 }
-		if (a.name < b.name) { return -1 }
-		if (a.name > b.name) { return 1 }
+		if (a.name === "I don't know") {
+			return 1
+		}
+		if (b.name === "I don't know") {
+			return -1
+		}
+		if (a.name < b.name) {
+			return -1
+		}
+		if (a.name > b.name) {
+			return 1
+		}
 		return 0
 	})
 }
@@ -535,7 +560,8 @@ function setLocalProfile(request: Request, key: string, value: any) {
 	request.session!.passport.user = JSON.stringify(user)
 
 	/* tslint:disable-next-line:no-empty */
-	request.session!.save(() => {})
+	request.session!.save(() => {
+	})
 }
 
 function adjustTokenQuota(request: Request, oldDomain: string) {
@@ -574,7 +600,7 @@ class LineManagerForm {
 	/* tslint:disable-next-line:variable-name */
 	private readonly _confirm: string
 
-	constructor(data: {email: string, confirm: string}) {
+	constructor(data: { email: string, confirm: string }) {
 		this._email = data.email
 		this._confirm = data.confirm
 	}
@@ -590,6 +616,7 @@ class LineManagerForm {
 	isPresent() {
 		return (this._email || this._confirm)
 	}
+
 	async validate() {
 		const errors = await validate(this)
 		/*tslint:disable*/

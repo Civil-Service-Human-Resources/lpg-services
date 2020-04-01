@@ -241,14 +241,6 @@ export async function getWithoutHal(path: string): Promise<AxiosResponse> {
 	}
 }
 
-// export async function isTokenizedUser(org: string, domain: string): Promise<AxiosResponse> {
-// 	try {
-// 		return await http.get(config.REGISTRY_SERVICE_URL + org)
-// 	}	catch (error) {
-// 		throw new Error(error)
-// 	}
-// }
-
 export async function isTokenizedUser(
 	code: string,
 	domain: string
@@ -269,30 +261,28 @@ export async function isTokenizedUser(
 		})
 
 		return tokenziedUser
-		console.log("test")
 	}
 
 export async function isValidToken(
-    code: string,
-    domain: string,
-    token: string
+		code: string,
+		domain: string,
+		token: string
 ) {
 
-		let validToken = false
-		await http.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
-			params: {
-				code,
-				domain,
-				token,
-			},
-		}).then(e => {
-			if (e.status === 200) {
-				validToken = true
-			} else {
-				validToken = false
-			}
-		})
-
+	let validToken = false
+	await http.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
+		params: {
+			code,
+			domain,
+			token,
+		},
+	}).then(e => {
+		if (e.status === 200) {
+			validToken = true
+		} else {
+			validToken = false
+		}
+	})
 	return validToken
 }
 
@@ -307,10 +297,10 @@ export async function updateToken(
 	const url = config.REGISTRY_SERVICE_URL + `/agencyTokens`
 
 	const data = JSON.stringify({
-		domain: domain,
-		token: token,
-		code: code,
-		removeUser: removeUser,
+		code,
+		domain,
+		removeUser,
+		token,
 	})
 
 	let errorMsg = ""
