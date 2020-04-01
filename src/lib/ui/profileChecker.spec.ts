@@ -7,7 +7,6 @@ import * as sinon from 'sinon'
 import * as sinonChai from 'sinon-chai'
 import {mockReq, mockRes} from 'sinon-express-mock'
 import {ProfileChecker} from './profileChecker'
-// import {enterToken} from '../../ui/controllers/profile'
 
 chai.use(sinonChai)
 
@@ -66,11 +65,10 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
+
 		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
 	})
 
@@ -78,6 +76,7 @@ describe('ProfileChecker tests', () => {
 		const request = mockReq({
 			originalUrl: '/home',
 			user: {
+				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 			},
 		})
@@ -86,11 +85,9 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
 		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
 	})
 
@@ -112,8 +109,7 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
@@ -139,8 +135,7 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
@@ -224,11 +219,9 @@ describe('ProfileChecker tests', () => {
 			callback(undefined)
 		}
 
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const response = mockRes()
 		response.redirect('profile/enterToken')
-
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
@@ -309,8 +302,7 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
