@@ -217,14 +217,17 @@ export async function checkTokenValidity(request: Request, response: Response) {
 					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 				)
 			} else if (checkTokenValidResponse === "Token not found") {
-				// setLocalProfile(request, 'tokenzied', null)
-				displayTokenPage(request, response, "Please make sure you entered the correct token", value, organisationalUnit.name)
+				displayTokenPage(request,
+						response,
+						"Please make sure you entered the correct token", value, organisationalUnit.name)
 			} else if (checkTokenValidResponse === "Not enough space") {
-				// setLocalProfile(request, 'tokenzied', null)
-				displayTokenPage(request, response, "Sorry, there is no enough spaces. Contact the office", value, organisationalUnit.name)
+				displayTokenPage(request,
+						response,
+						"Sorry, there is no enough spaces. Contact the office", value, organisationalUnit.name)
 			} else {
-				// setLocalProfile(request, 'tokenzied', null)
-				displayTokenPage(request, response, "Sorry, something went wrong. We are working on it", value, organisationalUnit.name)
+				displayTokenPage(request,
+						response,
+						"Sorry, something went wrong. We are working on it", value, organisationalUnit.name)
 			}
 	}
 }
