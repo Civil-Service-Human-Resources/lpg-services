@@ -292,8 +292,6 @@ export async function updateToken(
 	accessToken: string
 ) {
 
-	const url = config.REGISTRY_SERVICE_URL + `/agencyTokens`
-
 	const data = JSON.stringify({
 		code,
 		domain,
@@ -301,23 +299,17 @@ export async function updateToken(
 		token,
 	})
 
-	let errorMsg = ""
-	try {
-		await http.put(url, data, {
+	const result = new Promise((resolve, reject) => {
+		httpCsrs
+		.put(config.REGISTRY_SERVICE_URL + `/agencyTokens`, data, {
 			headers: {Authorization: `Bearer ${accessToken}`},
 		})
-		errorMsg = "NONE"
-	} catch (error) {
-		if (error.response.status === 404) {
-			errorMsg = "Token not found"
-		} else if (error.response.status === 409) {
-			errorMsg = "Not enough space"
-		} else if (error.response.status === 500) {
-			errorMsg = "Server error"
-		} else {
-			throw new Error(error)
-		}
-	}
-
-	return errorMsg
+		.then((response: any) => {
+			resolve(response)
+		})
+		.catch((error: any) => {
+			resolve(error.response)
+		})
+	})
+	return result
 }
