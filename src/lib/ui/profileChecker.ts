@@ -19,9 +19,6 @@ export class ProfileChecker {
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
 			return (Boolean (!user.forceOrgChange.isForceOrgChange()) && (Boolean(user.department)))
 		}),
-		// new ProfileSection('enterToken', '/profile/enterToken', (user: User) => {
-		// 	return Boolean(user.tokenzied)
-		// }),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
 			return Boolean(user.areasOfWork && user.areasOfWork.length)
 		}),
@@ -30,9 +27,7 @@ export class ProfileChecker {
 		}),
 	]
 	isProfileRequest(request: Request) {
-		console.log(request.path)
 		return Boolean(this._profileSections.filter(entry => {
-			console.log(entry.path)
 			return entry.path === request.path
 		}).length)
 	}
