@@ -77,11 +77,12 @@ export async function enterToken(request: Request, response: Response) {
 export async function updateOrganisation(request: Request, response: Response) {
 
 	const value = request.body.organisation
+	const email = request.user.userName
+	const domain = email.split("@")[1]
 
 	if (!value) {
 		const options: { [prop: string]: any } = {}
-		const email = request.user.userName
-		const domain = email.split("@")[1]
+
 		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
 		organisations.data.map((x: any) => {
 			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
@@ -95,71 +96,77 @@ export async function updateOrganisation(request: Request, response: Response) {
 			originalUrl: request.body.originalUrl,
 			value,
 		}))
+	}
+
+	let organisationalUnit
+
+	try {
+		const organisationResponse: any = await registry.getWithoutHal(value)
+		organisationalUnit = {
+			code: organisationResponse.data.code,
+			name: organisationResponse.data.name,
+			paymentMethods: organisationResponse.data.paymentMethods,
+		}
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+
+	let isWhitelisted: any = "false"
+	let isTokenizedUser: any = false
+
+	try {
+		isWhitelisted = identity.isWhitelisted(request.user.accessToken, domain)
+	} catch (error) {
+		logger.error(error)
+		throw new Error(error)
+	}
+
+	if (!isWhitelisted) {
+		isTokenizedUser = await registry.isTokenizedUser(organisationalUnit.code, domain)
+	}
+
+	if (isWhitelisted === "true" && !isTokenizedUser) {
+
+		try {
+			await registry.patch('civilServants', {organisationalUnit: request.body.organisation, },
+					request.user.accessToken)
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
+		}
+
+		setLocalProfile(request, 'department', organisationalUnit.code)
+		setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+
+		let res: any
+		const dto = {forceOrgChange: false}
+
+		try {
+			res = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
+		}
+
+		if (res.status === 204) {
+
+			setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
+
+			request.session!.save(() =>
+					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+			)
+		} else {
+			throw new Error(res)
+		}
+	} else if (isTokenizedUser) {
+			response.send(template.render('profile/enterToken', request, response, {
+				org: value,
+				organisation: organisationalUnit.name,
+				originalUrl: request.body.originalUrl,
+			}))
 	} else {
-
-		let organisationalUnit
-		const email = request.user.userName
-		const domain = email.split("@")[1]
-
-		try {
-			const organisationResponse: any = await registry.getWithoutHal(value)
-			organisationalUnit = {
-				code: organisationResponse.data.code,
-				name: organisationResponse.data.name,
-				paymentMethods: organisationResponse.data.paymentMethods,
-			}
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-
-		try {
-			const checkTokenPersonResponse: any = await registry.isTokenizedUser(organisationalUnit.code, domain)
-			if (checkTokenPersonResponse) {
-				response.send(template.render('profile/enterToken', request, response, {
-					org: value,
-					organisation: organisationalUnit.name,
-					originalUrl: request.body.originalUrl,
-				}))
-			}
-		} catch (error) {
-			if (error.response.status === 404) {
-				try {
-					// make the check
-					await registry.patch('civilServants', {
-						organisationalUnit: request.body.organisation,
-					}, request.user.accessToken)
-				} catch (error) {
-					logger.error(error)
-					throw new Error(error)
-				}
-
-				setLocalProfile(request, 'department', organisationalUnit.code)
-				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-
-				request.session!.save(() =>
-						response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
-				)
-			} else {
-				throw new Error(error)
-			}
-		}
-
-		try {
-			const dto = {forceOrgChange: false}
-			const res: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
-			if (res.status === 204) {
-				setLocalProfile(request, 'department', organisationalUnit.code)
-				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-				setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
-				request.session!.save(() =>
-						response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
-				)
-			}
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
+		throw new Error("Unexpected user state, user is logged in and is neither whitelisted or tokenized")
 	}
 }
 
@@ -187,7 +194,6 @@ export async function checkTokenValidity(request: Request, response: Response) {
 		}
 
 	} catch (error) {
-		console.log(error)
 		throw new Error(error)
 	}
 
@@ -200,35 +206,35 @@ export async function checkTokenValidity(request: Request, response: Response) {
 			displayTokenPage(request, response, "Please don't leave the token blank", value, organisationalUnit.name)
 	} else {
 		const checkTokenValidResponse: any = await registry.updateToken(code, domain, token, false, accessToken)
+
 		if (checkTokenValidResponse.status === 204) {
-			// call the insert function in CSRS to update tokini
-			setLocalProfile(request, 'department', organisationalUnit.code)
-			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 			try {
-				// make the check
 				await registry.patch('civilServants', {
 					organisationalUnit: request.body.org,
 				}, request.user.accessToken)
 			} catch (error) {
-				logger.error(error)
 				throw new Error(error)
 			}
+
+			setLocalProfile(request, 'department', organisationalUnit.code)
+			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+
 			request.session!.save(() =>
 					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
-				)
-			} else if (checkTokenValidResponse.status === 404) {
-				displayTokenPage(request,
-						response,
-						"Please make sure you entered the correct token", value, organisationalUnit.name)
-			} else if (checkTokenValidResponse.status === 409) {
-				displayTokenPage(request,
-						response,
-						"Sorry, there is no enough spaces. Contact the office", value, organisationalUnit.name)
-			} else {
-				displayTokenPage(request,
-						response,
-						"Sorry, something went wrong. We are working on it", value, organisationalUnit.name)
-			}
+			)
+		} else if (checkTokenValidResponse.status === 404) {
+			displayTokenPage(request,
+					response,
+					"Please make sure you entered the correct token", value, organisationalUnit.name)
+		} else if (checkTokenValidResponse.status === 409) {
+			displayTokenPage(request,
+					response,
+					"Sorry, there is no enough spaces. Contact the office", value, organisationalUnit.name)
+		} else {
+			displayTokenPage(request,
+					response,
+					"Sorry, something went wrong. We are working on it", value, organisationalUnit.name)
+		}
 	}
 }
 

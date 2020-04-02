@@ -198,11 +198,15 @@ export async function patch(node: string, data: any, token: string) {
 					bearer: token,
 				},
 			})
-			.patch(data, (error, document) => {
+			.patch(data, (error, response) => {
 				if (error) {
-					resolve(false)
+					reject(false)
 				} else {
-					resolve(true)
+					if (response.statusCode >= 200 && response.statusCode < 300) {
+						resolve(true)
+					} else {
+						reject(false)
+					}
 				}
 			})
 	)
