@@ -198,7 +198,7 @@ export async function checkTokenValidity(request: Request, response: Response) {
 			displayTokenPage(request, response, "Please don't leave the token blank", value, organisationalUnit.name)
 	} else {
 		const checkTokenValidResponse: any = await registry.updateToken(code, domain, token, false, accessToken)
-		if (checkTokenValidResponse === "NONE") {
+		if (checkTokenValidResponse.status === 204) {
 			// call the insert function in CSRS to update tokini
 			setLocalProfile(request, 'department', organisationalUnit.code)
 			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
@@ -214,11 +214,11 @@ export async function checkTokenValidity(request: Request, response: Response) {
 			request.session!.save(() =>
 					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 				)
-			} else if (checkTokenValidResponse === "Token not found") {
+			} else if (checkTokenValidResponse.status === 404) {
 				displayTokenPage(request,
 						response,
 						"Please make sure you entered the correct token", value, organisationalUnit.name)
-			} else if (checkTokenValidResponse === "Not enough space") {
+			} else if (checkTokenValidResponse.status === 409) {
 				displayTokenPage(request,
 						response,
 						"Sorry, there is no enough spaces. Contact the office", value, organisationalUnit.name)
