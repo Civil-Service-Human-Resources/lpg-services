@@ -67,7 +67,6 @@ export async function addOrganisation(request: Request, response: Response) {
 }
 
 export async function enterToken(request: Request, response: Response) {
-	console.log(request.body)
 	response.send(template.render('profile/enterToken', request, response, {
 		org: request.body.org,
 		organisation: request.body.organisation,
@@ -142,7 +141,6 @@ export async function updateOrganisation(request: Request, response: Response) {
 			} else {
 				throw new Error(error)
 			}
-			console.log(error)
 		}
 
 		try {
