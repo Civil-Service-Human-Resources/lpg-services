@@ -124,8 +124,6 @@ export async function updateOrganisation(request: Request, response: Response) {
 			}
 		} catch (error) {
 			if (error.response.status === 404) {
-				setLocalProfile(request, 'department', organisationalUnit.code)
-				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 				try {
 					// make the check
 					await registry.patch('civilServants', {
@@ -135,6 +133,10 @@ export async function updateOrganisation(request: Request, response: Response) {
 					logger.error(error)
 					throw new Error(error)
 				}
+
+				setLocalProfile(request, 'department', organisationalUnit.code)
+				setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+
 				request.session!.save(() =>
 						response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
 				)
