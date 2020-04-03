@@ -144,6 +144,7 @@ export async function tryCancelBooking(
 		},
 		400: async () => {
 			req.session!.save(() => {
+				req.flash('cancelBookingError', "An error occurred while trying to cancel your booking.")
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 			})
 		},
