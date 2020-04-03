@@ -371,6 +371,7 @@ export class Event {
 	date: Date
 	startDate: Date
 	endDate: Date
+	dateRanges: Date[]
 	location: string
 	capacity: number
 	availability: number
