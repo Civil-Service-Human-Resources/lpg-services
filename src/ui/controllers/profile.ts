@@ -116,7 +116,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	let isTokenizedUser: any = false
 
 	try {
-		isWhitelisted = identity.isWhitelisted(request.user.accessToken, domain)
+		isWhitelisted = await identity.isWhitelisted(request.user.accessToken, domain)
 	} catch (error) {
 		logger.error(error)
 		throw new Error(error)
@@ -126,7 +126,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 		isTokenizedUser = await registry.isTokenizedUser(organisationalUnit.code, domain)
 	}
 
-	if (isWhitelisted === "true" && !isTokenizedUser) {
+	if (isWhitelisted === true && !isTokenizedUser) {
 
 		try {
 			await registry.patch('civilServants', {organisationalUnit: request.body.organisation, },
