@@ -369,6 +369,8 @@ export class Event {
 
 	id: string
 	date: Date
+	startDate: Date
+	endDate: Date
 	location: string
 	capacity: number
 	availability: number
