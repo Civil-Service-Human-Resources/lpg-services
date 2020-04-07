@@ -1,9 +1,9 @@
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import _ = require("lodash")
 import * as moment from 'moment'
 import {Duration} from 'moment'
-import _ = require("lodash");
 
 export interface LineManager {
 	email: string
