@@ -4,14 +4,15 @@
     <base href="/">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="mask-icon" href="/img/gov.uk_logotype_crown.png" color="#0b0c0c">
+    <link rel="shortcut icon" href="{($req.app.locals.staticAssetRoot)}/img/favicon.ico" type="image/x-icon" />
+    <link rel="mask-icon" href="{($req.app.locals.staticAssetRoot)}/img/gov.uk_logotype_crown.png" color="#0b0c0c">
     <meta name="theme-color" content="#0b0c0c" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:image" content="/img/opengraph-image.png">
+    <meta property="og:image" content="{($req.app.locals.staticAssetRoot)}/img/opengraph-image.png">
     <title>{title} &ndash; {$i18n('proposition_name')}</title>
-	<link rel="stylesheet" href="/styles/main.css?v=">
-	<link rel="stylesheet" href="/styles/video-js.min.css">
-    <script src="/js/jquery.min.js"></script>
+	<link rel="stylesheet" href="{($req.app.locals.staticAssetRoot)}/styles/main.css">
+	<link rel="stylesheet" href="{($req.app.locals.staticAssetRoot)}/styles/video-js.min.css">
+    <script src="{($req.app.locals.staticAssetRoot)}/js/jquery.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id={($config.GOOGLE_ANALYTICS_ID)}"></script> {@html $config.GOOGLE_ANALYTICS_CODE}
 </head>
 <body>
@@ -27,12 +28,12 @@
         <slot> </slot>
     </Layout>
     <script>document.body.className = document.body.className.replace('', 'js-enabled');</script>
-    <script src="/js/govuk_frontend_toolkit/govuk/show-hide-content.js"></script>
-    <script src="/js/govuk_frontend_toolkit/govuk/modules.js"></script>
-    <script src="/js/govuk_frontend_toolkit/govuk/govuk-template.js"></script>
-    <script type="text/javascript" src="/js/accessible-autocomplete.min.js"></script>
+    <script src="{($req.app.locals.staticAssetRoot)}/js/govuk_frontend_toolkit/govuk/show-hide-content.js"></script>
+    <script src="{($req.app.locals.staticAssetRoot)}/js/govuk_frontend_toolkit/govuk/modules.js"></script>
+    <script src="{($req.app.locals.staticAssetRoot)}/js/govuk_frontend_toolkit/govuk/govuk-template.js"></script>
+    <script type="text/javascript" src="{($req.app.locals.staticAssetRoot)}/js/accessible-autocomplete.min.js"></script>
 
-    <script src="/js/main.js"></script>
+    <script src="{($req.app.locals.staticAssetRoot)}/js/main.js"></script>
 
 
 </body>

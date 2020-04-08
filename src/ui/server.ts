@@ -3,15 +3,16 @@ const appInsights = require('applicationinsights')
 import * as config from 'lib/config'
 
 appInsights
-	.setup(config.INSTRUMENTATION_KEY)
-	.setAutoDependencyCorrelation(true)
-	.setAutoCollectRequests(true)
-	.setAutoCollectPerformance(true)
-	.setAutoCollectExceptions(true)
-	.setAutoCollectDependencies(true)
-	.setAutoCollectConsole(true)
-	.setUseDiskRetryCaching(true)
-	.start()('serve-favicon')
+.setup(config.INSTRUMENTATION_KEY)
+.setAutoDependencyCorrelation(true)
+.setAutoCollectRequests(true)
+.setAutoCollectPerformance(true)
+.setAutoCollectExceptions(true)
+.setAutoCollectDependencies(true)
+.setAutoCollectConsole(true)
+.setUseDiskRetryCaching(true)
+.start()
+
 /* tslint:enable */
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
@@ -23,9 +24,9 @@ import * as session from 'express-session'
 import * as fs from 'fs'
 import * as log4js from 'log4js'
 import * as redis from 'redis'
+import { URL } from 'url'
 
 import * as lusca from 'lusca'
-import * as path from 'path'
 import * as serveStatic from 'serve-static'
 import * as sessionFileStore from 'session-file-store'
 
@@ -55,7 +56,6 @@ log4js.configure(config.LOGGING)
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
-const favicon = require('serve-favicon')
 /* tslint:enable */
 
 const {PORT = 3001} = process.env
@@ -131,31 +131,42 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
-const luscaPolicy = luscaConfig.setCspPolicy()
-app.use(
-	lusca({
-		csp: {
-			policy: luscaPolicy,
-		},
-		hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
-		nosniff: true,
-		referrerPolicy: 'same-origin',
-		xframe: 'SAMEORIGIN',
-		xssProtection: true,
-	})
-)
+app.locals.staticAssetDomain = ''
+app.locals.staticAssetRoot = ''
 
-app.use(
-	(req: express.Request, res: express.Response, next: express.NextFunction) => {
-		res.setHeader('Cache-Control', 'private, no-cache, no-store, max-age=0')
-		res.setHeader('Pragma', 'no-cache')
-		res.setHeader('Expires', '0')
-		next()
+if (config.STATIC_ASSET_ROOT) {
+	try {
+		const staticAssetUrl = new URL(config.STATIC_ASSET_ROOT)
+
+		app.locals.staticAssetDomain = staticAssetUrl.hostname
+		app.locals.staticAssetRoot = config.STATIC_ASSET_ROOT
+
+		if (staticAssetUrl.protocol !== "https:") {
+			logger.warn(`Static assets are not being served over ssl (static asset route: ${app.locals.staticAssetRoot})`)
+		}
+
+	} catch (error) {
+		// tslint:disable-next-line:max-line-length
+		logger.error(`The configured STATIC_ASSET_ROOT value ("${config.STATIC_ASSET_ROOT}") is not a valid URL, static content will default to being severed from the application server.\nFull error:\n${error}`)
 	}
-)
+}
 
 app.use(serveStatic('assets'))
-app.use(favicon(path.join('assets', 'img', 'favicon.ico')))
+
+const luscaPolicy = luscaConfig.setCspPolicy(app.locals.staticAssetDomain)
+app.use(
+		lusca({
+			csp: {
+				policy: luscaPolicy,
+			},
+			hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
+			nosniff: true,
+			referrerPolicy: 'same-origin',
+			xframe: 'SAMEORIGIN',
+			xssProtection: true,
+		})
+)
+
 passport.configure(
 	config.AUTHENTICATION.clientId,
 	config.AUTHENTICATION.clientSecret,
