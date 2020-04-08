@@ -169,3 +169,5 @@ export const REDIS = set({
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
 })
+
+export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT

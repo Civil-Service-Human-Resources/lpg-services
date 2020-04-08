@@ -1,23 +1,30 @@
 import * as config from "lib/config/index"
 
-export function setCspPolicy() {
-	let cdn = {}
+export function setCspPolicy(staticAssetDomain: string) {
+	let contentCdn
 	if (config.PROFILE === 'prod') {
-		cdn = 'https://cdn.learn.civilservice.gov.uk/'
+		contentCdn = ' https://cdn.learn.civilservice.gov.uk'
 	} else {
-		cdn = `https://${config.PROFILE}-cdn.cshr.digital/`
+		contentCdn = ` https://${config.PROFILE}-cdn.cshr.digital`
+	}
+
+	let staticCdn: string
+	if (staticAssetDomain) {
+		staticCdn = ` ${staticAssetDomain}`
+	} else {
+		staticCdn = ''
 	}
 
 	const policy =  {
 		'child-src': 'https://youtube.com https://www.youtube.com',
-		'default-src': "'self' " + cdn,
-		'font-src': 'data:',
+		'default-src': "'self'" + contentCdn + staticCdn,
+		'font-src': 'data:' + staticCdn,
 		'frame-src': 'https://youtube.com https://www.youtube.com',
-		'img-src': "'self' data: https://www.google-analytics.com",
+		'img-src': "'self' data: https://www.google-analytics.com" + staticCdn,
 		'script-src':
 		"'self' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com " +
-		"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'",
-		'style-src': "'self' 'unsafe-inline'",
+		"https://www.youtube.com https://s.ytimg.com 'unsafe-inline'" + staticCdn,
+		'style-src': "'self' 'unsafe-inline'" + staticCdn,
 	}
 	return policy
 }
