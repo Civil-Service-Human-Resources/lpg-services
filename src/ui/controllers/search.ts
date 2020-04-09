@@ -148,7 +148,7 @@ export async function search(ireq: express.Request, res: express.Response) {
 }
 
 async function getDepartmentData(user: model.User, selectedDepartments: string[]) {
-	const allDepartments = (await registry.halNode('organisationalUnits'))
+	const allDepartments = await registry.getAllOrganisationUnits()
 
 	const yourDepartment = allDepartments.find(department => department.code === user.department)
 	const otherDepartments = allDepartments.filter(department => department.code !== user.department)
@@ -161,7 +161,8 @@ async function getDepartmentData(user: model.User, selectedDepartments: string[]
 }
 
 async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[]) {
-	const allAreasOfWork = await registry.halNode('professions')
+	const allAreasOfWork = await registry.getAllProfessions()
+
 	const userAreasOfWork = (user.otherAreasOfWork || []).map(aow => aow.name)
 		.concat(user.areasOfWork || [])
 
@@ -179,7 +180,8 @@ async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[
 }
 
 async function getInterestsData(user: model.User, selectedInterests: string[]) {
-	const allInterests = await registry.halNode('interests')
+	const allInterests = await registry.getAllInterests()
+
 	const userInterests = (user.interests || []).map(interest => interest.name)
 
 	const yourInterests = allInterests.filter(interest => userInterests.indexOf(interest.name) > -1)
