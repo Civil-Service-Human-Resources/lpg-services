@@ -112,7 +112,7 @@ export class Course {
 		const durationArray = this.modules.map(m => m.duration)
 
 		// tslint:disable-next-line:only-arrow-functions
-		this.modules.forEach(function(module) {
+		this.modules.forEach(function(module, i) {
 			if (module.type === "face-to-face") {
 				if (module.events[0]) {
 					const event = module.events[0]
@@ -135,9 +135,11 @@ export class Course {
 
 						const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
 						durationInSeconds += durationInMinutes * 60
+
+						durationArray[i] = durationInSeconds
 					})
 					// tslint:disable-next-line:indent
-					durationArray[0] = durationInSeconds
+
 				}
 			}
 		})
