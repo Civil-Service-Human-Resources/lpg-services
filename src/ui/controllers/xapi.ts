@@ -89,6 +89,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 }
 
 async function unwrapPost(req: extended.CourseRequest) {
+	// @ts-ignore
 	req.method = req.query.method
 	const data =  querystring.parse(req.body)
 
