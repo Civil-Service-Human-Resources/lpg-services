@@ -54,49 +54,61 @@ export async function search(ireq: express.Request, res: express.Response) {
 
 	const start = new Date()
 	if (req.query.p) {
+		// @ts-ignore
 		page = req.query.p
 	}
 	if (req.query.s) {
+		// @ts-ignore
 		size = req.query.s
 	}
 
 	if (req.query.courseType) {
 		if (Array.isArray(req.query.courseType)) {
+			// @ts-ignore
 			courseTypes = req.query.courseType
 		} else {
+			// @ts-ignore
 			courseTypes = [req.query.courseType]
 		}
 	}
 
 	if (req.query.department) {
 		if (Array.isArray(req.query.department)) {
+			// @ts-ignore
 			departments = req.query.department
 		} else {
+			// @ts-ignore
 			departments = [req.query.department]
 		}
 	}
 
 	if (req.query.areaOfWork) {
 		if (Array.isArray(req.query.areaOfWork)) {
+			// @ts-ignore
 			areasOfWork = req.query.areaOfWork
 		} else {
+			// @ts-ignore
 			areasOfWork = [req.query.areaOfWork]
 		}
 	}
 
 	if (req.query.interest) {
 		if (Array.isArray(req.query.interest)) {
+			// @ts-ignore
 			interests = req.query.interest
 		} else {
+			// @ts-ignore
 			interests = [req.query.interest]
 		}
 	}
 
 	if (req.query.cost) {
+		// @ts-ignore
 		cost = req.query.cost
 	}
 
 	if (req.query.q) {
+		// @ts-ignore
 		query = striptags(req.query.q)
 	}
 
