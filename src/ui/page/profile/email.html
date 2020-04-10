@@ -1,19 +1,24 @@
 <Page title="Confirm Change of Email" {_csrf}>
     <div class="container">
         <h1 class="heading-large">
-            <span class="heading-primary">Confirm change of Email</span>
+            <span class="heading-primary">Confirm Change of Email</span>
         </h1>
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading heading-medium">
                     Are you sure you want to update your email?
                 </h2>
-                <p class="govuk-body">Change your email</p>
                 <table class="key-value-list key-value-list--auto u-space-b30 table--top">
+                    <thead>
+                        <tr>
+                            <th>Change your email</th>
+                            <th>Current email</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr>
                             <td class="key-value-list__key key-value-list__key--auto">{$i18n('profile_email_label')}</td>
-                            <td class="key-value-list__value key-value-list__value--auto lpg-email-address">{$signedInUser.userName}</td>
+                            <td class="key-value-list__value--auto lpg-email-address">{$signedInUser.userName}</td>
                         </tr>
                     </tbody>
                 </table>
