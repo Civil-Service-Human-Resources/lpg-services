@@ -219,9 +219,27 @@ export async function checkTokenValidity(request: Request, response: Response) {
 			setLocalProfile(request, 'department', organisationalUnit.code)
 			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 
-			request.session!.save(() =>
+			let res: any
+			const dto = {forceOrgChange: false}
+
+			try {
+				res = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
+			} catch (error) {
+				console.log(error)
+				throw new Error(error)
+			}
+
+			if (res.status === 204) {
+
+				setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
+
+				request.session!.save(() =>
 					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
-			)
+				)
+			} else {
+				throw new Error(res)
+			}
+
 		} else if (checkTokenValidResponse.status === 404) {
 			displayTokenPage(request,
 					response,
