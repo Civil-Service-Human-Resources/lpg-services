@@ -209,6 +209,7 @@ export async function newRenderAreasOfWorkPage(
 
 	// @ts-ignore
 	if (req.query.select) {
+		// @ts-ignore
 		const arrUpdate = req.query.select.split('/')
 		// @ts-ignore
 		await patchAndUpdate(arrUpdate[0], req.query.select, 'areas-of-work', req, res)
