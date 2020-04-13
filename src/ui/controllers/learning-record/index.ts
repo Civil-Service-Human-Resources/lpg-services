@@ -108,6 +108,7 @@ export async function record(ireq: express.Request, res: express.Response) {
 		res.sendStatus(400)
 		return
 	}
+	// @ts-ignore
 	const course = await catalog.get(courseId, req.user)
 	if (!course) {
 		logger.error(`No matching course found for course ID ${courseId}`)
@@ -120,6 +121,7 @@ export async function record(ireq: express.Request, res: express.Response) {
 		res.sendStatus(400)
 		return
 	}
+	// @ts-ignore
 	const module = course.modules.find(m => m.id === moduleId)
 	if (!module) {
 		logger.error(`No matching module found for module ID ${moduleId}`)
@@ -132,6 +134,7 @@ export async function record(ireq: express.Request, res: express.Response) {
 		res.sendStatus(500)
 		return
 	}
+	// @ts-ignore
 	const verbId = xapi.lookup(verb)
 	if (!verbId) {
 		logger.error(`Unknown xAPI verb: ${verb}`)
@@ -141,6 +144,7 @@ export async function record(ireq: express.Request, res: express.Response) {
 	let extensions = req.query.extensions
 	if (extensions) {
 		try {
+			// @ts-ignore
 			extensions = JSON.parse(extensions)
 		} catch (err) {
 			logger.error(
@@ -153,6 +157,7 @@ export async function record(ireq: express.Request, res: express.Response) {
 	let resultData = req.query.resultData
 	if (resultData) {
 		try {
+			// @ts-ignore
 			resultData = JSON.parse(resultData)
 		} catch (err) {
 			logger.error(
@@ -163,15 +168,8 @@ export async function record(ireq: express.Request, res: express.Response) {
 		}
 	}
 	try {
-		await xapi.record(
-			req,
-			course,
-			verbId,
-			extensions,
-			module,
-			undefined,
-			resultData
-		)
+		// @ts-ignore
+		await xapi.record(req, course, verbId, extensions, module, undefined, resultData)
 	} catch (err) {
 		logger.error(err.toString())
 		res.sendStatus(500)

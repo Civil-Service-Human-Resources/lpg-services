@@ -97,6 +97,7 @@ export async function renderChooseDate(
 		req.flash('bookingSelected')[0] || req.session!.selectedEventId || null
 
 	if (!selectedEventId) {
+		// @ts-ignore
 		selectedEventId = req.query.eventId
 		if (req.session!.selectedEventId) {
 			req.session!.selectedEventId = selectedEventId

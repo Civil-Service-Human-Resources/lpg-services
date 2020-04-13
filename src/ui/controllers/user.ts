@@ -207,15 +207,11 @@ export async function newRenderAreasOfWorkPage(
 	let levels: Level[][] = []
 	let prevLevelUrl
 
+	// @ts-ignore
 	if (req.query.select) {
 		const arrUpdate = req.query.select.split('/')
-		await patchAndUpdate(
-			arrUpdate[0],
-			req.query.select,
-			'areas-of-work',
-			req,
-			res
-		)
+		// @ts-ignore
+		await patchAndUpdate(arrUpdate[0], req.query.select, 'areas-of-work', req, res)
 		return
 	}
 
@@ -436,6 +432,7 @@ export function signIn(req: express.Request, res: express.Response) {
 		res.redirect('/authenticate')
 	} else {
 		res.send(
+			// @ts-ignore
 			renderSignIn(req, res, {
 				authenticationServiceUrl: config.AUTHENTICATION.serviceUrl,
 				loginFailed,
