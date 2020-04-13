@@ -97,6 +97,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		let noOption
 
 		if (req.query.delete) {
+			// @ts-ignore
 			const courseToDelete = await catalog.get(req.query.delete, user)
 			confirmTitle = req.__(
 				'learning_confirm_removal_plan_title',
@@ -115,6 +116,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		}
 
 		if (req.query.skip || req.query.move) {
+			// @ts-ignore
 			eventActionDetails = req.query[action].split(',')
 			eventActionDetails.push(action)
 			const module = await catalog.get(eventActionDetails[0], user)
