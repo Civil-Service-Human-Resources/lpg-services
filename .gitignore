@@ -1,6 +1,5 @@
-**/*.iml
 *.log
-**/*.iml
+*.iml
 .DS_Store
 .env
 .idea
@@ -8,7 +7,6 @@
 .sessions
 dist/
 node_modules/
-package-lock.json
 pyhome/
 src/management-ui/assets/styles/main.css
 src/ui/assets/styles/main.css
