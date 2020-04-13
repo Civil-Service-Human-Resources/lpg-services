@@ -209,6 +209,7 @@ export async function newRenderAreasOfWorkPage(
 	let levels: Level[][] = []
 	let prevLevelUrl
 
+	// @ts-ignore
 	if (req.query.select) {
 		// @ts-ignore
 		const arrUpdate = req.query.select.split('/')
