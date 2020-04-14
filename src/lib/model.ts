@@ -1,7 +1,8 @@
+import _ = require("lodash")
+
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
-import _ = require("lodash")
 import * as moment from 'moment'
 import {Duration} from 'moment'
 
@@ -191,7 +192,12 @@ export class Course {
 				if (bookedModule) {
 					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
 					if (event) {
-						return event.dateRanges
+						return event.dateRanges.sort(function compare(a, b) {
+							const dateA = new Date(_.get(a, 'date', ''))
+							const dateB = new Date(_.get(b, 'date', ''))
+							// @ts-ignore
+							return dateA - dateB
+						})
 					}
 				}
 			}
@@ -362,7 +368,6 @@ export class Module {
 		if (!this.duration) {
 			return null
 		}
-
 		return datetime.formatCourseDuration(this.duration)
 	}
 
