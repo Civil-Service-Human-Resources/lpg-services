@@ -208,27 +208,6 @@ describe('ProfileChecker tests', () => {
 		expect(next).to.have.been.calledOnce
 	})
 
-	it('The profile checker should not stop the redirection to the token page', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				givenName: 'Test User',
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const next = (err => undefined) as NextFunction
-		const response = mockRes()
-		response.redirect('profile/enterToken')
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		console.log(response.redirect.callCount)
-		expect(response.redirect).to.have.been.calledWithExactly('profile/enterToken')
-	})
-
 	it('should call next if mandatory sections of profile are complete', () => {
 		const request = mockReq({
 			originalUrl: '/home',
