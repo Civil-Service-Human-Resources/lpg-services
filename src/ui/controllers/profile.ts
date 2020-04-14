@@ -66,14 +66,6 @@ export async function addOrganisation(request: Request, response: Response) {
 	}))
 }
 
-/*export async function enterToken(request: Request, response: Response) {
-	response.send(template.render('profile/enterToken', request, response, {
-		org: request.body.org,
-		organisation: request.body.organisation,
-		originalUrl: request.query.originalUrl,
-	}))
-}*/
-
 export async function updateOrganisation(request: Request, response: Response) {
 
 	const value = request.body.organisation
@@ -111,22 +103,6 @@ export async function updateOrganisation(request: Request, response: Response) {
 		console.log(error)
 		throw new Error(error)
 	}
-///
-/*	let isWhitelisted: any = "false"
-	let isTokenizedUser: any = false
-
-	try {
-		isWhitelisted = await identity.isWhitelisted(request.user.accessToken, domain)
-	} catch (error) {
-		logger.error(error)
-		throw new Error(error)
-	}
-
-	if (!isWhitelisted) {
-		isTokenizedUser = await registry.isTokenizedUser(organisationalUnit.code, domain)
-	}*/
-//
-	//if (isWhitelisted === true && !isTokenizedUser) {
 
 	try {
 		await registry.patch('civilServants', {organisationalUnit: request.body.organisation, }, request.user.accessToken)
@@ -157,102 +133,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	} else {
 		throw new Error(res)
 	}
-	/*} else if (isTokenizedUser) {
-			response.send(template.render('profile/enterToken', request, response, {
-				org: value,
-				organisation: organisationalUnit.name,
-				originalUrl: request.body.originalUrl,
-			}))
-	} else {
-		throw new Error("Unexpected user state, user is logged in and is neither whitelisted or tokenized")
-	}*/
 }
-
-/*function displayTokenPage(request: Request, response: Response, errMsg: string, value: string, organisation: string) {
-	response.send(template.render(`profile/enterToken`, request, response, {
-		error: true,
-		msg: errMsg,
-		org: value,
-		organisation,
-		originalUrl: request.body.originalUrl,
-	}))
-}*/
-
-/*export async function checkTokenValidity(request: Request, response: Response) {
-
-	const value = request.body.org
-	let organisationalUnit
-
-	try {
-		const organisationResponse: any = await registry.getWithoutHal(value)
-		organisationalUnit = {
-			code: organisationResponse.data.code,
-			name: organisationResponse.data.name,
-			paymentMethods: organisationResponse.data.paymentMethods,
-		}
-
-	} catch (error) {
-		throw new Error(error)
-	}
-
-	const code = organisationalUnit.code
-	const domain = request.user.userName.split("@")[1]
-	const token = request.body.token
-	const accessToken = request.user.accessToken
-
-	if (!token) {
-			displayTokenPage(request, response, "Please don't leave the token blank", value, organisationalUnit.name)
-	} else {
-		const checkTokenValidResponse: any = await registry.updateToken(code, domain, token, false, accessToken)
-
-		if (checkTokenValidResponse.status === 204) {
-			try {
-				await registry.patch('civilServants', {
-					organisationalUnit: request.body.org,
-				}, request.user.accessToken)
-			} catch (error) {
-				throw new Error(error)
-			}
-
-			setLocalProfile(request, 'department', organisationalUnit.code)
-			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-
-			let res: any
-			const dto = {forceOrgChange: false}
-
-			try {
-				res = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
-			} catch (error) {
-				console.log(error)
-				throw new Error(error)
-			}
-
-			if (res.status === 204) {
-
-				setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
-
-				request.session!.save(() =>
-					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
-				)
-			} else {
-				throw new Error(res)
-			}
-
-		} else if (checkTokenValidResponse.status === 404) {
-			displayTokenPage(request,
-					response,
-					"Please make sure you entered the correct token", value, organisationalUnit.name)
-		} else if (checkTokenValidResponse.status === 409) {
-			displayTokenPage(request,
-					response,
-					"Sorry, there is no enough spaces. Contact the office", value, organisationalUnit.name)
-		} else {
-			displayTokenPage(request,
-					response,
-					"Sorry, something went wrong. We are working on it", value, organisationalUnit.name)
-		}
-	}
-}*/
 
 export async function addProfession(request: Request, response: Response) {
 
