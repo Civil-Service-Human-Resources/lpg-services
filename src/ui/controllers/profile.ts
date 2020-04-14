@@ -110,8 +110,6 @@ export async function updateOrganisation(request: Request, response: Response) {
 			console.log(error)
 			throw new Error(error)
 	}
-	setLocalProfile(request, 'department', organisationalUnit.code)
-	setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 
 	let res: any
 	const dto = {forceOrgChange: false}
@@ -125,6 +123,8 @@ export async function updateOrganisation(request: Request, response: Response) {
 
 	if (res.status === 204) {
 
+		setLocalProfile(request, 'department', organisationalUnit.code)
+		setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 		setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
 
 		request.session!.save(() =>
