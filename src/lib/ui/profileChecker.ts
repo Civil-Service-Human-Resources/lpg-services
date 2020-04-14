@@ -34,7 +34,6 @@ export class ProfileChecker {
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
 			if (!this.isProfileRequest(request)) {
-				if (request.path !== "/profile/enterToken" ) {
 					try {
 						for (const section of this._profileSections) {
 							if (!section.isPresent(request.user)) {
@@ -48,7 +47,6 @@ export class ProfileChecker {
 						logger.error(error)
 						next(error)
 					}
-				}
 			}
 
 			next()
