@@ -115,7 +115,7 @@ export class Course {
 		// tslint:disable-next-line:only-arrow-functions
 		this.modules.forEach(function(module, i) {
 			if (module.type === "face-to-face") {
-				if (module.events[0]) {
+				if (module.events && module.events.length > 0)  {
 					const event = module.events[0]
 					let durationInSeconds = 0
 					if (event.dateRanges) {
