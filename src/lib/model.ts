@@ -118,27 +118,29 @@ export class Course {
 				if (module.events[0]) {
 					const event = module.events[0]
 					let durationInSeconds = 0
+					if (event.dateRanges) {
+						event.dateRanges.forEach(dateRange => {
+							const tempStartDate = new Date()
+							const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
+							const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
+							const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
+							tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
+							const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
 
-					event.dateRanges.forEach(dateRange => {
-						const tempStartDate = new Date()
-						const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
-						const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
-						const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
-						tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
-						const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
+							const tempEndDate = new Date()
+							const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
+							const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
+							const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
+							tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
+							const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
 
-						const tempEndDate = new Date()
-						const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
-						const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
-						const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
-						tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
-						const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
+							const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
+							durationInSeconds += durationInMinutes * 60
 
-						const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
-						durationInSeconds += durationInMinutes * 60
+							durationArray[i] = durationInSeconds
+						})
+					}
 
-						durationArray[i] = durationInSeconds
-					})
 					// tslint:disable-next-line:indent
 
 				}
@@ -328,17 +330,19 @@ export class Module {
 	getDuration() {
 
 		if (this.type === "face-to-face") {
-			const startTimeHours = this.events[0].startDate.getHours()
-			const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
-			const endTimeHours = this.events[0].endDate.getHours()
-			const endTimeHoursInMinutes = endTimeHours * 60 + this.events[0].endDate.getMinutes()
-			const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
-			const durationInSeconds = durationInMinutes * 60
-			this.duration = durationInSeconds
+			if (this.events && this.events.length > 0) {
+				const startTimeHours = this.events[0].startDate.getHours()
+				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
+				const endTimeHours = this.events[0].endDate.getHours()
+				const endTimeHoursInMinutes = endTimeHours * 60 + this.events[0].endDate.getMinutes()
+				const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
+				const durationInSeconds = durationInMinutes * 60
+				this.duration = durationInSeconds
+			}
 		}
 
 		if (this.type === "face-to-face") {
-			if (this.events[0]) {
+			if (this.events && this.events.length > 0)  {
 				const event = this.events[0]
 				let durationInSeconds = 0
 
