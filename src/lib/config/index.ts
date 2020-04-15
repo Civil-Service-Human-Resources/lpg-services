@@ -1,6 +1,8 @@
 import * as dotenv from 'dotenv'
 import * as fs from 'fs'
 
+export const ONE_YEAR_IN_SECONDS = 31536000
+
 export const ENV = process.env.NODE_ENV || 'development'
 export const PRODUCTION_ENV = ENV === 'production'
 export const PROFILE = process.env.ENV_PROFILE || 'local'
@@ -171,3 +173,4 @@ export const REDIS = set({
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
+export const STATIC_ASSET_TTL = env.STATIC_ASSET_TTL
