@@ -151,15 +151,16 @@ if (config.STATIC_ASSET_ROOT) {
 	}
 }
 
-app.use(serveStatic('assets'))
+app.use(serveStatic('assets', { maxAge: config.STATIC_ASSET_TTL }))
 
 const luscaPolicy = luscaConfig.setCspPolicy(app.locals.staticAssetDomain)
+
 app.use(
 		lusca({
 			csp: {
 				policy: luscaPolicy,
 			},
-			hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
+			hsts: {maxAge: config.ONE_YEAR_IN_SECONDS, includeSubDomains: true, preload: true},
 			nosniff: true,
 			referrerPolicy: 'same-origin',
 			xframe: 'SAMEORIGIN',
