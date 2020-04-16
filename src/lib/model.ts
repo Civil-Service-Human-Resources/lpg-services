@@ -153,9 +153,10 @@ export class Course {
 			totalDuration += durationArray[i]
 		}
 
-		return durationArray.length
-			? datetime.formatCourseDuration(Number(totalDuration))
-			: null
+		if (durationArray.length > 0) {
+			return datetime.formatCourseDuration(Number(totalDuration))
+		}
+		return '0 minutes'
 	}
 
 	getGrades() {
@@ -370,7 +371,7 @@ export class Module {
 		}
 
 		if (!this.duration) {
-			return null
+			return '0 minutes'
 		}
 		return datetime.formatCourseDuration(this.duration)
 	}
