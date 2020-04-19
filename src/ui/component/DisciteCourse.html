@@ -65,11 +65,6 @@
                         {/if}
                     </span>
                 </p>
-                {#if duration && duration !== '-' }
-                <p class="discite__property-item no-margin"> <span>Duration: </span>
-                    <span class="lpg-course-duration">{duration}</span>
-                </p>
-                {/if}
             </div>
             <div class="discite__property-item discite__status--home">
                 <span class="badge badge--discite badge--info">{bookedModule.state ? $i18n(bookedModule.state) : ''}</span>
