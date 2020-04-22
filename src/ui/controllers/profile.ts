@@ -425,10 +425,12 @@ export async function updateEmail(request: Request, response: Response) {
 			setLocalProfile(request, 'department', null)
 			setLocalProfile(request, 'organisationalUnit', null)
 			setLocalProfile(request, 'forceOrgChange', true)
+			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
+			const urlWithOriginalUrlParam: string = changeEmailURL + '?originalUrl=${request.body.originalUrl}'
 
 			request.login(request.user, () => {
 				request.session!.save(() =>
-					response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+					response.redirect(urlWithOriginalUrlParam)
 				)
 			})
 		}
