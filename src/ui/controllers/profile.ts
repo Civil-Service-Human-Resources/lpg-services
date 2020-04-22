@@ -398,9 +398,8 @@ export async function updateLineManager(request: Request, response: Response) {
 }
 
 export function addEmail(request: Request, response: Response) {
-	response.send(template.render('profile/email', request, response, {
-		originalUrl: request.query.originalUrl,
-	}))
+	// original url is not required as email is not part of Profile Checker
+	response.send(template.render('profile/email', request, response))
 }
 
 export async function updateEmail(request: Request, response: Response) {
@@ -426,11 +425,10 @@ export async function updateEmail(request: Request, response: Response) {
 			setLocalProfile(request, 'organisationalUnit', null)
 			setLocalProfile(request, 'forceOrgChange', true)
 			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
-			const urlWithOriginalUrlParam: string = changeEmailURL + '?originalUrl=${request.body.originalUrl}'
 
 			request.login(request.user, () => {
 				request.session!.save(() =>
-					response.redirect(urlWithOriginalUrlParam)
+					response.redirect(changeEmailURL.toString())
 				)
 			})
 		}
