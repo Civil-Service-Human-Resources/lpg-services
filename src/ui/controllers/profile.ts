@@ -421,14 +421,11 @@ export async function updateEmail(request: Request, response: Response) {
 		const dto = {forceOrgChange: true}
 		const res: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
 		if (res.status === 204) {
-			setLocalProfile(request, 'department', null)
-			setLocalProfile(request, 'organisationalUnit', null)
-			setLocalProfile(request, 'forceOrgChange', true)
-			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
-
-			request.session!.save(() =>
-					response.redirect(changeEmailURL.toString())
-			)
+			// setLocalProfile(request, 'department', null)
+			// setLocalProfile(request, 'organisationalUnit', null)
+			// setLocalProfile(request, 'forceOrgChange', true)
+			logger.info('Org updated, redirecting to ' + config.AUTHENTICATION.serviceUrl + '/account/email')
+			response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email')
 		}
 	} catch (error) {
 		logger.error(error)
