@@ -426,11 +426,9 @@ export async function updateEmail(request: Request, response: Response) {
 			setLocalProfile(request, 'forceOrgChange', true)
 			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
 
-			request.login(request.user, () => {
-				request.session!.save(() =>
+			request.session!.save(() =>
 					response.redirect(changeEmailURL.toString())
-				)
-			})
+			)
 		}
 	} catch (error) {
 		logger.error(error)
