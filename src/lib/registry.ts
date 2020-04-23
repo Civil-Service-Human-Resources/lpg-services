@@ -139,8 +139,8 @@ export function updateForceOrgResetFlag(token: string, data: any) {
 	return result
 }
 
-export function getOrgCode(token: string) {
-	const result = new Promise((resolve, reject) => {
+export async function getOrgCode(token: string) {
+	const result = await new Promise((resolve, reject) => {
 		httpCsrs
 			.get(`/civilServants/org`, {
 				headers: {Authorization: `Bearer ${token}`},
@@ -155,8 +155,8 @@ export function getOrgCode(token: string) {
 	return result
 }
 
-export function getAgencyTokenByDomainAndOrgCode(token: string, domain: string, orgCode: string) {
-	const result = new Promise((resolve, reject) => {
+export async function getAgencyTokenByDomainAndOrgCode(token: string, domain: string, orgCode: string) {
+	const result = await new Promise((resolve, reject) => {
 		httpCsrs
 			.get(`/agencyTokens?domain=${domain}&code=${orgCode}`, {
 				headers: {Authorization: `Bearer ${token}`},
