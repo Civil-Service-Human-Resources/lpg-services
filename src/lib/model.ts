@@ -140,9 +140,6 @@ export class Course {
 							durationArray[i] = durationInSeconds
 						})
 					}
-
-					// tslint:disable-next-line:indent
-
 				}
 			}
 		})
@@ -296,6 +293,7 @@ export class Module {
 		module.fileSize = data.fileSize
 		module.optional = data.optional || false
 		module.events = (data.events || []).map(Event.create)
+		sortEvents(module.events)
 		module.associatedLearning = data.associatedLearning
 
 		return module
@@ -344,6 +342,7 @@ export class Module {
 
 		if (this.type === "face-to-face") {
 			if (this.events && this.events.length > 0)  {
+				sortEvents(this.events)
 				const event = this.events[0]
 				let durationInSeconds = 0
 
@@ -684,4 +683,13 @@ export class User {
 			this.hasRole('KNOWLEDGEPOOL_SUPPLIER_AUTHOR')
 		)
 	}
+}
+
+function sortEvents(events: Event[]) {
+	events.sort(function compare(a, b) {
+		const dateA = new Date(_.get(a, 'startDate', ''))
+		const dateB = new Date(_.get(b, 'startDate', ''))
+		// @ts-ignore
+		return dateA - dateB
+	})
 }
