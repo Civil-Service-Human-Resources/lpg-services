@@ -424,11 +424,10 @@ export async function updateEmail(request: Request, response: Response) {
 			setLocalProfile(request, 'department', null)
 			setLocalProfile(request, 'organisationalUnit', null)
 			setLocalProfile(request, 'forceOrgChange', true)
-			const changeEmailURL = new URL('/account/email', config.AUTHENTICATION.serviceUrl)
-			logger.info('Org updated, redirecting to ' + changeEmailURL.toString())
+			logger.info('Org updated, redirecting to ' + config.AUTHENTICATION.serviceUrl + '/account/email')
 
 			request.session!.save(() =>
-				response.redirect(changeEmailURL.toString())
+				response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email')
 			)
 		}
 	} catch (error) {
