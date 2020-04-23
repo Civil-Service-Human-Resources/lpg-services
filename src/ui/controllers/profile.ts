@@ -407,17 +407,15 @@ export async function updateEmail(request: Request, response: Response) {
 		const email = request.user.userName
 		const oldDomain = email.split("@")[1]
 		await identity.isWhitelisted(request.user.accessToken, oldDomain)
-		.then(e => {
-			if (e.status === 200) {
-				if (e === "false") {
-					adjustTokenQuota(request, oldDomain)
+			.then(async e => {
+				if (e === false) {
+					await adjustTokenQuota(request, oldDomain)
 				}
-			}
-		})
-		.catch(error => {
-			logger.error(error)
-			throw new Error(error)
-		})
+			})
+			.catch(error => {
+				logger.error(error)
+				throw new Error(error)
+			})
 		const dto = {forceOrgChange: true}
 		const res: any = await registry.updateForceOrgResetFlag(request.user.accessToken, dto)
 		if (res.status === 204) {
@@ -468,23 +466,16 @@ function setLocalProfile(request: Request, key: string, value: any) {
 	})
 }
 
-function adjustTokenQuota(request: Request, oldDomain: string) {
-	const oldOrgCodeResponse: any = registry.getOrgCode(request.user.accessToken)
-	if (oldOrgCodeResponse.status === 404) {
-		console.log("org code not found")
-		throw new Error("Org code not found")
+async function adjustTokenQuota(request: Request, oldDomain: string) {
+	// tslint:disable-next-line:max-line-length
+	const oldTokenResponse: any = await registry.getAgencyTokenByDomainAndOrgCode(request.user.accessToken, oldDomain, request.user.organisationalUnit.code)
+	if (oldTokenResponse.status === 404) {
+		console.log("token not found")
+		throw new Error("token not found")
 	} else {
-		const oldOrgCode = oldOrgCodeResponse.toString()
-		// tslint:disable-next-line:max-line-length
-		const oldTokenResponse: any = registry.getAgencyTokenByDomainAndOrgCode(request.user.accessToken, oldDomain, oldOrgCode)
-		if (oldTokenResponse.status === 404) {
-			console.log("token not found")
-			throw new Error("token not found")
-		} else {
-			const oldToken: string = oldTokenResponse.data.token
-			const quotaDTO = {domain: oldDomain, token: oldToken, code: oldOrgCode, removeUser: true}
-			registry.updateAvailableSpacesOnAgencyToken(request.user.accessToken, quotaDTO)
-		}
+		const oldToken: string = oldTokenResponse.data.token
+		const quotaDTO = {domain: oldDomain, token: oldToken, code:  request.user.organisationalUnit.code, removeUser: true}
+		registry.updateAvailableSpacesOnAgencyToken(request.user.accessToken, quotaDTO)
 	}
 }
 
