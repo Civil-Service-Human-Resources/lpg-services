@@ -70,7 +70,7 @@ services:
     image: lpgregistry.azurecr.io/identity-service:master-4
     ports:
       - 8080:8080
-      - 8081:8081
+#      - 8081:8081
 
   learner-record:
     container_name: learner-record
@@ -85,34 +85,34 @@ services:
     depends_on:
       - civil-servant-registry
       - identity
-      - learning-catalogue
+#      - learning-catalogue
       - learning-locker-xapi
     ports:
       - 9000:9000
 
-  learning-catalogue:
-    container_name: learning-catalogue
-    command:
-      [
-        './wait-for-it.sh',
-        'elasticsearch:9300',
-        '-t',
-        '200',
-        '--',
-        'java',
-        '-jar',
-        '/data/app.jar',
-      ]
-    environment:
-      - OAUTH_SERVICE_URL=http://identity:8080
-      - ELASTICSEARCH_URI=http://elasticsearch:9200
-      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
-      - APPINSIGHTS_INSTRUMENTATIONKEY=key
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-7
-    depends_on:
-      - identity
-    ports:
-      - 9001:9001
+#  learning-catalogue:
+#    container_name: learning-catalogue
+#    command:
+#      [
+#        './wait-for-it.sh',
+#        'elasticsearch:9300',
+#        '-t',
+#        '200',
+#        '--',
+#        'java',
+#        '-jar',
+#        '/data/app.jar',
+#      ]
+#    environment:
+#      - OAUTH_SERVICE_URL=http://identity:8080
+#      - ELASTICSEARCH_URI=http://elasticsearch:9200
+#      - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
+#      - APPINSIGHTS_INSTRUMENTATIONKEY=key
+#    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-7
+#    depends_on:
+#      - identity
+#    ports:
+#      - 9001:9001
 
   civil-servant-registry:
     container_name: civil-servant-registry

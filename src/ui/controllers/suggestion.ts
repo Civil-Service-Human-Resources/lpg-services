@@ -9,6 +9,8 @@ import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/suggestion')
+const RECORD_COUNT_TO_DISPLAY = 6;
+const RECORDS_TO_SCAN_IN_ELASTIC = 200;
 
 export function hashArray<T>(records: T[], key: string) {
 	const hash: Record<string, T> = {}
@@ -140,7 +142,7 @@ export async function suggestionsByInterest(
 			[],
 			[interest.name],
 			user.grade ? user.grade.code : '',
-			6,
+			RECORDS_TO_SCAN_IN_ELASTIC,
 			await getLearningRecord(user, learningRecordIn),
 			user
 		)
@@ -161,7 +163,7 @@ export async function suggestionsByAreaOfWork(
 			[aow],
 			[],
 			user.grade ? user.grade.code : '',
-			6,
+			RECORDS_TO_SCAN_IN_ELASTIC,
 			await getLearningRecord(user, learningRecordIn),
 			user
 		)
@@ -182,7 +184,7 @@ export async function suggestionsByOtherAreasOfWork(
 			[aow.name],
 			[],
 			user.grade ? user.grade.code : '',
-			6,
+			RECORDS_TO_SCAN_IN_ELASTIC,
 			await getLearningRecord(user, learningRecordIn),
 			user
 		)
@@ -202,7 +204,7 @@ export async function suggestionsByDepartment(
 			[],
 			[],
 			user.grade ? user.grade.code : '',
-			6,
+			RECORDS_TO_SCAN_IN_ELASTIC,
 			await getLearningRecord(user, learningRecordIn),
 			user
 		)
@@ -219,7 +221,7 @@ export async function homeSuggestions(
 		user.areasOfWork || [],
 		[],
 		user.grade ? user.grade.code : '',
-		6,
+		RECORDS_TO_SCAN_IN_ELASTIC,
 		learningRecord,
 		user
 	)
@@ -258,7 +260,7 @@ async function getSuggestions(
 		params.page += 1
 	}
 
-	return newSuggestions.slice(0, count)
+	return newSuggestions.slice(0, RECORD_COUNT_TO_DISPLAY)
 }
 
 function modifyCourses(
