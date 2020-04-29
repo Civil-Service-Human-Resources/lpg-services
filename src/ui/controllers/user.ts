@@ -162,186 +162,12 @@ export function haltoObject(traversonResult: any[]): {} {
 	return out
 }
 
-export function parseProfessions(
-	traversonResult: any
-): [Level[], string] | void {
-	try {
-		const parsed = traversonResult._embedded.professions.map(
-			(profession: any) => {
-				return {
-					name: profession.name,
-					url: profession._links.jobRoles.href,
-				}
-			}
-		)
-		return [parsed, traversonResult._links.self.href]
-	} catch (e) {
-		logger.error(e)
-		return
-	}
-}
-
-export function parseRoles(traversonResult: any): [Level[], string] | void {
-	try {
-		const parsed = traversonResult._embedded.jobRoles.map((role: any) => {
-			return {
-				hasChildren: role.hasChildren,
-				name: role.name,
-				url: role._links.self.href,
-			}
-		})
-
-		return [parsed, traversonResult._links.self.href]
-	} catch (e) {
-		logger.error(e)
-		return
-	}
-}
-
-export async function newRenderAreasOfWorkPage(
-	req: express.Request,
-	res: express.Response
-) {
-	const lede = req.__('register_area_page_intro')
-	let selectedArr: any = []
-	let currentLevel: number = 0
-	let selected: number
-	let levels: Level[][] = []
-	let prevLevelUrl
-
-	// @ts-ignore
-	if (req.query.select) {
-		// @ts-ignore
-		const arrUpdate = req.query.select.split('/')
-		// @ts-ignore
-		await patchAndUpdate(arrUpdate[0], req.query.select, 'areas-of-work', req, res)
-		return
-	}
-
-	if (req.params[0]) {
-		/* set the 'progress' vars */
-		selectedArr = req.params[0].split('/')
-		currentLevel = selectedArr.length
-		selected = selectedArr[currentLevel - 1] || 0
-	}
-
-	if (currentLevel === 0) {
-		/* if the user hasn't selected anything, start from the beginning and reset 'levels' vars */
-		req.session!.levels = []
-		levels = []
-
-		const parsed = parseProfessions(await registry.get('professions'))
-
-		if (parsed) {
-			levels.push(parsed[0])
-			req.session!.prevLevelUrl = parsed[1]
-		}
-	} else {
-		/* if the user has selected levels or there are req.params[0] */
-		levels = req.session!.levels
-		const followPath: string[] = []
-
-		prevLevelUrl = levels[currentLevel! - 1][selected!].url
-		if (levels.length === currentLevel) {
-			if (selectedArr.length! > 1) {
-				followPath.push('children')
-			}
-		} else {
-			/* If they don't match up, start from the beginning and reconstruct the path.
-			 * This may happen when they use the url to navigate to a level
-			 * or go backwards
-			 */
-
-			prevLevelUrl = levels[currentLevel - 1][selected!].url
-
-			selectedArr.forEach((selection: number, index: number) => {
-				if (index > 0) {
-					followPath.push('children')
-				}
-			})
-		}
-
-		const traversonResult = await registry.follow(prevLevelUrl, followPath)
-
-		if (levels.length === 0) {
-			/* if there are no levels saved, use parseProfessions method since the response contains 'professions' key */
-			const parsed = parseProfessions(traversonResult)
-			if (parsed) {
-				levels.push(parsed[0])
-				req.session!.prevLevelUrl = parsed[1]
-			}
-		} else {
-			/* if there are levels saved, use parseRoles method since the response contains 'jobRoles' key */
-			const parsed = parseRoles(traversonResult)
-
-			if (parsed) {
-				/* only set the results to the appropriate level*/
-				levels[selectedArr.length] = parsed[0]
-				req.session!.prevLevelUrl = parsed[1]
-			}
-		}
-	}
-
-	if (selectedArr) {
-		/* Slice the array to the amount of levels the user should see and save the levels to session */
-		levels = levels.slice(0, selectedArr.length + 1)
-		req.session!.levels = levels
-	}
-
-	res.send(
-		template.render('profile/edit', req, res, {
-			currentLevel,
-			inputName: 'areas-of-work',
-			lede,
-			levels,
-			...res.locals,
-			selected: selected!,
-			selectedArr,
-		})
-	)
-}
-
-export function renderAreasOfWorkPage(
-	req: express.Request,
-	res: express.Response
-) {
-	if (req.query.select) {
-		// const selectedLevel = req.query.select
-		//TODO: LPFG-49,241 - send request to profile service to update profile
-
-		res.redirect('/profile')
-	}
-	const lede = req.__('register_area_page_intro')
-	let selectedArr
-	let currentLevel
-	let selected
-	if (req.params[0]) {
-		selected = req.params[0]
-		selectedArr = req.params[0].split('/')
-		currentLevel = selectedArr.length
-	}
-
-	const levelsToShow: any[] = []
-
-	res.send(
-		template.render('profile/edit', req, res, {
-			currentLevel,
-			inputName: 'other-areas-of-work',
-			lede,
-			levels: levelsToShow,
-			...res.locals,
-			selected,
-			selectedArr,
-		})
-	)
-}
-
 export async function renderEditPage(
 	req: express.Request,
 	res: express.Response
 ) {
 	const inputName = req.params.profileDetail
-	let options: { [prop: string]: any } = {}
+	let options: {[prop: string]: any} = {}
 	let optionType: string = ''
 	let value = null
 	let lede
@@ -369,9 +195,11 @@ export async function renderEditPage(
 				options['/professions/' + x.id] = x.name
 			})
 			if (req.user.otherAreasOfWork) {
-				value = req.user.otherAreasOfWork.map((otherAreasOfWork: { name: string }) => {
-					return otherAreasOfWork.name
-				})
+				value = req.user.otherAreasOfWork.map(
+					(otherAreasOfWork: {name: string}) => {
+						return otherAreasOfWork.name
+					}
+				)
 			}
 
 			optionType = OptionTypes.Checkbox
@@ -379,15 +207,18 @@ export async function renderEditPage(
 			break
 		case 'department':
 			const email = req.user.userName
-			const domain = email.split("@")[1]
-			response = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
-			if (response.data !== "") {
+			const domain = email.split('@')[1]
+			response = await registry.getWithoutHal(
+				'/organisationalUnits/flat/' + domain + '/'
+			)
+			if (response.data !== '') {
 				response.data.map((x: any) => {
-					options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+					options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] =
+						x.formattedName
 				})
+				value = req.user.department
 			}
 			optionType = OptionTypes.Typeahead
-			value = req.user.department
 			break
 		case 'grade':
 			lede = 'Please select your grade'
@@ -402,7 +233,7 @@ export async function renderEditPage(
 			lede = 'Please select your interests'
 			options = haltoObject(await registry.halNode('interests'))
 			optionType = OptionTypes.Checkbox
-			value = req.user.interests.map((interest: { name: string }) => {
+			value = req.user.interests.map((interest: {name: string}) => {
 				return interest.name
 			})
 			break
@@ -470,7 +301,7 @@ export async function tryUpdateProfile(
 		const options: any = response.data
 		let children: any = []
 
-		const areaOfWorkId = areaOfWork.split("/professions/").pop()
+		const areaOfWorkId = areaOfWork.split('/professions/').pop()
 		options.forEach((option: any) => {
 			option.children.forEach((child: any) => {
 				// tslint:disable-next-line
@@ -485,7 +316,7 @@ export async function tryUpdateProfile(
 		})
 
 		if (children.length > 0) {
-			req.session!.flash = { children }
+			req.session!.flash = {children}
 			return req.session!.save(() => {
 				res.redirect('/profile/primary-area-of-work')
 			})
@@ -537,8 +368,6 @@ export async function patchAndUpdate(
 			})
 		}
 	} else if (response) {
-		// seems like we have to get the profile again to get values
-		// which seems ...not good
 		const profile = await registry.profile(req.user.accessToken)
 		await updateUserObject(req, profile as Record<string, string>)
 		req.flash('profile-updated', 'profile-updated')
@@ -622,10 +451,18 @@ export async function updateProfile(
 }
 function sortList(list: any) {
 	return list.sort((a: any, b: any) => {
-		if (a.name === "I don't know") { return 1 }
-		if (b.name === "I don't know") { return -1 }
-		if (a.name < b.name) { return -1 }
-		if (a.name > b.name) { return 1 }
+		if (a.name === "I don't know") {
+			return 1
+		}
+		if (b.name === "I don't know") {
+			return -1
+		}
+		if (a.name < b.name) {
+			return -1
+		}
+		if (a.name > b.name) {
+			return 1
+		}
 		return 0
 	})
 }

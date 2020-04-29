@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from 'axios'
-import * as https from "https"
+import * as https from 'https'
 import * as config from 'lib/config'
-import {User} from "lib/model"
+import {User} from 'lib/model'
 import * as log4js from 'log4js'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
@@ -39,8 +39,9 @@ export async function get(node: string): Promise<{}> {
 			.jsonHal()
 			.follow(node, 'self')
 			.withRequestOptions({
-				qs: { size: 100, page: 0},
-			})			.getResource((error, document) => {
+				qs: {size: 100, page: 0},
+			})
+			.getResource((error, document) => {
 				if (error) {
 					reject(false)
 				} else {
@@ -57,11 +58,7 @@ export async function halNode(node: string): Promise<any[]> {
 	return (result as any)._embedded[node]
 }
 
-export async function follow(
-	path: string,
-	nodes: string[],
-	templateParameters?: any
-) {
+export async function follow(path: string, nodes: string[], templateParameters?: any) {
 	if (nodes.length === 0) {
 		nodes = ['self']
 	}
@@ -108,8 +105,8 @@ export async function checkLineManager(data: any, token: string) {
 	return result
 }
 
-export function getForceOrgResetFlag(token: string) {
-	const result = new Promise<boolean>((resolve, reject) => {
+export async function getForceOrgResetFlag(token: string) {
+	const result = await new Promise<boolean>((resolve, reject) => {
 		httpCsrs
 			.get(`/civilServants/org/reset`, {
 				headers: {Authorization: `Bearer ${token}`},
@@ -124,8 +121,8 @@ export function getForceOrgResetFlag(token: string) {
 	return result
 }
 
-export function updateForceOrgResetFlag(user: User, data: any) {
-	const result = new Promise((resolve, reject) => {
+export async function updateForceOrgResetFlag(user: User, data: any) {
+	const result = await new Promise((resolve, reject) => {
 		httpCsrs
 			.patch(`/civilServants/org/reset`, data, {
 				headers: {Authorization: `Bearer ${user.accessToken}`},
@@ -240,23 +237,21 @@ export async function profile(token: string) {
 export async function getWithoutHal(path: string): Promise<AxiosResponse> {
 	try {
 		return await http.get(config.REGISTRY_SERVICE_URL + path)
-	}	catch (error) {
+	} catch (error) {
 		throw new Error(error)
 	}
 }
 
-export async function isTokenizedUser(
-	code: string,
-	domain: string
-) {
-
-		let tokenziedUser = false
-		await http.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
+export async function isTokenizedUser(code: string, domain: string) {
+	let tokenziedUser = false
+	await http
+		.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
 			params: {
 				code,
 				domain,
 			},
-		}).then(e => {
+		})
+		.then(e => {
 			if (e.status === 200) {
 				tokenziedUser = true
 			} else {
@@ -264,29 +259,26 @@ export async function isTokenizedUser(
 			}
 		})
 
-		return tokenziedUser
-	}
+	return tokenziedUser
+}
 
-export async function isValidToken(
-		code: string,
-		domain: string,
-		token: string
-) {
-
+export async function isValidToken(code: string, domain: string, token: string) {
 	let validToken = false
-	await http.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
-		params: {
-			code,
-			domain,
-			token,
-		},
-	}).then(e => {
-		if (e.status === 200) {
-			validToken = true
-		} else {
-			validToken = false
-		}
-	})
+	await http
+		.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
+			params: {
+				code,
+				domain,
+				token,
+			},
+		})
+		.then(e => {
+			if (e.status === 200) {
+				validToken = true
+			} else {
+				validToken = false
+			}
+		})
 	return validToken
 }
 
@@ -297,7 +289,6 @@ export async function updateToken(
 	removeUser: boolean,
 	accessToken: string
 ) {
-
 	const data = JSON.stringify({
 		code,
 		domain,
@@ -307,15 +298,15 @@ export async function updateToken(
 
 	const result = new Promise((resolve, reject) => {
 		httpCsrs
-		.put(config.REGISTRY_SERVICE_URL + `/agencyTokens`, data, {
-			headers: {Authorization: `Bearer ${accessToken}`},
-		})
-		.then((response: any) => {
-			resolve(response)
-		})
-		.catch((error: any) => {
-			resolve(error.response)
-		})
+			.put(config.REGISTRY_SERVICE_URL + `/agencyTokens`, data, {
+				headers: {Authorization: `Bearer ${accessToken}`},
+			})
+			.then((response: any) => {
+				resolve(response)
+			})
+			.catch((error: any) => {
+				resolve(error.response)
+			})
 	})
 	return result
 }

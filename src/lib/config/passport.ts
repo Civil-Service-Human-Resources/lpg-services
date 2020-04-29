@@ -1,8 +1,8 @@
 import * as express from 'express'
-import * as config from "lib/config/index"
+import * as config from 'lib/config/index'
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
-import {ForceOrgChange} from "lib/model"
+import {ForceOrgChange} from 'lib/model'
 import * as registry from 'lib/registry'
 import * as log4js from 'log4js'
 import * as passport from 'passport'
@@ -29,12 +29,7 @@ export function configure(
 			clientSecret,
 			tokenURL: `${authenticationServiceUrl}/oauth/token`,
 		},
-		async (
-			accessToken: string,
-			refreshToken: string,
-			profile: any,
-			cb: oauth2.VerifyCallback
-		) => {
+		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			profile.accessToken = accessToken
 
 			try {
@@ -67,7 +62,7 @@ export function configure(
 	passport.deserializeUser<model.User, string>(async (data, done) => {
 		let user: model.User
 		try {
-			user =  model.User.create(JSON.parse(data))
+			user = model.User.create(JSON.parse(data))
 			done(null, user)
 		} catch (error) {
 			done(error, undefined)
@@ -99,11 +94,7 @@ export function configure(
 	)
 }
 
-export function isAuthenticated(
-	req: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) {
+export function isAuthenticated(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const authenticated = req.isAuthenticated()
 	if (authenticated) {
 		return next()
@@ -117,11 +108,7 @@ export function isAuthenticated(
 }
 
 export function hasRole(role: string) {
-	return (
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
+	return (req: express.Request, res: express.Response, next: express.NextFunction) => {
 		if (req.user && req.user.hasRole(role)) {
 			return next()
 		}
@@ -130,11 +117,7 @@ export function hasRole(role: string) {
 }
 
 export function hasAnyRole(roles: string[]) {
-	return (
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
+	return (req: express.Request, res: express.Response, next: express.NextFunction) => {
 		if (req.user && req.user.hasAnyRole(roles)) {
 			return next()
 		}
