@@ -38,10 +38,7 @@ export class Course {
 			if (course.audience) {
 				course.audience.mandatory = false
 				course.audience.departments.forEach(a => {
-					if (
-						a === user.department &&
-						course.audience!.type === 'REQUIRED_LEARNING'
-					) {
+					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
 						course.audience!.mandatory = true
 					}
 				})
@@ -109,9 +106,7 @@ export class Course {
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
-		return durationArray.length
-			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
-			: null
+		return durationArray.length ? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0)) : null
 	}
 
 	getGrades() {
@@ -120,13 +115,9 @@ export class Course {
 
 	getSelectedDate() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(
-				m => !!m.eventId && m.state !== 'SKIPPED'
-			)
+			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
 			if (bookedModuleRecord) {
-				const bookedModule = this.modules.find(
-					m => m.id === bookedModuleRecord.moduleId
-				)
+				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
 				if (bookedModule) {
 					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
 					if (event) {
@@ -178,10 +169,7 @@ export class Course {
 			for (const moduleRecord of this.record!.modules) {
 				if (!completionDate) {
 					completionDate = moduleRecord.completionDate
-				} else if (
-					moduleRecord.completionDate &&
-					moduleRecord.completionDate > completionDate
-				) {
+				} else if (moduleRecord.completionDate && moduleRecord.completionDate > completionDate) {
 					completionDate = moduleRecord.completionDate
 				}
 			}
@@ -283,9 +271,7 @@ export class Event {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
 		let date: any = ''
 		if (data.dateRanges[0]) {
-			date = new Date(
-				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
-			)
+			date = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime)
 		} else {
 			date = data.date
 		}
@@ -315,14 +301,7 @@ export class Event {
 	status: string
 	isLearnerBooked: boolean
 
-	constructor(
-		date: Date,
-		location: string,
-		capacity: number,
-		availability: number,
-		status: string,
-		id?: string
-	) {
+	constructor(date: Date, location: string, capacity: number, availability: number, status: string, id?: string) {
 		if (id) {
 			this.id = id!
 		}
@@ -375,22 +354,11 @@ export class Audience {
 	getRelevance(user: User) {
 		let relevance = -1
 
-		if (
-			!(
-				this.areasOfWork.length ||
-				this.departments.length ||
-				this.grades.length
-			)
-		) {
+		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
 			return 0
 		}
 
-		if (
-			user.areasOfWork &&
-			this.areasOfWork.filter(
-				areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1
-			).length
-		) {
+		if (user.areasOfWork && this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length) {
 			relevance += 1
 		}
 		if (user.department && this.departments.indexOf(user.department) > -1) {
@@ -494,11 +462,8 @@ export class User {
 		} else {
 			user.forceOrgChange = new ForceOrgChange(false)
 		}
-		user.organisationalUnit =
-			data.organisationalUnit || new OrganisationalUnit()
-		user.department = data.organisationalUnit
-			? data.organisationalUnit.code
-			: data.department
+		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
+		user.department = data.organisationalUnit ? data.organisationalUnit.code : data.department
 		user.givenName = data.fullName ? data.fullName : data.givenName
 		user.grade = data.grade
 		if (data.profession || data.areasOfWork) {
@@ -538,13 +503,7 @@ export class User {
 
 	grade?: any
 
-	constructor(
-		id: string,
-		userName: string,
-		sessionIndex: string,
-		roles: string[],
-		accessToken: string
-	) {
+	constructor(id: string, userName: string, sessionIndex: string, roles: string[], accessToken: string) {
 		this.id = id
 		this.userName = userName
 		this.sessionIndex = sessionIndex

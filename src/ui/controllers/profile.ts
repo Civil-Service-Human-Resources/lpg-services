@@ -1,5 +1,5 @@
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
-import {NextFunction, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import * as config from 'lib/config'
 import {ForceOrgChange, User} from 'lib/model'
 import * as _ from 'lodash'
@@ -50,9 +50,7 @@ export async function updateName(request: Request, response: Response) {
 		setLocalProfile(request, 'givenName', name)
 
 		request.session!.save(() =>
-			response.redirect(
-				request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl
-			)
+			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
@@ -61,9 +59,7 @@ export async function addOrganisation(request: Request, response: Response) {
 	const options: {[prop: string]: any} = {}
 	const email = request.user.userName
 	const domain = email.split('@')[1]
-	const organisations: any = await registry.getWithoutHal(
-		'/organisationalUnits/flat/' + domain + '/'
-	)
+	const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
 	organisations.data.map((x: any) => {
 		options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 	})
@@ -85,13 +81,10 @@ export async function updateOrganisation(request: Request, response: Response) {
 	const value = request.body.organisation
 	const email = request.user.userName
 	const domain = email.split('@')[1]
-
 	if (!value) {
 		const options: {[prop: string]: any} = {}
 
-		const organisations: any = await registry.getWithoutHal(
-			'/organisationalUnits/flat/' + domain + '/'
-		)
+		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
 		organisations.data.map((x: any) => {
 			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 		})
@@ -123,11 +116,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	}
 
 	try {
-		await registry.patch(
-			'civilServants',
-			{organisationalUnit: request.body.organisation},
-			request.user.accessToken
-		)
+		await registry.patch('civilServants', {organisationalUnit: request.body.organisation}, request.user.accessToken)
 	} catch (error) {
 		console.log(error)
 		throw new Error(error)
@@ -147,11 +136,9 @@ export async function updateOrganisation(request: Request, response: Response) {
 		setLocalProfile(request, 'department', organisationalUnit.code)
 		setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 		setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
-
+		logger.info(request.user)
 		request.session!.save(() =>
-			response.redirect(
-				request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl
-			)
+			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	} else {
 		throw new Error(res)
@@ -191,9 +178,7 @@ export async function updateProfession(request: Request, response: Response) {
 			})
 		)
 	} else {
-		const professionsTree: any = await registry.getWithoutHal(
-			'/professions/tree'
-		)
+		const professionsTree: any = await registry.getWithoutHal('/professions/tree')
 		const options: any = sortList(professionsTree.data)
 		let children: any = []
 
@@ -213,9 +198,7 @@ export async function updateProfession(request: Request, response: Response) {
 		if (children.length > 0) {
 			request.session!.flash = {children}
 			return request.session!.save(() => {
-				response.redirect(
-					`/profile/profession?originalUrl=${request.body.originalUrl}`
-				)
+				response.redirect(`/profile/profession?originalUrl=${request.body.originalUrl}`)
 			})
 		}
 		if (request.session!.flash && request.session!.flash.children) {
@@ -234,9 +217,7 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 
 		try {
-			const professionResponse: any = await registry.getWithoutHal(
-				profession.replace(config.REGISTRY_SERVICE_URL, '')
-			)
+			const professionResponse: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
 			const data = professionResponse.data
 
 			setLocalProfile(request, 'areasOfWork', [data.id, data.name])
@@ -246,17 +227,12 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 
 		request.session!.save(() =>
-			response.redirect(
-				request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl
-			)
+			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
 
-export async function addOtherAreasOfWork(
-	request: Request,
-	response: Response
-) {
+export async function addOtherAreasOfWork(request: Request, response: Response) {
 	const professionsTree: any = await registry.getWithoutHal('/professions/tree')
 	const professions = sortList(professionsTree.data)
 	response.send(
@@ -267,10 +243,7 @@ export async function addOtherAreasOfWork(
 	)
 }
 
-export async function updateOtherAreasOfWork(
-	request: Request,
-	response: Response
-) {
+export async function updateOtherAreasOfWork(request: Request, response: Response) {
 	const otherAreasOfWork = request.body.otherAreasOfWork
 
 	if (!otherAreasOfWork) {
@@ -315,11 +288,7 @@ export async function updateOtherAreasOfWork(
 			throw new Error(error)
 		}
 
-		request.session!.save(() =>
-			response.redirect(
-				`/profile/interests?originalUrl=${request.body.originalUrl}`
-			)
-		)
+		request.session!.save(() => response.redirect(`/profile/interests?originalUrl=${request.body.originalUrl}`))
 	}
 }
 
@@ -354,9 +323,7 @@ export async function updateInterests(request: Request, response: Response) {
 		try {
 			const updatedInterests = []
 			for (const interest of values) {
-				const interestResponse: any = await registry.getWithoutHal(
-					interest.replace(config.REGISTRY_SERVICE_URL, '')
-				)
+				const interestResponse: any = await registry.getWithoutHal(interest.replace(config.REGISTRY_SERVICE_URL, ''))
 				updatedInterests.push({name: interestResponse.data.name})
 			}
 			setLocalProfile(request, 'interests', updatedInterests)
@@ -365,9 +332,7 @@ export async function updateInterests(request: Request, response: Response) {
 			throw new Error(error)
 		}
 	}
-	request.session!.save(() =>
-		response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`)
-	)
+	request.session!.save(() => response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`))
 }
 
 export async function addGrade(request: Request, response: Response) {
@@ -399,9 +364,7 @@ export async function updateGrade(request: Request, response: Response) {
 		}
 
 		try {
-			const gradeResponse: any = await registry.getWithoutHal(
-				grade.replace(config.REGISTRY_SERVICE_URL, '')
-			)
+			const gradeResponse: any = await registry.getWithoutHal(grade.replace(config.REGISTRY_SERVICE_URL, ''))
 			setLocalProfile(request, 'grade', {
 				code: gradeResponse.data.code,
 				name: gradeResponse.data.name,
@@ -411,11 +374,7 @@ export async function updateGrade(request: Request, response: Response) {
 			throw new Error(error)
 		}
 	}
-	request.session!.save(() =>
-		response.redirect(
-			`/profile/lineManager?originalUrl=${request.body.originalUrl}`
-		)
-	)
+	request.session!.save(() => response.redirect(`/profile/lineManager?originalUrl=${request.body.originalUrl}`))
 }
 
 export function addLineManager(request: Request, response: Response) {
@@ -443,10 +402,7 @@ export async function updateLineManager(request: Request, response: Response) {
 			)
 			return
 		}
-		const res: any = await registry.checkLineManager(
-			{lineManager: lineManager.email},
-			request.user.accessToken
-		)
+		const res: any = await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
 		if (res.status === 404) {
 			errors.push('errors.lineManagerMissing')
 
@@ -481,66 +437,52 @@ export async function updateLineManager(request: Request, response: Response) {
 	}
 
 	request.session!.save(() =>
-		response.redirect(
-			request.body.originalUrl !== 'undefined'
-				? request.body.originalUrl
-				: defaultRedirectUrl
-		)
+		response.redirect(request.body.originalUrl !== 'undefined' ? request.body.originalUrl : defaultRedirectUrl)
 	)
 }
 
 export function addEmail(request: Request, response: Response) {
-	// original url is not required as email is not part of Profile Checker
 	response.send(template.render('profile/email', request, response))
 }
 
-export async function updateEmail(
-	request: Request,
-	response: Response,
-	next: NextFunction
-) {
+/**
+ * This method sends the user to the update email form on Identity.
+ * Before doing so it needs to check if it is part of an agency token and if so, update token quota.
+ * For all users, set a flag on their civil servant object in csrs, to force organisation to be set next on log in.
+ * Clear any local profile info for dept/org.
+ *
+ * @param {Request} request
+ * @param {Response} response
+ * @returns response.redirect to change email form on Identity
+ */
+export async function updateEmail(request: Request, response: Response) {
 	try {
 		const agencyTokenFactory: AgencyTokenFactory = new AgencyTokenFactory()
 		const user = request.user
 		const email = user.userName
 		const oldDomain = email.split('@')[1]
+
 		if (
-			_.isEmpty(user.organisationalUnit) ||
-			user.organisationalUnit === undefined ||
-			user.organisationalUnit.code === undefined
+			!_.isEmpty(user.organisationalUnit) &&
+			user.organisationalUnit !== undefined &&
+			user.organisationalUnit.code !== undefined
 		) {
-			logger.debug(
-				`User ${
-					user.id
-				} does not have org code. Cannot validate, so sending them to change email form`
-			)
-			return request.session!.save(() =>
-				response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email')
-			)
+			const value: any = await registry.getAgencyTokenForUser(user, user.organisationalUnit.code, oldDomain)
+			if (value.status === 200) {
+				logger.debug(`User ${user.id} is an agency user. Adjusting token quota`)
+				const agencyToken = agencyTokenFactory.create(value.data)
+				await adjustTokenQuota(user, agencyToken, oldDomain)
+			}
 		}
 
-		const value: any = await registry.getAgencyTokenForUser(user, user.organisationalUnit.code, oldDomain)
-		if (value.status === 404) {
-			logger.debug(`User ${user.id} does not agency token. Sending them to change email form`)
-			return response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email')
-		}
-		const agencyToken = agencyTokenFactory.create(value.data)
-		await adjustTokenQuota(user, agencyToken, oldDomain)
 		const dto = {forceOrgChange: true}
 		const res: any = await registry.updateForceOrgResetFlag(user, dto)
 		if (res.status === 204) {
 			setLocalProfile(request, 'department', null)
 			setLocalProfile(request, 'organisationalUnit', null)
 			setLocalProfile(request, 'forceOrgChange', true)
-			logger.info(
-				'Org updated, redirecting to ' +
-					config.AUTHENTICATION.serviceUrl +
-					'/account/email'
-			)
 
-			return request.session!.save(() =>
-				response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email')
-			)
+			return request.session!.save(() => response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email'))
 		}
 	} catch (error) {
 		logger.error(error)
@@ -579,11 +521,7 @@ function setLocalProfile(request: Request, key: string, value: any) {
 	request.session!.save(() => {})
 }
 
-async function adjustTokenQuota(
-	user: User,
-	agencyToken: AgencyToken,
-	oldDomain: string
-) {
+async function adjustTokenQuota(user: User, agencyToken: AgencyToken, oldDomain: string) {
 	const quotaDTO = {
 		code: user.organisationalUnit!.code,
 		domain: oldDomain,

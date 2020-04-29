@@ -13,11 +13,13 @@ export class ProfileChecker {
 			return Boolean(user.givenName)
 		}),
 		new ProfileSection('organisationalUnit', '/profile/organisation', (user: User) => {
-			// tslint:disable-next-line:max-line-length
-			return (Boolean (!user.forceOrgChange.isForceOrgChange()) && (Boolean(user.organisationalUnit &&  user.organisationalUnit.name)))
+			return (
+				Boolean(!user.forceOrgChange.isForceOrgChange()) &&
+				Boolean(user.organisationalUnit && user.organisationalUnit.name)
+			)
 		}),
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
-			return (Boolean (!user.forceOrgChange.isForceOrgChange()) && (Boolean(user.department)))
+			return Boolean(!user.forceOrgChange.isForceOrgChange()) && Boolean(user.department)
 		}),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
 			return Boolean(user.areasOfWork && user.areasOfWork.length)
@@ -27,26 +29,28 @@ export class ProfileChecker {
 		}),
 	]
 	isProfileRequest(request: Request) {
-		return Boolean(this._profileSections.filter(entry => {
-			return entry.path === request.path
-		}).length)
+		return Boolean(
+			this._profileSections.filter(entry => {
+				return entry.path === request.path
+			}).length
+		)
 	}
 	checkProfile() {
-		return 	(request: Request, response: Response, next: NextFunction) => {
+		return (request: Request, response: Response, next: NextFunction) => {
 			if (!this.isProfileRequest(request)) {
-					try {
-						for (const section of this._profileSections) {
-							if (!section.isPresent(request.user)) {
-								request.session!.save(() => {
-									response.redirect(`${section.path}?originalUrl=${request.originalUrl}`)
-								})
-								return
-							}
+				try {
+					for (const section of this._profileSections) {
+						if (!section.isPresent(request.user)) {
+							request.session!.save(() => {
+								response.redirect(`${section.path}?originalUrl=${request.originalUrl}`)
+							})
+							return
 						}
-					}	catch (error) {
-						logger.error(error)
-						next(error)
 					}
+				} catch (error) {
+					logger.error(error)
+					next(error)
+				}
 			}
 
 			next()
