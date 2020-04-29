@@ -1,6 +1,7 @@
 import axios, {AxiosResponse} from 'axios'
 import * as https from "https"
 import * as config from 'lib/config'
+import {User} from "lib/model"
 import * as log4js from 'log4js'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
@@ -123,11 +124,11 @@ export function getForceOrgResetFlag(token: string) {
 	return result
 }
 
-export function updateForceOrgResetFlag(token: string, data: any) {
+export function updateForceOrgResetFlag(user: User, data: any) {
 	const result = new Promise((resolve, reject) => {
 		httpCsrs
 			.patch(`/civilServants/org/reset`, data, {
-				headers: {Authorization: `Bearer ${token}`},
+				headers: {Authorization: `Bearer ${user.accessToken}`},
 			})
 			.then((response: any) => {
 				resolve(response)
@@ -155,8 +156,10 @@ export async function getOrgCode(token: string) {
 	return result
 }
 
-export async function getAgencyTokenByDomainAndOrgCode(token: string, domain: string, orgCode: string) {
-	const result = await new Promise((resolve, reject) => {
+export async function getAgencyTokenForUser(user: User, orgCode: string, domain: string) {
+	const token = user.accessToken
+
+	return await new Promise(resolve => {
 		httpCsrs
 			.get(`/agencyTokens?domain=${domain}&code=${orgCode}`, {
 				headers: {Authorization: `Bearer ${token}`},
@@ -168,10 +171,9 @@ export async function getAgencyTokenByDomainAndOrgCode(token: string, domain: st
 				resolve(error.response)
 			})
 	})
-	return result
 }
 
-export function updateAvailableSpacesOnAgencyToken(token: string, data: any) {
+export async function updateAvailableSpacesOnAgencyToken(token: string, data: any) {
 	const result = new Promise((resolve, reject) => {
 		httpCsrs
 			.put(`/agencyTokens`, data, {
