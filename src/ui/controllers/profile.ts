@@ -136,7 +136,6 @@ export async function updateOrganisation(request: Request, response: Response) {
 		setLocalProfile(request, 'department', organisationalUnit.code)
 		setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 		setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
-		logger.info(request.user)
 		request.session!.save(() =>
 			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
 		)
