@@ -78,18 +78,11 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-function renderSignIn(
-	req: express.Request,
-	res: express.Response,
-	props: SignIn
-) {
+function renderSignIn(req: express.Request, res: express.Response, props: SignIn) {
 	return template.render('account/sign-in', req, res, props)
 }
 
-async function updateUserObject(
-	req: express.Request,
-	updatedProfile: Record<string, string>
-) {
+async function updateUserObject(req: express.Request, updatedProfile: Record<string, string>) {
 	const newUser = model.User.create({
 		...req.user,
 		...updatedProfile,
@@ -162,10 +155,7 @@ export function haltoObject(traversonResult: any[]): {} {
 	return out
 }
 
-export async function renderEditPage(
-	req: express.Request,
-	res: express.Response
-) {
+export async function renderEditPage(req: express.Request, res: express.Response) {
 	const inputName = req.params.profileDetail
 	let options: {[prop: string]: any} = {}
 	let optionType: string = ''
@@ -195,11 +185,9 @@ export async function renderEditPage(
 				options['/professions/' + x.id] = x.name
 			})
 			if (req.user.otherAreasOfWork) {
-				value = req.user.otherAreasOfWork.map(
-					(otherAreasOfWork: {name: string}) => {
-						return otherAreasOfWork.name
-					}
-				)
+				value = req.user.otherAreasOfWork.map((otherAreasOfWork: {name: string}) => {
+					return otherAreasOfWork.name
+				})
 			}
 
 			optionType = OptionTypes.Checkbox
@@ -208,13 +196,10 @@ export async function renderEditPage(
 		case 'department':
 			const email = req.user.userName
 			const domain = email.split('@')[1]
-			response = await registry.getWithoutHal(
-				'/organisationalUnits/flat/' + domain + '/'
-			)
+			response = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
 			if (response.data !== '') {
 				response.data.map((x: any) => {
-					options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] =
-						x.formattedName
+					options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 				})
 				value = req.user.department
 			}
@@ -279,19 +264,10 @@ export function signIn(req: express.Request, res: express.Response) {
 }
 
 export async function signOut(req: express.Request, res: express.Response) {
-	await passport.logout(
-		config.AUTHENTICATION.serviceUrl,
-		config.LPG_UI_SERVER,
-		req,
-		res,
-		req.user.accessToken
-	)
+	await passport.logout(config.AUTHENTICATION.serviceUrl, config.LPG_UI_SERVER, req, res, req.user.accessToken)
 }
 
-export async function tryUpdateProfile(
-	req: express.Request,
-	res: express.Response
-) {
+export async function tryUpdateProfile(req: express.Request, res: express.Response) {
 	const validFields = validateForm(req)
 
 	if (req.body['primary-area-of-work']) {
@@ -386,10 +362,7 @@ export async function patchAndUpdate(
 	}
 }
 
-export async function updateProfile(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function updateProfile(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	let inputName = req.params.profileDetail
