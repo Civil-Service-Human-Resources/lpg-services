@@ -36,40 +36,13 @@ function ensureFullICU() {
 	}
 }
 
-export function formatCourseDurationForCourseInlcFaceToFace(d: number) {
-	if (!d) {
-		return '-'
-	}
-	let out = ''
-
-	const [hours, hourSeconds] = divmod(d, 3600)
-	if (hours) {
-		if (out) {
-			out += ' '
-		}
-		out += `${hours} hour${hours > 1 ? 's' : ''}`
-	}
-
-	const [minutes] = divmod(hourSeconds, 60)
-	if (minutes) {
-		if (out) {
-			out += ' '
-		}
-		out += `${minutes} minute${minutes > 1 ? 's' : ''}`
-	}
-	if (minutes === 0 && hours === 0 ) {
-		out += `1 minute`
-	}
-	return out
-}
-
 export function formatCourseDuration(d: number) {
 	if (!d) {
 		return '-'
 	}
 	let out = ''
 	// treat a day as 8 hours
-	const [days, daySeconds] = divmod(d, 25200)
+	const [days, daySeconds] = divmod(d, 28800)
 	if (days) {
 		out += `${days} day${days > 1 ? 's' : ''}`
 	}
