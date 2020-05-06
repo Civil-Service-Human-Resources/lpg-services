@@ -106,6 +106,7 @@ export function isAuthenticated(
 	})
 }
 
+// @ts-ignore
 export function hasRole(role: string) {
 	return (
 		req: express.Request,
@@ -119,6 +120,7 @@ export function hasRole(role: string) {
 	}
 }
 
+// @ts-ignore
 export function hasAnyRole(roles: string[]) {
 	return (
 		req: express.Request,
