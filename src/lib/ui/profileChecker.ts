@@ -31,6 +31,7 @@ export class ProfileChecker {
 			return entry.path === request.path
 		}).length)
 	}
+	// @ts-ignore
 	checkProfile() {
 		return 	(request: Request, response: Response, next: NextFunction) => {
 			if (!this.isProfileRequest(request) ) {
