@@ -123,10 +123,10 @@ export const LOGGING = set(
 )
 
 export const LPG_UI_SERVER =
-	env.LPG_UI_SERVER || 'http://lpg.local.cshr.digital:3001'
+	env.LPG_UI_SERVER || 'http://localhost:3001'
 
 export const LPG_MANAGMENT_SERVER =
-	env.LPG_MANAGEMENT_SERVER || 'http://lpg.local.cshr.digital:3003'
+	env.LPG_MANAGEMENT_SERVER || 'http://localhost:3003'
 
 export const SESSION_SECRET =
 	env.SESSION_SECRET ||
@@ -156,7 +156,7 @@ export const REPORT_SERVICE = set({
 })
 
 export const LPG_MANAGEMENT_URL =
-	env.LPG_MANAGEMENT_SERVER || 'http://lpg.local.cshr.digital:3005'
+	env.LPG_MANAGEMENT_SERVER || 'http://localhost:3005'
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 60000
 
