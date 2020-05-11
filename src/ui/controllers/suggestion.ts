@@ -9,8 +9,8 @@ import * as xapi from 'lib/xapi'
 import * as log4js from 'log4js'
 
 const logger = log4js.getLogger('controllers/suggestion')
-const RECORD_COUNT_TO_DISPLAY = 6;
-const RECORDS_TO_SCAN_IN_ELASTIC = 200;
+const RECORD_COUNT_TO_DISPLAY = 6
+const RECORDS_TO_SCAN_IN_ELASTIC = 200
 
 export function hashArray<T>(records: T[], key: string) {
 	const hash: Record<string, T> = {}
