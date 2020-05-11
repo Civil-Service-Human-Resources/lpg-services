@@ -129,7 +129,7 @@ export async function findRequiredLearning(
 ): Promise<api.PageResults> {
 	try {
 		const response = await http.get(
-			`/courses?mandatory=true&department=${user.department}`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
+			`/courses/getrequiredlearning`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
 		)
 		return convert(response.data, user) as api.PageResults
 	} catch (e) {
