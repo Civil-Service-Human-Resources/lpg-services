@@ -319,7 +319,8 @@
 		"po-special-characters": "A purchase order should not contain dots (.), colons ( : ), or hashes ( # )",
 		"cancelBooking": "There was an error cancelling your booking request. Please try again.",
 		"registrationNotFound": "You attempted to cancel a booking you were not registered.",
-		"empty-payment-method": "Please enter your payment details."
+		"empty-payment-method": "Please enter your payment details.",
+		"otherareaofworksidontknowmultiselection": "You can not select an other area of work as well as 'I don’t know' option"
 	},
 	"courseResult": {
 		"complete": "Course complete",

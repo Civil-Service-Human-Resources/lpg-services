@@ -563,6 +563,8 @@ export async function updateProfile(
 	const node = getNodeByName(inputName)
 
 	let errorMessage = ''
+	let response: any
+	let index: number = 0;
 
 	switch (node) {
 		case 'interests':
@@ -571,7 +573,17 @@ export async function updateProfile(
 			}
 			break
 		case 'otherAreasOfWork':
-			if (!Array.isArray(fieldValue)) {
+			response = await registry.getWithoutHal('/professions/tree')
+			for(let i = 0; i < response.data.length; i++) {
+				if (response.data[i].name === "I don't know") {
+					index = response.data[i].id
+					break
+				}
+			}
+			if (Array.isArray(fieldValue) &&
+				fieldValue[fieldValue.length - 1] === '/professions/' + index) {
+				errorMessage = req.__('errors.otherareaofworksidontknowmultiselection')
+			} else {
 				fieldValue = [fieldValue]
 			}
 			break
