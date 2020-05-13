@@ -131,29 +131,34 @@ export async function tryCancelBooking(
 
 	if (cancelReason) {
 		extensions[xapi.Extension.CancelReason] = cancelReason
+
+		const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
+
+		const response: any = {
+			404: async () => {
+				req.session!.save(() => {
+					req.flash('cancelBookingError', "The booking could not be found.")
+					res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
+				})
+			},
+			400: async () => {
+				req.session!.save(() => {
+					req.flash('cancelBookingError', "An error occurred while trying to cancel your booking.")
+					res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
+				})
+			},
+			200: async () => {
+				req.session!.save(() => {
+					res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
+				})
+			},
+		}
+
+		await response[result.status]()
+	} else {
+		req.session!.save(() => {
+			req.flash('cancelBookingError', "Please enter a valid reason.")
+			res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
+		})
 	}
-
-	const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
-
-	const response: any = {
-		404: async () => {
-			req.session!.save(() => {
-				req.flash('cancelBookingError', "The booking could not be found.")
-				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-			})
-		},
-		400: async () => {
-			req.session!.save(() => {
-				req.flash('cancelBookingError', "An error occurred while trying to cancel your booking.")
-				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-			})
-		},
-		200: async () => {
-			req.session!.save(() => {
-				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
-			})
-		},
-	}
-
-	await response[result.status]()
 }
