@@ -157,7 +157,7 @@ export async function tryCancelBooking(
 		await response[result.status]()
 	} else {
 		req.session!.save(() => {
-			req.flash('cancelBookingError', "Please enter a valid reason.")
+			req.flash('cancelBookingError', "Please select a reason for cancelling your booking.")
 			res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 		})
 	}
