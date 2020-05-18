@@ -210,14 +210,10 @@ export async function newRenderAreasOfWorkPage(
 	let prevLevelUrl
 
 	if (req.query.select) {
+		// @ts-ignore
 		const arrUpdate = req.query.select.split('/')
-		await patchAndUpdate(
-			arrUpdate[0],
-			req.query.select,
-			'areas-of-work',
-			req,
-			res
-		)
+		// @ts-ignore
+		await patchAndUpdate(arrUpdate[0], req.query.select, 'areas-of-work', req, res)
 		return
 	}
 
