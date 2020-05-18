@@ -19,7 +19,6 @@ export function addName(request: Request, response: Response) {
 
 export async function updateName(request: Request, response: Response) {
 	const name = request.body.name
-
 	if (!name) {
 		response.send(template.render('profile/name', request, response, {
 			error: true,
@@ -28,7 +27,7 @@ export async function updateName(request: Request, response: Response) {
 		}))
 	} else {
 		try {
-			await registry.patch('civilServants', {
+			await registry.patch('/civilServants/' + request.user.userId, {
 				fullName: request.body.name,
 			}, request.user.accessToken)
 		} catch (error) {
@@ -82,7 +81,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 		}))
 	} else {
 		try {
-			await registry.patch('civilServants', {
+			await registry.patch('/civilServants/' + request.user.userId, {
 				organisationalUnit: request.body.organisation,
 			}, request.user.accessToken)
 		} catch (error) {
@@ -170,7 +169,7 @@ export async function updateProfession(request: Request, response: Response) {
 			delete request.session!.flash.children
 		}
 		try {
-			await registry.patch('civilServants', {
+			await registry.patch('/civilServants/' + request.user.userId, {
 				profession,
 			}, request.user.accessToken)
 		} catch (error) {
@@ -217,7 +216,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 			return "/professions/" + value
 		})
 		try {
-			await registry.patch('civilServants', {
+			await registry.patch('/civilServants/' + request.user.userId, {
 				otherAreasOfWork: values,
 			}, request.user.accessToken)
 		} catch (error) {
@@ -258,7 +257,7 @@ export async function updateInterests(request: Request, response: Response) {
 	if (interests) {
 		const values: string[] = [].concat(interests)
 		try {
-			await registry.patch('civilServants', {
+			await registry.patch('/civilServants/' + request.user.userId, {
 				interests: values,
 			}, request.user.accessToken)
 		} catch (error) {
@@ -296,7 +295,7 @@ export async function updateGrade(request: Request, response: Response) {
 
 	if (grade) {
 		try {
-			await registry.patch('civilServants', {
+			await registry.patch('/civilServants/' + request.user.userId, {
 				grade,
 				originalUrl: request.body.originalUrl,
 			}, request.user.accessToken)
