@@ -1,5 +1,6 @@
 LPG Services   
-=====================  
+=====================
+
 `lpg-services` contains the code you need to start the Learning Platform for Government application.
 ## Table of Contents
 - [Getting Started](#getting_started)
