@@ -1,7 +1,6 @@
 import {expect} from 'chai'
 import * as chai from 'chai'
 import {NextFunction} from 'express'
-import {ForceOrgChange} from 'lib/model'
 import {beforeEach} from 'mocha'
 import * as sinon from 'sinon'
 import * as sinonChai from 'sinon-chai'
@@ -56,7 +55,6 @@ describe('ProfileChecker tests', () => {
 		const request = mockReq({
 			originalUrl: '/home',
 			user: {
-				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 			},
 		})
@@ -76,7 +74,6 @@ describe('ProfileChecker tests', () => {
 		const request = mockReq({
 			originalUrl: '/home',
 			user: {
-				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 			},
 		})
@@ -95,7 +92,6 @@ describe('ProfileChecker tests', () => {
 		const request = mockReq({
 			originalUrl: '/home',
 			user: {
-				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
@@ -121,7 +117,6 @@ describe('ProfileChecker tests', () => {
 			originalUrl: '/home',
 			user: {
 				department: 'co',
-				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
@@ -150,7 +145,6 @@ describe('ProfileChecker tests', () => {
 					1, 'Analysis',
 				],
 				department: 'co',
-				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
@@ -180,7 +174,6 @@ describe('ProfileChecker tests', () => {
 					1, 'Analysis',
 				],
 				department: 'co',
-				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
@@ -216,7 +209,6 @@ describe('ProfileChecker tests', () => {
 					1, 'Analysis',
 				],
 				department: 'co',
-				forceOrgChange: new ForceOrgChange(false),
 				givenName: 'Test User',
 				interests: [
 					{
@@ -246,45 +238,5 @@ describe('ProfileChecker tests', () => {
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
 		expect(next).to.have.been.calledOnce
-	})
-
-	it('should call set organisation if mandatory sections of profile are complete and forceOrgChangeFlag is true', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				areasOfWork: [
-					1, 'Analysis',
-				],
-				department: 'co',
-				forceOrgChange: new ForceOrgChange(true),
-				givenName: 'Test User',
-				interests: [
-					{
-						name: 'Leadership',
-					},
-				],
-				organisationalUnit: {
-					code: 'co',
-					name: 'Cabinet Office',
-					paymentMethods: [],
-				},
-				otherAreasOfWork: [
-					{
-						id: 2,
-						name: 'Commercial',
-					},
-				],
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		const next = (err => undefined) as NextFunction
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
 	})
 })

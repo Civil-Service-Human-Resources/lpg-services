@@ -1,7 +1,6 @@
 import axios, {AxiosResponse} from 'axios'
 import * as https from 'https'
 import * as config from 'lib/config'
-import {User} from 'lib/model'
 import * as log4js from 'log4js'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
@@ -18,14 +17,6 @@ const http = axios.create({
 		maxFreeSockets: 15,
 		maxSockets: 100,
 	}),
-	timeout: config.REQUEST_TIMEOUT,
-})
-
-const httpCsrs = axios.create({
-	baseURL: config.REGISTRY_SERVICE_URL,
-	headers: {
-		'Content-Type': 'application/json',
-	},
 	timeout: config.REQUEST_TIMEOUT,
 })
 
@@ -105,87 +96,6 @@ export async function checkLineManager(data: any, token: string) {
 	return result
 }
 
-export async function getForceOrgResetFlag(token: string) {
-	const result = await new Promise<boolean>((resolve, reject) => {
-		httpCsrs
-			.get(`/civilServants/org/reset`, {
-				headers: {Authorization: `Bearer ${token}`},
-			})
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-	return result
-}
-
-export async function updateForceOrgResetFlag(user: User, data: any) {
-	const result = await new Promise((resolve, reject) => {
-		httpCsrs
-			.patch(`/civilServants/org/reset`, data, {
-				headers: {Authorization: `Bearer ${user.accessToken}`},
-			})
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-	return result
-}
-
-export async function getOrgCode(token: string) {
-	const result = await new Promise((resolve, reject) => {
-		httpCsrs
-			.get(`/civilServants/org`, {
-				headers: {Authorization: `Bearer ${token}`},
-			})
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-	return result
-}
-
-export async function getAgencyTokenForUser(user: User, orgCode: string, domain: string) {
-	const token = user.accessToken
-
-	return await new Promise(resolve => {
-		httpCsrs
-			.get(`/agencyTokens?domain=${domain}&code=${orgCode}`, {
-				headers: {Authorization: `Bearer ${token}`},
-			})
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-}
-
-export async function updateAvailableSpacesOnAgencyToken(token: string, data: any) {
-	const result = new Promise((resolve, reject) => {
-		httpCsrs
-			.put(`/agencyTokens`, data, {
-				headers: {Authorization: `Bearer ${token}`},
-			})
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-	return result
-}
-
 export async function patch(node: string, data: any, token: string) {
 	const result = await new Promise((resolve, reject) =>
 		traverson
@@ -252,73 +162,4 @@ export async function getWithoutHalWithAuth(path: string, request: Express.Reque
 	} catch (error) {
 		throw new Error(error)
 	}
-}
-
-export async function isTokenizedUser(code: string, domain: string) {
-	let tokenziedUser = false
-	await http
-		.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
-			params: {
-				code,
-				domain,
-			},
-		})
-		.then(e => {
-			if (e.status === 200) {
-				tokenziedUser = true
-			} else {
-				tokenziedUser = false
-			}
-		})
-
-	return tokenziedUser
-}
-
-export async function isValidToken(code: string, domain: string, token: string) {
-	let validToken = false
-	await http
-		.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
-			params: {
-				code,
-				domain,
-				token,
-			},
-		})
-		.then(e => {
-			if (e.status === 200) {
-				validToken = true
-			} else {
-				validToken = false
-			}
-		})
-	return validToken
-}
-
-export async function updateToken(
-	code: string,
-	domain: string,
-	token: string,
-	removeUser: boolean,
-	accessToken: string
-) {
-	const data = JSON.stringify({
-		code,
-		domain,
-		removeUser,
-		token,
-	})
-
-	const result = new Promise((resolve, reject) => {
-		httpCsrs
-			.put(config.REGISTRY_SERVICE_URL + `/agencyTokens`, data, {
-				headers: {Authorization: `Bearer ${accessToken}`},
-			})
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-	return result
 }
