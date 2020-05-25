@@ -14,12 +14,11 @@ export class ProfileChecker {
 		}),
 		new ProfileSection('organisationalUnit', '/profile/organisation', (user: User) => {
 			return (
-				Boolean(!user.forceOrgChange.isForceOrgChange()) &&
 				Boolean(user.organisationalUnit && user.organisationalUnit.name)
 			)
 		}),
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
-			return Boolean(!user.forceOrgChange.isForceOrgChange()) && Boolean(user.department)
+			return Boolean(user.department)
 		}),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
 			return Boolean(user.areasOfWork && user.areasOfWork.length)
