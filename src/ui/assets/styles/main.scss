@@ -167,3 +167,7 @@ body:not(.js-enabled) {
 .no-margin-bottom.discite__property-item {
 	margin-bottom: 0;
 }
+
+.no-prod-deploy .test-selector {
+	font-display: auto;
+}
