@@ -59,7 +59,7 @@ export async function addOrganisation(request: Request, response: Response) {
 	const options: {[prop: string]: any} = {}
 	const email = request.user.userName
 	const domain = email.split('@')[1]
-	const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
+	const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
 	organisations.data.map((x: any) => {
 		options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 	})

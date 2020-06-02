@@ -242,6 +242,18 @@ export async function getWithoutHal(path: string): Promise<AxiosResponse> {
 	}
 }
 
+export async function getWithoutHalWithAuth(path: string, request: Express.Request): Promise<AxiosResponse> {
+	try {
+		return await http.get(config.REGISTRY_SERVICE_URL + path, {
+			headers: {
+				Authorization: `Bearer ${request.user.accessToken}`,
+			},
+		})
+	} catch (error) {
+		throw new Error(error)
+	}
+}
+
 export async function isTokenizedUser(code: string, domain: string) {
 	let tokenziedUser = false
 	await http
