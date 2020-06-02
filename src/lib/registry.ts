@@ -1,7 +1,6 @@
 import axios, {AxiosResponse} from 'axios'
 import * as https from 'https'
 import * as config from 'lib/config'
-import {User} from 'lib/model'
 import * as log4js from 'log4js'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
@@ -18,14 +17,6 @@ const http = axios.create({
 		maxFreeSockets: 15,
 		maxSockets: 100,
 	}),
-	timeout: config.REQUEST_TIMEOUT,
-})
-
-const httpCsrs = axios.create({
-	baseURL: config.REGISTRY_SERVICE_URL,
-	headers: {
-		'Content-Type': 'application/json',
-	},
 	timeout: config.REQUEST_TIMEOUT,
 })
 
@@ -171,73 +162,4 @@ export async function getWithoutHalWithAuth(path: string, request: Express.Reque
 	} catch (error) {
 		throw new Error(error)
 	}
-}
-
-export async function isTokenizedUser(code: string, domain: string) {
-	let tokenziedUser = false
-	await http
-		.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
-			params: {
-				code,
-				domain,
-			},
-		})
-		.then(e => {
-			if (e.status === 200) {
-				tokenziedUser = true
-			} else {
-				tokenziedUser = false
-			}
-		})
-
-	return tokenziedUser
-}
-
-export async function isValidToken(code: string, domain: string, token: string) {
-	let validToken = false
-	await http
-		.get(config.REGISTRY_SERVICE_URL + `/agencyTokens`, {
-			params: {
-				code,
-				domain,
-				token,
-			},
-		})
-		.then(e => {
-			if (e.status === 200) {
-				validToken = true
-			} else {
-				validToken = false
-			}
-		})
-	return validToken
-}
-
-export async function updateToken(
-	code: string,
-	domain: string,
-	token: string,
-	removeUser: boolean,
-	accessToken: string
-) {
-	const data = JSON.stringify({
-		code,
-		domain,
-		removeUser,
-		token,
-	})
-
-	const result = new Promise((resolve, reject) => {
-		httpCsrs
-			.put(config.REGISTRY_SERVICE_URL + `/agencyTokens`, data, {
-				headers: {Authorization: `Bearer ${accessToken}`},
-			})
-			.then((response: any) => {
-				resolve(response)
-			})
-			.catch((error: any) => {
-				resolve(error.response)
-			})
-	})
-	return result
 }
