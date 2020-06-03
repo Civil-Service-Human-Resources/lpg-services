@@ -82,7 +82,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	if (!value) {
 		const options: {[prop: string]: any} = {}
 
-		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
+		const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
 		organisations.data.map((x: any) => {
 			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 		})
