@@ -129,7 +129,12 @@ export async function logout(
 	accessToken: string
 ) {
 	req.logout()
-	await identity.logout(accessToken)
-	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
-	res.end()
+	const url = `${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`
+	await identity.logout(accessToken).then(() => {
+		res.redirect(url)
+		res.end()
+	}).catch(() => {
+		res.redirect(url)
+		res.end()
+	})
 }
