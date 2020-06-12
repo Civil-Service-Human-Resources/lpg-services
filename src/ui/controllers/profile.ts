@@ -63,40 +63,42 @@ export async function addOrganisation(request: Request, response: Response) {
 	})
 
 	const value = request.user.department
+	const flashErrorArray = request.flash('error')
+	const flashErrorArraySize = flashErrorArray.length
+	//const flashErrorArraySize = request.flash('error').length
 
-	response.send(
-		template.render('profile/organisation', request, response, {
-			inputName: 'organisation',
-			label: 'Organisation',
-			options: Object.entries(options),
-			originalUrl: request.query.originalUrl,
-			value,
-		})
-	)
-}
-
-export async function updateOrganisation(request: Request, response: Response) {
-	const value = request.body.organisation
-	const email = request.user.userName
-	const domain = email.split('@')[1]
-	if (!value) {
-		const options: {[prop: string]: any} = {}
-
-		const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
-		organisations.data.map((x: any) => {
-			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
-		})
-
+	if (flashErrorArraySize > 0) {
 		response.send(
 			template.render('profile/organisation', request, response, {
-				error: true,
+				error: request.flash('error'),
 				inputName: 'organisation',
 				label: 'Organisation',
 				options: Object.entries(options),
-				originalUrl: request.body.originalUrl,
+				originalUrl: request.query.originalUrl,
 				value,
 			})
 		)
+	} else {
+		response.send(
+			template.render('profile/organisation', request, response, {
+				inputName: 'organisation',
+				label: 'Organisation',
+				options: Object.entries(options),
+				originalUrl: request.query.originalUrl,
+				value,
+			})
+		)
+	}
+}
+
+export async function updateOrganisation(request: Request, response: Response) {
+	let value: string
+	value = request.body.organisation
+	if (!value) {
+		request.flash('error', request.__('errors.empty-organisation'))
+		return request.session!.save(() => {
+			response.redirect(`/profile/organisation`)
+		})
 	}
 
 	let organisationalUnit
