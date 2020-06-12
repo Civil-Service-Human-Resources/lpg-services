@@ -65,7 +65,6 @@ export async function addOrganisation(request: Request, response: Response) {
 	const value = request.user.department
 	const flashErrorArray = request.flash('error')
 	const flashErrorArraySize = flashErrorArray.length
-	//const flashErrorArraySize = request.flash('error').length
 
 	if (flashErrorArraySize > 0) {
 		response.send(
