@@ -48,8 +48,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 						}
 					}
 					if (requiredCourse.shouldRepeat()) {
-						let previousRequiredBy = requiredCourse.previousRequiredBy()
-						let completionDate = record.getCompletionDate()
+						const previousRequiredBy = requiredCourse.previousRequiredBy()
+						const completionDate = record.getCompletionDate()
 						// @ts-ignore
 						if (completionDate < previousRequiredBy) {
 							record.state = ''
