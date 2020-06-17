@@ -47,6 +47,14 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							record.state = 'IN_PROGRESS'
 						}
 					}
+					if (requiredCourse.shouldRepeat()) {
+						let previousRequiredBy = requiredCourse.previousRequiredBy()
+						let completionDate = record.getCompletionDate()
+						// @ts-ignore
+						if (completionDate < previousRequiredBy) {
+							record.state = ''
+						}
+					}
 					learningRecord.splice(
 						learningRecord.findIndex(
 							value => value.courseId === record.courseId
