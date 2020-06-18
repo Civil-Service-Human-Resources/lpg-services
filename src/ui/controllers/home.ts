@@ -37,24 +37,35 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				const record = learningHash[requiredCourse.id]
 				if (record) {
 					requiredCourse.record = record
+					const previousRequiredBy = requiredCourse.previousRequiredBy()
+					const completionDate = record.getCompletionDate()
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeat()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
+						} else {
+							// @ts-ignore
+							if (completionDate < previousRequiredBy) {
+								record.state = '' //This may require a new definition like this: record.display_state
+							}
 						}
 					} else {
 						if (!record.state && record.modules && record.modules.length) {
-							record.state = 'IN_PROGRESS'
+							record.state = 'IN_PROGRESS' //This may require a new definition like this: record.display_state
+						}
+						if (requiredCourse.shouldRepeat()) {
+							//Apply the logic here for calculating the status to be displayed on the screen
+							//This may require a new definition like this: record.display_state
 						}
 					}
-					if (requiredCourse.shouldRepeat()) {
-						const previousRequiredBy = requiredCourse.previousRequiredBy()
-						const completionDate = record.getCompletionDate()
-						// @ts-ignore
-						if (completionDate < previousRequiredBy) {
-							record.state = ''
-						}
-					}
+					// if (requiredCourse.shouldRepeat()) {
+					// 	const previousRequiredBy = requiredCourse.previousRequiredBy()
+					// 	const completionDate = record.getCompletionDate()
+					// 	// @ts-ignore
+					// 	if (completionDate < previousRequiredBy) {
+					// 		record.state = '' //This may require a new definition like this: record.display_state
+					// 	}
+					// }
 					learningRecord.splice(
 						learningRecord.findIndex(
 							value => value.courseId === record.courseId
