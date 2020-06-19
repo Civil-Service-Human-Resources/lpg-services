@@ -58,14 +58,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							//This may require a new definition like this: record.display_state
 						}
 					}
-					// if (requiredCourse.shouldRepeat()) {
-					// 	const previousRequiredBy = requiredCourse.previousRequiredBy()
-					// 	const completionDate = record.getCompletionDate()
-					// 	// @ts-ignore
-					// 	if (completionDate < previousRequiredBy) {
-					// 		record.state = '' //This may require a new definition like this: record.display_state
-					// 	}
-					// }
 					learningRecord.splice(
 						learningRecord.findIndex(
 							value => value.courseId === record.courseId
