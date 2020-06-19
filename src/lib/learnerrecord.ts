@@ -318,6 +318,21 @@ export class CourseRecord {
 		}
 		return undefined
 	}
+
+	getStartedDate() {
+		let startedDate: Date | undefined
+		for (const moduleRecord of this.modules) {
+			if (!startedDate) {
+				startedDate = moduleRecord.createdAt
+			} else if (
+				moduleRecord.createdAt &&
+				moduleRecord.createdAt < startedDate
+			) {
+				startedDate = moduleRecord.createdAt
+			}
+		}
+		return startedDate
+	}
 }
 
 export interface ModuleRecord {

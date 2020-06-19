@@ -54,8 +54,10 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							record.state = 'IN_PROGRESS' //This may require a new definition like this: record.display_state
 						}
 						if (requiredCourse.shouldRepeat()) {
-							//Apply the logic here for calculating the status to be displayed on the screen
-							//This may require a new definition like this: record.display_state
+							// @ts-ignore
+							if (record.getStartedDate() < previousRequiredBy) {
+								record.state = '' //This may require a new definition like this: record.display_state
+							}
 						}
 					}
 					learningRecord.splice(
