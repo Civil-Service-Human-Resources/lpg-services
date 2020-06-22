@@ -30,6 +30,10 @@
                             </p>
                         {/if}
                         {#each searchResults.combinedResults as result}
+                            {#each result as resultItem}
+                                <p>{resultItem}</p>
+                            {/each}
+
                             {#if (result.type === "course") }
                                 <DisciteCourse course={result.course} modifier="search"/>
                             {:else}

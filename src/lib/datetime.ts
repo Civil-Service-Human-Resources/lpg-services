@@ -19,7 +19,7 @@ const timeFormat = new Intl.DateTimeFormat('en-GB', {
 	hour: 'numeric',
 	minute: '2-digit',
 	month: 'short',
-	timeZone: 'Europe/London',
+	timeZone: 'UTC',
 	year: 'numeric',
 })
 
@@ -149,6 +149,10 @@ export function formatTime(d: number | Date, timeOnly?: boolean) {
 	}
 
 	return timeFormat.format(d)
+}
+
+export function removeSeconds(t: any) {
+	return t.substring(0, t.length - 3)
 }
 
 export function parseMP4Duration(duration: string) {

@@ -34,7 +34,7 @@ export async function updateName(request: Request, response: Response) {
 	} else {
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					fullName: request.body.name,
 				},
@@ -115,7 +115,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	}
 
 	try {
-		await registry.patch('civilServants', {organisationalUnit: request.body.organisation}, request.user.accessToken)
+		await registry.patch('civilServants' + request.user.userId, {organisationalUnit: request.body.organisation}, request.user.accessToken)
 	} catch (error) {
 		console.log(error)
 		throw new Error(error)
@@ -188,7 +188,7 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					profession,
 				},
@@ -243,7 +243,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		})
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					otherAreasOfWork: values,
 				},
@@ -291,7 +291,7 @@ export async function updateInterests(request: Request, response: Response) {
 		const values: string[] = [].concat(interests)
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					interests: values,
 				},
@@ -333,7 +333,7 @@ export async function updateGrade(request: Request, response: Response) {
 	if (grade) {
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					grade,
 					originalUrl: request.body.originalUrl,
