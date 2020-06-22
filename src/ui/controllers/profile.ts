@@ -24,7 +24,6 @@ export function addName(request: Request, response: Response) {
 
 export async function updateName(request: Request, response: Response) {
 	const name = request.body.name
-
 	if (!name) {
 		response.send(
 			template.render('profile/name', request, response, {
@@ -36,7 +35,7 @@ export async function updateName(request: Request, response: Response) {
 	} else {
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					fullName: request.body.name,
 				},
@@ -89,31 +88,34 @@ export async function updateOrganisation(request: Request, response: Response) {
 			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 		})
 
-		response.send(
-			template.render('profile/organisation', request, response, {
-				error: true,
-				inputName: 'organisation',
-				label: 'Organisation',
-				options: Object.entries(options),
-				originalUrl: request.body.originalUrl,
-				value,
-			})
-		)
-	}
-
-	let organisationalUnit
-
-	try {
-		const organisationResponse: any = await registry.getWithoutHal(value)
-		organisationalUnit = {
-			code: organisationResponse.data.code,
-			name: organisationResponse.data.name,
-			paymentMethods: organisationResponse.data.paymentMethods,
+		response.send(template.render('profile/organisation', request, response, {
+			error: true,
+			inputName: 'organisation',
+			label: 'Organisation',
+			options: Object.entries(options),
+			originalUrl: request.body.originalUrl,
+			value,
+		}))
+	} else {
+		try {
+			await registry.patch('/civilServants/' + request.user.userId, {
+				organisationalUnit: request.body.organisation,
+			}, request.user.accessToken)
+		} catch (error) {
+			logger.error(error)
+			throw new Error(error)
 		}
-	} catch (error) {
-		console.log(error)
-		throw new Error(error)
-	}
+
+		try {
+			const organisationResponse: any = await registry.getWithoutHal(value)
+			const organisationalUnit = {
+				code: organisationResponse.data.code,
+				name: organisationResponse.data.name,
+				paymentMethods: organisationResponse.data.paymentMethods,
+			} catch (error) {
+				console.log(error)
+				throw new Error(error)
+			}
 
 	try {
 		await registry.patch('civilServants', {organisationalUnit: request.body.organisation}, request.user.accessToken)
@@ -205,7 +207,7 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					profession,
 				},
@@ -260,7 +262,7 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 		})
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					otherAreasOfWork: values,
 				},
@@ -308,7 +310,7 @@ export async function updateInterests(request: Request, response: Response) {
 		const values: string[] = [].concat(interests)
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					interests: values,
 				},
@@ -350,7 +352,7 @@ export async function updateGrade(request: Request, response: Response) {
 	if (grade) {
 		try {
 			await registry.patch(
-				'civilServants',
+				'/civilServants/' + request.user.userId,
 				{
 					grade,
 					originalUrl: request.body.originalUrl,

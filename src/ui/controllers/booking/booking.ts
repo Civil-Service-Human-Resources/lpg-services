@@ -1,3 +1,5 @@
+import _ = require('lodash')
+
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -116,8 +118,8 @@ export async function renderChooseDate(
 	const today = new Date()
 
 	const events = (module.events || [])
-		.filter(a => a.date > today)
-		.sort((a, b) => a.date.getTime() - b.date.getTime())
+		.filter(a => a.startDate > today)
+		.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
 	for (const event of events) {
 		await learnerRecord.getActiveBooking(event.id, req.user)
@@ -127,6 +129,13 @@ export async function renderChooseDate(
 				} else {
 					event.isLearnerBooked = false
 				}
+
+				event.dateRanges.sort(function compare(a, b) {
+					const dateA = new Date(_.get(a, 'date', ''))
+					const dateB = new Date(_.get(b, 'date', ''))
+					// @ts-ignore
+					return dateA - dateB
+				})
 			})
 			.catch(error => logger.error(error))
 	}
@@ -229,6 +238,13 @@ export async function renderConfirmPayment(
 	const module = req.module!
 	const event = req.event!
 	const session = req.session!
+
+	event.dateRanges.sort(function compare(a, b) {
+		const dateA = new Date(_.get(a, 'date', ''))
+		const dateB = new Date(_.get(b, 'date', ''))
+		// @ts-ignore
+		return dateA - dateB
+	})
 
 	const accessibilityReqs = [...session.accessibilityReqs]
 	if (accessibilityReqs.indexOf('other') > -1) {

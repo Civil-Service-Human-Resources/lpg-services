@@ -1,3 +1,5 @@
+import _ = require("lodash")
+
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
@@ -106,7 +108,49 @@ export class Course {
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
-		return durationArray.length ? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0)) : null
+
+		// tslint:disable-next-line:only-arrow-functions
+		this.modules.forEach(function(module, i) {
+			if (module.type === "face-to-face") {
+				if (module.events && module.events.length > 0)  {
+					const event = module.events[0]
+					let durationInSeconds = 0
+					if (event.dateRanges) {
+						event.dateRanges.forEach(dateRange => {
+							const tempStartDate = new Date()
+							const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
+							const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
+							const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
+							tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
+							const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
+
+							const tempEndDate = new Date()
+							const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
+							const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
+							const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
+							tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
+							const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
+
+							const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
+							durationInSeconds += durationInMinutes * 60
+
+							durationArray[i] = durationInSeconds
+						})
+					}
+				}
+			}
+		})
+
+		let totalDuration = 0
+		// tslint:disable-next-line:prefer-for-of
+		for (let i = 0; i < durationArray.length; i++) {
+			totalDuration += durationArray[i]
+		}
+
+		if (durationArray.length > 0) {
+			return datetime.formatCourseDuration(Number(totalDuration))
+		}
+		return '0 minutes'
 	}
 
 	getGrades() {
@@ -121,7 +165,32 @@ export class Course {
 				if (bookedModule) {
 					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
 					if (event) {
-						return event.date
+						return event.startDate
+					}
+				}
+			}
+		}
+		return null
+	}
+
+	getDateRanges() {
+		if (this.record) {
+			const bookedModuleRecord = this.record.modules.find(
+				m => !!m.eventId && m.state !== 'SKIPPED'
+			)
+			if (bookedModuleRecord) {
+				const bookedModule = this.modules.find(
+					m => m.id === bookedModuleRecord.moduleId
+				)
+				if (bookedModule) {
+					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
+					if (event) {
+						return event.dateRanges.sort(function compare(a, b) {
+							const dateA = new Date(_.get(a, 'date', ''))
+							const dateB = new Date(_.get(b, 'date', ''))
+							// @ts-ignore
+							return dateA - dateB
+						})
 					}
 				}
 			}
@@ -214,6 +283,7 @@ export class Module {
 		module.fileSize = data.fileSize
 		module.optional = data.optional || false
 		module.events = (data.events || []).map(Event.create)
+		sortEvents(module.events)
 		module.associatedLearning = data.associatedLearning
 
 		return module
@@ -247,8 +317,50 @@ export class Module {
 	}
 
 	getDuration() {
+
+		if (this.type === "face-to-face") {
+			if (this.events && this.events.length > 0) {
+				const startTimeHours = this.events[0].startDate.getHours()
+				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
+				const endTimeHours = this.events[0].endDate.getHours()
+				const endTimeHoursInMinutes = endTimeHours * 60 + this.events[0].endDate.getMinutes()
+				const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
+				const durationInSeconds = durationInMinutes * 60
+				this.duration = durationInSeconds
+			}
+		}
+
+		if (this.type === "face-to-face") {
+			if (this.events && this.events.length > 0)  {
+				sortEvents(this.events)
+				const event = this.events[0]
+				let durationInSeconds = 0
+
+				event.dateRanges.forEach(dateRange => {
+					const tempStartDate = new Date()
+					const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
+					const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
+					const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
+					tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
+					const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
+
+					const tempEndDate = new Date()
+					const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
+					const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
+					const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
+					tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
+					const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
+
+					const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
+					durationInSeconds += durationInMinutes * 60
+				})
+				// tslint:disable-next-line:indent
+				this.duration = durationInSeconds
+			}
+		}
+
 		if (!this.duration) {
-			return null
+			return '0 minutes'
 		}
 		return datetime.formatCourseDuration(this.duration)
 	}
@@ -269,11 +381,18 @@ export class ModuleWithCourse extends Module {
 export class Event {
 	static create(data: any) {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
-		let date: any = ''
+		let startDate: any = ''
+		let endDate: any = ''
+		let dateRanges: any = ''
+
 		if (data.dateRanges[0]) {
-			date = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime)
-		} else {
-			date = data.date
+			dateRanges = data.dateRanges
+			startDate = new Date(
+				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
+			)
+			endDate = new Date(
+				data.dateRanges[0].date + 'T' + data.dateRanges[0].endTime
+			)
 		}
 
 		let location = ''
@@ -290,22 +409,36 @@ export class Event {
 
 		const status = data.status ? data.status : 'Active'
 
-		return new Event(date, location, capacity, availability, status, data.id)
+		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}
 
 	id: string
 	date: Date
+	startDate: Date
+	endDate: Date
+	dateRanges: Date[]
 	location: string
 	capacity: number
 	availability: number
 	status: string
 	isLearnerBooked: boolean
 
-	constructor(date: Date, location: string, capacity: number, availability: number, status: string, id?: string) {
+	constructor(
+		startDate: Date,
+		endDate: Date,
+		dateRanges: Date[],
+		location: string,
+		capacity: number,
+		availability: number,
+		status: string,
+		id?: string
+	) {
 		if (id) {
 			this.id = id!
 		}
-		this.date = date
+		this.startDate = startDate
+		this.endDate = endDate
+		this.dateRanges = dateRanges
 		this.location = location
 		this.capacity = capacity
 		this.availability = availability
@@ -462,6 +595,8 @@ export class User {
 		} else {
 			user.forceOrgChange = new ForceOrgChange(false)
 		}
+
+		user.userId = data.userId
 		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit ? data.organisationalUnit.code : data.department
 		user.givenName = data.fullName ? data.fullName : data.givenName
@@ -500,6 +635,7 @@ export class User {
 	tokenzied?: string
 	organisationalUnit?: OrganisationalUnit
 	forceOrgChange: ForceOrgChange
+	userId: string
 
 	grade?: any
 
@@ -535,4 +671,13 @@ export class User {
 			this.hasRole('KNOWLEDGEPOOL_SUPPLIER_AUTHOR')
 		)
 	}
+}
+
+function sortEvents(events: Event[]) {
+	events.sort(function compare(a, b) {
+		const dateA = new Date(_.get(a, 'startDate', ''))
+		const dateB = new Date(_.get(b, 'startDate', ''))
+		// @ts-ignore
+		return dateA - dateB
+	})
 }
