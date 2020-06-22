@@ -18,7 +18,7 @@ export function setCspPolicy(staticAssetDomain: string) {
 	const policy =  {
 		'child-src': 'https://youtube.com https://www.youtube.com',
 		'default-src': `'self' ${contentCdn} ${staticCdn}`.trim(),
-		'font-src': `'data:' ${staticCdn}`.trim(),
+		'font-src': `'self' data: ${staticCdn}`.trim(),
 		'frame-src': 'https://youtube.com https://www.youtube.com',
 		'img-src': `'self' data: https://www.google-analytics.com ${staticCdn}`.trim(),
 		'script-src':

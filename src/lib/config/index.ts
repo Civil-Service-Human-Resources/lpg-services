@@ -174,3 +174,5 @@ export const REDIS = set({
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
 export const STATIC_ASSET_TTL = env.STATIC_ASSET_TTL
+
+export const TOKEN_EXPIRY_BUFFER = Number(env.TOKEN_EXPIRY_BUFFER) || 30

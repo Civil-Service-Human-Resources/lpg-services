@@ -86,6 +86,7 @@ async function updateUserObject(req: express.Request, updatedProfile: Record<str
 		...req.user,
 		...updatedProfile,
 	})
+
 	await new Promise(resolve => {
 		req.login(newUser, () => {
 			req.session!.save(resolve)
@@ -319,15 +320,17 @@ export async function patchAndUpdate(
 	call[node] = value
 	const response =
 		node !== 'lineManager'
-			? await registry.patch('civilServants', call, req.user.accessToken)
+			? await registry.patch('/civilServants/' + req.user.userId, call, req.user.accessToken)
 			: await registry.checkLineManager(call, req.user.accessToken)
 
-	if (node === 'lineManager' && (response as any).status !== 200) {
+	const responseStatus = (response as any).status || (response as any).statusCode
+	const requestWasSuccessful = responseStatus === 200
+
+	if (node === 'lineManager' && !requestWasSuccessful) {
 		const inputName = 'line-manager'
-		const status = (response as any).status
 		let errorMessage = null
 
-		switch (status) {
+		switch (responseStatus) {
 			case 404:
 				errorMessage = req.__('errors.lineManagerMissing')
 				break
@@ -342,7 +345,9 @@ export async function patchAndUpdate(
 				res.redirect(`/profile/${inputName}`)
 			})
 		}
-	} else if (response) {
+	} else if (requestWasSuccessful) {
+		// seems like we have to get the profile again to get values
+		// which seems ...not good
 		const profile = await registry.profile(req.user.accessToken)
 		await updateUserObject(req, profile as Record<string, string>)
 		req.flash('profile-updated', 'profile-updated')
