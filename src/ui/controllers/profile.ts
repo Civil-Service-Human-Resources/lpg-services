@@ -79,7 +79,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	const email = request.user.userName
 	const domain = email.split('@')[1]
 	if (!value) {
-		const options: {[prop: string]: any} = {}
+		const options: { [prop: string]: any } = {}
 
 		const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
 		organisations.data.map((x: any) => {
@@ -104,28 +104,32 @@ export async function updateOrganisation(request: Request, response: Response) {
 			throw new Error(error)
 		}
 
+		let organisationalUnit
+
 		try {
 			const organisationResponse: any = await registry.getWithoutHal(value)
-			const organisationalUnit = {
+			organisationalUnit = {
 				code: organisationResponse.data.code,
 				name: organisationResponse.data.name,
 				paymentMethods: organisationResponse.data.paymentMethods,
-			} catch (error) {
-				console.log(error)
-				throw new Error(error)
 			}
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
+		}
 
-	try {
-		await registry.patch('civilServants', {organisationalUnit: request.body.organisation}, request.user.accessToken)
-	} catch (error) {
-		console.log(error)
-		throw new Error(error)
+		try {
+			await registry.patch('civilServants', {organisationalUnit: request.body.organisation}, request.user.accessToken)
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
+		}
+		setLocalProfile(request, 'department', organisationalUnit.code)
+		setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+		request.session!.save(() =>
+			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
+		)
 	}
-	setLocalProfile(request, 'department', organisationalUnit.code)
-	setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-	request.session!.save(() =>
-		response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
-	)
 }
 
 export async function addProfession(request: Request, response: Response) {
