@@ -1,13 +1,11 @@
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
-import {ForceOrgChange, User} from 'lib/model'
+import {User} from 'lib/model'
 import * as _ from 'lodash'
 import * as log4js from 'log4js'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
-import {AgencyTokenFactory} from '../factory/agencyTokenFactory'
-import {AgencyToken} from '../model/agencyToken'
 
 log4js.configure(config.LOGGING)
 const logger = log4js.getLogger('profile')
@@ -24,6 +22,7 @@ export function addName(request: Request, response: Response) {
 
 export async function updateName(request: Request, response: Response) {
 	const name = request.body.name
+
 	if (!name) {
 		response.send(
 			template.render('profile/name', request, response, {
@@ -58,96 +57,76 @@ export async function addOrganisation(request: Request, response: Response) {
 	const options: {[prop: string]: any} = {}
 	const email = request.user.userName
 	const domain = email.split('@')[1]
-	const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
+	const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
 	organisations.data.map((x: any) => {
 		options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 	})
 
 	const value = request.user.department
+	const flashErrorArray = request.flash('error')
+	const flashErrorArraySize = flashErrorArray.length
 
-	response.send(
-		template.render('profile/organisation', request, response, {
-			inputName: 'organisation',
-			label: 'Organisation',
-			options: Object.entries(options),
-			originalUrl: request.query.originalUrl,
-			value,
-		})
-	)
+	if (flashErrorArraySize > 0) {
+		response.send(
+			template.render('profile/organisation', request, response, {
+				error: request.flash('error'),
+				inputName: 'organisation',
+				label: 'Organisation',
+				options: Object.entries(options),
+				originalUrl: request.query.originalUrl,
+				value,
+			})
+		)
+	} else {
+		response.send(
+			template.render('profile/organisation', request, response, {
+				inputName: 'organisation',
+				label: 'Organisation',
+				options: Object.entries(options),
+				originalUrl: request.query.originalUrl,
+				value,
+			})
+		)
+	}
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
-	const value = request.body.organisation
-	const email = request.user.userName
-	const domain = email.split('@')[1]
+	let value: string
+	value = request.body.organisation
 	if (!value) {
-		const options: { [prop: string]: any } = {}
-
-		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat/' + domain + '/')
-		organisations.data.map((x: any) => {
-			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+		request.flash('error', request.__('errors.empty-organisation'))
+		return request.session!.save(() => {
+			response.redirect(`/profile/organisation`)
 		})
-
-		response.send(template.render('profile/organisation', request, response, {
-			error: true,
-			inputName: 'organisation',
-			label: 'Organisation',
-			options: Object.entries(options),
-			originalUrl: request.body.originalUrl,
-			value,
-		}))
-	} else {
-		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				organisationalUnit: request.body.organisation,
-			}, request.user.accessToken)
-		} catch (error) {
-			logger.error(error)
-			throw new Error(error)
-		}
-
-		let organisationalUnit
-
-		try {
-			const organisationResponse: any = await registry.getWithoutHal(value)
-			organisationalUnit = {
-				code: organisationResponse.data.code,
-				name: organisationResponse.data.name,
-				paymentMethods: organisationResponse.data.paymentMethods,
-			}
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-
-		try {
-			await registry.patch('civilServants', {organisationalUnit: request.body.organisation}, request.user.accessToken)
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-
-		let res: any
-		const dto = {forceOrgChange: false}
-
-		try {
-			res = await registry.updateForceOrgResetFlag(request.user, dto)
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-
-		if (res.status === 204) {
-			setLocalProfile(request, 'department', organisationalUnit.code)
-			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-			setLocalProfile(request, 'forceOrgChange', new ForceOrgChange(false))
-			request.session!.save(() =>
-				response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
-			)
-		} else {
-			throw new Error(res)
-		}
 	}
+
+	let organisationalUnit
+
+	try {
+		const organisationResponse: any = await registry.getWithoutHal(value)
+		organisationalUnit = {
+			code: organisationResponse.data.code,
+			name: organisationResponse.data.name,
+			paymentMethods: organisationResponse.data.paymentMethods,
+		}
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+
+	try {
+		await registry.patch('civilServants' + request.user.userId,
+			{organisationalUnit: request.body.organisation},
+			request.user.accessToken)
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+	setLocalProfile(request, 'department', organisationalUnit.code)
+	setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+	request.session!.save(() =>
+		response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
+	)
 }
 
 export async function addProfession(request: Request, response: Response) {
@@ -447,14 +426,16 @@ export async function updateLineManager(request: Request, response: Response) {
 }
 
 export function addEmail(request: Request, response: Response) {
+	logger.debug(`User ${request.user.userName} requesting to change email`)
 	response.send(template.render('profile/email', request, response))
 }
 
 /**
  * This method sends the user to the update email form on Identity.
- * Before doing so it needs to check if it is part of an agency token and if so, update token quota.
  * For all users, set a flag on their civil servant object in csrs, to force organisation to be set next on log in.
  * Clear any local profile info for dept/org.
+ * This flag on csrs needs to be set here (as opposed to on the identity service),
+ * as this is the last point in the journey at which there is an authenticated context for security.
  *
  * @param {Request} request
  * @param {Response} response
@@ -462,33 +443,18 @@ export function addEmail(request: Request, response: Response) {
  */
 export async function updateEmail(request: Request, response: Response) {
 	try {
-		const agencyTokenFactory: AgencyTokenFactory = new AgencyTokenFactory()
-		const user = request.user
-		const email = user.userName
-		const oldDomain = email.split('@')[1]
-
-		if (
-			!_.isEmpty(user.organisationalUnit) &&
-			user.organisationalUnit !== undefined &&
-			user.organisationalUnit.code !== undefined
-		) {
-			const value: any = await registry.getAgencyTokenForUser(user, user.organisationalUnit.code, oldDomain)
-			if (value.status === 200) {
-				logger.debug(`User ${user.id} is an agency user. Adjusting token quota`)
-				const agencyToken = agencyTokenFactory.create(value.data)
-				await adjustTokenQuota(user, agencyToken, oldDomain)
-			}
+		const user: User = request.user
+		logger.debug(`User ${user.userName} confirming request to change email`)
+		try {
+			await registry.patch('civilServants', {organisationalUnit: null}, user.accessToken)
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
 		}
-
-		const dto = {forceOrgChange: true}
-		const res: any = await registry.updateForceOrgResetFlag(user, dto)
-		if (res.status === 204) {
-			setLocalProfile(request, 'department', null)
-			setLocalProfile(request, 'organisationalUnit', null)
-			setLocalProfile(request, 'forceOrgChange', true)
-
-			return request.session!.save(() => response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email'))
-		}
+		setLocalProfile(request, 'department', null)
+		setLocalProfile(request, 'organisationalUnit', null)
+		setLocalProfile(request, 'forceOrgChange', true)
+		return request.session!.save(() => response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email'))
 	} catch (error) {
 		logger.error(error)
 		throw new Error(error)
@@ -524,16 +490,6 @@ function setLocalProfile(request: Request, key: string, value: any) {
 
 	/* tslint:disable-next-line:no-empty */
 	request.session!.save(() => {})
-}
-
-async function adjustTokenQuota(user: User, agencyToken: AgencyToken, oldDomain: string) {
-	const quotaDTO = {
-		code: user.organisationalUnit!.code,
-		domain: oldDomain,
-		removeUser: true,
-		token: agencyToken.token,
-	}
-	await registry.updateAvailableSpacesOnAgencyToken(user.accessToken, quotaDTO)
 }
 
 class LineManagerForm {

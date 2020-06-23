@@ -565,16 +565,6 @@ export class Feedback {
 	relevance: number
 }
 
-export class ForceOrgChange {
-	forceOrgChange: boolean
-	constructor(forceOrgChange: boolean) {
-		this.forceOrgChange = forceOrgChange
-	}
-	isForceOrgChange() {
-		return this.forceOrgChange
-	}
-}
-
 export class OrganisationalUnit {
 	code: string
 	name: string
@@ -590,11 +580,6 @@ export class User {
 			Array.isArray(data.roles) ? data.roles : [data.roles],
 			data.accessToken
 		)
-		if (data.forceOrgChange.forceOrgChange) {
-			user.forceOrgChange = new ForceOrgChange(true)
-		} else {
-			user.forceOrgChange = new ForceOrgChange(false)
-		}
 
 		user.userId = data.userId
 		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
@@ -634,7 +619,6 @@ export class User {
 	givenName?: string
 	tokenzied?: string
 	organisationalUnit?: OrganisationalUnit
-	forceOrgChange: ForceOrgChange
 	userId: string
 
 	grade?: any
