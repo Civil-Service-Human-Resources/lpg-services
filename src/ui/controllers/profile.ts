@@ -22,6 +22,7 @@ export function addName(request: Request, response: Response) {
 
 export async function updateName(request: Request, response: Response) {
 	const name = request.body.name
+
 	if (!name) {
 		response.send(
 			template.render('profile/name', request, response, {
@@ -62,74 +63,70 @@ export async function addOrganisation(request: Request, response: Response) {
 	})
 
 	const value = request.user.department
+	const flashErrorArray = request.flash('error')
+	const flashErrorArraySize = flashErrorArray.length
 
-	response.send(
-		template.render('profile/organisation', request, response, {
-			inputName: 'organisation',
-			label: 'Organisation',
-			options: Object.entries(options),
-			originalUrl: request.query.originalUrl,
-			value,
-		})
-	)
+	if (flashErrorArraySize > 0) {
+		response.send(
+			template.render('profile/organisation', request, response, {
+				error: request.flash('error'),
+				inputName: 'organisation',
+				label: 'Organisation',
+				options: Object.entries(options),
+				originalUrl: request.query.originalUrl,
+				value,
+			})
+		)
+	} else {
+		response.send(
+			template.render('profile/organisation', request, response, {
+				inputName: 'organisation',
+				label: 'Organisation',
+				options: Object.entries(options),
+				originalUrl: request.query.originalUrl,
+				value,
+			})
+		)
+	}
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
-	const value = request.body.organisation
-	const email = request.user.userName
-	const domain = email.split('@')[1]
+	let value: string
+	value = request.body.organisation
 	if (!value) {
-		const options: { [prop: string]: any } = {}
-
-		const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
-		organisations.data.map((x: any) => {
-			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+		request.flash('error', request.__('errors.empty-organisation'))
+		return request.session!.save(() => {
+			response.redirect(`/profile/organisation`)
 		})
-
-		response.send(template.render('profile/organisation', request, response, {
-			error: true,
-			inputName: 'organisation',
-			label: 'Organisation',
-			options: Object.entries(options),
-			originalUrl: request.body.originalUrl,
-			value,
-		}))
-	} else {
-		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				organisationalUnit: request.body.organisation,
-			}, request.user.accessToken)
-		} catch (error) {
-			logger.error(error)
-			throw new Error(error)
-		}
-
-		let organisationalUnit
-
-		try {
-			const organisationResponse: any = await registry.getWithoutHal(value)
-			organisationalUnit = {
-				code: organisationResponse.data.code,
-				name: organisationResponse.data.name,
-				paymentMethods: organisationResponse.data.paymentMethods,
-			}
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-
-		try {
-			await registry.patch('civilServants', {organisationalUnit: request.body.organisation}, request.user.accessToken)
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-		setLocalProfile(request, 'department', organisationalUnit.code)
-		setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-		request.session!.save(() =>
-			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
-		)
 	}
+
+	let organisationalUnit
+
+	try {
+		const organisationResponse: any = await registry.getWithoutHal(value)
+		organisationalUnit = {
+			code: organisationResponse.data.code,
+			name: organisationResponse.data.name,
+			paymentMethods: organisationResponse.data.paymentMethods,
+		}
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+
+	try {
+		await registry.patch('civilServants' + request.user.userId,
+			{organisationalUnit: request.body.organisation},
+			request.user.accessToken)
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+	setLocalProfile(request, 'department', organisationalUnit.code)
+	setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+	request.session!.save(() =>
+		response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
+	)
 }
 
 export async function addProfession(request: Request, response: Response) {
