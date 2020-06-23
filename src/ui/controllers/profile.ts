@@ -115,7 +115,9 @@ export async function updateOrganisation(request: Request, response: Response) {
 	}
 
 	try {
-		await registry.patch('civilServants' + request.user.userId, {organisationalUnit: request.body.organisation}, request.user.accessToken)
+		await registry.patch('civilServants' + request.user.userId,
+			{organisationalUnit: request.body.organisation},
+			request.user.accessToken)
 	} catch (error) {
 		console.log(error)
 		throw new Error(error)
