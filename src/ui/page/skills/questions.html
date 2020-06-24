@@ -1,36 +1,4 @@
-<Page title="Skills" {_csrf}>
-    <div class="container container--main">
-        <div class="grid-row ">
-            <div class="column-full">
-                <p class="no-margin">
-                    {#if index > 0}
-                    <a class="link-back" href="/skills/questions/{index-1}">Back</a>
-                    {:else}
-                    <a class="link-back" href="/skills/choose-quiz">Back</a>
-                    {/if}
-                </p>
-                <h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
-                {#if question}
-                <h2 class="heading heading-large ">Question {index+1} of {count}</h2>
-                {:else}
-                <h2 class="heading heading-large ">Question # of #</h2>
-                {/if}
-                <form action="skills/questions/{index}" method="post" class="question-form">
-                    <input type="hidden" name="_csrf" value="{_csrf}">
-                    <fieldset class="form-group">
-                        <QuizQuestion question={question} type={type} />
-                    </fieldset>
-                    <div class="dont-know">
-                        <a href="/skills/questions/{index+1}">I'm not sure</a>
-                    </div>
-                    <button type="submit" class="button">Continue</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</Page>
-
-<script>
+<script type="text/javascript">
     import Page from '../../component/Page.html'
     import QuizQuestion from '../../component/QuizQuestion.html'
     export default {
@@ -44,3 +12,41 @@
         }
     }
 </script>
+
+<Page title="Skills" {_csrf}>
+    <div class="container container--main">
+        <div class="grid-row ">
+            <div class="column-half">
+                <p class="no-margin">
+                    {#if index > 0}
+                    <a class="link-back" href="/skills/questions/{index-1}">Back</a>
+                    {:else}
+                    <a class="link-back" href="/skills/choose-quiz">Back</a>
+                    {/if}
+                </p>
+                <h1 class="heading heading-medium heading-light no-margin">Measure your skills quiz</h1>
+                {#if question}
+                <h2 class="heading heading-large ">Question {index+1} of {count}</h2>
+                {:else}
+                <h2 class="heading heading-large ">Question # of #</h2>
+                {/if}
+                <form action="skills/questions/{index}" id="skip" method="post">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                </form>
+                <form id="mainForm" action="skills/questions/{index}" method="post" class="question-form">
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <fieldset class="form-group">
+                        <QuizQuestion question={question} keys={keys} skipped="{skipped}" attemptedAnswers="{answersToQuestionKeys}" multipleAnswers="{multipleAnswers}"/>
+                    </fieldset>
+                    <div class="dont-know">
+                        <a class="skipQuestion" onclick="$('#skip').submit()">Skip this question</a>
+                    </div>
+                    <button id="submitButton" type="submit" class="button" onclick="this.disabled = true; document.getElementById('mainForm').submit()">{index+1 === count ? 'Finish' : 'Continue'}</button>
+                </form>
+            </div>
+            <div style="height: 100vh" class="column-half supportingImageHolder">
+                <img class="supportingImage" alt="{question.alternativeText === undefined ? '' : question.alternativeText}" src="{question.imgUrl}"/>
+            </div>
+        </div>
+    </div>
+</Page>

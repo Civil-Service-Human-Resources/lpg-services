@@ -303,9 +303,10 @@ app.get(
 app.get('/skills', asyncHandler(skillsController.introduction))
 app.get('/skills/choose-quiz', asyncHandler(skillsController.chooseQuiz))
 app.post('/skills/start-quiz', asyncHandler(skillsController.startQuiz))
-app.get('/skills/questions/:questionIndex', asyncHandler(skillsController.nextQuestion))
+app.get('/skills/questions/:questionIndex', asyncHandler(skillsController.displayQuestion))
 app.post('/skills/questions/:questionIndex', asyncHandler(skillsController.answerQuestion))
-app.get('/skills/summary', asyncHandler(skillsController.quizSummary))
+app.get('/skills/summary/:answerSubmissionId', asyncHandler(skillsController.quizSummary))
+app.get('/skills/quiz-history', asyncHandler(skillsController.quizHistory))
 
 app.get('/home', asyncHandler(homeController.home))
 
