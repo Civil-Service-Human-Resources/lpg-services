@@ -1,0 +1,49 @@
+<Page title="Skills" {_csrf}>
+    <div class="container container--main">
+        <a class="link-back" href="/skills">Back</a>
+        <h1 class="heading-xlarge no-margin">Quiz History</h1>
+
+        {#if answerSubmissions.length == 0}
+            <h3 class="heading heading-small">You haven't completed any quizzes yet</h3>
+        {:else}
+            <table class="key-value-list key-value-list--auto u-space-b30 table--top">
+            <tbody>
+            <tr>
+                <th class="tableHeading">Date Completed</th>
+                <th class="tableHeading">Profession</th>
+                <th class="tableHeading">Type of quiz</th>
+                <th class="tableHeading">Score achieved</th>
+                <th></th>
+            </tr>
+            {#each answerSubmissions as answerSubmission}
+            <tr>
+                <td class="key-value-list__key key-value-list__key--auto">{answerSubmission.submittedDateString}</td>
+                <td class="key-value-list__key key-value-list__key--auto">{areaOfWorkKeys[answerSubmission.professionId]}</td>
+                <td class="key-value-list__key key-value-list__key--auto">{answerSubmission.type}</td>
+                <td class="key-value-list__key key-value-list__key--auto">{answerSubmission.correctAnswers}/{answerSubmission.numberOfQuestions}</td>
+                <td class="key-value-list__item-action">
+                    <a href="/skills/summary/{answerSubmission.id}">View results
+                    </a>
+                </td>
+            </tr>
+            {/each}
+            </tbody>
+        </table>
+        {/if}
+    </div>
+</Page>
+
+<script>
+    import Page from '../../component/Page.html'
+    import BackButton from '../../component/BackButton.html'
+
+    export default {
+        data() {
+            return {}
+        },
+        components: {
+            Page,
+            BackButton
+        }
+    }
+</script>

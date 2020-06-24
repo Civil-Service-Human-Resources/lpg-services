@@ -3,44 +3,50 @@
         <div class="grid-row">
             <div class="column-full">
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="heading heading-large">Policy awareness quiz:</h1>
+                    <h1 class="heading heading-large">{answerSubmission.quizName}:</h1>
                     <h2 class="heading-medium">Your quiz results</h2>
-                    <Banner type="confirmation" message="You scored {correct} out of {quiz.questionCount} on this awareness quiz" />
+                    <Banner type="confirmation" message="You scored {answerSubmission.correctAnswers} out of {answerSubmission.numberOfQuestions} on this awareness quiz" />
                 </div>
                 <div class="summary-container">
-                    {#each quiz.questions as question, y}
+                    {#each answerSubmission.answers as answer, y}
                     <div class="question-container">
                         <div class="answers">
-                            {#if question.theme}
-                            <h3 class="heading-medium">Q{y+1}: <span class="light">{question.theme}</span></h3>
+                            {#if answer.question.theme}
+                            <h3 class="heading-medium">Q{y+1}: <span class="light">{answer.question.theme}</span></h3>
                             {/if}
-                            {#if question.correct}
+                            {#if answer.question.answer.correctAnswers.every(x => answer.submittedAnswers.includes(x)) && answer.submittedAnswers.length === answer.question.answer.correctAnswers.length}
                             <span class="summary-icon correct"></span>
                             {:else}
                             <span class="summary-icon incorrect"></span>
                             {/if}
                             <input id=qs{y} type="checkbox" class="expand"/>
-                            <label class="expand-label govuk-link" for=qs{y}> answer</label>
-                            <h3 class="question-text">{question.value}</h3>
+                            <label class="expand-label govuk-link" for=qs{y}></label>
+                            <h3 class="question-text">{answer.question.value}</h3>
                             <div class="question-contents">
-                                {#each question.choices as choice, x}
+                                {#each Object.keys(answer.question.answer.answers) as choice, x}
                                 <div class="multiple-choice">
-                                    <input type="{choice.type}" value={choice.value} name="q{y+1}c{x+1}" id="q{y+1}c{x+1}" disabled="disabled"
-                                           checked="{choice.checked}"/>
-                                    <label for=q{y+1}c{x+1}>{choice.questionLetter}{choice.value}</label>
+                                    <input checked="{answer.submittedAnswers.includes(choice)}" type="{answer.question.type === 'MULTIPLE' ? 'checkbox' : 'radio'}" value="{choice}" name="{answer.questionId}{choice}" id="{choice}" disabled="disabled"/>
+                                    <label for={choice}>{choice}) {answer.question.answer.answers[choice]}</label>
                                 </div>
                                 {/each}
-                                {#if question.correctAnswers}
-                                <h3 class="question-text"><strong>The correct answer/s:</strong></h3>
-                                <h3 class="question-text"><span class="light">{question.correctAnswers}</span></h3>
+                                {#if answer.skipped}
+                                <h3 class="question-text"><span class="skippedText">This answer was skipped</span></h3>
                                 {/if}
-                                {#if question.why}
+                                {#if answer.question.answer.correctAnswers}
+                                <h3 class="question-text"><strong>{answer.question.type === 'MULTIPLE' ? 'The correct answers:' : 'The correct answer:'}</strong></h3>
+                                <h3 class="question-text"><span class="light">{answer.question.answer.correctAnswers.join(' and ')}</span></h3>
+                                {/if}
+                                {#if answer.question.why}
                                 <h3 class="question-text"><strong>Here's why:</strong></h3>
-                                <h3 class="question-text"><span class="light">{question.why}</span></h3>
+                                <h3 class="question-text"><span class="light">{answer.question.why}</span></h3>
                                 {/if}
-                                {#if question.learningName}
+                                {#if answer.question.learningName}
                                 <h3 class="question-text"><strong>Suggested learning based on this question:</strong></h3>
-                                <h3 class="question-text"><a href="{question.learningReference}">{question.learningName}</a></h3>
+                                <h3 class="question-text"><a href="//{answer.question.learningReference}" target="_blank">{answer.question.learningName}</a></h3>
+                                {/if}
+                                {#if answer.question.imgUrl}
+                                <h3 class="question-text"><strong>Supporting image</strong></h3>
+                                <img class="supportingImage" alt="" src="{answer.question.imgUrl}"/>
                                 {/if}
                             </div>
                         </div>

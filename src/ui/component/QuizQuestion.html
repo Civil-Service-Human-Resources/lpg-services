@@ -2,16 +2,19 @@
     <div class="question-contents">
         <h1><strong>{question.theme}</strong></h1>
         <p>{question.value}</p>
-        {#if type === "checkbox"}
+        {#if multipleAnswers}
         <p><strong>Select all correct answers</strong></p>
         {:else}
-        <p><strong>Select one answer</strong></p>
+        <p><strong>Select one correct answer</strong></p>
         {/if}
-        {#each question.choices as choice, x}
+        {#each keys as key}
         <div class="multiple-choice">
-            <input type="{type}" value={choice.value} name="answers" id="{x}" />
-            <label for={x}>{choice.questionLetter}{choice.value}</label>
+            <input checked="{attemptedAnswers.includes(key.value)}" type="{multipleAnswers ? 'checkbox' : 'radio'}" value={key.value} name="answers" id="{key.value}" />
+            <label for={key.value}>{key.value}) {question.answer.answers[key.value]}</label>
         </div>
         {/each}
+        <p class="screen-reader-text">{question.alternativeText === undefined ? 'Alternative text' : question.alternativeText}</p>
+        <div>
+        </div>
     </div>
 </div>

@@ -2,9 +2,10 @@ import axios, {AxiosInstance} from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
+import * as model from "lib/model"
 import * as log4js from 'log4js'
 
-import {Question, Quiz} from "lib/service/skills/api"
+import {AnswerSubmission, Question, QuizHistory, QuizMetadata, SelectedAnswers} from "lib/service/skills/api"
 
 const logger = log4js.getLogger('skills')
 
@@ -24,12 +25,56 @@ const http: AxiosInstance = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function searchQuiz(professionId: number, limit: number): Promise<Quiz> {
+export async function getQuizQuestions(professionId: number, limit: number, user: model.User): Promise<Question[]> {
 	try {
-		const response = await http.get(`/quizzes?professionId=${professionId}&limit=${limit}`)
-		return new Quiz(response.data as Question[])
+		const response = await http.get(`/api/quiz?professionId=${professionId}&limit=${limit}`, getAuthorizationHeader(user))
+		return response.data as Question[]
 	} catch (e) {
 		throw new Error('Error searching quizzes')
+	}
+}
+
+export async function getQuizMetadata(professionId: number, user: model.User): Promise<QuizMetadata> {
+	try {
+		const response = await http.get(`/api/quiz/${professionId}/info`, getAuthorizationHeader(user))
+		return response.data as QuizMetadata
+	} catch (e) {
+		throw new Error('Error getting quiz metadata')
+	}
+}
+
+export async function submitAnswers(selectedAnswers: SelectedAnswers, user: model.User): Promise<number> {
+	try {
+		const response = await http.post(`/api/quiz/submit-answers`, selectedAnswers,
+			getAuthorizationHeader(user))
+		return response.data as number
+	} catch (e) {
+		throw new Error('Error submitting answers')
+	}
+
+}
+
+export async function getResultsSummary(quizResultId: number, user: model.User): Promise<AnswerSubmission> {
+	try {
+		const response = await http.get(
+			`/api/quiz/quiz-summary?quizResultId=${quizResultId}&staffId=${user.id}`,
+			getAuthorizationHeader(user)
+		)
+		return response.data as AnswerSubmission
+	} catch (e) {
+		throw new Error('Error getting result summary')
+	}
+}
+
+export async function getQuizHistory(user: model.User): Promise<QuizHistory> {
+	try {
+		const response = await http.get(`/api/quiz/quiz-history?staffId=${user.id}`, getAuthorizationHeader(user))
+		if (response.status === 204) {
+			return {quizResultDto: []}
+		}
+		return response.data as QuizHistory
+	} catch (e) {
+		throw new Error('Error getting quiz history')
 	}
 }
 
@@ -43,5 +88,13 @@ export async function getPurchaseOrder(code: string): Promise<boolean> {
 			})
 	} catch (e) {
 		throw new Error('Error getting purchase order')
+	}
+}
+
+function getAuthorizationHeader(user: model.User) {
+	return {
+		headers: {
+			Authorization: `Bearer ${user.accessToken}`,
+		},
 	}
 }
