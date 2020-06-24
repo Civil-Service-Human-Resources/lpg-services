@@ -108,7 +108,7 @@ export async function patch(node: string, data: any, token: string) {
 			})
 			.patch(data, (error, response) => {
 				if (error) {
-					resolve(false)
+					reject(error)
 				} else {
 					if (response.statusCode >= 200 && response.statusCode < 300) {
 						resolve(response)
