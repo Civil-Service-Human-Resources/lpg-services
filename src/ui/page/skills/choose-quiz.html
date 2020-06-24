@@ -3,20 +3,35 @@
         <a class="link-back" href="/skills">Back</a>
         <div class="grid-row ">
             <div class="column-two-thirds">
-                <h1 class="heading heading-large">Choose your quiz</h1>
+                <h1 class="heading heading-large">Take the quiz</h1>
                 <form action="skills/start-quiz" method="post">
                     <input type="hidden" name="_csrf" value="{_csrf}">
-                    <fieldset class="form-group">
-                        <div class="multiple-choice">
-                            <input type="radio" value="10" id="limit-10" name="limit" class="quiz" checked="checked" />
-                            <label class="label-area" for="limit-10">The quick general awareness quiz covering all 3 Policy themes<br/>(10 questions)</label>
-                        </div>
-                        <div class="multiple-choice">
-                            <input type="radio" value="25" id="limit-25" name="limit" class="quiz" />
-                            <label class="label-area" for="limit-25">The full general awareness quiz covering all 3 Policy themes<br/>(25 questions)</label>
-                        </div>
-                    </fieldset>
-                    <button class="button" type="submit">Continue</button>
+                    <h3 class="heading-small">What is this quiz about?</h3>
+                    <p class="govuk-body">
+                        {quizDescription}
+                    </p>
+                    {#if !(questionCount > 17 && questionCount < 36)}
+                    <h3 class="heading-small">Which quiz would you like to take?</h3>
+                    <p class="govuk-body">
+                        The quiz consists of questions from 18 skill areas that are selected at random, you can choose from the short quiz which consists of 18 questions or to further test your knowledge you can choose the long quiz which consists of 36 questions.
+                    </p>
+
+                    <div class="form-group">
+                        <fieldset class="u-space-b30">
+                            <div class="column-one-third multiple-choice" style="clear: none;">
+                                <input  type="radio" name="quizType" checked="checked" value="short" id="shortQuiz">
+                                <label for="shortQuiz">Short quiz</label>
+                            </div>
+
+                            <div class="column-one-third multiple-choice" style="clear: none;">
+                                <input  type="radio" name="quizType" value="long" id="longQuiz">
+                                <label for="longQuiz">Long quiz</label>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                    {/if}
+                    <button class="button" type="submit">Start quiz</button>
                 </form>
             </div>
             <div class="column-one-third">

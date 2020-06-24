@@ -587,6 +587,7 @@ export class Feedback {
 }
 
 export class OrganisationalUnit {
+	id: number
 	code: string
 	name: string
 	paymentMethods: string[]

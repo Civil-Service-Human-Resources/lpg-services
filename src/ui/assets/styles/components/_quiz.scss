@@ -60,6 +60,56 @@
 
 }
 
+.supportingImageHolder {
+  display: grid;
+  grid-template-rows: auto min-content auto;
+}
+
+.supportImageText {
+  font-style: italic;
+  padding: 2px 2px 0px 2px;
+  text-align: center;
+  grid-row: 3;
+}
+
+img.supportingImage {
+  width: 100%;
+  height: auto;
+  align-self: center;
+  grid-row: 2;
+  //margin: 0 auto;
+}
+
+.screen-reader-text {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  word-wrap: normal !important;
+}
+
+p.alternativeText {
+  display: none;
+}
+
+span.skippedText {
+}
+
+.skipQuestion {
+  text-decoration: underline;
+  color: #0066CC;
+  cursor: pointer;
+}
+
+th.tableHeading {
+  font-weight: bold;
+}
+
 .summary-container {
   .question-contents {
     display: none;
@@ -82,7 +132,7 @@
     }
 
     &:before {
-      content: 'Show';
+      content: 'Show answers';
     }
 
     &:after
@@ -113,7 +163,7 @@
   }
 
   .expand:checked + .expand-label:before {
-    content: 'Hide';
+    content: 'Hide answers';
   }
 
   .expand:checked + .expand-label:after {
