@@ -115,7 +115,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	}
 
 	try {
-		await registry.patch('civilServants' + request.user.userId,
+		await registry.patch('/civilServants/' + request.user.userId,
 			{organisationalUnit: request.body.organisation},
 			request.user.accessToken)
 	} catch (error) {
@@ -432,7 +432,6 @@ export function addEmail(request: Request, response: Response) {
 
 /**
  * This method sends the user to the update email form on Identity.
- * For all users, set a flag on their civil servant object in csrs, to force organisation to be set next on log in.
  * Clear any local profile info for dept/org.
  * This flag on csrs needs to be set here (as opposed to on the identity service),
  * as this is the last point in the journey at which there is an authenticated context for security.
@@ -453,7 +452,6 @@ export async function updateEmail(request: Request, response: Response) {
 		}
 		setLocalProfile(request, 'department', null)
 		setLocalProfile(request, 'organisationalUnit', null)
-		setLocalProfile(request, 'forceOrgChange', true)
 		return request.session!.save(() => response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email'))
 	} catch (error) {
 		logger.error(error)
