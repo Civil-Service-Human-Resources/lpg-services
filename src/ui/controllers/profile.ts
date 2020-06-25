@@ -445,7 +445,7 @@ export async function updateEmail(request: Request, response: Response) {
 		const user: User = request.user
 		logger.debug(`User ${user.userName} confirming request to change email`)
 		try {
-			await registry.patch('civilServants', {organisationalUnit: null}, user.accessToken)
+			await registry.patch('/civilServants/' + request.user.userId, {organisationalUnit: null}, user.accessToken)
 		} catch (error) {
 			console.log(error)
 			throw new Error(error)
