@@ -1,5 +1,6 @@
 import assert = require("assert")
 import * as chai from 'chai'
+import * as registry from "lib/registry"
 import * as skillsApi from "lib/service/skills"
 import * as template from 'lib/ui/template'
 import * as sinon from 'sinon'
@@ -7,7 +8,6 @@ import * as sinonChai from 'sinon-chai'
 import {mockReq, mockRes} from 'sinon-express-mock'
 import {formatAnswerSubmissionDate} from "./helpers"
 import * as helper from './helpers'
-import * as registry from "lib/registry"
 import {
 	answerQuestion,
 	chooseQuiz,
