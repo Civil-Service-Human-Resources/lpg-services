@@ -782,3 +782,131 @@ export const expectedAreasOfWork = {
 	30: 'Commercial Specialist',
 	31: 'Senior Commercial Specialist',
 }
+
+export const areasOfWorkRegistryHalMock =
+	[
+		{
+			id: 1,
+			name: "Analysis",
+		},
+		{
+			id: 2,
+			name: "Commercial",
+		},
+		{
+			id: 3,
+			name: "Communications",
+		},
+		{
+			id: 4,
+			name: "Corporate finance",
+		},
+		{
+			id: 5,
+			name: "Digital",
+		},
+		{
+			id: 6,
+			name: "Finance",
+		},
+		{
+			id: 7,
+			name: "Fraud, error, debt and grants",
+		},
+		{
+			id: 8,
+			name: "Human resources",
+		},
+		{
+			id: 9,
+			name: "Internal audit",
+		},
+		{
+			id: 10,
+			name: "Legal",
+		},
+		{
+			id: 11,
+			name: "Operational delivery",
+		},
+		{
+			id: 12,
+			name: "Project delivery",
+		},
+		{
+			id: 13,
+			name: "Property",
+		},
+		{
+			id: 14,
+			name: "Policy",
+		},
+		{
+			id: 15,
+			name: "I don't know",
+		},
+		{
+			id: 16,
+			name: "Strategy and Policy Development",
+		},
+		{
+			id: 17,
+			name: "Business Needs and Sourcing",
+		},
+		{
+			id: 18,
+			name: "Procurement",
+		},
+		{
+			id: 19,
+			name: "Contract and Supplier Management",
+		},
+		{
+			id: 20,
+			name: "Category Management",
+		},
+		{
+			id: 21,
+			name: "Commercial Strategy",
+		},
+		{
+			id: 22,
+			name: "Market Maker & Supplier Engagement",
+		},
+		{
+			id: 23,
+			name: "Commercial Risk and Assurance Specialist",
+		},
+		{
+			id: 24,
+			name: "Commercial Policy Advisor",
+		},
+		{
+			id: 25,
+			name: "Commercial Support",
+		},
+		{
+			id: 26,
+			name: "Associate Commercial Practitioner",
+		},
+		{
+			id: 27,
+			name: "Commercial Practitioner",
+		},
+		{
+			id: 28,
+			name: "Commercial Lead",
+		},
+		{
+			id: 29,
+			name: "Associate Commercial Specialist",
+		},
+		{
+			id: 30,
+			name: "Commercial Specialist",
+		},
+		{
+			id: 31,
+			name: "Senior Commercial Specialist",
+		},
+	]

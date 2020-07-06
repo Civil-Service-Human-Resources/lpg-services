@@ -7,6 +7,7 @@ import * as sinonChai from 'sinon-chai'
 import {mockReq, mockRes} from 'sinon-express-mock'
 import {formatAnswerSubmissionDate} from "./helpers"
 import * as helper from './helpers'
+import * as registry from "lib/registry"
 import {
 	answerQuestion,
 	chooseQuiz,
@@ -17,6 +18,7 @@ import {
 	startQuiz
 } from './index'
 import {
+	areasOfWorkRegistryHalMock,
 	emptyQuizHistoryResponse,
 	expectedAreasOfWork,
 	expectedQuizHistoryResponse,
@@ -1248,6 +1250,8 @@ describe('Skills middleware', () => {
 
 			const apiStub = sinon.stub(skillsApi, 'getQuizHistory').returns(expectedQuizHistoryResponse)
 
+			const registryStub = sinon.stub(registry, 'halNode').returns(areasOfWorkRegistryHalMock)
+
 			await quizHistory(req, res)
 
 			assert(res.send.callCount === 1)
@@ -1258,6 +1262,7 @@ describe('Skills middleware', () => {
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
+			registryStub.restore()
 		})
 
 		it('Backend returns data, displays quiz history', async () => {
@@ -1294,6 +1299,8 @@ describe('Skills middleware', () => {
 
 			const apiStub = sinon.stub(skillsApi, 'getQuizHistory').returns(emptyQuizHistoryResponse)
 
+			const registryStub = sinon.stub(registry, 'halNode').returns(areasOfWorkRegistryHalMock)
+
 			await quizHistory(req, res)
 
 			assert(res.send.callCount === 1)
@@ -1304,6 +1311,7 @@ describe('Skills middleware', () => {
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
+			registryStub.restore()
 		})
 
 	})
