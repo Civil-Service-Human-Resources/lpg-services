@@ -422,7 +422,7 @@ describe('Skills middleware', () => {
 
 			assert(res.send.callCount === 1)
 			assert(templateStub.calledWith('skills/choose-quiz', req, res, {
-				quizCount: sessionQuiz.numberOfQuestions,
+				questionCount: sessionQuiz.numberOfQuestions,
 				quizDescription: sessionQuiz.description,
 			}))
 			assert(templateStub.calledOnce)
