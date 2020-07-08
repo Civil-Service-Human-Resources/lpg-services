@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as jwt from 'jsonwebtoken'
 import * as config from "lib/config/index"
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
@@ -95,17 +96,24 @@ export function isAuthenticated(
 	next: express.NextFunction
 ) {
 	const authenticated = req.isAuthenticated()
+
 	if (authenticated) {
-		return next()
+		const token: any = jwt.decode(req.user.accessToken)
+		const nowEpochSeconds: number = Math.round(Date.now() / 1000)
+		if (token !== null && (token.exp > (nowEpochSeconds + config.TOKEN_EXPIRY_BUFFER))) {
+			return next()
+		}
 	}
 	const session = req.session!
 	session.redirectTo = req.originalUrl
 	const authenticationServiceUrl = config.AUTHENTICATION.serviceUrl
 	session.save(() => {
+		req.logout()
 		res.redirect(`${authenticationServiceUrl}/logout`)
 	})
 }
 
+// @ts-ignore
 export function hasRole(role: string) {
 	return (
 		req: express.Request,
@@ -119,6 +127,7 @@ export function hasRole(role: string) {
 	}
 }
 
+// @ts-ignore
 export function hasAnyRole(roles: string[]) {
 	return (
 		req: express.Request,

@@ -14,6 +14,7 @@ appInsights
 .start()
 
 /* tslint:enable */
+
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as connectRedis from 'connect-redis'
@@ -182,6 +183,16 @@ app.param('moduleId', asyncHandler(courseController.loadModule))
 app.param('eventId', asyncHandler(courseController.loadEvent))
 
 app.use('/courses/:proxyCourseId/:proxyModuleId/xapi', asyncHandler(xApiController.proxy))
+
+/**
+ * The below handler is added as there are xapi calls done against learning-record which were not handled and were
+ * caught by lusca CSRF check - resulting with big number of error messages.
+ *
+ * As it hit 100% error rate the below handler is proposed to remediate the errors appearing - it is to be
+ * investigated whether the calls should be handled (or could they be removed completely).
+ */
+app.use('/learning-record/:learnerRecordId/:notHandledModuleId/xapi',
+	(req: express.Request, res: express.Response) => res.sendStatus(204))
 
 app.use(lusca.csrf())
 

@@ -104,7 +104,7 @@ async function unwrapPost(req: extended.CourseRequest) {
 	delete data.content
 	delete data['Content-Type']
 	delete data['X-Experience-API-Version']
-
+	// @ts-ignore
 	req.query = data
 
 	return req
