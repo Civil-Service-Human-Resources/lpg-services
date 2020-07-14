@@ -27,7 +27,10 @@ axiosLogger.axiosResponseLogger(http, logger)
 
 export async function getQuizQuestions(professionId: number, limit: number, user: model.User): Promise<Question[]> {
 	try {
-		const response = await http.get(`/api/quiz?professionId=${professionId}&limit=${limit}`, getAuthorizationHeader(user))
+		const response = await http.get(
+			`/api/quiz?professionId=${professionId}&limit=${limit}&organisationId=${user.organisationalUnit!.id}`,
+			getAuthorizationHeader(user)
+		)
 		return response.data as Question[]
 	} catch (e) {
 		throw new Error('Error searching quizzes')
@@ -36,7 +39,8 @@ export async function getQuizQuestions(professionId: number, limit: number, user
 
 export async function getQuizMetadata(professionId: number, user: model.User): Promise<QuizMetadata> {
 	try {
-		const response = await http.get(`/api/quiz/${professionId}/info`, getAuthorizationHeader(user))
+		const response = await http.get(`/api/quiz/${user.organisationalUnit!.id}/${professionId}/info`,
+			getAuthorizationHeader(user))
 		return response.data as QuizMetadata
 	} catch (e) {
 		throw new Error('Error getting quiz metadata')
