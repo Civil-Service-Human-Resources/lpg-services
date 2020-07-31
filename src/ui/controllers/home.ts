@@ -3,6 +3,7 @@ import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import {Course} from "lib/model"
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
@@ -80,13 +81,16 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 		plannedLearning = [...bookedLearning, ...plannedLearning]
 
-		const courses = await catalog.list(
+		let courses = await catalog.list(
 			plannedLearning.map(l => l.courseId),
 			user
 		)
+
 		for (const course of courses) {
 			course.record = plannedLearning.find(l => l.courseId === course.id)
 		}
+
+		courses = courses.filter((course: Course) => course.modules && course.modules.length > 0)
 
 		let removeCourseId
 		let confirmTitle
