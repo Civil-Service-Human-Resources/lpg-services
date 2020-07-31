@@ -63,11 +63,28 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
+
+		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
+	})
+
+	it('should redirect to profile  page if organisationalUnit is missing from profile', () => {
+		const request = mockReq({
+			originalUrl: '/home',
+			user: {
+				givenName: 'Test User',
+			},
+		})
+		request.session!.save = callback => {
+			callback(undefined)
+		}
+
+		const response = mockRes()
+		const next = (err => undefined) as NextFunction
+		const check = profileChecker.checkProfile()
+		check(request, response, next)
 		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
 	})
 
@@ -88,8 +105,7 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
@@ -114,8 +130,7 @@ describe('ProfileChecker tests', () => {
 		}
 
 		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
+		const next = (err => undefined) as NextFunction
 		const check = profileChecker.checkProfile()
 		check(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */

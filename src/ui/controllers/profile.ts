@@ -1,6 +1,7 @@
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
+import {User} from 'lib/model'
 import * as _ from 'lodash'
 import * as log4js from 'log4js'
 import * as registry from '../../lib/registry'
@@ -12,24 +13,33 @@ const logger = log4js.getLogger('profile')
 const defaultRedirectUrl = '/home'
 
 export function addName(request: Request, response: Response) {
-	response.send(template.render('profile/name', request, response, {
-		originalUrl: request.query.originalUrl,
-	}))
+	response.send(
+		template.render('profile/name', request, response, {
+			originalUrl: request.query.originalUrl,
+		})
+	)
 }
 
 export async function updateName(request: Request, response: Response) {
 	const name = request.body.name
+
 	if (!name) {
-		response.send(template.render('profile/name', request, response, {
-			error: true,
-			name,
-			originalUrl: request.body.originalUrl,
-		}))
+		response.send(
+			template.render('profile/name', request, response, {
+				error: true,
+				name,
+				originalUrl: request.body.originalUrl,
+			})
+		)
 	} else {
 		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				fullName: request.body.name,
-			}, request.user.accessToken)
+			await registry.patch(
+				'/civilServants/' + request.user.userId,
+				{
+					fullName: request.body.name,
+				},
+				request.user.accessToken
+			)
 		} catch (error) {
 			logger.error(error)
 			throw new Error(error)
@@ -38,81 +48,88 @@ export async function updateName(request: Request, response: Response) {
 		setLocalProfile(request, 'givenName', name)
 
 		request.session!.save(() =>
-			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
 
 export async function addOrganisation(request: Request, response: Response) {
 	const options: {[prop: string]: any} = {}
-	const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat')
+	const email = request.user.userName
+	const domain = email.split('@')[1]
+	const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
 	organisations.data.map((x: any) => {
 		options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
 	})
 
 	const value = request.user.department
+	const flashErrorArray = request.flash('error')
+	const flashErrorArraySize = flashErrorArray.length
 
-	response.send(template.render('profile/organisation', request, response, {
-		inputName: 'organisation',
-		label: 'Organisation',
-		options: Object.entries(options),
-		originalUrl: request.query.originalUrl,
-		value,
-	}))
-}
-
-export async function updateOrganisation(request: Request, response: Response) {
-	const value = request.body.organisation
-
-	if (!value) {
-		const options: {[prop: string]: any} = {}
-		const organisations: any = await registry.getWithoutHal('/organisationalUnits/flat')
-		organisations.data.map((x: any) => {
-			options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
-		})
-
-		response.send(template.render('profile/organisation', request, response, {
-			error: true,
-			inputName: 'organisation',
-			label: 'Organisation',
-			options: Object.entries(options),
-			originalUrl: request.body.originalUrl,
-			value,
-		}))
+	if (flashErrorArraySize > 0) {
+		response.send(
+			template.render('profile/organisation', request, response, {
+				error: request.flash('error'),
+				inputName: 'organisation',
+				label: 'Organisation',
+				options: Object.entries(options),
+				originalUrl: request.query.originalUrl,
+				value,
+			})
+		)
 	} else {
-		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				organisationalUnit: request.body.organisation,
-			}, request.user.accessToken)
-		} catch (error) {
-			logger.error(error)
-			throw new Error(error)
-		}
-
-		try {
-			const organisationResponse: any = await registry.getWithoutHal(value)
-			const organisationalUnit = {
-				code: organisationResponse.data.code,
-				name: organisationResponse.data.name,
-				paymentMethods: organisationResponse.data.paymentMethods,
-			}
-
-			setLocalProfile(request, 'department', organisationalUnit.code)
-			setLocalProfile(request, 'organisationalUnit', organisationalUnit)
-
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-
-		request.session!.save(() =>
-			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+		response.send(
+			template.render('profile/organisation', request, response, {
+				inputName: 'organisation',
+				label: 'Organisation',
+				options: Object.entries(options),
+				originalUrl: request.query.originalUrl,
+				value,
+			})
 		)
 	}
 }
 
-export async function addProfession(request: Request, response: Response) {
+export async function updateOrganisation(request: Request, response: Response) {
+	let value: string
+	value = request.body.organisation
+	if (!value) {
+		request.flash('error', request.__('errors.empty-organisation'))
+		return request.session!.save(() => {
+			response.redirect(`/profile/organisation`)
+		})
+	}
 
+	let organisationalUnit
+
+	try {
+		const organisationResponse: any = await registry.getWithoutHal(value)
+		organisationalUnit = {
+			code: organisationResponse.data.code,
+			name: organisationResponse.data.name,
+			paymentMethods: organisationResponse.data.paymentMethods,
+		}
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+
+	try {
+		await registry.patch('/civilServants/' + request.user.userId,
+			{organisationalUnit: request.body.organisation},
+			request.user.accessToken)
+	} catch (error) {
+		console.log(error)
+		throw new Error(error)
+	}
+	setLocalProfile(request, 'department', organisationalUnit.code)
+	setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+	request.session!.save(() =>
+		response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
+	)
+}
+
+export async function addProfession(request: Request, response: Response) {
 	let options: {[prop: string]: any}
 	let res: any
 
@@ -123,9 +140,10 @@ export async function addProfession(request: Request, response: Response) {
 		options = sortList(res.data)
 	}
 
-	response.send(template.render('profile/profession', request, response, {
-		originalUrl: request.query.originalUrl,
-		professions: Object.entries(options),
+	response.send(
+		template.render('profile/profession', request, response, {
+			originalUrl: request.query.originalUrl,
+			professions: Object.entries(options),
 		})
 	)
 }
@@ -134,19 +152,21 @@ export async function updateProfession(request: Request, response: Response) {
 	const profession = request.body.profession
 
 	if (!profession) {
-			const professions = await getOptions("professions")
-			response.send(template.render('profile/profession', request, response, {
+		const professions = await getOptions('professions')
+		response.send(
+			template.render('profile/profession', request, response, {
 				error: true,
 				originalUrl: request.body.originalUrl,
 				profession,
 				professions,
-			}))
+			})
+		)
 	} else {
 		const professionsTree: any = await registry.getWithoutHal('/professions/tree')
-		const options: any  = sortList(professionsTree.data)
+		const options: any = sortList(professionsTree.data)
 		let children: any = []
 
-		const areaOfWorkId = profession.split("/professions/").pop()
+		const areaOfWorkId = profession.split('/professions/').pop()
 		options.forEach((option: any) => {
 			option.children.forEach((child: any) => {
 				// tslint:disable-next-line
@@ -169,9 +189,13 @@ export async function updateProfession(request: Request, response: Response) {
 			delete request.session!.flash.children
 		}
 		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				profession,
-			}, request.user.accessToken)
+			await registry.patch(
+				'/civilServants/' + request.user.userId,
+				{
+					profession,
+				},
+				request.user.accessToken
+			)
 		} catch (error) {
 			throw new Error(error)
 		}
@@ -187,7 +211,7 @@ export async function updateProfession(request: Request, response: Response) {
 		}
 
 		request.session!.save(() =>
-			response.redirect((request.body.originalUrl) ? request.body.originalUrl : defaultRedirectUrl)
+			response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
 		)
 	}
 }
@@ -195,30 +219,38 @@ export async function updateProfession(request: Request, response: Response) {
 export async function addOtherAreasOfWork(request: Request, response: Response) {
 	const professionsTree: any = await registry.getWithoutHal('/professions/tree')
 	const professions = sortList(professionsTree.data)
-	response.send(template.render('profile/otherAreasOfWork', request, response, {
-		originalUrl: request.query.originalUrl,
-		professions,
-	}))
+	response.send(
+		template.render('profile/otherAreasOfWork', request, response, {
+			originalUrl: request.query.originalUrl,
+			professions,
+		})
+	)
 }
 
 export async function updateOtherAreasOfWork(request: Request, response: Response) {
 	const otherAreasOfWork = request.body.otherAreasOfWork
 
 	if (!otherAreasOfWork) {
-		const professions = await getOptions("professions")
-		response.send(template.render('profile/otherAreasOfWork', request, response, {
-			error: true,
-			originalUrl: request.body.originalUrl,
-			professions,
-		}))
+		const professions = await getOptions('professions')
+		response.send(
+			template.render('profile/otherAreasOfWork', request, response, {
+				error: true,
+				originalUrl: request.body.originalUrl,
+				professions,
+			})
+		)
 	} else {
 		const values: string[] = [].concat(otherAreasOfWork).map(value => {
-			return "/professions/" + value
+			return '/professions/' + value
 		})
 		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				otherAreasOfWork: values,
-			}, request.user.accessToken)
+			await registry.patch(
+				'/civilServants/' + request.user.userId,
+				{
+					otherAreasOfWork: values,
+				},
+				request.user.accessToken
+			)
 		} catch (error) {
 			logger.error(error)
 			throw new Error(error)
@@ -228,7 +260,10 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 			const professions = []
 			for (const profession of values) {
 				const professionResponse: any = await registry.getWithoutHal(profession)
-				professions.push({id: professionResponse.data.id, name: professionResponse.data.name})
+				professions.push({
+					id: professionResponse.data.id,
+					name: professionResponse.data.name,
+				})
 			}
 
 			setLocalProfile(request, 'otherAreasOfWork', professions)
@@ -237,18 +272,18 @@ export async function updateOtherAreasOfWork(request: Request, response: Respons
 			throw new Error(error)
 		}
 
-		request.session!.save(() =>
-			response.redirect(`/profile/interests?originalUrl=${request.body.originalUrl}`)
-		)
+		request.session!.save(() => response.redirect(`/profile/interests?originalUrl=${request.body.originalUrl}`))
 	}
 }
 
 export async function addInterests(request: Request, response: Response) {
-	const interests = await getOptions("interests")
-	response.send(template.render('profile/interests', request, response, {
-		interests,
-		originalUrl: request.query.originalUrl,
-	}))
+	const interests = await getOptions('interests')
+	response.send(
+		template.render('profile/interests', request, response, {
+			interests,
+			originalUrl: request.query.originalUrl,
+		})
+	)
 }
 
 export async function updateInterests(request: Request, response: Response) {
@@ -257,9 +292,13 @@ export async function updateInterests(request: Request, response: Response) {
 	if (interests) {
 		const values: string[] = [].concat(interests)
 		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				interests: values,
-			}, request.user.accessToken)
+			await registry.patch(
+				'/civilServants/' + request.user.userId,
+				{
+					interests: values,
+				},
+				request.user.accessToken
+			)
 		} catch (error) {
 			logger.error(error)
 			throw new Error(error)
@@ -277,17 +316,17 @@ export async function updateInterests(request: Request, response: Response) {
 			throw new Error(error)
 		}
 	}
-	request.session!.save(() =>
-		response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`)
-	)
+	request.session!.save(() => response.redirect(`/profile/grade?originalUrl=${request.body.originalUrl}`))
 }
 
 export async function addGrade(request: Request, response: Response) {
 	const grades = await getOptions('grades')
-	response.send(template.render('profile/grade', request, response, {
-		grades,
-		originalUrl: request.query.originalUrl,
-	}))
+	response.send(
+		template.render('profile/grade', request, response, {
+			grades,
+			originalUrl: request.query.originalUrl,
+		})
+	)
 }
 
 export async function updateGrade(request: Request, response: Response) {
@@ -295,10 +334,14 @@ export async function updateGrade(request: Request, response: Response) {
 
 	if (grade) {
 		try {
-			await registry.patch('/civilServants/' + request.user.userId, {
-				grade,
-				originalUrl: request.body.originalUrl,
-			}, request.user.accessToken)
+			await registry.patch(
+				'/civilServants/' + request.user.userId,
+				{
+					grade,
+					originalUrl: request.body.originalUrl,
+				},
+				request.user.accessToken
+			)
 		} catch (error) {
 			logger.error(error)
 			throw new Error(error)
@@ -306,21 +349,24 @@ export async function updateGrade(request: Request, response: Response) {
 
 		try {
 			const gradeResponse: any = await registry.getWithoutHal(grade.replace(config.REGISTRY_SERVICE_URL, ''))
-			setLocalProfile(request, 'grade', {code: gradeResponse.data.code, name: gradeResponse.data.name})
+			setLocalProfile(request, 'grade', {
+				code: gradeResponse.data.code,
+				name: gradeResponse.data.name,
+			})
 		} catch (error) {
 			logger.error(error)
 			throw new Error(error)
 		}
 	}
-	request.session!.save(() =>
-		response.redirect(`/profile/lineManager?originalUrl=${request.body.originalUrl}`)
-	)
+	request.session!.save(() => response.redirect(`/profile/lineManager?originalUrl=${request.body.originalUrl}`))
 }
 
 export function addLineManager(request: Request, response: Response) {
-	response.send(template.render('profile/lineManager', request, response, {
-		originalUrl: request.query.originalUrl,
-	}))
+	response.send(
+		template.render('profile/lineManager', request, response, {
+			originalUrl: request.query.originalUrl,
+		})
+	)
 }
 
 export async function updateLineManager(request: Request, response: Response) {
@@ -330,47 +376,87 @@ export async function updateLineManager(request: Request, response: Response) {
 		const errors = await lineManager.validate()
 
 		if (errors.length) {
-			response.send(template.render('profile/lineManager', request, response, {
-				confirm: lineManager.confirm,
-				email: lineManager.email,
-				errors,
-				originalUrl: request.body.originalUrl,
-			}))
+			response.send(
+				template.render('profile/lineManager', request, response, {
+					confirm: lineManager.confirm,
+					email: lineManager.email,
+					errors,
+					originalUrl: request.body.originalUrl,
+				})
+			)
 			return
 		}
 		const res: any = await registry.checkLineManager({lineManager: lineManager.email}, request.user.accessToken)
 		if (res.status === 404) {
-			errors.push("errors.lineManagerMissing")
+			errors.push('errors.lineManagerMissing')
 
-			response.send(template.render('profile/lineManager', request, response, {
-				confirm: lineManager.confirm,
-				email: lineManager.email,
-				errors,
-				originalUrl: request.body.originalUrl,
-			}))
+			response.send(
+				template.render('profile/lineManager', request, response, {
+					confirm: lineManager.confirm,
+					email: lineManager.email,
+					errors,
+					originalUrl: request.body.originalUrl,
+				})
+			)
 			return
 		} else if (res.status === 400) {
 			errors.push('errors.lineManagerIsUser')
 
-			response.send(template.render('profile/lineManager', request, response, {
-				confirm: lineManager.confirm,
-				email: lineManager.email,
-				errors,
-				originalUrl: request.body.originalUrl,
-			}))
+			response.send(
+				template.render('profile/lineManager', request, response, {
+					confirm: lineManager.confirm,
+					email: lineManager.email,
+					errors,
+					originalUrl: request.body.originalUrl,
+				})
+			)
 			return
-		} else if (res.status === 200)  {
-			setLocalProfile(request, 'lineManager', { email: lineManager.email })
+		} else if (res.status === 200) {
+			setLocalProfile(request, 'lineManager', {email: lineManager.email})
 		} else {
 			logger.error(res)
 			throw new Error(res)
 		}
-		setLocalProfile(request, 'lineManager', { email: lineManager.email })
+		setLocalProfile(request, 'lineManager', {email: lineManager.email})
 	}
 
 	request.session!.save(() =>
-		response.redirect((request.body.originalUrl !== "undefined") ? request.body.originalUrl : defaultRedirectUrl)
+		response.redirect(request.body.originalUrl !== 'undefined' ? request.body.originalUrl : defaultRedirectUrl)
 	)
+}
+
+export function addEmail(request: Request, response: Response) {
+	logger.debug(`User ${request.user.userName} requesting to change email`)
+	response.send(template.render('profile/email', request, response))
+}
+
+/**
+ * This method sends the user to the update email form on Identity.
+ * Clear any local profile info for dept/org.
+ * This flag on csrs needs to be set here (as opposed to on the identity service),
+ * as this is the last point in the journey at which there is an authenticated context for security.
+ *
+ * @param {Request} request
+ * @param {Response} response
+ * @returns response.redirect to change email form on Identity
+ */
+export async function updateEmail(request: Request, response: Response) {
+	try {
+		const user: User = request.user
+		logger.debug(`User ${user.userName} confirming request to change email`)
+		try {
+			await registry.patch('/civilServants/' + request.user.userId, {organisationalUnit: null}, user.accessToken)
+		} catch (error) {
+			console.log(error)
+			throw new Error(error)
+		}
+		setLocalProfile(request, 'department', null)
+		setLocalProfile(request, 'organisationalUnit', null)
+		return request.session!.save(() => response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email'))
+	} catch (error) {
+		logger.error(error)
+		throw new Error(error)
+	}
 }
 
 async function getOptions(type: string) {
@@ -379,10 +465,18 @@ async function getOptions(type: string) {
 
 function sortList(list: any) {
 	return list.sort((a: any, b: any) => {
-		if (a.name === "I don't know") { return 1 }
-		if (b.name === "I don't know") { return -1 }
-		if (a.name < b.name) { return -1 }
-		if (a.name > b.name) { return 1 }
+		if (a.name === "I don't know") {
+			return 1
+		}
+		if (b.name === "I don't know") {
+			return -1
+		}
+		if (a.name < b.name) {
+			return -1
+		}
+		if (a.name > b.name) {
+			return 1
+		}
 		return 0
 	})
 }
@@ -397,9 +491,12 @@ function setLocalProfile(request: Request, key: string, value: any) {
 }
 
 class LineManagerForm {
-	@IsEmail({}, {
-		message: 'profile.lineManager.email.invalid',
-	})
+	@IsEmail(
+		{},
+		{
+			message: 'profile.lineManager.email.invalid',
+		}
+	)
 	@IsNotEmpty({
 		message: 'profile.lineManager.email.empty',
 	})
@@ -412,7 +509,7 @@ class LineManagerForm {
 	/* tslint:disable-next-line:variable-name */
 	private readonly _confirm: string
 
-	constructor(data: {email: string, confirm: string}) {
+	constructor(data: {email: string; confirm: string}) {
 		this._email = data.email
 		this._confirm = data.confirm
 	}
@@ -426,20 +523,22 @@ class LineManagerForm {
 	}
 
 	isPresent() {
-		return (this._email || this._confirm)
+		return this._email || this._confirm
 	}
+
 	async validate() {
 		const errors = await validate(this)
 		/*tslint:disable*/
-		const messages = _.flatten(errors.map(error => {
-			return Object.values(error.constraints)
-		}))
+		const messages = _.flatten(
+			errors.map(error => {
+				return Object.values(error.constraints)
+			})
+		)
 		/*tslint:enable*/
 		if (this._email !== this._confirm) {
-			messages.push("profile.lineManager.confirm.match")
+			messages.push('profile.lineManager.confirm.match')
 		}
 
 		return messages
 	}
-
 }

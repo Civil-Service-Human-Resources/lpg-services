@@ -38,6 +38,14 @@ describe('Profile page funtionality', () => {
 		expect(browser.element(selectors.areasOfWork).isVisible()).toBe(true)
 	})
 
+	it('Should display the primary areaa of work field', () => {
+		expect(browser.element(selectors.areasOfWork).isVisible()).toBe(true)
+	})
+
+	it('Should display the primary areaaaaa of work field', () => {
+		expect(browser.element(selectors.areasOfWork).isVisible()).toBe(true)
+	})
+
 	// xit('Should display other areas of work field', () => {})
 
 	it('Should display the grade field', () => {

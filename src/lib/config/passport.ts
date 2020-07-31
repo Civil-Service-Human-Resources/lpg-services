@@ -1,6 +1,6 @@
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
-import * as config from "lib/config/index"
+import * as config from 'lib/config/index'
 import * as identity from 'lib/identity'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
@@ -29,12 +29,7 @@ export function configure(
 			clientSecret,
 			tokenURL: `${authenticationServiceUrl}/oauth/token`,
 		},
-		async (
-			accessToken: string,
-			refreshToken: string,
-			profile: any,
-			cb: oauth2.VerifyCallback
-		) => {
+		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			profile.accessToken = accessToken
 
 			try {
@@ -62,7 +57,13 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
-		done(null, model.User.create(JSON.parse(data)))
+		let user: model.User
+		try {
+			user = model.User.create(JSON.parse(data))
+			done(null, user)
+		} catch (error) {
+			done(error, undefined)
+		}
 	})
 
 	app.all(
@@ -90,11 +91,7 @@ export function configure(
 	)
 }
 
-export function isAuthenticated(
-	req: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) {
+export function isAuthenticated(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const authenticated = req.isAuthenticated()
 
 	if (authenticated) {
@@ -115,11 +112,7 @@ export function isAuthenticated(
 
 // @ts-ignore
 export function hasRole(role: string) {
-	return (
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
+	return (req: express.Request, res: express.Response, next: express.NextFunction) => {
 		if (req.user && req.user.hasRole(role)) {
 			return next()
 		}
@@ -129,11 +122,7 @@ export function hasRole(role: string) {
 
 // @ts-ignore
 export function hasAnyRole(roles: string[]) {
-	return (
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	) => {
+	return (req: express.Request, res: express.Response, next: express.NextFunction) => {
 		if (req.user && req.user.hasAnyRole(roles)) {
 			return next()
 		}
@@ -151,4 +140,5 @@ export async function logout(
 	req.logout()
 	await identity.logout(accessToken)
 	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
+	res.end()
 }

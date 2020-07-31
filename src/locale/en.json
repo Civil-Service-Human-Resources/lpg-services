@@ -319,7 +319,8 @@
 		"po-special-characters": "A purchase order should not contain dots (.), colons ( : ), or hashes ( # )",
 		"cancelBooking": "There was an error cancelling your booking request. Please try again.",
 		"registrationNotFound": "You attempted to cancel a booking you were not registered.",
-		"empty-payment-method": "Please enter your payment details."
+		"empty-payment-method": "Please enter your payment details.",
+		"empty-organisation": "Organisation is required"
 	},
 	"courseResult": {
 		"complete": "Course complete",
@@ -373,7 +374,8 @@
 		"department": "Organisation is required",
 		"given-name": "Your name is required",
 		"other-areas-of-work": "Your other areas of work are required",
-		"interest": "Your interests are required"
+		"interest": "Your interests are required",
+		"line-manager": "profile.line-manager"
 	},
 	"profile_undefined_label": "profile_undefined_label",
 	"undefined": "undefined",

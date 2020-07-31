@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from 'axios'
-import * as https from "https"
+import * as https from 'https'
 import * as config from 'lib/config'
 import * as log4js from 'log4js'
 import * as traverson from 'traverson'
@@ -30,8 +30,9 @@ export async function get(node: string): Promise<{}> {
 			.jsonHal()
 			.follow(node, 'self')
 			.withRequestOptions({
-				qs: { size: 100, page: 0},
-			})			.getResource((error, document) => {
+				qs: {size: 100, page: 0},
+			})
+			.getResource((error, document) => {
 				if (error) {
 					reject(false)
 				} else {
@@ -48,11 +49,7 @@ export async function halNode(node: string): Promise<any[]> {
 	return (result as any)._embedded[node]
 }
 
-export async function follow(
-	path: string,
-	nodes: string[],
-	templateParameters?: any
-) {
+export async function follow(path: string, nodes: string[], templateParameters?: any) {
 	if (nodes.length === 0) {
 		nodes = ['self']
 	}
@@ -109,11 +106,15 @@ export async function patch(node: string, data: any, token: string) {
 					bearer: token,
 				},
 			})
-			.patch(data, (error, document) => {
+			.patch(data, (error, response) => {
 				if (error) {
 					reject(error)
 				} else {
-					resolve(document)
+					if (response.statusCode >= 200 && response.statusCode < 300) {
+						resolve(response)
+					} else {
+						reject(error.response)
+					}
 				}
 			})
 	)
@@ -144,7 +145,19 @@ export async function profile(token: string) {
 export async function getWithoutHal(path: string): Promise<AxiosResponse> {
 	try {
 		return await http.get(config.REGISTRY_SERVICE_URL + path)
-	}	catch (error) {
+	} catch (error) {
+		throw new Error(error)
+	}
+}
+
+export async function getWithoutHalWithAuth(path: string, request: Express.Request): Promise<AxiosResponse> {
+	try {
+		return await http.get(config.REGISTRY_SERVICE_URL + path, {
+			headers: {
+				Authorization: `Bearer ${request.user.accessToken}`,
+			},
+		})
+	} catch (error) {
 		throw new Error(error)
 	}
 }
