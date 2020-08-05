@@ -61,17 +61,17 @@ export function constructCourseCallToAction(
 						callToActionProps.actionToRecord = {
 							move: `/home?move=${course.id},${
 								course.record.modules[0].moduleId
-								},${course.record.modules[0].eventId}`,
+							},${course.record.modules[0].eventId}`,
 							skip: `/home?skip=${course.id},${
 								course.record.modules[0].moduleId
-								},${course.record.modules[0].eventId}`,
+							},${course.record.modules[0].eventId}`,
 						}
 						delete callToActionProps.url
 						delete callToActionProps.message
 					} else {
 						callToActionProps.url = `/book/${course.id}/${
 							record.modules[0].moduleId
-							}/${record.modules[0].eventId}/cancel`
+						}/${record.modules[0].eventId}/cancel`
 						callToActionProps.message = `action_CANCEL`
 					}
 				}

@@ -3,8 +3,8 @@
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h1 class="heading-large">
-                    <span class="heading-secondary">Set up your profile</span>
-                    <span class="heading-primary">Your organisation</span>
+                    <span role="heading" aria-level="1" class="heading-secondary">Set up your profile</span>
+                    <span role="heading" aria-level="2" class="heading-primary">Your organisation</span>
                 </h1>
                 {#if (error)}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
@@ -14,7 +14,8 @@
 
                 <form autocomplete="off" method="post" action="/profile/organisation">
                     <div class="form-group">
-                        <fieldset>
+                        <fieldset aria-labelledby="organisation">
+                            <legend></legend>
                             <TypeAhead {options} {inputName} {script} {label} {value} />
                         </fieldset>
                     </div>

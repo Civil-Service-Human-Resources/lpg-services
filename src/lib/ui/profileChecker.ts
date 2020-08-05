@@ -13,7 +13,9 @@ export class ProfileChecker {
 			return Boolean(user.givenName)
 		}),
 		new ProfileSection('organisationalUnit', '/profile/organisation', (user: User) => {
-			return Boolean(user.organisationalUnit &&  user.organisationalUnit.name)
+			return (
+				Boolean(user.organisationalUnit && user.organisationalUnit.name)
+			)
 		}),
 		new ProfileSection('department', '/profile/organisation', (user: User) => {
 			return Boolean(user.department)
@@ -25,16 +27,17 @@ export class ProfileChecker {
 			return Boolean(user.otherAreasOfWork && user.otherAreasOfWork.length)
 		}),
 	]
-
 	isProfileRequest(request: Request) {
-		return Boolean(this._profileSections.filter(entry => {
-			return entry.path === request.path
-		}).length)
+		return Boolean(
+			this._profileSections.filter(entry => {
+				return entry.path === request.path
+			}).length
+		)
 	}
 	// @ts-ignore
 	checkProfile() {
-		return 	(request: Request, response: Response, next: NextFunction) => {
-			if (!this.isProfileRequest(request) ) {
+		return (request: Request, response: Response, next: NextFunction) => {
+			if (!this.isProfileRequest(request)) {
 				try {
 					for (const section of this._profileSections) {
 						if (!section.isPresent(request.user)) {
@@ -44,7 +47,7 @@ export class ProfileChecker {
 							return
 						}
 					}
-				}	catch (error) {
+				} catch (error) {
 					logger.error(error)
 					next(error)
 				}
