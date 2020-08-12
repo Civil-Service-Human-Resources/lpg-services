@@ -13,7 +13,7 @@
     }
 </script>
 
-<Page title="Skills" {_csrf}>
+<Page class="question-page" title="Skills" {_csrf}>
     <div class="container container--main">
         <div class="grid-row ">
             <div class="column-half">
@@ -44,8 +44,10 @@
                     <button id="submitButton" type="submit" class="button" onclick="this.disabled = true; document.getElementById('mainForm').submit()">{index+1 === count ? 'Finish' : 'Continue'}</button>
                 </form>
             </div>
-            <div style="height: 100vh" class="column-half supportingImageHolder">
+            <div class="column-half frame">
+                {#if question.imgUrl }
                 <img class="supportingImage" alt="{question.alternativeText === undefined ? '' : question.alternativeText}" src="{question.imgUrl}"/>
+                {/if}
             </div>
         </div>
     </div>
