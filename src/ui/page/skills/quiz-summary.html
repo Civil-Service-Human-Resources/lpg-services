@@ -2,6 +2,9 @@
     <div class="container container--main">
         <div class="grid-row">
             <div class="column-full">
+                <p class="no-margin">
+                    <a class="link-back" href="/skills">Back</a>
+                </p>
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="heading heading-large">{answerSubmission.quizName}:</h1>
                     <h2 class="heading-medium">Your quiz results</h2>
@@ -20,13 +23,13 @@
                             <span class="summary-icon incorrect"></span>
                             {/if}
                             <input id=qs{y} type="checkbox" class="expand"/>
-                            <label class="expand-label govuk-link" for=qs{y}></label>
+                            <label class="expand-label govuk-link" for=qs{y}>answers</label>
                             <h3 class="question-text">{answer.question.value}</h3>
                             <div class="question-contents">
                                 {#each Object.keys(answer.question.answer.answers) as choice, x}
                                 <div class="multiple-choice">
-                                    <input checked="{answer.submittedAnswers.includes(choice)}" type="{answer.question.type === 'MULTIPLE' ? 'checkbox' : 'radio'}" value="{choice}" name="{answer.questionId}{choice}" id="{choice}" disabled="disabled"/>
-                                    <label for={choice}>{choice}) {answer.question.answer.answers[choice]}</label>
+                                    <input checked="{answer.submittedAnswers.includes(choice)}" type="{answer.question.type === 'MULTIPLE' ? 'checkbox' : 'radio'}" value="{choice}" name="{answer.questionId}{choice}" id="{answer.questionId}{choice}" disabled="disabled"/>
+                                    <label for={answer.questionId}{choice}>{choice}) {answer.question.answer.answers[choice]}</label>
                                 </div>
                                 {/each}
                                 {#if answer.skipped}
