@@ -60,24 +60,27 @@
 
 }
 
-.supportingImageHolder {
-  display: grid;
-  grid-template-rows: auto min-content auto;
-}
-
-.supportImageText {
-  font-style: italic;
-  padding: 2px 2px 0px 2px;
-  text-align: center;
-  grid-row: 3;
+.frame {
+  height: 100vh;
+  width: 50%;
+  position: relative;
 }
 
 img.supportingImage {
-  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
   height: auto;
-  align-self: center;
-  grid-row: 2;
-  //margin: 0 auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.question-page .column-half table th, .question-page .column-half table td {
+  border-bottom: none;
 }
 
 .screen-reader-text {
@@ -132,7 +135,7 @@ th.tableHeading {
     }
 
     &:before {
-      content: 'Show answers';
+      content: 'Show ';
     }
 
     &:after
@@ -163,7 +166,7 @@ th.tableHeading {
   }
 
   .expand:checked + .expand-label:before {
-    content: 'Hide answers';
+    content: 'Hide ';
   }
 
   .expand:checked + .expand-label:after {
