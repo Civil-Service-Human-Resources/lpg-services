@@ -30,10 +30,10 @@
                 {:else}
                 <h2 class="heading heading-large ">Question # of #</h2>
                 {/if}
-                <form action="skills/questions/{index}" id="skip" method="post">
+                <form action="/skills/questions/{index}" id="skip" method="post">
                     <input type="hidden" name="_csrf" value="{_csrf}">
                 </form>
-                <form id="mainForm" action="skills/questions/{index}" method="post" class="question-form">
+                <form id="mainForm" action="/skills/questions/{index}" method="post" class="question-form">
                     <input type="hidden" name="_csrf" value="{_csrf}">
                     <fieldset class="form-group">
                         <QuizQuestion question={question} keys={keys} skipped="{skipped}" attemptedAnswers="{answersToQuestionKeys}" multipleAnswers="{multipleAnswers}"/>
