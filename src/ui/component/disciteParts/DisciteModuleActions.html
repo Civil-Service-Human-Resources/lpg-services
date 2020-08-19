@@ -5,7 +5,7 @@
         {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
     {/if}
     {#if !course.isArchived()}
-        {$i18n(cta.learningAction.text)}
+        {$i18n(cta.learningAction.text)} {@html `<span class="visually-hidden"> course {course.title}</span>`}
     {/if}
     {@html `</a>`}  {cta.learningAction.fileHelper ? cta.learningAction.fileHelper : ''}
     {#if cta.actionToPlan && !course.isArchived() }
