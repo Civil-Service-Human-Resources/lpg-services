@@ -14,7 +14,7 @@ RUN mkdir -p /var/www/app
 WORKDIR /var/www/app
 
 ENV NVM_DIR /root/.nvm
-ENV NODE_VERSION 9.4.0
+ENV NODE_VERSION 10.22.0
 ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
