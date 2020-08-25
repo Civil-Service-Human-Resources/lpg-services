@@ -24,7 +24,7 @@
                             {/if}
                             <input id=qs{y} type="checkbox" class="expand"/>
                             <label class="expand-label govuk-link" for=qs{y}>answers</label>
-                            <h3 class="question-text">{answer.question.value}</h3>
+                            <h3 class="question-text new-lines">{answer.question.value}</h3>
                             <div class="question-contents">
                                 {#each Object.keys(answer.question.answer.answers) as choice, x}
                                 <div class="multiple-choice">
@@ -41,7 +41,7 @@
                                 {/if}
                                 {#if answer.question.why}
                                 <h3 class="question-text"><strong>Here's why:</strong></h3>
-                                <h3 class="question-text"><span class="light">{answer.question.why}</span></h3>
+                                <h3 class="question-text new-lines"><span class="light">{answer.question.why}</span></h3>
                                 {/if}
                                 {#if answer.question.learningName}
                                 <h3 class="question-text"><strong>Suggested learning based on this question:</strong></h3>
