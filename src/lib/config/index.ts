@@ -176,3 +176,5 @@ export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
 export const STATIC_ASSET_TTL = env.STATIC_ASSET_TTL
 
 export const TOKEN_EXPIRY_BUFFER = Number(env.TOKEN_EXPIRY_BUFFER) || 30
+
+export const BLOB_STORAGE_URL = env.BLOB_STORAGE_URL || 'https://lpgdev.blob.core.windows.net/lpgdevcontent'
