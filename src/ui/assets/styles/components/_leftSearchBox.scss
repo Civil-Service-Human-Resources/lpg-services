@@ -54,6 +54,10 @@
 .hide-filters {
 	position: absolute;
 	left: -9999px;
+
+	@include media(641px) {
+		display: none;
+	}
 }
 
 .filter-label {
