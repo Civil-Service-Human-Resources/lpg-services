@@ -21,10 +21,10 @@
                 {#if confirmTitle}
                     <Banner type="warning" title={confirmTitle} message={confirmMessage}>
 						{#if eventActionDetails}
-							<a class="banner__action" href="book/{eventActionDetails[0]}/{eventActionDetails[1]}/{eventActionDetails[2]}/{eventActionDetails[3]}/">{yesOption}.</a>
+							<a class="banner__action" href="/book/{eventActionDetails[0]}/{eventActionDetails[1]}/{eventActionDetails[2]}/{eventActionDetails[3]}/">{yesOption}.</a>
 							<a class="banner__action" href="/">{noOption}</a>
 						{:else}
-                        	<a class="banner__action" href="courses/{removeCourseId}/delete">Yes, remove course now.</a>
+                        	<a class="banner__action" href="/courses/{removeCourseId}/delete">Yes, remove course now.</a>
                         	<a class="banner__action" href="/">No, keep it.</a>
 						{/if}
                     </Banner>

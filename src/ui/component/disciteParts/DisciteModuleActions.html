@@ -1,8 +1,8 @@
 <div class="discite__action discite__action--module">
      {#if module.type === 'link' && !course.isArchived() }
-        {@html `<a href="${cta.url}" target="_blank" ${cta.learningAction.attribute} >`}
+        {@html `<a href="/${cta.url}" target="_blank" ${cta.learningAction.attribute} >`}
     {:elseif !course.isArchived()}
-        {@html `<a href="${cta.url}" ${cta.learningAction.attribute} >`}
+        {@html `<a href="/${cta.url}" ${cta.learningAction.attribute} >`}
     {/if}
     {#if !course.isArchived()}
         {$i18n(cta.learningAction.text)} {@html `<span class="visually-hidden"> module ${module.title}</span>`}
