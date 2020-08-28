@@ -38,7 +38,7 @@ export function constructModuleCta(
 		learningAction: {
 			text: `action_${state || 'NOT_STARTED'}`,
 		},
-		url: `courses/${courseId}/${module.id}${isSearch ? '#modules' : ''}`,
+		url: `/courses/${courseId}/${module.id}${isSearch ? '#modules' : ''}`,
 	}
 
 	if (!isSearch) {
