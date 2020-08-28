@@ -67,7 +67,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
-    image: lpgregistry.azurecr.io/identity-service:master-4
+      - JWT_KEY=key
+    image: lpgregistry.azurecr.io/identity-service:master-15
     ports:
       - 8080:8080
       - 8081:8081
@@ -81,7 +82,8 @@ services:
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
-    image: lpgregistry.azurecr.io/lpg-learner-record:master-5
+      - JWT_KEY=key
+    image: lpgregistry.azurecr.io/lpg-learner-record:master-14
     depends_on:
       - civil-servant-registry
       - identity
@@ -108,7 +110,8 @@ services:
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-7
+      - JWT_KEY=key
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-13
     depends_on:
       - identity
     ports:
@@ -120,7 +123,8 @@ services:
       - SPRING_PROFILES_ACTIVE=default
       - OAUTH_SERVICE_URL=http://identity:8080
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-8
+      - JWT_KEY=key
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-19
     depends_on:
       - identity
     ports:
@@ -134,7 +138,8 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
-    image: lpgregistry.azurecr.io/lpg-report-service:master-3
+      - JWT_KEY=key
+    image: lpgregistry.azurecr.io/lpg-report-service:master-10
     depends_on:
       - identity
       - learner-record
@@ -146,6 +151,7 @@ services:
     environment:
       - OAUTH_SERVICE_URL=http://identity:8080
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
+      - JWT_KEY=key
     image: lpgregistry.azurecr.io/notification-service:master-5
     depends_on:
       - identity
