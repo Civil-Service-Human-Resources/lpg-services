@@ -205,6 +205,10 @@ app.get('/privacy', (req, res) => {
 	res.send(template.render('privacy', req, res))
 })
 
+app.get('/accessibility-statement', (req, res) => {
+	res.send(template.render('accessibility-statement', req, res))
+})
+
 app.get('/cookies', homeController.cookies)
 
 app.get('/contact-us', homeController.contactUs)
