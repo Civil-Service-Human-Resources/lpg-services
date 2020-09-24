@@ -23,7 +23,7 @@
                             <span class="summary-icon incorrect"></span>
                             {/if}
                             <input id=qs{y} type="checkbox" class="expand"/>
-                            <label class="expand-label govuk-link" for=qs{y}>answers</label>
+                            <label class="expand-label govuk-link" for=qs{y} aria-label="Show answers for question {y+1}.">answers</label>
                             <h3 class="question-text new-lines">{answer.question.value}</h3>
                             <div class="question-contents">
                                 {#each Object.keys(answer.question.answer.answers) as choice, x}
