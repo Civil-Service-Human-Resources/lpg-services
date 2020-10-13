@@ -11,12 +11,12 @@
                 {:else}
                     <h1 class="heading-large"><span class="heading-primary">Your {$i18n('profile_' + inputName + '_label').toLowerCase()}</span></h1>
                 {/if}
-                {#if (error || errorEmpty)}
+                {#if (error)}
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading-example-1">
-                        Update failed
+                        There is a problem
                     </h2>
-                    <p class="error-message">{$i18n('profile.' + inputName)}</p>
+                    <p class="error-message" style="white-space: pre-line">{error} </p>
                 </div>
 
                 {/if}

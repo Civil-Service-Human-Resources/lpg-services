@@ -62,7 +62,7 @@ const validPassword = /(?!([a-zA-Z]*|[a-z\d]*|[^A-Z\d]*|[A-Z\d]*|[^a-z\d]*|[^a-z
 // This slick super regex is from http://emailregex.com/
 
 /* tslint:disable:max-line-length */
-const validEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const validEmail = /^(?:\s*(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))\s*)?$/
 /* tslint:enable */
 
 const http = axios.create({
@@ -92,24 +92,6 @@ async function updateUserObject(req: express.Request, updatedProfile: Record<str
 			req.session!.save(resolve)
 		})
 	})
-}
-
-function validateForm(req: express.Request) {
-	const form = req.body
-	delete form._csrf
-
-	let validFields = true
-
-	for (const input of Object.keys(form)) {
-		if (!/\S/.test(form[input])) {
-			form[input] = ''
-			validFields = false
-		}
-	}
-	if (Object.keys(form).length === 0) {
-		validFields = false
-	}
-	return validFields
 }
 
 export function viewProfile(ireq: express.Request, res: express.Response) {
@@ -268,7 +250,6 @@ export async function signOut(req: express.Request, res: express.Response) {
 }
 
 export async function tryUpdateProfile(req: express.Request, res: express.Response) {
-	const validFields = validateForm(req)
 
 	if (req.body['primary-area-of-work']) {
 		const areaOfWork = req.body['primary-area-of-work']
@@ -300,14 +281,7 @@ export async function tryUpdateProfile(req: express.Request, res: express.Respon
 		delete req.session!.flash.children
 	}
 
-	if (!validFields) {
-		req.flash('profileErrorEmpty', req.__('errors.profileErrorEmpty'))
-		return req.session!.save(() => {
-			res.redirect(`/profile/${req.params.profileDetail}`)
-		})
-	} else {
-		await updateProfile(req, res)
-	}
+	await updateProfile(req, res)
 }
 export async function patchAndUpdate(
 	node: string,

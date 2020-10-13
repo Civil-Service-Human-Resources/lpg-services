@@ -594,7 +594,7 @@ export class User {
 		user.interests = data.interests
 		user.tokenzied = data.tokenzied
 
-		if (data.lineManagerEmailAddress) {
+		if (data.lineManagerEmailAddress || data.lineManagerEmailAddress == '') {
 			user.lineManager = {
 				email: data.lineManagerEmailAddress,
 				name: data.lineManagerName,
