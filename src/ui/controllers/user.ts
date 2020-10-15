@@ -368,7 +368,7 @@ export async function updateProfile(ireq: express.Request, res: express.Response
 			}
 			break
 		case 'lineManager':
-			if (fieldValue !== req.body.confirmLineManager) {
+			if (fieldValue.toUpperCase() !== req.body.confirmLineManager.toUpperCase()) {
 				errorMessage = req.__('errors.lineManagerConfirmation')
 			} else if (!validEmail.exec(fieldValue)) {
 				errorMessage = req.__('errors.lineManagerInvalid')
