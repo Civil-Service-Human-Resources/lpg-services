@@ -6,21 +6,46 @@
 		padding-right: 8px;
 
 		font-weight: bold;
-		background: $alt-color;
+		//background: $alt-color;
 		width: 100%;
 	}
+
+
 
 	div.multiple-choice {
 		padding: 2px 0px 6px 0px;
 		margin-top: 8px;
 
 		margin-bottom: 0px;
-		border-bottom: 1px solid $alt-color;
+		//border-bottom: 1px solid $alt-color;
 		width: 100%;
 
         input {
             margin-left: 8px;
         }
+
+		label {
+			margin-left: 45px;
+			&:before {
+				left: 8px;
+			}
+			&:after {
+				left: 16px;
+			}
+		}
+	}
+
+	div.multiple-choice-gds {
+		padding: 2px 0px 6px 0px;
+		margin-top: 8px;
+
+		margin-bottom: 0px;
+		//border-bottom: 1px solid $alt-color;
+		width: 100%;
+
+		input {
+			margin-left: 8px;
+		}
 
 		label {
 			margin-left: 45px;
@@ -41,14 +66,36 @@
 }
 
 .filter-headings {
-	margin: 15px 0 12px 0;
+	// margin: 15px 0 12px 0;
+	margin: 8px 0 12px 0;
+	font-size: 22px;
+	color: #1d70b8;
+	font-weight: 700;
+}
+
+.filter-headings:focus {
+	//outline:none;
+	text-decoration: none;
+	outline:3px solid transparent;
+	color: #0b0c0c;
+	background-color: #fd0;
+	box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+}
+
+.filter-headings:hover:focus {
+	text-decoration: none;
+}
+
+.filter-headings:hover {
+	text-decoration: underline;
 }
 
 .clear-filters {
 	float: left;
 	clear: left;
 	width: 100%;
-	margin: 10px 0;
+	//margin: 10px 0;
+	margin: 20px 0px 30px 10px;
 }
 
 .hide-filters {
