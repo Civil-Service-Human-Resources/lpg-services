@@ -52,6 +52,12 @@ $(document).ready(function() {
 			.parents('.filter-toggle')
 			.toggleClass('filter-toggle--shut')
 	})
+	$('.filter-toggle legend').on('keypress',function(e) {
+		e.preventDefault()
+		$(this)
+			.parents('.filter-toggle')
+			.toggleClass('filter-toggle--shut')
+	});
 })
 
 function getCookie(cname) {
