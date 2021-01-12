@@ -95,10 +95,17 @@ export function isAuthenticated(req: express.Request, res: express.Response, nex
 	const authenticated = req.isAuthenticated()
 
 	if (authenticated) {
-		const token: any = jwt.decode(req.user.accessToken)
-		const nowEpochSeconds: number = Math.round(Date.now() / 1000)
-		if (token !== null && (token.exp > (nowEpochSeconds + config.TOKEN_EXPIRY_BUFFER))) {
-			return next()
+		const user = req.user as model.User
+		const userName = user.userName
+		if (userName) {
+			const token: any = jwt.decode(req.user.accessToken)
+			const nowEpochSeconds: number = Math.round(Date.now() / 1000)
+			if (token !== null && (token.exp > (nowEpochSeconds + config.TOKEN_EXPIRY_BUFFER))) {
+				return next()
+			}
+		} else {
+			res.redirect('/sign-out')
+			return
 		}
 	}
 	const session = req.session!

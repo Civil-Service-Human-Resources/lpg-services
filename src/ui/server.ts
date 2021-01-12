@@ -29,7 +29,6 @@ import { URL } from 'url'
 
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
-import * as sessionFileStore from 'session-file-store'
 
 import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
@@ -79,51 +78,30 @@ app.use(
 		nolog: '\\.js|\\.css|\\.gif|\\.jpg|\\.png|\\.ico$',
 	})
 )
-if (config.PROFILE === 'local') {
-	const FileStore = sessionFileStore(session)
-	app.use(
-		session({
-			cookie: {
-				httpOnly: true,
-				maxAge: config.COOKIE.maxAge,
-				secure: config.PRODUCTION_ENV,
-			},
-			name: 'lpg-ui',
-			resave: true,
-			saveUninitialized: true,
-			secret: config.SESSION_SECRET,
-			store: new FileStore({
-				path: process.env.NOW ? `/tmp/sessions` : `.sessions`,
-			}),
-		})
-	)
-}
 
-if (config.PROFILE !== 'local') {
-	const RedisStore = connectRedis(session)
-	const redisClient = redis.createClient({
-		auth_pass: config.REDIS.password,
-		host: config.REDIS.host,
-		no_ready_check: true,
-		port: config.REDIS.port,
+const RedisStore = connectRedis(session)
+const redisClient = redis.createClient({
+	auth_pass: config.REDIS.password,
+	host: config.REDIS.host,
+	no_ready_check: true,
+	port: config.REDIS.port,
+})
+app.use(
+	session({
+		cookie: {
+			httpOnly: true,
+			maxAge: config.COOKIE.maxAge,
+			secure: config.PRODUCTION_ENV,
+		},ß
+		name: 'lpg-ui',
+		resave: true,
+		saveUninitialized: true,
+		secret: config.SESSION_SECRET,
+		store: new RedisStore({
+			client: redisClient,
+		}),
 	})
-	app.use(
-		session({
-			cookie: {
-				httpOnly: true,
-				maxAge: config.COOKIE.maxAge,
-				secure: config.PRODUCTION_ENV,
-			},
-			name: 'lpg-ui',
-			resave: true,
-			saveUninitialized: true,
-			secret: config.SESSION_SECRET,
-			store: new RedisStore({
-				client: redisClient,
-			}),
-		})
-	)
-}
+)
 app.use(flash())
 
 app.use(bodyParser.json({strict: false}))
@@ -195,6 +173,7 @@ app.use('/learning-record/:learnerRecordId/:notHandledModuleId/xapi',
 	(req: express.Request, res: express.Response) => res.sendStatus(204))
 
 app.use(lusca.csrf())
+
 
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
