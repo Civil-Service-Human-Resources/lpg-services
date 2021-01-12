@@ -92,7 +92,7 @@ app.use(
 			httpOnly: true,
 			maxAge: config.COOKIE.maxAge,
 			secure: config.PRODUCTION_ENV,
-		},ß
+		},
 		name: 'lpg-ui',
 		resave: true,
 		saveUninitialized: true,
