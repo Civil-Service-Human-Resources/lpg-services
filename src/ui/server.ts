@@ -174,7 +174,6 @@ app.use('/learning-record/:learnerRecordId/:notHandledModuleId/xapi',
 
 app.use(lusca.csrf())
 
-
 app.get('/', homeController.index)
 app.get('/sign-in', userController.signIn)
 app.get('/sign-out', asyncHandler(userController.signOut))
