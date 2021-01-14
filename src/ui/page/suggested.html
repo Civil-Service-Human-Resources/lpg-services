@@ -66,24 +66,34 @@
         </div>
     </div>
     {#if !$isEmpty(department)  }
+    {#if !$isEmpty(department[$getFirstKey(department)]) }
     <SuggestionsSection id={$getFirstKey(department)} title={$signedInUser.organisationalUnit.name} code={$getFirstKey(department)} suggestedLearning="{department[$getFirstKey(department)]}" home={false} type="department" />
     <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
     {/if}
+    {/if}
+
     {#if !$isEmpty(areaOfWork)  }
+    {#if !$isEmpty(areaOfWork[$getFirstKey(areaOfWork)]) }
     <SuggestionsSection id={$getFirstKey(areaOfWork)} title={$getFirstKey(areaOfWork)}  code={$getFirstKey(areaOfWork)}  suggestedLearning="{areaOfWork[$getFirstKey(areaOfWork)]}" home={false} type="areaOfWork" />
     <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
     {/if}
+    {/if}
+
     {#if !$isEmpty(otherAreasOfWork)  }
     {#each $getKeys(otherAreasOfWork) as otherAreaOfWork}
-        <SuggestionsSection id={otherAreaOfWork} title={otherAreaOfWork}  code={otherAreaOfWork}  suggestedLearning="{otherAreasOfWork[otherAreaOfWork]}" home={false} type="areaOfWork" />
-        <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+    {#if !$isEmpty(otherAreasOfWork[otherAreaOfWork])  }
+    <SuggestionsSection id={otherAreaOfWork} title={otherAreaOfWork}  code={otherAreaOfWork}  suggestedLearning="{otherAreasOfWork[otherAreaOfWork]}" home={false} type="areaOfWork" />
+    <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+    {/if}
     {/each}
     {/if}
     {#if !$isEmpty(interests)  }
-        {#each $getKeys(interests) as interest}
-            <SuggestionsSection id={interest} title={interest}  code={interest}  suggestedLearning="{interests[interest]}" home={false} type="interest" />
-            <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
-        {/each}
+    {#each $getKeys(interests) as interest}
+    {#if !$isEmpty(interests[interest])  }
+    <SuggestionsSection id={interest} title={interest}  code={interest}  suggestedLearning="{interests[interest]}" home={false} type="interest" />
+    <div class="container"><div class="column-full"><p class="back-to-top"><a href="/suggestions-for-you/#">&uarr; Back to top</a></p></div></div>
+    {/if}
+    {/each}
     {/if}
 </Page>
 
