@@ -95,21 +95,10 @@ export function isAuthenticated(req: express.Request, res: express.Response, nex
 	const authenticated = req.isAuthenticated()
 
 	if (authenticated) {
-		//LC-742: If user is already authenticated but userName is missing from req.user then
-		//it means that the login journey has started from lpg-management
-		//which is not a valid login for lpg-services
-		//hence user is be forced to sign-out to start the login journey from lpg-services.
-		const user = req.user as model.User
-		const userName = user.userName
-		if (userName) {
-			const token: any = jwt.decode(req.user.accessToken)
-			const nowEpochSeconds: number = Math.round(Date.now() / 1000)
-			if (token !== null && (token.exp > (nowEpochSeconds + config.TOKEN_EXPIRY_BUFFER))) {
-				return next()
-			}
-		} else {
-			res.redirect('/sign-out')
-			return
+		const token: any = jwt.decode(req.user.accessToken)
+		const nowEpochSeconds: number = Math.round(Date.now() / 1000)
+		if (token !== null && (token.exp > (nowEpochSeconds + config.TOKEN_EXPIRY_BUFFER))) {
+			return next()
 		}
 	}
 	const session = req.session!
