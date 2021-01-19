@@ -265,7 +265,11 @@ export function signIn(req: express.Request, res: express.Response) {
 
 export async function signOut(req: express.Request, res: express.Response) {
 	const callbackURL = config.LPG_MANAGEMENT_URL + "/log-out"
-	await passport.logout(config.AUTHENTICATION.serviceUrl, callbackURL, req, res, req.user.accessToken)
+	if (req.isAuthenticated()) {
+		await passport.logout(config.AUTHENTICATION.serviceUrl, callbackURL, req, res, req.user.accessToken)
+	} else {
+		res.redirect(callbackURL)
+	}
 }
 
 export async function tryUpdateProfile(req: express.Request, res: express.Response) {
