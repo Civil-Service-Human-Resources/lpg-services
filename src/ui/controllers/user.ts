@@ -266,9 +266,13 @@ export function signIn(req: express.Request, res: express.Response) {
 export async function signOut(req: express.Request, res: express.Response) {
 	const callbackURL = config.LPG_MANAGEMENT_URL + "/log-out"
 	if (req.isAuthenticated()) {
-		await passport.logout(config.AUTHENTICATION.serviceUrl, callbackURL, req, res, req.user.accessToken)
+		if (req.user.isAdmin()) {
+			await passport.logout(config.AUTHENTICATION.serviceUrl, callbackURL, req, res, req.user.accessToken)
+		} else {
+			await passport.logout(config.AUTHENTICATION.serviceUrl, config.LPG_UI_SERVER, req, res, req.user.accessToken)
+		}
 	} else {
-		res.redirect(callbackURL)
+		res.redirect(config.LPG_UI_SERVER)
 	}
 }
 
