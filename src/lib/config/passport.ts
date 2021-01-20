@@ -139,6 +139,6 @@ export async function logout(
 ) {
 	req.logout()
 	await identity.logout(accessToken)
-	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
+	res.redirect(config.LPG_UI_SERVER)
 	res.end()
 }
