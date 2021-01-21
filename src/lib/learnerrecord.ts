@@ -251,7 +251,7 @@ export class CourseRecord {
 		this.preference = data.preference
 		this.state = data.state
 
-		if(data.lastUpdated) {
+		if (data.lastUpdated) {
 			this.lastUpdated = new Date(data.lastUpdated)
 		}
 
