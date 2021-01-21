@@ -241,6 +241,7 @@ export class CourseRecord {
 	modules: ModuleRecord[]
 	preference?: string
 	state?: string | undefined
+	lastUpdated?: Date
 
 	constructor(data: any) {
 		this.courseId = data.courseId
@@ -250,7 +251,17 @@ export class CourseRecord {
 		this.preference = data.preference
 		this.state = data.state
 
+		if(data.lastUpdated) {
+			this.lastUpdated = new Date(data.lastUpdated)
+		}
+
 		for (const module of this.modules) {
+			if (module.createdAt) {
+				module.createdAt = new Date(module.createdAt)
+			}
+			if (module.updatedAt) {
+				module.updatedAt = new Date(module.updatedAt)
+			}
 			if (module.completionDate) {
 				module.completionDate = new Date(module.completionDate)
 			}
@@ -307,6 +318,21 @@ export class CourseRecord {
 		}
 		return undefined
 	}
+
+	getStartedDate() {
+		let startedDate: Date | undefined
+		for (const moduleRecord of this.modules) {
+			if (!startedDate) {
+				startedDate = moduleRecord.createdAt
+			} else if (
+				moduleRecord.createdAt &&
+				moduleRecord.createdAt < startedDate
+			) {
+				startedDate = moduleRecord.createdAt
+			}
+		}
+		return startedDate
+	}
 }
 
 export interface ModuleRecord {
@@ -322,4 +348,6 @@ export interface ModuleRecord {
 	rated?: boolean
 	state?: string
 	bookingStatus?: string
+	createdAt?: Date
+	updatedAt?: Date
 }
