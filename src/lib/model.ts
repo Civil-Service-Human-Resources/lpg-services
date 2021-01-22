@@ -220,6 +220,14 @@ export class Course {
 		return null
 	}
 
+	previousRequiredBy() {
+		const completionDate = this.getCompletionDate()
+		if (this.audience) {
+			return this.audience!.previousRequiredBy(completionDate)
+		}
+		return null
+	}
+
 	getMandatoryCount() {
 		const modules = this.getModules()
 		let count = 0
@@ -515,6 +523,20 @@ export class Audience {
 			return Frequency.increment(this.frequency, next)
 		}
 		return next
+	}
+
+	previousRequiredBy(completionDate?: Date) {
+		const [last, next] = this._getCurrentRecurrencePeriod()
+		if (!last || !next) {
+			return null
+		}
+		if (completionDate && completionDate > last) {
+			if (!this.frequency) {
+				return null
+			}
+			return Frequency.decrement(this.frequency, next)
+		}
+		return last
 	}
 
 	shouldRepeat(completionDate?: Date) {
