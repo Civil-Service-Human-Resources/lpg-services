@@ -130,6 +130,9 @@ export async function findRequiredLearning(
 	try {
 		const response = await http.get(
 			`/courses?mandatory=true&department=${user.department}`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
+			// This is the new endpoint in learning-catalogue to call when you chose
+			// to replace the old endpoint called from above
+			//	`/courses/getrequiredlearning`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
 		)
 		return convert(response.data, user) as api.PageResults
 	} catch (e) {
