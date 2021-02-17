@@ -46,6 +46,8 @@ services:
   redis:
     container_name: redis
     image: redis@sha256:3446883dfe13ab3db67433aace0e72d8cd669c528e60c617c42d6c697f0fa41f
+    ports:
+      - 6379:6379
 
   setup-learning-locker:
     command:
@@ -68,7 +70,7 @@ services:
       - SPRING_PROFILES_ACTIVE=default
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/identity-service:master-15
+    image: lpgregistry.azurecr.io/identity-service:idt-release-1.0-6
     ports:
       - 8080:8080
       - 8081:8081
@@ -83,7 +85,7 @@ services:
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-learner-record:master-14
+    image: lpgregistry.azurecr.io/lpg-learner-record:master-19
     depends_on:
       - civil-servant-registry
       - identity
@@ -111,7 +113,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-13
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:master-16
     depends_on:
       - identity
     ports:
@@ -124,7 +126,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-19
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:master-23
     depends_on:
       - identity
     ports:
