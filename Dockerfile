@@ -49,6 +49,3 @@ COPY dist dist
 
 # This needs to be specified after the `npm install`
 ENV NODE_ICU_DATA=/var/www/app/node_modules/full-icu
-
-ADD https://github.com/Civil-Service-Human-Resources/lpg-terraform-paas/releases/download/hammer-0.1/hammer /bin/hammer
-RUN chmod +x /bin/hammer && echo "Hammer v0.1 Added"
