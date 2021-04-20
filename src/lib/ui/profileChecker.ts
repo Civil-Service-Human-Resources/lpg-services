@@ -2,7 +2,6 @@ import {NextFunction, Request, Response} from 'express'
 import {getLogger} from 'lib/logger'
 import {User} from '../model'
 
-
 const logger = getLogger('profileChecker')
 
 export class ProfileChecker {

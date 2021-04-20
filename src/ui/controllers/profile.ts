@@ -1,9 +1,9 @@
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
+import {getLogger} from 'lib/logger'
 import {User} from 'lib/model'
 import * as _ from 'lodash'
-import {getLogger} from 'lib/logger'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
 

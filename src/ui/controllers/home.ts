@@ -3,16 +3,17 @@ import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import {getLogger} from 'lib/logger'
 import {Course} from "lib/model"
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import {getLogger} from 'lib/logger'
 import * as suggestionController from './suggestion'
 
 const logger = getLogger('controllers/home')
 
 export async function home(req: express.Request, res: express.Response, next: express.NextFunction) {
+	logger.info("hello")
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User

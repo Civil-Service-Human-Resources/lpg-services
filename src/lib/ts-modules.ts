@@ -1,1 +1,1 @@
-declare module 'winston-azure-application-insights' 
+declare module 'winston-azure-application-insights'

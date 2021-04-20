@@ -2,8 +2,8 @@ import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
-import * as model from 'lib/model'
 import {getLogger} from 'lib/logger'
+import * as model from 'lib/model'
 
 const logger = getLogger('lib/xapi')
 

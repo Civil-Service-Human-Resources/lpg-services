@@ -3,8 +3,8 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as featureConfig from 'lib/config/featureConfig'
 import * as extended from 'lib/extended'
-import * as xapi from 'lib/xapi'
 import {getLogger} from 'lib/logger'
+import * as xapi from 'lib/xapi'
 import * as querystring from 'querystring'
 
 const logger = getLogger('controllers/xapi')

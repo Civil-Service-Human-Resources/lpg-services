@@ -2,13 +2,13 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
-import {getLogger} from 'lib/logger'
 
 export interface CourseDetail {
 	label: string

@@ -2,8 +2,8 @@ import axios from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as datetime from 'lib/datetime'
-import {getPurchaseOrder} from "lib/service/skills"
 import {getLogger} from 'lib/logger'
+import {getPurchaseOrder} from "lib/service/skills"
 import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'

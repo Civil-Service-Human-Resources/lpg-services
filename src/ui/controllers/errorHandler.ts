@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express'
-import * as template from 'lib/ui/template'
 import {getLogger} from 'lib/logger'
+import * as template from 'lib/ui/template'
 
 const logger = getLogger('controllers/home')
 const nonProductionEnvironments = ['dev', 'test']

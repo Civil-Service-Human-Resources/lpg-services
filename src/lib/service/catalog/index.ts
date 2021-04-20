@@ -2,9 +2,9 @@ import axios, {AxiosInstance} from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
+import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
-import {getLogger} from 'lib/logger'
 import * as query from 'querystring'
 
 const logger = getLogger('catalog')

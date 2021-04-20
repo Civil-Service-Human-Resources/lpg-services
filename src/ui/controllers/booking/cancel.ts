@@ -4,9 +4,9 @@ import {NextFunction} from "express"
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import {getLogger} from 'lib/logger'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
-import {getLogger} from 'lib/logger'
 
 const logger = getLogger('controllers/booking/cancel')
 

@@ -2,8 +2,8 @@ import axios, {AxiosInstance} from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
-import * as model from "lib/model"
 import {getLogger} from 'lib/logger'
+import * as model from "lib/model"
 
 import {AnswerSubmission, Question, QuizHistory, QuizMetadata, SelectedAnswers} from "lib/service/skills/api"
 
