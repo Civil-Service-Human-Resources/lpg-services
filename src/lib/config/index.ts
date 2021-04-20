@@ -101,26 +101,7 @@ export const LEARNER_RECORD = set({
 	url: env.LEARNER_RECORD_URL || 'http://localhost:9000',
 })
 
-export const LOGGING = set(
-	{
-		appenders: {
-			out: {type: 'console'},
-		},
-		categories: {
-			default: {appenders: ['out'], level: 'info'},
-		},
-	},
-	{
-		development: {
-			appenders: {
-				out: {type: 'console'},
-			},
-			categories: {
-				default: {appenders: ['out'], level: 'debug'},
-			},
-		},
-	}
-)
+export const LOGGING_LEVEL = env.LOGGING_LEVEL
 
 export const LPG_UI_SERVER =
 	env.LPG_UI_SERVER || 'http://localhost:3001'

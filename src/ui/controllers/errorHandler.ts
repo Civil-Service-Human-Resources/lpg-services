@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from 'express'
 import * as template from 'lib/ui/template'
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 
-const logger = log4js.getLogger('controllers/home')
+const logger = getLogger('controllers/home')
 const nonProductionEnvironments = ['dev', 'test']
 
 export async function handleError(

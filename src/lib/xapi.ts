@@ -3,8 +3,10 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as model from 'lib/model'
-import * as log4js from "log4js"
-const logger = log4js.getLogger('lib/xapi')
+import {getLogger} from 'lib/logger'
+
+const logger = getLogger('lib/xapi')
+
 export enum Placement {
 	Context,
 	Result,

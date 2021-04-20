@@ -4,10 +4,10 @@ import * as config from 'lib/config'
 import * as featureConfig from 'lib/config/featureConfig'
 import * as extended from 'lib/extended'
 import * as xapi from 'lib/xapi'
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 import * as querystring from 'querystring'
 
-const logger = log4js.getLogger('controllers/xapi')
+const logger = getLogger('controllers/xapi')
 
 export async function proxy(ireq: express.Request, res: express.Response) {
 	let req = ireq as extended.CourseRequest

@@ -2,16 +2,11 @@
 const appInsights = require('applicationinsights')
 import * as config from 'lib/config'
 
-appInsights
-.setup(config.INSTRUMENTATION_KEY)
-.setAutoDependencyCorrelation(true)
-.setAutoCollectRequests(true)
-.setAutoCollectPerformance(true)
-.setAutoCollectExceptions(true)
-.setAutoCollectDependencies(true)
-.setAutoCollectConsole(true)
-.setUseDiskRetryCaching(true)
-.start()
+appInsights.setup(config.INSTRUMENTATION_KEY)
+.setAutoCollectConsole(false)
+
+appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-services"
+appInsights.start()
 
 /* tslint:enable */
 
@@ -23,13 +18,13 @@ import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as fs from 'fs'
-import * as log4js from 'log4js'
 import * as redis from 'redis'
 import { URL } from 'url'
 
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 
+import { getLogger } from 'lib/logger'
 import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
@@ -52,15 +47,13 @@ import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
 
-log4js.configure(config.LOGGING)
-
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
 /* tslint:enable */
 
 const {PORT = 3001} = process.env
 
-const logger = log4js.getLogger('server')
+const logger = getLogger('server.ts')
 
 const app = express()
 
@@ -70,14 +63,6 @@ app.enable('trust proxy')
 
 const corsOptions = corsConfig.setCorsOptions()
 app.use(cors(corsOptions))
-
-app.use(
-	log4js.connectLogger(logger, {
-		format: ':method :url',
-		level: 'trace',
-		nolog: '\\.js|\\.css|\\.gif|\\.jpg|\\.png|\\.ico$',
-	})
-)
 
 const RedisStore = connectRedis(session)
 const redisClient = redis.createClient({

@@ -8,7 +8,7 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 
 export interface CourseDetail {
 	label: string
@@ -20,7 +20,7 @@ export interface DataRow {
 	value: string
 }
 
-const logger = log4js.getLogger('controllers/course')
+const logger = getLogger('controllers/course')
 
 export function getCourseDetails(
 	req: extended.CourseRequest,

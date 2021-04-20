@@ -3,11 +3,11 @@ import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
 import * as model from "lib/model"
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 
 import {AnswerSubmission, Question, QuizHistory, QuizMetadata, SelectedAnswers} from "lib/service/skills/api"
 
-const logger = log4js.getLogger('skills')
+const logger = getLogger('skills')
 
 const http: AxiosInstance = axios.create({
 	baseURL: config.REGISTRY_SERVICE_URL,
