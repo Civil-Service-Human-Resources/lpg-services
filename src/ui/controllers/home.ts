@@ -13,7 +13,6 @@ import * as suggestionController from './suggestion'
 const logger = getLogger('controllers/home')
 
 export async function home(req: express.Request, res: express.Response, next: express.NextFunction) {
-	logger.info("hello")
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
