@@ -297,9 +297,10 @@ app.use(bookingRouter.router)
 app.use(errorController.handleError)
 
 if (require.main === module) {
-	app.listen(PORT, () => {
+	const server = app.listen(PORT, () => {
 		logger.info(`listening on port ${PORT}`)
 	})
+	server.setTimeout(500000)
 }
 
 module.exports = app
