@@ -300,7 +300,7 @@ if (require.main === module) {
 	const server = app.listen(PORT, () => {
 		logger.info(`listening on port ${PORT}`)
 	})
-	server.setTimeout(config.SERVER_TIMEOUT)
+	server.setTimeout(config.SERVER_TIMEOUT_MS)
 }
 
 module.exports = app
