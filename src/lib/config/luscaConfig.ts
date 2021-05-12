@@ -5,7 +5,7 @@ export function setCspPolicy(staticAssetDomain: string) {
 	if (config.PROFILE === 'prod') {
 		contentCdn = 'https://cdn.learn.civilservice.gov.uk'
 	} else {
-		contentCdn = `https://${config.PROFILE}-cdn.cshr.digital`
+		contentCdn = `https://cdn.${config.PROFILE}.learn.civilservice.gov.uk`
 	}
 
 	let staticCdn: string
