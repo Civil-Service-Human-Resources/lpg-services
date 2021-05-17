@@ -160,7 +160,7 @@ export const LPG_MANAGEMENT_URL =
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 60000
 
-export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 300000
+export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
 
 export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
 
