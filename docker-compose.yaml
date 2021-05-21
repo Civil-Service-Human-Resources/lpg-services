@@ -70,7 +70,7 @@ services:
       - SPRING_PROFILES_ACTIVE=default
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/identity-service:idt-release-3.0-1-20210217-165501
+    image: lpgregistry.azurecr.io/identity-service:idt-release-4.0-1-20210329-090558
     ports:
       - 8080:8080
       - 8081:8081
@@ -85,7 +85,7 @@ services:
       - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-learner-record:idt-release-3.0-1-20210217-165723
+    image: lpgregistry.azurecr.io/lpg-learner-record:idt-release-4.0-1-20210329-114134
     depends_on:
       - civil-servant-registry
       - identity
@@ -113,7 +113,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:idt-release-2.0-1
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:idt-release-4.0-1-20210329-091154
     depends_on:
       - identity
     ports:
@@ -126,7 +126,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:idt-release-3.0-2-20210219-125511
+    image: lpgregistry.azurecr.io/civil-servant-registry-service:idt-release-4.0-1-20210329-091016
     depends_on:
       - identity
     ports:
@@ -141,7 +141,7 @@ services:
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-report-service:master-10
+    image: lpgregistry.azurecr.io/lpg-report-service:idt-release-5.0-2-20210514-083933
     depends_on:
       - identity
       - learner-record
