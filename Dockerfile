@@ -2,11 +2,6 @@ FROM library/ubuntu:xenial-20210416
 
 EXPOSE 3001
 
-RUN apt-get update && \
-  apt-get install --yes wget g++ make perl=5.32.1 libarchive-zip-perl=1.68-1 && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
 
 # Copy app files
