@@ -2,11 +2,6 @@ FROM library/ubuntu:hirsute-20210514
 
 EXPOSE 3001
 
-RUN apt-get update && \
-  apt-get install --yes wget g++ make perl libarchive-zip-perl && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
 
 # Copy app files
