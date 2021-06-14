@@ -1,4 +1,4 @@
-FROM library/ubuntu
+FROM library/ubuntu:19.10
 
 EXPOSE 3001
 
