@@ -2,6 +2,8 @@ FROM library/ubuntu:xenial-20210416
 
 EXPOSE 3001
 
+RUN apt-get install wget
+
 RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
 
 # Copy app files
