@@ -1,5 +1,5 @@
 config:
-  target: 'https://test-lpg.cshr.digital'
+  target: 'https://test.learn.civilservice.gov.uk'
   phases:
     - duration: 200
       arrivalRate: 1
@@ -21,7 +21,7 @@ scenarios:
           selector: "input[type='hidden']"
           as: "csrf"
     - post:
-        url: "https://test-identity.cshr.digital/login"
+        url: "https://test.identity.learn.civilservice.gov.uk/login"
         username: "{{ username }}"
         password: "{{ password }}"
         beforeRequest: "setLoginBody"

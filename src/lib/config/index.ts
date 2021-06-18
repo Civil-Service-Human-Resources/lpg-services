@@ -70,7 +70,7 @@ export const BOOKING_NOTIFY_RECIPIENTS = [
 ]
 
 export const CONTENT_URL =
-	env.CONTENT_URL || 'http://local-cdn.cshr.digital/lpgdevcontent'
+	env.CONTENT_URL || 'http://cdn.local.learn.civilservice.gov.uk/lpgdevcontent'
 
 export const CONTENT_CONTAINER = env.CONTENT_CONTAINER || 'lpgdevcontent'
 
