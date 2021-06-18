@@ -115,7 +115,7 @@
 		"serve-favicon": "2.4.5",
 		"session-file-store": "1.2.0",
 		"shortid": "2.2.8",
-		"striptags": "3.1.1",
+		"striptags": "3.2.0",
 		"svelte": "2.6.3",
 		"tmp": "0.0.33",
 		"traverson": "6.0.3",
