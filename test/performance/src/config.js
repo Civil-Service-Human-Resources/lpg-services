@@ -3,7 +3,7 @@ Object.defineProperty(exports, '__esModule', {value: true})
 const dotenv = require('dotenv')
 const fs = require('fs')
 exports.PROFILE = process.env.ENV_PROFILE || 'local'
-const envFile = '/keybase/team/lpg/dev/testenv'
+const envFile = '/volumes/keybase/team/lpg/dev/testenv'
 try {
 	if (fs.statSync(envFile).isFile()) {
 		dotenv.config({path: envFile})

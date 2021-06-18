@@ -3,7 +3,7 @@ import * as fs from 'fs'
 
 export const PROFILE = process.env.ENV_PROFILE || 'local'
 
-const envFile = '/keybase/team/lpg/dev/testenv'
+const envFile = '/volumes/keybase/team/lpg/dev/testenv'
 
 try {
 	if (fs.statSync(envFile).isFile()) {
