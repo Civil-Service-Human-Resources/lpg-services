@@ -16,7 +16,7 @@ echo "Checking ${APP} has been updated to ${TAG}"
 START=`date +%s`
 
 while [ $(( `date +%s` - $START )) -lt ${UPDATE_TIMEOUT} ]; do
-  version=`curl -s https://${APP}.cshr.digital/status | grep "version"`
+  version=`curl -s https://${APP}.learn.civilservice.gov.uk/status | grep "version"`
 
   if [ -z "${version##*$TAG*}" ]; then
     end 0 "Update complete"

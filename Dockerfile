@@ -11,13 +11,13 @@ COPY bin/setup-dist bin/setup-dist
 COPY src src
 
 # Runtime environment variables
-ENV AUTHENTICATION_SERVICE_URL=http://identity.local.cshr.digital:9443 \
+ENV AUTHENTICATION_SERVICE_URL=http://identity.local.learn.civilservice.gov.uk:9443 \
   CONTENT_CONTAINER=lpgdevcontent \
-  CONTENT_URL=http://local-cdn.cshr.digital/lpgdevcontent \
+  CONTENT_URL=http://cdn.local.learn.civilservice.gov.uk/lpgdevcontent \
   LEARNER_RECORD_URL=http://localhost:9000 \
   LEARNER_RECORD_USER=user \
   LEARNER_RECORD_PASS=password \
-  LPG_UI_SERVER=http://lpg.local.cshr.digital \
+  LPG_UI_SERVER=http://local.learn.civilservice.gov.uk \
   NODE_ENV=production \
   PORT=3001 \
   SESSION_SECRET=topsecret
