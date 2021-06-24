@@ -28,8 +28,12 @@
     <div class="grid-row ">
         <div class="column-full">
             <div class="form-group">
-                <button type="submit" class="button">Save changes</button>
-            </div>
+                {#if inputName === 'line-manager'}
+                    <button type="submit" class="button">Continue</button>
+                {:else}
+                    <button type="submit" class="button">Save changes</button>
+                {/if}
+                </div>
         </div>
     </div>
     <input type="hidden" name="_csrf" value="{_csrf}">
