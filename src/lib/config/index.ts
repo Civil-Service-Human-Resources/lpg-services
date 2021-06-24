@@ -9,7 +9,7 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
-	const envFile = '/keybase/team/lpg/dev/dotenv'
+	const envFile = '/volumes/keybase/team/lpg/dev/dotenv'
 	try {
 		if (!fs.statSync(envFile).isFile()) {
 			throw new Error(`File not found: ${envFile}`)
