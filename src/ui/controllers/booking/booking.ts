@@ -47,6 +47,7 @@ export function saveAccessibilityOptions(
 ) {
 	const session = ireq.session!
 	const req = ireq as extended.CourseRequest
+	const user = req.user as model.User
 
 	if (Array.isArray(ireq.body.accessibilityreqs)) {
 		session.accessibilityReqs = ireq.body.accessibilityreqs
@@ -66,6 +67,8 @@ export function saveAccessibilityOptions(
 	let {returnTo} = ireq.session!
 	if (returnTo) {
 		delete ireq.session!.returnTo
+	} else if (!user.department || !user.lineManager) {
+		returnTo = '/profile'
 	} else if (req.module!.cost === 0) {
 		session.payment = {
 			type: '',
@@ -277,26 +280,19 @@ export async function renderPaymentOptions(
 	const req = ireq as extended.CourseRequest
 	const session = req.session!
 	const module = req.module!
-
-	const user = req.user as model.User
-
-	if (!user.department || !user.lineManager) {
-		res.redirect('/profile')
-	} else {
-		res.send(
-			template.render('booking/payment-options', req, res, {
-				course: req.course!,
-				errors: req.flash('errors'),
-				event: req.event!,
-				module,
-				values:
-					req.flash('values')[0] ||
-					(session.payment
-						? {[session.payment.type]: session.payment.value}
-						: {}),
-			})
-		)
-	}
+	res.send(
+		template.render('booking/payment-options', req, res, {
+			course: req.course!,
+			errors: req.flash('errors'),
+			event: req.event!,
+			module,
+			values:
+				req.flash('values')[0] ||
+				(session.payment
+					? {[session.payment.type]: session.payment.value}
+					: {}),
+		})
+	)
 }
 
 export async function enteredPaymentDetails(
