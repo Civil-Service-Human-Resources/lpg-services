@@ -3,9 +3,9 @@ const appInsights = require('applicationinsights')
 import * as config from 'lib/config'
 
 appInsights.setup(config.INSTRUMENTATION_KEY)
-.setAutoCollectConsole(false)
+.setAutoCollectConsole(true)
 
-appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-services"
+appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-ui"
 appInsights.start()
 
 /* tslint:enable */

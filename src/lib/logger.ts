@@ -1,5 +1,4 @@
 import { createLogger, format, Logger, transports } from 'winston'
-import { AzureApplicationInsightsLogger } from 'winston-azure-application-insights'
 const { combine, timestamp, printf } = format
 import * as config from './config'
 /*tslint:disable*/
@@ -18,8 +17,7 @@ const WINSTON_CONFIG = {
 	),
 	level: config.LOGGING_LEVEL,
 	transports: [
-		new AzureApplicationInsightsLogger({key: config.INSTRUMENTATION_KEY}),
-		new transports.Console(),
+		new transports.Console()
 	],
 }
 

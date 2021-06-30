@@ -141,13 +141,9 @@ export const LPG_MANAGEMENT_URL =
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 60000
 
-<<<<<<< HEAD
 export const INSTRUMENTATION_KEY = env.APPINSIGHTS_INSTRUMENTATIONKEY || 'ai_key'
-=======
-export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
 
-export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
->>>>>>> idt-develop
+export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
 
 export const CONTACT_EMAIL = env.CONTACT_EMAIL || 'support@civilservicelearning.uk'
 
