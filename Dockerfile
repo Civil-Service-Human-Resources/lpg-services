@@ -1,4 +1,4 @@
-FROM node:16.3.0-slim as dependencies
+FROM node:16.3.0-slim
 
 WORKDIR /var/www/app
 
