@@ -17,7 +17,7 @@ const WINSTON_CONFIG = {
 	),
 	level: config.LOGGING_LEVEL,
 	transports: [
-		new transports.Console()
+		new transports.Console(),
 	],
 }
 
