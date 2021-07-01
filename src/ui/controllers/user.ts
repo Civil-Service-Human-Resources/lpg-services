@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as https from 'https'
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 
 import * as axiosLogger from 'lib/axiosLogger'
 import * as extended from 'lib/extended'
@@ -50,7 +50,7 @@ function getNodeByName(name: string) {
 	return node
 }
 
-const logger = log4js.getLogger('controllers/user')
+const logger = getLogger('controllers/user')
 
 // This super slick regex is by Andrew Clark from:
 // https://stackoverflow.com/questions/6739676/regular-expression-matching-at-least-n-of-m-groups

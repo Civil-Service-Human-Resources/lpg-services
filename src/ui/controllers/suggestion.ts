@@ -1,14 +1,14 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import {ApiParameters} from "lib/service/catalog"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
-import * as log4js from 'log4js'
 
-const logger = log4js.getLogger('controllers/suggestion')
+const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
 const RECORDS_TO_SCAN_IN_ELASTIC = 200
 

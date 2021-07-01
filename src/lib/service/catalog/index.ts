@@ -2,12 +2,12 @@ import axios, {AxiosInstance} from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
+import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
-import * as log4js from 'log4js'
 import * as query from 'querystring'
 
-const logger = log4js.getLogger('catalog')
+const logger = getLogger('catalog')
 
 const http: AxiosInstance = axios.create({
 	baseURL: config.COURSE_CATALOGUE.url,

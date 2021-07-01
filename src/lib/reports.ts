@@ -1,11 +1,11 @@
 import axios from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 import * as config from './config'
 import * as model from './model'
 
-const logger = log4js.getLogger('reports')
+const logger = getLogger('reports')
 
 const http = axios.create({
 	baseURL: config.REPORT_SERVICE.url,

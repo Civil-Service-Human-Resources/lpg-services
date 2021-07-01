@@ -1,14 +1,13 @@
 import {IsEmail, IsNotEmpty, validate} from 'class-validator'
 import {Request, Response} from 'express'
 import * as config from 'lib/config'
+import {getLogger} from 'lib/logger'
 import {User} from 'lib/model'
 import * as _ from 'lodash'
-import * as log4js from 'log4js'
 import * as registry from '../../lib/registry'
 import * as template from '../../lib/ui/template'
 
-log4js.configure(config.LOGGING)
-const logger = log4js.getLogger('profile')
+const logger = getLogger('profile')
 
 const defaultRedirectUrl = '/home'
 

@@ -14,6 +14,7 @@
 		"sass:all": "npm run sass:ui",
 		"sass:ui": "node-sass src/ui/assets/styles/main.scss dist/ui/assets/styles/main.css --output-style compressed",
 		"start:all": "npm run start:ui",
+		"start:build": "npm run build && npm run start:ui",
 		"start:ui": "cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
 		"test": "find dist -name '*.spec.js' | NODE_ICU_DATA=node_modules/full-icu xargs node_modules/mocha/bin/mocha --timeout 10000 --exit",
 		"watch": "./bin/tsc -w",
@@ -71,9 +72,9 @@
 	},
 	"dependencies": {
 		"@types/connect-redis": "0.0.11",
-		"@types/redis": "^2.8.14",
+		"@types/redis": "2.8.14",
 		"app-root-path": "^2.1.0",
-		"applicationinsights": "1.5.0",
+		"applicationinsights": "2.1.3",
 		"axios": "0.18.1",
 		"azure-storage": "2.8.1",
 		"class-validator": "0.9.1",
@@ -89,7 +90,7 @@
 		"express-sanitizer": "1.0.4",
 		"express-session": "1.15.6",
 		"express-validator": "4.3.0",
-		"full-icu": "1.2.0",
+		"full-icu": "1.3.4",
 		"glob": "^7.1.2",
 		"govuk-elements-sass": "3.1.2",
 		"govuk_frontend_toolkit": "7.2.0",
@@ -97,13 +98,12 @@
 		"i18n": "0.8.3",
 		"jsonwebtoken": "8.5.1",
 		"lodash": "4.17.19",
-		"log4js": "2.5.2",
 		"lusca": "1.5.2",
 		"mime-types": "2.1.18",
 		"moment": "^2.24.0",
 		"node-exiftool": "2.3.0",
 		"node-fetch": "1.7.3",
-		"node-sass": "4.9.0",
+		"node-sass": "6.0.0",
 		"notifications-node-client": "4.1.0",
 		"passport": "0.4.0",
 		"passport-oauth2": "1.4.0",
@@ -120,6 +120,7 @@
 		"tmp": "0.0.33",
 		"traverson": "6.0.3",
 		"traverson-hal": "6.0.0",
-		"unzip": "0.1.11"
+		"unzip": "0.1.11",
+		"winston": "3.3.3"
 	}
 }

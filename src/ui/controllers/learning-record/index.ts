@@ -1,12 +1,12 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
-import * as log4js from 'log4js'
 
-const logger = log4js.getLogger('controllers/learning-record')
+const logger = getLogger('controllers/learning-record')
 
 export async function courseResult(
 	ireq: express.Request,

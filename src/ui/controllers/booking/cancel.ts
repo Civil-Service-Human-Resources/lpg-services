@@ -4,11 +4,11 @@ import {NextFunction} from "express"
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import {getLogger} from 'lib/logger'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
-import * as log4js from 'log4js'
 
-const logger = log4js.getLogger('controllers/booking/cancel')
+const logger = getLogger('controllers/booking/cancel')
 
 export async function renderCancelBookingPage(
 	ireq: express.Request,

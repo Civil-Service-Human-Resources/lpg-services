@@ -1,11 +1,11 @@
 import axios, {AxiosResponse} from 'axios'
 import * as https from 'https'
 import * as config from 'lib/config'
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
 
-const logger = log4js.getLogger('registry')
+const logger = getLogger('registry')
 
 const http = axios.create({
 	baseURL: config.CHECK_LINEMANAGER_URL,
