@@ -2,7 +2,7 @@
 const appInsights = require('applicationinsights')
 import * as config from 'lib/config'
 
-appInsights.setup(config.INSTRUMENTATION_KEY)
+appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
 .setAutoCollectConsole(true)
 
 appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-ui"
