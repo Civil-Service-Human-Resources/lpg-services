@@ -122,7 +122,7 @@ export async function patch(node: string, data: any, token: string) {
 	return result
 }
 
-export async function profile(token: string) {
+export async function profile(token: string): Promise<any> {
 	return await new Promise((resolve, reject) =>
 		traverson
 			.from(config.REGISTRY_SERVICE_URL + '/civilServants/me')

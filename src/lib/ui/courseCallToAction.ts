@@ -17,8 +17,8 @@ export interface CallToActionProps {
 		skip: string
 	}
 	isInLearningPlan: boolean
-	message: string
-	url: string
+	message?: string 
+	url?: string
 }
 
 export function constructCourseCallToAction(

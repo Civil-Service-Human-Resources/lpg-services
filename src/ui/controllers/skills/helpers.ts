@@ -1,8 +1,8 @@
 import * as express from 'express'
 import {AnswerSubmission} from "lib/service/skills/api"
 
-export async function saveSession(req: express.Request): Promise<string> {
-	return new Promise<string>((resolve, reject) => {
+export async function saveSession(req: express.Request): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
 		req.session!.save(() => {
 			resolve()
 		})
