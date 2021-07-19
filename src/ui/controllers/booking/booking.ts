@@ -9,9 +9,9 @@ import * as xapi from 'lib/xapi'
 
 import * as courseController from '../course/index'
 
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 
-const logger = log4js.getLogger('controllers/booking')
+const logger = getLogger('controllers/booking')
 const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
 
 export enum confirmedMessage {

@@ -9,7 +9,7 @@ import * as fileHelpers from 'lib/filehelpers'
 import * as express from 'express'
 import * as fs from 'fs'
 
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 import * as path from 'path'
 
 /*tslint:disable*/
@@ -20,7 +20,7 @@ const {Store} = require('svelte/store.umd.js')
 const rootDir = process.cwd()
 export const pageDir = path.join(rootDir, 'page')
 
-const logger = log4js.getLogger('lib/template')
+const logger = getLogger('lib/template')
 
 function isFile(path: string) {
 	try {

@@ -101,26 +101,7 @@ export const LEARNER_RECORD = set({
 	url: env.LEARNER_RECORD_URL || 'http://localhost:9000',
 })
 
-export const LOGGING = set(
-	{
-		appenders: {
-			out: {type: 'console'},
-		},
-		categories: {
-			default: {appenders: ['out'], level: 'info'},
-		},
-	},
-	{
-		development: {
-			appenders: {
-				out: {type: 'console'},
-			},
-			categories: {
-				default: {appenders: ['out'], level: 'debug'},
-			},
-		},
-	}
-)
+export const LOGGING_LEVEL = env.LOGGING_LEVEL
 
 export const LPG_UI_SERVER =
 	env.LPG_UI_SERVER || 'http://local.learn.civilservice.gov.uk:3001'
@@ -160,9 +141,9 @@ export const LPG_MANAGEMENT_URL =
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 60000
 
-export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
+export const APPLICATIONINSIGHTS_CONNECTION_STRING = env.APPLICATIONINSIGHTS_CONNECTION_STRING || 'ai_key'
 
-export const INSTRUMENTATION_KEY = env.instrumentation_key || 'instrumentation_key'
+export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
 
 export const CONTACT_EMAIL = env.CONTACT_EMAIL || 'support@civilservicelearning.uk'
 
