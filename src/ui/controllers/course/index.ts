@@ -165,8 +165,12 @@ export async function display(ireq: express.Request, res: express.Response) {
 				const moduleRecord = record
 					? (record.modules || []).find(m => m.moduleId === cm.id)
 					: null
+				const moduleUpdatedAt = moduleRecord ? moduleRecord.updatedAt : null
+				const coursePreviousRequiredDate = course.previousRequiredBy()
 				return {
 					...cm,
+					// tslint:disable-next-line:max-line-length
+					display_state: moduleRecord && moduleUpdatedAt && coursePreviousRequiredDate && moduleUpdatedAt >= coursePreviousRequiredDate ? moduleRecord.state : null,
 					duration: cm.getDuration(),
 					isMandatory: !cm.optional,
 					state: moduleRecord ? moduleRecord.state : null,
