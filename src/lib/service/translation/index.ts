@@ -1,11 +1,11 @@
 import * as express from 'express'
 import * as i18n from 'i18n'
-import * as path from 'path'
+import appRoot = require('app-root-path')
 
 export let configure = (app: express.Express) => {
 	i18n.configure({
 		defaultLocale: 'en',
-		directory: path.join(path.dirname(process.cwd()), '/locale'),
+		directory: `${appRoot}/locale`,
 		locales: ['en', 'de'],
 		objectNotation: true,
 	})

@@ -1,10 +1,11 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
+import * as learnerRecord from 'lib/service/learnerRecord'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
+import { getRawLearningRecord, getRecord } from 'lib/client/learnerrecord'
 
 const logger = getLogger('controllers/learning-record')
 
@@ -21,20 +22,20 @@ export async function courseResult(
 	try {
 		const course = req.course
 		const module = req.module!
-		const courseRecord = await learnerRecord.getRecord(req.user, course, module)
+		const courseRecord = await getRecord(req.user, course, module)
 		let moduleRecord = null
 
 		if (courseRecord && courseRecord.modules) {
 			moduleRecord = courseRecord.modules.find(mr => module.id === mr.moduleId)
 		}
-		if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
+		if (!moduleRecord || !moduleRecord.isCompleted()) {
 			res.redirect('/home')
 		} else {
 			let courseCompleted = true
 			let modulesCompleted = 0
 			course.modules.forEach(m => {
 				const r = courseRecord!.modules.find(mr => m.id === mr.moduleId)
-				if (!r || r.state !== 'COMPLETED') {
+				if (!r || !r.isCompleted()) {
 					courseCompleted = false
 				} else {
 					modulesCompleted++
@@ -62,7 +63,7 @@ export async function display(req: express.Request, res: express.Response) {
 
 	const [requiredLearning, learningRecord] = await Promise.all([
 		catalog.findRequiredLearning(req.user),
-		learnerRecord.getRawLearningRecord(req.user, [], ['COMPLETED']),
+		getRawLearningRecord(req.user, [], ['COMPLETED']),
 	])
 
 	const completedLearning = learningRecord.sort((a, b) => {

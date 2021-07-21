@@ -1,7 +1,6 @@
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
 import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
@@ -9,6 +8,7 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
+import { getRecord } from 'lib/client/learnerrecord'
 
 export interface CourseDetail {
 	label: string
@@ -160,7 +160,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'link':
 		case 'video':
 		case 'blended':
-			const record = await learnerRecord.getRecord(req.user, course)
+			const record = await getRecord(req.user, course)
 			const modules = course.modules.map(cm => {
 				const moduleRecord = record
 					? (record.modules || []).find(m => m.moduleId === cm.id)

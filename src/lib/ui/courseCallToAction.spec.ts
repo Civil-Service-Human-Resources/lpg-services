@@ -4,8 +4,8 @@ import {
 	CourseActionType,
 } from 'lib/ui/courseCallToAction'
 
-import {CourseRecord, ModuleRecord} from 'lib/learnerrecord'
 import {Course, Module, User} from 'lib/model'
+import { RecordState } from 'lib/model/learnerRecord/record'
 
 const courseSkeletonData: any = {
 	id: 'UT0',
@@ -168,7 +168,7 @@ describe('Course Call to Actions', () => {
 						describe('where the date today has not passed the event date', () => {
 							it('should show "Remove" and "Book" for UNREGISTERED courses', () => {
 								course.record!.modules.push(initModuleRecord('future'))
-								course.record!.modules[0].state = 'UNREGISTERED'
+								course.record!.modules[0].state = RecordState.Unregsitered
 
 								const cta = constructCourseCallToAction(
 									course,

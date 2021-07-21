@@ -2,13 +2,15 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
 import {getLogger} from 'lib/logger'
 import {Course} from "lib/model"
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as suggestionController from './suggestion'
+import { CourseRecord } from 'lib/model/learnerRecord/courseRecord'
+import { countReadyForFeedback, getRawLearningRecord } from 'lib/client/learnerrecord'
+import { RecordState } from 'lib/model/learnerRecord/record'
 
 const logger = getLogger('controllers/home')
 
@@ -18,7 +20,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		const user = req.user as model.User
 
 		const [learningRecord, requiredLearningResults] = await Promise.all([
-			learnerRecord.getRawLearningRecord(user),
+			getRawLearningRecord(user),
 			catalog.findRequiredLearning(user),
 		])
 		const requiredLearning = requiredLearningResults.results
@@ -27,7 +29,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			'courseId'
 		)
 
-		const readyForFeedback = await learnerRecord.countReadyForFeedback(
+		const readyForFeedback = await countReadyForFeedback(
 			learningRecord
 		)
 		for (let i = 0; i < requiredLearning.length; i++) {
@@ -38,24 +40,24 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					requiredCourse.record = record
 					const previousRequiredBy = requiredCourse.previousRequiredBy()
 					const completionDate = record.getCompletionDate()
-					if (record.isComplete()) {
+					if (record.isCompleted()) {
 						if (!requiredCourse.shouldRepeat()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
 							// @ts-ignore
 							if (completionDate < previousRequiredBy) {
-								record.state = '' //This may require a new definition like this: record.display_state
+								record.state = RecordState.Null //This may require a new definition like this: record.display_state
 							}
 						}
 					} else {
 						if (!record.state && record.modules && record.modules.length) {
-							record.state = 'IN_PROGRESS' //This may require a new definition like this: record.display_state
+							record.state = RecordState.InProgress //This may require a new definition like this: record.display_state
 						}
 						if (requiredCourse.shouldRepeat()) {
 							// @ts-ignore
 							if (record.getStartedDate() < previousRequiredBy) {
-								record.state = '' //This may require a new definition like this: record.display_state
+								record.state = RecordState.Null //This may require a new definition like this: record.display_state
 							}
 						}
 					}
@@ -69,12 +71,12 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			}
 		}
 
-		const bookedLearning: learnerRecord.CourseRecord[] = []
-		let plannedLearning: learnerRecord.CourseRecord[] = []
+		const bookedLearning: CourseRecord[] = []
+		let plannedLearning: CourseRecord[] = []
 		for (const record of learningRecord) {
-			if (!record.isComplete() && learnerRecord.isActive(record)) {
+			if (!record.isCompleted() && record.isActive()) {
 				if (!record.state && record.modules && record.modules.length) {
-					record.state = 'IN_PROGRESS'
+					record.state = RecordState.InProgress
 				}
 				if (record.getSelectedDate()) {
 					const bookedModuleRecord = record.modules.find(m => !!m.eventId)

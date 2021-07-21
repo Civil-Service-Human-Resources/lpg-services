@@ -2,9 +2,9 @@ import _ = require("lodash")
 
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
-import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
 import {Duration} from 'moment'
+import { CourseRecord } from "./model/learnerRecord/courseRecord"
 
 export interface LineManager {
 	email: string
@@ -63,7 +63,7 @@ export class Course {
 	audiences: Audience[]
 	audience?: Audience
 
-	record?: learnerRecord.CourseRecord
+	record?: CourseRecord
 
 	constructor(id: string) {
 		this.id = id
@@ -71,14 +71,6 @@ export class Course {
 
 	isArchived() {
 		return this.status ? this.status === 'Archived' : false
-	}
-
-	isComplete() {
-		return this.record ? this.record!.state === 'COMPLETED' : false
-	}
-
-	isStarted() {
-		return this.record ? this.record!.state === 'IN_PROGRESS' : false
 	}
 
 	hasPreference() {
@@ -159,7 +151,7 @@ export class Course {
 
 	getSelectedDate() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
+			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && !m.isSkipped())
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
 				if (bookedModule) {
@@ -176,7 +168,7 @@ export class Course {
 	getDateRanges() {
 		if (this.record) {
 			const bookedModuleRecord = this.record.modules.find(
-				m => !!m.eventId && m.state !== 'SKIPPED'
+				m => !!m.eventId && !m.isSkipped
 			)
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(

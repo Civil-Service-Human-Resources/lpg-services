@@ -1,6 +1,6 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
+import * as learnerRecord from 'lib/service/learnerRecord'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'

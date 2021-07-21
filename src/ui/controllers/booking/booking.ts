@@ -2,7 +2,7 @@ import _ = require('lodash')
 
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
+import * as learnerRecord from 'lib/service/learnerRecord'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'

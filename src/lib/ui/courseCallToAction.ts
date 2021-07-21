@@ -44,14 +44,14 @@ export function constructCourseCallToAction(
 		callToActionProps.url = `/courses/${course.id}`
 	}
 
-	if (course.record && course.record.state !== 'ARCHIVED') {
+	if (course.record && !course.record.isArchived()) {
 		const record = course.record
 		callToActionProps.isInLearningPlan = (!!course.record || isRequired)
 
 		const bookedModule = record.modules && record.modules.find(m => !!m.eventId)
 		const isBooked =
 			bookedModule &&
-			(bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED')
+			(bookedModule.isRegistered() || bookedModule.isApproved())
 		const isDatePassed = new Date() > course.getSelectedDate()!
 
 		switch (courseType) {
@@ -86,8 +86,7 @@ export function constructCourseCallToAction(
 					const isModuleInLearningRecord = record.modules.find(recordModule => recordModule.moduleId === moduleCourse.id)
 					for (const moduleRecord of record.modules) {
 						const isItemAlreadyInArray = iDsOfNonOptionalnotStartedCourses.includes(moduleRecord.moduleId)
-						const isModuleCompleted = moduleRecord.state !== "COMPLETED"
-						if (!isModuleInLearningRecord && !moduleCourse.optional && !isItemAlreadyInArray && isModuleCompleted) {
+						if (!isModuleInLearningRecord && !moduleCourse.optional && !isItemAlreadyInArray && moduleRecord.isCompleted()) {
 							nonOptionalnotStartedCourses.push(moduleCourse)
 							iDsOfNonOptionalnotStartedCourses.push(moduleRecord.moduleId)
 						}
@@ -106,7 +105,7 @@ export function constructCourseCallToAction(
 							}
 						} else {
 							const courseOptionalModule = OptionalModules.find(optionalModule => optionalModule.title === module.moduleTitle)
-							if (module.state !== "COMPLETED" && !courseOptionalModule) {
+							if (!module.isCompleted() && !courseOptionalModule) {
 								isCourseModuleCompleted = false
 								break
 							}

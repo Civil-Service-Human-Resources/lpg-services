@@ -3,10 +3,10 @@ import {confirmedMessage, recordCheck} from './booking'
 import {NextFunction} from "express"
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
 import {getLogger} from 'lib/logger'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
+import { cancelBooking, getCancellationReasons, getRecord } from 'lib/client/learnerrecord'
 
 const logger = getLogger('controllers/booking/cancel')
 
@@ -20,7 +20,7 @@ export async function renderCancelBookingPage(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	const record = await getRecord(req.user, course, module, event)
 
 	if (!recordCheck(record, ireq)) {
 		res.sendStatus(400)
@@ -41,7 +41,7 @@ export async function renderCancelBookingPage(
 
 	const optionType = 'radio'
 
-	await learnerRecord.getCancellationReasons(req.user)
+	await getCancellationReasons(req.user)
 		.then(request => {
 			const options = Object.entries(request.data)
 			res.send(
@@ -69,7 +69,7 @@ export async function renderCancelledBookingPage(
 	const event = req.event!
 	let error: string = ''
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	const record = await getRecord(req.user, course, module, event)
 
 	if (!recordCheck(record, ireq)) {
 		error = req.__('errors.registrationNotFound')
@@ -78,7 +78,7 @@ export async function renderCancelledBookingPage(
 			rm => rm.moduleId === module.id && rm.eventId === event.id
 		)
 
-		if (moduleRecord && moduleRecord.state !== 'UNREGISTERED') {
+		if (moduleRecord && !moduleRecord.isUnregistered()) {
 			req.flash('cancelBookingError', req.__('errors.cancelBooking'))
 			req.session!.save(() => {
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
@@ -110,7 +110,7 @@ export async function tryCancelBooking(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	const record = await getRecord(req.user, course, module, event)
 
 	if (!record) {
 		logger.warn(
@@ -132,7 +132,7 @@ export async function tryCancelBooking(
 	if (cancelReason) {
 		extensions[xapi.Extension.CancelReason] = cancelReason
 
-		const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
+		const result = await cancelBooking(event, cancelReason, req.user)
 
 		const response: any = {
 			404: async () => {

@@ -1,6 +1,6 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
+import * as learnerRecord from 'lib/service/learnerRecord'
 import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import {ApiParameters} from "lib/service/catalog"

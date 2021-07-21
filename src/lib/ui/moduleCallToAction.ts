@@ -1,6 +1,6 @@
 import * as fileHelpers from 'lib/filehelpers'
-import {CourseRecord} from 'lib/learnerrecord'
 import * as model from 'lib/model'
+import { CourseRecord } from 'lib/model/learnerRecord/courseRecord'
 import {ActionToPlan, CourseActionType} from 'lib/ui/courseCallToAction'
 
 export interface LearningAction {

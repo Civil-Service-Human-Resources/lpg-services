@@ -10,7 +10,6 @@
 		"lint:headless": "tslint --project test/headless/tsconfig.json",
 		"lint:webdriver": "tslint --project test/webdriver/tsconfig.json",
 		"nuke": "rm -rf dist node_modules",
-		"postinstall": "gulp setupDist",
 		"sass": "gulp sass",
 		"start:all": "npm run start:ui",
 		"start:build": "npm run build && npm run start:ui",

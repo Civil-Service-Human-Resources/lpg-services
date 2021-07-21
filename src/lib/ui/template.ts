@@ -12,13 +12,14 @@ import * as fs from 'fs'
 import {getLogger} from 'lib/logger'
 import * as path from 'path'
 
+import appRoot = require('app-root-path')
+
 /*tslint:disable*/
 require('svelte/ssr/register')
 const {Store} = require('svelte/store.umd.js')
 /*tslint:enable*/
 
-const rootDir = process.cwd()
-export const pageDir = path.join(rootDir, 'page')
+export const pageDir = `${appRoot}/ui/page`
 
 const logger = getLogger('lib/template')
 

@@ -1,18 +1,14 @@
 import axios from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
-import * as datetime from 'lib/datetime'
 import {getLogger} from 'lib/logger'
+import { ModuleRecord } from 'lib/model/learnerRecord/moduleRecord'
 import {getPurchaseOrder} from "lib/service/skills"
 import * as query from 'querystring'
-import * as config from './config'
-import * as model from './model'
-import * as catalog from './service/catalog'
-
-export enum CourseState {
-	Completed = 'COMPLETED',
-	InProgress = 'IN_PROGRESS',
-}
+import * as config from '../config'
+import * as model from '../model'
+import { CourseRecord } from '../model/learnerRecord/courseRecord'
+import * as catalog from '../service/catalog'
 
 const logger = getLogger('learner-record')
 
@@ -108,6 +104,25 @@ export async function getCancellationReasons(user: any): Promise<any> {
 	})
 }
 
+export async function getCourseRecord(courseId: String, user: model.User) {
+	let response = await http.get('/course_records',
+		{
+			headers: {Authorization: `Bearer ${user.accessToken}`},
+			params: {
+				courseId: courseId,
+				userId: user.id
+			}
+		}
+	)
+	let course_records = response.data.course_records
+	if (course_records.length == 1) {
+		let record = course_records[0]
+		return convert(record)
+	} else {
+		return null
+	}
+}
+
 export async function getRecord(
 	user: model.User,
 	course: model.Course,
@@ -191,7 +206,7 @@ export async function countReadyForFeedback(learningRecord: CourseRecord[]) {
 	let count = 0
 	for (const courseRecord of learningRecord) {
 		for (const moduleRecord of courseRecord.modules) {
-			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
+			if (!moduleRecord.rated && moduleRecord.isCompleted()) {
 				count++
 			}
 		}
@@ -203,7 +218,7 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 	const readyForFeedback = []
 	for (const course of learningRecord) {
 		for (const moduleRecord of course.record!.modules) {
-			if (!moduleRecord.rated && moduleRecord.state === 'COMPLETED') {
+			if (!moduleRecord.rated && moduleRecord.isCompleted()) {
 				const module = course.modules.find(m => m.id === moduleRecord.moduleId)
 				if (!module) {
 					logger.debug(
@@ -228,126 +243,12 @@ export async function getReadyForFeedback(learningRecord: model.Course[]) {
 
 export function isActive(record: CourseRecord) {
 	return (
-		record.state !== 'ARCHIVED' &&
-		record.state !== 'SKIPPED' &&
+		!record.isArchived() &&
+		!record.isSkipped() &&
 		record.preference !== 'DISLIKED'
 	)
 }
 
-export class CourseRecord {
-	courseId: string
-	courseTitle: string
-	userId: string
-	modules: ModuleRecord[]
-	preference?: string
-	state?: string | undefined
-	lastUpdated?: Date
-
-	constructor(data: any) {
-		this.courseId = data.courseId
-		this.courseTitle = data.courseTitle
-		this.userId = data.userId
-		this.modules = data.modules || []
-		this.preference = data.preference
-		this.state = data.state
-
-		if (data.lastUpdated) {
-			this.lastUpdated = new Date(data.lastUpdated)
-		}
-
-		for (const module of this.modules) {
-			if (module.createdAt) {
-				module.createdAt = new Date(module.createdAt)
-			}
-			if (module.updatedAt) {
-				module.updatedAt = new Date(module.updatedAt)
-			}
-			if (module.completionDate) {
-				module.completionDate = new Date(module.completionDate)
-			}
-			if (module.eventDate) {
-				module.eventDate = new Date(module.eventDate)
-			}
-		}
-	}
-
-	isComplete() {
-		return this.state === 'COMPLETED'
-	}
-
-	getSelectedDate() {
-		for (const moduleRecord of this.modules) {
-			if (moduleRecord.eventDate) {
-				return moduleRecord.eventDate
-			}
-		}
-		return undefined
-	}
-
-	getType() {
-		if (!this.modules.length) {
-			return null
-		}
-		if (this.modules.length > 1) {
-			return 'blended'
-		}
-		return this.modules[0].moduleType
-	}
-
-	getDuration() {
-		const durationArray = this.modules.map(m => m.duration || 0)
-		return durationArray.length
-			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
-			: null
-	}
-
-	getCompletionDate() {
-		if (this.isComplete()) {
-			let completionDate: Date | undefined
-			for (const moduleRecord of this.modules) {
-				if (!completionDate) {
-					completionDate = moduleRecord.completionDate
-				} else if (
-					moduleRecord.completionDate &&
-					moduleRecord.completionDate > completionDate
-				) {
-					completionDate = moduleRecord.completionDate
-				}
-			}
-			return completionDate
-		}
-		return undefined
-	}
-
-	getStartedDate() {
-		let startedDate: Date | undefined
-		for (const moduleRecord of this.modules) {
-			if (!startedDate) {
-				startedDate = moduleRecord.createdAt
-			} else if (
-				moduleRecord.createdAt &&
-				moduleRecord.createdAt < startedDate
-			) {
-				startedDate = moduleRecord.createdAt
-			}
-		}
-		return startedDate
-	}
-}
-
-export interface ModuleRecord {
-	completionDate?: Date
-	eventId?: string
-	eventDate?: Date
-	moduleId: string
-	moduleTitle: string
-	moduleType: string
-	optional: boolean
-	cost?: number
-	duration?: number
-	rated?: boolean
-	state?: string
-	bookingStatus?: string
-	createdAt?: Date
-	updatedAt?: Date
+export function createModuleRecord(newModuleRecord: ModuleRecord) {
+    throw new Error("Function not implemented.")
 }
