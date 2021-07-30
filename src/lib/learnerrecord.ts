@@ -2,8 +2,8 @@ import axios from 'axios'
 import * as https from "https"
 import * as axiosLogger from 'lib/axiosLogger'
 import * as datetime from 'lib/datetime'
+import {getLogger} from 'lib/logger'
 import {getPurchaseOrder} from "lib/service/skills"
-import * as log4js from 'log4js'
 import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'
@@ -14,7 +14,7 @@ export enum CourseState {
 	InProgress = 'IN_PROGRESS',
 }
 
-const logger = log4js.getLogger('learner-record')
+const logger = getLogger('learner-record')
 
 const http = axios.create({
 	baseURL: config.LEARNER_RECORD.url,

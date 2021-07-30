@@ -38,12 +38,12 @@ const env = new Proxy({}, {get: getEnv})
 
 exports.PASSWORD = env.PASSWORD
 exports.URL = set(
-	'http://lpg.local.cshr.digital:3001/sign-in',
-	`https://${exports.PROFILE}-lpg.cshr.digital/sign-in`
+	'http://local.learn.civilservice.gov.uk/sign-in',
+	`https://${exports.PROFILE}.learn.civilservice.gov.uk/sign-in`
 )
 exports.BASE_URL = set(
-	'http://lpg.local.cshr.digital:3001',
-	`https://${exports.PROFILE}-lpg.cshr.digital`
+	'http://local.learn.civilservice.gov.uk:3001',
+	`https://${exports.PROFILE}.learn.civilservice.gov.uk`
 )
 exports.USERNAME = env.USERNAME
 //# sourceMappingURL=config.js.map

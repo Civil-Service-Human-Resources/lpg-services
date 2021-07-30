@@ -1,10 +1,8 @@
 import {NextFunction, Request, Response} from 'express'
-import * as log4js from 'log4js'
-import * as config from '../config'
+import {getLogger} from 'lib/logger'
 import {User} from '../model'
 
-log4js.configure(config.LOGGING)
-const logger = log4js.getLogger('profileChecker')
+const logger = getLogger('profileChecker')
 
 export class ProfileChecker {
 	/* tslint:disable:variable-name */
