@@ -1,5 +1,5 @@
 import {AxiosInstance} from 'axios'
-import {Logger} from 'log4js'
+import {Logger} from 'winston'
 
 export function axiosRequestLogger(
 	axiosInstance: AxiosInstance,
@@ -30,7 +30,7 @@ export function axiosResponseLogger(
 	// Add a response interceptor
 	axiosInstance.interceptors.response.use(
 		response => {
-			logger.trace('response data:', response)
+			logger.debug('response data:', response)
 			return response
 		},
 		error => {

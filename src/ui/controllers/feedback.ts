@@ -1,8 +1,8 @@
 import * as express from 'express'
 import * as feedback from 'lib/feedback'
-import * as log4js from 'log4js'
+import {getLogger} from 'lib/logger'
 
-const logger = log4js.getLogger('controllers/feedback')
+const logger = getLogger('controllers/feedback')
 
 export async function record(req: express.Request, res: express.Response) {
 	const {pageUrl = '', wentWrong = '', whatDoing = ''} = req.body
