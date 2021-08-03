@@ -350,5 +350,5 @@ export interface ModuleRecord {
 	bookingStatus?: string
 	createdAt?: Date
 	updatedAt?: Date
-	display_state?: string
+	displayState?: string
 }

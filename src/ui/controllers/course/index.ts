@@ -170,7 +170,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				return {
 					...cm,
 					// tslint:disable-next-line:max-line-length
-					display_state: moduleRecord && moduleUpdatedAt && coursePreviousRequiredDate && moduleUpdatedAt > coursePreviousRequiredDate ? moduleRecord.state : null,
+					displayState: moduleRecord && moduleUpdatedAt && coursePreviousRequiredDate && moduleUpdatedAt > coursePreviousRequiredDate ? moduleRecord.state : null,
 					duration: cm.getDuration(),
 					isMandatory: !cm.optional,
 					state: moduleRecord ? moduleRecord.state : null,
