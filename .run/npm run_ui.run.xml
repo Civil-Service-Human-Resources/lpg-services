@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="npm run:ui" type="NodeJSConfigurationType" path-to-node="node" path-to-js-file="$PROJECT_DIR$/dist/build/ui/server.js" working-dir="$PROJECT_DIR$/dist/ui">
+    <envs>
+      <env name="NODE_ICU_DATA" value="$PROJECT_DIR$/node_modules/full-icu" />
+    </envs>
+    <method v="2">
+      <option name="NpmBeforeRunTask" enabled="true">
+        <package-json value="$PROJECT_DIR$/package.json" />
+        <command value="run" />
+        <scripts>
+          <script value="build" />
+        </scripts>
+        <node-interpreter value="node" />
+        <envs />
+      </option>
+    </method>
+  </configuration>
+</component>
