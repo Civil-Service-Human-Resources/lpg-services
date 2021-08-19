@@ -165,8 +165,19 @@ export async function display(ireq: express.Request, res: express.Response) {
 				const moduleRecord = record
 					? (record.modules || []).find(m => m.moduleId === cm.id)
 					: null
+				const moduleUpdatedAt = moduleRecord ? moduleRecord.updatedAt : null
+				const coursePreviousRequiredDate = course.previousRequiredBy()
+				let displayStateLocal = null
+				if (coursePreviousRequiredDate) {
+					if (moduleRecord && moduleUpdatedAt && moduleUpdatedAt > coursePreviousRequiredDate) {
+						displayStateLocal = moduleRecord.state
+					}
+				} else {
+					displayStateLocal = moduleRecord ? moduleRecord.state : null
+				}
 				return {
 					...cm,
+					displayState: displayStateLocal,
 					duration: cm.getDuration(),
 					isMandatory: !cm.optional,
 					state: moduleRecord ? moduleRecord.state : null,
