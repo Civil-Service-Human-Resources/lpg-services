@@ -37,25 +37,45 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				if (record) {
 					requiredCourse.record = record
 					const previousRequiredBy = requiredCourse.previousRequiredBy()
-					const completionDate = record.getCompletionDate()
+					const latestCompletionDateOfModulesForACourse = record.getCompletionDate()
+					const earliestCompletionDateOfModulesForACourse = record.getEarliestCompletionDateOfModulesForACourse()
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeat()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
-							// @ts-ignore
-							if (completionDate < previousRequiredBy) {
-								record.state = '' //This may require a new definition like this: record.display_state
+							if (previousRequiredBy && earliestCompletionDateOfModulesForACourse
+								&& previousRequiredBy < earliestCompletionDateOfModulesForACourse) {
+								record.state = 'COMPLETED'
+								record.courseDisplayState = 'COMPLETED'
+							} else if (previousRequiredBy && latestCompletionDateOfModulesForACourse
+								&& previousRequiredBy > latestCompletionDateOfModulesForACourse) {
+									record.state = ''
+									record.courseDisplayState = ''
+							} else if (previousRequiredBy && earliestCompletionDateOfModulesForACourse
+								&& latestCompletionDateOfModulesForACourse
+								&& previousRequiredBy > earliestCompletionDateOfModulesForACourse
+								&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
+								record.state = 'IN_PROGRESS'
+								record.courseDisplayState = 'IN_PROGRESS'
 							}
 						}
 					} else {
 						if (!record.state && record.modules && record.modules.length) {
-							record.state = 'IN_PROGRESS' //This may require a new definition like this: record.display_state
+							record.state = 'IN_PROGRESS'
+							record.courseDisplayState = 'IN_PROGRESS'
 						}
 						if (requiredCourse.shouldRepeat()) {
-							// @ts-ignore
-							if (record.getStartedDate() < previousRequiredBy) {
-								record.state = '' //This may require a new definition like this: record.display_state
+							const startedDate = record.getStartedDate()
+							if (startedDate && previousRequiredBy
+								&& startedDate < previousRequiredBy) {
+								record.state = ''
+								record.courseDisplayState = ''
+							}
+							if (startedDate && previousRequiredBy
+								&& startedDate > previousRequiredBy) {
+								record.state = 'IN_PROGRESS'
+								record.courseDisplayState = 'IN_PROGRESS'
 							}
 						}
 					}
