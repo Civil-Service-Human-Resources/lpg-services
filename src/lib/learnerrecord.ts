@@ -302,7 +302,7 @@ export class CourseRecord {
 			: null
 	}
 
-	getCompletionDate() {
+	getLatestCompletionDateOfModulesForACourse() {
 		if (this.isComplete()) {
 			let completionDate: Date | undefined
 			for (const moduleRecord of this.modules) {
