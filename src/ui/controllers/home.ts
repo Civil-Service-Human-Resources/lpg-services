@@ -37,7 +37,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				if (record) {
 					requiredCourse.record = record
 					const previousRequiredBy = requiredCourse.previousRequiredBy()
-					const latestCompletionDateOfModulesForACourse = record.getLatestCompletionDateOfModulesForACourse()
+					const latestCompletionDateOfModulesForACourse = record.getCompletionDate()
 					const earliestCompletionDateOfModulesForACourse = record.getEarliestCompletionDateOfModulesForACourse()
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeat()) {

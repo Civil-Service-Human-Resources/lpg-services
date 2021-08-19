@@ -76,8 +76,8 @@ export async function display(req: express.Request, res: express.Response) {
 	])
 
 	const completedLearning = learningRecord.sort((a, b) => {
-		const bcd = b.getLatestCompletionDateOfModulesForACourse()
-		const acd = a.getLatestCompletionDateOfModulesForACourse()
+		const bcd = b.getCompletionDate()
+		const acd = a.getCompletionDate()
 
 		const bt = bcd ? bcd.getTime() : 0
 		const at = acd ? acd.getTime() : 0
