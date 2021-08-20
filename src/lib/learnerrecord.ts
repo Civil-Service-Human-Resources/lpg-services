@@ -242,6 +242,7 @@ export class CourseRecord {
 	preference?: string
 	state?: string | undefined
 	lastUpdated?: Date
+	courseDisplayState?: string
 
 	constructor(data: any) {
 		this.courseId = data.courseId
@@ -310,6 +311,24 @@ export class CourseRecord {
 				} else if (
 					moduleRecord.completionDate &&
 					moduleRecord.completionDate > completionDate
+				) {
+					completionDate = moduleRecord.completionDate
+				}
+			}
+			return completionDate
+		}
+		return undefined
+	}
+
+	getEarliestCompletionDateOfModulesForACourse() {
+		if (this.isComplete()) {
+			let completionDate: Date | undefined
+			for (const moduleRecord of this.modules) {
+				if (!completionDate) {
+					completionDate = moduleRecord.completionDate
+				} else if (
+					moduleRecord.completionDate &&
+					moduleRecord.completionDate < completionDate
 				) {
 					completionDate = moduleRecord.completionDate
 				}
