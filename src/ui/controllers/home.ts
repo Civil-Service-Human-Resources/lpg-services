@@ -49,6 +49,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 								&& previousRequiredBy < earliestCompletionDateOfModulesForACourse) {
 								record.state = 'COMPLETED'
 								record.courseDisplayState = 'COMPLETED'
+								requiredLearning.splice(i, 1)
+								i -= 1
 							} else if (previousRequiredBy && latestCompletionDateOfModulesForACourse
 								&& previousRequiredBy > latestCompletionDateOfModulesForACourse) {
 									record.state = ''
