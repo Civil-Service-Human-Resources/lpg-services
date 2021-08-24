@@ -320,6 +320,26 @@ export class CourseRecord {
 		return undefined
 	}
 
+	//LC-1054: Rather than renaming the above method a new method is Implemented as below
+	getLatestCompletionDateOfModulesForACourse() {
+		if (this.isComplete()) {
+			let completionDate: Date | undefined
+			for (const moduleRecord of this.modules) {
+				if (!completionDate) {
+					completionDate = moduleRecord.completionDate
+				} else if (
+					moduleRecord.completionDate &&
+					moduleRecord.completionDate > completionDate
+				) {
+					completionDate = moduleRecord.completionDate
+				}
+			}
+			return completionDate
+		}
+		return undefined
+	}
+
+	//LC-1054: A new method implemented as below
 	getEarliestCompletionDateOfModulesForACourse() {
 		if (this.isComplete()) {
 			let completionDate: Date | undefined
@@ -338,6 +358,7 @@ export class CourseRecord {
 		return undefined
 	}
 
+	//LC-1054: Below method is no longer used
 	getStartedDate() {
 		let startedDate: Date | undefined
 		for (const moduleRecord of this.modules) {
