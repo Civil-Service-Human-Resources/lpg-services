@@ -36,11 +36,12 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				const record = learningHash[requiredCourse.id]
 				if (record) {
 					requiredCourse.record = record
-					const previousRequiredBy = requiredCourse.previousRequiredBy()
-					const latestCompletionDateOfModulesForACourse = record.getCompletionDate()
+					//LC-1054: line 40 to line 83 various updates to fix the home page course status
+					const previousRequiredBy = requiredCourse.previousRequiredByNew()
+					const latestCompletionDateOfModulesForACourse = record.getLatestCompletionDateOfModulesForACourse()
 					const earliestCompletionDateOfModulesForACourse = record.getEarliestCompletionDateOfModulesForACourse()
 					if (record.isComplete()) {
-						if (!requiredCourse.shouldRepeat()) {
+						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
@@ -48,6 +49,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 								&& previousRequiredBy < earliestCompletionDateOfModulesForACourse) {
 								record.state = 'COMPLETED'
 								record.courseDisplayState = 'COMPLETED'
+								requiredLearning.splice(i, 1)
+								i -= 1
 							} else if (previousRequiredBy && latestCompletionDateOfModulesForACourse
 								&& previousRequiredBy > latestCompletionDateOfModulesForACourse) {
 									record.state = ''
@@ -61,19 +64,23 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							}
 						}
 					} else {
+						if (record.state === 'IN_PROGRESS') {
+							record.state = 'IN_PROGRESS'
+							record.courseDisplayState = 'IN_PROGRESS'
+						}
 						if (!record.state && record.modules && record.modules.length) {
 							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
 						}
-						if (requiredCourse.shouldRepeat()) {
-							const startedDate = record.getStartedDate()
-							if (startedDate && previousRequiredBy
-								&& startedDate < previousRequiredBy) {
+						if (requiredCourse.shouldRepeatNew()) {
+							const lastUpdated = record.lastUpdated
+							if (lastUpdated && previousRequiredBy
+								&& lastUpdated < previousRequiredBy) {
 								record.state = ''
 								record.courseDisplayState = ''
 							}
-							if (startedDate && previousRequiredBy
-								&& startedDate > previousRequiredBy) {
+							if (lastUpdated && previousRequiredBy
+								&& lastUpdated > previousRequiredBy) {
 								record.state = 'IN_PROGRESS'
 								record.courseDisplayState = 'IN_PROGRESS'
 							}
