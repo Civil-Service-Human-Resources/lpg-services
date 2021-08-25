@@ -40,7 +40,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const previousRequiredBy = requiredCourse.previousRequiredByNew()
 					const latestCompletionDateOfModulesForACourse = record.getLatestCompletionDateOfModulesForACourse()
 					const earliestCompletionDateOfModulesForACourse = record.getEarliestCompletionDateOfModulesForACourse()
-
+					record.courseDisplayState = record.state
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
@@ -72,10 +72,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							}
 						}
 					} else {
-						if (record.state === 'IN_PROGRESS') {
-							record.state = 'IN_PROGRESS'
-							record.courseDisplayState = 'IN_PROGRESS'
-						}
 						if (!record.state && record.modules && record.modules.length) {
 							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
