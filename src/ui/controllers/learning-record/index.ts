@@ -37,10 +37,11 @@ export async function courseResult(
 				if (!r || r.state !== 'COMPLETED') {
 					courseCompleted = false
 				} else {
-					const coursePreviousRequiredDate = course.previousRequiredBy()
+					const coursePreviousRequiredDate = course.previousRequiredByNew()
 					if (coursePreviousRequiredDate) {
-						const moduleUpdatedAt = r.updatedAt
-						if (moduleUpdatedAt && moduleUpdatedAt > coursePreviousRequiredDate) {
+						const moduleCompletionDate = r.completionDate
+						if (moduleCompletionDate &&
+							moduleCompletionDate > coursePreviousRequiredDate) {
 							modulesCompleted++
 						} else {
 							courseCompleted = false
