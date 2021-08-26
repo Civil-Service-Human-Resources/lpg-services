@@ -166,15 +166,34 @@ export async function display(ireq: express.Request, res: express.Response) {
 					? (record.modules || []).find(m => m.moduleId === cm.id)
 					: null
 				const moduleUpdatedAt = moduleRecord ? moduleRecord.updatedAt : null
-				const coursePreviousRequiredDate = course.previousRequiredBy()
-				let displayStateLocal = null
-				if (coursePreviousRequiredDate) {
-					if (moduleRecord && moduleUpdatedAt && moduleUpdatedAt > coursePreviousRequiredDate) {
-						displayStateLocal = moduleRecord.state
+				const moduleCompletionDate = moduleRecord ? moduleRecord.completionDate : null
+				const coursePreviousRequiredDate = course.previousRequiredByNew()
+				let displayStateLocal = moduleRecord ? moduleRecord.state : null
+				if (course.isComplete()) {
+					if (course.shouldRepeatNew()) {
+						if (moduleCompletionDate && moduleUpdatedAt && coursePreviousRequiredDate &&
+							moduleCompletionDate < coursePreviousRequiredDate &&
+							moduleUpdatedAt < coursePreviousRequiredDate) {
+							displayStateLocal = null
+						} else if (moduleCompletionDate && moduleUpdatedAt && coursePreviousRequiredDate &&
+							moduleCompletionDate < coursePreviousRequiredDate &&
+							moduleUpdatedAt > coursePreviousRequiredDate) {
+							displayStateLocal = 'IN_PROGRESS'
+						} else {
+							displayStateLocal = moduleRecord ? moduleRecord.state : null
+						}
 					}
 				} else {
-					displayStateLocal = moduleRecord ? moduleRecord.state : null
+					if (course.shouldRepeatNew()) {
+						if (moduleUpdatedAt && coursePreviousRequiredDate &&
+							moduleUpdatedAt < coursePreviousRequiredDate) {
+							displayStateLocal = null
+						} else {
+							displayStateLocal = moduleRecord ? moduleRecord.state : null
+						}
+					}
 				}
+
 				return {
 					...cm,
 					displayState: displayStateLocal,

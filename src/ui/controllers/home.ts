@@ -40,34 +40,38 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const previousRequiredBy = requiredCourse.previousRequiredByNew()
 					const latestCompletionDateOfModulesForACourse = record.getLatestCompletionDateOfModulesForACourse()
 					const earliestCompletionDateOfModulesForACourse = record.getEarliestCompletionDateOfModulesForACourse()
+					record.courseDisplayState = record.state
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
-							if (previousRequiredBy && earliestCompletionDateOfModulesForACourse
-								&& previousRequiredBy < earliestCompletionDateOfModulesForACourse) {
-								record.state = 'COMPLETED'
-								record.courseDisplayState = 'COMPLETED'
-								requiredLearning.splice(i, 1)
-								i -= 1
-							} else if (previousRequiredBy && latestCompletionDateOfModulesForACourse
-								&& previousRequiredBy > latestCompletionDateOfModulesForACourse) {
+							if (previousRequiredBy) {
+								if (earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse) {
+									record.state = 'COMPLETED'
+									record.courseDisplayState = 'COMPLETED'
+									requiredLearning.splice(i, 1)
+									i -= 1
+								} else if (latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy > latestCompletionDateOfModulesForACourse) {
 									record.state = ''
 									record.courseDisplayState = ''
-							} else if (previousRequiredBy && earliestCompletionDateOfModulesForACourse
-								&& latestCompletionDateOfModulesForACourse
-								&& previousRequiredBy > earliestCompletionDateOfModulesForACourse
-								&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
-								record.state = 'IN_PROGRESS'
-								record.courseDisplayState = 'IN_PROGRESS'
+								} else if (earliestCompletionDateOfModulesForACourse
+									&& latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy > earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
+									record.state = 'IN_PROGRESS'
+									record.courseDisplayState = 'IN_PROGRESS'
+								}
+								if (!record.state && record.lastUpdated
+									&& previousRequiredBy < record.lastUpdated) {
+									record.state = 'IN_PROGRESS'
+									record.courseDisplayState = 'IN_PROGRESS'
+								}
 							}
 						}
 					} else {
-						if (record.state === 'IN_PROGRESS') {
-							record.state = 'IN_PROGRESS'
-							record.courseDisplayState = 'IN_PROGRESS'
-						}
 						if (!record.state && record.modules && record.modules.length) {
 							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
