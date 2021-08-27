@@ -36,7 +36,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				const record = learningHash[requiredCourse.id]
 				if (record) {
 					requiredCourse.record = record
-					//LC-1054: line 40 to line 83 various updates to fix the home page course status
+					//LC-1054: course status fix on home page
 					const previousRequiredBy = requiredCourse.previousRequiredByNew()
 					const latestCompletionDateOfModulesForACourse = record.getLatestCompletionDateOfModulesForACourse()
 					const earliestCompletionDateOfModulesForACourse = record.getEarliestCompletionDateOfModulesForACourse()
