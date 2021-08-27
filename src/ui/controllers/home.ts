@@ -54,18 +54,19 @@ export async function home(req: express.Request, res: express.Response, next: ex
 									requiredLearning.splice(i, 1)
 									i -= 1
 								} else if (latestCompletionDateOfModulesForACourse
-									&& previousRequiredBy > latestCompletionDateOfModulesForACourse) {
+									&& previousRequiredBy >= latestCompletionDateOfModulesForACourse) {
 									record.state = ''
 									record.courseDisplayState = ''
+									//Below if condition is the scenario where module is progressed in the new learning period but not completed
+									if (record.lastUpdated
+										&& previousRequiredBy < record.lastUpdated) {
+										record.state = 'IN_PROGRESS'
+										record.courseDisplayState = 'IN_PROGRESS'
+									}
 								} else if (earliestCompletionDateOfModulesForACourse
 									&& latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy > earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
-									record.state = 'IN_PROGRESS'
-									record.courseDisplayState = 'IN_PROGRESS'
-								}
-								if (!record.state && record.lastUpdated
-									&& previousRequiredBy < record.lastUpdated) {
 									record.state = 'IN_PROGRESS'
 									record.courseDisplayState = 'IN_PROGRESS'
 								}

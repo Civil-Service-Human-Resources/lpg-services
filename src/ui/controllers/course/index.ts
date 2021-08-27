@@ -170,17 +170,15 @@ export async function display(ireq: express.Request, res: express.Response) {
 				const coursePreviousRequiredDate = course.previousRequiredByNew()
 				let displayStateLocal = moduleRecord ? moduleRecord.state : null
 				if (course.isComplete()) {
-					if (course.shouldRepeatNew()) {
-						if (moduleCompletionDate && moduleUpdatedAt && coursePreviousRequiredDate &&
-							moduleCompletionDate < coursePreviousRequiredDate &&
-							moduleUpdatedAt < coursePreviousRequiredDate) {
+					if (course.shouldRepeatNew() &&
+						moduleCompletionDate && moduleUpdatedAt && coursePreviousRequiredDate) {
+						if (moduleCompletionDate <= coursePreviousRequiredDate &&
+							moduleUpdatedAt <= coursePreviousRequiredDate) {
 							displayStateLocal = null
-						} else if (moduleCompletionDate && moduleUpdatedAt && coursePreviousRequiredDate &&
-							moduleCompletionDate < coursePreviousRequiredDate &&
+						}
+						if (moduleCompletionDate <= coursePreviousRequiredDate &&
 							moduleUpdatedAt > coursePreviousRequiredDate) {
 							displayStateLocal = 'IN_PROGRESS'
-						} else {
-							displayStateLocal = moduleRecord ? moduleRecord.state : null
 						}
 					}
 				} else {
@@ -188,12 +186,9 @@ export async function display(ireq: express.Request, res: express.Response) {
 						if (moduleUpdatedAt && coursePreviousRequiredDate &&
 							moduleUpdatedAt < coursePreviousRequiredDate) {
 							displayStateLocal = null
-						} else {
-							displayStateLocal = moduleRecord ? moduleRecord.state : null
 						}
 					}
 				}
-
 				return {
 					...cm,
 					displayState: displayStateLocal,
