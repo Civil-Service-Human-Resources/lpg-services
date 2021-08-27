@@ -618,11 +618,16 @@ export class Audience {
 		if (!this.requiredBy) {
 			return [null, null]
 		}
-		let nextDate = this.requiredBy
+		const today = new Date(new Date().toDateString())
+		let nextDate = new Date(this.requiredBy.toDateString())
+
 		if (!this.frequency) {
-			return [nextDate, nextDate]
+			if (nextDate < today) {
+				return [nextDate, nextDate]
+			} else {
+				return [null, nextDate]
+			}
 		}
-		const today = new Date()
 		while (nextDate < today) {
 			nextDate = Frequency.increment(this.frequency, nextDate)
 		}
