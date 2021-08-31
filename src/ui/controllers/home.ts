@@ -38,8 +38,12 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
 					const previousRequiredBy = requiredCourse.previousRequiredByNew()
-					const latestCompletionDateOfModulesForACourse = record.getLatestCompletionDateOfModulesForACourse()
-					const earliestCompletionDateOfModulesForACourse = record.getEarliestCompletionDateOfModulesForACourse()
+					const latestCompletionDateOfModulesForACourse1 = record.getLatestCompletionDateOfModulesForACourse()
+					// tslint:disable-next-line:max-line-length
+					const latestCompletionDateOfModulesForACourse = latestCompletionDateOfModulesForACourse1 ? new Date(latestCompletionDateOfModulesForACourse1.toDateString()) : null
+					const earliestCompletionDateOfModulesForACourse1 = record.getEarliestCompletionDateOfModulesForACourse()
+					// tslint:disable-next-line:max-line-length
+					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
 					record.courseDisplayState = record.state
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeatNew()) {
@@ -78,7 +82,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							record.courseDisplayState = 'IN_PROGRESS'
 						}
 						if (requiredCourse.shouldRepeatNew()) {
-							const lastUpdated = record.lastUpdated
+							const lastUpdated1 = record.lastUpdated
+							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
 							if (lastUpdated && previousRequiredBy
 								&& lastUpdated < previousRequiredBy) {
 								record.state = ''
