@@ -186,9 +186,15 @@ export async function display(ireq: express.Request, res: express.Response) {
 					}
 				} else {
 					if (course.shouldRepeatNew()) {
-						if (moduleUpdatedAt && coursePreviousRequiredDate &&
-							moduleUpdatedAt < coursePreviousRequiredDate) {
-							displayStateLocal = null
+						if (moduleUpdatedAt && coursePreviousRequiredDate) {
+							if (moduleCompletionDate &&
+								moduleCompletionDate <= coursePreviousRequiredDate &&
+								moduleUpdatedAt > coursePreviousRequiredDate) {
+									displayStateLocal = 'IN_PROGRESS'
+							}
+							if (moduleUpdatedAt <= coursePreviousRequiredDate) {
+								displayStateLocal = null
+							}
 						}
 					}
 				}
