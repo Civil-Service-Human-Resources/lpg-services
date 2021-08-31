@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="npm run:ui" type="NodeJSConfigurationType" path-to-node="node" path-to-js-file="$PROJECT_DIR$/dist/build/ui/server.js" working-dir="$PROJECT_DIR$/dist/ui">
+  <configuration default="false" name="npm run-ui" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v16.3.0/bin/node" path-to-js-file="$PROJECT_DIR$/dist/build/ui/server.js" working-dir="$PROJECT_DIR$/dist/ui">
     <envs>
       <env name="NODE_ICU_DATA" value="$PROJECT_DIR$/node_modules/full-icu" />
     </envs>
