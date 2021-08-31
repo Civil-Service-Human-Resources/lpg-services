@@ -166,8 +166,10 @@ export async function display(ireq: express.Request, res: express.Response) {
 					? (record.modules || []).find(m => m.moduleId === cm.id)
 					: null
 				//LC-1054: module status fix on course details page
-				const moduleUpdatedAt = moduleRecord ? moduleRecord.updatedAt : null
-				const moduleCompletionDate = moduleRecord ? moduleRecord.completionDate : null
+				const moduleUpdatedAt1 = moduleRecord ? moduleRecord.updatedAt : null
+				const moduleUpdatedAt = moduleUpdatedAt1 ? new Date(moduleUpdatedAt1.toDateString()) : null
+				const moduleCompletionDate1 = moduleRecord ? moduleRecord.completionDate : null
+				const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
 				const coursePreviousRequiredDate = course.previousRequiredByNew()
 				let displayStateLocal = moduleRecord ? moduleRecord.state : null
 				if (course.isComplete()) {
