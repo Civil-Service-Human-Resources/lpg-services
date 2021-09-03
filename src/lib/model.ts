@@ -220,10 +220,26 @@ export class Course {
 		return null
 	}
 
+	//LC-1054: Rather than updating the above method a new method is Implemented as below but it is not used
+	nextRequiredByNew() {
+		if (this.audience) {
+			return this.audience!.nextRequiredByNew()
+		}
+		return null
+	}
+
 	previousRequiredBy() {
 		const completionDate = this.getCompletionDate()
 		if (this.audience) {
 			return this.audience!.previousRequiredBy(completionDate)
+		}
+		return null
+	}
+
+	//LC-1054: Rather than updating the above method a new method is Implemented as below
+	previousRequiredByNew() {
+		if (this.audience) {
+			return this.audience!.previousRequiredByNew()
 		}
 		return null
 	}
@@ -259,6 +275,14 @@ export class Course {
 		const completionDate = this.getCompletionDate()
 		if (this.audience) {
 			return this.audience!.shouldRepeat(completionDate)
+		}
+		return false
+	}
+
+	//LC-1054: Rather than updating the above method a new method is Implemented as below
+	shouldRepeatNew() {
+		if (this.audience) {
+			return this.audience!.shouldRepeatNew()
 		}
 		return false
 	}
@@ -525,6 +549,15 @@ export class Audience {
 		return next
 	}
 
+	//LC-1054: Rather than updating the above method a new method is Implemented as below
+	nextRequiredByNew() {
+		const [last, next] = this._getCurrentRecurrencePeriodNew()
+		if (!last && !next) {
+			return null
+		}
+		return next
+	}
+
 	previousRequiredBy(completionDate?: Date) {
 		const [last, next] = this._getCurrentRecurrencePeriod()
 		if (!last || !next) {
@@ -535,6 +568,15 @@ export class Audience {
 				return null
 			}
 			return Frequency.decrement(this.frequency, next)
+		}
+		return last
+	}
+
+	//LC-1054: Rather than updating the above method a new method is Implemented as below
+	previousRequiredByNew() {
+		const [last, next] = this._getCurrentRecurrencePeriodNew()
+		if (!last && !next) {
+			return null
 		}
 		return last
 	}
@@ -550,12 +592,42 @@ export class Audience {
 		return completionDate < last
 	}
 
+	//LC-1054: Rather than updating the above method a new method is Implemented as below
+	shouldRepeatNew() {
+		if (this.requiredBy && this.frequency) {
+			return true
+		}
+		return false
+	}
+
 	_getCurrentRecurrencePeriod() {
 		if (!this.requiredBy || !this.frequency) {
 			return [null, null]
 		}
 		const today = new Date()
 		let nextDate = this.requiredBy
+		while (nextDate < today) {
+			nextDate = Frequency.increment(this.frequency, nextDate)
+		}
+		const lastDate = Frequency.decrement(this.frequency, nextDate)
+		return [lastDate, nextDate]
+	}
+
+	//LC-1054: Rather than updating the above method a new method is Implemented as below
+	_getCurrentRecurrencePeriodNew() {
+		if (!this.requiredBy) {
+			return [null, null]
+		}
+		const today = new Date(new Date().toDateString())
+		let nextDate = new Date(this.requiredBy.toDateString())
+
+		if (!this.frequency) {
+			if (nextDate < today) {
+				return [nextDate, nextDate]
+			} else {
+				return [null, nextDate]
+			}
+		}
 		while (nextDate < today) {
 			nextDate = Frequency.increment(this.frequency, nextDate)
 		}
