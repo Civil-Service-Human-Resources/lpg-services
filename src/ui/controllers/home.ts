@@ -62,8 +62,10 @@ export async function home(req: express.Request, res: express.Response, next: ex
 									record.state = ''
 									record.courseDisplayState = ''
 									//Below if condition is the scenario where module is progressed in the new learning period but not completed
-									if (record.lastUpdated
-										&& previousRequiredBy < record.lastUpdated) {
+									const lastUpdated1 = record.lastUpdated
+									const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
+									if (lastUpdated
+										&& previousRequiredBy < lastUpdated) {
 										record.state = 'IN_PROGRESS'
 										record.courseDisplayState = 'IN_PROGRESS'
 									}
