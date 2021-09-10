@@ -44,56 +44,49 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const earliestCompletionDateOfModulesForACourse1 = record.getEarliestCompletionDateOfModulesForACourse()
 					// tslint:disable-next-line:max-line-length
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
-					record.courseDisplayState = record.state
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
 							if (previousRequiredBy) {
-								if (earliestCompletionDateOfModulesForACourse
-									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse) {
-									record.state = 'COMPLETED'
+								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
 									record.courseDisplayState = 'COMPLETED'
 									requiredLearning.splice(i, 1)
 									i -= 1
-								} else if (latestCompletionDateOfModulesForACourse
+								} else if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy >= latestCompletionDateOfModulesForACourse) {
-									record.state = ''
 									record.courseDisplayState = ''
 									//Below if condition is the scenario where module is progressed in the new learning period but not completed
 									const lastUpdated1 = record.lastUpdated
 									const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
 									if (lastUpdated
 										&& previousRequiredBy < lastUpdated) {
-										record.state = 'IN_PROGRESS'
 										record.courseDisplayState = 'IN_PROGRESS'
 									}
 								} else if (earliestCompletionDateOfModulesForACourse
 									&& latestCompletionDateOfModulesForACourse
-									&& previousRequiredBy > earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
-									record.state = 'IN_PROGRESS'
 									record.courseDisplayState = 'IN_PROGRESS'
 								}
 							}
 						}
 					} else {
 						if (!record.state && record.modules && record.modules.length) {
-							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
 						}
 						if (requiredCourse.shouldRepeatNew()) {
 							const lastUpdated1 = record.lastUpdated
 							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
 							if (lastUpdated && previousRequiredBy
-								&& lastUpdated < previousRequiredBy) {
-								record.state = ''
+								&& lastUpdated <= previousRequiredBy) {
 								record.courseDisplayState = ''
-							}
-							if (lastUpdated && previousRequiredBy
+							} else if (lastUpdated && previousRequiredBy
 								&& lastUpdated > previousRequiredBy) {
-								record.state = 'IN_PROGRESS'
 								record.courseDisplayState = 'IN_PROGRESS'
 							}
 						}
