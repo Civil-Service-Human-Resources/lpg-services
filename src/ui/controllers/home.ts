@@ -78,6 +78,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 						}
 					} else {
 						if (!record.state && record.modules && record.modules.length) {
+							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
 						}
 						if (requiredCourse.shouldRepeatNew()) {
@@ -88,6 +89,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 								record.courseDisplayState = ''
 							} else if (lastUpdated && previousRequiredBy &&
 								previousRequiredBy < lastUpdated) {
+								record.state = 'IN_PROGRESS'
 								record.courseDisplayState = 'IN_PROGRESS'
 							}
 						}
