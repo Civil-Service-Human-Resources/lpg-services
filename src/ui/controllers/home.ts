@@ -44,6 +44,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const earliestCompletionDateOfModulesForACourse1 = record.getEarliestCompletionDateOfModulesForACourse()
 					// tslint:disable-next-line:max-line-length
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
+					record.courseDisplayState = record.state
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
@@ -79,14 +80,12 @@ export async function home(req: express.Request, res: express.Response, next: ex
 						if (!record.state && record.modules && record.modules.length) {
 							record.courseDisplayState = 'IN_PROGRESS'
 						}
-						if (requiredCourse.shouldRepeatNew()) {
+						if (previousRequiredBy) {
 							const lastUpdated1 = record.lastUpdated
 							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
-							if (lastUpdated && previousRequiredBy
-								&& lastUpdated <= previousRequiredBy) {
+							if (lastUpdated && lastUpdated <= previousRequiredBy) {
 								record.courseDisplayState = ''
-							} else if (lastUpdated && previousRequiredBy
-								&& lastUpdated > previousRequiredBy) {
+							} else if (lastUpdated && lastUpdated > previousRequiredBy) {
 								record.courseDisplayState = 'IN_PROGRESS'
 							}
 						}
