@@ -121,7 +121,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const bookedModuleRecord = record.modules.find(m => !!m.eventId)
 					if (bookedModuleRecord) {
 						record.state = bookedModuleRecord.bookingStatus
-						record.courseDisplayState = bookedModuleRecord.bookingStatus
 					}
 					bookedLearning.push(record)
 				} else {
