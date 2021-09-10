@@ -54,24 +54,28 @@ export async function home(req: express.Request, res: express.Response, next: ex
 								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
+									record.state = 'COMPLETED'
 									record.courseDisplayState = 'COMPLETED'
 									requiredLearning.splice(i, 1)
 									i -= 1
 								} else if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy >= latestCompletionDateOfModulesForACourse) {
+									record.state = ''
 									record.courseDisplayState = ''
 									//Below if condition is the scenario where module is progressed in the new learning period but not completed
 									const lastUpdated1 = record.lastUpdated
 									const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
 									if (lastUpdated
 										&& previousRequiredBy < lastUpdated) {
+										record.state = 'IN_PROGRESS'
 										record.courseDisplayState = 'IN_PROGRESS'
 									}
 								} else if (earliestCompletionDateOfModulesForACourse
 									&& latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
+									record.state = 'IN_PROGRESS'
 									record.courseDisplayState = 'IN_PROGRESS'
 								}
 							}
@@ -86,6 +90,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
 							if (lastUpdated && previousRequiredBy &&
 								previousRequiredBy >= lastUpdated) {
+								record.state = ''
 								record.courseDisplayState = ''
 							} else if (lastUpdated && previousRequiredBy &&
 								previousRequiredBy < lastUpdated) {
@@ -116,7 +121,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const bookedModuleRecord = record.modules.find(m => !!m.eventId)
 					if (bookedModuleRecord) {
 						record.state = bookedModuleRecord.bookingStatus
-						record.courseDisplayState = record.state
+						record.courseDisplayState = bookedModuleRecord.bookingStatus
 					}
 					bookedLearning.push(record)
 				} else {
