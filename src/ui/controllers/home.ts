@@ -110,11 +110,13 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			if (!record.isComplete() && learnerRecord.isActive(record)) {
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
+					record.courseDisplayState = 'IN_PROGRESS'
 				}
 				if (record.getSelectedDate()) {
 					const bookedModuleRecord = record.modules.find(m => !!m.eventId)
 					if (bookedModuleRecord) {
 						record.state = bookedModuleRecord.bookingStatus
+						record.courseDisplayState = record.state
 					}
 					bookedLearning.push(record)
 				} else {
