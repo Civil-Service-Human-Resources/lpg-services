@@ -80,12 +80,14 @@ export async function home(req: express.Request, res: express.Response, next: ex
 						if (!record.state && record.modules && record.modules.length) {
 							record.courseDisplayState = 'IN_PROGRESS'
 						}
-						if (previousRequiredBy) {
+						if (requiredCourse.shouldRepeatNew()) {
 							const lastUpdated1 = record.lastUpdated
 							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
-							if (lastUpdated && lastUpdated <= previousRequiredBy) {
+							if (lastUpdated && previousRequiredBy &&
+								previousRequiredBy >= lastUpdated) {
 								record.courseDisplayState = ''
-							} else if (lastUpdated && lastUpdated > previousRequiredBy) {
+							} else if (lastUpdated && previousRequiredBy &&
+								previousRequiredBy < lastUpdated) {
 								record.courseDisplayState = 'IN_PROGRESS'
 							}
 						}
