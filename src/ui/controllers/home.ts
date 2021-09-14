@@ -51,13 +51,15 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							i -= 1
 						} else {
 							if (previousRequiredBy) {
-								if (earliestCompletionDateOfModulesForACourse
-									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse) {
+								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
 									record.state = 'COMPLETED'
 									record.courseDisplayState = 'COMPLETED'
 									requiredLearning.splice(i, 1)
 									i -= 1
-								} else if (latestCompletionDateOfModulesForACourse
+								} else if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy >= latestCompletionDateOfModulesForACourse) {
 									record.state = ''
 									record.courseDisplayState = ''
@@ -71,7 +73,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 									}
 								} else if (earliestCompletionDateOfModulesForACourse
 									&& latestCompletionDateOfModulesForACourse
-									&& previousRequiredBy > earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
 									record.state = 'IN_PROGRESS'
 									record.courseDisplayState = 'IN_PROGRESS'
@@ -86,13 +88,12 @@ export async function home(req: express.Request, res: express.Response, next: ex
 						if (requiredCourse.shouldRepeatNew()) {
 							const lastUpdated1 = record.lastUpdated
 							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
-							if (lastUpdated && previousRequiredBy
-								&& lastUpdated < previousRequiredBy) {
+							if (lastUpdated && previousRequiredBy &&
+								previousRequiredBy >= lastUpdated) {
 								record.state = ''
 								record.courseDisplayState = ''
-							}
-							if (lastUpdated && previousRequiredBy
-								&& lastUpdated > previousRequiredBy) {
+							} else if (lastUpdated && previousRequiredBy &&
+								previousRequiredBy < lastUpdated) {
 								record.state = 'IN_PROGRESS'
 								record.courseDisplayState = 'IN_PROGRESS'
 							}
@@ -114,6 +115,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			if (!record.isComplete() && learnerRecord.isActive(record)) {
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
+					record.courseDisplayState = 'IN_PROGRESS'
 				}
 				if (record.getSelectedDate()) {
 					const bookedModuleRecord = record.modules.find(m => !!m.eventId)
