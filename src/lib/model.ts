@@ -81,6 +81,10 @@ export class Course {
 		return this.modules
 	}
 
+	getModule(moduleId: string) {
+		return this.getModules().find(m => m.id === moduleId)
+	}
+
 	isAssociatedLearningModule(id: number) {
 		return this.modules[id].associatedLearning
 	}
@@ -233,7 +237,7 @@ export class Course {
 	}
 
 	getCompletionDate() {
-		if (this.isComplete()) {
+		if (this.record?.isCompleted()) {
 			let completionDate: Date | undefined
 			for (const moduleRecord of this.record!.modules) {
 				if (!completionDate) {

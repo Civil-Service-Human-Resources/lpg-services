@@ -252,3 +252,11 @@ export function isActive(record: CourseRecord) {
 export function createModuleRecord(newModuleRecord: ModuleRecord) {
     throw new Error("Function not implemented.")
 }
+
+export function createCourseRecord(newCourseRecord: CourseRecord) {
+    throw new Error("Function not implemented.")
+}
+
+export function patchCourseRecord(courseRecordData: CourseRecord) {
+
+}

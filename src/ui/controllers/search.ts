@@ -1,11 +1,11 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/service/learnerRecord'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as striptags from 'striptags'
+import { getRawLearningRecord } from 'lib/client/learnerrecord'
 
 export interface SearchFilter {
 	label: string
@@ -117,7 +117,7 @@ export async function search(ireq: express.Request, res: express.Response) {
 	const searchResults = await catalog.search(user, page, size, query, courseTypes, cost, areasOfWork,
 		departments, interests)
 
-	const courseRecords = await learnerRecord.getRawLearningRecord(user, searchResults.results.map(r => r.course.id))
+	const courseRecords = await getRawLearningRecord(user, searchResults.results.map(r => r.course.id))
 
 	searchResults.results.forEach(result => {
 		const cmResult = result as model.CourseModule

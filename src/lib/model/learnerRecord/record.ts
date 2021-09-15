@@ -6,7 +6,8 @@ export enum RecordState {
     Skipped = 'SKIPPED',
     Unregsitered = 'UNREGISTERED',
     Registered = 'REGISTERED',
-    Approved = 'APPROVED'
+    Approved = 'APPROVED',
+    Booked = 'BOOKED'
 }
 
 export class Record {

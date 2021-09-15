@@ -6,6 +6,8 @@ import {
 
 import {Course, Module, User} from 'lib/model'
 import { RecordState } from 'lib/model/learnerRecord/record'
+import { CourseRecord } from 'lib/model/learnerRecord/courseRecord'
+import { ModuleRecord } from 'lib/model/learnerRecord/moduleRecord'
 
 const courseSkeletonData: any = {
 	id: 'UT0',
@@ -246,11 +248,11 @@ export function initModules(moduleNames: string[]): Module[] {
 type EventRelativeToToday = 'past' | 'future'
 
 function initModuleRecord(rel: EventRelativeToToday): ModuleRecord {
-	return {
-		eventId: rel,
-		moduleId: 'F2F',
-		moduleTitle: 'module',
-		moduleType: 'blog',
-		optional: true,
-	}
+	let module = new Module("F2F", "blog")
+	module.title = "module"
+	module.optional = true
+	let moduleRecord = new ModuleRecord(module)
+	moduleRecord.eventId = rel
+
+	return moduleRecord
 }

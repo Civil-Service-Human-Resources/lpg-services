@@ -2,7 +2,6 @@ import _ = require('lodash')
 
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/service/learnerRecord'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
@@ -10,6 +9,8 @@ import * as xapi from 'lib/xapi'
 import * as courseController from '../course/index'
 
 import {getLogger} from 'lib/logger'
+import { CourseRecord } from 'lib/model/learnerRecord/courseRecord'
+import { bookEvent, getActiveBooking, getRecord } from 'lib/client/learnerrecord'
 
 const logger = getLogger('controllers/booking')
 const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
@@ -21,7 +22,7 @@ export enum confirmedMessage {
 }
 
 export function recordCheck(
-	record: learnerRecord.CourseRecord | null,
+	record: CourseRecord | null,
 	ireq: express.Request
 ) {
 	const req = ireq as extended.CourseRequest
@@ -125,7 +126,7 @@ export async function renderChooseDate(
 		.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
 	for (const event of events) {
-		await learnerRecord.getActiveBooking(event.id, req.user)
+		await getActiveBooking(event.id, req.user)
 			.then(e => {
 				if (e.status === 200) {
 					event.isLearnerBooked = true
@@ -378,7 +379,7 @@ export async function trySkipBooking(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	const record = await getRecord(req.user, course, module, event)
 
 	if (!recordCheck(record, ireq)) {
 		res.sendStatus(400)
@@ -408,7 +409,7 @@ export async function tryMoveBooking(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	const record = await getRecord(req.user, course, module, event)
 
 	if (!recordCheck(record, ireq)) {
 		res.sendStatus(400)
@@ -464,7 +465,7 @@ export async function tryCompleteBooking(
 	}
 
 	const accessibilityOptions = accessibilityArray.join(', ')
-	const response = await learnerRecord.bookEvent(
+	const response = await bookEvent(
 		course,
 		module,
 		event,

@@ -12,7 +12,7 @@ export class ModuleRecord extends Record {
 	cost?: number
 	duration?: number
 	rated?: boolean
-	bookingStatus?: string
+	bookingStatus?: RecordState
 	createdAt?: Date
     updatedAt?: Date
 

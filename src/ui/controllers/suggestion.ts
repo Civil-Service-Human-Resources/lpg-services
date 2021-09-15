@@ -1,12 +1,13 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/service/learnerRecord'
 import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import {ApiParameters} from "lib/service/catalog"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
+import { CourseRecord } from 'lib/model/learnerRecord/courseRecord'
+import { getRawLearningRecord } from 'lib/client/learnerrecord'
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
@@ -115,14 +116,14 @@ export async function suggestionsPage(
 
 export async function getLearningRecord(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	learningRecordIn: Record<string, CourseRecord> = {}
 ) {
-	let learningRecord: Record<string, learnerRecord.CourseRecord> = {}
+	let learningRecord: Record<string, CourseRecord> = {}
 
 	if (Object.keys(learningRecordIn).length > 0) {
 		learningRecord = learningRecordIn
 	} else {
-		const records = await learnerRecord.getRawLearningRecord(user)
+		const records = await getRawLearningRecord(user)
 		learningRecord = records.length ? hashArray(records, 'courseId') : {}
 	}
 	return learningRecord
@@ -130,7 +131,7 @@ export async function getLearningRecord(
 
 export async function suggestionsByInterest(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	learningRecordIn: Record<string, CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
@@ -151,7 +152,7 @@ export async function suggestionsByInterest(
 
 export async function suggestionsByAreaOfWork(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	learningRecordIn: Record<string, CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
@@ -172,7 +173,7 @@ export async function suggestionsByAreaOfWork(
 
 export async function suggestionsByOtherAreasOfWork(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	learningRecordIn: Record<string, CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
@@ -193,7 +194,7 @@ export async function suggestionsByOtherAreasOfWork(
 
 export async function suggestionsByDepartment(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	learningRecordIn: Record<string, CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 	if (user.department) {
@@ -212,7 +213,7 @@ export async function suggestionsByDepartment(
 
 export async function homeSuggestions(
 	user: model.User,
-	learningRecord: Record<string, learnerRecord.CourseRecord> = {}
+	learningRecord: Record<string, CourseRecord> = {}
 ) {
 	return await getSuggestions(
 		user.department!,
@@ -231,7 +232,7 @@ async function getSuggestions(
 	interests: string[],
 	grade: string,
 	count: number,
-	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
+	learningRecord: Record<string, CourseRecord | model.Course>,
 	user: model.User
 ): Promise<model.Course[]> {
 	const params: ApiParameters = new catalog.ApiParameters(
@@ -263,7 +264,7 @@ async function getSuggestions(
 
 function modifyCourses(
 	courses: model.Course[],
-	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>
+	learningRecord: Record<string, CourseRecord | model.Course>
 ) {
 	const modified: model.Course[] = []
 	for (const course of courses) {
