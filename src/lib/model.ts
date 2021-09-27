@@ -28,13 +28,36 @@ export class Course {
 		if (user) {
 			let matchedAudience = null
 			let matchedRelevance = -1
+			let audienceWithRelevance2 = null
+			let audienceWithRelevance3 = null
+			let prevAudienceWithRelevance3 = null
 			for (const audience of audiences) {
 				const relevance = audience.getRelevance(user!)
-				if (relevance > matchedRelevance) {
+				if (relevance >= matchedRelevance) {
 					matchedAudience = audience
 					matchedRelevance = relevance
+					if (relevance === 3) {
+						if (prevAudienceWithRelevance3 == null) {
+							prevAudienceWithRelevance3 = audience
+						}
+						if (audience.requiredBy < prevAudienceWithRelevance3.requiredBy) {
+							prevAudienceWithRelevance3 = audience
+						}
+						audienceWithRelevance3 = prevAudienceWithRelevance3
+					}
+					if (relevance === 2) {
+						audienceWithRelevance2 = audience
+					}
 				}
 			}
+
+			if (audienceWithRelevance2) {
+				matchedAudience = audienceWithRelevance2
+			}
+			if (audienceWithRelevance3) {
+				matchedAudience = audienceWithRelevance3
+			}
+
 			course.audience = matchedAudience
 
 			if (course.audience) {
@@ -528,6 +551,9 @@ export class Audience {
 		}
 		if (user.department && this.departments.indexOf(user.department) > -1) {
 			relevance += 1 // N.B. user.areasOfWork!.indexOf(areaOfWork) will be false for index 0 , so check for > -1
+			if (this.requiredBy) {
+				relevance += 1
+			}
 		}
 		if (user.grade && this.grades.indexOf(user.grade.code) > -1) {
 			relevance += 1
