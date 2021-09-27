@@ -30,20 +30,20 @@ export class Course {
 			let matchedRelevance = -1
 			let audienceWithRelevance2 = null
 			let audienceWithRelevance3 = null
-			let prevAudienceWithRelevance3 = null
+			let minRequiredByAudienceWithRelevance3 = null
 			for (const audience of audiences) {
 				const relevance = audience.getRelevance(user!)
 				if (relevance >= matchedRelevance) {
 					matchedAudience = audience
 					matchedRelevance = relevance
 					if (relevance === 3) {
-						if (prevAudienceWithRelevance3 == null) {
-							prevAudienceWithRelevance3 = audience
+						if (minRequiredByAudienceWithRelevance3 == null) {
+							minRequiredByAudienceWithRelevance3 = audience
 						}
-						if (audience.requiredBy < prevAudienceWithRelevance3.requiredBy) {
-							prevAudienceWithRelevance3 = audience
+						if (audience.requiredBy < minRequiredByAudienceWithRelevance3.requiredBy) {
+							minRequiredByAudienceWithRelevance3 = audience
 						}
-						audienceWithRelevance3 = prevAudienceWithRelevance3
+						audienceWithRelevance3 = minRequiredByAudienceWithRelevance3
 					}
 					if (relevance === 2) {
 						audienceWithRelevance2 = audience
