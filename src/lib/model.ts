@@ -28,12 +28,12 @@ export class Course {
 		if (user) {
 			let matchedAudience = null
 			let matchedRelevance = -1
-			let audienceWithRelevance3 = null
-			let audienceWithRelevance2 = null
-			let audienceWithRelevance1 = null
-			let minRequiredByAudienceWithRelevance3 = null
-			let minRequiredByAudienceWithRelevance2 = null
-			let minRequiredByAudienceWithRelevance1 = null
+			let audienceWithRelevanceThree = null
+			let audienceWithRelevanceTwo = null
+			let audienceWithRelevanceOne = null
+			let minRequiredByAudienceWithRelevanceThree = null
+			let minRequiredByAudienceWithRelevanceTwo = null
+			let minRequiredByAudienceWithRelevanceOne = null
 			for (const audience of audiences) {
 				//Get the relevance of each audience
 				const relevance = audience.getRelevance(user!)
@@ -48,31 +48,31 @@ export class Course {
 					//then the audience which has earliest due date within the same relevance need to be selected
 					//to keep it in sync with the backend code which fetches the mandatory course for homepage
 					if (relevance === 3) {
-						if (minRequiredByAudienceWithRelevance3 == null) {
-							minRequiredByAudienceWithRelevance3 = audience
+						if (minRequiredByAudienceWithRelevanceThree == null) {
+							minRequiredByAudienceWithRelevanceThree = audience
 						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevance3.requiredBy) {
-							minRequiredByAudienceWithRelevance3 = audience
+						if (audience.requiredBy < minRequiredByAudienceWithRelevanceThree.requiredBy) {
+							minRequiredByAudienceWithRelevanceThree = audience
 						}
-						audienceWithRelevance3 = minRequiredByAudienceWithRelevance3
+						audienceWithRelevanceThree = minRequiredByAudienceWithRelevanceThree
 					}
 					if (relevance === 2) {
-						if (minRequiredByAudienceWithRelevance2 == null) {
-							minRequiredByAudienceWithRelevance2 = audience
+						if (minRequiredByAudienceWithRelevanceTwo == null) {
+							minRequiredByAudienceWithRelevanceTwo = audience
 						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevance2.requiredBy) {
-							minRequiredByAudienceWithRelevance2 = audience
+						if (audience.requiredBy < minRequiredByAudienceWithRelevanceTwo.requiredBy) {
+							minRequiredByAudienceWithRelevanceTwo = audience
 						}
-						audienceWithRelevance2 = minRequiredByAudienceWithRelevance2
+						audienceWithRelevanceTwo = minRequiredByAudienceWithRelevanceTwo
 					}
 					if (relevance === 1) {
-						if (minRequiredByAudienceWithRelevance1 == null) {
-							minRequiredByAudienceWithRelevance1 = audience
+						if (minRequiredByAudienceWithRelevanceOne == null) {
+							minRequiredByAudienceWithRelevanceOne = audience
 						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevance1.requiredBy) {
-							minRequiredByAudienceWithRelevance1 = audience
+						if (audience.requiredBy < minRequiredByAudienceWithRelevanceOne.requiredBy) {
+							minRequiredByAudienceWithRelevanceOne = audience
 						}
-						audienceWithRelevance1 = minRequiredByAudienceWithRelevance1
+						audienceWithRelevanceOne = minRequiredByAudienceWithRelevanceOne
 					}
 				}
 			}
@@ -80,14 +80,14 @@ export class Course {
 			//if the audiences with relevance 1, 2 and 3 are found
 			//then matchedAudience will be of the highest priority of relevance
 			//i.e. relevance 3 then 2 then 1
-			if (audienceWithRelevance1) {
-				matchedAudience = audienceWithRelevance1
+			if (audienceWithRelevanceOne) {
+				matchedAudience = audienceWithRelevanceOne
 			}
-			if (audienceWithRelevance2) {
-				matchedAudience = audienceWithRelevance2
+			if (audienceWithRelevanceTwo) {
+				matchedAudience = audienceWithRelevanceTwo
 			}
-			if (audienceWithRelevance3) {
-				matchedAudience = audienceWithRelevance3
+			if (audienceWithRelevanceThree) {
+				matchedAudience = audienceWithRelevanceThree
 			}
 
 			course.audience = matchedAudience
@@ -582,7 +582,7 @@ export class Audience {
 			relevance += 1
 		}
 		if (user.department && this.departments.indexOf(user.department) > -1) {
-			//If the user's department matches to any of the department in the audience then it ia a relevant audience
+			//If the user's department matches to any of the departments in the audience then it is a relevant audience
 			relevance += 1
 			if (this.requiredBy) {
 				//For the matching department, if audience has a required by date then this audience makes the course as mandatory
