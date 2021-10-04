@@ -5,6 +5,7 @@ import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
 import {Duration} from 'moment'
+import { getAudience } from "./service/catalog/utils"
 
 export interface LineManager {
 	email: string
@@ -26,80 +27,10 @@ export class Course {
 		course.audiences = audiences
 
 		if (user) {
-			let matchedAudience = null
-			let matchedRelevance = -1
-			let audienceWithRelevanceThree = null
-			let audienceWithRelevanceTwo = null
-			let audienceWithRelevanceOne = null
-			let minRequiredByAudienceWithRelevanceThree = null
-			let minRequiredByAudienceWithRelevanceTwo = null
-			let minRequiredByAudienceWithRelevanceOne = null
-			for (const audience of audiences) {
-				//Get the relevance of each audience
-				const relevance = audience.getRelevance(user!)
-				//If the relevance of the audience is same or more then the previous audience
-				//then keep processing the further audiences in the course to get the highest relevance audience
-				if (relevance >= matchedRelevance) {
-					matchedAudience = audience
-					matchedRelevance = relevance
-					//audience with relevance 3 will have the required by date
-					//and the audience with relevance 2 and 1 can also have the required by date
-					//and if multiple audiences are found within the relevance 3 or 2 or 1
-					//then the audience which has earliest due date within the same relevance need to be selected
-					//to keep it in sync with the backend code which fetches the mandatory course for homepage
-					if (relevance === 3) {
-						if (minRequiredByAudienceWithRelevanceThree == null) {
-							minRequiredByAudienceWithRelevanceThree = audience
-						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevanceThree.requiredBy) {
-							minRequiredByAudienceWithRelevanceThree = audience
-						}
-						audienceWithRelevanceThree = minRequiredByAudienceWithRelevanceThree
-					}
-					if (relevance === 2) {
-						if (minRequiredByAudienceWithRelevanceTwo == null) {
-							minRequiredByAudienceWithRelevanceTwo = audience
-						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevanceTwo.requiredBy) {
-							minRequiredByAudienceWithRelevanceTwo = audience
-						}
-						audienceWithRelevanceTwo = minRequiredByAudienceWithRelevanceTwo
-					}
-					if (relevance === 1) {
-						if (minRequiredByAudienceWithRelevanceOne == null) {
-							minRequiredByAudienceWithRelevanceOne = audience
-						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevanceOne.requiredBy) {
-							minRequiredByAudienceWithRelevanceOne = audience
-						}
-						audienceWithRelevanceOne = minRequiredByAudienceWithRelevanceOne
-					}
-				}
-			}
-
-			//if the audiences with relevance 1, 2 and 3 are found
-			//then matchedAudience will be of the highest priority of relevance
-			//i.e. relevance 3 then 2 then 1
-			if (audienceWithRelevanceOne) {
-				matchedAudience = audienceWithRelevanceOne
-			}
-			if (audienceWithRelevanceTwo) {
-				matchedAudience = audienceWithRelevanceTwo
-			}
-			if (audienceWithRelevanceThree) {
-				matchedAudience = audienceWithRelevanceThree
-			}
-
-			course.audience = matchedAudience
-
-			if (course.audience) {
-				course.audience.mandatory = false
-				course.audience.departments.forEach(a => {
-					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
-						course.audience!.mandatory = true
-					}
+			getAudience(course, user)
+				.then(audience => {
+					course.audience = audience
 				})
-			}
 		}
 
 		return course
@@ -571,31 +502,6 @@ export class Audience {
 		this.mandatory = !value || value === 'false'
 	}
 
-	getRelevance(user: User) {
-		let relevance = -1
-
-		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
-			return 0
-		}
-
-		if (user.areasOfWork && this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length) {
-			relevance += 1
-		}
-		if (user.department && this.departments.indexOf(user.department) > -1) {
-			//If the user's department matches to any of the departments in the audience then it is a relevant audience
-			relevance += 1
-			if (this.requiredBy) {
-				//For the matching department, if audience has a required by date then this audience makes the course as mandatory
-				//which increases the relevance further.
-				relevance += 1
-			}
-		}
-		if (user.grade && this.grades.indexOf(user.grade.code) > -1) {
-			relevance += 1
-		}
-		return relevance
-	}
-
 	nextRequiredBy(completionDate?: Date) {
 		const [last, next] = this._getCurrentRecurrencePeriod()
 		if (!last || !next) {
@@ -724,7 +630,20 @@ export class OrganisationalUnit {
 	id: number
 	code: string
 	name: string
+	children: OrganisationalUnit[]
 	paymentMethods: string[]
+}
+
+export class OrganisationalUnitFactory {
+	public create(data: any): OrganisationalUnit {
+		let org = new OrganisationalUnit()
+		org.id = data.id
+		org.code = data.code
+		org.name = data.name
+		org.children = (data.children || []).map(this.create)
+		org.paymentMethods = data.paymentMethods
+		return org
+	}
 }
 
 export class User {
