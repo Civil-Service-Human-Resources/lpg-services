@@ -113,7 +113,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:idt-release-7.0-2-20210722-150339
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue:idt-release-8.1.0-1-20210927-132326
     depends_on:
       - identity
     ports:
