@@ -36,26 +36,66 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				const record = learningHash[requiredCourse.id]
 				if (record) {
 					requiredCourse.record = record
-					const previousRequiredBy = requiredCourse.previousRequiredBy()
-					const completionDate = record.getCompletionDate()
+					//LC-1054: course status fix on home page
+					const previousRequiredBy = requiredCourse.previousRequiredByNew()
+					const latestCompletionDateOfModulesForACourse1 = record.getLatestCompletionDateOfModulesForACourse()
+					// tslint:disable-next-line:max-line-length
+					const latestCompletionDateOfModulesForACourse = latestCompletionDateOfModulesForACourse1 ? new Date(latestCompletionDateOfModulesForACourse1.toDateString()) : null
+					const earliestCompletionDateOfModulesForACourse1 = record.getEarliestCompletionDateOfModulesForACourse()
+					// tslint:disable-next-line:max-line-length
+					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
+					record.courseDisplayState = record.state
 					if (record.isComplete()) {
-						if (!requiredCourse.shouldRepeat()) {
+						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
-							// @ts-ignore
-							if (completionDate < previousRequiredBy) {
-								record.state = '' //This may require a new definition like this: record.display_state
+							if (previousRequiredBy) {
+								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
+									record.state = 'COMPLETED'
+									record.courseDisplayState = 'COMPLETED'
+									requiredLearning.splice(i, 1)
+									i -= 1
+								} else if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy >= latestCompletionDateOfModulesForACourse) {
+									record.state = ''
+									record.courseDisplayState = ''
+									//Below if condition is the scenario where module is progressed in the new learning period but not completed
+									const lastUpdated1 = record.lastUpdated
+									const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
+									if (lastUpdated
+										&& previousRequiredBy < lastUpdated) {
+										record.state = 'IN_PROGRESS'
+										record.courseDisplayState = 'IN_PROGRESS'
+									}
+								} else if (earliestCompletionDateOfModulesForACourse
+									&& latestCompletionDateOfModulesForACourse
+									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
+									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
+									record.state = 'IN_PROGRESS'
+									record.courseDisplayState = 'IN_PROGRESS'
+								}
 							}
 						}
 					} else {
 						if (!record.state && record.modules && record.modules.length) {
-							record.state = 'IN_PROGRESS' //This may require a new definition like this: record.display_state
+							record.state = 'IN_PROGRESS'
+							record.courseDisplayState = 'IN_PROGRESS'
 						}
-						if (requiredCourse.shouldRepeat()) {
-							// @ts-ignore
-							if (record.getStartedDate() < previousRequiredBy) {
-								record.state = '' //This may require a new definition like this: record.display_state
+						if (requiredCourse.shouldRepeatNew()) {
+							const lastUpdated1 = record.lastUpdated
+							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
+							if (lastUpdated && previousRequiredBy &&
+								previousRequiredBy >= lastUpdated) {
+								record.state = ''
+								record.courseDisplayState = ''
+							} else if (lastUpdated && previousRequiredBy &&
+								previousRequiredBy < lastUpdated) {
+								record.state = 'IN_PROGRESS'
+								record.courseDisplayState = 'IN_PROGRESS'
 							}
 						}
 					}
@@ -75,6 +115,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			if (!record.isComplete() && learnerRecord.isActive(record)) {
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = 'IN_PROGRESS'
+					record.courseDisplayState = 'IN_PROGRESS'
 				}
 				if (record.getSelectedDate()) {
 					const bookedModuleRecord = record.modules.find(m => !!m.eventId)

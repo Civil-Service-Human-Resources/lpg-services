@@ -37,7 +37,20 @@ export async function courseResult(
 				if (!r || r.state !== 'COMPLETED') {
 					courseCompleted = false
 				} else {
-					modulesCompleted++
+					//LC-1054: module completion fix in the new learning period
+					const coursePreviousRequiredDate = course.previousRequiredByNew()
+					if (coursePreviousRequiredDate) {
+						const moduleCompletionDate1 = r.completionDate
+						const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
+						if (moduleCompletionDate &&
+							moduleCompletionDate > coursePreviousRequiredDate) {
+							modulesCompleted++
+						} else {
+							courseCompleted = false
+						}
+					} else {
+						modulesCompleted++
+					}
 				}
 			})
 

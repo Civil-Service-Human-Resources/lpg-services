@@ -1,7 +1,7 @@
 <div class="discite__properties {modifier ? `discite__properties--${modifier}` : ''} u-clearfix">
     <ul class="discite__property {modifier ? `discite__property--${modifier}` : ''}">
         <li class="discite__property-item">
-            {#if course.record && course.record.state && course.record.state !== 'RETRIEVED' && course.record.state !== 'ARCHIVED' || successId}
+            {#if course.record && course.record.state && course.record.state !== 'COMPLETED' && course.record.state !== 'RETRIEVED' && course.record.state !== 'ARCHIVED' || successId}
             <div class="discite__status {modifier ? `discite__status--${modifier}` : ''}">
                 {#if !course.getSelectedDate()}
                     <span class="badge badge--discite badge--{successId ? 'success' : 'info'}">{$i18n(successId ? 'justAdded' : course.record.state)}</span>

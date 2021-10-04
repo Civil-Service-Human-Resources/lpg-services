@@ -165,8 +165,44 @@ export async function display(ireq: express.Request, res: express.Response) {
 				const moduleRecord = record
 					? (record.modules || []).find(m => m.moduleId === cm.id)
 					: null
+				//LC-1054: module status fix on course details page
+				const moduleUpdatedAt1 = moduleRecord ? moduleRecord.updatedAt : null
+				const moduleUpdatedAt = moduleUpdatedAt1 ? new Date(moduleUpdatedAt1.toDateString()) : null
+				const moduleCompletionDate1 = moduleRecord ? moduleRecord.completionDate : null
+				const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
+				const coursePreviousRequiredDate = course.previousRequiredByNew()
+				let displayStateLocal = moduleRecord ? moduleRecord.state : null
+				if (course.isComplete()) {
+					if (course.audience && course.audience.mandatory &&
+						course.shouldRepeatNew() &&
+						moduleCompletionDate && moduleUpdatedAt && coursePreviousRequiredDate) {
+						if (moduleCompletionDate <= coursePreviousRequiredDate &&
+							moduleUpdatedAt <= coursePreviousRequiredDate) {
+							displayStateLocal = null
+						}
+						if (moduleCompletionDate <= coursePreviousRequiredDate &&
+							moduleUpdatedAt > coursePreviousRequiredDate) {
+							displayStateLocal = 'IN_PROGRESS'
+						}
+					}
+				} else {
+					if (course.audience && course.audience.mandatory &&
+						course.shouldRepeatNew()) {
+						if (moduleUpdatedAt && coursePreviousRequiredDate) {
+							if (moduleCompletionDate &&
+								moduleCompletionDate <= coursePreviousRequiredDate &&
+								moduleUpdatedAt > coursePreviousRequiredDate) {
+								displayStateLocal = 'IN_PROGRESS'
+							}
+							if (moduleUpdatedAt <= coursePreviousRequiredDate) {
+								displayStateLocal = null
+							}
+						}
+					}
+				}
 				return {
 					...cm,
+					displayState: displayStateLocal,
 					duration: cm.getDuration(),
 					isMandatory: !cm.optional,
 					state: moduleRecord ? moduleRecord.state : null,

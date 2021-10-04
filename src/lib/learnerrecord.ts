@@ -4,6 +4,7 @@ import * as axiosLogger from 'lib/axiosLogger'
 import * as datetime from 'lib/datetime'
 import {getLogger} from 'lib/logger'
 import {getPurchaseOrder} from "lib/service/skills"
+import _ = require("lodash")
 import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'
@@ -242,6 +243,7 @@ export class CourseRecord {
 	preference?: string
 	state?: string | undefined
 	lastUpdated?: Date
+	courseDisplayState?: string
 
 	constructor(data: any) {
 		this.courseId = data.courseId
@@ -319,6 +321,28 @@ export class CourseRecord {
 		return undefined
 	}
 
+	getCompletedModules() {
+		// Return only the modules that are completed (where m.completionDate is not null)
+		return this.modules.filter(m => m.completionDate)
+	}
+
+	//LC-1054: Rather than renaming the above method a new method is Implemented as below
+	getLatestCompletionDateOfModulesForACourse() {
+		if (this.isComplete()) {
+			return _.max(this.getCompletedModules().map(m => m.completionDate))
+		}
+		return undefined
+	}
+
+	//LC-1054: A new method implemented as below
+	getEarliestCompletionDateOfModulesForACourse() {
+		if (this.isComplete()) {
+			return _.min(this.getCompletedModules().map(m => m.completionDate))
+		}
+		return undefined
+	}
+
+	//LC-1054: Below method is no longer used
 	getStartedDate() {
 		let startedDate: Date | undefined
 		for (const moduleRecord of this.modules) {
@@ -350,4 +374,5 @@ export interface ModuleRecord {
 	bookingStatus?: string
 	createdAt?: Date
 	updatedAt?: Date
+	displayState?: string
 }
