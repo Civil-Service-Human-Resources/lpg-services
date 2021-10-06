@@ -23,9 +23,6 @@ export abstract class AudienceBracket {
 		}
 	}
 
-	setAudiences(audiences: AudienceWithScore[]): void {
-		this.audiences = audiences
-	}
 }
 
 export class StandardAudienceBracket extends AudienceBracket {
@@ -162,23 +159,21 @@ export async function getRelevancyMap(user: User, audiences: Audience[]) {
 	const userGradeCode = user.grade.code || ""
 
 	const audienceMap = new AudienceMap(audienceBrackets)
-
-	audiences.forEach(async aud => {
-		const audWithRelevancyScore: AudienceWithScore = await getAudienceRelevanceForUser(aud,
+	for (const audience of audiences) {
+		const audWithRelevancyScore: AudienceWithScore = await getAudienceRelevanceForUser(
+			audience,
 			userAreasOfWork,
 			userDepartmentHierarchy,
 			userGradeCode)
-		audienceMap.addAudience(audWithRelevancyScore)
-	})
+		await audienceMap.addAudience(audWithRelevancyScore)
+	}
 
 	return audienceMap
 }
 
 export async function getAudience(course: Course, user: User): Promise<Audience|undefined> {
 	const audiences = course.audiences
-
 	const relevanceMap = await getRelevancyMap(user, audiences)
-
 	for (const audienceBracket of relevanceMap.audienceBrackets) {
 		const topAudience = await audienceBracket.getTop()
 		if (topAudience) {
