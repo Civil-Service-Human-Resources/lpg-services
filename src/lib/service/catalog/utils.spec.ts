@@ -35,10 +35,10 @@ describe('#getOrgHierarchy()', () => {
 		const hierarchyCode = "1003"
 		const getParentOrgsStub = Sinon.stub(registryClient, "getParentOrgs").returns(Promise.resolve(orgStructure))
 		const parentOrgs = await utils.getOrgHierarchy(hierarchyCode)
-		assert(getParentOrgsStub.calledOnceWith(hierarchyCode))
-		assert(parentOrgs[0] === hierarchyCode)
-		assert(parentOrgs[1] === "1002")
-		assert(parentOrgs[2] === "1003")
+		assert(getParentOrgsStub.calledOnceWith(hierarchyCode), `stub wasn't called with ${hierarchyCode}`)
+		assert(parentOrgs[0] === hierarchyCode, `1st code was ${parentOrgs[0]}`)
+		assert(parentOrgs[1] === "1002", `2nd code was ${parentOrgs[1]}`)
+		assert(parentOrgs[2] === "1003", `3rd code was ${parentOrgs[2]}`)
 	})
 })
 
@@ -46,24 +46,24 @@ describe('#getDepartmentRelevancyScore()', () => {
 	const audience = createAudienceWithDep("TEST001")
 	it("Should return a score of 0 for no matching department", async () => {
 		const score = await utils.getDepartmentRelevancyScore(audience, ["TEST005"])
-		assert(score === 0)
+		assert(score === 0, `Score was ${score}`)
 	})
 
 	it("Should return a score of 1 for a matching department", async () => {
 		const score = await utils.getDepartmentRelevancyScore(audience, ["TEST001"])
-		assert(score === 1)
+		assert(score === 1, `Score was ${score}`)
 	})
 
 	it("Should return a score of 3 for a matching mandatory parent department", async () => {
 		audience.requiredBy = new Date()
 		const score = await utils.getDepartmentRelevancyScore(audience, ["TEST005", "TEST001"])
-		assert(score === 3)
+		assert(score === 3, `Score was ${score}`)
 	})
 
 	it("Should return a score of 4 for a matching mandatory department", async () => {
 		audience.requiredBy = new Date()
 		const score = await utils.getDepartmentRelevancyScore(audience, ["TEST001", "TEST005"])
-		assert(score === 4)
+		assert(score === 4, `Score was ${score}`)
 	})
 })
 
@@ -71,19 +71,19 @@ describe("#getAudienceRelevanceForUser()", () => {
 	it("Should return a score of 0 if there is no area of work, department or grade", async () => {
 		const aud = Audience.create({})
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, [], [], "")
-		assert(audWithScore.score === 0)
+		assert(audWithScore.score === 0, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of 1 if only the area of work matches", async () => {
 		const aud = Audience.create({areasOfWork: ["AOW001"]})
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, ["AOW001"], [], "")
-		assert(audWithScore.score === 1)
+		assert(audWithScore.score === 1, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of 1 if only the grade matches", async () => {
 		const aud = Audience.create({grades: ["GRD001"]})
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, [], [], "GRD001")
-		assert(audWithScore.score === 1)
+		assert(audWithScore.score === 1, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of -1 if there are no matches", async () => {
@@ -93,7 +93,7 @@ describe("#getAudienceRelevanceForUser()", () => {
 			grades: ["GRD001"],
 		})
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, ["AOW002"], ["DEP002"], "GRD002")
-		assert(audWithScore.score === -1)
+		assert(audWithScore.score === -1, `Score was ${audWithScore.score}`)
 	})
 
 })
