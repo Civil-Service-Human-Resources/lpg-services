@@ -57,11 +57,12 @@ export class AudienceMap {
 	}
 
 	async getBracket(score: number): Promise<AudienceBracket|null> {
-		this.audienceBrackets.forEach(bracket => {
-			if (score <= bracket.maxScore && score >= bracket.minScore) {
-				return bracket
-			}
+		const matchingBrackets = this.audienceBrackets.filter(bracket => {
+			return (score <= bracket.maxScore && score >= bracket.minScore)
 		})
+		if (matchingBrackets) {
+			return matchingBrackets[0]
+		}
 		return null
 	}
 
@@ -178,12 +179,12 @@ export async function getAudience(course: Course, user: User): Promise<Audience|
 
 	const relevanceMap = await getRelevancyMap(user, audiences)
 
-	relevanceMap.audienceBrackets.forEach(async bracket => {
-		const aud = await bracket.getTop()
-		if (aud) {
-			return aud.audience
+	for (const audienceBracket of relevanceMap.audienceBrackets) {
+		const topAudience = await audienceBracket.getTop()
+		if (topAudience) {
+			return topAudience.audience
 		}
-	})
+	}
 
 	return undefined
 
