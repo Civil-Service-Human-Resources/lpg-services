@@ -14,7 +14,7 @@ export abstract class AudienceBracket {
 
 	abstract sort(): void
 
-	getTop(): AudienceWithScore|null {
+	async getTop(): Promise<AudienceWithScore|null> {
 		if (this.audiences.length) {
 			this.sort()
 			return this.audiences[0]
@@ -56,7 +56,7 @@ export class AudienceMap {
 		this.audienceBrackets = providedBrackets
 	}
 
-	getBracket(score: number): AudienceBracket|null {
+	async getBracket(score: number): Promise<AudienceBracket|null> {
 		this.audienceBrackets.forEach(bracket => {
 			if (score <= bracket.maxScore && score >= bracket.minScore) {
 				return bracket
@@ -65,8 +65,8 @@ export class AudienceMap {
 		return null
 	}
 
-	addAudience(audience: AudienceWithScore) {
-		const audienceBracket = this.getBracket(audience.score)
+	async addAudience(audience: AudienceWithScore) {
+		const audienceBracket = await this.getBracket(audience.score)
 		if (audienceBracket !== null) {
 			audienceBracket.audiences.push(audience)
 		}
@@ -178,8 +178,8 @@ export async function getAudience(course: Course, user: User): Promise<Audience|
 
 	const relevanceMap = await getRelevancyMap(user, audiences)
 
-	relevanceMap.audienceBrackets.forEach(bracket => {
-		const aud = bracket.getTop()
+	relevanceMap.audienceBrackets.forEach(async (bracket) => {
+		const aud = await bracket.getTop()
 		if (aud) {
 			return aud.audience
 		}

@@ -122,25 +122,25 @@ describe("#AudienceMap", () => {
 		new utils.MandatoryAudienceBracket(0, 1),
 	]
 	describe("#addAudience()", () => {
-		it("Should correctly add audiences to the correct bracket", () => {
+		it("Should correctly add audiences to the correct bracket", async () => {
 			const audienceMap = new utils.AudienceMap(testBrackets)
 			const audienceWithScoreOne = new utils.AudienceWithScore(Audience.create({}), 2)
 			const audienceWithScoreTwo = new utils.AudienceWithScore(Audience.create({}), 0)
 			audienceMap.addAudience(audienceWithScoreOne)
 			audienceMap.addAudience(audienceWithScoreTwo)
 
-			const bracketOne = audienceMap.audienceBrackets[0]
-			assert(bracketOne.audiences[0].score === 2)
+			const bracketOne = await audienceMap.getBracket(2)
+			assert(bracketOne!.audiences[0].score === 2)
 
-			const bracketTwo = audienceMap.audienceBrackets[1]
-			assert(bracketTwo.audiences[1].score === 0)
+			const bracketTwo = await audienceMap.getBracket(1)
+			assert(bracketTwo!.audiences[1].score === 0)
 		})
 
 	})
 
 	describe("#getTop", () => {
 
-		it("Should correctly choose a mandatory audience with an earlier requiredBy date if there are more than 1", () => {
+		it("Should correctly choose a mandatory audience with an earlier requiredBy date if there are more than 1", async () => {
 			const audienceMap = new utils.AudienceMap(testBrackets)
 			const today = new Date()
 			const todayAudience = Audience.create({requiredBy: today})
@@ -154,10 +154,13 @@ describe("#AudienceMap", () => {
 			audienceMap.addAudience(todayAudienceWithScore)
 			audienceMap.addAudience(yesterdayAudienceWithScore)
 
-			assert(audienceMap.audienceBrackets[0].getTop()!.score === 2)
+			const bracket = await audienceMap.getBracket(2)
+			const topAudience = await bracket!.getTop()
+
+			assert(topAudience!.score === 2)
 		})
 
-		it("Should correctly choose a standard audience with a higher score when there are more than 1", () => {
+		it("Should correctly choose a standard audience with a higher score when there are more than 1", async () => {
 			const regularBrackets = [
 				new utils.StandardAudienceBracket(1, 5),
 			]
@@ -170,7 +173,10 @@ describe("#AudienceMap", () => {
 			audienceMap.addAudience(audienceWithScore4)
 			audienceMap.addAudience(audienceWithScore3)
 
-			assert(audienceMap.audienceBrackets[0].getTop()!.score === 4)
+			const bracket = await audienceMap.getBracket(2)
+			const topAudience = await bracket!.getTop()
+
+			assert(topAudience!.score === 4)
 		})
 
 	})
