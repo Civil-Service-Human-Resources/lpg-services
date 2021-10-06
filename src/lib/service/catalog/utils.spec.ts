@@ -141,7 +141,7 @@ describe("#AudienceMap", () => {
 	describe("#getTop", () => {
 
 		it(
-			"Should correctly choose a mandatory audience with an " + 
+			"Should correctly choose a mandatory audience with an " +
 			"earlier requiredBy date if there are more than 1", async () => {
 			const audienceMap = new utils.AudienceMap(testBrackets)
 			const today = new Date()
