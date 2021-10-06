@@ -163,12 +163,11 @@ export async function getWithoutHalWithAuth(path: string, request: Express.Reque
 	}
 }
 
-export async function getParentOrgs(orgCode: String): Promise<OrganisationalUnit[]> {
+export async function getParentOrgs(orgCode: string): Promise<OrganisationalUnit[]> {
 	const path: string = `/organisationalUnits/parent/${orgCode}`
 	const response = await getWithoutHal(path)
-	const orgFactory = new OrganisationalUnitFactory()
 	const orgsArray: any[] = response.data
-	const orgs: OrganisationalUnit[] = orgsArray.map(o => orgFactory.create(o))
+	const orgs: OrganisationalUnit[] = orgsArray.map(o => OrganisationalUnitFactory.create(o))
 	return orgs
 }
 

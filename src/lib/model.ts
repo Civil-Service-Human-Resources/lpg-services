@@ -635,8 +635,8 @@ export class OrganisationalUnit {
 }
 
 export class OrganisationalUnitFactory {
-	public create(data: any): OrganisationalUnit {
-		let org = new OrganisationalUnit()
+	public static create(data: any): OrganisationalUnit {
+		const org = new OrganisationalUnit()
 		org.id = data.id
 		org.code = data.code
 		org.name = data.name
