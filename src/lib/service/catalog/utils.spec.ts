@@ -38,7 +38,7 @@ describe('#getOrgHierarchy()', () => {
 		assert(getParentOrgsStub.calledOnceWith(hierarchyCode), `stub wasn't called with ${hierarchyCode}`)
 		assert(parentOrgs[0] === hierarchyCode, `1st code was ${parentOrgs[0]}`)
 		assert(parentOrgs[1] === "1002", `2nd code was ${parentOrgs[1]}`)
-		assert(parentOrgs[2] === "1003", `3rd code was ${parentOrgs[2]}`)
+		assert(parentOrgs[2] === "1001", `3rd code was ${parentOrgs[2]}`)
 	})
 })
 
@@ -68,30 +68,31 @@ describe('#getDepartmentRelevancyScore()', () => {
 })
 
 describe("#getAudienceRelevanceForUser()", () => {
+	const aud = new Audience()
 	it("Should return a score of 0 if there is no area of work, department or grade", async () => {
-		const aud = Audience.create({})
+		aud.areasOfWork = []
+		aud.departments = []
+		aud.grades = []
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, [], [], "")
 		assert(audWithScore.score === 0, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of 1 if only the area of work matches", async () => {
-		const aud = Audience.create({areasOfWork: ["AOW001"]})
+		aud.areasOfWork = ["AOW001"]
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, ["AOW001"], [], "")
 		assert(audWithScore.score === 1, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of 1 if only the grade matches", async () => {
-		const aud = Audience.create({grades: ["GRD001"]})
+		aud.grades = ["GRD001"]
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, [], [], "GRD001")
 		assert(audWithScore.score === 1, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of -1 if there are no matches", async () => {
-		const aud = Audience.create({
-			areasOfWork: ["AOW001", "AOW002"],
-			departments: ["DEP001"],
-			grades: ["GRD001"],
-		})
+		aud.areasOfWork = ["AOW001", "AOW002"]
+		aud.departments = ["DEP001"]
+		aud.grades = ["GRD001"]
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, ["AOW002"], ["DEP002"], "GRD002")
 		assert(audWithScore.score === -1, `Score was ${audWithScore.score}`)
 	})
