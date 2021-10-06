@@ -68,32 +68,31 @@ describe('#getDepartmentRelevancyScore()', () => {
 })
 
 describe("#getAudienceRelevanceForUser()", () => {
-	const aud = new Audience()
 	it("Should return a score of 0 if there is no area of work, department or grade", async () => {
-		aud.areasOfWork = []
-		aud.departments = []
-		aud.grades = []
+		const aud = Audience.create({})
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, [], [], "")
 		assert(audWithScore.score === 0, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of 1 if only the area of work matches", async () => {
-		aud.areasOfWork = ["AOW001"]
+		const aud = Audience.create({areasOfWork: ["AOW001"]})
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, ["AOW001"], [], "")
-		assert(audWithScore.score === 1, `Score was ${audWithScore.score}`)
+		assert(audWithScore.score === 0, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of 1 if only the grade matches", async () => {
-		aud.grades = ["GRD001"]
+		const aud = Audience.create({grades: ["GRD001"]})
 		const audWithScore = await utils.getAudienceRelevanceForUser(aud, [], [], "GRD001")
-		assert(audWithScore.score === 1, `Score was ${audWithScore.score}`)
+		assert(audWithScore.score === 0, `Score was ${audWithScore.score}`)
 	})
 
 	it("Should return a score of -1 if there are no matches", async () => {
-		aud.areasOfWork = ["AOW001", "AOW002"]
-		aud.departments = ["DEP001"]
-		aud.grades = ["GRD001"]
-		const audWithScore = await utils.getAudienceRelevanceForUser(aud, ["AOW002"], ["DEP002"], "GRD002")
+		const aud = Audience.create({
+			areasOfWork: ["AOW001", "AOW002"],
+			departments: ["DEP001"],
+			grades: ["GRD001"],
+		})
+		const audWithScore = await utils.getAudienceRelevanceForUser(aud, ["AOW003"], ["DEP002"], "GRD002")
 		assert(audWithScore.score === -1, `Score was ${audWithScore.score}`)
 	})
 
