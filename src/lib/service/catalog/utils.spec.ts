@@ -128,9 +128,12 @@ describe("#AudienceMap", () => {
 			const audienceWithScoreTwo = new utils.AudienceWithScore(Audience.create({}), 0)
 			audienceMap.addAudience(audienceWithScoreOne)
 			audienceMap.addAudience(audienceWithScoreTwo)
-			const bracket = audienceMap.audienceBrackets[0]
-			assert(bracket.audiences[0].score === 1)
-			assert(bracket.audiences[1].score === 0)
+
+			const bracketOne = audienceMap.getBracket(2)!
+			assert(bracketOne.audiences[0].score === 2)
+
+			const bracketTwo = audienceMap.getBracket(1)!
+			assert(bracketTwo.audiences[1].score === 0)
 		})
 
 	})
@@ -151,7 +154,7 @@ describe("#AudienceMap", () => {
 			audienceMap.addAudience(todayAudienceWithScore)
 			audienceMap.addAudience(yesterdayAudienceWithScore)
 
-			assert(audienceMap.getBracket(1)!.getTop()!.score === 2)
+			assert(audienceMap.getBracket(2)!.getTop()!.score === 2)
 		})
 
 		it("Should correctly choose a standard audience with a higher score when there are more than 1", () => {
