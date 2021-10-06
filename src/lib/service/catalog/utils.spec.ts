@@ -1,5 +1,5 @@
 import {assert} from 'chai'
-import { Audience, Course, OrganisationalUnitFactory, User } from 'lib/model'
+import { Audience, Course, OrganisationalUnit, User } from 'lib/model'
 import * as registryClient from "lib/registry"
 import { AudienceBracket, AudienceMap, AudienceWithScore,
 	getAudience, getAudienceRelevanceForUser, getDepartmentRelevancyScore,
@@ -16,19 +16,19 @@ const yesterday = new Date(today)
 yesterday.setDate(yesterday.getDate() - 1)
 
 const orgStructure = [
-	OrganisationalUnitFactory.create({
+	OrganisationalUnit.create({
 		code: "DEP003",
 		id: 3,
 		name: "DEP003",
 		paymentMethods: "",
 	}),
-	OrganisationalUnitFactory.create({
+	OrganisationalUnit.create({
 		code: "DEP002",
 		id: 2,
 		name: "DEP002",
 		paymentMethods: "",
 	}),
-	OrganisationalUnitFactory.create({
+	OrganisationalUnit.create({
 		code: "DEP001",
 		id: 1,
 		name: "DEP001",

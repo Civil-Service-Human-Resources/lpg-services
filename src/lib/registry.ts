@@ -4,7 +4,7 @@ import * as config from 'lib/config'
 import {getLogger} from 'lib/logger'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
-import { OrganisationalUnit, OrganisationalUnitFactory } from './model'
+import { OrganisationalUnit } from './model'
 
 const logger = getLogger('registry')
 
@@ -167,7 +167,7 @@ export async function getParentOrgs(orgCode: string): Promise<OrganisationalUnit
 	const path: string = `/organisationalUnits/parent/${orgCode}`
 	const response = await getWithoutHal(path)
 	const orgsArray: any[] = response.data
-	const orgs: OrganisationalUnit[] = orgsArray.map(o => OrganisationalUnitFactory.create(o))
+	const orgs: OrganisationalUnit[] = orgsArray.map(o => OrganisationalUnit.create(o))
 	return orgs
 }
 

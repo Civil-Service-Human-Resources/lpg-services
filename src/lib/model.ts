@@ -627,23 +627,21 @@ export class Feedback {
 }
 
 export class OrganisationalUnit {
-	id: number
-	code: string
-	name: string
-	children: OrganisationalUnit[]
-	paymentMethods: string[]
-}
-
-export class OrganisationalUnitFactory {
 	public static create(data: any): OrganisationalUnit {
 		const org = new OrganisationalUnit()
 		org.id = data.id
 		org.code = data.code
 		org.name = data.name
-		org.children = (data.children || []).map(this.create)
+		org.children = (data.children || []).map(OrganisationalUnit.create)
 		org.paymentMethods = data.paymentMethods
 		return org
 	}
+	id: number
+	code: string
+	name: string
+	children: OrganisationalUnit[]
+	paymentMethods: string[]
+
 }
 
 export class User {
