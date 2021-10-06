@@ -178,7 +178,7 @@ export async function getAudience(course: Course, user: User): Promise<Audience|
 
 	const relevanceMap = await getRelevancyMap(user, audiences)
 
-	relevanceMap.audienceBrackets.forEach(async (bracket) => {
+	relevanceMap.audienceBrackets.forEach(async bracket => {
 		const aud = await bracket.getTop()
 		if (aud) {
 			return aud.audience
