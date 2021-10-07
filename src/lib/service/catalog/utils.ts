@@ -1,5 +1,8 @@
+import { getLogger } from "lib/logger"
 import { Audience, Course, OrganisationalUnit, User } from "lib/model"
 import { getParentOrgs } from "lib/registry"
+
+const logger = getLogger('utils.ts')
 
 export abstract class AudienceBracket {
 
@@ -118,7 +121,6 @@ export async function getDepartmentRelevancyScore(audience: Audience, department
 			}
 		}
 	}
-
 	return score
 }
 
@@ -128,12 +130,16 @@ export async function getAudienceRelevanceForUser(
 												userDepartmentHierarchy: string[],
 												userGradeCode: string): Promise<AudienceWithScore> {
 	let relevance = -1
-
+	logger.debug(`AUDIENCE: ${JSON.stringify(audience)}`)
+	logger.debug(`DEP HIERARCHY: ${JSON.stringify(userDepartmentHierarchy)}`)
+	logger.debug(`GRADE CODE: ${JSON.stringify(userGradeCode)}`)
+	logger.debug(`AREAS OF WORK: ${JSON.stringify(userAreasOfWork)}`)
 	if (!(audience.areasOfWork.length || audience.departments.length || audience.grades.length)) {
 		return new AudienceWithScore(audience, 0)
 	}
 
 	const departmentScore = await getDepartmentRelevancyScore(audience, userDepartmentHierarchy)
+	logger.debug(`Dep relevancy score: ${departmentScore}`)
 
 	// A score equal to or higher than 3 indicates mandatory learning
 	if (departmentScore >= 3) {
@@ -149,7 +155,6 @@ export async function getAudienceRelevanceForUser(
 	if (audience.grades.indexOf(userGradeCode) > -1) {
 		relevance += 1
 	}
-
 	return new AudienceWithScore(audience, relevance)
 }
 
@@ -165,6 +170,7 @@ export async function getRelevancyMap(user: User, audiences: Audience[]) {
 			userAreasOfWork,
 			userDepartmentHierarchy,
 			userGradeCode)
+		logger.debug(`Final score: ${audWithRelevancyScore.score}`)
 		await audienceMap.addAudience(audWithRelevancyScore)
 	}
 
@@ -173,10 +179,12 @@ export async function getRelevancyMap(user: User, audiences: Audience[]) {
 
 export async function getAudience(course: Course, user: User): Promise<Audience|undefined> {
 	const audiences = course.audiences
+	logger.debug(`AUDIENCE COUNT: ${course.audiences.length}`)
 	const relevanceMap = await getRelevancyMap(user, audiences)
 	for (const audienceBracket of relevanceMap.audienceBrackets) {
 		const topAudience = await audienceBracket.getTop()
 		if (topAudience) {
+			logger.debug(`FINAL AUDIENCE: ${JSON.stringify(topAudience.audience)}`)
 			return topAudience.audience
 		}
 	}
