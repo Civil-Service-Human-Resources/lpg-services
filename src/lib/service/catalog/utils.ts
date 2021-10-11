@@ -105,19 +105,15 @@ export async function getOrgHierarchy(orgCode: string): Promise<string[]> {
 
 export async function getDepartmentRelevancyScore(audience: Audience, departmentHierarchy: string[]) {
 	let score = 0
-	for (let i = 0; i < departmentHierarchy.length; i++) {
-		const dep = departmentHierarchy[i]
-		if (audience.departments.indexOf(dep) > -1) {
+	for await (const audienceDep of audience.departments) {
+		const depIndex = departmentHierarchy.indexOf(audienceDep)
+		if (depIndex > -1) {
 			score = 1
-			// department match + requiredby = mandatory learning, so return the max score
 			if (audience.requiredBy) {
-				// If the department is the user's department (NOT a parent/grandparent) then
-				// return an even higher score
-				if (i === 0) {
+				if (depIndex === 0) {
 					return 4
-				} else {
-					return 3
 				}
+				return 3
 			}
 		}
 	}
@@ -164,7 +160,7 @@ export async function getRelevancyMap(user: User, audiences: Audience[]) {
 	const userGradeCode = user.grade.code || ""
 
 	const audienceMap = new AudienceMap(audienceBrackets)
-	for (const audience of audiences) {
+	for await (const audience of audiences) {
 		const audWithRelevancyScore: AudienceWithScore = await getAudienceRelevanceForUser(
 			audience,
 			userAreasOfWork,
@@ -181,7 +177,7 @@ export async function getAudience(course: Course, user: User): Promise<Audience|
 	const audiences = course.audiences
 	logger.debug(`AUDIENCE COUNT: ${course.audiences.length}`)
 	const relevanceMap = await getRelevancyMap(user, audiences)
-	for (const audienceBracket of relevanceMap.audienceBrackets) {
+	for await (const audienceBracket of relevanceMap.audienceBrackets) {
 		const topAudience = await audienceBracket.getTop()
 		if (topAudience) {
 			logger.debug(`FINAL AUDIENCE: ${JSON.stringify(topAudience.audience)}`)
