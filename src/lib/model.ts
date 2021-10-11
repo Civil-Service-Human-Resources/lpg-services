@@ -6,6 +6,9 @@ import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import { getAudience } from "./service/catalog/utils"
+import { getLogger } from "./logger"
+
+const logger = getLogger('models.ts')
 
 export interface LineManager {
 	email: string
@@ -14,6 +17,7 @@ export interface LineManager {
 
 export class Course {
 	static create(data: any, user?: User) {
+		logger.debug(`${JSON.stringify(data)}`)
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
@@ -471,6 +475,7 @@ export class Event {
 
 export class Audience {
 	static create(data: any) {
+		logger.debug(`${JSON.stringify(data)}`)
 		const audience = new Audience()
 		audience.areasOfWork = data.areasOfWork || []
 		audience.departments = data.departments || []
