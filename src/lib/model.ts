@@ -3,10 +3,10 @@ import _ = require("lodash")
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import { getLogger } from "lib/logger"
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import { getAudience } from "./service/catalog/utils"
-import { getLogger } from "./logger"
 
 const logger = getLogger('models.ts')
 
