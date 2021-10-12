@@ -17,6 +17,10 @@ export abstract class AudienceBracket {
 
 	abstract sort(): void
 
+	async addAudience(audience: AudienceWithScore) {
+		this.audiences.push(audience)
+	}
+
 	async getTop(): Promise<AudienceWithScore|null> {
 		if (this.audiences.length) {
 			this.sort()
@@ -34,6 +38,13 @@ export class StandardAudienceBracket extends AudienceBracket {
 		this.audiences.sort((a, b) => {
 			return b.score - a.score
 		})
+	}
+
+	async addAudience(audience: AudienceWithScore) {
+		// Required because all audiences come from catalogue marked as
+		// mandatory
+		audience.audience.mandatory = false
+		this.audiences.push(audience)
 	}
 
 }
@@ -69,7 +80,7 @@ export class AudienceMap {
 	async addAudience(audience: AudienceWithScore) {
 		const audienceBracket = await this.getBracket(audience.score)
 		if (audienceBracket !== null) {
-			audienceBracket.audiences.push(audience)
+			await audienceBracket.addAudience(audience)
 		}
 	}
 
@@ -85,12 +96,6 @@ export class AudienceWithScore {
 		this.score = score
 	}
 }
-
-const audienceBrackets: AudienceBracket[] = [
-	new MandatoryAudienceBracket(4, 4),
-	new MandatoryAudienceBracket(3, 3),
-	new StandardAudienceBracket(-1, 2),
-]
 
 /**
  * getParentOrgs will return a list of Organisation objects, where the first element
@@ -161,6 +166,12 @@ export async function getRelevancyMap(user: User, audiences: Audience[]) {
 	if (user.grade) {
 		userGradeCode = user.grade.code || ""
 	}
+
+	const audienceBrackets: AudienceBracket[] = [
+		new MandatoryAudienceBracket(4, 4),
+		new MandatoryAudienceBracket(3, 3),
+		new StandardAudienceBracket(-1, 2),
+	]
 
 	const audienceMap = new AudienceMap(audienceBrackets)
 	for await (const audience of audiences) {

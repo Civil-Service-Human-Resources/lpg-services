@@ -176,7 +176,7 @@ describe("#getAudience", () => {
 
 	it("Should get the closest matching audience if none of the others are mandatory", async () => {
 
-		const course = [
+		const audiences = [
 				Audience.create({requiredBy: today, departments: ["DEP007", ], type: "TYPE001"}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP006", ], type: "TYPE002"}),
 				Audience.create({departments: ["DEP001", ], areasOfWork: ["AOW001", ], type: "TYPE003"}),
@@ -184,7 +184,7 @@ describe("#getAudience", () => {
 				Audience.create({departments: ["DEP005", ]}),
 			]
 
-		const returnedAudience = await getAudience(course, user)
+		const returnedAudience = await getAudience(audiences, user)
 		const resultingType = returnedAudience!.type
 		const expectedType = "TYPE003"
 		assert(
@@ -197,7 +197,7 @@ describe("#getAudience", () => {
 		"Should get a parent-department-matching audience if the " +
 		"user's doesn't match any immediate departments", async () => {
 
-		const course = [
+		const audiences = [
 				Audience.create({requiredBy: today, departments: ["DEP002", ], type: "TYPE001"}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP006", ], type: "TYPE002"}),
 				Audience.create({departments: ["DEP001", ]}),
@@ -205,7 +205,7 @@ describe("#getAudience", () => {
 				Audience.create({departments: ["DEP005", ]}),
 			]
 
-		const returnedAudience = await getAudience(course, user)
+		const returnedAudience = await getAudience(audiences, user)
 		const resultingType = returnedAudience!.type
 		const expectedType = "TYPE001"
 		assert(
@@ -216,7 +216,7 @@ describe("#getAudience", () => {
 
 	it("Should get an earlier requiredBy audience if two clashing audiences are found", async () => {
 
-		const course = [
+		const audiences = [
 				Audience.create({requiredBy: today, departments: ["DEP003", ], type: "TYPE001"}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP003", ], type: "TYPE002"}),
 				Audience.create({departments: ["DEP001", ]}),
@@ -224,7 +224,7 @@ describe("#getAudience", () => {
 				Audience.create({departments: ["DEP005", ]}),
 			]
 
-		const returnedAudience = await getAudience(course, user)
+		const returnedAudience = await getAudience(audiences, user)
 		const resultingType = returnedAudience!.type
 		const expectedType = "TYPE002"
 		assert(
@@ -236,7 +236,7 @@ describe("#getAudience", () => {
 
 	it("Should get an audience with a matching department and requiredBy as priority", async () => {
 
-		const course = [
+		const audiences = [
 				Audience.create({requiredBy: today, departments: ["DEP003"]}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP002"]}),
 				Audience.create({departments: ["DEP001"]}),
@@ -244,12 +244,40 @@ describe("#getAudience", () => {
 				Audience.create({departments: ["DEP005"]}),
 			]
 
-		const returnedAudience = await getAudience(course, user)
+		const returnedAudience = await getAudience(audiences, user)
 		const resultingDepartment = returnedAudience!.departments[0]
 		const expectedAudienceDepartment = "DEP003"
 		assert(
 			resultingDepartment === expectedAudienceDepartment,
 			`Resulting audience was for department ${resultingDepartment},  expected ${expectedAudienceDepartment}`
 		)
+	})
+
+	it("Should get a normal audience with a matching department and area of work", async () => {
+
+		const audiences = [
+				Audience.create({departments: ["DEP007"], areasOfWork: ["AOW002"]}),
+				Audience.create({departments: ["DEP003"], areasOfWork: ["AOW001"]}),
+				Audience.create({departments: ["DEP008"], areasOfWork: ["AOW003"]}),
+			]
+
+		const returnedAudience = await getAudience(audiences, user)
+		const resultingDepartment = returnedAudience!.departments[0]
+		const expectedAudienceDepartment = "DEP003"
+
+		const resultingAreaOfWork = returnedAudience!.areasOfWork[0]
+		const expectedAreaOfWork = "AOW001"
+
+		assert(
+			resultingDepartment === expectedAudienceDepartment,
+			`Resulting audience was for department ${resultingDepartment}, expected ${expectedAudienceDepartment}`
+		)
+		assert(
+			resultingAreaOfWork === expectedAreaOfWork,
+			`Resulting audience was for area of work ${resultingAreaOfWork}, expected ${expectedAreaOfWork}`
+		)
+		assert(
+			!returnedAudience!.mandatory,
+			"Mandatory was True, expected False")
 	})
 })
