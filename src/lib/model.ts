@@ -32,7 +32,15 @@ export class CourseFactory {
 		course.audiences = audiences
 
 		if (user) {
-			course.audience = await getAudience(audiences, user)
+			if (audiences.length > 1) {
+				course.audience = await getAudience(audiences, user)
+			} else if (audiences.length === 1) {
+				course.audience = audiences[0]
+			}
+		}
+
+		if (course.audience) {
+			course.audience.mandatory = (course.audience.requiredBy) ? true : false
 		}
 
 		return course
