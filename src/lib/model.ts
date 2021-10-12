@@ -53,7 +53,7 @@ export class Course {
 							!matchedHighPriorityAudience) {
 								matchedAudience = audience
 								matchedHighPriorityAudience = audience
-								matchedRelevance = 4
+								matchedRelevance = 3
 						}
 					} else {
 						audience.mandatory = false
