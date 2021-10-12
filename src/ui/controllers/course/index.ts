@@ -172,6 +172,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
 				const coursePreviousRequiredDate = course.previousRequiredByNew()
 				let displayStateLocal = moduleRecord ? moduleRecord.state : null
+				logger.debug(`Audience: ${course.audience}`)
 				if (course.isComplete()) {
 					if (course.audience && course.audience.mandatory &&
 						course.shouldRepeatNew() &&

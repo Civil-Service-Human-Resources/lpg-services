@@ -15,6 +15,30 @@ export interface LineManager {
 	name?: string
 }
 
+export class CourseFactory {
+
+	static async create(data: any, user?: User) {
+		logger.debug(`${JSON.stringify(data)}`)
+		const course = new Course(data.id)
+		course.description = data.description
+		course.learningOutcomes = data.learningOutcomes
+		course.shortDescription = data.shortDescription
+		course.title = data.title
+		course.status = data.status
+
+		course.modules = (data.modules || []).map(Module.create)
+
+		const audiences = (data.audiences || []).map(Audience.create)
+		course.audiences = audiences
+
+		if (user) {
+			course.audience = await getAudience(audiences, user)
+		}
+
+		return course
+	}
+}
+
 export class Course {
 	static create(data: any, user?: User) {
 		logger.debug(`${JSON.stringify(data)}`)
@@ -33,7 +57,7 @@ export class Course {
 		if (user) {
 			getAudience(audiences, user)
 				.then(audience => {
-					logger.debug(`Audience in model.ts: ${audience}`)
+					logger.debug(`Audience in model.ts: ${JSON.stringify(audience)}`)
 					course.audience = audience
 				})
 		}
