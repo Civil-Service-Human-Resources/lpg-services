@@ -161,6 +161,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'video':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
+			logger.debug(`Audience: ${JSON.stringify(course.audience)}`)
 			const modules = course.modules.map(cm => {
 				const moduleRecord = record
 					? (record.modules || []).find(m => m.moduleId === cm.id)
@@ -172,7 +173,6 @@ export async function display(ireq: express.Request, res: express.Response) {
 				const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
 				const coursePreviousRequiredDate = course.previousRequiredByNew()
 				let displayStateLocal = moduleRecord ? moduleRecord.state : null
-				logger.debug(`Audience: ${course.audience}`)
 				if (course.isComplete()) {
 					if (course.audience && course.audience.mandatory &&
 						course.shouldRepeatNew() &&
