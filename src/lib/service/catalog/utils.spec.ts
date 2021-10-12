@@ -1,5 +1,5 @@
 import {assert} from 'chai'
-import { Audience, Course, OrganisationalUnit, User } from 'lib/model'
+import { Audience, OrganisationalUnit, User } from 'lib/model'
 import * as registryClient from "lib/registry"
 import { AudienceBracket, AudienceMap, AudienceWithScore,
 	getAudience, getAudienceRelevanceForUser, getDepartmentRelevancyScore,
@@ -176,15 +176,13 @@ describe("#getAudience", () => {
 
 	it("Should get the closest matching audience if none of the others are mandatory", async () => {
 
-		const course = Course.create({
-			audiences: [
+		const course = [
 				Audience.create({requiredBy: today, departments: ["DEP007", ], type: "TYPE001"}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP006", ], type: "TYPE002"}),
 				Audience.create({departments: ["DEP001", ], areasOfWork: ["AOW001", ], type: "TYPE003"}),
 				Audience.create({departments: ["DEP004", ]}),
 				Audience.create({departments: ["DEP005", ]}),
-			],
-		})
+			]
 
 		const returnedAudience = await getAudience(course, user)
 		const resultingType = returnedAudience!.type
@@ -199,15 +197,13 @@ describe("#getAudience", () => {
 		"Should get a parent-department-matching audience if the " +
 		"user's doesn't match any immediate departments", async () => {
 
-		const course = Course.create({
-			audiences: [
+		const course = [
 				Audience.create({requiredBy: today, departments: ["DEP002", ], type: "TYPE001"}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP006", ], type: "TYPE002"}),
 				Audience.create({departments: ["DEP001", ]}),
 				Audience.create({departments: ["DEP004", ]}),
 				Audience.create({departments: ["DEP005", ]}),
-			],
-		})
+			]
 
 		const returnedAudience = await getAudience(course, user)
 		const resultingType = returnedAudience!.type
@@ -220,15 +216,13 @@ describe("#getAudience", () => {
 
 	it("Should get an earlier requiredBy audience if two clashing audiences are found", async () => {
 
-		const course = Course.create({
-			audiences: [
+		const course = [
 				Audience.create({requiredBy: today, departments: ["DEP003", ], type: "TYPE001"}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP003", ], type: "TYPE002"}),
 				Audience.create({departments: ["DEP001", ]}),
 				Audience.create({departments: ["DEP004", ]}),
 				Audience.create({departments: ["DEP005", ]}),
-			],
-		})
+			]
 
 		const returnedAudience = await getAudience(course, user)
 		const resultingType = returnedAudience!.type
@@ -242,15 +236,13 @@ describe("#getAudience", () => {
 
 	it("Should get an audience with a matching department and requiredBy as priority", async () => {
 
-		const course = Course.create({
-			audiences: [
+		const course = [
 				Audience.create({requiredBy: today, departments: ["DEP003"]}),
 				Audience.create({requiredBy: yesterday, departments: ["DEP002"]}),
 				Audience.create({departments: ["DEP001"]}),
 				Audience.create({departments: ["DEP004"]}),
 				Audience.create({departments: ["DEP005"]}),
-			],
-		})
+			]
 
 		const returnedAudience = await getAudience(course, user)
 		const resultingDepartment = returnedAudience!.departments[0]

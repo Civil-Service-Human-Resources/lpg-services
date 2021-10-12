@@ -31,8 +31,9 @@ export class Course {
 		course.audiences = audiences
 
 		if (user) {
-			getAudience(course, user)
+			getAudience(audiences, user)
 				.then(audience => {
+					logger.debug(`Audience in model.ts: ${audience}`)
 					course.audience = audience
 				})
 		}

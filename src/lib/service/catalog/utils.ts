@@ -1,5 +1,5 @@
 import { getLogger } from "lib/logger"
-import { Audience, Course, OrganisationalUnit, User } from "lib/model"
+import { Audience, OrganisationalUnit, User } from "lib/model"
 import { getParentOrgs } from "lib/registry"
 
 const logger = getLogger('utils.ts')
@@ -157,7 +157,10 @@ export async function getAudienceRelevanceForUser(
 export async function getRelevancyMap(user: User, audiences: Audience[]) {
 	const userDepartmentHierarchy = await getOrgHierarchy(user.department!)
 	const userAreasOfWork = user.areasOfWork || []
-	const userGradeCode = user.grade.code || ""
+	let userGradeCode = ""
+	if (user.grade) {
+		userGradeCode = user.grade.code || ""
+	}
 
 	const audienceMap = new AudienceMap(audienceBrackets)
 	for await (const audience of audiences) {
@@ -173,9 +176,8 @@ export async function getRelevancyMap(user: User, audiences: Audience[]) {
 	return audienceMap
 }
 
-export async function getAudience(course: Course, user: User): Promise<Audience|undefined> {
-	const audiences = course.audiences
-	logger.debug(`AUDIENCE COUNT: ${course.audiences.length}`)
+export async function getAudience(audiences: Audience[], user: User): Promise<Audience|undefined> {
+	logger.debug(`AUDIENCE COUNT: ${audiences.length}`)
 	const relevanceMap = await getRelevancyMap(user, audiences)
 	for await (const audienceBracket of relevanceMap.audienceBrackets) {
 		const topAudience = await audienceBracket.getTop()
