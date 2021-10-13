@@ -13,7 +13,7 @@ export interface LineManager {
 }
 
 export class Course {
-	static async create(data: any, user?: User) {
+	static create(data: any, user?: User) {
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
@@ -27,7 +27,7 @@ export class Course {
 		course.audiences = audiences
 
 		if (user) {
-			let matchedAudience = undefined
+			let matchedAudience
 			let matchedRelevance = -1
 			let matchedHighPriorityAudience = null
 			let matchedHighestPriorityAudience = null
