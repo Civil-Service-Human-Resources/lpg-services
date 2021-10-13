@@ -3,9 +3,12 @@ import _ = require("lodash")
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import { getLogger } from "lib/logger"
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import { getOrgHierarchy } from "./registry"
+
+const logger = getLogger('model.ts')
 
 export interface LineManager {
 	email: string
@@ -33,8 +36,10 @@ export class Course {
 			let matchedHighestPriorityAudience = null
 
 			for (const audience of audiences) {
+				logger.debug(`AUDIENCE: ${JSON.stringify(audience)}`)
 				//Get the relevance of each audience
 				const relevance = audience.getRelevance(user!)
+				logger.debug(`END RELEVANCE: ${relevance}`)
 
 				//If the relevance of the audience is same or more then the previous audience
 				//then keep processing the further audiences in the course to get the highest relevance audience
@@ -44,6 +49,7 @@ export class Course {
 						if ((matchedHighestPriorityAudience != null &&
 							audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
 							matchedHighestPriorityAudience == null) {
+								logger.debug(`Setting relevance 4`)
 								audience.mandatory = true
 								matchedAudience = audience
 								matchedHighestPriorityAudience = audience
@@ -53,12 +59,14 @@ export class Course {
 						if ((matchedHighPriorityAudience != null &&
 							audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
 							matchedHighPriorityAudience == null) {
+								logger.debug(`Setting relevance 3`)
 								audience.mandatory = true
 								matchedAudience = audience
 								matchedHighPriorityAudience = audience
 								matchedRelevance = 3
 						}
 					} else {
+						logger.debug(`Setting relevance default`)
 						audience.mandatory = false
 						matchedAudience = audience
 						matchedRelevance = relevance
@@ -70,7 +78,7 @@ export class Course {
 			course.audience = matchedAudience
 
 		}
-
+		logger.debug(`FINAL COURSE AUDIENCE: ${JSON.stringify(course.audience)}`)
 		return course
 	}
 
@@ -554,6 +562,8 @@ export class Audience {
 			let depScore = 0
 			getOrgHierarchy(user.department)
 			.then(depHierarchy => {
+				logger.debug(`DEP HIERARCHY: ${JSON.stringify(depHierarchy)}`)
+				logger.debug(`AUDIENCE DEPS: ${JSON.stringify(this.departments)}`)
 				for (const department of this.departments) {
 					const depIndex = depHierarchy.indexOf(department)
 					if (depIndex > -1) {
@@ -569,11 +579,13 @@ export class Audience {
 					}
 				}
 			})
+			logger.debug(`DEP SCORE: ${depScore}`)
 			relevance += depScore
 		}
 		if (user.grade && this.grades.indexOf(user.grade.code) > -1) {
 			relevance += 1
 		}
+		logger.debug(`FINAL RELEVANCE FROM METHOD: ${relevance}`)
 		return relevance
 	}
 
