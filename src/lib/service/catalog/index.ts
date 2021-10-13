@@ -169,7 +169,7 @@ export async function findSuggestedLearningWithParameters(
 export async function get(id: string, user: model.User) {
 	try {
 		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return model.Course.create(response.data, user)
+		return await model.CourseFactory.create(response.data, user)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
 			return null

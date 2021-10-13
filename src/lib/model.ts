@@ -69,8 +69,8 @@ const getAudienceForCourse = async (audiences: Audience[], user: User) => {
 	return matchedAudience
 }
 
-export class Course {
-	static create(data: any, user?: User) {
+export class CourseFactory {
+	static async create(data: any, user?: User) {
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
@@ -84,12 +84,104 @@ export class Course {
 		course.audiences = audiences
 
 		if (user) {
-			getAudienceForCourse(audiences, user)
-			.then(matchedAudience => {
-				logger.debug(`FINAL COURSE AUDIENCE: ${JSON.stringify(course.audience)}`)
-				course.audience = matchedAudience
-			})
+			course.audience = await getAudienceForCourse(audiences, user)
 		}
+
+		return course
+	}
+}
+
+export class Course {
+	static create(data: any, user?: User) {
+		const course = new Course(data.id)
+		course.description = data.description
+		course.learningOutcomes = data.learningOutcomes
+		course.shortDescription = data.shortDescription
+		course.title = data.title
+		course.status = data.status
+
+		course.modules = (data.modules || []).map(Module.create)
+
+		const audiences = (data.audiences || []).map(Audience.create)
+		course.audiences = audiences
+
+		if (user) {
+			let matchedAudience = null
+			let matchedRelevance = -1
+			let audienceWithRelevanceThree = null
+			let audienceWithRelevanceTwo = null
+			let audienceWithRelevanceOne = null
+			let minRequiredByAudienceWithRelevanceThree = null
+			let minRequiredByAudienceWithRelevanceTwo = null
+			let minRequiredByAudienceWithRelevanceOne = null
+			for (const audience of audiences) {
+				//Get the relevance of each audience
+				const relevance = audience.getRelevance(user!)
+				//If the relevance of the audience is same or more then the previous audience
+				//then keep processing the further audiences in the course to get the highest relevance audience
+				if (relevance >= matchedRelevance) {
+					matchedAudience = audience
+					matchedRelevance = relevance
+					//audience with relevance 3 will have the required by date
+					//and the audience with relevance 2 and 1 can also have the required by date
+					//and if multiple audiences are found within the relevance 3 or 2 or 1
+					//then the audience which has earliest due date within the same relevance need to be selected
+					//to keep it in sync with the backend code which fetches the mandatory course for homepage
+					if (relevance === 3) {
+						if (minRequiredByAudienceWithRelevanceThree == null) {
+							minRequiredByAudienceWithRelevanceThree = audience
+						}
+						if (audience.requiredBy < minRequiredByAudienceWithRelevanceThree.requiredBy) {
+							minRequiredByAudienceWithRelevanceThree = audience
+						}
+						audienceWithRelevanceThree = minRequiredByAudienceWithRelevanceThree
+					}
+					if (relevance === 2) {
+						if (minRequiredByAudienceWithRelevanceTwo == null) {
+							minRequiredByAudienceWithRelevanceTwo = audience
+						}
+						if (audience.requiredBy < minRequiredByAudienceWithRelevanceTwo.requiredBy) {
+							minRequiredByAudienceWithRelevanceTwo = audience
+						}
+						audienceWithRelevanceTwo = minRequiredByAudienceWithRelevanceTwo
+					}
+					if (relevance === 1) {
+						if (minRequiredByAudienceWithRelevanceOne == null) {
+							minRequiredByAudienceWithRelevanceOne = audience
+						}
+						if (audience.requiredBy < minRequiredByAudienceWithRelevanceOne.requiredBy) {
+							minRequiredByAudienceWithRelevanceOne = audience
+						}
+						audienceWithRelevanceOne = minRequiredByAudienceWithRelevanceOne
+					}
+				}
+			}
+
+			//if the audiences with relevance 1, 2 and 3 are found
+			//then matchedAudience will be of the highest priority of relevance
+			//i.e. relevance 3 then 2 then 1
+			if (audienceWithRelevanceOne) {
+				matchedAudience = audienceWithRelevanceOne
+			}
+			if (audienceWithRelevanceTwo) {
+				matchedAudience = audienceWithRelevanceTwo
+			}
+			if (audienceWithRelevanceThree) {
+				matchedAudience = audienceWithRelevanceThree
+			}
+
+			course.audience = matchedAudience
+
+			if (course.audience) {
+				course.audience.mandatory = false
+				course.audience.departments.forEach(a => {
+					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
+						course.audience!.mandatory = true
+					}
+				})
+			}
+		}
+
 		return course
 	}
 
