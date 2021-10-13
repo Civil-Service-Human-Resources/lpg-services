@@ -32,47 +32,50 @@ export class Course {
 		if (user) {
 			let matchedAudience
 			let matchedRelevance = -1
-			let matchedHighPriorityAudience = null
-			let matchedHighestPriorityAudience = null
+			let matchedHighPriorityAudience: Audience
+			let matchedHighestPriorityAudience: Audience
 
 			for (const audience of audiences) {
 				logger.debug(`AUDIENCE: ${JSON.stringify(audience)}`)
 				//Get the relevance of each audience
-				const relevance = audience.getRelevance(user!)
-				logger.debug(`END RELEVANCE: ${relevance}`)
+				audience.getRelevance(user!)
+				.then(relevance => {
+					logger.debug(`END RELEVANCE: ${relevance}`)
 
-				//If the relevance of the audience is same or more then the previous audience
-				//then keep processing the further audiences in the course to get the highest relevance audience
-				if (relevance >= matchedRelevance) {
+					//If the relevance of the audience is same or more then the previous audience
+					//then keep processing the further audiences in the course to get the highest relevance audience
+					if (relevance >= matchedRelevance) {
 
-					if (relevance === 4) {
-						if ((matchedHighestPriorityAudience != null &&
-							audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
-							matchedHighestPriorityAudience == null) {
-								logger.debug(`Setting relevance 4`)
-								audience.mandatory = true
-								matchedAudience = audience
-								matchedHighestPriorityAudience = audience
-								matchedRelevance = 4
+						if (relevance === 4) {
+							if ((matchedHighestPriorityAudience &&
+								audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
+								!matchedHighestPriorityAudience) {
+									logger.debug(`Setting relevance 4`)
+									audience.mandatory = true
+									matchedAudience = audience
+									matchedHighestPriorityAudience = audience
+									matchedRelevance = 4
+							}
+						} else if (relevance === 3) {
+							if ((matchedHighPriorityAudience &&
+								audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
+								!matchedHighPriorityAudience) {
+									logger.debug(`Setting relevance 3`)
+									audience.mandatory = true
+									matchedAudience = audience
+									matchedHighPriorityAudience = audience
+									matchedRelevance = 3
+							}
+						} else {
+							logger.debug(`Setting relevance default`)
+							audience.mandatory = false
+							matchedAudience = audience
+							matchedRelevance = relevance
 						}
-					} else if (relevance === 3) {
-						if ((matchedHighPriorityAudience != null &&
-							audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
-							matchedHighPriorityAudience == null) {
-								logger.debug(`Setting relevance 3`)
-								audience.mandatory = true
-								matchedAudience = audience
-								matchedHighPriorityAudience = audience
-								matchedRelevance = 3
-						}
-					} else {
-						logger.debug(`Setting relevance default`)
-						audience.mandatory = false
-						matchedAudience = audience
-						matchedRelevance = relevance
+
 					}
 
-				}
+				})
 			}
 
 			course.audience = matchedAudience
@@ -548,7 +551,7 @@ export class Audience {
 		this.mandatory = !value || value === 'false'
 	}
 
-	getRelevance(user: User): number {
+	async getRelevance(user: User): Promise<number> {
 		let relevance = -1
 
 		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
@@ -560,25 +563,23 @@ export class Audience {
 		}
 		if (user.department) {
 			let depScore = 0
-			getOrgHierarchy(user.department)
-			.then(depHierarchy => {
-				logger.debug(`DEP HIERARCHY: ${JSON.stringify(depHierarchy)}`)
-				logger.debug(`AUDIENCE DEPS: ${JSON.stringify(this.departments)}`)
-				for (const department of this.departments) {
-					const depIndex = depHierarchy.indexOf(department)
-					if (depIndex > -1) {
-						depScore = 1
-						if (this.requiredBy) {
-							// 4 = mandatory for the user's immediate dep
-							if (depIndex === 0) {
-								return 4
-							}
-							// 3 = mandatory for the user's parent/gparent dep
-							return 3
+			const depHierarchy = await getOrgHierarchy(user.department)
+			logger.debug(`DEP HIERARCHY: ${JSON.stringify(depHierarchy)}`)
+			logger.debug(`AUDIENCE DEPS: ${JSON.stringify(this.departments)}`)
+			for (const department of this.departments) {
+				const depIndex = depHierarchy.indexOf(department)
+				if (depIndex > -1) {
+					depScore = 1
+					if (this.requiredBy) {
+						// 4 = mandatory for the user's immediate dep
+						if (depIndex === 0) {
+							return 4
 						}
+						// 3 = mandatory for the user's parent/gparent dep
+						return 3
 					}
 				}
-			})
+			}
 			logger.debug(`DEP SCORE: ${depScore}`)
 			relevance += depScore
 		}
