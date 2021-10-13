@@ -40,18 +40,18 @@ export class Course {
 				if (relevance >= matchedRelevance) {
 
 					if (relevance === 4) {
-						if ((matchedHighestPriorityAudience &&
+						if ((matchedHighestPriorityAudience != null &&
 							(audience.requiredBy < matchedHighestPriorityAudience.requiredBy)) ||
-							!matchedHighestPriorityAudience) {
+							matchedHighestPriorityAudience == null) {
 								audience.mandatory = true
 								matchedAudience = audience
 								matchedHighestPriorityAudience = audience
 								matchedRelevance = 4
 						}
 					} else if (relevance === 3) {
-						if ((matchedHighPriorityAudience &&
+						if ((matchedHighPriorityAudience != null &&
 							(audience.requiredBy < matchedHighPriorityAudience.requiredBy)) ||
-							!matchedHighPriorityAudience) {
+							matchedHighPriorityAudience == null) {
 								audience.mandatory = true
 								matchedAudience = audience
 								matchedHighPriorityAudience = audience
