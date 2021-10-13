@@ -13,7 +13,7 @@ export interface LineManager {
 }
 
 export class Course {
-	static create(data: any, user?: User) {
+	static async create(data: any, user?: User) {
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
@@ -23,11 +23,11 @@ export class Course {
 
 		course.modules = (data.modules || []).map(Module.create)
 
-		const audiences = (data.audiences || []).map(Audience.create)
+		const audiences: Audience[] = (data.audiences || []).map(Audience.create)
 		course.audiences = audiences
 
 		if (user) {
-			let matchedAudience = null
+			let matchedAudience = undefined
 			let matchedRelevance = -1
 			let matchedHighPriorityAudience = null
 			let matchedHighestPriorityAudience = null
@@ -35,13 +35,14 @@ export class Course {
 			for (const audience of audiences) {
 				//Get the relevance of each audience
 				const relevance = audience.getRelevance(user!)
+
 				//If the relevance of the audience is same or more then the previous audience
 				//then keep processing the further audiences in the course to get the highest relevance audience
 				if (relevance >= matchedRelevance) {
 
 					if (relevance === 4) {
 						if ((matchedHighestPriorityAudience != null &&
-							(audience.requiredBy < matchedHighestPriorityAudience.requiredBy)) ||
+							audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
 							matchedHighestPriorityAudience == null) {
 								audience.mandatory = true
 								matchedAudience = audience
@@ -50,7 +51,7 @@ export class Course {
 						}
 					} else if (relevance === 3) {
 						if ((matchedHighPriorityAudience != null &&
-							(audience.requiredBy < matchedHighPriorityAudience.requiredBy)) ||
+							audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
 							matchedHighPriorityAudience == null) {
 								audience.mandatory = true
 								matchedAudience = audience
@@ -539,7 +540,7 @@ export class Audience {
 		this.mandatory = !value || value === 'false'
 	}
 
-	async getRelevance(user: User): Promise<number> {
+	getRelevance(user: User): number {
 		let relevance = -1
 
 		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
@@ -551,21 +552,23 @@ export class Audience {
 		}
 		if (user.department) {
 			let depScore = 0
-			const depHierarchy = await getOrgHierarchy(user.department)
-			for (const department of this.departments) {
-				const depIndex = depHierarchy.indexOf(department)
-				if (depIndex > -1) {
-					depScore = 1
-					if (this.requiredBy) {
-						// 4 = mandatory for the user's immediate dep
-						if (depIndex === 0) {
-							return 4
+			getOrgHierarchy(user.department)
+			.then(depHierarchy => {
+				for (const department of this.departments) {
+					const depIndex = depHierarchy.indexOf(department)
+					if (depIndex > -1) {
+						depScore = 1
+						if (this.requiredBy) {
+							// 4 = mandatory for the user's immediate dep
+							if (depIndex === 0) {
+								return 4
+							}
+							// 3 = mandatory for the user's parent/gparent dep
+							return 3
 						}
-						// 3 = mandatory for the user's parent/gparent dep
-						return 3
 					}
 				}
-			}
+			})
 			relevance += depScore
 		}
 		if (user.grade && this.grades.indexOf(user.grade.code) > -1) {
