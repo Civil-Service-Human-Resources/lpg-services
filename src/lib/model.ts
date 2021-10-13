@@ -43,6 +43,7 @@ export class Course {
 						if ((matchedHighestPriorityAudience &&
 							(audience.requiredBy < matchedHighestPriorityAudience.requiredBy)) ||
 							!matchedHighestPriorityAudience) {
+								audience.mandatory = true
 								matchedAudience = audience
 								matchedHighestPriorityAudience = audience
 								matchedRelevance = 4
@@ -51,6 +52,7 @@ export class Course {
 						if ((matchedHighPriorityAudience &&
 							(audience.requiredBy < matchedHighPriorityAudience.requiredBy)) ||
 							!matchedHighPriorityAudience) {
+								audience.mandatory = true
 								matchedAudience = audience
 								matchedHighPriorityAudience = audience
 								matchedRelevance = 3
@@ -537,7 +539,7 @@ export class Audience {
 		this.mandatory = !value || value === 'false'
 	}
 
-	async getRelevance(user: User) {
+	async getRelevance(user: User): Promise<number> {
 		let relevance = -1
 
 		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
@@ -548,11 +550,12 @@ export class Audience {
 			relevance += 1
 		}
 		if (user.department) {
+			let depScore = 0
 			const depHierarchy = await getOrgHierarchy(user.department)
 			for (const department of this.departments) {
 				const depIndex = depHierarchy.indexOf(department)
 				if (depIndex > -1) {
-					relevance += 1
+					depScore = 1
 					if (this.requiredBy) {
 						// 4 = mandatory for the user's immediate dep
 						if (depIndex === 0) {
@@ -563,6 +566,7 @@ export class Audience {
 					}
 				}
 			}
+			relevance += depScore
 		}
 		if (user.grade && this.grades.indexOf(user.grade.code) > -1) {
 			relevance += 1
