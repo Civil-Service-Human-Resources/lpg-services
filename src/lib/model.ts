@@ -15,6 +15,60 @@ export interface LineManager {
 	name?: string
 }
 
+const getAudienceForCourse = async (audiences: Audience[], user: User) => {
+	let matchedAudience
+	let matchedRelevance = -1
+	let matchedHighPriorityAudience: Audience
+	let matchedHighestPriorityAudience: Audience
+
+	if (user) {
+		for (const audience of audiences) {
+			logger.debug(`AUDIENCE: ${JSON.stringify(audience)}`)
+			//Get the relevance of each audience
+			audience.getRelevance(user!)
+			.then(relevance => {
+				logger.debug(`END RELEVANCE: ${relevance}`)
+
+				//If the relevance of the audience is same or more then the previous audience
+				//then keep processing the further audiences in the course to get the highest relevance audience
+				if (relevance >= matchedRelevance) {
+
+					if (relevance === 4) {
+						if ((matchedHighestPriorityAudience &&
+							audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
+							!matchedHighestPriorityAudience) {
+								logger.debug(`Setting relevance 4`)
+								audience.mandatory = true
+								matchedAudience = audience
+								matchedHighestPriorityAudience = audience
+								matchedRelevance = 4
+						}
+					} else if (relevance === 3) {
+						if ((matchedHighPriorityAudience &&
+							audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
+							!matchedHighPriorityAudience) {
+								logger.debug(`Setting relevance 3`)
+								audience.mandatory = true
+								matchedAudience = audience
+								matchedHighPriorityAudience = audience
+								matchedRelevance = 3
+						}
+					} else {
+						logger.debug(`Setting relevance default`)
+						audience.mandatory = false
+						matchedAudience = audience
+						matchedRelevance = relevance
+					}
+
+				}
+
+			})
+		}
+	}
+
+	return matchedAudience
+}
+
 export class Course {
 	static create(data: any, user?: User) {
 		const course = new Course(data.id)
@@ -30,58 +84,12 @@ export class Course {
 		course.audiences = audiences
 
 		if (user) {
-			let matchedAudience
-			let matchedRelevance = -1
-			let matchedHighPriorityAudience: Audience
-			let matchedHighestPriorityAudience: Audience
-
-			for (const audience of audiences) {
-				logger.debug(`AUDIENCE: ${JSON.stringify(audience)}`)
-				//Get the relevance of each audience
-				audience.getRelevance(user!)
-				.then(relevance => {
-					logger.debug(`END RELEVANCE: ${relevance}`)
-
-					//If the relevance of the audience is same or more then the previous audience
-					//then keep processing the further audiences in the course to get the highest relevance audience
-					if (relevance >= matchedRelevance) {
-
-						if (relevance === 4) {
-							if ((matchedHighestPriorityAudience &&
-								audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
-								!matchedHighestPriorityAudience) {
-									logger.debug(`Setting relevance 4`)
-									audience.mandatory = true
-									matchedAudience = audience
-									matchedHighestPriorityAudience = audience
-									matchedRelevance = 4
-							}
-						} else if (relevance === 3) {
-							if ((matchedHighPriorityAudience &&
-								audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
-								!matchedHighPriorityAudience) {
-									logger.debug(`Setting relevance 3`)
-									audience.mandatory = true
-									matchedAudience = audience
-									matchedHighPriorityAudience = audience
-									matchedRelevance = 3
-							}
-						} else {
-							logger.debug(`Setting relevance default`)
-							audience.mandatory = false
-							matchedAudience = audience
-							matchedRelevance = relevance
-						}
-
-					}
-
-				})
-			}
-
-			course.audience = matchedAudience
-
+			getAudienceForCourse(audiences, user)
+			.then(matchedAudience => {
+				logger.debug(`FINAL COURSE AUDIENCE: ${JSON.stringify(course.audience)}`)
+				course.audience = matchedAudience
+			})
 		}
-		logger.debug(`FINAL COURSE AUDIENCE: ${JSON.stringify(course.audience)}`)
 		return course
 	}
 
