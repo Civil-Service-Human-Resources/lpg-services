@@ -134,7 +134,7 @@ export async function findRequiredLearning(
 			// to replace the old endpoint called from above
 			//	`/courses/getrequiredlearning`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
 		)
-		return convert(response.data, user) as api.PageResults
+		return await convertNew(response.data, user) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
 	}
@@ -206,6 +206,13 @@ export async function listAll(user: model.User): Promise<api.PageResults> {
 function convert(data: any, user?: model.User) {
 	if (data.results) {
 		data.results = data.results.map((d: any) => model.Course.create(d, user))
+	}
+	return data
+}
+
+async function convertNew(data: any, user?: model.User) {
+	if (data.results) {
+		data.results = await Promise.all(data.results.map(async (d: any) => await model.CourseFactory.create(d, user)))
 	}
 	return data
 }
