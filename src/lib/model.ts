@@ -116,7 +116,7 @@ export class Course {
 			let minRequiredByAudienceWithRelevanceOne = null
 			for (const audience of audiences) {
 				//Get the relevance of each audience
-				const relevance = audience.getRelevance(user!)
+				const relevance = audience.getRelevance(user!, [])
 				//If the relevance of the audience is same or more then the previous audience
 				//then keep processing the further audiences in the course to get the highest relevance audience
 				if (relevance >= matchedRelevance) {
