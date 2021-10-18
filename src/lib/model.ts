@@ -21,7 +21,7 @@ const getAudienceForCourse = async (audiences: Audience[], user: User) => {
 	let matchedHighPriorityAudience
 	let matchedHighestPriorityAudience
 
-	for (const audience of audiences) {
+	for await (const audience of audiences) {
 		logger.debug(`AUDIENCE: ${JSON.stringify(audience)}`)
 		//Get the relevance of each audience
 		const relevance = await audience.getRelevance(user!)
