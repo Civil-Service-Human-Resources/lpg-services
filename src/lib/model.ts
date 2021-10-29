@@ -5,10 +5,82 @@ import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
 import {Duration} from 'moment'
+import { getOrgHierarchy } from "./registry"
 
 export interface LineManager {
 	email: string
 	name?: string
+}
+
+const getAudienceForCourse = async (audiences: Audience[], user: User) => {
+	let matchedAudience
+	let matchedRelevance = -1
+	let matchedHighPriorityAudience
+	let matchedHighestPriorityAudience
+	let depHierarchy: string[] = []
+
+	if (user.department) {
+		depHierarchy = await getOrgHierarchy(user.department)
+	}
+
+	for await (const audience of audiences) {
+		//Get the relevance of each audience
+		const relevance = await audience.getRelevance(user!, depHierarchy)
+
+		//If the relevance of the audience is same or more then the previous audience
+		//then keep processing the further audiences in the course to get the highest relevance audience
+		if (relevance >= matchedRelevance) {
+
+			if (relevance === 4) {
+				if ((matchedHighestPriorityAudience &&
+					audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
+					!matchedHighestPriorityAudience) {
+						audience.mandatory = true
+						matchedAudience = audience
+						matchedHighestPriorityAudience = audience
+						matchedRelevance = 4
+				}
+			} else if (relevance === 3) {
+				if ((matchedHighPriorityAudience &&
+					audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
+					!matchedHighPriorityAudience) {
+						audience.mandatory = true
+						matchedAudience = audience
+						matchedHighPriorityAudience = audience
+						matchedRelevance = 3
+				}
+			} else {
+				audience.mandatory = false
+				matchedAudience = audience
+				matchedRelevance = relevance
+			}
+
+		}
+	}
+
+	return matchedAudience
+}
+
+export class CourseFactory {
+	static async create(data: any, user?: User) {
+		const course = new Course(data.id)
+		course.description = data.description
+		course.learningOutcomes = data.learningOutcomes
+		course.shortDescription = data.shortDescription
+		course.title = data.title
+		course.status = data.status
+
+		course.modules = (data.modules || []).map(Module.create)
+
+		const audiences: Audience[] = (data.audiences || []).map(Audience.create)
+		course.audiences = audiences
+
+		if (user) {
+			course.audience = await getAudienceForCourse(audiences, user)
+		}
+
+		return course
+	}
 }
 
 export class Course {
@@ -36,7 +108,7 @@ export class Course {
 			let minRequiredByAudienceWithRelevanceOne = null
 			for (const audience of audiences) {
 				//Get the relevance of each audience
-				const relevance = audience.getRelevance(user!)
+				const relevance = audience.getRelevance(user!, [])
 				//If the relevance of the audience is same or more then the previous audience
 				//then keep processing the further audiences in the course to get the highest relevance audience
 				if (relevance >= matchedRelevance) {
@@ -571,7 +643,7 @@ export class Audience {
 		this.mandatory = !value || value === 'false'
 	}
 
-	getRelevance(user: User) {
+	async getRelevance(user: User, depHierarchy: string[]): Promise<number> {
 		let relevance = -1
 
 		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
@@ -581,15 +653,24 @@ export class Audience {
 		if (user.areasOfWork && this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length) {
 			relevance += 1
 		}
-		if (user.department && this.departments.indexOf(user.department) > -1) {
-			//If the user's department matches to any of the departments in the audience then it is a relevant audience
-			relevance += 1
-			if (this.requiredBy) {
-				//For the matching department, if audience has a required by date then this audience makes the course as mandatory
-				//which increases the relevance further.
-				relevance += 1
+
+		let depScore = 0
+		for (const department of this.departments) {
+			const depIndex = depHierarchy.indexOf(department)
+			if (depIndex > -1) {
+				depScore = 1
+				if (this.requiredBy) {
+					// 4 = mandatory for the user's immediate dep
+					if (depIndex === 0) {
+						return 4
+					}
+					// 3 = mandatory for the user's parent/gparent dep
+					return 3
+				}
 			}
 		}
+		relevance += depScore
+
 		if (user.grade && this.grades.indexOf(user.grade.code) > -1) {
 			relevance += 1
 		}
@@ -721,10 +802,21 @@ export class Feedback {
 }
 
 export class OrganisationalUnit {
+	public static create(data: any): OrganisationalUnit {
+		const org = new OrganisationalUnit()
+		org.id = data.id
+		org.code = data.code
+		org.name = data.name
+		org.children = (data.children || []).map(OrganisationalUnit.create)
+		org.paymentMethods = data.paymentMethods
+		return org
+	}
 	id: number
 	code: string
 	name: string
+	children: OrganisationalUnit[]
 	paymentMethods: string[]
+
 }
 
 export class User {
