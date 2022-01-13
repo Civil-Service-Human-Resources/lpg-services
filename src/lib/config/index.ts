@@ -145,7 +145,7 @@ export const APPLICATIONINSIGHTS_CONNECTION_STRING = env.APPLICATIONINSIGHTS_CON
 
 export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
 
-export const CONTACT_EMAIL = env.CONTACT_EMAIL || 'support@civilservicelearning.uk'
+export const CONTACT_EMAIL = env.CONTACT_EMAIL
 
 export const CONTACT_NUMBER = env.CONTACT_NUMBER || '020 3640 7985'
 
