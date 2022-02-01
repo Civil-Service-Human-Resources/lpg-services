@@ -169,7 +169,9 @@ app.get('/privacy', (req, res) => {
 })
 
 app.get('/accessibility-statement', (req, res) => {
-	res.send(template.render('accessibility-statement', req, res))
+	res.send(template.render('accessibility-statement', req, res, {
+		contactEmail: config.CONTACT_EMAIL,
+	}))
 })
 
 app.get('/cookies', homeController.cookies)
