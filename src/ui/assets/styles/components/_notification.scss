@@ -1,0 +1,19 @@
+.lpg-notification{
+    border: 5px solid #1d70b8;
+
+    .lpg-notification--heading{
+        background-color: #1d70b8;
+        color: white;
+        font-size: 2rem;
+    }
+
+    .lpg-notification--description{
+        font-size: 2.5rem;
+    }
+
+    .lpg-notification--heading,
+    .lpg-notification--description{
+        padding: 20px;
+        font-weight: bold;
+    }
+} 
