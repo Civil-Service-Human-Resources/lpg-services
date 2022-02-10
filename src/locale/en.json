@@ -385,6 +385,6 @@
 	"profile_primary-area-of-work": "profile_primary-area-of-work",
 	"archivedWarning": {
 		"heading": "This course has been archived and is no longer available.",
-		"description": "It may appear in your record of completed learning, but cannot be started or resumed."
+		"description": "You can't start or resume this course. Previously completed courses will appear in your learning record."
 	}
 }
