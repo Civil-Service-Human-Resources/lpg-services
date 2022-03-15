@@ -3,9 +3,11 @@
         <div class="grid-row">
             
             <div class="column-two-thirds">
-                <h1 class="heading-xlarge">Ouch</h1>
-                <p class="lede">Something went horribly wrong while booking. Please contact <a href="mailto:csldigital-support@cslearning.gov.uk">csldigital-support@cslearning.gov.uk</a>.</p>
-            </div>
+                <h1 class="heading-xlarge">{ $i18n('serviceError.sorryThereIsAProblem') }</h1>
+                <p class="lede">Something has gone wrong with the system. Please contact <a href="mailto:csldigital-support@cslearning.gov.uk">csldigital-support@cslearning.gov.uk</a>. We're looking into it.</p>
+				<p class="generic-error">{@html $toHtml($i18n('serviceError.pleaseSignOut'))}</p>
+
+			</div>
         </div>
     </div>
 </Page>
