@@ -382,5 +382,10 @@
 	"line-manager": "line-manager",
 	"other-areas-of-work": "other-areas-of-work",
 	"Commercial": "Commercial",
-	"profile_primary-area-of-work": "profile_primary-area-of-work"
+	"profile_primary-area-of-work": "profile_primary-area-of-work",
+	"serviceError": {
+		"sorryThereIsAProblem": "Sorry, there is a problem with this service",
+		"somethingHasGoneWrong": "Something has gone wrong with the system. We're looking into it.",
+		"pleaseSignOut": "Please <a href='/sign-out'>sign out</a> and try again."
+	}
 }
