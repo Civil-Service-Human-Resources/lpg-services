@@ -385,7 +385,6 @@
 	"profile_primary-area-of-work": "profile_primary-area-of-work",
 	"serviceError": {
 		"sorryThereIsAProblem": "Sorry, there is a problem with this service",
-		"somethingHasGoneWrong": "Something has gone wrong with the system. We're looking into it.",
-		"pleaseSignOut": "Please <a href='/sign-out'>sign out</a> and try again."
+		"wereLookingIntoIt": "We're looking into it. Please <a href='/sign-out'>sign out</a> and try again."
 	}
 }
