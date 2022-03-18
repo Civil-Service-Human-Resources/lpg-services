@@ -382,5 +382,9 @@
 	"line-manager": "line-manager",
 	"other-areas-of-work": "other-areas-of-work",
 	"Commercial": "Commercial",
-	"profile_primary-area-of-work": "profile_primary-area-of-work"
+	"profile_primary-area-of-work": "profile_primary-area-of-work",
+	"archivedWarning": {
+		"heading": "This course has been archived and is no longer available.",
+		"description": "You can't start or resume this course. Previously completed courses will appear in your learning record."
+	}
 }
