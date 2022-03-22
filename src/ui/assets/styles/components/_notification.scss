@@ -1,0 +1,22 @@
+$notification-main-color: #1d70b8;
+
+.lpg-notification{
+    border: 5px solid $notification-main-color;
+    margin: 30px 0 60px 0;
+
+    .lpg-notification--heading{
+        background-color: $notification-main-color;
+        color: white;
+        font-size: 2.5rem;
+    }
+
+    .lpg-notification--description{
+        font-size: 2.5rem;
+    }
+
+    .lpg-notification--heading,
+    .lpg-notification--description{
+        padding: 20px;
+        font-weight: bold;
+    }
+} 

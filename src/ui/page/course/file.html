@@ -3,6 +3,9 @@
         <p class="no-margin">
             <a class="link-back" href="/suggestions-for-you">Find another course</a>
         </p>
+        {#if course.status === "Archived"}
+            <ArchivedWarning />
+        {/if}
         <h1 class="heading-xlarge heading heading--page-heading ">
             {module.title || course.title}
         </h1>
@@ -15,9 +18,12 @@
                 <h2 class="heading-medium">Learning outcomes</h2>
                 <div>{@html $toHtml(course.learningOutcomes)}</div>
                 {/if}
-                <h3 class="heading-small">Download document</h3>
-                <a download href="/courses/{course.id}/{module.id}">{$fileHelpers.fileName(module.url)}</a>
-                ({$fileHelpers.extension(module.url)}, {$fileHelpers.appropriateFileSize(module.fileSize)})
+
+                {#if course.status !== "Archived"}
+                    <h3 class="heading-small">Download document</h3>
+                    <a download href="/courses/{course.id}/{module.id}">{$fileHelpers.fileName(module.url)}</a>
+                    ({$fileHelpers.extension(module.url)}, {$fileHelpers.appropriateFileSize(module.fileSize)})
+                {/if}
             </div>
             <div class="column-one-third">
                 {#if courseDetails.length} {#each courseDetails as dataRows}
@@ -31,6 +37,8 @@
 <script>
 	import Page from '../../component/Page.html'
     import RightBox from '../../component/Rightbox.html'
+    import ArchivedWarning from '../../component/ArchivedWarning.html'
+
 
 	export default {
 		data() {
@@ -40,7 +48,8 @@
 
 		components: {
 			Page,
-			RightBox
+			RightBox,
+            ArchivedWarning
 		}
 	}
 </script>

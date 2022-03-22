@@ -386,5 +386,9 @@
 	"serviceError": {
 		"sorryThereIsAProblem": "Sorry, there is a problem with this service",
 		"wereLookingIntoIt": "We're looking into it. Please <a href='/sign-out'>sign out</a> and try again."
+  },
+	"archivedWarning": {
+		"heading": "This course has been archived and is no longer available.",
+		"description": "You can't start or resume this course. Previously completed courses will appear in your learning record."
 	}
 }
