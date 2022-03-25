@@ -383,6 +383,10 @@
 	"other-areas-of-work": "other-areas-of-work",
 	"Commercial": "Commercial",
 	"profile_primary-area-of-work": "profile_primary-area-of-work",
+	"serviceError": {
+		"sorryThereIsAProblem": "Sorry, there is a problem with this service",
+		"wereLookingIntoIt": "We're looking into it. Please <a href='/sign-out'>sign out</a> and try again."
+  },
 	"archivedWarning": {
 		"heading": "This course is no longer available.",
 		"description": "You can't start or resume this course. Previously completed courses will appear in your learning record."
