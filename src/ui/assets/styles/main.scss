@@ -37,8 +37,8 @@
 @import 'components/pagination';
 @import 'components/tabs';
 @import 'components/levels';
-
 @import 'components/videojs';
+@import 'components/notification';
 
 .phase-banner {
 	@extend %site-width-container;

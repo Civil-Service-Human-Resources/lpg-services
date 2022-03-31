@@ -4,6 +4,9 @@
 		<p class="no-margin">
             <a class="link-back" href="/suggestions-for-you">Find another course</a>
         </p>
+		{#if course.status === "Archived"}
+            <ArchivedWarning />
+        {/if}
         <h1 class="heading-xlarge heading heading--page-heading ">
             {module.title || course.title}
         </h1>
@@ -44,6 +47,8 @@
 
 <script>
 	import Page from '../../component/Page.html'
+	import ArchivedWarning from '../../component/ArchivedWarning.html'
+
 
 	export default {
 		data() {
@@ -53,6 +58,7 @@
 
 		components: {
 			Page,
+			ArchivedWarning
 		}
 	}
 </script>
