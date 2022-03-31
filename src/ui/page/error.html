@@ -1117,13 +1117,13 @@
         <div class="container">
             <div class="grid-row">
                 <div class="column-two-thirds">
-                    <h1 class="heading-xlarge">{ $i18n('serviceError.sorryThereIsAProblem') }</h1>
+                    <h1 class="heading-xlarge">Sorry, there is a problem with this service</h1>
 
                     {#if isNonProd}
                     <p id="error-time">{errorTime}</p>
                     <p id="error-stack">{error}</p>
                     {:else}
-                    <p class="generic-error">{@html $toHtml($i18n('serviceError.wereLookingIntoIt'))}</p>
+                    <p class="generic-error">We're looking into it. Please <a href='/sign-out'>sign out</a> and try again.</p>
                     {/if}
                 </div>
             </div>
