@@ -2,8 +2,6 @@ import * as config from '../extension/config'
 import loginPage from '../page/login'
 import {editProfileInfo, selectors} from '../page/profile'
 
-const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
-
 describe('Profile page funtionality', () => {
 	beforeAll(done => {
 		browser.url(config.URL)
@@ -14,11 +12,6 @@ describe('Profile page funtionality', () => {
 
 	afterAll(done => {
 		browser.close()
-	})
-
-	it('Should display a feedback link with the correct survey link', () => {
-		const feedback = browser.getAttribute(selectors.feedbackLink, 'href')
-		expect(feedback).toEqual(smartSurveyLink)
 	})
 
 	it('Should display username field which matches email address', () => {
