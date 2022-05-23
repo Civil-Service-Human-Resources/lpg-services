@@ -9,6 +9,8 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
+import { FullCourseRecord } from '../../../lib/service/fullLearnerRecord/fullCourseRecord'
+import { getCourseRecord } from '../../../lib/service/learnerRecordAPI/courseRecord/client'
 
 export interface CourseDetail {
 	label: string
@@ -103,7 +105,9 @@ export async function displayModule(
 			break
 		case 'link':
 		case 'file':
-			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
+			const courseRecord = await getCourseRecord(course.id, req.user)
+			const fullRecord = new FullCourseRecord(course, req.user, courseRecord)
+			fullRecord.completeModule(module.id)
 			res.redirect(module.url!)
 			break
 		case 'video':
