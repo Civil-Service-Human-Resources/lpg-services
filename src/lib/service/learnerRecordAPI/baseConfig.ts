@@ -1,6 +1,6 @@
 import axios, {AxiosRequestConfig} from 'axios'
-import * as config from '../../config'
 import * as https from 'https'
+import * as config from '../../config'
 import * as model from '../../model'
 
 export const http = axios.create({

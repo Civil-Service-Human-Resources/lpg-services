@@ -1,9 +1,9 @@
-import {makeRequest, patch} from '../baseConfig'
-import {ModuleRecord} from './models/moduleRecord'
-import {ModuleRecordInput} from './models/moduleRecordInput'
 import * as model from '../../../model'
 import {JsonPatch} from '../../shared/models/JsonPatch'
+import {makeRequest, patch} from '../baseConfig'
 import {completeRecord, initModule} from '../models/patchFactory'
+import {ModuleRecord} from './models/moduleRecord'
+import {ModuleRecordInput} from './models/moduleRecordInput'
 
 const URL = '/module_records'
 
@@ -18,10 +18,10 @@ export async function initialiseModuleRecord(moduleRecordId: number, user: model
 }
 
 async function patchModuleRecord(jsonPatch: JsonPatch[], user: model.User, moduleRecordId: number) {
-	let response = await patch<ModuleRecord>(
+	const response = await patch<ModuleRecord>(
 		{
-			url: `${URL}/${moduleRecordId}`,
 			data: jsonPatch,
+			url: `${URL}/${moduleRecordId}`,
 		},
 		user
 	)
@@ -29,11 +29,11 @@ async function patchModuleRecord(jsonPatch: JsonPatch[], user: model.User, modul
 }
 
 export async function createModuleRecord(moduleRecord: ModuleRecordInput, user: model.User) {
-	let response = await makeRequest<ModuleRecord>(
+	const response = await makeRequest<ModuleRecord>(
 		{
+			data: moduleRecord,
 			method: 'POST',
 			url: URL,
-			data: moduleRecord,
 		},
 		user
 	)

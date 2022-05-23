@@ -1,5 +1,5 @@
-import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 import {Record} from '../../models/record'
+import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 
 export class CourseRecordResponse {
 	CourseRecords: CourseRecord[]
@@ -41,7 +41,7 @@ export class CourseRecord extends Record {
 	}
 
 	getModuleRecord(moduleId: string) {
-		const records = this.modules.filter((m) => m.moduleId == moduleId)
+		const records = this.modules.filter(m => m.moduleId === moduleId)
 		if (records.length > 0) {
 			return records[0]
 		} else {
