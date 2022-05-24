@@ -1,5 +1,5 @@
 export enum Ops {
-	replace,
+	replace = 'replace',
 }
 
 export class JsonPatch {
@@ -9,7 +9,7 @@ export class JsonPatch {
 
 	constructor(op: Ops, path: string, value?: string) {
 		this.op = op
-		this.path = path.includes('/') ? `/${path}` : path
+		this.path = !path.includes('/') ? `/${path}` : path
 		this.value = value
 	}
 }

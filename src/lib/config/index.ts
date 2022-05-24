@@ -9,7 +9,7 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
-	const envFile = '/keybase/team/lpg/dev/dotenv'
+	const envFile = './.env'
 	try {
 		if (!fs.statSync(envFile).isFile()) {
 			throw new Error(`File not found: ${envFile}`)
@@ -17,9 +17,9 @@ if (ENV === 'development') {
 		dotenv.config({path: envFile})
 	} catch (err) {
 		warn(`
-!!! Unable to load the env file at ${envFile} !!!
-
-`)
+		!!! Unable to load the env file at ${envFile} !!!
+		
+		`)
 	}
 }
 
@@ -104,7 +104,7 @@ export const LEARNER_RECORD = set({
 export const LOGGING_LEVEL = env.LOGGING_LEVEL
 
 export const LPG_UI_SERVER =
-	env.LPG_UI_SERVER || 'http://local.learn.civilservice.gov.uk:3001'
+	env.LPG_UI_SERVER || 'http://localhost:3001'
 
 export const LPG_MANAGMENT_SERVER =
 	env.LPG_MANAGEMENT_SERVER || 'http://management.local.learn.civilservice.gov.uk:3005'

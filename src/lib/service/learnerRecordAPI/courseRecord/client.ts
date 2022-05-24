@@ -16,6 +16,7 @@ export async function completeCourseRecord(courseId: string, user: model.User) {
 }
 
 async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, courseId: string) {
+	logger.debug(`Patching course record for course ID ${courseId} and user ID ${user.id}`)
 	const response = await patch<CourseRecord>(
 		{
 			data: jsonPatch,
@@ -31,6 +32,7 @@ async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, cours
 }
 
 export async function createCourseRecord(courseRecord: CourseRecordInput, user: model.User) {
+	logger.debug(`Creating course record for course ID ${courseRecord.courseId} and user ID ${user.id}`)
 	const response = await makeRequest<CourseRecord>(
 		{
 			data: courseRecord,
@@ -42,7 +44,8 @@ export async function createCourseRecord(courseRecord: CourseRecordInput, user: 
 	return response.data
 }
 
-export async function getCourseRecord(courseId: string, user: model.User) {
+export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
+	logger.debug(`Getting course record for course ID ${courseId} and user ID ${user.id}`)
 	const response = await makeRequest<CourseRecordResponse>(
 		{
 			method: 'GET',
@@ -54,13 +57,13 @@ export async function getCourseRecord(courseId: string, user: model.User) {
 		},
 		user
 	)
-	const courseRecords = response.data.CourseRecords
+	const courseRecords = response.data.courseRecords
+	let courseRecord = undefined
 	if (courseRecords.length === 1) {
-		return courseRecords[0]
+		courseRecord = new CourseRecord(courseRecords[0])
 	} else if (courseRecords.length > 1) {
 		logger.warn(`Course record for course ID ${courseId} and user ID ${user.id} returned a result set greater than 1`)
-		return courseRecords[0]
-	} else {
-		return undefined
+		courseRecord = new CourseRecord(courseRecords[0])
 	}
+	return courseRecord
 }

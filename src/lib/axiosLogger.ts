@@ -17,7 +17,7 @@ export function axiosRequestLogger(
 		},
 		error => {
 			// Do something with request error
-			logger.error(`Error with request:`, error)
+			logger.error(`Error with request: ${error}`)
 			return Promise.reject(error)
 		}
 	)
@@ -30,7 +30,7 @@ export function axiosResponseLogger(
 	// Add a response interceptor
 	axiosInstance.interceptors.response.use(
 		response => {
-			logger.debug('response data:', response)
+			// logger.debug(`response data: ${response.data}`)
 			return response
 		},
 		error => {

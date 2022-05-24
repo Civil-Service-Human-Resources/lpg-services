@@ -2,7 +2,11 @@ import {Record} from '../../models/record'
 import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 
 export class CourseRecordResponse {
-	CourseRecords: CourseRecord[]
+	courseRecords: CourseRecord[]
+
+	constructor(courseResponse: CourseRecordResponse) {
+		Object.assign(this, courseResponse)
+	}
 }
 
 export class CourseRecord extends Record {
@@ -40,7 +44,7 @@ export class CourseRecord extends Record {
 		}
 	}
 
-	getModuleRecord(moduleId: string) {
+	public getModuleRecord = (moduleId: string) => {
 		const records = this.modules.filter(m => m.moduleId === moduleId)
 		if (records.length > 0) {
 			return records[0]

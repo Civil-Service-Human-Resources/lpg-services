@@ -6,7 +6,7 @@ import {ModuleRecordInput} from '../learnerRecordAPI/moduleRecord/models/moduleR
 export class FullModuleRecord {
 	id?: number
 	moduleId: string
-	courseTitle: string
+	courseId: string
 	title: string
 	optional: boolean
 	type: string
@@ -14,9 +14,9 @@ export class FullModuleRecord {
 	state?: RecordState
 	user: User
 
-	constructor(moduleData: Module, user: User, courseTitle: string, moduleRecord?: ModuleRecord) {
+	constructor(moduleData: Module, user: User, courseId: string, moduleRecord?: ModuleRecord) {
 		this.moduleId = moduleData.id
-		this.courseTitle = courseTitle
+		this.courseId = courseId
 		this.title = moduleData.title
 		this.optional = moduleData.optional
 		this.type = moduleData.type
@@ -35,7 +35,7 @@ export class FullModuleRecord {
 	getAsModuleRecordInput() {
 		return new ModuleRecordInput(
 			this.user.id,
-			this.courseTitle,
+			this.courseId,
 			this.moduleId,
 			this.title,
 			this.optional,

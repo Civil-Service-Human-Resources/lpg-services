@@ -11,7 +11,7 @@ export class FullCourseRecord {
 	required: boolean
 	courseTitle: string
 	user: User
-	modules: Map<string, FullModuleRecord>
+	modules: Map<string, FullModuleRecord> = new Map
 	state?: RecordState
 
 	constructor(courseData: Course, user: User, courseRecord?: CourseRecord) {
@@ -24,7 +24,7 @@ export class FullCourseRecord {
 	}
 
 	getAsCourseRecordInput() {
-		return new CourseRecordInput(this.courseId, this.courseTitle, this.user.userId, this.required, [], this.state)
+		return new CourseRecordInput(this.courseId, this.courseTitle, this.user.id, this.required, [], this.state)
 	}
 
 	async progressModule(moduleId: string) {
@@ -67,8 +67,14 @@ export class FullCourseRecord {
 
 	private addModules(courseData: Course, courseRecord?: CourseRecord) {
 		courseData.modules.forEach( module => {
-			const moduleRecord = courseRecord ? courseRecord.getModuleRecord(module.id) : undefined
-			const fullModuleRecord = new FullModuleRecord(module, this.user, this.courseTitle, moduleRecord)
+			console.log(courseRecord)
+			let moduleRecord = undefined
+			if (courseRecord) {
+				
+				console.log(courseRecord.getModuleRecord)
+				moduleRecord = courseRecord.getModuleRecord(module.id)
+			}
+			const fullModuleRecord = new FullModuleRecord(module, this.user, this.courseId, moduleRecord)
 			this.modules.set(module.id, fullModuleRecord)
 		})
 	}
@@ -83,7 +89,7 @@ export class FullCourseRecord {
 
 	private areAllModulesComplete() {
 		const remainingModules = [...this.modules.values()].filter(m => m.state === RecordState.NotStarted)
-		return remainingModules.length > 0
+		return remainingModules.length === 0
 	}
 
 	private async createNewCourseRecord(module: FullModuleRecord) {
