@@ -15,9 +15,9 @@ export const http = axios.create({
 
 export async function makeRequest<T>(req: AxiosRequestConfig, user: model.User) {
 	if (req.headers) {
-		req.headers['Authorization'] = `Bearer ${user.accessToken}`
+		req.headers.Authorization = `Bearer ${user.accessToken}`
 	} else {
-		req.headers = {'Authorization': `Bearer ${user.accessToken}`}
+		req.headers = {Authorization: `Bearer ${user.accessToken}`}
 	}
 	return await http.request<T>(req)
 }

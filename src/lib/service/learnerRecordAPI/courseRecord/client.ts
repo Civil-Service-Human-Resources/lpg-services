@@ -58,7 +58,7 @@ export async function getCourseRecord(courseId: string, user: model.User): Promi
 		user
 	)
 	const courseRecords = response.data.courseRecords
-	let courseRecord = undefined
+	let courseRecord
 	if (courseRecords.length === 1) {
 		courseRecord = new CourseRecord(courseRecords[0])
 	} else if (courseRecords.length > 1) {

@@ -16,10 +16,7 @@ if (ENV === 'development') {
 		}
 		dotenv.config({path: envFile})
 	} catch (err) {
-		warn(`
-		!!! Unable to load the env file at ${envFile} !!!
-		
-		`)
+		warn(`!!! Unable to load the env file at ${envFile} !!!`)
 	}
 }
 

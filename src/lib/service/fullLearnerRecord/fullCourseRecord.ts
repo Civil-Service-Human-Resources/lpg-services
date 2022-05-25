@@ -11,7 +11,7 @@ export class FullCourseRecord {
 	required: boolean
 	courseTitle: string
 	user: User
-	modules: Map<string, FullModuleRecord> = new Map
+	modules: Map<string, FullModuleRecord> = new Map()
 	state?: RecordState
 
 	constructor(courseData: Course, user: User, courseRecord?: CourseRecord) {
@@ -68,9 +68,8 @@ export class FullCourseRecord {
 	private addModules(courseData: Course, courseRecord?: CourseRecord) {
 		courseData.modules.forEach( module => {
 			console.log(courseRecord)
-			let moduleRecord = undefined
+			let moduleRecord
 			if (courseRecord) {
-				
 				console.log(courseRecord.getModuleRecord)
 				moduleRecord = courseRecord.getModuleRecord(module.id)
 			}
