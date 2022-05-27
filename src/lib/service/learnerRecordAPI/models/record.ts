@@ -12,12 +12,14 @@ export enum RecordState {
 }
 
 export class Record {
+	courseId: string
+	userId: string
 	state?: RecordState
-	userId?: string
 
-	constructor(state?: RecordState, userId?: string) {
-		this.state = state
+	constructor(courseId: string, userId: string, state?: RecordState) {
+		this.courseId = courseId
 		this.userId = userId
+		this.state = state
 	}
 
 	isStarted() {

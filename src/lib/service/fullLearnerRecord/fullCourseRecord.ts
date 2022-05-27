@@ -1,68 +1,46 @@
-import {Course, User} from '../../model'
-import {completeCourseRecord, createCourseRecord} from '../learnerRecordAPI/courseRecord/client'
+import {Course} from '../../model'
 import {CourseRecord} from '../learnerRecordAPI/courseRecord/models/courseRecord'
 import {CourseRecordInput} from '../learnerRecordAPI/courseRecord/models/courseRecordInput'
-import {RecordState} from '../learnerRecordAPI/models/record'
-import {completeModuleRecord, createModuleRecord, initialiseModuleRecord} from '../learnerRecordAPI/moduleRecord/client'
+import {Record, RecordState} from '../learnerRecordAPI/models/record'
+import { ModuleRecordInput } from '../learnerRecordAPI/moduleRecord/models/moduleRecordInput'
 import {FullModuleRecord} from './fullModuleRecord'
 
-export class FullCourseRecord {
-	courseId: string
+export class FullCourseRecord extends Record {
 	required: boolean
 	courseTitle: string
-	user: User
 	modules: Map<string, FullModuleRecord> = new Map()
-	state?: RecordState
 
-	constructor(courseData: Course, user: User, courseRecord?: CourseRecord) {
+	constructor(courseData: Course, userId: string, courseRecord?: CourseRecord) {
+		super(courseData.id, userId, courseRecord ? courseRecord.state : RecordState.NotStarted)
 		this.courseId = courseData.id
 		this.required = courseData.isRequired()
 		this.courseTitle = courseData.title
-		this.user = user
-		this.state = courseRecord ? courseRecord.state : RecordState.NotStarted
 		this.addModules(courseData, courseRecord)
 	}
 
-	getAsCourseRecordInput() {
-		return new CourseRecordInput(this.courseId, this.courseTitle, this.user.id, this.required, [], this.state)
+	getAsCourseRecordInput(includeModules: boolean = false) {
+		let moduleInputs: ModuleRecordInput[] = []
+		if (includeModules) {
+			moduleInputs = Object.values(this.modules).map(m => m.getAsModuleRecordInput())
+		}
+		return new CourseRecordInput(this.courseId, this.courseTitle, this.userId, this.required, moduleInputs, this.state)
 	}
 
-	async progressModule(moduleId: string) {
-		const module = this.fetchModule(moduleId)
-		if (this.state === RecordState.NotStarted) {
-			module.state = RecordState.InProgress
-			this.state = RecordState.InProgress
-			await this.createNewCourseRecord(module)
-		} else {
-			if (module.state === RecordState.NotStarted) {
-				module.state = RecordState.InProgress
-				await this.createNewModuleRecord(module)
-			} else {
-				await initialiseModuleRecord(module.id!, this.user)
-			}
-		}
-		this.modules.set(module.moduleId, module)
+	updateModule(moduleId: string, module: FullModuleRecord) {
+		this.modules.set(moduleId, module)
 	}
 
-	async completeModule(moduleId: string) {
-		const module = this.fetchModule(moduleId)
-		if (this.state === RecordState.NotStarted) {
-			module.state = RecordState.Completed
-			this.state = this.modules.size === 1 ? RecordState.Completed : RecordState.InProgress
-			await this.createNewCourseRecord(module)
-		} else {
-			if (module.state === RecordState.NotStarted) {
-				module.state = RecordState.Completed
-				await this.createNewModuleRecord(module)
-			} else {
-				await completeModuleRecord(module.id!, this.user)
-			}
+	fetchModule(moduleId: string) {
+		const module = this.modules.get(moduleId)
+		if (!module) {
+			throw new Error(`Module ${moduleId} was not found within course ${this.courseId} but was expected.`)
 		}
-		this.modules.set(module.moduleId, module)
+		return module
+	}
 
-		if (this.areAllModulesComplete()) {
-			completeCourseRecord(this.courseId, this.user)
-		}
+	areAllModulesComplete() {
+		const remainingModules = [...this.modules.values()].filter(m => m.state === RecordState.NotStarted)
+		return remainingModules.length === 0
 	}
 
 	private addModules(courseData: Course, courseRecord?: CourseRecord) {
@@ -73,33 +51,9 @@ export class FullCourseRecord {
 				console.log(courseRecord.getModuleRecord)
 				moduleRecord = courseRecord.getModuleRecord(module.id)
 			}
-			const fullModuleRecord = new FullModuleRecord(module, this.user, this.courseId, moduleRecord)
+			const fullModuleRecord = new FullModuleRecord(module, this.userId!, this.courseId, moduleRecord)
 			this.modules.set(module.id, fullModuleRecord)
 		})
-	}
-
-	private fetchModule(moduleId: string) {
-		const module = this.modules.get(moduleId)
-		if (!module) {
-			throw new Error(`Module ${moduleId} was not found within course ${this.courseId} but was expected.`)
-		}
-		return module
-	}
-
-	private areAllModulesComplete() {
-		const remainingModules = [...this.modules.values()].filter(m => m.state === RecordState.NotStarted)
-		return remainingModules.length === 0
-	}
-
-	private async createNewCourseRecord(module: FullModuleRecord) {
-		const recInput = this.getAsCourseRecordInput()
-		recInput.moduleRecords.push(module.getAsModuleRecordInput())
-		await createCourseRecord(recInput, this.user)
-	}
-
-	private async createNewModuleRecord(module: FullModuleRecord) {
-		const newRecord = module.getAsModuleRecordInput()
-		await createModuleRecord(newRecord, this.user)
 	}
 
 }
