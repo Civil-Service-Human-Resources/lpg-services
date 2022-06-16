@@ -226,6 +226,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 					module,
 					modules,
 					recordState,
+					ref: ireq.query.ref
 				})
 			)
 			break

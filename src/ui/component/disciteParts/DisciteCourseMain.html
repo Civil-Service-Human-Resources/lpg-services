@@ -5,7 +5,7 @@
         </h3> 
     {:else}
         <h3 class="heading discite__heading lpg-course-name">
-            <a class="lpg-course-link" href="/courses/{course.id}">{course.title}</a>
+            <a class="lpg-course-link" href="/courses/{course.id}?ref=/search?q={query}">{course.title}</a>
         </h3>   
     {/if}
 </div>
