@@ -1,7 +1,7 @@
 <Page title="{course.title}" {_csrf}>
     <div class="container">
         <p class="no-margin">
-            <a class="link-back" href="/suggestions-for-you">Find another course</a>
+            <a class="link-back" href="/suggestions-for-you" onclick="history.back(); return false;">Find another course</a>
         </p>
         {#if course.status === "Archived"}
             <ArchivedWarning />
