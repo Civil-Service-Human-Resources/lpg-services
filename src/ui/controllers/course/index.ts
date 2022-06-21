@@ -9,7 +9,7 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
-import { completeModule } from '../../../lib/service/fullLearnerRecord/fullLearnerRecordService'
+import { completeModule, progressModule } from '../../../lib/service/fullLearnerRecord/fullLearnerRecordService'
 
 export interface CourseDetail {
 	label: string
@@ -108,20 +108,13 @@ export async function displayModule(
 			res.redirect(module.url!)
 			break
 		case 'video':
-			const sessionId = await xapi.record(
-				req,
-				course,
-				xapi.Verb.Initialised,
-				undefined,
-				module
-			)
+			progressModule(course, module.id, req.user)
 
 			res.send(
 				template.render(`course/display-video`, req, res, {
 					course,
 					courseDetails: getCourseDetails(req, course, module),
 					module,
-					sessionId,
 					video: !module.url!.search('/http(.+)youtube(.*)/i')
 						? null
 						: await youtube.getBasicInfo(module.url!),
