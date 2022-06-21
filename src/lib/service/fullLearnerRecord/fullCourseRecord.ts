@@ -4,6 +4,7 @@ import {CourseRecordInput} from '../learnerRecordAPI/courseRecord/models/courseR
 import {Record, RecordState} from '../learnerRecordAPI/models/record'
 import { ModuleRecordInput } from '../learnerRecordAPI/moduleRecord/models/moduleRecordInput'
 import {FullModuleRecord} from './fullModuleRecord'
+import { ModuleRecord } from '../learnerRecordAPI/moduleRecord/models/moduleRecord';
 
 export class FullCourseRecord extends Record {
 	required: boolean
@@ -31,28 +32,27 @@ export class FullCourseRecord extends Record {
 	}
 
 	fetchModule(moduleId: string) {
-		const module = this.modules.get(moduleId)
-		if (!module) {
+		const mod = this.modules.get(moduleId)
+		if (!mod) {
 			throw new Error(`Module ${moduleId} was not found within course ${this.courseId} but was expected.`)
 		}
-		return module
+		return mod
 	}
 
-	areAllModulesComplete() {
-		const remainingModules = [...this.modules.values()].filter(m => m.state === RecordState.NotStarted)
-		return remainingModules.length === 0
+	areAllRequiredModulesComplete() {
+		const remainingRequiredModules = [...this.modules.values()].filter(m => !m.isCompleted() && !m.optional)
+		console.log(remainingRequiredModules)
+		return remainingRequiredModules.length === 0
 	}
 
 	private addModules(courseData: Course, courseRecord?: CourseRecord) {
-		courseData.modules.forEach( module => {
-			console.log(courseRecord)
-			let moduleRecord
+		courseData.modules.forEach(mod => {
+			let moduleRecord: ModuleRecord | undefined
 			if (courseRecord) {
-				console.log(courseRecord.getModuleRecord)
-				moduleRecord = courseRecord.getModuleRecord(module.id)
+				moduleRecord = courseRecord.getModuleRecord(mod.id)
 			}
-			const fullModuleRecord = new FullModuleRecord(module, this.userId!, this.courseId, moduleRecord)
-			this.modules.set(module.id, fullModuleRecord)
+			const fullModuleRecord = new FullModuleRecord(mod, this.userId, this.courseId, moduleRecord)
+			this.modules.set(mod.id, fullModuleRecord)
 		})
 	}
 

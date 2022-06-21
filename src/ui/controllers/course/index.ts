@@ -162,6 +162,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'video':
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
+			console.log(record)
 			const modules = course.modules.map(cm => {
 				logger.debug(`Mapping module ${cm.id}`)
 				const moduleRecord = record

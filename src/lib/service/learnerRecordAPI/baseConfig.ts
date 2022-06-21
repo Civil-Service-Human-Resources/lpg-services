@@ -13,17 +13,18 @@ export const http = axios.create({
 	timeout: config.REQUEST_TIMEOUT,
 })
 
-export async function makeRequest<T>(req: AxiosRequestConfig, user: model.User) {
+export async function makeRequest<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
 	if (req.headers) {
 		req.headers.Authorization = `Bearer ${user.accessToken}`
 	} else {
 		req.headers = {Authorization: `Bearer ${user.accessToken}`}
 	}
-	return await http.request<T>(req)
+	const res = await http.request<T>(req)
+	return res.data
 }
 
 export async function patch<T>(req: AxiosRequestConfig, user: model.User) {
 	req.method = 'PATCH'
 	req.headers = {'Content-Type': 'application/json-patch+json'}
-	return makeRequest<T>(req, user)
+	return await makeRequest<T>(req, user)
 }

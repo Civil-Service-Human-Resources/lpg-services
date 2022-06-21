@@ -1,47 +1,46 @@
-import {Record} from '../../models/record'
+import {Record, RecordState} from '../../models/record'
 import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 
 export class CourseRecordResponse {
 	courseRecords: CourseRecord[]
 
-	constructor(courseResponse: CourseRecordResponse) {
-		Object.assign(this, courseResponse)
+	constructor(courseRecords: CourseRecord[]) {
+		this.courseRecords = courseRecords
 	}
+
 }
 
 export class CourseRecord extends Record {
-	courseId: string
 	courseTitle: string
 	modules: ModuleRecord[]
 	preference?: string
 	lastUpdated?: Date
 	courseDisplayState?: string
+	required: boolean
 
-	constructor(data: any) {
-		super(data.state, data.userId)
-		this.courseId = data.courseId
-		this.courseTitle = data.courseTitle
-		this.modules = data.modules || []
-		this.preference = data.preference
+	// STATE NOTE: For some reason, course records that are in progress can sometimes be
+	// stored with state=NULL. So if a course record exists but the state is null, default
+	// it to IN_PROGRESS here so that lpg-ui has an easier time working with it.
+	constructor(courseId: string, userId: string, state: RecordState = RecordState.InProgress,
+		modules: ModuleRecord[] = [], courseTitle: string, required: boolean, preference?: string,
+		lastUpdated?: Date) {
 
-		if (data.lastUpdated) {
-			this.lastUpdated = new Date(data.lastUpdated)
+		super(courseId, userId, state)
+		this.courseTitle = courseTitle
+		this.preference = preference
+		this.required = required
+		if (lastUpdated) {
+			this.lastUpdated = new Date(lastUpdated)
 		}
 
-		for (const module of this.modules) {
-			if (module.createdAt) {
-				module.createdAt = new Date(module.createdAt)
-			}
-			if (module.updatedAt) {
-				module.updatedAt = new Date(module.updatedAt)
-			}
-			if (module.completionDate) {
-				module.completionDate = new Date(module.completionDate)
-			}
-			if (module.eventDate) {
-				module.eventDate = new Date(module.eventDate)
-			}
+		if (modules.length > 0) {
+			this.fillRecords(modules)
 		}
+
+	}
+
+	private fillRecords = (moduleRecords: ModuleRecord[]) => {
+		this.modules = moduleRecords.map(m => Object.assign(ModuleRecord, m))
 	}
 
 	public getModuleRecord = (moduleId: string) => {
@@ -52,4 +51,5 @@ export class CourseRecord extends Record {
 			return undefined
 		}
 	}
+
 }

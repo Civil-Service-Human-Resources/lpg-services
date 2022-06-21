@@ -59,7 +59,7 @@ export const completeModule = async (course: Course, moduleId: string, user: Use
 	}
 	fullRecord.updateModule(moduleRecord.moduleId, moduleRecord)
 
-	if (fullRecord.areAllModulesComplete()) {
+	if (fullRecord.areAllRequiredModulesComplete()) {
 		await completeCourseRecord(fullRecord.courseId, user)
 	}
 }

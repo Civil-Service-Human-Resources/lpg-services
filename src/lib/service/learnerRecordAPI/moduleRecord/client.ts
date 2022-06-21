@@ -4,6 +4,7 @@ import {makeRequest, patch} from '../baseConfig'
 import {completeRecord, initModule} from '../models/patchFactory'
 import {ModuleRecord} from './models/moduleRecord'
 import {ModuleRecordInput} from './models/moduleRecordInput'
+import { plainToClass } from 'class-transformer';
 
 const URL = '/module_records'
 
@@ -18,18 +19,18 @@ export async function initialiseModuleRecord(moduleRecordId: number, user: model
 }
 
 async function patchModuleRecord(jsonPatch: JsonPatch[], user: model.User, moduleRecordId: number) {
-	const response = await patch<ModuleRecord>(
+	const res =  await patch<ModuleRecord>(
 		{
 			data: jsonPatch,
 			url: `${URL}/${moduleRecordId}`,
 		},
 		user
 	)
-	return response.data
+	return plainToClass(ModuleRecord, res)
 }
 
 export async function createModuleRecord(moduleRecord: ModuleRecordInput, user: model.User) {
-	const response = await makeRequest<ModuleRecord>(
+	const res = await makeRequest<ModuleRecord>(
 		{
 			data: moduleRecord,
 			method: 'POST',
@@ -37,5 +38,5 @@ export async function createModuleRecord(moduleRecord: ModuleRecordInput, user: 
 		},
 		user
 	)
-	return response.data
+	return plainToClass(ModuleRecord, res)
 }

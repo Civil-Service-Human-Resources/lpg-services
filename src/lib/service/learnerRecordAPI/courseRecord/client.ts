@@ -5,6 +5,7 @@ import {makeRequest, patch} from '../baseConfig'
 import {completeRecord} from '../models/patchFactory'
 import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
 import {CourseRecordInput} from './models/courseRecordInput'
+import { plainToClass } from 'class-transformer';
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 
@@ -17,7 +18,7 @@ export async function completeCourseRecord(courseId: string, user: model.User) {
 
 async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, courseId: string) {
 	logger.debug(`Patching course record for course ID ${courseId} and user ID ${user.id}`)
-	const response = await patch<CourseRecord>(
+	const res =  await patch<CourseRecord>(
 		{
 			data: jsonPatch,
 			params: {
@@ -28,12 +29,12 @@ async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, cours
 		},
 		user
 	)
-	return response.data
+	return plainToClass(CourseRecord, res)
 }
 
 export async function createCourseRecord(courseRecord: CourseRecordInput, user: model.User) {
 	logger.debug(`Creating course record for course ID ${courseRecord.courseId} and user ID ${user.id}`)
-	const response = await makeRequest<CourseRecord>(
+	const res =  await makeRequest<CourseRecord>(
 		{
 			data: courseRecord,
 			method: 'POST',
@@ -41,12 +42,12 @@ export async function createCourseRecord(courseRecord: CourseRecordInput, user: 
 		},
 		user
 	)
-	return response.data
+	return plainToClass(CourseRecord, res)
 }
 
 export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
 	logger.debug(`Getting course record for course ID ${courseId} and user ID ${user.id}`)
-	const response = await makeRequest<CourseRecordResponse>(
+	const resp = await makeRequest<CourseRecordResponse>(
 		{
 			method: 'GET',
 			params: {
@@ -57,13 +58,13 @@ export async function getCourseRecord(courseId: string, user: model.User): Promi
 		},
 		user
 	)
-	const courseRecords = response.data.courseRecords
+	const courseRecords = plainToClass(CourseRecordResponse, resp).courseRecords
 	let courseRecord
 	if (courseRecords.length === 1) {
-		courseRecord = new CourseRecord(courseRecords[0])
+		courseRecord = plainToClass(CourseRecord, courseRecords[0])
 	} else if (courseRecords.length > 1) {
 		logger.warn(`Course record for course ID ${courseId} and user ID ${user.id} returned a result set greater than 1`)
-		courseRecord = new CourseRecord(courseRecords[0])
+		courseRecord = plainToClass(CourseRecord, courseRecords[0])
 	}
 	return courseRecord
 }
