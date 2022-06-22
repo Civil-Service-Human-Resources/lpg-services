@@ -5,7 +5,7 @@ import {JsonPatch} from '../../shared/models/JsonPatch'
 import {makeRequest, patch} from '../baseConfig'
 import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
 import {CourseRecordInput} from './models/courseRecordInput'
-import { completeRecord, setLastUpdated } from './patchFactory'
+import { completeRecord, setLastUpdated, setStateToArchived } from './patchFactory'
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 
@@ -18,6 +18,11 @@ export async function completeCourseRecord(courseId: string, user: model.User) {
 
 export async function updateLastUpdated(courseId: string, user: model.User) {
 	const jsonPatch = setLastUpdated()
+	return await patchCourseRecord(jsonPatch, user, courseId)
+}
+
+export async function removeCourseFromLearningPlan(courseId: string, user: model.User) {
+	const jsonPatch = setStateToArchived()
 	return await patchCourseRecord(jsonPatch, user, courseId)
 }
 

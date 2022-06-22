@@ -7,9 +7,9 @@ import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
 import { completeModule, progressModule } from '../../../lib/service/fullLearnerRecord/fullLearnerRecordService'
+import { removeCourseFromLearningPlan } from '../../../lib/service/learnerRecordAPI/service'
 
 export interface CourseDetail {
 	label: string
@@ -296,7 +296,7 @@ export async function markCourseDeleted(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	await xapi.record(req, req.course, xapi.Verb.Archived)
+	await removeCourseFromLearningPlan(req.course, req.user)
 
 	req.flash(
 		'successTitle',

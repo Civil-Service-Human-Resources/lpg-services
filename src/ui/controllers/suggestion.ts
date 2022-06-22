@@ -6,7 +6,7 @@ import * as model from 'lib/model'
 import {ApiParameters} from "lib/service/catalog"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
+import { addCourseToLearningPlan, removeCourseFromSuggestions } from '../../lib/service/learnerRecordAPI/service'
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
@@ -33,7 +33,7 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 			break
 	}
 	try {
-		await xapi.record(req, course, xapi.Verb.Liked)
+		await addCourseToLearningPlan(course, req.user)
 
 		req.flash(
 			'successTitle',
@@ -64,7 +64,7 @@ export async function removeFromSuggestions(
 	const course = req.course
 
 	try {
-		await xapi.record(req, course, xapi.Verb.Disliked)
+		await removeCourseFromSuggestions(course, req.user)
 		req.flash(
 			'successTitle',
 			req.__('learning_removed_from_plan_title', course.title)

@@ -16,3 +16,10 @@ export function completeRecord() {
 export function setLastUpdated() {
 	return [new JsonPatch(Ops.replace, 'lastUpdated', getNow())]
 }
+
+export function setStateToArchived() {
+	return [
+		new JsonPatch(Ops.replace, 'state', RecordState.Archived),
+		new JsonPatch(Ops.replace, 'lastUpdated', getNow()),
+	]
+}
