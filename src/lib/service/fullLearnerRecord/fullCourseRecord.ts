@@ -2,9 +2,9 @@ import {Course} from '../../model'
 import {CourseRecord} from '../learnerRecordAPI/courseRecord/models/courseRecord'
 import {CourseRecordInput} from '../learnerRecordAPI/courseRecord/models/courseRecordInput'
 import {Record, RecordState} from '../learnerRecordAPI/models/record'
+import { ModuleRecord } from '../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import { ModuleRecordInput } from '../learnerRecordAPI/moduleRecord/models/moduleRecordInput'
 import {FullModuleRecord} from './fullModuleRecord'
-import { ModuleRecord } from '../learnerRecordAPI/moduleRecord/models/moduleRecord';
 
 export class FullCourseRecord extends Record {
 	required: boolean

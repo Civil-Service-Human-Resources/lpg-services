@@ -47,7 +47,7 @@ import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
-import { completeVideoModule } from './controllers/video';
+import { completeVideoModule } from './controllers/video'
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')

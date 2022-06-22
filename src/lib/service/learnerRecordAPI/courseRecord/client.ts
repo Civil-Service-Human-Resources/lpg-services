@@ -1,3 +1,4 @@
+import { plainToClass } from 'class-transformer'
 import { getLogger } from 'lib/logger'
 import * as model from '../../../model'
 import {JsonPatch} from '../../shared/models/JsonPatch'
@@ -5,7 +6,6 @@ import {makeRequest, patch} from '../baseConfig'
 import {completeRecord} from '../models/patchFactory'
 import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
 import {CourseRecordInput} from './models/courseRecordInput'
-import { plainToClass } from 'class-transformer';
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 

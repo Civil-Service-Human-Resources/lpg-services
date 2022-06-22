@@ -2,11 +2,9 @@ import * as express from 'express'
 import * as extended from 'lib/extended'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
-import { completeModule } from '../../lib/service/fullLearnerRecord/fullLearnerRecordService';
-
+import {completeModule} from '../../lib/service/fullLearnerRecord/fullLearnerRecordService'
 
 const logger = getLogger('controllers/learning-record')
-
 
 export async function completeVideoModule(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
@@ -37,6 +35,6 @@ export async function completeVideoModule(ireq: express.Request, res: express.Re
 		return
 	}
 
-    completeModule(course, moduleId, req.user)
-    res.sendStatus(200)
+	completeModule(course, moduleId, req.user)
+	res.sendStatus(200)
 }
