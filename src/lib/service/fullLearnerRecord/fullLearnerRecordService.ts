@@ -1,11 +1,14 @@
-import { Course, User } from "../../model"
-import { completeCourseRecord, createCourseRecord, getCourseRecord } from "../learnerRecordAPI/courseRecord/client"
-import { RecordState } from "../learnerRecordAPI/models/record"
-import { completeModuleRecord,
+import {Course, User} from '../../model'
+import {completeCourseRecord, createCourseRecord, getCourseRecord} from '../learnerRecordAPI/courseRecord/client'
+import {RecordState} from '../learnerRecordAPI/models/record'
+import {
+	completeModuleRecord,
 	createModuleRecord,
-	initialiseModuleRecord } from "../learnerRecordAPI/moduleRecord/client"
-import { FullCourseRecord } from "./fullCourseRecord"
-import { FullModuleRecord } from "./fullModuleRecord"
+	initialiseModuleRecord,
+	updateModuleRecordUpdatedAt,
+} from '../learnerRecordAPI/moduleRecord/client'
+import {FullCourseRecord} from './fullCourseRecord'
+import {FullModuleRecord} from './fullModuleRecord'
 
 const createNewCourseRecord = async (courseRecord: FullCourseRecord, moduleRecord: FullModuleRecord, user: User) => {
 	const courseRecordAsInput = courseRecord.getAsCourseRecordInput()
@@ -32,11 +35,15 @@ export const progressModule = async (course: Course, moduleId: string, user: Use
 		fullRecord.state = RecordState.InProgress
 		await createNewCourseRecord(fullRecord, moduleRecord, user)
 	} else {
-		if (!moduleRecord.isStarted()) {
-			moduleRecord.state = RecordState.InProgress
-			await createNewModuleRecord(moduleRecord, user)
+		if (!moduleRecord.isCompleted()) {
+			if (!moduleRecord.isStarted()) {
+				moduleRecord.state = RecordState.InProgress
+				await createNewModuleRecord(moduleRecord, user)
+			} else {
+				await initialiseModuleRecord(moduleRecord.id!, user)
+			}
 		} else {
-			await initialiseModuleRecord(moduleRecord.id!, user)
+			await updateModuleRecordUpdatedAt(moduleRecord.id!, user)
 		}
 	}
 	fullRecord.updateModule(moduleId, moduleRecord)

@@ -1,3 +1,4 @@
+import * as moment from 'moment'
 import {JsonPatch, Ops} from '../../shared/models/JsonPatch'
 import {RecordState} from './record'
 
@@ -12,6 +13,10 @@ export function initModule() {
 		new JsonPatch(Ops.replace, 'score', undefined),
 		new JsonPatch(Ops.replace, 'completionDate', undefined),
 	]
+}
+
+export function setUpdatedAt() {
+	return [new JsonPatch(Ops.replace, 'updatedAt', moment(new Date()).format('YYYY-MM-DDTHH:mm:ss'))]
 }
 
 export function passElearningModule() {

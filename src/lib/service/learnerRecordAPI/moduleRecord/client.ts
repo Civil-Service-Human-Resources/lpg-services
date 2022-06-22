@@ -2,7 +2,7 @@ import { plainToClass } from 'class-transformer'
 import * as model from '../../../model'
 import {JsonPatch} from '../../shared/models/JsonPatch'
 import {makeRequest, patch} from '../baseConfig'
-import {completeRecord, initModule} from '../models/patchFactory'
+import {completeRecord, initModule, setUpdatedAt} from '../models/patchFactory'
 import {ModuleRecord} from './models/moduleRecord'
 import {ModuleRecordInput} from './models/moduleRecordInput'
 
@@ -15,6 +15,11 @@ export async function completeModuleRecord(moduleRecordId: number, user: model.U
 
 export async function initialiseModuleRecord(moduleRecordId: number, user: model.User) {
 	const jsonPatch = initModule()
+	return await patchModuleRecord(jsonPatch, user, moduleRecordId)
+}
+
+export async function updateModuleRecordUpdatedAt(moduleRecordId: number, user: model.User) {
+	const jsonPatch = setUpdatedAt()
 	return await patchModuleRecord(jsonPatch, user, moduleRecordId)
 }
 
