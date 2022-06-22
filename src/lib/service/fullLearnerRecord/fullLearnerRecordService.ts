@@ -1,12 +1,14 @@
-import { Course, User } from "../../model"
-import { completeCourseRecord, createCourseRecord, getCourseRecord } from "../learnerRecordAPI/courseRecord/client"
-import { RecordState } from "../learnerRecordAPI/models/record"
-import { completeModuleRecord,
+import {Course, User} from '../../model'
+import {completeCourseRecord, createCourseRecord, getCourseRecord} from '../learnerRecordAPI/courseRecord/client'
+import {RecordState} from '../learnerRecordAPI/models/record'
+import {
+	completeModuleRecord,
 	createModuleRecord,
-	initialiseModuleRecord, 
-	updateModuleRecordUpdatedAt} from "../learnerRecordAPI/moduleRecord/client"
-import { FullCourseRecord } from "./fullCourseRecord"
-import { FullModuleRecord } from "./fullModuleRecord"
+	initialiseModuleRecord,
+	updateModuleRecordUpdatedAt,
+} from '../learnerRecordAPI/moduleRecord/client'
+import {FullCourseRecord} from './fullCourseRecord'
+import {FullModuleRecord} from './fullModuleRecord'
 
 const createNewCourseRecord = async (courseRecord: FullCourseRecord, moduleRecord: FullModuleRecord, user: User) => {
 	const courseRecordAsInput = courseRecord.getAsCourseRecordInput()
