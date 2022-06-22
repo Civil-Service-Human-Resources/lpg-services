@@ -2,9 +2,9 @@ import { plainToClass } from 'class-transformer'
 import * as model from '../../../model'
 import {JsonPatch} from '../../shared/models/JsonPatch'
 import {makeRequest, patch} from '../baseConfig'
-import {completeRecord, initModule, setUpdatedAt} from '../models/patchFactory'
 import {ModuleRecord} from './models/moduleRecord'
 import {ModuleRecordInput} from './models/moduleRecordInput'
+import {completeRecord, initModule, setUpdatedAt} from './patchFactory'
 
 const URL = '/module_records'
 
