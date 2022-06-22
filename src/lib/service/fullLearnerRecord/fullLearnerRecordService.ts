@@ -4,7 +4,6 @@ import {RecordState} from '../learnerRecordAPI/models/record'
 import {
 	completeModuleRecord,
 	createModuleRecord,
-	initialiseModuleRecord,
 	updateModuleRecordUpdatedAt,
 } from '../learnerRecordAPI/moduleRecord/client'
 import {FullCourseRecord} from './fullCourseRecord'
@@ -35,13 +34,9 @@ export const progressModule = async (course: Course, moduleId: string, user: Use
 		fullRecord.state = RecordState.InProgress
 		await createNewCourseRecord(fullRecord, moduleRecord, user)
 	} else {
-		if (!moduleRecord.isCompleted()) {
-			if (!moduleRecord.isStarted()) {
-				moduleRecord.state = RecordState.InProgress
-				await createNewModuleRecord(moduleRecord, user)
-			} else {
-				await initialiseModuleRecord(moduleRecord.id!, user)
-			}
+		if (!moduleRecord.isStarted()) {
+			moduleRecord.state = RecordState.InProgress
+			await createNewModuleRecord(moduleRecord, user)
 		} else {
 			await updateModuleRecordUpdatedAt(moduleRecord.id!, user)
 		}
