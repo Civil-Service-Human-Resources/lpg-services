@@ -1,5 +1,10 @@
 import {Course, User} from '../../model'
-import {completeCourseRecord, createCourseRecord, getCourseRecord} from '../learnerRecordAPI/courseRecord/client'
+import {
+	completeCourseRecord,
+	createCourseRecord,
+	getCourseRecord,
+	updateLastUpdated
+} from '../learnerRecordAPI/courseRecord/client'
 import {RecordState} from '../learnerRecordAPI/models/record'
 import {
 	completeModuleRecord,
@@ -45,8 +50,8 @@ export const progressModule = async (course: Course, moduleId: string, user: Use
 		} else {
 			await updateModuleRecordUpdatedAt(moduleRecord.id!, user)
 		}
+		await updateLastUpdated(fullRecord.courseId, user)
 	}
-	fullRecord.updateModule(moduleId, moduleRecord)
 }
 
 export const completeModule = async (course: Course, moduleId: string, user: User) => {
@@ -63,10 +68,12 @@ export const completeModule = async (course: Course, moduleId: string, user: Use
 		} else {
 			await completeModuleRecord(moduleRecord.id!, user)
 		}
-	}
-	fullRecord.updateModule(moduleRecord.moduleId, moduleRecord)
+		fullRecord.updateModule(moduleRecord.moduleId, moduleRecord)
 
-	if (fullRecord.areAllRequiredModulesComplete()) {
-		await completeCourseRecord(fullRecord.courseId, user)
+		if (fullRecord.areAllRequiredModulesComplete()) {
+			await completeCourseRecord(fullRecord.courseId, user)
+		} else {
+			await updateLastUpdated(fullRecord.courseId, user)
+		}
 	}
 }

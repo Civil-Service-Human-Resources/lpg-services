@@ -11,3 +11,7 @@ export function completeRecord() {
 		new JsonPatch(Ops.replace, 'lastUpdated', getNow()),
 	]
 }
+
+export function setLastUpdated() {
+	return [new JsonPatch(Ops.replace, 'lastUpdated', getNow())]
+}
