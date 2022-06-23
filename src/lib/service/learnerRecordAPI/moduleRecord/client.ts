@@ -4,22 +4,27 @@ import {JsonPatch} from '../../shared/models/JsonPatch'
 import {makeRequest, patch} from '../baseConfig'
 import {ModuleRecord} from './models/moduleRecord'
 import {ModuleRecordInput} from './models/moduleRecordInput'
-import {completeRecord, initModule, setUpdatedAt} from './patchFactory'
+import * as patches from './patchFactory'
 
 const URL = '/module_records'
 
 export async function completeModuleRecord(moduleRecordId: number, user: model.User) {
-	const jsonPatch = completeRecord()
+	const jsonPatch = patches.completeRecord()
 	return await patchModuleRecord(jsonPatch, user, moduleRecordId)
 }
 
 export async function initialiseModuleRecord(moduleRecordId: number, user: model.User) {
-	const jsonPatch = initModule()
+	const jsonPatch = patches.initModule()
 	return await patchModuleRecord(jsonPatch, user, moduleRecordId)
 }
 
 export async function updateModuleRecordUpdatedAt(moduleRecordId: number, user: model.User) {
-	const jsonPatch = setUpdatedAt()
+	const jsonPatch = patches.setUpdatedAt()
+	return await patchModuleRecord(jsonPatch, user, moduleRecordId)
+}
+
+export async function rateModule(moduleRecordId: number, user: model.User) {
+	const jsonPatch = patches.rateModule()
 	return await patchModuleRecord(jsonPatch, user, moduleRecordId)
 }
 

@@ -4,7 +4,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
+import { rateModule } from '../../../lib/service/learnerRecordAPI/service';
 
 const logger = getLogger('controllers/learning-record/feedback')
 
@@ -21,7 +21,7 @@ export async function displayFeedback(
 			`Ignoring feedback for course ${course.id} and module ${module.id}`
 		)
 
-		await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
+		await rateModule(course, module.id, req.user)
 
 		req.session!.save(() => {
 			res.redirect('/home')
@@ -84,7 +84,7 @@ export async function submitFeedback(
 			moduleId: module.id,
 			userId: req.user.id,
 		}, req.user)
-		await xapi.record(req, course, xapi.Verb.Rated, undefined, module)
+		await rateModule(course, module.id, req.user)
 
 		req.flash('successTitle', req.__('learning_feedback_submitted_title'))
 		req.flash('successMessage', req.__('learning_feedback_submitted_message'))
