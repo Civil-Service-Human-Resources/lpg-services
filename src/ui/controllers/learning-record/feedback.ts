@@ -4,7 +4,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import { rateModule } from '../../../lib/service/learnerRecordAPI/service';
+import { rateModule } from '../../../lib/service/learnerRecordAPI/service'
 
 const logger = getLogger('controllers/learning-record/feedback')
 
