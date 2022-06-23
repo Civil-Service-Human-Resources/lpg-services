@@ -9,7 +9,7 @@ export async function addCourseToLearningPlan(course: Course, user: User) {
 		const input = new CourseRecordInput(
 			course.id,
 			course.title,
-			user.userId,
+			user.id,
 			course.isRequired(),
 			[],
 			undefined,
@@ -25,7 +25,7 @@ export async function removeCourseFromSuggestions(course: Course, user: User) {
 		const input = new CourseRecordInput(
 			course.id,
 			course.title,
-			user.userId,
+			user.id,
 			course.isRequired(),
 			[],
 			undefined,
