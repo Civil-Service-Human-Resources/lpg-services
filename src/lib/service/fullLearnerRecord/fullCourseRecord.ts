@@ -27,8 +27,8 @@ export class FullCourseRecord extends Record {
 		return new CourseRecordInput(this.courseId, this.courseTitle, this.userId, this.required, moduleInputs, this.state)
 	}
 
-	updateModule(moduleId: string, module: FullModuleRecord) {
-		this.modules.set(moduleId, module)
+	updateModule(module: FullModuleRecord) {
+		this.modules.set(module.moduleId, module)
 	}
 
 	fetchModule(moduleId: string) {
@@ -41,7 +41,6 @@ export class FullCourseRecord extends Record {
 
 	areAllRequiredModulesComplete() {
 		const remainingRequiredModules = [...this.modules.values()].filter(m => !m.isCompleted() && !m.optional)
-		console.log(remainingRequiredModules)
 		return remainingRequiredModules.length === 0
 	}
 
@@ -50,6 +49,8 @@ export class FullCourseRecord extends Record {
 			let moduleRecord: ModuleRecord | undefined
 			if (courseRecord) {
 				moduleRecord = courseRecord.getModuleRecord(mod.id)
+				console.log("MODULE RECORD")
+				console.log(moduleRecord)
 			}
 			const fullModuleRecord = new FullModuleRecord(mod, this.userId, this.courseId, moduleRecord)
 			this.modules.set(mod.id, fullModuleRecord)

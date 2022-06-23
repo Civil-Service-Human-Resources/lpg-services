@@ -17,13 +17,10 @@ export class CourseRecord extends Record {
 	courseDisplayState?: string
 	required: boolean
 
-	// STATE NOTE: For some reason, course records that are in progress can sometimes be
-	// stored with state=NULL. So if a course record exists but the state is null, default
-	// it to IN_PROGRESS here so that lpg-ui has an easier time working with it.
 	constructor(
 		courseId: string,
 		userId: string,
-		state: RecordState = RecordState.InProgress,
+		state: RecordState = RecordState.Null,
 		modules: ModuleRecord[] = [],
 		courseTitle: string,
 		required: boolean,

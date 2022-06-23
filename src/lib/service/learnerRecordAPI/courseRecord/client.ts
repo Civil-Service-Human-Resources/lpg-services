@@ -5,24 +5,34 @@ import {JsonPatch} from '../../shared/models/JsonPatch'
 import {makeRequest, patch} from '../baseConfig'
 import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
 import {CourseRecordInput} from './models/courseRecordInput'
-import { completeRecord, setLastUpdated, setStateToArchived } from './patchFactory'
+import * as patches from './patchFactory'
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 
 const URL = '/course_records'
 
 export async function completeCourseRecord(courseId: string, user: model.User) {
-	const jsonPatch = completeRecord()
+	const jsonPatch = patches.completeRecord()
 	return await patchCourseRecord(jsonPatch, user, courseId)
 }
 
 export async function updateLastUpdated(courseId: string, user: model.User) {
-	const jsonPatch = setLastUpdated()
+	const jsonPatch = patches.setLastUpdated()
+	return await patchCourseRecord(jsonPatch, user, courseId)
+}
+
+export async function setRecordToInProgress(courseId: string, user: model.User) {
+	const jsonPatch = patches.setInProgress()
 	return await patchCourseRecord(jsonPatch, user, courseId)
 }
 
 export async function removeCourseFromLearningPlan(courseId: string, user: model.User) {
-	const jsonPatch = setStateToArchived()
+	const jsonPatch = patches.setStateToArchived()
+	return await patchCourseRecord(jsonPatch, user, courseId)
+}
+
+export async function addCourseToLearningPlan(courseId: string, user: model.User) {
+	const jsonPatch = patches.addCourseToLearningPlan()
 	return await patchCourseRecord(jsonPatch, user, courseId)
 }
 
@@ -69,6 +79,7 @@ export async function getCourseRecord(courseId: string, user: model.User): Promi
 		user
 	)
 	const courseRecords = plainToClass(CourseRecordResponse, resp).courseRecords
+	console.log(courseRecords)
 	let courseRecord
 	if (courseRecords.length === 1) {
 		courseRecord = plainToClass(CourseRecord, courseRecords[0])

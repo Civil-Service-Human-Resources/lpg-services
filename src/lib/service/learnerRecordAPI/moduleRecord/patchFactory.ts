@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import {JsonPatch, Ops} from '../../shared/models/JsonPatch'
+import {JsonPatch} from '../../shared/models/JsonPatch'
 import {RecordState} from '../models/record'
 
 function getNow() {
@@ -8,48 +8,48 @@ function getNow() {
 
 export function completeRecord() {
 	return [
-		new JsonPatch(Ops.replace, 'state', RecordState.Completed),
-		new JsonPatch(Ops.replace, 'updatedAt', getNow()),
-		new JsonPatch(Ops.replace, 'completionDate', getNow()),
+		JsonPatch.replacePatch('state', RecordState.Completed),
+		JsonPatch.replacePatch('updatedAt', getNow()),
+		JsonPatch.replacePatch('completionDate', getNow()),
 	]
 }
 
 export function initModule() {
 	return [
-		new JsonPatch(Ops.replace, 'state', RecordState.InProgress),
-		new JsonPatch(Ops.replace, 'result', undefined),
-		new JsonPatch(Ops.replace, 'score', undefined),
-		new JsonPatch(Ops.replace, 'completionDate', undefined),
-		new JsonPatch(Ops.replace, 'updatedAt', getNow()),
+		JsonPatch.replacePatch('state', RecordState.InProgress),
+		JsonPatch.replacePatch('result', undefined),
+		JsonPatch.replacePatch('score', undefined),
+		JsonPatch.replacePatch('completionDate', undefined),
+		JsonPatch.replacePatch('updatedAt', getNow()),
 	]
 }
 
 export function setUpdatedAt() {
-	return [new JsonPatch(Ops.replace, 'updatedAt', getNow())]
+	return [JsonPatch.replacePatch('updatedAt', getNow())]
 }
 
 export function passElearningModule() {
 	return [
-		new JsonPatch(Ops.replace, 'state', RecordState.Completed),
-		new JsonPatch(Ops.replace, 'result', 'PASSED'),
-		new JsonPatch(Ops.replace, 'updatedAt', getNow()),
-		new JsonPatch(Ops.replace, 'completionDate', getNow()),
+		JsonPatch.replacePatch('state', RecordState.Completed),
+		JsonPatch.replacePatch('result', 'PASSED'),
+		JsonPatch.replacePatch('updatedAt', getNow()),
+		JsonPatch.replacePatch('completionDate', getNow()),
 	]
 }
 
 export function rateModule() {
 	return [
-		new JsonPatch(Ops.replace, 'rated', 'true'),
-		new JsonPatch(Ops.replace, 'updatedAt', getNow()),
+		JsonPatch.replacePatch('rated', 'true'),
+		JsonPatch.replacePatch('updatedAt', getNow()),
 	]
 }
 
 export function registerForEventModule() {
 	return [
-		new JsonPatch(Ops.replace, 'state', RecordState.Registered),
-		new JsonPatch(Ops.replace, 'result', undefined),
-		new JsonPatch(Ops.replace, 'score', undefined),
-		new JsonPatch(Ops.replace, 'completionDate', undefined),
-		new JsonPatch(Ops.replace, 'updatedAt', getNow()),
+		JsonPatch.replacePatch('state', RecordState.Registered),
+		JsonPatch.replacePatch('result', undefined),
+		JsonPatch.replacePatch('score', undefined),
+		JsonPatch.replacePatch('completionDate', undefined),
+		JsonPatch.replacePatch('updatedAt', getNow()),
 	]
 }

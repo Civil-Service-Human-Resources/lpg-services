@@ -1,25 +1,31 @@
 import * as moment from 'moment'
-import {JsonPatch, Ops} from '../../shared/models/JsonPatch'
-import { RecordState } from '../models/record'
+import {JsonPatch} from '../../shared/models/JsonPatch'
+import {RecordState} from '../models/record'
 
 function getNow() {
 	return moment(new Date()).format('YYYY-MM-DDTHH:mm:ss')
 }
 
 export function completeRecord() {
-	return [
-		new JsonPatch(Ops.replace, 'state', RecordState.Completed),
-		new JsonPatch(Ops.replace, 'lastUpdated', getNow()),
-	]
+	return [JsonPatch.replacePatch('state', RecordState.Completed), JsonPatch.replacePatch('lastUpdated', getNow())]
 }
 
 export function setLastUpdated() {
-	return [new JsonPatch(Ops.replace, 'lastUpdated', getNow())]
+	return [JsonPatch.replacePatch('lastUpdated', getNow())]
+}
+
+export function setInProgress() {
+	return [JsonPatch.replacePatch('state', RecordState.InProgress), JsonPatch.replacePatch('lastUpdated', getNow())]
+}
+
+export function addCourseToLearningPlan() {
+	return [
+		JsonPatch.replacePatch('preference', 'LIKED'),
+		JsonPatch.removePatch('state'),
+		JsonPatch.replacePatch('lastUpdated', getNow()),
+	]
 }
 
 export function setStateToArchived() {
-	return [
-		new JsonPatch(Ops.replace, 'state', RecordState.Archived),
-		new JsonPatch(Ops.replace, 'lastUpdated', getNow()),
-	]
+	return [JsonPatch.replacePatch('state', RecordState.Archived), JsonPatch.replacePatch('lastUpdated', getNow())]
 }

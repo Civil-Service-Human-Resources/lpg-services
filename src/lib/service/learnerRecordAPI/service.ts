@@ -1,9 +1,14 @@
+import { getLogger } from '../../logger'
 import {Course, User} from '../../model'
 import * as courseRecordClient from './courseRecord/client'
 import {CourseRecordInput} from './courseRecord/models/courseRecordInput'
 import * as moduleRecordClient from './moduleRecord/client'
 
+const logger = getLogger('learnerRecordAPI/service')
+
 export async function addCourseToLearningPlan(course: Course, user: User) {
+	logger.debug(user.id)
+	logger.debug(user.userId)
 	const courseRecord = await courseRecordClient.getCourseRecord(course.id, user)
 	if (!courseRecord) {
 		const input = new CourseRecordInput(
@@ -16,6 +21,8 @@ export async function addCourseToLearningPlan(course: Course, user: User) {
 			'LIKED'
 		)
 		await courseRecordClient.createCourseRecord(input, user)
+	} else {
+		await courseRecordClient.addCourseToLearningPlan(course.id, user)
 	}
 }
 

@@ -22,6 +22,23 @@ export class Record {
 		this.state = state
 	}
 
+	/**
+	 * NOTE: A course record can have state = NULL if it is added to
+	 * the learning plan (after being removed) - this is still true even
+	 * if it has module records that are in progress.
+	 *
+	 * A course record with state = NULL will not have it's state field
+	 * returned from the learner record API.
+	 */
+	isNull() {
+		return this.state === RecordState.Null
+	}
+
+	/**
+	 * NOTE: the NotStarted state isn't a state that exists within
+	 * the learner record API - but will be used here to indicate that
+	 * the record does not exist in any form within the database.
+	 */
 	isStarted() {
 		return this.state !== RecordState.NotStarted
 	}

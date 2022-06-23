@@ -3,7 +3,8 @@ import {
 	completeCourseRecord,
 	createCourseRecord,
 	getCourseRecord,
-	updateLastUpdated
+	setRecordToInProgress,
+	updateLastUpdated,
 } from '../learnerRecordAPI/courseRecord/client'
 import {RecordState} from '../learnerRecordAPI/models/record'
 import {
@@ -29,6 +30,7 @@ const createNewModuleRecord = async (moduleRecord: FullModuleRecord, user: User)
 // Implement a redis cache for this later on to avoid going to learner record API every time
 const getFullCourseRecord = async (course: Course, user: User) => {
 	const courseRecord = await getCourseRecord(course.id, user)
+	console.log(courseRecord)
 	return new FullCourseRecord(course, user.id, courseRecord)
 }
 
@@ -50,29 +52,45 @@ export const progressModule = async (course: Course, moduleId: string, user: Use
 		} else {
 			await updateModuleRecordUpdatedAt(moduleRecord.id!, user)
 		}
-		await updateLastUpdated(fullRecord.courseId, user)
+		// If the record exists, but the state is null (removed and then added to learning plan) OR
+		// If the state is ARCHIVED (removed from learning plan)
+		if (fullRecord.isNull() || fullRecord.isArchived()) {
+			await setRecordToInProgress(fullRecord.courseId, user)
+		} else {
+			await updateLastUpdated(fullRecord.courseId, user)
+		}
 	}
 }
 
 export const completeModule = async (course: Course, moduleId: string, user: User) => {
 	const fullRecord = await getFullCourseRecord(course, user)
 	const moduleRecord = fullRecord.fetchModule(moduleId)
-	moduleRecord.state = RecordState.Completed
-	fullRecord.updateModule(moduleRecord.moduleId, moduleRecord)
+	// If the course record doesn't exist
 	if (!fullRecord.isStarted()) {
+		moduleRecord.state = RecordState.Completed
 		fullRecord.state = fullRecord.modules.size === 1 ? RecordState.Completed : RecordState.InProgress
 		await createNewCourseRecord(fullRecord, moduleRecord, user)
 	} else {
 		if (!moduleRecord.isStarted()) {
+			moduleRecord.state = RecordState.Completed
 			await createNewModuleRecord(moduleRecord, user)
 		} else {
+			moduleRecord.state = RecordState.Completed
 			await completeModuleRecord(moduleRecord.id!, user)
 		}
+
+		fullRecord.updateModule(moduleRecord)
 
 		if (fullRecord.areAllRequiredModulesComplete()) {
 			await completeCourseRecord(fullRecord.courseId, user)
 		} else {
-			await updateLastUpdated(fullRecord.courseId, user)
+			// If the record exists, but the state is null (removed and then added to learning plan) OR
+			// If the state is ARCHIVED (removed from learning plan)
+			if (fullRecord.isNull() || fullRecord.isArchived()) {
+				await setRecordToInProgress(fullRecord.courseId, user)
+			} else {
+				await updateLastUpdated(fullRecord.courseId, user)
+			}
 		}
 	}
 }
