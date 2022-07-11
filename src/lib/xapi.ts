@@ -143,11 +143,13 @@ export const ResultValidators = {
 
 export const Verb = {
 	Archived: 'https://w3id.org/xapi/dod-isd/verbs/archived',
+	Attempted: 'http://adlnet.gov/expapi/verbs/attempted',
 	Completed: 'http://adlnet.gov/expapi/verbs/completed',
 	Disliked: 'https://w3id.org/xapi/acrossx/verbs/disliked',
 	Experienced: 'http://adlnet.gov/expapi/verbs/experienced',
 	Failed: 'http://adlnet.gov/expapi/verbs/failed',
 	Initialised: 'http://adlnet.gov/expapi/verbs/initialized',
+	Launched: 'http://adlnet.gov/expapi/verbs/launched',
 	Liked: 'https://w3id.org/xapi/acrossx/verbs/liked',
 	Passed: 'http://adlnet.gov/expapi/verbs/passed',
 	PausedVideo: 'https://w3id.org/xapi/video/verbs/paused',

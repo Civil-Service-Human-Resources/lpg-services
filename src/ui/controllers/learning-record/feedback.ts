@@ -4,7 +4,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import { rateModule } from '../../../lib/service/learnerRecordAPI/service'
+import { RateModuleActionWorker } from '../../../lib/service/fullLearnerRecord/workers/RateModuleActionWorker';
 
 const logger = getLogger('controllers/learning-record/feedback')
 
@@ -21,7 +21,7 @@ export async function displayFeedback(
 			`Ignoring feedback for course ${course.id} and module ${module.id}`
 		)
 
-		await rateModule(course, module.id, req.user)
+		await new RateModuleActionWorker(course, req.user, module.id).applyActionToLearnerRecord()
 
 		req.session!.save(() => {
 			res.redirect('/home')
@@ -84,7 +84,7 @@ export async function submitFeedback(
 			moduleId: module.id,
 			userId: req.user.id,
 		}, req.user)
-		await rateModule(course, module.id, req.user)
+		await new RateModuleActionWorker(course, req.user, module.id).applyActionToLearnerRecord()
 
 		req.flash('successTitle', req.__('learning_feedback_submitted_title'))
 		req.flash('successMessage', req.__('learning_feedback_submitted_message'))

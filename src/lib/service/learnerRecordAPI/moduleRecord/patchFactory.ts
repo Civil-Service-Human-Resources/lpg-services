@@ -1,55 +1,36 @@
 import * as moment from 'moment'
 import {JsonPatch} from '../../shared/models/JsonPatch'
 import {RecordState} from '../models/record'
+import { ModuleRecordResult } from './models/moduleRecord';
 
-function getNow() {
-	return moment(new Date()).format('YYYY-MM-DDTHH:mm:ss')
+export function setScore(score?: string) {
+	return JsonPatch.replacePatch('score', score)
 }
 
-export function completeRecord() {
-	return [
-		JsonPatch.replacePatch('state', RecordState.Completed),
-		JsonPatch.replacePatch('updatedAt', getNow()),
-		JsonPatch.replacePatch('completionDate', getNow()),
-	]
+export function setRated(rated: boolean) {
+	return JsonPatch.replacePatch('rated', rated.toString())
 }
 
-export function initModule() {
-	return [
-		JsonPatch.replacePatch('state', RecordState.InProgress),
-		JsonPatch.replacePatch('result', undefined),
-		JsonPatch.replacePatch('score', undefined),
-		JsonPatch.replacePatch('completionDate', undefined),
-		JsonPatch.replacePatch('updatedAt', getNow()),
-	]
+export function setResult(result?: ModuleRecordResult) {
+	return JsonPatch.replacePatch('result', result)
 }
 
-export function setUpdatedAt() {
-	return [JsonPatch.replacePatch('updatedAt', getNow())]
+function setDate(key: string, date?: Date) {
+	let convertedDate = undefined
+	if (date) {
+		convertedDate = moment(date).format('YYYY-MM-DDTHH:mm:ss')
+	}
+	return JsonPatch.replacePatch(key, convertedDate)
 }
 
-export function passElearningModule() {
-	return [
-		JsonPatch.replacePatch('state', RecordState.Completed),
-		JsonPatch.replacePatch('result', 'PASSED'),
-		JsonPatch.replacePatch('updatedAt', getNow()),
-		JsonPatch.replacePatch('completionDate', getNow()),
-	]
+export function setUpdatedAt(updatedAt?: Date) {
+	return setDate('updatedAt', updatedAt)
 }
 
-export function rateModule() {
-	return [
-		JsonPatch.replacePatch('rated', 'true'),
-		JsonPatch.replacePatch('updatedAt', getNow()),
-	]
+export function setCompletionDate(completionDate?: Date) {
+	return setDate('completionDate', completionDate)
 }
 
-export function registerForEventModule() {
-	return [
-		JsonPatch.replacePatch('state', RecordState.Registered),
-		JsonPatch.replacePatch('result', undefined),
-		JsonPatch.replacePatch('score', undefined),
-		JsonPatch.replacePatch('completionDate', undefined),
-		JsonPatch.replacePatch('updatedAt', getNow()),
-	]
+export function setState(state: RecordState) {
+	return JsonPatch.replacePatch('state', state)
 }

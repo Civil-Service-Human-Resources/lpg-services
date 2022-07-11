@@ -6,8 +6,25 @@ import * as extended from 'lib/extended'
 import {getLogger} from 'lib/logger'
 import * as xapi from 'lib/xapi'
 import * as querystring from 'querystring'
+import { User } from '../../lib/model';
+import { get } from '../../lib/service/catalog';
+import { InitialiseActionWorker } from '../../lib/service/fullLearnerRecord/workers/initialiseActionWorker';
+import { CompletedActionWorker } from '../../lib/service/fullLearnerRecord/workers/CompletedActionWorker';
+import { PassModuleActionWorker } from '../../lib/service/fullLearnerRecord/workers/PassModuleActionWorker';
+import { FailModuleActionWorker } from '../../lib/service/fullLearnerRecord/workers/FailModuleActionWorker';
+import { ActionWorker } from '../../lib/service/fullLearnerRecord/workers/ActionWorker';
 
 const logger = getLogger('controllers/xapi')
+
+const learnerRecordVerbs = [
+	xapi.Verb.Attempted,
+	xapi.Verb.Completed,
+	xapi.Verb.Experienced,
+	xapi.Verb.Failed,
+	xapi.Verb.Initialised,
+	xapi.Verb.Launched,
+	xapi.Verb.Passed,
+]
 
 export async function proxy(ireq: express.Request, res: express.Response) {
 	let req = ireq as extended.CourseRequest
@@ -66,6 +83,10 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	if (ctype) {
 		headers['Content-Type'] = ctype
 	}
+
+	if (body.verb && body.verb.id && learnerRecordVerbs.includes(body.verb.id)) {
+		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
+	} 
 
 	try {
 		const response = await axios({
@@ -145,4 +166,33 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 		}
 	}
 	return statement
+}
+
+async function syncToLearnerRecord(courseId: string, moduleId: string, user: User, verbId: string) {
+	const course = await get(courseId, user)
+	let actionWorker = null
+	if (course) {
+		switch (verbId) {
+			case xapi.Verb.Attempted:
+			case xapi.Verb.Experienced:
+			case xapi.Verb.Initialised:
+			case xapi.Verb.Launched:
+				actionWorker = new InitialiseActionWorker(course, user, moduleId)
+				break;
+			case xapi.Verb.Completed:
+				actionWorker = new CompletedActionWorker(course, user, moduleId)
+				break;
+			case xapi.Verb.Passed:
+				actionWorker = new PassModuleActionWorker(course, user, moduleId)
+				break;
+			case xapi.Verb.Failed:
+				actionWorker = new FailModuleActionWorker(course, user, moduleId)
+				break;
+			default:
+				break;
+		}
+		if (actionWorker) {
+			await actionWorker.applyActionToLearnerRecord()
+		}
+	}
 }

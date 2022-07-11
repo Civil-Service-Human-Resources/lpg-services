@@ -413,6 +413,10 @@ export class Course {
 		}
 		return false
 	}
+
+	getModule(moduleId: string) {
+		return this.modules.filter(m => m.id === moduleId)[0]
+	}
 }
 
 export class CourseModule {

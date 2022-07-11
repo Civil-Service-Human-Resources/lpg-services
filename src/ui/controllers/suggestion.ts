@@ -6,7 +6,8 @@ import * as model from 'lib/model'
 import {ApiParameters} from "lib/service/catalog"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import { addCourseToLearningPlan, removeCourseFromSuggestions } from '../../lib/service/learnerRecordAPI/service'
+import { AddCourseToLearningplanActionWorker } from '../../lib/service/fullLearnerRecord/workers/AddCourseToLearningplanActionWorker';
+import { RemoveCourseFromLearningplanActionWorker } from '../../lib/service/fullLearnerRecord/workers/RemoveCourseFromLearningplanActionWorker';
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
@@ -33,7 +34,7 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 			break
 	}
 	try {
-		await addCourseToLearningPlan(course, req.user)
+		await new AddCourseToLearningplanActionWorker(course, req.user).applyActionToLearnerRecord()
 
 		req.flash(
 			'successTitle',
@@ -64,7 +65,7 @@ export async function removeFromSuggestions(
 	const course = req.course
 
 	try {
-		await removeCourseFromSuggestions(course, req.user)
+		await new RemoveCourseFromLearningplanActionWorker(course, req.user).applyActionToLearnerRecord()
 		req.flash(
 			'successTitle',
 			req.__('learning_removed_from_plan_title', course.title)

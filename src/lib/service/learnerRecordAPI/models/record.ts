@@ -70,4 +70,12 @@ export class Record {
 	isApproved() {
 		return this.state === RecordState.Approved
 	}
+
+	setCompleted() {
+		this.state = RecordState.Completed
+	}
+
+	setInProgress() {
+		this.state = RecordState.InProgress
+	}
 }

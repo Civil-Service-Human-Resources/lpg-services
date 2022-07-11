@@ -5,38 +5,12 @@ import {JsonPatch} from '../../shared/models/JsonPatch'
 import {makeRequest, patch} from '../baseConfig'
 import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
 import {CourseRecordInput} from './models/courseRecordInput'
-import * as patches from './patchFactory'
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 
 const URL = '/course_records'
 
-export async function completeCourseRecord(courseId: string, user: model.User) {
-	const jsonPatch = patches.completeRecord()
-	return await patchCourseRecord(jsonPatch, user, courseId)
-}
-
-export async function updateLastUpdated(courseId: string, user: model.User) {
-	const jsonPatch = patches.setLastUpdated()
-	return await patchCourseRecord(jsonPatch, user, courseId)
-}
-
-export async function setRecordToInProgress(courseId: string, user: model.User) {
-	const jsonPatch = patches.setInProgress()
-	return await patchCourseRecord(jsonPatch, user, courseId)
-}
-
-export async function removeCourseFromLearningPlan(courseId: string, user: model.User) {
-	const jsonPatch = patches.setStateToArchived()
-	return await patchCourseRecord(jsonPatch, user, courseId)
-}
-
-export async function addCourseToLearningPlan(courseId: string, user: model.User) {
-	const jsonPatch = patches.addCourseToLearningPlan()
-	return await patchCourseRecord(jsonPatch, user, courseId)
-}
-
-async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, courseId: string) {
+export async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, courseId: string) {
 	logger.debug(`Patching course record for course ID ${courseId} and user ID ${user.id}`)
 	const res =  await patch<CourseRecord>(
 		{
