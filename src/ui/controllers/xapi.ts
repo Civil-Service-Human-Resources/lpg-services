@@ -12,7 +12,6 @@ import { InitialiseActionWorker } from '../../lib/service/fullLearnerRecord/work
 import { CompletedActionWorker } from '../../lib/service/fullLearnerRecord/workers/CompletedActionWorker';
 import { PassModuleActionWorker } from '../../lib/service/fullLearnerRecord/workers/PassModuleActionWorker';
 import { FailModuleActionWorker } from '../../lib/service/fullLearnerRecord/workers/FailModuleActionWorker';
-import { ActionWorker } from '../../lib/service/fullLearnerRecord/workers/ActionWorker';
 
 const logger = getLogger('controllers/xapi')
 
@@ -172,21 +171,22 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 	const course = await get(courseId, user)
 	let actionWorker = null
 	if (course) {
+		const module = course.getModule(moduleId)
 		switch (verbId) {
 			case xapi.Verb.Attempted:
 			case xapi.Verb.Experienced:
 			case xapi.Verb.Initialised:
 			case xapi.Verb.Launched:
-				actionWorker = new InitialiseActionWorker(course, user, moduleId)
+				actionWorker = new InitialiseActionWorker(course, user, module)
 				break;
 			case xapi.Verb.Completed:
-				actionWorker = new CompletedActionWorker(course, user, moduleId)
+				actionWorker = new CompletedActionWorker(course, user, module)
 				break;
 			case xapi.Verb.Passed:
-				actionWorker = new PassModuleActionWorker(course, user, moduleId)
+				actionWorker = new PassModuleActionWorker(course, user, module)
 				break;
 			case xapi.Verb.Failed:
-				actionWorker = new FailModuleActionWorker(course, user, moduleId)
+				actionWorker = new FailModuleActionWorker(course, user, module)
 				break;
 			default:
 				break;

@@ -10,7 +10,7 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 	constructor(
         protected readonly course: Course,
         protected readonly user: User,
-        protected readonly moduleIdToUpdate: string
+        protected readonly module: Module
     ) {
         super(course, user)
      }
@@ -20,10 +20,9 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
         if (!courseRecord) {
             await this.createCourseRecord()
         } else {
-            let moduleRecord = courseRecord.getModuleRecord(this.moduleIdToUpdate)
-            const module = this.course.getModule(this.moduleIdToUpdate)
+            let moduleRecord = courseRecord.getModuleRecord(this.module.id)
             if (!moduleRecord) {
-                moduleRecord = await this.createModuleRecord(module)
+                moduleRecord = await this.createModuleRecord()
             } else {
                 moduleRecord = await this.updateModuleRecord(moduleRecord)
             }
@@ -32,16 +31,18 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
         }
     }
 
-    createNewModuleRecord = async (mod: Module, state: RecordState) => {
-        const input = this.generateModuleRecordInput(mod, state)
+    createNewModuleRecord = async (state: RecordState) => {
+        const input = this.generateModuleRecordInput(state)
         return await createModuleRecord(input, this.user)
     }
 
-    protected generateModuleRecordInput(mod: Module, state: RecordState) {
-        return new ModuleRecordInput(this.user.userId, this.course.id, mod.id, mod.title, mod.optional, mod.type, mod.duration, state, mod.cost)
+    protected generateModuleRecordInput(state: RecordState) {
+        return new ModuleRecordInput(this.user.userId, this.course.id, this.module.id,
+            this.module.title, this.module.optional, this.module.type, this.module.duration,
+            state, this.module.cost)
     }
 
-    abstract createModuleRecord(module: Module): Promise<ModuleRecord>
+    abstract createModuleRecord(): Promise<ModuleRecord>
 
     abstract updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord>
 }

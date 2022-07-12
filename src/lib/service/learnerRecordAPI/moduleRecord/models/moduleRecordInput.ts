@@ -1,6 +1,3 @@
-import {Course, Module, User} from '../../../../model'
-import {RecordState} from '../../models/record'
-
 export class ModuleRecordInput {
 	constructor(
 		readonly userId: string,
@@ -11,32 +8,8 @@ export class ModuleRecordInput {
 		readonly moduleType: string,
 		readonly duration: number,
 		readonly state?: string,
-		readonly cost?: number
+		readonly cost?: number,
+		readonly eventId?: string,
+		readonly eventDate?: Date
 	) {}
-}
-
-export function createCompletedModuleRecord(courseData: Course, user: User, module: Module) {
-	return new ModuleRecordInput(
-		user.id,
-		courseData.id,
-		module.id,
-		module.title,
-		module.optional,
-		module.type,
-		module.duration,
-		RecordState.Completed
-	)
-}
-
-export function createInProgressModuleRecord(courseData: Course, user: User, module: Module) {
-	return new ModuleRecordInput(
-		user.id,
-		courseData.id,
-		module.id,
-		module.title,
-		module.optional,
-		module.type,
-		module.duration,
-		RecordState.InProgress
-	)
 }

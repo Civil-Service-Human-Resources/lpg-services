@@ -5,11 +5,13 @@ import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
 
 import * as courseController from '../course/index'
 
 import {getLogger} from 'lib/logger'
+import { CompleteBookingActionWorker } from '../../../lib/service/fullLearnerRecord/workers/CompleteBookingActionWorker';
+import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError';
+import { SkipBookingActionWorker } from '../../../lib/service/fullLearnerRecord/workers/SkipBookingActionWorker';
 
 const logger = getLogger('controllers/booking')
 const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
@@ -378,16 +380,15 @@ export async function trySkipBooking(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
+	const actionWorker = new SkipBookingActionWorker(course, req.user, event, module)
+	try {
+		actionWorker.applyActionToLearnerRecord()
+	} catch (e) {
+		if (e instanceof CourseRecordStateError) {
+			res.sendStatus(400)
+			return
+		}
 	}
-
-	course.record = record!
-
-	await xapi.record(req, course, xapi.Verb.Skipped, undefined, module, event)
 
 	req.flash('successTitle', req.__('learning_skipped_title', req.course.title))
 	req.flash(
@@ -407,17 +408,16 @@ export async function tryMoveBooking(
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
-
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
+	
+	const actionWorker = new CompleteBookingActionWorker(course, req.user, event, module)
+	try {
+		actionWorker.applyActionToLearnerRecord()
+	} catch (e) {
+		if (e instanceof CourseRecordStateError) {
+			res.sendStatus(400)
+			return
+		}
 	}
-
-	course.record = record!
-
-	await xapi.record(req, course, xapi.Verb.Completed, undefined, module, event)
 
 	req.session!.save(() => {
 		res.redirect('/')

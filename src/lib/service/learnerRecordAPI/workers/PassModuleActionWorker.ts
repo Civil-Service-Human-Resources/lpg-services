@@ -1,4 +1,4 @@
-import { Course, User } from "../../../model";
+import { Course, User, Module } from "../../../model";
 import { RecordState } from "../../learnerRecordAPI/models/record";
 import { setUpdatedAt, setCompletionDate, setResult } from "../../learnerRecordAPI/moduleRecord/patchFactory";
 import { patchModuleRecord } from "../../learnerRecordAPI/moduleRecord/client";
@@ -10,9 +10,9 @@ export class PassModuleActionWorker extends CompletedActionWorker {
     constructor(
         readonly course: Course,
         readonly user: User,
-        readonly moduleIdToUpdate: string
+        readonly module: Module
     ) {
-        super(course, user, moduleIdToUpdate)
+        super(course, user, module)
     }
 
     async updateModuleRecord(moduleRecord: ModuleRecord) {

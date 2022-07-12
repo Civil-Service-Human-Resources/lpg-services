@@ -1,6 +1,6 @@
 import { ActionWorker } from "./ActionWorker";
 import { RecordState } from "../../learnerRecordAPI/models/record";
-import { Course, User } from "../../../model";
+import { Course, User, Module } from "../../../model";
 import { setState } from '../../learnerRecordAPI/courseRecord/patchFactory';
 import { CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseRecord';
 import { setUpdatedAt, setResult, setScore, setCompletionDate } from "../../learnerRecordAPI/moduleRecord/patchFactory";
@@ -12,20 +12,18 @@ export class InitialiseActionWorker extends ActionWorker {
     constructor(
         protected readonly course: Course,
         protected readonly user: User,
-        protected readonly moduleIdToUpdate: string
+        protected readonly module: Module
     ) {
-        super(course, user, moduleIdToUpdate)
+        super(course, user, module)
     }
     
     async createCourseRecord() {
-        const mod = this.course.getModule(this.moduleIdToUpdate)
-        const moduleRecordInput = this.generateModuleRecordInput(mod, RecordState.InProgress)
+        const moduleRecordInput = this.generateModuleRecordInput(RecordState.InProgress)
         await this.createNewCourseRecord([moduleRecordInput], RecordState.InProgress)
     }
 
     async createModuleRecord() {
-        const mod = this.course.getModule(this.moduleIdToUpdate)
-        return await this.createNewModuleRecord(mod, RecordState.InProgress)
+        return await this.createNewModuleRecord(RecordState.InProgress)
     }
 
     async updateCourseRecord(courseRecord: CourseRecord) {

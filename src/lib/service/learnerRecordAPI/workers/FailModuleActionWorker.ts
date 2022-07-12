@@ -1,4 +1,4 @@
-import { Course, User } from "../../../model";
+import { Course, User, Module } from "../../../model";
 import { setUpdatedAt, setResult } from "../../learnerRecordAPI/moduleRecord/patchFactory";
 import { patchModuleRecord } from "../../learnerRecordAPI/moduleRecord/client";
 import { ModuleRecord, ModuleRecordResult } from "../../learnerRecordAPI/moduleRecord/models/moduleRecord";
@@ -8,9 +8,9 @@ export class FailModuleActionWorker extends InitialiseActionWorker {
     constructor(
         readonly course: Course,
         readonly user: User,
-        readonly moduleIdToUpdate: string
+        readonly module: Module
     ) {
-        super(course, user, moduleIdToUpdate)
+        super(course, user, module)
     }
 
     async updateModuleRecord(moduleRecord: ModuleRecord) {

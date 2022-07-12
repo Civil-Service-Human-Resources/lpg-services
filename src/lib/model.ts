@@ -6,6 +6,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import { getOrgHierarchy } from "./registry"
+import { ModuleNotFoundError } from "./exception/moduleNotFound";
 
 export interface LineManager {
 	email: string
@@ -415,7 +416,12 @@ export class Course {
 	}
 
 	getModule(moduleId: string) {
-		return this.modules.filter(m => m.id === moduleId)[0]
+		const mods = this.modules.filter(m => m.id === moduleId)
+		if (mods.length > 0) {
+			return mods[0]
+		} else {
+			throw new ModuleNotFoundError(this.id, moduleId)
+		}
 	}
 }
 

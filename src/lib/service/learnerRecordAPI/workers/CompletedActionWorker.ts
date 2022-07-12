@@ -12,20 +12,19 @@ export class CompletedActionWorker extends ActionWorker {
     constructor(
         readonly course: Course,
         readonly user: User,
-        readonly moduleIdToUpdate: string
+        readonly module: Module
     ) {
-        super(course, user, moduleIdToUpdate)
+        super(course, user, module)
     }
 
     async createCourseRecord() {
-        const mod = this.course.getModule(this.moduleIdToUpdate)
-        const moduleRecordInput = this.generateModuleRecordInput(mod, RecordState.Completed)
+        const moduleRecordInput = this.generateModuleRecordInput(RecordState.Completed)
         const courseRecordState = this.course.modules.length === 1 ? RecordState.Completed : RecordState.InProgress
         await this.createNewCourseRecord([moduleRecordInput], courseRecordState)
     }
 
-    async createModuleRecord(module: Module) {
-        return await this.createNewModuleRecord(module, RecordState.Completed)
+    async createModuleRecord() {
+        return await this.createNewModuleRecord(RecordState.Completed)
     }
 
     async updateCourseRecord(courseRecord: CourseRecord) {
