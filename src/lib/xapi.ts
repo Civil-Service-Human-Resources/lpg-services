@@ -158,12 +158,14 @@ export const Verb = {
 }
 
 export const Labels: Record<string, string> = {
+	[Verb.Attempted]: 'attempted',
 	[Verb.Archived]: 'archived',
 	[Verb.Completed]: 'completed',
 	[Verb.Disliked]: 'disliked',
 	[Verb.Experienced]: 'experienced',
 	[Verb.Failed]: 'failed',
 	[Verb.Initialised]: 'initialised',
+	[Verb.Launched]: 'launched',
 	[Verb.Liked]: 'liked',
 	[Verb.Passed]: 'passed',
 	[Verb.PausedVideo]: 'paused video',
