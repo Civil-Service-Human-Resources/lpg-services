@@ -1,12 +1,12 @@
-import _ = require("lodash")
+import _ = require('lodash')
 
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
 import {Duration} from 'moment'
-import { getOrgHierarchy } from "./registry"
-import { ModuleNotFoundError } from "./exception/moduleNotFound";
+import {ModuleNotFoundError} from './exception/moduleNotFound'
+import {getOrgHierarchy} from './registry'
 
 export interface LineManager {
 	email: string
@@ -31,31 +31,31 @@ const getAudienceForCourse = async (audiences: Audience[], user: User) => {
 		//If the relevance of the audience is same or more then the previous audience
 		//then keep processing the further audiences in the course to get the highest relevance audience
 		if (relevance >= matchedRelevance) {
-
 			if (relevance === 4) {
-				if ((matchedHighestPriorityAudience &&
-					audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
-					!matchedHighestPriorityAudience) {
-						audience.mandatory = true
-						matchedAudience = audience
-						matchedHighestPriorityAudience = audience
-						matchedRelevance = 4
+				if (
+					(matchedHighestPriorityAudience && audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
+					!matchedHighestPriorityAudience
+				) {
+					audience.mandatory = true
+					matchedAudience = audience
+					matchedHighestPriorityAudience = audience
+					matchedRelevance = 4
 				}
 			} else if (relevance === 3) {
-				if ((matchedHighPriorityAudience &&
-					audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
-					!matchedHighPriorityAudience) {
-						audience.mandatory = true
-						matchedAudience = audience
-						matchedHighPriorityAudience = audience
-						matchedRelevance = 3
+				if (
+					(matchedHighPriorityAudience && audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
+					!matchedHighPriorityAudience
+				) {
+					audience.mandatory = true
+					matchedAudience = audience
+					matchedHighPriorityAudience = audience
+					matchedRelevance = 3
 				}
 			} else {
 				audience.mandatory = false
 				matchedAudience = audience
 				matchedRelevance = relevance
 			}
-
 		}
 	}
 
@@ -239,23 +239,23 @@ export class Course {
 
 		// tslint:disable-next-line:only-arrow-functions
 		this.modules.forEach(function(module, i) {
-			if (module.type === "face-to-face") {
-				if (module.events && module.events.length > 0)  {
+			if (module.type === 'face-to-face') {
+				if (module.events && module.events.length > 0) {
 					const event = module.events[0]
 					let durationInSeconds = 0
 					if (event.dateRanges) {
 						event.dateRanges.forEach(dateRange => {
 							const tempStartDate = new Date()
-							const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
-							const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
-							const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
+							const startTimeInHours = _.get(dateRange, 'startTime', 0).split(':')[0]
+							const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(':')[1]
+							const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(':')[2]
 							tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
 							const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
 
 							const tempEndDate = new Date()
-							const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
-							const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
-							const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
+							const endTimeInHours = _.get(dateRange, 'endTime', 0).split(':')[0]
+							const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(':')[1]
+							const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(':')[2]
 							tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
 							const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
 
@@ -303,13 +303,9 @@ export class Course {
 
 	getDateRanges() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(
-				m => !!m.eventId && m.state !== 'SKIPPED'
-			)
+			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
 			if (bookedModuleRecord) {
-				const bookedModule = this.modules.find(
-					m => m.id === bookedModuleRecord.moduleId
-				)
+				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
 				if (bookedModule) {
 					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
 					if (event) {
@@ -486,8 +482,7 @@ export class Module {
 	}
 
 	getDuration() {
-
-		if (this.type === "face-to-face") {
+		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
 				const startTimeHours = this.events[0].startDate.getHours()
 				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
@@ -499,24 +494,24 @@ export class Module {
 			}
 		}
 
-		if (this.type === "face-to-face") {
-			if (this.events && this.events.length > 0)  {
+		if (this.type === 'face-to-face') {
+			if (this.events && this.events.length > 0) {
 				sortEvents(this.events)
 				const event = this.events[0]
 				let durationInSeconds = 0
 
 				event.dateRanges.forEach(dateRange => {
 					const tempStartDate = new Date()
-					const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
-					const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
-					const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
+					const startTimeInHours = _.get(dateRange, 'startTime', 0).split(':')[0]
+					const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(':')[1]
+					const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(':')[2]
 					tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
 					const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
 
 					const tempEndDate = new Date()
-					const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
-					const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
-					const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
+					const endTimeInHours = _.get(dateRange, 'endTime', 0).split(':')[0]
+					const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(':')[1]
+					const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(':')[2]
 					tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
 					const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
 
@@ -556,12 +551,8 @@ export class Event {
 
 		if (data.dateRanges[0]) {
 			dateRanges = data.dateRanges
-			startDate = new Date(
-				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
-			)
-			endDate = new Date(
-				data.dateRanges[0].date + 'T' + data.dateRanges[0].endTime
-			)
+			startDate = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime)
+			endDate = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].endTime)
 		}
 
 		let location = ''
@@ -660,7 +651,10 @@ export class Audience {
 			return 0
 		}
 
-		if (user.areasOfWork && this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length) {
+		if (
+			user.areasOfWork &&
+			this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length
+		) {
 			relevance += 1
 		}
 
@@ -826,7 +820,6 @@ export class OrganisationalUnit {
 	name: string
 	children: OrganisationalUnit[]
 	paymentMethods: string[]
-
 }
 
 export class User {

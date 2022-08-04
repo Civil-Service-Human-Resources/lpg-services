@@ -3,15 +3,15 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as featureConfig from 'lib/config/featureConfig'
 import * as extended from 'lib/extended'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as xapi from 'lib/xapi'
 import * as querystring from 'querystring'
-import { User } from '../../lib/model';
-import { get } from '../../lib/service/catalog';
-import { InitialiseActionWorker } from '../../lib/service/fullLearnerRecord/workers/initialiseActionWorker';
-import { CompletedActionWorker } from '../../lib/service/fullLearnerRecord/workers/CompletedActionWorker';
-import { PassModuleActionWorker } from '../../lib/service/fullLearnerRecord/workers/PassModuleActionWorker';
-import { FailModuleActionWorker } from '../../lib/service/fullLearnerRecord/workers/FailModuleActionWorker';
+import { User } from '../../lib/model'
+import { get } from '../../lib/service/catalog'
+import { CompletedActionWorker } from '../../lib/service/learnerRecordAPI/workers/CompletedActionWorker'
+import { FailModuleActionWorker } from '../../lib/service/learnerRecordAPI/workers/FailModuleActionWorker'
+import { InitialiseActionWorker } from '../../lib/service/learnerRecordAPI/workers/initialiseActionWorker'
+import { PassModuleActionWorker } from '../../lib/service/learnerRecordAPI/workers/PassModuleActionWorker'
 
 const logger = getLogger('controllers/xapi')
 
@@ -85,7 +85,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 
 	if (body.verb && body.verb.id && learnerRecordVerbs.includes(body.verb.id)) {
 		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
-	} 
+	}
 
 	try {
 		const response = await axios({
@@ -111,7 +111,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 async function unwrapPost(req: extended.CourseRequest) {
 	// @ts-ignore
 	req.method = req.query.method
-	const data =  querystring.parse(req.body)
+	const data = querystring.parse(req.body)
 
 	req.headers = {
 		'Content-Type': data['Content-Type'],
@@ -178,18 +178,18 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 			case xapi.Verb.Initialised:
 			case xapi.Verb.Launched:
 				actionWorker = new InitialiseActionWorker(course, user, module)
-				break;
+				break
 			case xapi.Verb.Completed:
 				actionWorker = new CompletedActionWorker(course, user, module)
-				break;
+				break
 			case xapi.Verb.Passed:
 				actionWorker = new PassModuleActionWorker(course, user, module)
-				break;
+				break
 			case xapi.Verb.Failed:
 				actionWorker = new FailModuleActionWorker(course, user, module)
-				break;
+				break
 			default:
-				break;
+				break
 		}
 		if (actionWorker) {
 			await actionWorker.applyActionToLearnerRecord()

@@ -1,10 +1,10 @@
+import {Module} from '../../../../model'
 import {Record, RecordState} from '../../models/record'
 import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
-import { Module } from '../../../../model';
 
 export enum CourseRecordPreference {
 	Liked = 'LIKED',
-	Disliked = 'DISLIKED'
+	Disliked = 'DISLIKED',
 }
 
 export class CourseRecordResponse {
@@ -48,7 +48,7 @@ export class CourseRecord extends Record {
 
 	public updateModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {
 		for (let i = 0; i < this.modules.length; i++) {
-			const mr = this.modules[i];
+			const mr = this.modules[i]
 			if (mr.id === moduleRecordId) {
 				this.modules[i] = moduleRecord
 			}
@@ -71,15 +71,16 @@ export class CourseRecord extends Record {
 			return undefined
 		}
 	}
-	
+
 	public areAllRequiredModulesComplete(modules: Module[]) {
 		const moduleIds = modules.map(m => m.id)
-        const remainingModules = this.modules.filter(m => !moduleIds.includes(m.moduleId) && !m.isCompleted() && !m.optional)
-        return remainingModules.length === 0
+		const remainingModules = this.modules.filter(
+			m => !moduleIds.includes(m.moduleId) && !m.isCompleted() && !m.optional
+		)
+		return remainingModules.length === 0
 	}
 
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {
 		this.modules = moduleRecords.map(m => Object.assign(ModuleRecord, m))
 	}
-
 }

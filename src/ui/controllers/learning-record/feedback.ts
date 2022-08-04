@@ -1,10 +1,13 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import { RateModuleActionWorker } from '../../../lib/service/fullLearnerRecord/workers/RateModuleActionWorker';
+
+import {
+	RateModuleActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/RateModuleActionWorker'
 
 const logger = getLogger('controllers/learning-record/feedback')
 

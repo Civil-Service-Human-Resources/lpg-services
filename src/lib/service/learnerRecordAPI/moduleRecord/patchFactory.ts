@@ -1,7 +1,8 @@
 import * as moment from 'moment'
-import {JsonPatch} from '../../shared/models/JsonPatch'
-import {RecordState} from '../models/record'
-import { ModuleRecordResult, BookingStatus } from './models/moduleRecord';
+
+import { JsonPatch } from '../../shared/models/JsonPatch'
+import { RecordState } from '../models/record'
+import { BookingStatus, ModuleRecordResult } from './models/moduleRecord'
 
 export function clearBookingStatus() {
 	return JsonPatch.removePatch('bookingStatus')
@@ -40,7 +41,7 @@ export function setEventDate(eventDate?: Date) {
 }
 
 function setDate(key: string, date?: Date) {
-	let convertedDate = undefined
+	let convertedDate
 	if (date) {
 		convertedDate = moment(date).format('YYYY-MM-DDTHH:mm:ss')
 	}

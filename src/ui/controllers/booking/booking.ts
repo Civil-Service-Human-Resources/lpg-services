@@ -3,15 +3,18 @@ import _ = require('lodash')
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
 
+import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
+import {
+	CompleteBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/CompleteBookingActionWorker'
+import {
+	SkipBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/SkipBookingActionWorker'
 import * as courseController from '../course/index'
-
-import {getLogger} from 'lib/logger'
-import { CompleteBookingActionWorker } from '../../../lib/service/fullLearnerRecord/workers/CompleteBookingActionWorker';
-import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError';
-import { SkipBookingActionWorker } from '../../../lib/service/fullLearnerRecord/workers/SkipBookingActionWorker';
 
 const logger = getLogger('controllers/booking')
 const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
@@ -408,7 +411,7 @@ export async function tryMoveBooking(
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
-	
+
 	const actionWorker = new CompleteBookingActionWorker(course, req.user, event, module)
 	try {
 		actionWorker.applyActionToLearnerRecord()

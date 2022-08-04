@@ -1,13 +1,17 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
-import {ApiParameters} from "lib/service/catalog"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import { AddCourseToLearningplanActionWorker } from '../../lib/service/fullLearnerRecord/workers/AddCourseToLearningplanActionWorker';
-import { RemoveCourseFromLearningplanActionWorker } from '../../lib/service/fullLearnerRecord/workers/RemoveCourseFromLearningplanActionWorker';
+
+import {
+	AddCourseToLearningplanActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/AddCourseToLearningplanActionWorker'
+import {
+	RemoveCourseFromLearningplanActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/RemoveCourseFromLearningplanActionWorker'
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
@@ -235,7 +239,7 @@ async function getSuggestions(
 	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
 	user: model.User
 ): Promise<model.Course[]> {
-	const params: ApiParameters = new catalog.ApiParameters(
+	const params: catalog.ApiParameters = new catalog.ApiParameters(
 		areasOfWork,
 		department,
 		interests,

@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import {JsonPatch} from '../../shared/models/JsonPatch'
 import {RecordState} from '../models/record'
-import { CourseRecordPreference } from './models/courseRecord';
+import {CourseRecordPreference} from './models/courseRecord'
 
 export function clearState() {
 	return JsonPatch.removePatch('state')
