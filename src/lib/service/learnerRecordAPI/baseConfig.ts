@@ -17,6 +17,7 @@ export const http = axios.create({
 })
 
 export async function makeRequest<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
+	logger.debug(`${req.method} request to ${req.url}. Data: ${req.data}`)
 	if (req.headers) {
 		req.headers.Authorization = `Bearer ${user.accessToken}`
 	} else {
