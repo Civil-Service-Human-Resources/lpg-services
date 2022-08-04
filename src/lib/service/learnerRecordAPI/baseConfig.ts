@@ -26,7 +26,7 @@ export async function makeRequest<T>(req: AxiosRequestConfig, user: model.User):
 		const res = await http.request<T>(req)
 		return res.data
 	} catch (e) {
-		let str = `Request to ${req.url} failed`
+		let str = `${req.method} request to ${req.url} failed`
 		if (e.response) {
 			const data = JSON.stringify(e.response.data)
 			str = `${str} with a status ${e.response.status}. data: ${data}`

@@ -38,7 +38,7 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 
 	protected generateModuleRecordInput(state: RecordState) {
 		return new ModuleRecordInput(
-			this.user.userId,
+			this.user.id,
 			this.course.id,
 			this.module.id,
 			this.module.title,
