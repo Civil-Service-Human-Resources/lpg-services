@@ -1,7 +1,7 @@
 import { Course, Module, User } from '../../../model'
 import { patchCourseRecord } from '../../learnerRecordAPI/courseRecord/client'
 import { CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
-import { setState } from '../../learnerRecordAPI/courseRecord/patchFactory'
+import { setLastUpdated, setState } from '../../learnerRecordAPI/courseRecord/patchFactory'
 import { RecordState } from '../../learnerRecordAPI/models/record'
 import { patchModuleRecord } from '../../learnerRecordAPI/moduleRecord/client'
 import { ModuleRecord } from '../../learnerRecordAPI/moduleRecord/models/moduleRecord'
@@ -24,7 +24,7 @@ export class CompletedActionWorker extends ActionWorker {
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord) {
-		const patches = [setUpdatedAt()]
+		const patches = [setLastUpdated()]
 		if (courseRecord.areAllRequiredModulesComplete(this.course.modules)) {
 			patches.push(setState(RecordState.Completed))
 		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
