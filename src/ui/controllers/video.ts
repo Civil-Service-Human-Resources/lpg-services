@@ -2,7 +2,7 @@ import * as express from 'express'
 import * as extended from 'lib/extended'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
-import {completeModule} from '../../lib/service/fullLearnerRecord/fullLearnerRecordService'
+import { CompletedActionWorker } from '../../lib/service/learnerRecordAPI/workers/CompletedActionWorker'
 
 const logger = getLogger('controllers/learning-record')
 
@@ -35,6 +35,6 @@ export async function completeVideoModule(ireq: express.Request, res: express.Re
 		return
 	}
 
-	completeModule(course, moduleId, req.user)
+	new CompletedActionWorker(course, req.user, mod).applyActionToLearnerRecord()
 	res.sendStatus(200)
 }

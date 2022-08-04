@@ -2,14 +2,22 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
-import { completeModule, progressModule } from '../../../lib/service/fullLearnerRecord/fullLearnerRecordService'
-import { removeCourseFromLearningPlan } from '../../../lib/service/learnerRecordAPI/service'
+
+import {
+	CompletedActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/CompletedActionWorker'
+import {
+	InitialiseActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/initialiseActionWorker'
+import {
+	RemoveCourseFromLearningplanActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/RemoveCourseFromLearningplanActionWorker'
 
 export interface CourseDetail {
 	label: string
@@ -104,11 +112,11 @@ export async function displayModule(
 			break
 		case 'link':
 		case 'file':
-			completeModule(course, module.id, req.user)
+			new CompletedActionWorker(course, req.user, module).applyActionToLearnerRecord()
 			res.redirect(module.url!)
 			break
 		case 'video':
-			progressModule(course, module.id, req.user)
+			new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
 
 			res.send(
 				template.render(`course/display-video`, req, res, {
@@ -295,7 +303,7 @@ export async function markCourseDeleted(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	await removeCourseFromLearningPlan(req.course, req.user)
+	new RemoveCourseFromLearningplanActionWorker(req.course, req.user).applyActionToLearnerRecord()
 
 	req.flash(
 		'successTitle',

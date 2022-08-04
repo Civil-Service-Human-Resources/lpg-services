@@ -24,7 +24,7 @@ export async function displayFeedback(
 			`Ignoring feedback for course ${course.id} and module ${module.id}`
 		)
 
-		await new RateModuleActionWorker(course, req.user, module.id).applyActionToLearnerRecord()
+		await new RateModuleActionWorker(course, req.user, module).applyActionToLearnerRecord()
 
 		req.session!.save(() => {
 			res.redirect('/home')
@@ -87,7 +87,7 @@ export async function submitFeedback(
 			moduleId: module.id,
 			userId: req.user.id,
 		}, req.user)
-		await new RateModuleActionWorker(course, req.user, module.id).applyActionToLearnerRecord()
+		await new RateModuleActionWorker(course, req.user, module).applyActionToLearnerRecord()
 
 		req.flash('successTitle', req.__('learning_feedback_submitted_title'))
 		req.flash('successMessage', req.__('learning_feedback_submitted_message'))
