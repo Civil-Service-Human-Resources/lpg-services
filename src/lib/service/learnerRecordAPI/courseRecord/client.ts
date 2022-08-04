@@ -13,7 +13,6 @@ const logger = getLogger('LearnerRecordAPI/client.ts')
 const URL = '/course_records'
 
 export async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, courseId: string) {
-	logger.debug(`Patching course record for course ID ${courseId} and user ID ${user.id}`)
 	const res =  await patch<CourseRecord>(
 		{
 			data: jsonPatch,
@@ -29,7 +28,6 @@ export async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User
 }
 
 export async function createCourseRecord(courseRecord: CourseRecordInput, user: model.User) {
-	logger.debug(`Creating course record for course ID ${courseRecord.courseId} and user ID ${user.id}`)
 	const res =  await makeRequest<CourseRecord>(
 		{
 			data: courseRecord,
@@ -42,7 +40,6 @@ export async function createCourseRecord(courseRecord: CourseRecordInput, user: 
 }
 
 export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
-	logger.debug(`Getting course record for course ID ${courseId} and user ID ${user.id}`)
 	const resp = await makeRequest<CourseRecordResponse>(
 		{
 			method: 'GET',
@@ -55,7 +52,6 @@ export async function getCourseRecord(courseId: string, user: model.User): Promi
 		user
 	)
 	const courseRecords = plainToClass(CourseRecordResponse, resp).courseRecords
-	console.log(courseRecords)
 	let courseRecord
 	if (courseRecords.length === 1) {
 		courseRecord = buildCourseRecord(courseRecords[0])

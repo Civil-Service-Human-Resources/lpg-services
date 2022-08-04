@@ -1,3 +1,4 @@
+import { getLogger } from '../../../logger'
 import { Course, Module, User } from '../../../model'
 import { getCourseRecord } from '../../learnerRecordAPI/courseRecord/client'
 import { RecordState } from '../../learnerRecordAPI/models/record'
@@ -5,6 +6,8 @@ import { createModuleRecord } from '../../learnerRecordAPI/moduleRecord/client'
 import { ModuleRecord } from '../../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import { ModuleRecordInput } from '../../learnerRecordAPI/moduleRecord/models/moduleRecordInput'
 import { CourseRecordActionWorker } from './CourseRecordActionWorker'
+
+const logger = getLogger('LearnerRecordAPI/workers/ActionWorker')
 
 export abstract class ActionWorker extends CourseRecordActionWorker {
 	constructor(protected readonly course: Course, protected readonly user: User, protected readonly module: Module) {
@@ -18,15 +21,19 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 	async applyActionToLearnerRecord() {
 		const courseRecord = await getCourseRecord(this.course.id, this.user)
 		if (!courseRecord) {
+			logger.debug(`Creating course record ${this.course.id} for user ${this.user.id}`)
 			await this.createCourseRecord()
 		} else {
 			let moduleRecord = courseRecord.getModuleRecord(this.module.id)
 			if (!moduleRecord) {
+				logger.debug(`Creating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
 				moduleRecord = await this.createModuleRecord()
 			} else {
+				logger.debug(`Updating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
 				moduleRecord = await this.updateModuleRecord(moduleRecord)
 			}
 			courseRecord.updateModuleRecord(moduleRecord.id, moduleRecord)
+			logger.debug(`Creating course record for course ${this.course.id} and user ${this.user.id}`)
 			await this.updateCourseRecord(courseRecord)
 		}
 	}
