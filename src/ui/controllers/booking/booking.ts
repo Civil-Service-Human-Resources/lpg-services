@@ -9,8 +9,14 @@ import * as template from 'lib/ui/template'
 
 import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
 import {
+	ApprovedBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/ApprovedBookingActionWorker'
+import {
 	CompleteBookingActionWorker
 } from '../../../lib/service/learnerRecordAPI/workers/CompleteBookingActionWorker'
+import {
+	RegisterBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/RegisterBookingActionWorker'
 import {
 	SkipBookingActionWorker
 } from '../../../lib/service/learnerRecordAPI/workers/SkipBookingActionWorker'
@@ -485,6 +491,12 @@ export async function tryCompleteBooking(
 			`event: ${event.id}`,
 			`response: ${response.status}`
 		)
+
+		if (!module.cost || module.cost === 0) {
+			new ApprovedBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+		} else {
+			new RegisterBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+		}
 
 		message = confirmedMessage.Booked
 	} else {
