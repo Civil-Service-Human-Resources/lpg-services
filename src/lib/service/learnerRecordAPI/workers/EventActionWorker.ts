@@ -25,7 +25,7 @@ export abstract class EventActionWorker extends ActionWorker {
 			state,
 			this.module.cost,
 			this.event.id,
-			this.event.dateRanges[0]
+			this.event.startDate
 		)
 	}
 }
