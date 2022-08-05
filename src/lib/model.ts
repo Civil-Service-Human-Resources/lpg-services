@@ -856,6 +856,9 @@ export class User {
 		return user
 	}
 
+	/**
+	 * The UID
+	 */
 	readonly id: string
 	readonly userName: string
 	readonly sessionIndex: string
