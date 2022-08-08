@@ -1,6 +1,8 @@
-import {Module} from '../../../../model'
-import {Record, RecordState} from '../../models/record'
-import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
+import { plainToClass } from 'class-transformer'
+
+import { Module } from '../../../../model'
+import { Record, RecordState } from '../../models/record'
+import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
 
 export enum CourseRecordPreference {
 	Liked = 'LIKED',
@@ -73,14 +75,14 @@ export class CourseRecord extends Record {
 	}
 
 	public areAllRequiredModulesComplete(modules: Module[]) {
-		const moduleIds = modules.map(m => m.id)
-		const remainingModules = this.modules.filter(
-			m => !moduleIds.includes(m.moduleId) && !m.isCompleted() && !m.optional
+		const requiredModuleIds = modules.filter(m => !m.optional).map(m => m.id)
+		const completedRequiredModules = this.modules.filter(
+			m => requiredModuleIds.includes(m.moduleId) && m.isCompleted()
 		)
-		return remainingModules.length === 0
+		return completedRequiredModules.length === requiredModuleIds.length
 	}
 
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {
-		this.modules = moduleRecords.map(m => Object.assign(ModuleRecord, m))
+		this.modules = moduleRecords.map(m => plainToClass(ModuleRecord, m as ModuleRecord))
 	}
 }

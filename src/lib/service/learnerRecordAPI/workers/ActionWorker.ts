@@ -34,7 +34,7 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 					moduleRecord = await this.updateModuleRecord(moduleRecord)
 				}
 				courseRecord.updateModuleRecord(moduleRecord.id, moduleRecord)
-				logger.debug(`Creating course record for course ${this.course.id} and user ${this.user.id}`)
+				logger.debug(`Updating course record for course ${this.course.id} and user ${this.user.id}`)
 				await this.updateCourseRecord(courseRecord)
 			}
 		} catch (e) {
