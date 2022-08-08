@@ -28,7 +28,7 @@ export class CancelBookingActionWorker extends EventActionWorker {
 	}
 
 	async createModuleRecord(): Promise<ModuleRecord> {
-		return await this.createNewModuleRecord(RecordState.Registered)
+		return await this.createNewModuleRecord(RecordState.Unregsitered)
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
