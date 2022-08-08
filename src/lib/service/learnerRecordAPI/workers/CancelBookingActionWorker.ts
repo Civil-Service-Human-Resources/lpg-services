@@ -46,7 +46,7 @@ export class CancelBookingActionWorker extends EventActionWorker {
 			clearScore(),
 			clearCompletionDate(),
 			setUpdatedAt(new Date()),
-			setBookingStatus(BookingStatus.Cancelled),
+			setBookingStatus(BookingStatus.CANCELLED),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
 	}

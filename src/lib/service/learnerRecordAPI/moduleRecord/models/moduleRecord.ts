@@ -6,9 +6,9 @@ export enum ModuleRecordResult {
 }
 
 export enum BookingStatus {
-	Requested = 0,
-	Confirmed = 1,
-	Cancelled = 2,
+	REQUESTED = 'REQUESTED',
+	CONFIRMED = 'CONFIRMED',
+	CANCELLED = 'CANCELLED',
 }
 
 export class ModuleRecord extends Record {

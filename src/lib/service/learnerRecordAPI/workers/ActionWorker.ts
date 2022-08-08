@@ -19,22 +19,27 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 	abstract updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord>
 
 	async applyActionToLearnerRecord() {
-		const courseRecord = await getCourseRecord(this.course.id, this.user)
-		if (!courseRecord) {
-			logger.debug(`Creating course record ${this.course.id} for user ${this.user.id}`)
-			await this.createCourseRecord()
-		} else {
-			let moduleRecord = courseRecord.getModuleRecord(this.module.id)
-			if (!moduleRecord) {
-				logger.debug(`Creating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
-				moduleRecord = await this.createModuleRecord()
+		try {
+			const courseRecord = await getCourseRecord(this.course.id, this.user)
+			if (!courseRecord) {
+				logger.debug(`Creating course record ${this.course.id} for user ${this.user.id}`)
+				await this.createCourseRecord()
 			} else {
-				logger.debug(`Updating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
-				moduleRecord = await this.updateModuleRecord(moduleRecord)
+				let moduleRecord = courseRecord.getModuleRecord(this.module.id)
+				if (!moduleRecord) {
+					logger.debug(`Creating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
+					moduleRecord = await this.createModuleRecord()
+				} else {
+					logger.debug(`Updating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
+					moduleRecord = await this.updateModuleRecord(moduleRecord)
+				}
+				courseRecord.updateModuleRecord(moduleRecord.id, moduleRecord)
+				logger.debug(`Creating course record for course ${this.course.id} and user ${this.user.id}`)
+				await this.updateCourseRecord(courseRecord)
 			}
-			courseRecord.updateModuleRecord(moduleRecord.id, moduleRecord)
-			logger.debug(`Creating course record for course ${this.course.id} and user ${this.user.id}`)
-			await this.updateCourseRecord(courseRecord)
+		} catch (e) {
+			logger.error(`failed to apply action to the course record. UserID: ${this.user.id}, ` +
+			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}. Error: ${e}`)
 		}
 	}
 
