@@ -1,3 +1,4 @@
+import { CancelBookingActionWorker } from '../../../lib/service/learnerRecordAPI/workers/CancelBookingActionWorker'
 import {confirmedMessage, recordCheck} from './booking'
 
 import {NextFunction} from "express"
@@ -133,6 +134,8 @@ export async function tryCancelBooking(
 		extensions[xapi.Extension.CancelReason] = cancelReason
 
 		const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
+
+		new CancelBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
 
 		const response: any = {
 			404: async () => {
