@@ -48,12 +48,19 @@ export class CourseRecord extends Record {
 		}
 	}
 
-	public updateModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {
+	public upsertModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {
+		let existingModIndex
 		for (let i = 0; i < this.modules.length; i++) {
 			const mr = this.modules[i]
 			if (mr.id === moduleRecordId) {
-				this.modules[i] = moduleRecord
+				existingModIndex = i
 			}
+		}
+
+		if (existingModIndex) {
+			this.modules[existingModIndex] = moduleRecord
+		} else {
+			this.modules.push(moduleRecord)
 		}
 	}
 

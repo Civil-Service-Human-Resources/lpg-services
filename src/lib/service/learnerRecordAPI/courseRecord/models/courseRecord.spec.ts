@@ -54,3 +54,39 @@ describe('Should return course completion status', () => {
 		expect(completed === false)
 	})
 })
+
+describe('Should upsert (update OR insert) a module record', () => {
+	it('should update the existing module record', () => {
+		const moduleRecordId = 1
+
+		const mod = new ModuleRecord(moduleRecordId, '', '', '', new Date(),
+		new Date(), '', 'link', RecordState.InProgress, 0, false, undefined)
+
+		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, [mod], '', false)
+
+		const updatedMod = new ModuleRecord(moduleRecordId, '', '', '', new Date(),
+		new Date(), '', 'link', RecordState.Completed, 0, false, undefined)
+
+		courseRecord.upsertModuleRecord(updatedMod.id, updatedMod)
+
+		expect(courseRecord.modules.length === 1)
+		expect(courseRecord.modules[0].isCompleted())
+	})
+
+	it('should insert the missing module record', () => {
+
+		const mod = new ModuleRecord(1, '', '', '', new Date(),
+		new Date(), '', 'link', RecordState.InProgress, 0, false, undefined)
+
+		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, [mod], '', false)
+
+		const updatedMod = new ModuleRecord(2, '', '', '', new Date(),
+		new Date(), '', 'link', RecordState.Completed, 0, false, undefined)
+
+		courseRecord.upsertModuleRecord(updatedMod.id, updatedMod)
+
+		expect(courseRecord.modules.length === 2)
+		expect(courseRecord.modules[0].isInProgress())
+		expect(courseRecord.modules[1].isCompleted())
+	})
+})
