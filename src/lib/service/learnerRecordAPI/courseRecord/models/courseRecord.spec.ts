@@ -11,8 +11,12 @@ const mod2 = new Module('MOD002', 'link')
 mod2.optional = false
 const mod3 = new Module('MOD003', 'link')
 mod3.optional = true
+const mod4 = new Module('MOD003', 'link')
+mod3.optional = true
 
 const mods = [mod1, mod2, mod3]
+
+const optionalMods = [mod3, mod4]
 
 describe('Should return course completion status', () => {
 
@@ -20,7 +24,7 @@ describe('Should return course completion status', () => {
 		const modRecords = mods.filter(m => !m.optional).map(m => new ModuleRecord(0, m.id, '', '', new Date(),
 		new Date(), '', 'link', RecordState.Completed, 0, m.optional, undefined))
 		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
-		const completed = courseRecord.areAllRequiredModulesComplete(mods)
+		const completed = courseRecord.areAllRelevantModulesComplete(mods)
 		expect(completed === true)
 	})
 
@@ -29,7 +33,7 @@ describe('Should return course completion status', () => {
 		'link', RecordState.Completed, 0, m.optional, undefined))
 		modRecords[2].state = RecordState.InProgress
 		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
-		const completed = courseRecord.areAllRequiredModulesComplete(mods)
+		const completed = courseRecord.areAllRelevantModulesComplete(mods)
 		expect(completed === true)
 	})
 
@@ -38,20 +42,29 @@ describe('Should return course completion status', () => {
 		new Date(), '', 'link', RecordState.Completed, 0, m.optional, undefined))
 		modRecords[0].state = RecordState.InProgress
 		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
-		const completed = courseRecord.areAllRequiredModulesComplete(mods)
+		const completed = courseRecord.areAllRelevantModulesComplete(mods)
 		expect(completed === false)
 	})
 
 	it('Should return "false" when both required modules are still in progress but optional is completed', () => {
 		const modRecords = mods.map(m => new ModuleRecord(0, m.id, '', '', new Date(),
 		new Date(), '', 'link', RecordState.Completed, 0, m.optional, undefined))
-		console.log(modRecords.length)
 		modRecords[0].state = RecordState.InProgress
 		modRecords[1].state = RecordState.InProgress
 		modRecords[2].state = RecordState.Completed
 		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
-		const completed = courseRecord.areAllRequiredModulesComplete(mods)
+		const completed = courseRecord.areAllRelevantModulesComplete(mods)
 		expect(completed === false)
+	})
+
+	it('Should return "true" when all optional modules are completed on a course containing only optional modules', () => {
+		const modRecords = optionalMods.map(m => new ModuleRecord(0, m.id, '', '', new Date(),
+		new Date(), '', 'link', RecordState.Completed, 0, m.optional, undefined))
+		modRecords[0].state = RecordState.Completed
+		modRecords[1].state = RecordState.Completed
+		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
+		const completed = courseRecord.areAllRelevantModulesComplete(mods)
+		expect(completed === true)
 	})
 })
 

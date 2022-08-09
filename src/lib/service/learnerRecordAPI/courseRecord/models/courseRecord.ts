@@ -81,12 +81,15 @@ export class CourseRecord extends Record {
 		}
 	}
 
-	public areAllRequiredModulesComplete(modules: Module[]) {
-		const requiredModuleIds = modules.filter(m => !m.optional).map(m => m.id)
-		const completedRequiredModules = this.modules.filter(
-			m => requiredModuleIds.includes(m.moduleId) && m.isCompleted()
-		)
-		return completedRequiredModules.length === requiredModuleIds.length
+	public areAllRelevantModulesComplete(modules: Module[]) {
+		let modIds: string[]
+		let completedModuleIds = this.modules.filter(m => m.isCompleted()).map(m => m.moduleId)
+		if (modules.every(m => m.optional)) {
+			modIds = modules.filter(m => m.optional).map(m => m.id)
+		} else {
+			modIds = modules.filter(m => !m.optional).map(m => m.id)
+		}
+		return completedModuleIds.filter(m => modIds.includes(m)).length === modIds.length
 	}
 
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {

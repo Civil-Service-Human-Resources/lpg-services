@@ -15,7 +15,14 @@ export class CompletedActionWorker extends ActionWorker {
 
 	async createCourseRecord() {
 		const moduleRecordInput = this.generateModuleRecordInput(RecordState.Completed)
-		const courseRecordState = this.course.modules.length === 1 ? RecordState.Completed : RecordState.InProgress
+		let courseRecordState = RecordState.InProgress
+		if (this.course.modules.length === 1) {
+			courseRecordState = RecordState.Completed
+		} else {
+			if (this.course.getRequiredModules().length === 1 && !this.module.optional) {
+				courseRecordState = RecordState.Completed
+			}
+		}
 		await this.createNewCourseRecord([moduleRecordInput], courseRecordState)
 	}
 
@@ -25,7 +32,7 @@ export class CompletedActionWorker extends ActionWorker {
 
 	async updateCourseRecord(courseRecord: CourseRecord) {
 		const patches = [setLastUpdated()]
-		if (courseRecord.areAllRequiredModulesComplete(this.course.modules)) {
+		if (courseRecord.areAllRelevantModulesComplete(this.course.modules)) {
 			patches.push(setState(RecordState.Completed))
 		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
 			patches.push(setState(RecordState.InProgress))

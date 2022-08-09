@@ -217,6 +217,18 @@ export class Course {
 		return this.modules
 	}
 
+	isOptional() {
+		return this.getOptionalModules().length === this.modules.length
+	}
+
+	getRequiredModules() {
+		return this.getModules().filter(m => !m.optional)
+	}
+
+	getOptionalModules() {
+		return this.getModules().filter(m => m.optional)
+	}
+
 	isAssociatedLearningModule(id: number) {
 		return this.modules[id].associatedLearning
 	}
