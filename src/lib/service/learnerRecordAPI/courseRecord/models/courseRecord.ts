@@ -83,7 +83,7 @@ export class CourseRecord extends Record {
 
 	public areAllRelevantModulesComplete(modules: Module[]) {
 		let modIds: string[]
-		let completedModuleIds = this.modules.filter(m => m.isCompleted()).map(m => m.moduleId)
+		const completedModuleIds = this.modules.filter(m => m.isCompleted()).map(m => m.moduleId)
 		if (modules.every(m => m.optional)) {
 			modIds = modules.filter(m => m.optional).map(m => m.id)
 		} else {
