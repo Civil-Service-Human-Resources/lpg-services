@@ -27,9 +27,7 @@
                             </p>
                         {/if}
                         {#each modules as module}
-                            {#if course.getMandatoryCount() > 0}
-                                <DisciteModule type="blended" {recordState} {course} {module}/>
-                            {/if}
+                            <DisciteModule type="blended" {recordState} {course} {module}/>
                         {/each}
                     </div>
                 {/if}
