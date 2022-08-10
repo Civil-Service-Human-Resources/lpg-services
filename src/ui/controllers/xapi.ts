@@ -174,7 +174,6 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 		const module = course.getModule(moduleId)
 		switch (verbId) {
 			case xapi.Verb.Attempted:
-			case xapi.Verb.Experienced:
 			case xapi.Verb.Initialised:
 			case xapi.Verb.Launched:
 				actionWorker = new InitialiseActionWorker(course, user, module)
