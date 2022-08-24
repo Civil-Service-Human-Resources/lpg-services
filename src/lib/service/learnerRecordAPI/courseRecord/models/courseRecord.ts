@@ -43,9 +43,7 @@ export class CourseRecord extends Record {
 			this.lastUpdated = new Date(lastUpdated)
 		}
 
-		if (modules.length > 0) {
-			this.fillRecords(modules)
-		}
+		this.fillRecords(modules)
 	}
 
 	public upsertModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {

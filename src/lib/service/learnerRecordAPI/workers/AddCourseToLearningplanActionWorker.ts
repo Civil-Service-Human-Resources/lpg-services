@@ -1,6 +1,6 @@
 import { Course, User } from '../../../model'
 import { patchCourseRecord } from '../../learnerRecordAPI/courseRecord/client'
-import { CourseRecordPreference } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
+import { CourseRecordPreference, CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
 import {
 	clearState, setLastUpdated, setPreference
 } from '../../learnerRecordAPI/courseRecord/patchFactory'
@@ -11,9 +11,9 @@ export class AddCourseToLearningplanActionWorker extends CourseRecordActionWorke
 		super(course, user)
 	}
 
-	async updateCourseRecord() {
+	async updateCourseRecord(courseRecord: CourseRecord) {
 		const patches = [setPreference(CourseRecordPreference.Liked), clearState(), setLastUpdated(new Date())]
-		await patchCourseRecord(patches, this.user, this.course.id)
+		await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async createCourseRecord() {

@@ -44,6 +44,8 @@ function setDate(key: string, date?: Date) {
 	let convertedDate
 	if (date) {
 		convertedDate = moment(date).format('YYYY-MM-DDTHH:mm:ss')
+	} else {
+		convertedDate = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss')
 	}
 	return JsonPatch.replacePatch(key, convertedDate)
 }

@@ -4,6 +4,7 @@ import { CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseR
 import { setLastUpdated, setState } from '../../learnerRecordAPI/courseRecord/patchFactory'
 import { RecordState } from '../../learnerRecordAPI/models/record'
 import { CourseRecordActionWorker } from './CourseRecordActionWorker'
+import { patchCourseRecord } from '../courseRecord/client';
 
 const logger = getLogger('fullLearnerRecord/workers/RemoveCourseFromLearningplanActionWorker')
 
@@ -14,8 +15,8 @@ export class RemoveCourseFromLearningplanActionWorker extends CourseRecordAction
 
 	async updateCourseRecord(courseRecord: CourseRecord) {
 		if (!courseRecord.hasBeenAddedToLearningPlan()) {
-			const patches = []
-			patches.push(...[setState(RecordState.Archived), setLastUpdated(new Date())])
+			const patches = [setState(RecordState.Archived), setLastUpdated(new Date())]
+			patchCourseRecord(patches, this.user, courseRecord.courseId)
 		}
 	}
 

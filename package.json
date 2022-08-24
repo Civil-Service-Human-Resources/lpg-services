@@ -15,6 +15,9 @@
 		"start:build": "npm run build && npm run start:ui",
 		"start:ui": "cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
 		"test": "find dist -name '*.spec.js' | cross-env NODE_ICU_DATA=node_modules/full-icu xargs node_modules/mocha/bin/mocha --timeout 10000 --exit",
+		"test:ts": "ts-mocha --paths -p ./tsconfig.json src/**/*.spec.ts --timeout 10000 --exit",
+		"test-single:ts": "ts-mocha --paths -p ./tsconfig.json --timeout 10000 --exit",
+		"test:watch": "ts-mocha src/**/*.spec.ts --paths -w -watch-files '**/*.ts'",
 		"watch": "./bin/tsc -w"
 	},
 	"devDependencies": {
@@ -67,7 +70,9 @@
 		"sinon-express-mock": "2.0.4",
 		"slugid": "1.1.0",
 		"supertest": "^3.1.0",
+		"ts-mocha": "^10.0.0",
 		"ts-node-register": "^1.0.0",
+		"tsconfig-paths": "^4.1.0",
 		"tslint": "5.9.1",
 		"typescript": "2.9.2"
 	},

@@ -3,7 +3,13 @@ export enum Ops {
 	remove = 'remove',
 }
 
-export class JsonPatch {
+export interface IJsonPatch {
+	op: string
+	path: string
+	value?: string
+}
+
+export class JsonPatch implements IJsonPatch {
 
 	static replacePatch(path: string, value?: string) {
 		return new this(Ops.replace, path, value)
