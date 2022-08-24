@@ -1,10 +1,10 @@
-import { getLogger } from '../../../logger'
-import { Course, User } from '../../../model'
-import { CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
-import { setLastUpdated, setState } from '../../learnerRecordAPI/courseRecord/patchFactory'
-import { RecordState } from '../../learnerRecordAPI/models/record'
+import { getLogger } from '../../../../logger'
+import { Course, User } from '../../../../model'
+import { patchCourseRecord } from '../../courseRecord/client'
+import { CourseRecord } from '../../courseRecord/models/courseRecord'
+import { setLastUpdated, setState } from '../../courseRecord/patchFactory'
+import { RecordState } from '../../models/record'
 import { CourseRecordActionWorker } from './CourseRecordActionWorker'
-import { patchCourseRecord } from '../courseRecord/client';
 
 const logger = getLogger('fullLearnerRecord/workers/RemoveCourseFromLearningplanActionWorker')
 

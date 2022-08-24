@@ -1,9 +1,7 @@
-import { Course, User } from '../../../model'
-import { patchCourseRecord } from '../../learnerRecordAPI/courseRecord/client'
-import { CourseRecordPreference, CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
-import {
-	clearState, setLastUpdated, setPreference
-} from '../../learnerRecordAPI/courseRecord/patchFactory'
+import { Course, User } from '../../../../model'
+import { patchCourseRecord } from '../../courseRecord/client'
+import { CourseRecord, CourseRecordPreference } from '../../courseRecord/models/courseRecord'
+import { clearState, setLastUpdated, setPreference } from '../../courseRecord/patchFactory'
 import { CourseRecordActionWorker } from './CourseRecordActionWorker'
 
 export class AddCourseToLearningplanActionWorker extends CourseRecordActionWorker {

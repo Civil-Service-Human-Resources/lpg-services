@@ -1,8 +1,11 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
-import { CompletedActionWorker } from '../../lib/service/learnerRecordAPI/workers/CompletedActionWorker'
+
+import {
+    CompletedActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
 
 const logger = getLogger('controllers/learning-record')
 

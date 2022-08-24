@@ -6,8 +6,8 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 
 import {
-	RateModuleActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/RateModuleActionWorker'
+    RateModuleActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/RateModuleActionWorker'
 
 const logger = getLogger('controllers/learning-record/feedback')
 

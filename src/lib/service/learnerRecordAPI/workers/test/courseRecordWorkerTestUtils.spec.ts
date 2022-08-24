@@ -1,13 +1,16 @@
 import { expect } from 'chai'
 
+import { SinonStub } from '../../../../../../node_modules/@types/sinon'
 import { IJsonPatch, JsonPatch } from '../../../shared/models/JsonPatch'
+import { CourseRecord } from '../../courseRecord/models/courseRecord'
+import { CourseRecordInput } from '../../courseRecord/models/courseRecordInput'
 import { RecordState } from '../../models/record'
-import { CourseRecordActionWorker } from '../CourseRecordActionWorker'
-import { mockCreateCourseRecord, mockGetCourseRecordNotFound, mockPatchCourseRecord, mockGetCourseRecord, assertJsonPatch, assertOneCallAndGetArgs } from './WorkerTestUtils.spec'
-import { CourseRecordInput } from '../../courseRecord/models/courseRecordInput';
-import { CourseRecord } from '../../courseRecord/models/courseRecord';
-import { SinonStub } from '../../../../../../node_modules/@types/sinon';
-import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput';
+import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
+import { CourseRecordActionWorker } from '../courseRecordActionWorkers/CourseRecordActionWorker'
+import {
+    assertJsonPatch, assertOneCallAndGetArgs, mockCreateCourseRecord, mockGetCourseRecord,
+    mockGetCourseRecordNotFound, mockPatchCourseRecord
+} from './WorkerTestUtils.spec'
 
 /**
  * Test template for creating a course record
@@ -25,16 +28,16 @@ export function updateCourseRecordTest (testFunc: Mocha.Func, extraDesc: string 
 
 export async function testCreateCourseRecord(worker: CourseRecordActionWorker, expState: RecordState|undefined,
                                             expPrefernce: string|undefined,
-                                            expModuleRecordStates: RecordState[]|undefined = undefined) {
+                                            expModuleRecordState: RecordState|undefined = undefined) {
     mockGetCourseRecordNotFound()
     const createCourseRecordMock = mockCreateCourseRecord()
     await worker.applyActionToLearnerRecord()
-    assertCreateCourseRecordCall(createCourseRecordMock, expState, expPrefernce, expModuleRecordStates)
+    assertCreateCourseRecordCall(createCourseRecordMock, expState, expPrefernce, expModuleRecordState)
         
 }
 
 export function assertCreateCourseRecordCall(stub: SinonStub, expState: RecordState|undefined,
-    expPrefernce: string|undefined, expModuleRecordStates: RecordState[]|undefined = undefined) {
+    expPrefernce: string|undefined, expModuleRecordState: RecordState|undefined = undefined) {
     const args = assertOneCallAndGetArgs(stub)
     const input = args[0] as CourseRecordInput
 
@@ -43,12 +46,10 @@ export function assertCreateCourseRecordCall(stub: SinonStub, expState: RecordSt
     const modRecordArgs = input.moduleRecords as ModuleRecordInput[]
     expect(stateArg).to.eq(expState, `Expected course record state to be ${expState} but was ${stateArg}`)
     expect(preferenceArg).to.eq(expPrefernce, `Expected course record preference to be ${expPrefernce} but was ${preferenceArg}`)
-    if (expModuleRecordStates) {
-        for (let i = 0; i < modRecordArgs.length; i++) {
-            const modRec = modRecordArgs[i]
-            const expModRecState = expModuleRecordStates[i]
-            expect(modRec.state).to.eq(expModRecState, `Expected module record state to be ${expModRecState} but was ${modRec.state}`)
-        }
+    if (expModuleRecordState) {
+        const modRec = modRecordArgs[0]
+        const expModRecState = expModuleRecordState
+        expect(modRec.state).to.eq(expModRecState, `Expected module record state to be ${expModRecState} but was ${modRec.state}`)
     } else {
         expect(modRecordArgs).to.be.empty
     }

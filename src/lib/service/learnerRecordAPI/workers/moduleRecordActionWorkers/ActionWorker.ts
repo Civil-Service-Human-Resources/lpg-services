@@ -1,11 +1,12 @@
-import { getLogger } from '../../../logger'
-import { Course, Module, User } from '../../../model'
-import { getCourseRecord } from '../../learnerRecordAPI/courseRecord/client'
-import { RecordState } from '../../learnerRecordAPI/models/record'
-import { createModuleRecord } from '../../learnerRecordAPI/moduleRecord/client'
-import { ModuleRecord } from '../../learnerRecordAPI/moduleRecord/models/moduleRecord'
-import { ModuleRecordInput } from '../../learnerRecordAPI/moduleRecord/models/moduleRecordInput'
-import { CourseRecordActionWorker } from './CourseRecordActionWorker'
+import { CourseRecordActionWorker } from "../courseRecordActionWorkers/CourseRecordActionWorker";
+import { Course, User, Module } from "../../../../model";
+import { getLogger } from "../../../../logger";
+import { ModuleRecord } from "../../moduleRecord/models/moduleRecord";
+import { getCourseRecord } from "../../courseRecord/client";
+import * as moduleRecordClient from  "../../moduleRecord/client"
+import { RecordState } from "../../models/record";
+import { ModuleRecordInput } from "../../moduleRecord/models/moduleRecordInput";
+
 
 const logger = getLogger('LearnerRecordAPI/workers/ActionWorker')
 
@@ -45,7 +46,7 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 
 	createNewModuleRecord = async (state: RecordState) => {
 		const input = this.generateModuleRecordInput(state)
-		return await createModuleRecord(input, this.user)
+		return await moduleRecordClient.createModuleRecord(input, this.user)
 	}
 
 	protected generateModuleRecordInput(state: RecordState) {

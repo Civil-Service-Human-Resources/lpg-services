@@ -1,14 +1,14 @@
-import { CourseRecordStateError } from '../../../exception/courseRecordStateError'
-import { Course, Event, Module, User } from '../../../model'
-import { patchCourseRecord } from '../../learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
-import { setLastUpdated } from '../../learnerRecordAPI/courseRecord/patchFactory'
-import { RecordState } from '../../learnerRecordAPI/models/record'
-import { patchModuleRecord } from '../../learnerRecordAPI/moduleRecord/client'
-import { ModuleRecord } from '../../learnerRecordAPI/moduleRecord/models/moduleRecord'
+import { CourseRecordStateError } from '../../../../../exception/courseRecordStateError'
+import { Course, Event, Module, User } from '../../../../../model'
+import { patchCourseRecord } from '../../../../learnerRecordAPI/courseRecord/client'
+import { CourseRecord } from '../../../../learnerRecordAPI/courseRecord/models/courseRecord'
+import { setLastUpdated } from '../../../../learnerRecordAPI/courseRecord/patchFactory'
+import { RecordState } from '../../../../learnerRecordAPI/models/record'
+import { patchModuleRecord } from '../../../../learnerRecordAPI/moduleRecord/client'
+import { ModuleRecord } from '../../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {
-	clearBookingStatus, clearCompletionDate, clearResult, clearScore, setState
-} from '../../learnerRecordAPI/moduleRecord/patchFactory'
+    clearBookingStatus, clearCompletionDate, clearResult, clearScore, setState
+} from '../../../../learnerRecordAPI/moduleRecord/patchFactory'
 import { EventActionWorker } from './EventActionWorker'
 
 export class SkipBookingActionWorker extends EventActionWorker {

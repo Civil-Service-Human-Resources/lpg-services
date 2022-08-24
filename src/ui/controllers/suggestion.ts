@@ -7,11 +7,11 @@ import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 
 import {
-	AddCourseToLearningplanActionWorker
-} from '../../lib/service/learnerRecordAPI/workers/AddCourseToLearningplanActionWorker'
+    AddCourseToLearningplanActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/AddCourseToLearningplanActionWorker'
 import {
-	RemoveCourseFromLearningplanActionWorker
-} from '../../lib/service/learnerRecordAPI/workers/RemoveCourseFromLearningplanActionWorker'
+    RemoveCourseFromLearningplanActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6

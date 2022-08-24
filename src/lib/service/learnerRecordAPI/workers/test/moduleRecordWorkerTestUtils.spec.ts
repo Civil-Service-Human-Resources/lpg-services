@@ -1,15 +1,17 @@
 import { expect } from 'chai'
 
+import { User } from '../../../../model'
 import { IJsonPatch, JsonPatch } from '../../../shared/models/JsonPatch'
+import { CourseRecord } from '../../courseRecord/models/courseRecord'
 import { RecordState } from '../../models/record'
-import { mockPatchCourseRecord, testUser, mockGetCourseRecord, mockPatchModuleRecord, mockCreateModuleRecord, assertJsonPatch, genericModuleRecord, assertOneCallAndGetArgs } from './WorkerTestUtils.spec'
-import { User } from '../../../../model';
-import { CourseRecord } from '../../courseRecord/models/courseRecord';
-import { ActionWorker } from '../ActionWorker';
-import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput';
-import { assertPatchCourseRecordCall } from './courseRecordWorkerTestUtils.spec';
-import { ModuleRecord } from '../../moduleRecord/models/moduleRecord';
-
+import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
+import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
+import { ActionWorker } from '../moduleRecordActionWorkers/ActionWorker'
+import { assertPatchCourseRecordCall } from './courseRecordWorkerTestUtils.spec'
+import {
+    assertJsonPatch, assertOneCallAndGetArgs, genericModuleRecord, mockCreateModuleRecord,
+    mockGetCourseRecord, mockPatchCourseRecord, mockPatchModuleRecord, testUser
+} from './WorkerTestUtils.spec'
 
 /**
  * Test the following scenario:

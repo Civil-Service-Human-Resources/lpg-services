@@ -1,13 +1,23 @@
 import * as sinon from 'sinon'
 
 import { CourseRecordPreference } from '../../courseRecord/models/courseRecord'
-import { AddCourseToLearningplanActionWorker } from '../AddCourseToLearningplanActionWorker'
-import { testCreateCourseRecord, testUpdateCourseRecord, createCourseRecordTest, updateCourseRecordTest } from './courseRecordWorkerTestUtils.spec'
-import { testUser, mockTime, testDateAsStr, getCourseRecordWithOneModuleRecord, getCourseWithOneOptionalModule } from './workerTestUtils.spec'
-import { RemoveCourseFromLearningplanActionWorker } from '../RemoveCourseFromLearningplanActionWorker';
-import { RemoveCourseFromSuggestionsActionWorker } from '../RemoveCourseFromSuggestionsActionWorker';
-import { RecordState } from '../../models/record';
-
+import { RecordState } from '../../models/record'
+import {
+    AddCourseToLearningplanActionWorker
+} from '../courseRecordActionWorkers/AddCourseToLearningplanActionWorker'
+import {
+    RemoveCourseFromLearningplanActionWorker
+} from '../courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
+import {
+    RemoveCourseFromSuggestionsActionWorker
+} from '../courseRecordActionWorkers/RemoveCourseFromSuggestionsActionWorker'
+import {
+    createCourseRecordTest, testCreateCourseRecord, testUpdateCourseRecord, updateCourseRecordTest
+} from './courseRecordWorkerTestUtils.spec'
+import {
+    getCourseRecordWithOneModuleRecord, getCourseWithOneOptionalModule, mockTime, testDateAsStr,
+    testUser
+} from './workerTestUtils.spec'
 
 describe('Should test the course action worker classes', () => {
 

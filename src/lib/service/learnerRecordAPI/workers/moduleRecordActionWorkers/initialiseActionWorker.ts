@@ -1,13 +1,14 @@
-import { Course, Module, User } from '../../../model'
-import { patchCourseRecord } from '../../learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
-import { setLastUpdated, setState } from '../../learnerRecordAPI/courseRecord/patchFactory'
-import { RecordState } from '../../learnerRecordAPI/models/record'
-import { patchModuleRecord } from '../../learnerRecordAPI/moduleRecord/client'
-import { ModuleRecord } from '../../learnerRecordAPI/moduleRecord/models/moduleRecord'
+
+import { Course, Module, User } from '../../../../model'
+import { patchCourseRecord } from '../../courseRecord/client'
+import { CourseRecord } from '../../courseRecord/models/courseRecord'
+import { setLastUpdated, setState } from '../../courseRecord/patchFactory'
+import { RecordState } from '../../models/record'
+import { patchModuleRecord } from '../../moduleRecord/client'
+import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
 import {
-	setCompletionDate, setResult, setScore, setUpdatedAt
-} from '../../learnerRecordAPI/moduleRecord/patchFactory'
+    clearResult, clearScore, setCompletionDate, setUpdatedAt
+} from '../../moduleRecord/patchFactory'
 import { ActionWorker } from './ActionWorker'
 
 export class InitialiseActionWorker extends ActionWorker {
@@ -39,8 +40,8 @@ export class InitialiseActionWorker extends ActionWorker {
 			patches.push(
 				...[
 					setState(RecordState.InProgress),
-					setResult(undefined),
-					setScore(undefined),
+					clearResult(),
+					clearScore(),
 					setCompletionDate(),
 					setUpdatedAt(new Date()),
 				]

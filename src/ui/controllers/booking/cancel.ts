@@ -1,20 +1,22 @@
-import { CancelBookingActionWorker } from '../../../lib/service/learnerRecordAPI/workers/CancelBookingActionWorker'
-import {confirmedMessage, recordCheck} from './booking'
 
-import {NextFunction} from "express"
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
+
+import {
+    CancelBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
+import { confirmedMessage, recordCheck } from './booking'
 
 const logger = getLogger('controllers/booking/cancel')
 
 export async function renderCancelBookingPage(
 	ireq: express.Request,
 	res: express.Response,
-	next: NextFunction
+	next: express.NextFunction
 ) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course

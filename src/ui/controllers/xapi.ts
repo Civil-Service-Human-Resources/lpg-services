@@ -8,11 +8,10 @@ import * as xapi from 'lib/xapi'
 import * as querystring from 'querystring'
 import { User } from '../../lib/model'
 import { get } from '../../lib/service/catalog'
-import { CompletedActionWorker } from '../../lib/service/learnerRecordAPI/workers/CompletedActionWorker'
-import { FailModuleActionWorker } from '../../lib/service/learnerRecordAPI/workers/FailModuleActionWorker'
-import { InitialiseActionWorker } from '../../lib/service/learnerRecordAPI/workers/initialiseActionWorker'
-import { PassModuleActionWorker } from '../../lib/service/learnerRecordAPI/workers/PassModuleActionWorker'
-
+import { CompletedActionWorker } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker';
+import { FailModuleActionWorker } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/FailModuleActionWorker';
+import { InitialiseActionWorker } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker';
+import { PassModuleActionWorker } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/PassModuleActionWorker';
 const logger = getLogger('controllers/xapi')
 
 const learnerRecordVerbs = [

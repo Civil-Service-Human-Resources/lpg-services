@@ -1,6 +1,6 @@
-import { getLogger } from '../../../logger'
-import { Course, User } from '../../../model'
-import { CourseRecordPreference } from '../../learnerRecordAPI/courseRecord/models/courseRecord'
+import { getLogger } from '../../../../logger'
+import { Course, User } from '../../../../model'
+import { CourseRecordPreference } from '../../courseRecord/models/courseRecord'
 import { CourseRecordActionWorker } from './CourseRecordActionWorker'
 
 const logger = getLogger('fullLearnerRecord/workers/RemoveCourseFromSuggestionsActionWorker')

@@ -1,13 +1,22 @@
 import * as sinon from 'sinon'
 
 import { RecordState } from '../../models/record'
-import { CompletedActionWorker } from '../CompletedActionWorker'
+
 import { testCreateCourseRecord } from './courseRecordWorkerTestUtils.spec'
-import { testCreateModuleRecord, testUpdateCourseRecord } from './moduleRecordWorkerTestUtils.spec'
 import {
-    getCourseRecordWithTwoModuleRecords, getCourseWithMixedModules, getCourseWithOneRequiredModule,
-    getCourseWithTwoRequiredModules, mockTime, testDateAsStr, testUser, getCourseRecordWithOneModuleRecord
+    testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord
+} from './moduleRecordWorkerTestUtils.spec'
+import {
+    getCourseRecordWithOneModuleRecord, getCourseRecordWithTwoModuleRecords,
+    getCourseWithMixedModules, getCourseWithOneRequiredModule, getCourseWithTwoRequiredModules,
+    mockTime, testDateAsStr, testUser
 } from './workerTestUtils.spec'
+import { CompletedActionWorker } from '../moduleRecordActionWorkers/CompletedActionWorker';
+import { InitialiseActionWorker } from '../moduleRecordActionWorkers/initialiseActionWorker';
+import { CourseState } from '../../../../learnerrecord';
+import { FailModuleActionWorker } from '../moduleRecordActionWorkers/FailModuleActionWorker';
+import { PassModuleActionWorker } from '../moduleRecordActionWorkers/PassModuleActionWorker';
+import { RateModuleActionWorker } from '../moduleRecordActionWorkers/RateModuleActionWorker';
 
 describe('Should test the course action worker classes', () => {
 
@@ -25,25 +34,22 @@ describe('Should test the course action worker classes', () => {
 
             it('Should create a completed course record when the course has 1 module', async () => {
                 const course = getCourseWithOneRequiredModule()
-                const expModuleState = [RecordState.Completed]
                 const worker = new CompletedActionWorker(course, testUser, course.modules[0])
-                await testCreateCourseRecord(worker, RecordState.Completed, undefined, expModuleState)
+                await testCreateCourseRecord(worker, RecordState.Completed, undefined, RecordState.Completed)
             })
     
             it(`Should create a completed course record when the course has
                 1 required module and 1 optional module and the required one is completed`, async () => {
                 const course = getCourseWithMixedModules()
-                const expModuleState = [RecordState.Completed]
                 const worker = new CompletedActionWorker(course, testUser, course.modules[1])
-                await testCreateCourseRecord(worker, RecordState.Completed, undefined, expModuleState)
+                await testCreateCourseRecord(worker, RecordState.Completed, undefined, RecordState.Completed)
             })
     
             it(`Should create an in progress course record when the course has
                 2 required modules and one of them is completed`, async () => {
                 const course = getCourseWithTwoRequiredModules()
-                const expModuleState = [RecordState.Completed]
                 const worker = new CompletedActionWorker(course, testUser, course.modules[0])
-                await testCreateCourseRecord(worker, RecordState.InProgress, undefined, expModuleState)
+                await testCreateCourseRecord(worker, RecordState.InProgress, undefined, RecordState.Completed)
             })
         })
 
@@ -95,5 +101,113 @@ describe('Should test the course action worker classes', () => {
         })
 	})
 
+    describe('Should test initialising a module', () => {
+        const course = getCourseWithTwoRequiredModules()
 
+        it(`Should create the course record correctly`, async () => {
+            const worker = new InitialiseActionWorker(course, testUser, course.modules[0])
+            await testCreateCourseRecord(
+                worker, RecordState.InProgress, undefined, RecordState.InProgress
+            )
+        })
+
+        it(`Should create the course record correctly`, async () => {
+            const courseRecord = getCourseRecordWithOneModuleRecord(
+                course.id, RecordState.InProgress, course.modules[0].id, RecordState.Completed
+            )
+            const worker = new InitialiseActionWorker(course, testUser, course.modules[1])
+            await testCreateModuleRecord(
+                worker, courseRecord, RecordState.InProgress
+            )
+        })
+
+        it(`Should update the course record correctly after
+            the course has been added/removed to/from the learning plan`, async () => {
+            const courseRecord = getCourseRecordWithOneModuleRecord(
+                course.id, RecordState.Null, course.modules[0].id, RecordState.Completed
+            )
+            const worker = new InitialiseActionWorker(course, testUser, course.modules[0])
+            await testUpdateCourseRecord(
+                worker, courseRecord, courseRecord.modules[0],
+                [
+                    {op: 'replace', path: '/lastUpdated', value: testDateAsStr},
+                    {op: 'replace', path: '/state', value: 'IN_PROGRESS'}
+                ]
+            )
+        })
+
+        it(`Should update the patch record correctly if it is
+            not already completed`, async () => {
+        const courseRecord = getCourseRecordWithOneModuleRecord(
+            course.id, RecordState.Null, course.modules[0].id, RecordState.Null
+        )
+        const worker = new InitialiseActionWorker(course, testUser, course.modules[0])
+        await testUpdateModuleRecord(
+            worker, courseRecord,
+            [
+                {op: 'replace', path: '/state', value: 'IN_PROGRESS'},
+                {op: 'remove', path: '/result', value: undefined},
+                {op: 'remove', path: '/score', value: undefined},
+                {op: 'replace', path: '/completionDate', value: testDateAsStr},
+                {op: 'replace', path: '/updatedAt', value: testDateAsStr},
+            ]
+        )
+    })
+    })
+
+    describe('Should test failing a module', () => {
+        it(`Should correctly update the module record when
+            a module is failed`, async () => {
+                const course = getCourseWithOneRequiredModule()
+                const courseRecord = getCourseRecordWithOneModuleRecord(
+                    course.id, RecordState.InProgress, course.modules[0].id,
+                    RecordState.InProgress
+                )
+                const worker = new FailModuleActionWorker(course, testUser, course.modules[0])
+                testUpdateModuleRecord(
+                    worker, courseRecord, [
+                        {op: 'replace', path: '/updatedAt', value: testDateAsStr},
+                        {op: 'replace', path: '/result', value: 'FAILED'}
+                    ]
+                )
+            })
+    })
+
+    describe('Should test passing a module', () => {
+        it(`Should correctly update the module record when
+            a module is passed`, async () => {
+                const course = getCourseWithOneRequiredModule()
+                const courseRecord = getCourseRecordWithOneModuleRecord(
+                    course.id, RecordState.InProgress, course.modules[0].id,
+                    RecordState.InProgress
+                )
+                const worker = new PassModuleActionWorker(course, testUser, course.modules[0])
+                testUpdateModuleRecord(
+                    worker, courseRecord, [
+                        {op: 'replace', path: '/updatedAt', value: testDateAsStr},
+                        {op: 'replace', path: '/state', value: 'COMPLETED'},
+                        {op: 'replace', path: '/completionDate', value: testDateAsStr},
+                        {op: 'replace', path: '/result', value: 'PASSED'}
+                    ]
+                )
+            })
+    })
+
+    describe('Should test rating a module', () => {
+        it(`Should correctly update the module record when
+            a module is rated`, async () => {
+                const course = getCourseWithOneRequiredModule()
+                const courseRecord = getCourseRecordWithOneModuleRecord(
+                    course.id, RecordState.InProgress, course.modules[0].id,
+                    RecordState.InProgress
+                )
+                const worker = new RateModuleActionWorker(course, testUser, course.modules[0])
+                testUpdateModuleRecord(
+                    worker, courseRecord, [
+                        {op: 'replace', path: '/rated', value: 'true'},
+                        {op: 'replace', path: '/updatedAt', value: testDateAsStr},
+                    ]
+                )
+            })
+    })
 })

@@ -1,9 +1,9 @@
-import { Course, Module, User } from '../../../model'
-import { patchModuleRecord } from '../../learnerRecordAPI/moduleRecord/client'
+import { Course, Module, User } from '../../../../model'
+import { patchModuleRecord } from '../../../learnerRecordAPI/moduleRecord/client'
 import {
-	ModuleRecord, ModuleRecordResult
-} from '../../learnerRecordAPI/moduleRecord/models/moduleRecord'
-import { setResult, setUpdatedAt } from '../../learnerRecordAPI/moduleRecord/patchFactory'
+    ModuleRecord, ModuleRecordResult
+} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
+import { setResult, setUpdatedAt } from '../../../learnerRecordAPI/moduleRecord/patchFactory'
 import { InitialiseActionWorker } from './initialiseActionWorker'
 
 export class FailModuleActionWorker extends InitialiseActionWorker {

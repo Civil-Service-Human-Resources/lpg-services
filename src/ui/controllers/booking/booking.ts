@@ -9,17 +9,17 @@ import * as template from 'lib/ui/template'
 
 import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
 import {
-	ApprovedBookingActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/ApprovedBookingActionWorker'
+    ApprovedBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
 import {
-	CompleteBookingActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/CompleteBookingActionWorker'
+    CompleteBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
 import {
-	RegisterBookingActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/RegisterBookingActionWorker'
+    RegisterBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
 import {
-	SkipBookingActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/SkipBookingActionWorker'
+    SkipBookingActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
 import * as courseController from '../course/index'
 
 const logger = getLogger('controllers/booking')

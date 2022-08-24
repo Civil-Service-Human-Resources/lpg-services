@@ -1,7 +1,7 @@
-import { Course, Module, User } from '../../../model'
-import { patchModuleRecord } from '../../learnerRecordAPI/moduleRecord/client'
-import { ModuleRecord } from '../../learnerRecordAPI/moduleRecord/models/moduleRecord'
-import { setRated, setUpdatedAt } from '../../learnerRecordAPI/moduleRecord/patchFactory'
+import { Course, Module, User } from '../../../../model'
+import { patchModuleRecord } from '../../../learnerRecordAPI/moduleRecord/client'
+import { ModuleRecord } from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
+import { setRated, setUpdatedAt } from '../../../learnerRecordAPI/moduleRecord/patchFactory'
 import { InitialiseActionWorker } from './initialiseActionWorker'
 
 export class RateModuleActionWorker extends InitialiseActionWorker {
