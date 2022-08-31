@@ -1,7 +1,11 @@
 import * as sinon from 'sinon'
 
 import { RecordState } from '../../models/record'
-
+import { CompletedActionWorker } from '../moduleRecordActionWorkers/CompletedActionWorker'
+import { FailModuleActionWorker } from '../moduleRecordActionWorkers/FailModuleActionWorker'
+import { InitialiseActionWorker } from '../moduleRecordActionWorkers/initialiseActionWorker'
+import { PassModuleActionWorker } from '../moduleRecordActionWorkers/PassModuleActionWorker'
+import { RateModuleActionWorker } from '../moduleRecordActionWorkers/RateModuleActionWorker'
 import { testCreateCourseRecord } from './courseRecordWorkerTestUtils.spec'
 import {
     testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord
@@ -11,12 +15,6 @@ import {
     getCourseWithMixedModules, getCourseWithOneRequiredModule, getCourseWithTwoRequiredModules,
     mockTime, testDateAsStr, testUser
 } from './workerTestUtils.spec'
-import { CompletedActionWorker } from '../moduleRecordActionWorkers/CompletedActionWorker';
-import { InitialiseActionWorker } from '../moduleRecordActionWorkers/initialiseActionWorker';
-import { CourseState } from '../../../../learnerrecord';
-import { FailModuleActionWorker } from '../moduleRecordActionWorkers/FailModuleActionWorker';
-import { PassModuleActionWorker } from '../moduleRecordActionWorkers/PassModuleActionWorker';
-import { RateModuleActionWorker } from '../moduleRecordActionWorkers/RateModuleActionWorker';
 
 describe('Should test the course action worker classes', () => {
 
@@ -35,21 +33,27 @@ describe('Should test the course action worker classes', () => {
             it('Should create a completed course record when the course has 1 module', async () => {
                 const course = getCourseWithOneRequiredModule()
                 const worker = new CompletedActionWorker(course, testUser, course.modules[0])
-                await testCreateCourseRecord(worker, RecordState.Completed, undefined, RecordState.Completed)
+                await testCreateCourseRecord(
+                    worker, RecordState.Completed, undefined, RecordState.Completed, course
+                    )
             })
     
             it(`Should create a completed course record when the course has
                 1 required module and 1 optional module and the required one is completed`, async () => {
                 const course = getCourseWithMixedModules()
                 const worker = new CompletedActionWorker(course, testUser, course.modules[1])
-                await testCreateCourseRecord(worker, RecordState.Completed, undefined, RecordState.Completed)
+                await testCreateCourseRecord(
+                    worker, RecordState.Completed, undefined, RecordState.Completed, course
+                    )
             })
     
             it(`Should create an in progress course record when the course has
                 2 required modules and one of them is completed`, async () => {
                 const course = getCourseWithTwoRequiredModules()
                 const worker = new CompletedActionWorker(course, testUser, course.modules[0])
-                await testCreateCourseRecord(worker, RecordState.InProgress, undefined, RecordState.Completed)
+                await testCreateCourseRecord(
+                    worker, RecordState.InProgress, undefined, RecordState.Completed, course
+                    )
             })
         })
 
@@ -58,7 +62,7 @@ describe('Should test the course action worker classes', () => {
             const courseRecord = getCourseRecordWithOneModuleRecord(course.id, RecordState.InProgress,
                 course.modules[0].id, RecordState.Completed)
             const worker = new CompletedActionWorker(course, testUser, course.modules[1])
-            await testCreateModuleRecord(worker, courseRecord, RecordState.Completed)
+            await testCreateModuleRecord(worker, courseRecord, RecordState.Completed, course.modules[1])
         })
 
         it(`Should complete the course record and module record
@@ -107,7 +111,8 @@ describe('Should test the course action worker classes', () => {
         it(`Should create the course record correctly`, async () => {
             const worker = new InitialiseActionWorker(course, testUser, course.modules[0])
             await testCreateCourseRecord(
-                worker, RecordState.InProgress, undefined, RecordState.InProgress
+                worker, RecordState.InProgress, undefined, RecordState.InProgress,
+                course
             )
         })
 
@@ -117,7 +122,7 @@ describe('Should test the course action worker classes', () => {
             )
             const worker = new InitialiseActionWorker(course, testUser, course.modules[1])
             await testCreateModuleRecord(
-                worker, courseRecord, RecordState.InProgress
+                worker, courseRecord, RecordState.InProgress, course.modules[1]
             )
         })
 

@@ -33,7 +33,8 @@ describe('Should test the course action worker classes', () => {
 		createCourseRecordTest(async () => {
 			const course = getCourseWithOneOptionalModule()
 			const worker = new AddCourseToLearningplanActionWorker(course, testUser)
-			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Liked)
+			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Liked,
+				RecordState.Null, course)
 		})
 	
 		updateCourseRecordTest(async () => {
@@ -66,7 +67,8 @@ describe('Should test the course action worker classes', () => {
 		createCourseRecordTest(async () => {
 			const course = getCourseWithOneOptionalModule()
 			const worker = new RemoveCourseFromSuggestionsActionWorker(course, testUser)
-			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Disliked)
+			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Disliked,
+				undefined, course)
 		})
 	})
 

@@ -11,6 +11,7 @@ import {
     assertJsonPatch, assertOneCallAndGetArgs, mockCreateCourseRecord, mockGetCourseRecord,
     mockGetCourseRecordNotFound, mockPatchCourseRecord
 } from './WorkerTestUtils.spec'
+import { Course } from '../../../../model';
 
 /**
  * Test template for creating a course record
@@ -28,16 +29,19 @@ export function updateCourseRecordTest (testFunc: Mocha.Func, extraDesc: string 
 
 export async function testCreateCourseRecord(worker: CourseRecordActionWorker, expState: RecordState|undefined,
                                             expPrefernce: string|undefined,
-                                            expModuleRecordState: RecordState|undefined = undefined) {
+                                            expModuleRecordState: RecordState|undefined = undefined,
+                                            expCourseDetails: Course) {
     mockGetCourseRecordNotFound()
     const createCourseRecordMock = mockCreateCourseRecord()
     await worker.applyActionToLearnerRecord()
-    assertCreateCourseRecordCall(createCourseRecordMock, expState, expPrefernce, expModuleRecordState)
+    assertCreateCourseRecordCall(createCourseRecordMock, expState, expPrefernce,
+        expModuleRecordState, expCourseDetails)
         
 }
 
 export function assertCreateCourseRecordCall(stub: SinonStub, expState: RecordState|undefined,
-    expPrefernce: string|undefined, expModuleRecordState: RecordState|undefined = undefined) {
+    expPrefernce: string|undefined, expModuleRecordState: RecordState|undefined = undefined,
+    expCourseDetails: Course) {
     const args = assertOneCallAndGetArgs(stub)
     const input = args[0] as CourseRecordInput
 
@@ -53,6 +57,10 @@ export function assertCreateCourseRecordCall(stub: SinonStub, expState: RecordSt
     } else {
         expect(modRecordArgs).to.be.empty
     }
+
+    expect(input.courseId).to.eq(expCourseDetails.id)
+    expect(input.courseTitle).to.eq(expCourseDetails.title)
+    expect(input.isRequired).to.eq(expCourseDetails.isRequired())
 }
 
 export function assertPatchCourseRecordCall(stub: SinonStub, expectedPatches: IJsonPatch[]) {

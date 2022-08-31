@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import * as sinon from 'sinon'
 
-import { User, Course, Module } from '../../../../model'
+import { User, Course, Module, Event } from '../../../../model'
 import { IJsonPatch } from '../../../shared/models/JsonPatch'
 import * as courseRecordClient from '../../courseRecord/client'
 import { CourseRecord } from '../../courseRecord/models/courseRecord'
@@ -55,6 +55,21 @@ export function genericCourse(modules: Module[]) {
 	return course
 }
 
+// Event data
+
+export function genericEvent() {
+	const eventId = "event " + Math.random().toString()
+	return new Event(
+		new Date(),
+		new Date(),
+		[new Date()],
+		"Location",
+		10,
+		10,
+		"ACTIVE",
+		eventId)
+}
+
 // Course record data
 
 export function getCourseRecordWithOneModuleRecord(courseId: string, courseState: RecordState,
@@ -85,6 +100,8 @@ export function genericCourseRecord(courseId: string, moduleRecords: ModuleRecor
 	)
 }
 
+// Module data
+
 export function getRequiredModule() {
 	return genericModule(false)
 }
@@ -99,6 +116,8 @@ export function genericModule(optional: boolean) {
 	mod.optional = optional
 	return mod
 }
+
+// Module record data
 
 export function createModuleRecord(moduleId: string, courseId: string, state: RecordState) {
 	const _id = Math.random()
@@ -120,6 +139,13 @@ export function createModuleRecord(moduleId: string, courseId: string, state: Re
 
 export function genericModuleRecord() {
 	return createModuleRecord("", "", RecordState.InProgress)
+}
+
+export function getEventModuleRecord(moduleId: string, courseId: string, state: RecordState,
+	eventId: string) {
+	let moduleRecord = createModuleRecord(moduleId, courseId, state)
+	moduleRecord.eventId = eventId
+	return moduleRecord
 }
 
 export function mockTime() {
