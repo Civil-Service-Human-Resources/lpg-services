@@ -44,7 +44,7 @@ export class ApprovedBookingActionWorker extends EventActionWorker {
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {
 		const patches = [
-			setState(RecordState.Registered),
+			setState(RecordState.Approved),
 			clearResult(),
 			clearScore(),
 			clearCompletionDate(),

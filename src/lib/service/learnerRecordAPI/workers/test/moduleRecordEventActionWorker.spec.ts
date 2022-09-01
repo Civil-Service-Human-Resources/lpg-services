@@ -92,7 +92,7 @@ describe('Should test the module event action worker classes', () => {
 			const event = genericEvent()
 			const worker = new ApprovedBookingActionWorker(course, testUser, event, course.modules[1])
 			await testUpdateModuleRecord(worker, courseRecord, [
-				{op: 'replace', path: '/state', value: 'REGISTERED'},
+				{op: 'replace', path: '/state', value: 'APPROVED'},
 				{op: 'remove', path: '/result', value: undefined},
 				{op: 'remove', path: '/score', value: undefined},
 				{op: 'remove', path: '/completionDate', value: undefined},
