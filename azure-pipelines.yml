@@ -24,7 +24,8 @@ steps:
       npm run lint
       npm run lint:webdriver
       npm run build
-      npm test:ts
+      npm run test:ts
+    displayName: 'Install, lint, build and test NPM'
   
   - task: Docker@2
     inputs:
