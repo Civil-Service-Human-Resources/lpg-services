@@ -11,7 +11,7 @@ import { assertPatchCourseRecordCall } from './courseRecordWorkerTestUtils'
 import {
 	assertJsonPatch, assertOneCallAndGetArgs, genericModuleRecord, mockCreateModuleRecord,
 	mockGetCourseRecord, mockPatchCourseRecord, mockPatchModuleRecord, testUser
-} from './WorkerTestUtils'
+} from './workerTestUtils'
 
 /**
  * Test the following scenario:
