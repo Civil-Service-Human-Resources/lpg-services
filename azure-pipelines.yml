@@ -28,7 +28,7 @@ steps:
   
   - task: Docker@2
     inputs:
-      containerRegistry: 'CSL azure container registry'
+      containerRegistry: 'lpgregistry ACR'
       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
         repository: 'lpg-services/prod'
       ${{ else }}:
