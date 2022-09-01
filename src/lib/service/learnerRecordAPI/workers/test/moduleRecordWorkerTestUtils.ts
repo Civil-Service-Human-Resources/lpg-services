@@ -7,11 +7,11 @@ import { RecordState } from '../../models/record'
 import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
 import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
 import { ActionWorker } from '../moduleRecordActionWorkers/ActionWorker'
-import { assertPatchCourseRecordCall } from './courseRecordWorkerTestUtils.spec'
+import { assertPatchCourseRecordCall } from './courseRecordWorkerTestUtils'
 import {
 	assertJsonPatch, assertOneCallAndGetArgs, genericModuleRecord, mockCreateModuleRecord,
 	mockGetCourseRecord, mockPatchCourseRecord, mockPatchModuleRecord, testUser
-} from './WorkerTestUtils.spec'
+} from './WorkerTestUtils'
 
 /**
  * Test the following scenario:

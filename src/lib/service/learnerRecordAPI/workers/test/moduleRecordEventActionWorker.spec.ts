@@ -17,17 +17,17 @@ import {
 import {
 	SkipBookingActionWorker
 } from '../moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
-import { testCreateCourseRecord } from './courseRecordWorkerTestUtils.spec'
+import { testCreateCourseRecord } from './courseRecordWorkerTestUtils'
 import {
 	testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord
-} from './moduleRecordWorkerTestUtils.spec'
+} from './moduleRecordWorkerTestUtils'
 import {
 	genericEvent, genericModuleRecord, getCourseRecordWithOneModuleRecord,
 	getCourseRecordWithTwoModuleRecords, getCourseWithOneRequiredModule,
 	getCourseWithTwoRequiredModules, getEventModuleRecord, mockCreateCourseRecord,
 	mockCreateModuleRecord, mockGetCourseRecord, mockPatchModuleRecord, mockTime, testDateAsStr,
 	testUser
-} from './workerTestUtils.spec'
+} from './workerTestUtils'
 
 describe('Should test the module event action worker classes', () => {
 	beforeEach(() => {

@@ -6,15 +6,15 @@ import { FailModuleActionWorker } from '../moduleRecordActionWorkers/FailModuleA
 import { InitialiseActionWorker } from '../moduleRecordActionWorkers/initialiseActionWorker'
 import { PassModuleActionWorker } from '../moduleRecordActionWorkers/PassModuleActionWorker'
 import { RateModuleActionWorker } from '../moduleRecordActionWorkers/RateModuleActionWorker'
-import { testCreateCourseRecord } from './courseRecordWorkerTestUtils.spec'
+import { testCreateCourseRecord } from './courseRecordWorkerTestUtils'
 import {
 	testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord
-} from './moduleRecordWorkerTestUtils.spec'
+} from './moduleRecordWorkerTestUtils'
 import {
 	getCourseRecordWithOneModuleRecord, getCourseRecordWithTwoModuleRecords,
 	getCourseWithMixedModules, getCourseWithOneRequiredModule, getCourseWithTwoRequiredModules,
 	mockTime, testDateAsStr, testUser
-} from './workerTestUtils.spec'
+} from './workerTestUtils'
 
 describe('Should test the course action worker classes', () => {
 	beforeEach(() => {

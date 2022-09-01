@@ -13,11 +13,11 @@ import {
 } from '../courseRecordActionWorkers/RemoveCourseFromSuggestionsActionWorker'
 import {
 	createCourseRecordTest, testCreateCourseRecord, testUpdateCourseRecord, updateCourseRecordTest
-} from './courseRecordWorkerTestUtils.spec'
+} from './courseRecordWorkerTestUtils'
 import {
 	getCourseRecordWithOneModuleRecord, getCourseWithOneOptionalModule, mockTime, testDateAsStr,
 	testUser
-} from './workerTestUtils.spec'
+} from './workerTestUtils'
 
 describe('Should test the course action worker classes', () => {
 	beforeEach(() => {

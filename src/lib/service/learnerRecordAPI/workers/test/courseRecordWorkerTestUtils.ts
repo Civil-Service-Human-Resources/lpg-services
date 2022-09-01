@@ -12,7 +12,7 @@ import { CourseRecordActionWorker } from '../courseRecordActionWorkers/CourseRec
 import {
 	assertJsonPatch, assertOneCallAndGetArgs, mockCreateCourseRecord, mockGetCourseRecord,
 	mockGetCourseRecordNotFound, mockPatchCourseRecord
-} from './WorkerTestUtils.spec'
+} from './WorkerTestUtils'
 
 /**
  * Test template for creating a course record
