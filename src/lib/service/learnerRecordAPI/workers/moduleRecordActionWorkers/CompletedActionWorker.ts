@@ -6,7 +6,7 @@ import { RecordState } from '../../../learnerRecordAPI/models/record'
 import { patchModuleRecord } from '../../../learnerRecordAPI/moduleRecord/client'
 import { ModuleRecord } from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {
-    setCompletionDate, setUpdatedAt
+	setCompletionDate, setUpdatedAt
 } from '../../../learnerRecordAPI/moduleRecord/patchFactory'
 import { ActionWorker } from './ActionWorker'
 

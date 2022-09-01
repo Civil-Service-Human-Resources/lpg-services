@@ -10,14 +10,14 @@ import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 
 import {
-    RemoveCourseFromLearningplanActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
+	RemoveCourseFromLearningplanActionWorker
+} from 'learnerRecordWorkers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
 import {
-    CompletedActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
+	CompletedActionWorker
+} from 'learnerRecordWorkers/moduleRecordActionWorkers/CompletedActionWorker'
 import {
-    InitialiseActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
+	InitialiseActionWorker
+} from 'learnerRecordWorkers/moduleRecordActionWorkers/initialiseActionWorker'
 
 export interface CourseDetail {
 	label: string

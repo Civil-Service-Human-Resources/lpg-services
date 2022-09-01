@@ -11,7 +11,8 @@
 		"noUnusedLocals": true,
 		"outDir": "./dist/build",
 		"paths": {
-			"lib/*": ["src/lib/*"]
+			"lib/*": ["src/lib/*"],
+			"learnerRecordWorkers/*": ["src/lib/service/learnerRecordAPI/workers/*"]
 		},
 		"preserveConstEnums": true,
 		"pretty": true,

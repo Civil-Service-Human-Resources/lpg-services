@@ -1,18 +1,19 @@
+/* tslint:disable:no-unused-expression */
 import { expect } from 'chai'
 import * as sinon from 'sinon'
 
-import { User, Course, Module, Event } from '../../../../model'
-import { IJsonPatch } from '../../../shared/models/JsonPatch'
+import { Course, Event, Module, User } from '../../../../model'
+import { JsonPatchInterface } from '../../../shared/models/JsonPatch'
 import * as courseRecordClient from '../../courseRecord/client'
 import { CourseRecord } from '../../courseRecord/models/courseRecord'
+import { RecordState } from '../../models/record'
 import * as moduleRecordClient from '../../moduleRecord/client'
 import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
-import { RecordState } from '../../models/record';
 
 const testDate = new Date(2020, 0, 1, 0, 0, 0)
-export const testDateAsStr = "2020-01-01T00:00:00"
+export const testDateAsStr = '2020-01-01T00:00:00'
 
-export const testUser = new User("100", "TestUser", "", [], "")
+export const testUser = new User('100', 'TestUser', '', [], '')
 export const testCourse = new Course('TEST001')
 
 // Course data
@@ -49,8 +50,8 @@ export function getCourseWithMixedModules() {
 }
 
 export function genericCourse(modules: Module[]) {
-	const courseId = "course " + Math.random().toString()
-	let course = new Course(courseId)
+	const courseId = 'course ' + Math.random().toString()
+	const course = new Course(courseId)
 	course.modules = modules
 	return course
 }
@@ -58,46 +59,41 @@ export function genericCourse(modules: Module[]) {
 // Event data
 
 export function genericEvent() {
-	const eventId = "event " + Math.random().toString()
-	return new Event(
-		new Date(),
-		new Date(),
-		[new Date()],
-		"Location",
-		10,
-		10,
-		"ACTIVE",
-		eventId)
+	const eventId = 'event ' + Math.random().toString()
+	return new Event(new Date(), new Date(), [new Date()], 'Location', 10, 10, 'ACTIVE', eventId)
 }
 
 // Course record data
 
-export function getCourseRecordWithOneModuleRecord(courseId: string, courseState: RecordState,
-	moduleId: string, moduleState: RecordState) {
+export function getCourseRecordWithOneModuleRecord(
+	courseId: string,
+	courseState: RecordState,
+	moduleId: string,
+	moduleState: RecordState
+) {
 	const moduleRecord = createModuleRecord(moduleId, courseId, moduleState)
-	let courseRecord = genericCourseRecord(courseId, [moduleRecord])
+	const courseRecord = genericCourseRecord(courseId, [moduleRecord])
 	courseRecord.state = courseState
 	return courseRecord
 }
 
-export function getCourseRecordWithTwoModuleRecords(courseId: string, courseState: RecordState,
-	moduleId: string, moduleState: RecordState, moduleTwoId: string, moduleTwoState: RecordState) {
+export function getCourseRecordWithTwoModuleRecords(
+	courseId: string,
+	courseState: RecordState,
+	moduleId: string,
+	moduleState: RecordState,
+	moduleTwoId: string,
+	moduleTwoState: RecordState
+) {
 	const moduleRecord = createModuleRecord(moduleId, courseId, moduleState)
 	const moduleRecordTwo = createModuleRecord(moduleTwoId, courseId, moduleTwoState)
-	let courseRecord = genericCourseRecord(courseId, [moduleRecord, moduleRecordTwo])
+	const courseRecord = genericCourseRecord(courseId, [moduleRecord, moduleRecordTwo])
 	courseRecord.state = courseState
 	return courseRecord
 }
 
 export function genericCourseRecord(courseId: string, moduleRecords: ModuleRecord[]) {
-	return new CourseRecord(
-		courseId,
-		testUser.id,
-		undefined,
-		moduleRecords,
-		"Test course",
-		false
-	)
+	return new CourseRecord(courseId, testUser.id, undefined, moduleRecords, 'Test course', false)
 }
 
 // Module data
@@ -111,8 +107,8 @@ export function getOptionalModule() {
 }
 
 export function genericModule(optional: boolean) {
-	const moduleId = "module " + Math.random().toString()
-	let mod = new Module(moduleId, "elearning")
+	const moduleId = 'module ' + Math.random().toString()
+	const mod = new Module(moduleId, 'elearning')
 	mod.optional = optional
 	return mod
 }
@@ -120,16 +116,16 @@ export function genericModule(optional: boolean) {
 // Module record data
 
 export function createModuleRecord(moduleId: string, courseId: string, state: RecordState) {
-	const _id = Math.random()
+	const id = Math.random()
 	return new ModuleRecord(
-		_id,
+		id,
 		moduleId,
 		testUser.id,
 		courseId,
 		new Date(),
 		new Date(),
-		"Test Module",
-		"elearning",
+		'Test Module',
+		'elearning',
 		state,
 		undefined,
 		false,
@@ -138,12 +134,11 @@ export function createModuleRecord(moduleId: string, courseId: string, state: Re
 }
 
 export function genericModuleRecord() {
-	return createModuleRecord("", "", RecordState.InProgress)
+	return createModuleRecord('', '', RecordState.InProgress)
 }
 
-export function getEventModuleRecord(moduleId: string, courseId: string, state: RecordState,
-	eventId: string) {
-	let moduleRecord = createModuleRecord(moduleId, courseId, state)
+export function getEventModuleRecord(moduleId: string, courseId: string, state: RecordState, eventId: string) {
+	const moduleRecord = createModuleRecord(moduleId, courseId, state)
 	moduleRecord.eventId = eventId
 	return moduleRecord
 }
@@ -155,16 +150,19 @@ export function mockTime() {
 // Assertion functions
 
 export function assertOneCallAndGetArgs(stub: sinon.SinonStub) {
-    expect(stub.calledOnce, `Expected function ${stub} to be called once, was called ${stub.callCount} times`).to.be.true
-    return stub.firstCall.args
+	expect(stub.calledOnce, `Expected function ${stub} to be called once, was called ${stub.callCount} times`).to.be.true
+	return stub.firstCall.args
 }
 
-export function assertJsonPatch(patches: IJsonPatch[], expectedPatches: IJsonPatch[]) {
+export function assertJsonPatch(patches: JsonPatchInterface[], expectedPatches: JsonPatchInterface[]) {
 	for (let i = 0; i < expectedPatches.length; i++) {
-        const expPatch = expectedPatches[i]
-        const actualPatch = patches[i]
-		expect(actualPatch).to.eql(expPatch, `expected patch op to be ${JSON.stringify(expPatch)} but was ${JSON.stringify(actualPatch)}`)
-    }
+		const expPatch = expectedPatches[i]
+		const actualPatch = patches[i]
+		expect(actualPatch).to.eql(
+			expPatch,
+			`expected patch op to be ${JSON.stringify(expPatch)} but was ${JSON.stringify(actualPatch)}`
+		)
+	}
 }
 
 // Course record mocks
@@ -177,7 +175,7 @@ export function mockCreateCourseRecord() {
 	return sinon.stub(courseRecordClient, 'createCourseRecord').returns(Promise.resolve())
 }
 
-export function mockGetCourseRecord(returnVal: CourseRecord|undefined = undefined) {
+export function mockGetCourseRecord(returnVal?: CourseRecord | undefined) {
 	return sinon.stub(courseRecordClient, 'getCourseRecord').returns(Promise.resolve(returnVal))
 }
 

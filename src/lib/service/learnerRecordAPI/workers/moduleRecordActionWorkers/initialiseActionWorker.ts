@@ -1,15 +1,12 @@
-
-import { Course, Module, User } from '../../../../model'
-import { patchCourseRecord } from '../../courseRecord/client'
-import { CourseRecord } from '../../courseRecord/models/courseRecord'
-import { setLastUpdated, setState } from '../../courseRecord/patchFactory'
-import { RecordState } from '../../models/record'
-import { patchModuleRecord } from '../../moduleRecord/client'
-import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
-import {
-    clearResult, clearScore, setCompletionDate, setUpdatedAt
-} from '../../moduleRecord/patchFactory'
-import { ActionWorker } from './ActionWorker'
+import {Course, Module, User} from '../../../../model'
+import {patchCourseRecord} from '../../courseRecord/client'
+import {CourseRecord} from '../../courseRecord/models/courseRecord'
+import {setLastUpdated, setState} from '../../courseRecord/patchFactory'
+import {RecordState} from '../../models/record'
+import {patchModuleRecord} from '../../moduleRecord/client'
+import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
+import {clearResult, clearScore, setCompletionDate, setUpdatedAt} from '../../moduleRecord/patchFactory'
+import {ActionWorker} from './ActionWorker'
 
 export class InitialiseActionWorker extends ActionWorker {
 	constructor(protected readonly course: Course, protected readonly user: User, protected readonly module: Module) {

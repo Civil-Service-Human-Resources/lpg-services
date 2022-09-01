@@ -1,10 +1,8 @@
-import { Course, Module, User } from '../../../../model'
-import { patchModuleRecord } from '../../../learnerRecordAPI/moduleRecord/client'
-import {
-    ModuleRecord, ModuleRecordResult
-} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
-import { setResult, setUpdatedAt } from '../../../learnerRecordAPI/moduleRecord/patchFactory'
-import { InitialiseActionWorker } from './initialiseActionWorker'
+import {Course, Module, User} from '../../../../model'
+import {patchModuleRecord} from '../../../learnerRecordAPI/moduleRecord/client'
+import {ModuleRecord, ModuleRecordResult} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {setResult, setUpdatedAt} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
+import {InitialiseActionWorker} from './initialiseActionWorker'
 
 export class FailModuleActionWorker extends InitialiseActionWorker {
 	constructor(readonly course: Course, readonly user: User, readonly module: Module) {

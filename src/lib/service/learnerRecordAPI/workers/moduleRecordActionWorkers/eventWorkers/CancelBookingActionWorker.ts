@@ -1,15 +1,18 @@
-
-import { Course, Event, Module, User } from '../../../../../model'
-import { patchCourseRecord } from '../../../courseRecord/client'
-import { CourseRecord } from '../../../courseRecord/models/courseRecord'
-import { setLastUpdated, setState } from '../../../courseRecord/patchFactory'
-import { RecordState } from '../../../models/record'
-import { patchModuleRecord } from '../../../moduleRecord/client'
-import { BookingStatus, ModuleRecord } from '../../../moduleRecord/models/moduleRecord'
+import {Course, Event, Module, User} from '../../../../../model'
+import {patchCourseRecord} from '../../../courseRecord/client'
+import {CourseRecord} from '../../../courseRecord/models/courseRecord'
+import {setLastUpdated, setState} from '../../../courseRecord/patchFactory'
+import {RecordState} from '../../../models/record'
+import {patchModuleRecord} from '../../../moduleRecord/client'
+import {BookingStatus, ModuleRecord} from '../../../moduleRecord/models/moduleRecord'
 import {
-    clearCompletionDate, clearResult, clearScore, setBookingStatus, setUpdatedAt
+	clearCompletionDate,
+	clearResult,
+	clearScore,
+	setBookingStatus,
+	setUpdatedAt,
 } from '../../../moduleRecord/patchFactory'
-import { EventActionWorker } from './EventActionWorker'
+import {EventActionWorker} from './EventActionWorker'
 
 export class CancelBookingActionWorker extends EventActionWorker {
 	constructor(

@@ -3,24 +3,23 @@ import * as sinon from 'sinon'
 import { CourseRecordPreference } from '../../courseRecord/models/courseRecord'
 import { RecordState } from '../../models/record'
 import {
-    AddCourseToLearningplanActionWorker
+	AddCourseToLearningplanActionWorker
 } from '../courseRecordActionWorkers/AddCourseToLearningplanActionWorker'
 import {
-    RemoveCourseFromLearningplanActionWorker
+	RemoveCourseFromLearningplanActionWorker
 } from '../courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
 import {
-    RemoveCourseFromSuggestionsActionWorker
+	RemoveCourseFromSuggestionsActionWorker
 } from '../courseRecordActionWorkers/RemoveCourseFromSuggestionsActionWorker'
 import {
-    createCourseRecordTest, testCreateCourseRecord, testUpdateCourseRecord, updateCourseRecordTest
+	createCourseRecordTest, testCreateCourseRecord, testUpdateCourseRecord, updateCourseRecordTest
 } from './courseRecordWorkerTestUtils.spec'
 import {
-    getCourseRecordWithOneModuleRecord, getCourseWithOneOptionalModule, mockTime, testDateAsStr,
-    testUser
+	getCourseRecordWithOneModuleRecord, getCourseWithOneOptionalModule, mockTime, testDateAsStr,
+	testUser
 } from './workerTestUtils.spec'
 
 describe('Should test the course action worker classes', () => {
-
 	beforeEach(() => {
 		mockTime()
 	})
@@ -33,19 +32,22 @@ describe('Should test the course action worker classes', () => {
 		createCourseRecordTest(async () => {
 			const course = getCourseWithOneOptionalModule()
 			const worker = new AddCourseToLearningplanActionWorker(course, testUser)
-			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Liked,
-				RecordState.Null, course)
+			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Liked, RecordState.Null, course)
 		})
-	
+
 		updateCourseRecordTest(async () => {
 			const course = getCourseWithOneOptionalModule()
 			const worker = new AddCourseToLearningplanActionWorker(course, testUser)
-			const courseRecord = getCourseRecordWithOneModuleRecord(course.id, RecordState.Null,
-				course.modules[0].id, RecordState.InProgress)
+			const courseRecord = getCourseRecordWithOneModuleRecord(
+				course.id,
+				RecordState.Null,
+				course.modules[0].id,
+				RecordState.InProgress
+			)
 			await testUpdateCourseRecord(worker, courseRecord, [
 				{op: 'replace', path: '/preference', value: 'LIKED'},
 				{op: 'remove', path: '/state', value: undefined},
-				{op: 'replace', path: '/lastUpdated', value:  testDateAsStr},
+				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 			])
 		})
 	})
@@ -53,12 +55,16 @@ describe('Should test the course action worker classes', () => {
 	describe('Should test removing a course from the learning plan', () => {
 		updateCourseRecordTest(async () => {
 			const course = getCourseWithOneOptionalModule()
-			const courseRecord = getCourseRecordWithOneModuleRecord(course.id, RecordState.Completed,
-				course.modules[0].id, RecordState.InProgress)
+			const courseRecord = getCourseRecordWithOneModuleRecord(
+				course.id,
+				RecordState.Completed,
+				course.modules[0].id,
+				RecordState.InProgress
+			)
 			const worker = new RemoveCourseFromLearningplanActionWorker(course, testUser)
 			await testUpdateCourseRecord(worker, courseRecord, [
 				{op: 'replace', path: '/state', value: 'ARCHIVED'},
-				{op: 'replace', path: '/lastUpdated', value:  testDateAsStr},
+				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 			])
 		})
 	})
@@ -67,10 +73,7 @@ describe('Should test the course action worker classes', () => {
 		createCourseRecordTest(async () => {
 			const course = getCourseWithOneOptionalModule()
 			const worker = new RemoveCourseFromSuggestionsActionWorker(course, testUser)
-			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Disliked,
-				undefined, course)
+			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Disliked, undefined, course)
 		})
 	})
-
-
 })

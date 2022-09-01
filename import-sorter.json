@@ -1,3 +1,4 @@
 {
-    "importStringConfiguration.hasSemicolon": false
+    "importStringConfiguration.hasSemicolon": false,
+    "importSorter.importStringConfiguration.tabType": "tab"
 }

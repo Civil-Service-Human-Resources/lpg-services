@@ -7,8 +7,8 @@ import * as template from 'lib/ui/template'
 import * as xapi from 'lib/xapi'
 
 import {
-    CancelBookingActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
+	CancelBookingActionWorker
+} from 'learnerRecordWorkers/moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
 import { confirmedMessage, recordCheck } from './booking'
 
 const logger = getLogger('controllers/booking/cancel')

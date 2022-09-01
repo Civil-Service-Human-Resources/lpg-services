@@ -1,8 +1,7 @@
-import { ActionWorker } from "../ActionWorker";
-import { Course, Module, User, Event } from "../../../../../model";
-import { ModuleRecordInput } from "../../../moduleRecord/models/moduleRecordInput";
-import { RecordState } from "../../../models/record";
-
+import { Course, Event, Module, User } from '../../../../../model'
+import { RecordState } from '../../../models/record'
+import { ModuleRecordInput } from '../../../moduleRecord/models/moduleRecordInput'
+import { ActionWorker } from '../ActionWorker'
 
 export abstract class EventActionWorker extends ActionWorker {
 	constructor(
