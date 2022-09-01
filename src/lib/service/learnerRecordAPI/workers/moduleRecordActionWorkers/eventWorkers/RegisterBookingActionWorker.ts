@@ -44,7 +44,7 @@ export class RegisterBookingActionWorker extends EventActionWorker {
 			clearScore(),
 			clearCompletionDate(),
 			setEventId(this.event.id),
-			setEventDate(this.event.dateRanges[0]),
+			setEventDate(this.event.startDate),
 			setUpdatedAt(new Date()),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
