@@ -20,7 +20,7 @@ const timeFormat = new Intl.DateTimeFormat('en-GB', {
 	minute: '2-digit',
 	month: 'short',
 	timeZone: 'UTC',
-	year: 'numeric'
+	year: 'numeric',
 })
 
 function divmod(a: number, b: number) {
