@@ -5,7 +5,7 @@ import * as catalog from 'lib/service/catalog'
 
 import {
 	CompletedActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/CompletedActionWorker'
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
 
 const logger = getLogger('controllers/learning-record')
 

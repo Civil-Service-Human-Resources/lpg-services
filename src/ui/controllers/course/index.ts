@@ -11,13 +11,14 @@ import * as youtube from 'lib/youtube'
 
 import {
 	RemoveCourseFromLearningplanActionWorker
-} from 'learnerRecordWorkers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
 import {
 	CompletedActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/CompletedActionWorker'
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
 import {
 	InitialiseActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/initialiseActionWorker'
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
 
 export interface CourseDetail {
 	label: string

@@ -7,7 +7,7 @@ import * as template from 'lib/ui/template'
 
 import {
 	RateModuleActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/RateModuleActionWorker'
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/RateModuleActionWorker'
 
 const logger = getLogger('controllers/learning-record/feedback')
 

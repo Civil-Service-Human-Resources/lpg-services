@@ -1,17 +1,5 @@
 import axios from 'axios'
 import * as express from 'express'
-import {
-	CompletedActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/CompletedActionWorker'
-import {
-	FailModuleActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/FailModuleActionWorker'
-import {
-	InitialiseActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/initialiseActionWorker'
-import {
-	PassModuleActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/PassModuleActionWorker'
 import * as config from 'lib/config'
 import * as featureConfig from 'lib/config/featureConfig'
 import * as extended from 'lib/extended'
@@ -21,6 +9,18 @@ import * as querystring from 'querystring'
 
 import { User } from '../../lib/model'
 import { get } from '../../lib/service/catalog'
+import {
+	CompletedActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
+import {
+	FailModuleActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/FailModuleActionWorker'
+import {
+	InitialiseActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
+import {
+	PassModuleActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/PassModuleActionWorker'
 
 const logger = getLogger('controllers/xapi')
 

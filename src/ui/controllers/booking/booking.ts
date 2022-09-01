@@ -1,18 +1,6 @@
 import _ = require('lodash')
 
 import * as express from 'express'
-import {
-	ApprovedBookingActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
-import {
-	CompleteBookingActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
-import {
-	RegisterBookingActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
-import {
-	SkipBookingActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
@@ -20,6 +8,22 @@ import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
 
 import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
+import {
+	ApprovedBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
+import {
+	CompleteBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
+import {
+	RegisterBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
+import {
+	SkipBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
 import * as courseController from '../course/index'
 
 const logger = getLogger('controllers/booking')

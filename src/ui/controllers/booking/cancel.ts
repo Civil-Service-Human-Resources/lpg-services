@@ -8,7 +8,7 @@ import * as xapi from 'lib/xapi'
 
 import {
 	CancelBookingActionWorker
-} from 'learnerRecordWorkers/moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
 import { confirmedMessage, recordCheck } from './booking'
 
 const logger = getLogger('controllers/booking/cancel')
