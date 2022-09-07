@@ -45,6 +45,12 @@ function js() {
         .pipe(gulp.dest("./dist/ui/assets/js"))
 }
 
+function watchAssets() {
+    gulp.watch("./src/ui/page/**/*.*", pages)
+    gulp.watch("./src/ui/assets/styles/**/*.*css", buildSass)
+    gulp.watch("./src/ui/component/**/*.*", components)
+}
+
 exports.typescript = typescript
 exports.buildSass = buildSass
 exports.jasmine = jasmine
@@ -54,8 +60,10 @@ exports.js = js
 exports.pages = pages
 exports.components = components
 
+
 const setupDist = gulp.parallel(jasmine, locale, images, js, pages, components)
 const compile = gulp.series(setupDist, gulp.parallel(buildSass, typescript))
 
+exports.watchAssets = watchAssets
 exports.setupDist = setupDist
 exports.compile = compile
