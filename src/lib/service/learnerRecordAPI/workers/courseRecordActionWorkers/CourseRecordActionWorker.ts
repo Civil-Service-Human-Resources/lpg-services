@@ -1,10 +1,13 @@
-import {Course, User} from '../../../../model'
-import {createCourseRecord, getCourseRecord, patchCourseRecord} from '../../courseRecord/client'
-import {CourseRecord} from '../../courseRecord/models/courseRecord'
-import {CourseRecordInput} from '../../courseRecord/models/courseRecordInput'
-import {setLastUpdated} from '../../courseRecord/patchFactory'
-import {RecordState} from '../../models/record'
-import {ModuleRecordInput} from '../../moduleRecord/models/moduleRecordInput'
+import { getLogger } from '../../../../logger'
+import { Course, User } from '../../../../model'
+import { createCourseRecord, getCourseRecord, patchCourseRecord } from '../../courseRecord/client'
+import { CourseRecord } from '../../courseRecord/models/courseRecord'
+import { CourseRecordInput } from '../../courseRecord/models/courseRecordInput'
+import { setLastUpdated } from '../../courseRecord/patchFactory'
+import { RecordState } from '../../models/record'
+import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
+
+const logger = getLogger('LearnerRecordAPI/workers/CourseRecordActionWorker')
 
 /**
  * Generic worker class for when JUST the course record needs updating
@@ -17,11 +20,16 @@ export abstract class CourseRecordActionWorker {
 	}
 
 	async applyActionToLearnerRecord() {
-		const courseRecord = await getCourseRecord(this.course.id, this.user)
-		if (!courseRecord) {
-			await this.createCourseRecord()
-		} else {
-			await this.updateCourseRecord(courseRecord)
+		try {
+			const courseRecord = await getCourseRecord(this.course.id, this.user)
+			if (!courseRecord) {
+				await this.createCourseRecord()
+			} else {
+				await this.updateCourseRecord(courseRecord)
+			}
+		} catch (e) {
+			logger.error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
+			`CourseID: ${this.course.id}. Error: ${e}`)
 		}
 	}
 
