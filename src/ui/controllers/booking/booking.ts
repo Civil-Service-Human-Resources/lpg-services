@@ -364,7 +364,7 @@ export async function tryMoveBooking(ireq: express.Request, res: express.Respons
 
 	const actionWorker = new CompleteBookingActionWorker(course, req.user, event, module)
 	try {
-		actionWorker.applyActionToLearnerRecord()
+		await actionWorker.applyActionToLearnerRecord()
 	} catch (e) {
 		if (e instanceof CourseRecordStateError) {
 			res.sendStatus(400)
@@ -430,9 +430,9 @@ export async function tryCompleteBooking(ireq: express.Request, res: express.Res
 		)
 
 		if (!module.cost || module.cost === 0) {
-			new ApprovedBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+			await new ApprovedBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
 		} else {
-			new RegisterBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+			await new RegisterBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
 		}
 
 		message = confirmedMessage.Booked

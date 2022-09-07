@@ -38,10 +38,8 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 				await this.updateCourseRecord(courseRecord)
 			}
 		} catch (e) {
-			logger.error(
-				`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
-					`CourseID: ${this.course.id}, ModuleID: ${this.module.id}. Error: ${e}`
-			)
+			throw new Error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
+			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}. Error: ${e}`)
 		}
 	}
 

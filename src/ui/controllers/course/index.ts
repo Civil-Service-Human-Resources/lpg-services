@@ -93,47 +93,48 @@ export async function displayModule(
 	ireq: express.Request,
 	res: express.Response
 ) {
-	const req = ireq as extended.CourseRequest
-
-	const course = req.course
-	const module = req.module!
-
-	switch (module.type) {
-		case 'elearning':
-			res.redirect(
-				`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
-				encodeURIComponent(course.title)}` +
-				`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
-					course.id
-				}/${module.id}/xapi/&actor={"name":"Noop"}`
-			)
-			break
-		case 'face-to-face':
-			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
-			break
-		case 'link':
-		case 'file':
-			new CompletedActionWorker(course, req.user, module).applyActionToLearnerRecord()
-			res.redirect(module.url!)
-			break
-		case 'video':
-			new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
-
-			res.send(
-				template.render(`course/display-video`, req, res, {
-					course,
-					courseDetails: getCourseDetails(req, course, module),
-					module,
-					video: !module.url!.search('/http(.+)youtube(.*)/i')
-						? null
-						: await youtube.getBasicInfo(module.url!),
-				})
-			)
-			break
-		default:
-			logger.debug(`Unknown module type: ${module.type}`)
-			res.sendStatus(500)
-	}
+		const req = ireq as extended.CourseRequest
+	
+		const course = req.course
+		const module = req.module!
+	
+		switch (module.type) {
+			case 'elearning':
+				res.redirect(
+					`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
+					encodeURIComponent(course.title)}` +
+					`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
+						course.id
+					}/${module.id}/xapi/&actor={"name":"Noop"}`
+				)
+				break
+			case 'face-to-face':
+				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
+				break
+			case 'link':
+			case 'file':
+				logger.debug("STARTING")
+				await new CompletedActionWorker(course, req.user, module).applyActionToLearnerRecord()
+				res.redirect(module.url!)
+				break
+			case 'video':
+				await new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
+	
+				res.send(
+					template.render(`course/display-video`, req, res, {
+						course,
+						courseDetails: getCourseDetails(req, course, module),
+						module,
+						video: !module.url!.search('/http(.+)youtube(.*)/i')
+							? null
+							: await youtube.getBasicInfo(module.url!),
+					})
+				)
+				break
+			default:
+				logger.debug(`Unknown module type: ${module.type}`)
+				res.sendStatus(500)
+		}
 }
 
 export async function display(ireq: express.Request, res: express.Response) {
@@ -304,7 +305,7 @@ export async function markCourseDeleted(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	new RemoveCourseFromLearningplanActionWorker(req.course, req.user).applyActionToLearnerRecord()
+	await new RemoveCourseFromLearningplanActionWorker(req.course, req.user).applyActionToLearnerRecord()
 
 	req.flash(
 		'successTitle',

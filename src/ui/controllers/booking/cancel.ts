@@ -137,7 +137,7 @@ export async function tryCancelBooking(
 
 		const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
 
-		new CancelBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+		await new CancelBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
 
 		const response: any = {
 			404: async () => {

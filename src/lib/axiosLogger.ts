@@ -30,7 +30,6 @@ export function axiosResponseLogger(
 	// Add a response interceptor
 	axiosInstance.interceptors.response.use(
 		response => {
-			// logger.debug(`response data: ${response.data}`)
 			return response
 		},
 		error => {

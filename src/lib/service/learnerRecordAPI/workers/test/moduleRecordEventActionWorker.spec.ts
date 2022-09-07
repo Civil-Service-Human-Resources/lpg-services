@@ -390,7 +390,7 @@ describe('Should test the module event action worker classes', () => {
 			const worker = new CompleteBookingActionWorker(course, testUser, event, course.modules[1])
 			mockGetCourseRecord(courseRecord)
 			const patchModRecordMock = mockPatchModuleRecord(courseRecord.modules[0])
-			worker.applyActionToLearnerRecord()
+			await worker.applyActionToLearnerRecord()
 			expect(patchModRecordMock.getCalls.length).to.eql(0)
 		})
 	})

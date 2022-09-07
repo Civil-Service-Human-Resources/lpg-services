@@ -39,6 +39,6 @@ export async function completeVideoModule(ireq: express.Request, res: express.Re
 	}
 
 	logger.debug(`User ${req.user.id} completing video ${mod.id}`)
-	new CompletedActionWorker(course, req.user, mod).applyActionToLearnerRecord()
+	await new CompletedActionWorker(course, req.user, mod).applyActionToLearnerRecord()
 	res.sendStatus(200)
 }
