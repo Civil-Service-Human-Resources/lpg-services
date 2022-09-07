@@ -94,10 +94,10 @@ export async function displayModule(
 	res: express.Response
 ) {
 		const req = ireq as extended.CourseRequest
-	
+
 		const course = req.course
 		const module = req.module!
-	
+
 		switch (module.type) {
 			case 'elearning':
 				res.redirect(
@@ -119,7 +119,7 @@ export async function displayModule(
 				break
 			case 'video':
 				await new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
-	
+
 				res.send(
 					template.render(`course/display-video`, req, res, {
 						course,
