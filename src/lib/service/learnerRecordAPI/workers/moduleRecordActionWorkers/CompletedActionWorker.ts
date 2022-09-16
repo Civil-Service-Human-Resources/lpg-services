@@ -1,14 +1,13 @@
-import { Course, Module, User } from '../../../../model'
-import { patchCourseRecord } from '../../../learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from '../../../learnerRecordAPI/courseRecord/models/courseRecord'
-import { setLastUpdated, setState } from '../../../learnerRecordAPI/courseRecord/patchFactory'
-import { RecordState } from '../../../learnerRecordAPI/models/record'
-import { patchModuleRecord } from '../../../learnerRecordAPI/moduleRecord/client'
-import { ModuleRecord } from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
-import {
-	setCompletionDate, setUpdatedAt
-} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
-import { ActionWorker } from './ActionWorker'
+import {Course, Module, User} from '../../../../model'
+import {patchCourseRecord} from '../../../learnerRecordAPI/courseRecord/client'
+import {CourseRecord} from '../../../learnerRecordAPI/courseRecord/models/courseRecord'
+import {setLastUpdated, setState} from '../../../learnerRecordAPI/courseRecord/patchFactory'
+import {RecordState} from '../../../learnerRecordAPI/models/record'
+import {patchModuleRecord} from '../../../learnerRecordAPI/moduleRecord/client'
+import {ModuleRecord} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {setCompletionDate, setUpdatedAt} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
+import {WorkerType} from '../workerType'
+import {ActionWorker} from './ActionWorker'
 
 export class CompletedActionWorker extends ActionWorker {
 	constructor(readonly course: Course, readonly user: User, readonly module: Module) {
@@ -45,5 +44,9 @@ export class CompletedActionWorker extends ActionWorker {
 	async updateModuleRecord(moduleRecord: ModuleRecord) {
 		const patches = [setUpdatedAt(), setState(RecordState.Completed), setCompletionDate()]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.COMPLETE_MODULE
 	}
 }

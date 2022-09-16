@@ -21,25 +21,26 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 	async applyActionToLearnerRecord() {
 		try {
 			const courseRecord = await getCourseRecord(this.course.id, this.user)
+			logger.debug(`Applying action to module ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
 			if (!courseRecord) {
-				logger.debug(`Creating course record ${this.course.id} for user ${this.user.id}`)
+				logger.debug(`Creating course record`)
 				await this.createCourseRecord()
 			} else {
 				let moduleRecord = courseRecord.getModuleRecord(this.module.id)
 				if (!moduleRecord) {
-					logger.debug(`Creating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
+					logger.debug(`Creating module record`)
 					moduleRecord = await this.createModuleRecord()
 				} else {
-					logger.debug(`Updating module record ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
+					logger.debug(`Updating module record`)
 					moduleRecord = await this.updateModuleRecord(moduleRecord)
 				}
 				courseRecord.upsertModuleRecord(moduleRecord.id, moduleRecord)
-				logger.debug(`Updating course record for course ${this.course.id} and user ${this.user.id}`)
+				logger.debug(`Updating course record`)
 				await this.updateCourseRecord(courseRecord)
 			}
 		} catch (e) {
 			logger.error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
-			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}. Error: ${e}`)
+			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}, with action ${this.getType()}. Error: ${e}`)
 		}
 	}
 

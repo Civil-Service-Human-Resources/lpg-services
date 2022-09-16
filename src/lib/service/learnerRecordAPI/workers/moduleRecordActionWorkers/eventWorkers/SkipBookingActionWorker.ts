@@ -13,6 +13,7 @@ import {
 	clearScore,
 	setState,
 } from '../../../../learnerRecordAPI/moduleRecord/patchFactory'
+import {WorkerType} from '../../workerType'
 import {EventActionWorker} from './EventActionWorker'
 
 export class SkipBookingActionWorker extends EventActionWorker {
@@ -56,5 +57,9 @@ export class SkipBookingActionWorker extends EventActionWorker {
 			clearCompletionDate(),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.SKIP_BOOKING
 	}
 }

@@ -1,14 +1,14 @@
-
-import { CourseRecordStateError } from '../../../../../exception/courseRecordStateError'
-import { Course, Event, Module, User } from '../../../../../model'
-import { patchCourseRecord } from '../../../courseRecord/client'
-import { CourseRecord } from '../../../courseRecord/models/courseRecord'
-import { setLastUpdated, setState } from '../../../courseRecord/patchFactory'
-import { RecordState } from '../../../models/record'
-import { patchModuleRecord } from '../../../moduleRecord/client'
-import { ModuleRecord } from '../../../moduleRecord/models/moduleRecord'
-import { setCompletionDate, setUpdatedAt } from '../../../moduleRecord/patchFactory'
-import { EventActionWorker } from './EventActionWorker'
+import {CourseRecordStateError} from '../../../../../exception/courseRecordStateError'
+import {Course, Event, Module, User} from '../../../../../model'
+import {patchCourseRecord} from '../../../courseRecord/client'
+import {CourseRecord} from '../../../courseRecord/models/courseRecord'
+import {setLastUpdated, setState} from '../../../courseRecord/patchFactory'
+import {RecordState} from '../../../models/record'
+import {patchModuleRecord} from '../../../moduleRecord/client'
+import {ModuleRecord} from '../../../moduleRecord/models/moduleRecord'
+import {setCompletionDate, setUpdatedAt} from '../../../moduleRecord/patchFactory'
+import {WorkerType} from '../../workerType'
+import {EventActionWorker} from './EventActionWorker'
 
 export class CompleteBookingActionWorker extends EventActionWorker {
 	constructor(
@@ -55,5 +55,9 @@ export class CompleteBookingActionWorker extends EventActionWorker {
             has not been approved (course ${this.course.id}, module ${this.module.id})`
 			throw new CourseRecordStateError(msg)
 		}
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.COMPLETE_BOOKING
 	}
 }

@@ -4,6 +4,7 @@ import {RecordState} from '../../../learnerRecordAPI/models/record'
 import {patchModuleRecord} from '../../../learnerRecordAPI/moduleRecord/client'
 import {ModuleRecord, ModuleRecordResult} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {setCompletionDate, setResult, setUpdatedAt} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
+import {WorkerType} from '../workerType'
 import {CompletedActionWorker} from './CompletedActionWorker'
 
 export class PassModuleActionWorker extends CompletedActionWorker {
@@ -22,5 +23,9 @@ export class PassModuleActionWorker extends CompletedActionWorker {
 			]
 		)
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.PASS_MODULE
 	}
 }

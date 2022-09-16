@@ -1,8 +1,9 @@
-import { Course, User } from '../../../../model'
-import { patchCourseRecord } from '../../courseRecord/client'
-import { CourseRecord, CourseRecordPreference } from '../../courseRecord/models/courseRecord'
-import { clearState, setLastUpdated, setPreference } from '../../courseRecord/patchFactory'
-import { CourseRecordActionWorker } from './CourseRecordActionWorker'
+import {Course, User} from '../../../../model'
+import {patchCourseRecord} from '../../courseRecord/client'
+import {CourseRecord, CourseRecordPreference} from '../../courseRecord/models/courseRecord'
+import {clearState, setLastUpdated, setPreference} from '../../courseRecord/patchFactory'
+import {WorkerType} from '../workerType'
+import {CourseRecordActionWorker} from './CourseRecordActionWorker'
 
 export class AddCourseToLearningplanActionWorker extends CourseRecordActionWorker {
 	constructor(protected readonly course: Course, protected readonly user: User) {
@@ -16,5 +17,9 @@ export class AddCourseToLearningplanActionWorker extends CourseRecordActionWorke
 
 	async createCourseRecord() {
 		await this.createNewCourseRecord([], undefined, CourseRecordPreference.Liked)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.ADD_TO_LEARNING_PLAN
 	}
 }

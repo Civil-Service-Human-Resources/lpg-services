@@ -12,6 +12,7 @@ import {
 	setBookingStatus,
 	setUpdatedAt,
 } from '../../../moduleRecord/patchFactory'
+import {WorkerType} from '../../workerType'
 import {EventActionWorker} from './EventActionWorker'
 
 export class CancelBookingActionWorker extends EventActionWorker {
@@ -51,5 +52,9 @@ export class CancelBookingActionWorker extends EventActionWorker {
 			setBookingStatus(BookingStatus.CANCELLED),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.CANCEL_BOOKING
 	}
 }

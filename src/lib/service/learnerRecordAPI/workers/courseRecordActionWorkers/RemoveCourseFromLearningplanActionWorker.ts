@@ -4,6 +4,7 @@ import { patchCourseRecord } from '../../courseRecord/client'
 import { CourseRecord } from '../../courseRecord/models/courseRecord'
 import { setLastUpdated, setState } from '../../courseRecord/patchFactory'
 import { RecordState } from '../../models/record'
+import { WorkerType } from '../workerType'
 import { CourseRecordActionWorker } from './CourseRecordActionWorker'
 
 const logger = getLogger('fullLearnerRecord/workers/RemoveCourseFromLearningplanActionWorker')
@@ -25,5 +26,9 @@ export class RemoveCourseFromLearningplanActionWorker extends CourseRecordAction
 			`Attempted removal from learning plan when no course record exists
 			(course: ${this.course.id}, user: ${this.user.id})`
 		)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.REMOVE_FROM_LEARNING_PLAN
 	}
 }

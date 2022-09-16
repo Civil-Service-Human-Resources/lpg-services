@@ -1,7 +1,8 @@
-import { getLogger } from '../../../../logger'
-import { Course, User } from '../../../../model'
-import { CourseRecordPreference } from '../../courseRecord/models/courseRecord'
-import { CourseRecordActionWorker } from './CourseRecordActionWorker'
+import {getLogger} from '../../../../logger'
+import {Course, User} from '../../../../model'
+import {CourseRecordPreference} from '../../courseRecord/models/courseRecord'
+import {WorkerType} from '../workerType'
+import {CourseRecordActionWorker} from './CourseRecordActionWorker'
 
 const logger = getLogger('fullLearnerRecord/workers/RemoveCourseFromSuggestionsActionWorker')
 
@@ -19,5 +20,9 @@ export class RemoveCourseFromSuggestionsActionWorker extends CourseRecordActionW
 
 	async createCourseRecord() {
 		await this.createNewCourseRecord([], undefined, CourseRecordPreference.Disliked)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.REMOVE_FROM_SUGGESTIONS
 	}
 }

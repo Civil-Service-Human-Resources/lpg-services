@@ -6,6 +6,7 @@ import {RecordState} from '../../models/record'
 import {patchModuleRecord} from '../../moduleRecord/client'
 import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 import {clearResult, clearScore, setCompletionDate, setUpdatedAt} from '../../moduleRecord/patchFactory'
+import {WorkerType} from '../workerType'
 import {ActionWorker} from './ActionWorker'
 
 export class InitialiseActionWorker extends ActionWorker {
@@ -45,5 +46,9 @@ export class InitialiseActionWorker extends ActionWorker {
 			)
 		}
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.INITIALISE_MODULE
 	}
 }

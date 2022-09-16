@@ -2,6 +2,7 @@ import {Course, Module, User} from '../../../../model'
 import {patchModuleRecord} from '../../../learnerRecordAPI/moduleRecord/client'
 import {ModuleRecord, ModuleRecordResult} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {setResult, setUpdatedAt} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
+import {WorkerType} from '../workerType'
 import {InitialiseActionWorker} from './initialiseActionWorker'
 
 export class FailModuleActionWorker extends InitialiseActionWorker {
@@ -13,5 +14,9 @@ export class FailModuleActionWorker extends InitialiseActionWorker {
 		const patches = []
 		patches.push(...[setUpdatedAt(), setResult(ModuleRecordResult.Failed)])
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.FAIL_MODULE
 	}
 }

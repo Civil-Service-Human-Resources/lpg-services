@@ -1,19 +1,15 @@
-import {Course, Event, Module, User} from '../../../../../model'
-import {patchCourseRecord} from '../../../courseRecord/client'
-import {CourseRecord} from '../../../courseRecord/models/courseRecord'
-import {setLastUpdated, setState} from '../../../courseRecord/patchFactory'
-import {RecordState} from '../../../models/record'
-import {patchModuleRecord} from '../../../moduleRecord/client'
-import {ModuleRecord} from '../../../moduleRecord/models/moduleRecord'
+import { Course, Event, Module, User } from '../../../../../model'
+import { patchCourseRecord } from '../../../courseRecord/client'
+import { CourseRecord } from '../../../courseRecord/models/courseRecord'
+import { setLastUpdated, setState } from '../../../courseRecord/patchFactory'
+import { RecordState } from '../../../models/record'
+import { patchModuleRecord } from '../../../moduleRecord/client'
+import { ModuleRecord } from '../../../moduleRecord/models/moduleRecord'
 import {
-	clearCompletionDate,
-	clearResult,
-	clearScore,
-	setEventDate,
-	setEventId,
-	setUpdatedAt,
+	clearCompletionDate, clearResult, clearScore, setEventDate, setEventId, setUpdatedAt
 } from '../../../moduleRecord/patchFactory'
-import {EventActionWorker} from './EventActionWorker'
+import { WorkerType } from '../../workerType'
+import { EventActionWorker } from './EventActionWorker'
 
 export class ApprovedBookingActionWorker extends EventActionWorker {
 	constructor(
@@ -53,5 +49,9 @@ export class ApprovedBookingActionWorker extends EventActionWorker {
 			setUpdatedAt(new Date()),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.APPROVE_BOOKING
 	}
 }

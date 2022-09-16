@@ -1,14 +1,21 @@
-import { Course, Event, Module, User } from '../../../../../model'
-import { patchCourseRecord } from '../../../../learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from '../../../../learnerRecordAPI/courseRecord/models/courseRecord'
-import { setLastUpdated } from '../../../../learnerRecordAPI/courseRecord/patchFactory'
-import { RecordState } from '../../../../learnerRecordAPI/models/record'
-import { patchModuleRecord } from '../../../../learnerRecordAPI/moduleRecord/client'
-import { ModuleRecord } from '../../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {Course, Event, Module, User} from '../../../../../model'
+import {patchCourseRecord} from '../../../../learnerRecordAPI/courseRecord/client'
+import {CourseRecord} from '../../../../learnerRecordAPI/courseRecord/models/courseRecord'
+import {setLastUpdated} from '../../../../learnerRecordAPI/courseRecord/patchFactory'
+import {RecordState} from '../../../../learnerRecordAPI/models/record'
+import {patchModuleRecord} from '../../../../learnerRecordAPI/moduleRecord/client'
+import {ModuleRecord} from '../../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {
-	clearCompletionDate, clearResult, clearScore, setEventDate, setEventId, setState, setUpdatedAt
+	clearCompletionDate,
+	clearResult,
+	clearScore,
+	setEventDate,
+	setEventId,
+	setState,
+	setUpdatedAt,
 } from '../../../../learnerRecordAPI/moduleRecord/patchFactory'
-import { EventActionWorker } from './EventActionWorker'
+import {WorkerType} from '../../workerType'
+import {EventActionWorker} from './EventActionWorker'
 
 export class RegisterBookingActionWorker extends EventActionWorker {
 	constructor(
@@ -48,5 +55,9 @@ export class RegisterBookingActionWorker extends EventActionWorker {
 			setUpdatedAt(new Date()),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
+	}
+
+	protected getType(): WorkerType {
+		return WorkerType.REGISTER_BOOKING
 	}
 }
