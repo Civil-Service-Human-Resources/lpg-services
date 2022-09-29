@@ -67,6 +67,12 @@ describe('Should test the course action worker classes', () => {
 				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 			])
 		})
+
+		createCourseRecordTest(async () => {
+			const course = getCourseWithOneOptionalModule()
+			const worker = new RemoveCourseFromLearningplanActionWorker(course, testUser)
+			await testCreateCourseRecord(worker, RecordState.Archived, undefined, undefined, course)
+		})
 	})
 
 	describe('Should test removing a course from suggested learning', () => {
