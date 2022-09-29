@@ -420,12 +420,11 @@ export class Course {
 	}
 
 	getModule(moduleId: string) {
-		const mods = this.modules.filter(m => m.id === moduleId)
-		if (mods.length > 0) {
-			return mods[0]
-		} else {
+		const module = this.modules.find(m => m.id === moduleId)
+		if (!module) {
 			throw new ModuleNotFoundError(this.id, moduleId)
 		}
+		return module
 	}
 }
 

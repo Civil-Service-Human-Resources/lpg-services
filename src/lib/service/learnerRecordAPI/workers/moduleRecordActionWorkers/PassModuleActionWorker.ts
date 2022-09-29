@@ -16,7 +16,7 @@ export class PassModuleActionWorker extends CompletedActionWorker {
 		const patches = []
 		patches.push(
 			...[
-				setUpdatedAt(),
+				setUpdatedAt(new Date()),
 				setState(RecordState.Completed),
 				setCompletionDate(new Date()),
 				setResult(ModuleRecordResult.Passed),

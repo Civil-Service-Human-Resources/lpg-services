@@ -42,7 +42,7 @@ export class CompletedActionWorker extends ActionWorker {
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord) {
-		const patches = [setUpdatedAt(), setState(RecordState.Completed), setCompletionDate()]
+		const patches = [setUpdatedAt(new Date()), setState(RecordState.Completed), setCompletionDate(new Date())]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
 	}
 

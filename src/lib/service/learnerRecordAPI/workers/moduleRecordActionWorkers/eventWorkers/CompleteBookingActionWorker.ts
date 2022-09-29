@@ -47,7 +47,7 @@ export class CompleteBookingActionWorker extends EventActionWorker {
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {
 		// Only approved event modules can have attendance registered against them
 		if (moduleRecord.isApproved()) {
-			const patches = [setUpdatedAt(), setState(RecordState.Completed), setCompletionDate(new Date())]
+			const patches = [setUpdatedAt(new Date()), setState(RecordState.Completed), setCompletionDate(new Date())]
 			return await patchModuleRecord(patches, this.user, moduleRecord.id)
 		} else {
 			const msg = `User ${this.user.id} attempted to record

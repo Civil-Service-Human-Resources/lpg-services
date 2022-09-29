@@ -47,16 +47,10 @@ export class CourseRecord extends Record {
 	}
 
 	public upsertModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {
-		let existingModIndex
-		for (let i = 0; i < this.modules.length; i++) {
-			const mr = this.modules[i]
-			if (mr.id === moduleRecordId) {
-				existingModIndex = i
-			}
-		}
+		const existingModuleIndex = this.modules.findIndex(m => m.id === moduleRecordId)
 
-		if (existingModIndex) {
-			this.modules[existingModIndex] = moduleRecord
+		if (existingModuleIndex) {
+			this.modules[existingModuleIndex] = moduleRecord
 		} else {
 			this.modules.push(moduleRecord)
 		}
@@ -71,12 +65,7 @@ export class CourseRecord extends Record {
 	}
 
 	public getModuleRecord = (moduleId: string) => {
-		const records = this.modules.filter(m => m.moduleId === moduleId)
-		if (records.length > 0) {
-			return records[0]
-		} else {
-			return undefined
-		}
+		return this.modules.find(m => m.moduleId === moduleId)
 	}
 
 	public areAllRelevantModulesComplete(modules: Module[]) {

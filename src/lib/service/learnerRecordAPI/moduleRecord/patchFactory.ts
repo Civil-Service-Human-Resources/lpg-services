@@ -36,21 +36,16 @@ export function setEventId(eventId: string) {
 	return JsonPatch.replacePatch('eventId', eventId)
 }
 
-export function setEventDate(eventDate?: Date) {
+export function setEventDate(eventDate: Date) {
 	return setDate('eventDate', eventDate)
 }
 
-function setDate(key: string, date?: Date) {
-	let convertedDate
-	if (date) {
-		convertedDate = moment(date).format('YYYY-MM-DDTHH:mm:ss')
-	} else {
-		convertedDate = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss')
-	}
+function setDate(key: string, date: Date) {
+	const convertedDate = moment(date).format('YYYY-MM-DDTHH:mm:ss')
 	return JsonPatch.replacePatch(key, convertedDate)
 }
 
-export function setUpdatedAt(updatedAt?: Date) {
+export function setUpdatedAt(updatedAt: Date) {
 	return setDate('updatedAt', updatedAt)
 }
 
@@ -58,7 +53,7 @@ export function setBookingStatus(status: BookingStatus) {
 	return JsonPatch.replacePatch('bookingStatus', status.toString())
 }
 
-export function setCompletionDate(completionDate?: Date) {
+export function setCompletionDate(completionDate: Date) {
 	return setDate('completionDate', completionDate)
 }
 

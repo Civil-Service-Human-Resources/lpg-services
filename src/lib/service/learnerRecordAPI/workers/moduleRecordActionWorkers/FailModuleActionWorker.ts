@@ -12,7 +12,7 @@ export class FailModuleActionWorker extends InitialiseActionWorker {
 
 	async updateModuleRecord(moduleRecord: ModuleRecord) {
 		const patches = []
-		patches.push(...[setUpdatedAt(), setResult(ModuleRecordResult.Failed)])
+		patches.push(...[setUpdatedAt(new Date()), setResult(ModuleRecordResult.Failed)])
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
 	}
 
