@@ -49,7 +49,7 @@ export class CourseRecord extends Record {
 	public upsertModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {
 		const existingModuleIndex = this.modules.findIndex(m => m.id === moduleRecordId)
 
-		if (existingModuleIndex) {
+		if (existingModuleIndex > 0) {
 			this.modules[existingModuleIndex] = moduleRecord
 		} else {
 			this.modules.push(moduleRecord)
