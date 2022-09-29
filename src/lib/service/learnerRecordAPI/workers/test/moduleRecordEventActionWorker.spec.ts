@@ -108,7 +108,7 @@ describe('Should test the module event action worker classes', () => {
 			const course = getCourseWithOneRequiredModule()
 			const event = genericEvent()
 			const worker = new CancelBookingActionWorker(course, testUser, event, course.modules[0])
-			await testCreateCourseRecord(worker, RecordState.Unregsitered, undefined, RecordState.Unregsitered, course)
+			await testCreateCourseRecord(worker, RecordState.Unregistered, undefined, RecordState.Unregistered, course)
 		})
 
 		it(`Should create an unregistered module record`, async () => {
@@ -121,7 +121,7 @@ describe('Should test the module event action worker classes', () => {
 			)
 			const event = genericEvent()
 			const worker = new CancelBookingActionWorker(course, testUser, event, course.modules[1])
-			await testCreateModuleRecord(worker, courseRecord, RecordState.Unregsitered, course.modules[1])
+			await testCreateModuleRecord(worker, courseRecord, RecordState.Unregistered, course.modules[1])
 		})
 
 		it(`Should unregsiter the course record

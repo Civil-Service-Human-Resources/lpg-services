@@ -5,7 +5,7 @@ export enum RecordState {
 	InProgress = 'IN_PROGRESS',
 	Archived = 'ARCHIVED',
 	Skipped = 'SKIPPED',
-	Unregsitered = 'UNREGISTERED',
+	Unregistered = 'UNREGISTERED',
 	Registered = 'REGISTERED',
 	Approved = 'APPROVED',
 	Booked = 'BOOKED',
@@ -60,7 +60,7 @@ export class Record {
 	}
 
 	isUnregistered() {
-		return this.state === RecordState.Unregsitered
+		return this.state === RecordState.Unregistered
 	}
 
 	isRegistered() {
