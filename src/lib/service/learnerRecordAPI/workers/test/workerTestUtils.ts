@@ -1,14 +1,14 @@
 /* tslint:disable:no-unused-expression */
-import { expect } from 'chai'
+import {expect} from 'chai'
 import * as sinon from 'sinon'
 
-import { Course, Event, Module, User } from '../../../../model'
-import { JsonPatchInterface } from '../../../shared/models/JsonPatch'
+import {Course, Event, Module, User} from '../../../../model'
+import {JsonPatchInterface} from '../../../shared/models/JsonPatch'
 import * as courseRecordClient from '../../courseRecord/client'
-import { CourseRecord } from '../../courseRecord/models/courseRecord'
-import { RecordState } from '../../models/record'
+import {CourseRecord} from '../../courseRecord/models/courseRecord'
+import {RecordState} from '../../models/record'
 import * as moduleRecordClient from '../../moduleRecord/client'
-import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
+import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 
 const testDate = new Date(2020, 0, 1, 0, 0, 0)
 export const testDateAsStr = '2020-01-01T00:00:00'
@@ -18,66 +18,67 @@ export const testCourse = new Course('TEST001')
 
 // Course data
 
-export function getCourseWithOneRequiredModule() {
-	const module = getRequiredModule()
-	return genericCourse([module])
+export function getCourseWithOneRequiredModule(courseId: string, moduleId: string) {
+	const module = getRequiredModule(moduleId)
+	return genericCourse(courseId, [module])
 }
 
-export function getCourseWithTwoRequiredModules() {
-	const course = getCourseWithOneRequiredModule()
-	course.modules.push(getRequiredModule())
+export function getCourseWithTwoRequiredModules(courseId: string, moduleOneId: string, moduleTwoId: string) {
+	const course = getCourseWithOneRequiredModule(courseId, moduleOneId)
+	course.modules.push(getRequiredModule(moduleTwoId))
 	return course
 }
 
-export function getCourseWithOneOptionalModule() {
-	const module = getOptionalModule()
-	return genericCourse([module])
+export function getCourseWithOneOptionalModule(courseId: string, moduleId: string) {
+	const module = getOptionalModule(moduleId)
+	return genericCourse(courseId, [module])
 }
 
-export function getCourseWithTwoOptionalModules() {
-	const course = getCourseWithOneOptionalModule()
-	course.modules.push(getOptionalModule())
+export function getCourseWithTwoOptionalModules(courseId: string, moduleOneId: string, moduleTwoId: string) {
+	const course = getCourseWithOneOptionalModule(courseId, moduleOneId)
+	course.modules.push(getOptionalModule(moduleTwoId))
 }
 
 /**
  * - module [0] is opt
  * - module [1] is required
  */
-export function getCourseWithMixedModules() {
-	const course = getCourseWithOneOptionalModule()
-	course.modules.push(getRequiredModule())
+export function getCourseWithMixedModules(courseId: string, moduleOneId: string, moduleTwoId: string) {
+	const course = getCourseWithOneOptionalModule(courseId, moduleOneId)
+	course.modules.push(getRequiredModule(moduleTwoId))
 	return course
 }
 
-export function genericCourse(modules: Module[]) {
-	const courseId = 'course ' + Math.random().toString()
-	const course = new Course(courseId)
+export function genericCourse(id: string, modules: Module[]) {
+	const course = new Course(id)
 	course.modules = modules
 	return course
 }
 
 // Event data
 
-export function genericEvent() {
-	const eventId = 'event ' + Math.random().toString()
-	return new Event(new Date(), new Date(), [new Date()], 'Location', 10, 10, 'ACTIVE', eventId)
+export function genericEvent(id: string) {
+	return new Event(new Date(), new Date(), [new Date()], 'Location', 10, 10, 'ACTIVE', id)
 }
 
 // Course record data
 
 export function getCourseRecordWithOneModuleRecord(
+	moduleRecordId: number,
 	courseId: string,
 	courseState: RecordState,
 	moduleId: string,
 	moduleState: RecordState
 ) {
-	const moduleRecord = createModuleRecord(moduleId, courseId, moduleState)
+	const moduleRecord = createModuleRecord(moduleRecordId, moduleId, courseId, moduleState)
 	const courseRecord = genericCourseRecord(courseId, [moduleRecord])
 	courseRecord.state = courseState
 	return courseRecord
 }
 
 export function getCourseRecordWithTwoModuleRecords(
+	moduleRecordId: number,
+	moduleRecordTwoId: number,
 	courseId: string,
 	courseState: RecordState,
 	moduleId: string,
@@ -85,8 +86,8 @@ export function getCourseRecordWithTwoModuleRecords(
 	moduleTwoId: string,
 	moduleTwoState: RecordState
 ) {
-	const moduleRecord = createModuleRecord(moduleId, courseId, moduleState)
-	const moduleRecordTwo = createModuleRecord(moduleTwoId, courseId, moduleTwoState)
+	const moduleRecord = createModuleRecord(moduleRecordId, moduleId, courseId, moduleState)
+	const moduleRecordTwo = createModuleRecord(moduleRecordTwoId, moduleTwoId, courseId, moduleTwoState)
 	const courseRecord = genericCourseRecord(courseId, [moduleRecord, moduleRecordTwo])
 	courseRecord.state = courseState
 	return courseRecord
@@ -98,27 +99,25 @@ export function genericCourseRecord(courseId: string, moduleRecords: ModuleRecor
 
 // Module data
 
-export function getRequiredModule() {
-	return genericModule(false)
+export function getRequiredModule(id: string) {
+	return genericModule(id, false)
 }
 
-export function getOptionalModule() {
-	return genericModule(true)
+export function getOptionalModule(id: string) {
+	return genericModule(id, true)
 }
 
-export function genericModule(optional: boolean) {
-	const moduleId = 'module ' + Math.random().toString()
-	const mod = new Module(moduleId, 'elearning')
+export function genericModule(id: string, optional: boolean) {
+	const mod = new Module(id, 'elearning')
 	mod.optional = optional
 	return mod
 }
 
 // Module record data
 
-export function createModuleRecord(moduleId: string, courseId: string, state: RecordState) {
-	const id = Math.random()
+export function createModuleRecord(moduleRecordId: number, moduleId: string, courseId: string, state: RecordState) {
 	return new ModuleRecord(
-		id,
+		moduleRecordId,
 		moduleId,
 		testUser.id,
 		courseId,
@@ -133,12 +132,18 @@ export function createModuleRecord(moduleId: string, courseId: string, state: Re
 	)
 }
 
-export function genericModuleRecord() {
-	return createModuleRecord('', '', RecordState.InProgress)
+export function genericModuleRecord(moduleRecordId: number) {
+	return createModuleRecord(moduleRecordId, '', '', RecordState.InProgress)
 }
 
-export function getEventModuleRecord(moduleId: string, courseId: string, state: RecordState, eventId: string) {
-	const moduleRecord = createModuleRecord(moduleId, courseId, state)
+export function getEventModuleRecord(
+	moduleRecordId: number,
+	moduleId: string,
+	courseId: string,
+	state: RecordState,
+	eventId: string
+) {
+	const moduleRecord = createModuleRecord(moduleRecordId, moduleId, courseId, state)
 	moduleRecord.eventId = eventId
 	return moduleRecord
 }

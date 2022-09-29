@@ -30,15 +30,16 @@ describe('Should test the course action worker classes', () => {
 
 	describe('Should test adding a course to the learning plan', () => {
 		createCourseRecordTest(async () => {
-			const course = getCourseWithOneOptionalModule()
+			const course = getCourseWithOneOptionalModule("course 100", "module 100")
 			const worker = new AddCourseToLearningplanActionWorker(course, testUser)
 			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Liked, RecordState.Null, course)
 		})
 
 		updateCourseRecordTest(async () => {
-			const course = getCourseWithOneOptionalModule()
+			const course = getCourseWithOneOptionalModule("course 100", "module 100")
 			const worker = new AddCourseToLearningplanActionWorker(course, testUser)
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.Null,
 				course.modules[0].id,
@@ -54,8 +55,9 @@ describe('Should test the course action worker classes', () => {
 
 	describe('Should test removing a course from the learning plan', () => {
 		updateCourseRecordTest(async () => {
-			const course = getCourseWithOneOptionalModule()
+			const course = getCourseWithOneOptionalModule("course 100", "module 100")
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.Completed,
 				course.modules[0].id,
@@ -69,7 +71,7 @@ describe('Should test the course action worker classes', () => {
 		})
 
 		createCourseRecordTest(async () => {
-			const course = getCourseWithOneOptionalModule()
+			const course = getCourseWithOneOptionalModule("course 100", "module 100")
 			const worker = new RemoveCourseFromLearningplanActionWorker(course, testUser)
 			await testCreateCourseRecord(worker, RecordState.Archived, undefined, undefined, course)
 		})
@@ -77,7 +79,7 @@ describe('Should test the course action worker classes', () => {
 
 	describe('Should test removing a course from suggested learning', () => {
 		createCourseRecordTest(async () => {
-			const course = getCourseWithOneOptionalModule()
+			const course = getCourseWithOneOptionalModule("course 100", "module 100")
 			const worker = new RemoveCourseFromSuggestionsActionWorker(course, testUser)
 			await testCreateCourseRecord(worker, undefined, CourseRecordPreference.Disliked, undefined, course)
 		})

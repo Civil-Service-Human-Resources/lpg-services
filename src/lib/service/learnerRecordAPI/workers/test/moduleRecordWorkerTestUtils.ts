@@ -26,7 +26,7 @@ export async function testCreateModuleRecord(
 	expModuleDetails: Module
 ) {
 	mockGetCourseRecord(getCourseRecordMockResponse)
-	const createModuleRecordMock = mockCreateModuleRecord(genericModuleRecord())
+	const createModuleRecordMock = mockCreateModuleRecord(genericModuleRecord(1))
 	mockPatchCourseRecord()
 	await worker.applyActionToLearnerRecord()
 	assertCreateModuleRecordCall(createModuleRecordMock, expState, expModuleDetails)
@@ -79,7 +79,7 @@ export async function testUpdateModuleRecord(
 	expectedPatches: JsonPatchInterface[]
 ) {
 	mockGetCourseRecord(courseRecordReturnVal)
-	const patchModuleRecordMock = mockPatchModuleRecord(genericModuleRecord())
+	const patchModuleRecordMock = mockPatchModuleRecord(genericModuleRecord(1))
 	mockPatchCourseRecord()
 	await worker.applyActionToLearnerRecord()
 	assertPatchModuleRecordCall(patchModuleRecordMock, expectedPatches)

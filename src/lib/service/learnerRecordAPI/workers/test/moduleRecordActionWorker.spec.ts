@@ -28,29 +28,30 @@ describe('Should test the course action worker classes', () => {
 	describe('Should test completing a module', () => {
 		describe('Should create course records', () => {
 			it('Should create a completed course record when the course has 1 module', async () => {
-				const course = getCourseWithOneRequiredModule()
+				const course = getCourseWithOneRequiredModule("course 100", "module 100")
 				const worker = new CompletedActionWorker(course, testUser, course.modules[0])
 				await testCreateCourseRecord(worker, RecordState.Completed, undefined, RecordState.Completed, course)
 			})
 
 			it(`Should create a completed course record when the course has
                 1 required module and 1 optional module and the required one is completed`, async () => {
-				const course = getCourseWithMixedModules()
+				const course = getCourseWithMixedModules("course 100", "module 100", "module 101")
 				const worker = new CompletedActionWorker(course, testUser, course.modules[1])
 				await testCreateCourseRecord(worker, RecordState.Completed, undefined, RecordState.Completed, course)
 			})
 
 			it(`Should create an in progress course record when the course has
                 2 required modules and one of them is completed`, async () => {
-				const course = getCourseWithTwoRequiredModules()
+				const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
 				const worker = new CompletedActionWorker(course, testUser, course.modules[0])
 				await testCreateCourseRecord(worker, RecordState.InProgress, undefined, RecordState.Completed, course)
 			})
 		})
 
 		it(`Should create a completed module record`, async () => {
-			const course = getCourseWithTwoRequiredModules()
+			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.InProgress,
 				course.modules[0].id,
@@ -62,8 +63,10 @@ describe('Should test the course action worker classes', () => {
 
 		it(`Should complete the course record and module record
             when all relevant modules are now completed`, async () => {
-			const course = getCourseWithTwoRequiredModules()
+			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
 			const courseRecord = getCourseRecordWithTwoModuleRecords(
+				1,
+				2,
 				course.id,
 				RecordState.InProgress,
 				course.modules[0].id,
@@ -81,8 +84,10 @@ describe('Should test the course action worker classes', () => {
 		it(`Should set the course record to in progress when it has been
             removed/added from/to the learning plan and there are still
             module to complete`, async () => {
-			const course = getCourseWithTwoRequiredModules()
+			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
 			const courseRecord = getCourseRecordWithTwoModuleRecords(
+				1,
+				2,
 				course.id,
 				RecordState.Null,
 				course.modules[0].id,
@@ -99,7 +104,7 @@ describe('Should test the course action worker classes', () => {
 	})
 
 	describe('Should test initialising a module', () => {
-		const course = getCourseWithTwoRequiredModules()
+		const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
 
 		it(`Should create the course record correctly`, async () => {
 			const worker = new InitialiseActionWorker(course, testUser, course.modules[0])
@@ -108,6 +113,7 @@ describe('Should test the course action worker classes', () => {
 
 		it(`Should create the course record correctly`, async () => {
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.InProgress,
 				course.modules[0].id,
@@ -120,6 +126,7 @@ describe('Should test the course action worker classes', () => {
 		it(`Should update the course record correctly after
             the course has been added/removed to/from the learning plan`, async () => {
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.Null,
 				course.modules[0].id,
@@ -135,6 +142,7 @@ describe('Should test the course action worker classes', () => {
 		it(`Should update the patch record correctly if it is
             not already completed`, async () => {
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.Null,
 				course.modules[0].id,
@@ -154,8 +162,9 @@ describe('Should test the course action worker classes', () => {
 	describe('Should test failing a module', () => {
 		it(`Should correctly update the module record when
             a module is failed`, async () => {
-			const course = getCourseWithOneRequiredModule()
+			const course = getCourseWithOneRequiredModule("course 100", "module 100")
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.InProgress,
 				course.modules[0].id,
@@ -172,8 +181,9 @@ describe('Should test the course action worker classes', () => {
 	describe('Should test passing a module', () => {
 		it(`Should correctly update the module record when
             a module is passed`, async () => {
-			const course = getCourseWithOneRequiredModule()
+			const course = getCourseWithOneRequiredModule("course 100", "module 100")
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.InProgress,
 				course.modules[0].id,
@@ -192,8 +202,9 @@ describe('Should test the course action worker classes', () => {
 	describe('Should test rating a module', () => {
 		it(`Should correctly update the module record when
             a module is rated`, async () => {
-			const course = getCourseWithOneRequiredModule()
+			const course = getCourseWithOneRequiredModule("course 100", "module 100")
 			const courseRecord = getCourseRecordWithOneModuleRecord(
+				1,
 				course.id,
 				RecordState.InProgress,
 				course.modules[0].id,
