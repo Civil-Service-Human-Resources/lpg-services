@@ -21,7 +21,8 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 	async applyActionToLearnerRecord() {
 		try {
 			const courseRecord = await getCourseRecord(this.course.id, this.user)
-			logger.debug(`Applying action to module ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
+			logger.debug(`Applying action ${this.getType().toString()} to module ${this.module.id} ` +
+			`for course ${this.course.id} and user ${this.user.id}`)
 			if (!courseRecord) {
 				logger.debug(`Creating course record`)
 				await this.createCourseRecord()

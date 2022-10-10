@@ -49,7 +49,7 @@ export class CourseRecord extends Record {
 	public upsertModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {
 		const existingModuleIndex = this.modules.findIndex(m => m.id === moduleRecordId)
 
-		if (existingModuleIndex > 0) {
+		if (existingModuleIndex > -1) {
 			this.modules[existingModuleIndex] = moduleRecord
 		} else {
 			this.modules.push(moduleRecord)
@@ -69,14 +69,17 @@ export class CourseRecord extends Record {
 	}
 
 	public areAllRelevantModulesComplete(modules: Module[]) {
-		let modIds: string[]
+		let modulesRequiredForCompletion: string[]
 		const completedModuleIds = this.modules.filter(m => m.isCompleted()).map(m => m.moduleId)
 		if (modules.every(m => m.optional)) {
-			modIds = modules.filter(m => m.optional).map(m => m.id)
+			modulesRequiredForCompletion = modules.filter(m => m.optional).map(m => m.id)
 		} else {
-			modIds = modules.filter(m => !m.optional).map(m => m.id)
+			modulesRequiredForCompletion = modules.filter(m => !m.optional).map(m => m.id)
 		}
-		return completedModuleIds.filter(m => modIds.includes(m)).length === modIds.length
+		return (
+			completedModuleIds.every(i => modulesRequiredForCompletion.includes(i))
+			&& modulesRequiredForCompletion.every(i => completedModuleIds.includes(i))
+		)
 	}
 
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {

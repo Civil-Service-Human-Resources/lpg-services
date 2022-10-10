@@ -368,7 +368,7 @@ describe('Should test the module event action worker classes', () => {
 			console.log(course.id)
 			const event = genericEvent("event 100")
 			const completedModuleRecord = getEventModuleRecord(
-				1,
+				2,
 				course.modules[1].id,
 				course.id,
 				RecordState.Completed,
