@@ -15,10 +15,9 @@ export class RemoveCourseFromLearningplanActionWorker extends CourseRecordAction
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord) {
-		if (!courseRecord.hasBeenAddedToLearningPlan()) {
-			const patches = [setState(RecordState.Archived), setLastUpdated(new Date())]
-			patchCourseRecord(patches, this.user, courseRecord.courseId)
-		}
+		logger.debug(courseRecord)
+		const patches = [setState(RecordState.Archived), setLastUpdated(new Date())]
+		patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async createCourseRecord() {
