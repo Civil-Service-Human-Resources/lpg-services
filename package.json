@@ -109,7 +109,7 @@
 		"lodash": "4.17.19",
 		"lusca": "1.5.2",
 		"mime-types": "2.1.18",
-		"moment": "^2.24.0",
+		"moment": "^2.29.4",
 		"node-exiftool": "2.3.0",
 		"node-fetch": "1.7.3",
 		"node-sass": "6.0.0",
