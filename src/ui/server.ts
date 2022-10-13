@@ -1,4 +1,5 @@
 /* tslint:disable:no-var-requires */
+import 'reflect-metadata'
 const appInsights = require('applicationinsights')
 import * as config from 'lib/config'
 
@@ -46,6 +47,7 @@ import * as userController from './controllers/user'
 import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
+import { completeVideoModule } from './controllers/video'
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
@@ -199,7 +201,7 @@ if (config.PROFILE !== 'local') {
 	app.use(new ProfileChecker().checkProfile())
 }
 
-app.get('/api/lrs.record', asyncHandler(learningRecordController.record))
+app.get('/api/video/complete', asyncHandler(completeVideoModule))
 
 app.get('/profile', userController.viewProfile)
 

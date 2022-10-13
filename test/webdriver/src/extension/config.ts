@@ -63,7 +63,7 @@ export const URL = set(
 )
 
 export const BASE_URL = set(
-	'http://local.learn.civilservice.gov.uk:3001',
+	'http://localhost:3001',
 	`https://${PROFILE}.learn.civilservice.gov.uk`
 )
 

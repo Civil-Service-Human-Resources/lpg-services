@@ -42,7 +42,7 @@ exports.URL = set(
 	`https://${exports.PROFILE}.learn.civilservice.gov.uk/sign-in`
 )
 exports.BASE_URL = set(
-	'http://local.learn.civilservice.gov.uk:3001',
+	'http://localhost:3001',
 	`https://${exports.PROFILE}.learn.civilservice.gov.uk`
 )
 exports.USERNAME = env.USERNAME

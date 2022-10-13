@@ -386,5 +386,6 @@
 	"archivedWarning": {
 		"heading": "This course is no longer available.",
 		"description": "You can't start or resume this course. Previously completed courses will appear in your learning record."
-	}
+	},
+	"Analysis": "Analysis"
 }

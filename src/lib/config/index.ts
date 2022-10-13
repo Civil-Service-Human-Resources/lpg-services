@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv'
-import * as fs from 'fs'
 
 export const ONE_YEAR_IN_SECONDS = 31536000
 
@@ -9,18 +8,7 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
-	const envFile = '/keybase/team/lpg/dev/dotenv'
-	try {
-		if (!fs.statSync(envFile).isFile()) {
-			throw new Error(`File not found: ${envFile}`)
-		}
-		dotenv.config({path: envFile})
-	} catch (err) {
-		warn(`
-!!! Unable to load the env file at ${envFile} !!!
-
-`)
-	}
+	dotenv.config()
 }
 
 function getEnv(obj: any, attr: string) {
@@ -33,14 +21,6 @@ function set<T>(defaultValue: T, envValues: Record<string, T> = {}): T {
 		return defaultValue
 	}
 	return val
-}
-
-function warn(msg: string) {
-	if (process.stdout.isTTY && /-256(color)?$/i.test(process.env.TERM || '')) {
-		console.log(`\u001b[33m${msg}\u001b[0m`)
-	} else {
-		console.log(msg)
-	}
 }
 
 const env: Record<string, string> = new Proxy({}, {get: getEnv})
@@ -104,10 +84,10 @@ export const LEARNER_RECORD = set({
 export const LOGGING_LEVEL = env.LOGGING_LEVEL
 
 export const LPG_UI_SERVER =
-	env.LPG_UI_SERVER || 'http://local.learn.civilservice.gov.uk:3001'
+	env.LPG_UI_SERVER || 'http://localhost:3001'
 
 export const LPG_MANAGMENT_SERVER =
-	env.LPG_MANAGEMENT_SERVER || 'http://management.local.learn.civilservice.gov.uk:3005'
+	env.LPG_MANAGEMENT_SERVER || 'http://localhost:3005'
 
 export const SESSION_SECRET =
 	env.SESSION_SECRET ||
@@ -137,7 +117,7 @@ export const REPORT_SERVICE = set({
 })
 
 export const LPG_MANAGEMENT_URL =
-	env.LPG_MANAGEMENT_SERVER || 'http://management.local.learn.civilservice.gov.uk:3005'
+	env.LPG_MANAGEMENT_SERVER || 'http://localhost:3005'
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 60000
 
