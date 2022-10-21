@@ -360,6 +360,7 @@ export class CourseRecord {
 }
 
 export interface ModuleRecord {
+	uid?:string
 	completionDate?: Date
 	eventId?: string
 	eventDate?: Date
