@@ -102,4 +102,15 @@ describe('Should upsert (update OR insert) a module record', () => {
 		expect(courseRecord.modules[0].isInProgress())
 		expect(courseRecord.modules[1].isCompleted())
 	})
+
+	it('should insert optional uid field when set', () => {
+		const module = new ModuleRecord(1, '', '', '', new Date(),
+		new Date(), '', 'link', RecordState.InProgress, 0, false, undefined)
+
+		const expectedUid = 'abc-123'
+
+		module.uid = 'abc-123'
+
+		expect(module.uid === expectedUid)
+	})
 })
