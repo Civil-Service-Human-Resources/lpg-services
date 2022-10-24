@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Peformance Test') {
             steps { 
-                nodejs(nodeJSInstallationName: 'NodeJS 10.4.0') {
+                nodejs(nodeJSInstallationName: 'NodeJS 16.3.0') {
                     dir('test/performance') {
                         sh 'npm install'
                         sh 'npm run smoke'
