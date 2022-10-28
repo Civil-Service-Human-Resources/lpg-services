@@ -33,9 +33,9 @@ export class CompletedActionWorker extends ActionWorker {
 
 	async updateCourseRecord(courseRecord: CourseRecord) {
 		const patches = [setLastUpdated()]
-		if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
+		if (courseRecord.areAllRelevantModulesComplete(this.course.modules) ) {
 			patches.push(setState(RecordState.InProgress))
-		} else if (courseRecord.areAllRelevantModulesComplete(this.course.modules)) {
+		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
 			patches.push(setState(RecordState.Completed))
 		}
 		await patchCourseRecord(patches, this.user, this.course.id)
