@@ -1,10 +1,12 @@
-import {IsEmail, IsNotEmpty, validate} from 'class-validator'
-import {Request, Response} from 'express'
+import { IsEmail, IsNotEmpty, validate } from 'class-validator'
+import { Request, Response } from 'express'
 import * as config from 'lib/config'
-import {getLogger} from 'lib/logger'
-import {User} from 'lib/model'
+import { getLogger } from 'lib/logger'
+import { User } from 'lib/model'
 import * as _ from 'lodash'
+
 import * as registry from '../../lib/registry'
+import * as csrsService from '../../lib/service/civilServantRegistry/csrsService'
 import * as template from '../../lib/ui/template'
 
 const logger = getLogger('profile')
@@ -54,13 +56,10 @@ export async function updateName(request: Request, response: Response) {
 
 export async function addOrganisation(request: Request, response: Response) {
 	const options: {[prop: string]: any} = {}
-	const email = request.user.userName
-	const domain = email.split('@')[1]
-	const organisations: any = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', request)
-	organisations.data.map((x: any) => {
-		options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
+	const orgDropdown = await csrsService.getOrganisationDropdown(request.user)
+	orgDropdown.map(o => {
+		options[o.id] = o.formattedName
 	})
-
 	const value = request.user.department
 	const flashErrorArray = request.flash('error')
 	const flashErrorArraySize = flashErrorArray.length

@@ -4,7 +4,6 @@ import * as config from 'lib/config'
 import {getLogger} from 'lib/logger'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
-import { OrganisationalUnit } from './model'
 
 const logger = getLogger('registry')
 
@@ -79,17 +78,6 @@ export async function follow(path: string, nodes: string[], templateParameters?:
 	})
 
 	return result
-}
-
-/**
- * getParentOrgs will return a list of Organisation objects, where the first element
- * is the provided org. Parents/graparents will appear in the list in
- * hierarchical order. If there are no parents, then just the provided org will be returned.
- */
-export async function getOrgHierarchy(orgCode: string): Promise<string[]> {
-	const orgArray: OrganisationalUnit[] = await getParentOrgs(orgCode)
-	const hierarchy: string[] = orgArray.map(org => org.code)
-	return hierarchy
 }
 
 export async function checkLineManager(data: any, token: string) {
@@ -172,20 +160,6 @@ export async function getWithoutHalWithAuth(path: string, request: Express.Reque
 	} catch (error) {
 		throw new Error(error)
 	}
-}
-
-export async function getAllOrganisationUnits(): Promise<any[]> {
-	const path: string = "/organisationalUnits"
-	const response = await getWithoutHal(path)
-	return response.data._embedded.organisationalUnits
-}
-
-export async function getParentOrgs(orgCode: string): Promise<OrganisationalUnit[]> {
-	const path: string = `/organisationalUnits/parent/${orgCode}`
-	const response = await getWithoutHal(path)
-	const orgsArray: any[] = response.data
-	const orgs: OrganisationalUnit[] = orgsArray.map(o => OrganisationalUnit.create(o))
-	return orgs
 }
 
 export async function getAllProfessions(): Promise<any[]> {

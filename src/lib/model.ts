@@ -1,12 +1,13 @@
 import _ = require('lodash')
 
+import { plainToClass } from 'class-transformer'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
-import {Duration} from 'moment'
-import {ModuleNotFoundError} from './exception/moduleNotFound'
-import {getOrgHierarchy} from './registry'
+
+import { ModuleNotFoundError } from './exception/moduleNotFound'
+import { getOrgHierarchy } from './service/civilServantRegistry/csrsService'
 
 export interface LineManager {
 	email: string
@@ -20,8 +21,8 @@ const getAudienceForCourse = async (audiences: Audience[], user: User) => {
 	let matchedHighestPriorityAudience
 	let depHierarchy: string[] = []
 
-	if (user.department) {
-		depHierarchy = await getOrgHierarchy(user.department)
+	if (user.departmentId) {
+		depHierarchy = await getOrgHierarchy(user.departmentId, user)
 	}
 
 	for await (const audience of audiences) {
@@ -812,12 +813,21 @@ export class Feedback {
 	relevance: number
 }
 
+export class AgencyToken {
+	token: string
+	uid: string
+	agencyDomains: string[]
+}
+
 export class OrganisationalUnit {
 	public static create(data: any): OrganisationalUnit {
 		const org = new OrganisationalUnit()
 		org.id = data.id
 		org.code = data.code
 		org.name = data.name
+		org.parentId = data.parentId
+		org.agencyToken = plainToClass(AgencyToken, data.agencyToken)
+		org.formattedName = data.formattedName ? data.formattedName : ''
 		org.children = (data.children || []).map(OrganisationalUnit.create)
 		org.paymentMethods = data.paymentMethods
 		return org
@@ -825,6 +835,9 @@ export class OrganisationalUnit {
 	id: number
 	code: string
 	name: string
+	parentId: number
+	agencyToken: AgencyToken
+	formattedName: string
 	children: OrganisationalUnit[]
 	paymentMethods: string[]
 }
@@ -842,6 +855,7 @@ export class User {
 		user.userId = data.userId
 		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit ? data.organisationalUnit.code : data.department
+		user.departmentId = data.organisationalUnit ? data.organisationalUnit.id : data.departmentId
 		user.givenName = data.fullName ? data.fullName : data.givenName
 		user.grade = data.grade
 		if (data.profession || data.areasOfWork) {
@@ -873,6 +887,7 @@ export class User {
 	readonly accessToken: string
 
 	department?: string
+	departmentId?: number
 	areasOfWork?: string[]
 	lineManager?: LineManager
 	otherAreasOfWork?: any[]

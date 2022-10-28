@@ -4,6 +4,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
+import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 import * as template from 'lib/ui/template'
 import * as striptags from 'striptags'
 
@@ -160,7 +161,7 @@ export async function search(ireq: express.Request, res: express.Response) {
 }
 
 async function getDepartmentData(user: model.User, selectedDepartments: string[]) {
-	const allDepartments = await registry.getAllOrganisationUnits()
+	const allDepartments = await csrsService.getAllOrganisationUnits(user)
 
 	const yourDepartment = allDepartments.find(department => department.code === user.department)
 	const otherDepartments = allDepartments.filter(department => department.code !== user.department)
