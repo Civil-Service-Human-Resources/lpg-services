@@ -1,5 +1,5 @@
-import {OrganisationalUnit} from '../../../model'
-import { OrganisationalUnitCache } from './organisationalUnitCache';
+import { OrganisationalUnit } from '../../../model'
+import { OrganisationalUnitCache } from './organisationalUnitCache'
 
 let cache: OrganisationalUnitCache
 

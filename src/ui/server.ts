@@ -1,7 +1,16 @@
 /* tslint:disable:no-var-requires */
 import 'reflect-metadata'
+const appInsights = require('applicationinsights')
+import * as config from 'lib/config'
+
+appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
+.setAutoCollectConsole(true)
+
+appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-ui"
+appInsights.start()
 
 /* tslint:enable */
+
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as connectRedis from 'connect-redis'
@@ -10,26 +19,26 @@ import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as fs from 'fs'
-import * as config from 'lib/config'
+import * as redis from 'redis'
+import { URL } from 'url'
+
+import * as lusca from 'lusca'
+import * as serveStatic from 'serve-static'
+
 import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
 import { getLogger } from 'lib/logger'
+/* tslint:disable:max-line-length */
+import { OrganisationalUnitCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import * as organisationalUnitCacheClient from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCacheClient'
+/* tslint:enable */
 import * as i18n from 'lib/service/translation'
-import { ProfileChecker } from 'lib/ui/profileChecker'
+import {ProfileChecker} from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
-import * as lusca from 'lusca'
-import * as redis from 'redis'
-import * as serveStatic from 'serve-static'
-import { URL } from 'url'
 
-import {
-	OrganisationalUnitCache
-} from '../lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
-import * as errorController from './controllers/errorHandler'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
@@ -39,15 +48,10 @@ import * as searchController from './controllers/search'
 import * as skillsController from './controllers/skills'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
-import { completeVideoModule } from './controllers/video'
 import * as xApiController from './controllers/xapi'
 
-const appInsights = require('applicationinsights')
-appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
-.setAutoCollectConsole(true)
-
-appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-ui"
-appInsights.start()
+import * as errorController from './controllers/errorHandler'
+import { completeVideoModule } from './controllers/video'
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
