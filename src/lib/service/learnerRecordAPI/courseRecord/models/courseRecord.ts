@@ -76,10 +76,7 @@ export class CourseRecord extends Record {
 		} else {
 			modulesRequiredForCompletion = modules.filter(m => !m.optional).map(m => m.id)
 		}
-		return (
-			completedModuleIds.every(i => modulesRequiredForCompletion.includes(i))
-			&& modulesRequiredForCompletion.every(i => completedModuleIds.includes(i))
-		)
+		return completedModuleIds.every(i => modulesRequiredForCompletion.includes(i))
 	}
 
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {
