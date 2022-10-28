@@ -40,7 +40,7 @@ export class CompleteBookingActionWorker extends EventActionWorker {
 			patches.push(setState(RecordState.InProgress))
 		} else if (courseRecord.areAllRelevantModulesComplete(this.course.modules)) {
 			patches.push(setState(RecordState.Completed))
-		} 
+		}
 		await patchCourseRecord(patches, this.user, this.course.id)
 	}
 
