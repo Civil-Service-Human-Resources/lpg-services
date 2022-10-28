@@ -1,21 +1,25 @@
-import { createClient } from 'redis'
+import { RedisClient } from 'redis'
 import {promisify} from 'util'
 
-export class Cache {
-    constructor(readonly host: string, readonly port: number, readonly password: string) {
-    }
-    
-    private getClient() {
-        return createClient({
-            auth_pass: this.password,
-            host: this.host,
-            no_ready_check: true,
-            port: this.port,
-        })
+export abstract class Cache <T> {
+    constructor(private readonly redisClient: RedisClient) {}
+
+    protected abstract convert(cacheHit: any): T
+    protected abstract convertList(cachedList: string[]): T[]
+
+    async get(key:string): Promise<T|undefined>{
+        const response = await promisify(this.redisClient.hgetall)(key)
+        if (response === undefined) {
+            return undefined
+        }
+        return this.convert(response)
     }
 
-    async get(key:string){
-        const client = this.getClient()
-        return await promisify(client.hgetall)(key)
+    async getList(key:string): Promise<T[]|undefined> {
+        const response = await promisify(this.redisClient.lrange)(key, 0, -1)
+        if (response === undefined) {
+            return undefined
+        }
+        return this.convertList(response)
     }
 }
