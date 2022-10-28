@@ -17,7 +17,7 @@ optModule2.optional = true
 
 function moduleRecordFromModule(module: Module, state: RecordState) {
 	return new ModuleRecord(0, module.id, '', '', new Date(),
-	new Date(), '', 'link', state, 0, module.optional, undefined) 
+	new Date(), '', 'link', state, 0, module.optional, undefined)
 }
 
 const mods = [requiredModule1, requiredModule2]
