@@ -36,7 +36,7 @@ export class CompleteBookingActionWorker extends EventActionWorker {
 
 	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
 		const patches = [setLastUpdated()]
-		if (courseRecord.areAllRelevantModulesComplete(this.course.modules) ) {
+		if (courseRecord.areAllRelevantModulesComplete(this.course.modules)) {
 			patches.push(setState(RecordState.Completed))
 		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
 			patches.push(setState(RecordState.InProgress))
