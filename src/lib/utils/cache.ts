@@ -1,25 +1,31 @@
-import {RedisClient} from 'redis'
+import {createClient} from 'redis'
 import {promisify} from 'util'
 
 export abstract class Cache<T> {
-	constructor(private readonly redisClient: RedisClient) {}
+	constructor(private readonly redisClient: ReturnType<typeof createClient>) {}
 
-	async get(key: string): Promise<T | undefined> {
-		const response = await promisify(this.redisClient.hgetall)(key)
-		if (response === undefined) {
+	async get(id: string | number): Promise<T | undefined> {
+		const response = await promisify(this.redisClient.get)(this.getFormattedKey(id))
+		if (response === null) {
 			return undefined
 		}
 		return this.convert(response)
 	}
 
-	async getList(key: string): Promise<T[] | undefined> {
-		const response = await promisify(this.redisClient.lrange)(key, 0, -1)
-		if (response === undefined) {
+	async getList(): Promise<T[] | undefined> {
+		const response = await promisify(this.redisClient.get)(this.getListKey())
+		if (response == null) {
 			return undefined
 		}
-		return this.convertList(response)
+		const jsonResponse: any[] = JSON.parse(response)
+		return this.convertList(jsonResponse)
 	}
 
-	protected abstract convert(cacheHit: any): T
-	protected abstract convertList(cachedList: string[]): T[]
+	protected getListKey() {
+		return this.getFormattedKey('list')
+	}
+
+	protected abstract getFormattedKey(keyPart: string | number): string
+	protected abstract convert(cacheHit: string): T
+	protected abstract convertList(cachedList: any[]): T[]
 }

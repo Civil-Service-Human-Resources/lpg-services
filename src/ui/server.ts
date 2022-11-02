@@ -29,9 +29,9 @@ import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
 import { getLogger } from 'lib/logger'
+import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 /* tslint:disable:max-line-length */
 import { OrganisationalUnitCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
-import * as organisationalUnitCacheClient from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCacheClient'
 /* tslint:enable */
 import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
@@ -104,7 +104,7 @@ const orgCacheRedisClient = redis.createClient({
 })
 
 const orgCache = new OrganisationalUnitCache(orgCacheRedisClient)
-organisationalUnitCacheClient.setCache(orgCache)
+csrsService.setCache(orgCache)
 
 app.use(flash())
 
