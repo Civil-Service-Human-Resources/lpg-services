@@ -37,7 +37,7 @@ export async function getOrgHierarchy(
 			{includeFormattedName: true, includeParents: true},
 			user
 		)
-		while (org) {
+		while (org != null) {
 			hierarchy.push(org)
 			organisationalUnitCache.set(org.id, org)
 			org = org.parent
