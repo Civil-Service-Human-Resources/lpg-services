@@ -14,6 +14,10 @@ export class HttpClient {
 			const stringedData = JSON.stringify(req.data)
 			logMsg += ` Data: ${stringedData}`
 		}
+		if (req.params) {
+			const stringedParams = JSON.stringify(req.params)
+			logMsg += ` Params: ${stringedParams}`
+		}
 		logger.debug(logMsg)
 		if (req.headers) {
 			req.headers.Authorization = `Bearer ${user.accessToken}`
