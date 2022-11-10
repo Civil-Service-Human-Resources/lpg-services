@@ -33,8 +33,7 @@ export class OrganisationalUnitTypeAhead {
 		const filteredOrgs: OrganisationalUnit[] = []
 		let domainOrgFound = false
 
-		for (let i = 0; i < this.typeahead.length; i++) {
-			const org = this.typeahead[i]
+		for (const org of this.typeahead) {
 			if (!domainOrgFound &&
 				org.agencyToken &&
 				org.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
