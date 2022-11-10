@@ -15,14 +15,14 @@ export function setCaches(orgCache: OrganisationalUnitCache, orgTypeaheadCache: 
 	organisationalUnitTypeaheadCache = orgTypeaheadCache
 }
 
-async function refreshTypeahead(user: User) {
+async function refreshTypeahead(user: User): Promise<OrganisationalUnitTypeAhead> {
 	const organisationalUnits = await organisationalUnitClient.getOrganisationalUnits(
 		{includeFormattedName: true, orderBy: OrderBy.FORMATTED_NAME},
 		user
 	)
 	const typeahead = new OrganisationalUnitTypeAhead(organisationalUnits)
 	await organisationalUnitTypeaheadCache.setTypeahead(typeahead)
-	return organisationalUnits
+	return typeahead
 }
 
 export async function getOrgHierarchy(
@@ -55,8 +55,7 @@ export async function getOrgHierarchy(
 export async function getAllOrganisationUnits(user: User): Promise<OrganisationalUnitTypeAhead> {
 	let typeahead = await organisationalUnitTypeaheadCache.getTypeahead()
 	if (typeahead === undefined) {
-		const flatOrgs = await refreshTypeahead(user)
-		typeahead = new OrganisationalUnitTypeAhead(flatOrgs)
+		typeahead = await refreshTypeahead(user)
 	}
 	return typeahead
 }

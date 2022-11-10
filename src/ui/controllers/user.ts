@@ -196,7 +196,7 @@ export async function renderEditPage(req: express.Request, res: express.Response
 		case 'department':
 			const orgDropdown = await csrsService.getOrganisationDropdown(req.user)
 			orgDropdown.map(o => {
-				options[o.id] = o.formattedName
+				options[`/organisationalUnits/${o.id}`] = o.formattedName
 			})
 			value = req.user.department
 			optionType = OptionTypes.Typeahead

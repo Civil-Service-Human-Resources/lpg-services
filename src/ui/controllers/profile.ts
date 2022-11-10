@@ -58,7 +58,7 @@ export async function addOrganisation(request: Request, response: Response) {
 	const options: {[prop: string]: any} = {}
 	const orgDropdown = await csrsService.getOrganisationDropdown(request.user)
 	orgDropdown.map(o => {
-		options[o.id] = o.formattedName
+		options[`/organisationalUnits/${o.id}`] = o.formattedName
 	})
 	const value = request.user.department
 	const flashErrorArray = request.flash('error')

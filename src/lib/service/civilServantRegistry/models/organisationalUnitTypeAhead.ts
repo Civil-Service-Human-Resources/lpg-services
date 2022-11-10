@@ -9,26 +9,6 @@ export class OrganisationalUnitTypeAhead {
 		return this.typeahead
 	}
 
-	getAsTree(): OrganisationalUnit[] {
-		const map: Map<number, number> = new Map()
-		const roots: OrganisationalUnit[] = []
-
-		for (let i = 0; i < this.typeahead.length; i++) {
-			map.set(this.typeahead[i].id, i)
-			this.typeahead[i].children = []
-		}
-
-		for (const org of this.typeahead) {
-			if (org.parentId != null) {
-				this.typeahead[map.get(org.parentId)!].children.push(org)
-			} else {
-				roots.push(org)
-			}
-		}
-
-		return roots
-	}
-
 	getDomainFilteredList(domain: string) {
 		const filteredOrgs: OrganisationalUnit[] = []
 		let domainOrgFound = false
