@@ -31,18 +31,21 @@ export class OrganisationalUnitTypeAhead {
 
 	getDomainFilteredList(domain: string) {
 		const filteredOrgs: OrganisationalUnit[] = []
-		const tree = this.getAsTree()
-		let domainOrg
+		let domainOrgFound = false
 
-		for (const org of tree) {
-			if (org.agencyToken && org.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
-				domainOrg = org
-				break
+		for (let i = 0; i < this.typeahead.length; i++) {
+			const org = this.typeahead[i]
+			if (!domainOrgFound &&
+				org.agencyToken &&
+				org.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
+				domainOrgFound = true
+			}
+			if (domainOrgFound && org.parentId) {
+				filteredOrgs.push(org)
 			}
 		}
 
-		if (domainOrg) {
-			filteredOrgs.push(...[domainOrg, ...this.getAllChildrenFromParent(domainOrg)])
+		if (filteredOrgs) {
 			return filteredOrgs
 		}
 
