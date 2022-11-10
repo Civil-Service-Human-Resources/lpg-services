@@ -38,7 +38,7 @@ export class OrganisationalUnitTypeAhead {
 				org.agencyToken &&
 				org.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
 					filteredOrgs.push(org)
-				domainOrgFound = true
+					domainOrgFound = true
 			}
 			if (domainOrgFound && org.parentId) {
 				filteredOrgs.push(org)
