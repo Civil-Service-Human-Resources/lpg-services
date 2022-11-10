@@ -1,12 +1,17 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
-import {ApiParameters} from "lib/service/catalog"
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
+
+import {
+	AddCourseToLearningplanActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/AddCourseToLearningplanActionWorker'
+import {
+	RemoveCourseFromLearningplanActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
@@ -33,7 +38,7 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 			break
 	}
 	try {
-		await xapi.record(req, course, xapi.Verb.Liked)
+		await new AddCourseToLearningplanActionWorker(course, req.user).applyActionToLearnerRecord()
 
 		req.flash(
 			'successTitle',
@@ -64,7 +69,7 @@ export async function removeFromSuggestions(
 	const course = req.course
 
 	try {
-		await xapi.record(req, course, xapi.Verb.Disliked)
+		await new RemoveCourseFromLearningplanActionWorker(course, req.user).applyActionToLearnerRecord()
 		req.flash(
 			'successTitle',
 			req.__('learning_removed_from_plan_title', course.title)
@@ -234,7 +239,7 @@ async function getSuggestions(
 	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
 	user: model.User
 ): Promise<model.Course[]> {
-	const params: ApiParameters = new catalog.ApiParameters(
+	const params: catalog.ApiParameters = new catalog.ApiParameters(
 		areasOfWork,
 		department,
 		interests,

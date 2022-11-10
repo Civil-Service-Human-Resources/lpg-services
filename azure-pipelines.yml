@@ -1,0 +1,60 @@
+trigger:
+  branches:
+    include:
+    - master
+    - idt-develop
+    - idt-feature-LC-*
+    - idt-release-v*
+    - idt-hotfix-v*
+  tags:
+    include:
+      - '*'
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '16.3'
+    displayName: 'Install Node.js'
+
+  - task: Npm@1
+    displayName: 'Install'
+    inputs:
+      command: 'install'
+
+  - task: Npm@1
+    displayName: 'Lint'
+    inputs:
+      command: 'custom'
+      customCommand: 'run lint'
+  
+  - task: Npm@1
+    displayName: 'Lint webdriver'
+    inputs:
+      command: 'custom'
+      customCommand: 'run lint:webdriver'
+
+  - task: Npm@1
+    displayName: 'Build'
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
+
+  - task: Npm@1
+    displayName: 'Test'
+    inputs:
+      command: 'custom'
+      customCommand: 'run test:ts'
+  
+  - task: Docker@2
+    inputs:
+      containerRegistry: 'lpgregistry ACR'
+      ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
+        repository: 'lpg-services/prod'
+      ${{ else }}:
+        repository: 'lpg-services/test'
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'
+      tags: '$(Build.SourceBranchName)'

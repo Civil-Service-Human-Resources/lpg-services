@@ -3,11 +3,36 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as featureConfig from 'lib/config/featureConfig'
 import * as extended from 'lib/extended'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as xapi from 'lib/xapi'
 import * as querystring from 'querystring'
 
+import { User } from '../../lib/model'
+import { get } from '../../lib/service/catalog'
+import {
+	CompletedActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
+import {
+	FailModuleActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/FailModuleActionWorker'
+import {
+	InitialiseActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
+import {
+	PassModuleActionWorker
+} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/PassModuleActionWorker'
+
 const logger = getLogger('controllers/xapi')
+
+const learnerRecordVerbs = [
+	xapi.Verb.Attempted,
+	xapi.Verb.Completed,
+	xapi.Verb.Experienced,
+	xapi.Verb.Failed,
+	xapi.Verb.Initialised,
+	xapi.Verb.Launched,
+	xapi.Verb.Passed,
+]
 
 export async function proxy(ireq: express.Request, res: express.Response) {
 	let req = ireq as extended.CourseRequest
@@ -67,6 +92,10 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		headers['Content-Type'] = ctype
 	}
 
+	if (body.verb && body.verb.id && learnerRecordVerbs.includes(body.verb.id)) {
+		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
+	}
+
 	try {
 		const response = await axios({
 			auth: config.XAPI.auth,
@@ -91,7 +120,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 async function unwrapPost(req: extended.CourseRequest) {
 	// @ts-ignore
 	req.method = req.query.method
-	const data =  querystring.parse(req.body)
+	const data = querystring.parse(req.body)
 
 	req.headers = {
 		'Content-Type': data['Content-Type'],
@@ -145,4 +174,33 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 		}
 	}
 	return statement
+}
+
+async function syncToLearnerRecord(courseId: string, moduleId: string, user: User, verbId: string) {
+	const course = await get(courseId, user)
+	let actionWorker = null
+	if (course) {
+		const module = course.getModule(moduleId)
+		switch (verbId) {
+			case xapi.Verb.Attempted:
+			case xapi.Verb.Initialised:
+			case xapi.Verb.Launched:
+				actionWorker = new InitialiseActionWorker(course, user, module)
+				break
+			case xapi.Verb.Completed:
+				actionWorker = new CompletedActionWorker(course, user, module)
+				break
+			case xapi.Verb.Passed:
+				actionWorker = new PassModuleActionWorker(course, user, module)
+				break
+			case xapi.Verb.Failed:
+				actionWorker = new FailModuleActionWorker(course, user, module)
+				break
+			default:
+				break
+		}
+		if (actionWorker) {
+			await actionWorker.applyActionToLearnerRecord()
+		}
+	}
 }

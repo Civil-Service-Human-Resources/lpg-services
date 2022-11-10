@@ -3,13 +3,28 @@ import _ = require('lodash')
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
 
+import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
+import {
+	ApprovedBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
+import {
+	CompleteBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
+import {
+	RegisterBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
+import {
+	SkipBookingActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
 import * as courseController from '../course/index'
-
-import {getLogger} from 'lib/logger'
 
 const logger = getLogger('controllers/booking')
 const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
@@ -20,19 +35,14 @@ export enum confirmedMessage {
 	Error = 'Error',
 }
 
-export function recordCheck(
-	record: learnerRecord.CourseRecord | null,
-	ireq: express.Request
-) {
+export function recordCheck(record: learnerRecord.CourseRecord | null, ireq: express.Request) {
 	const req = ireq as extended.CourseRequest
 
 	if (!record) {
 		logger.warn(
-			`Attempt to cancel a booking when not registered. user: ${
-				req.user.id
-			}, course: ${req.course.id}, module: ${req.module!.id}, event: ${
-				req.event!.id
-			}`
+			`Attempt to cancel a booking when not registered. user: ${req.user.id}, course: ${req.course.id}, module: ${
+				req.module!.id
+			}, event: ${req.event!.id}`
 		)
 
 		return false
@@ -41,10 +51,7 @@ export function recordCheck(
 	}
 }
 
-export function saveAccessibilityOptions(
-	ireq: express.Request,
-	res: express.Response
-) {
+export function saveAccessibilityOptions(ireq: express.Request, res: express.Response) {
 	const session = ireq.session!
 	const req = ireq as extended.CourseRequest
 	const user = req.user as model.User
@@ -57,8 +64,7 @@ export function saveAccessibilityOptions(
 
 	session.otherAccessibilityReqs = ireq.body.otherDescription || ''
 	if (
-		(session.accessibilityReqs.indexOf('other') > -1 ||
-			ireq.body.otherDescription) &&
+		(session.accessibilityReqs.indexOf('other') > -1 || ireq.body.otherDescription) &&
 		session.accessibilityReqs.indexOf('other') === -1
 	) {
 		session.accessibilityReqs.push('other')
@@ -74,23 +80,16 @@ export function saveAccessibilityOptions(
 			type: '',
 			value: '',
 		}
-		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
-			ireq.params.eventId
-		}/confirm`
+		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${ireq.params.eventId}/confirm`
 	} else {
-		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
-			ireq.session!.selectedEventId
-		}/payment`
+		returnTo = `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${ireq.session!.selectedEventId}/payment`
 	}
 	ireq.session!.save(() => {
 		res.redirect(returnTo)
 	})
 }
 
-export async function renderChooseDate(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function renderChooseDate(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	const tab = req.query.tab
@@ -98,8 +97,7 @@ export async function renderChooseDate(
 	const course = req.course
 	const module = req.module!
 
-	let selectedEventId: string =
-		req.flash('bookingSelected')[0] || req.session!.selectedEventId || null
+	let selectedEventId: string = req.flash('bookingSelected')[0] || req.session!.selectedEventId || null
 
 	if (!selectedEventId) {
 		// @ts-ignore
@@ -113,9 +111,7 @@ export async function renderChooseDate(
 	}
 
 	if (req.query.ref === 'summary') {
-		req.session!.returnTo = `/book/${course.id}/${
-			module.id
-		}/${selectedEventId}/confirm`
+		req.session!.returnTo = `/book/${course.id}/${module.id}/${selectedEventId}/confirm`
 	}
 
 	const today = new Date()
@@ -125,7 +121,8 @@ export async function renderChooseDate(
 		.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
 	for (const event of events) {
-		await learnerRecord.getActiveBooking(event.id, req.user)
+		await learnerRecord
+			.getActiveBooking(event.id, req.user)
 			.then(e => {
 				if (e.status === 200) {
 					event.isLearnerBooked = true
@@ -166,9 +163,7 @@ export function selectedDate(req: express.Request, res: express.Response) {
 		req.flash('bookingSelected', selected)
 
 		req.session!.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
-			)
+			res.redirect(`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`)
 		})
 		return
 	}
@@ -183,18 +178,14 @@ export function selectedDate(req: express.Request, res: express.Response) {
 		req.flash('errorTitle', 'booking_must_select_date_title')
 		req.flash('errorMessage', 'booking_must_select_date_message')
 		req.session!.save(() => {
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`
-			)
+			res.redirect(`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`)
 		})
 	} else {
 		let {returnTo} = req.session!
 		if (returnTo) {
 			delete req.session!.returnTo
 		} else {
-			returnTo = `/book/${req.params.courseId}/${
-				req.params.moduleId
-			}/${decodeURIComponent(selected)}/accessibility`
+			returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${decodeURIComponent(selected)}/accessibility`
 		}
 		req.session!.selectedEventId = selected
 		req.session!.save(() => {
@@ -203,10 +194,7 @@ export function selectedDate(req: express.Request, res: express.Response) {
 	}
 }
 
-export async function renderAccessibilityOptions(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function renderAccessibilityOptions(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	const course = req.course
@@ -215,9 +203,7 @@ export async function renderAccessibilityOptions(
 	const session = req.session!
 
 	if (req.query.ref === 'summary') {
-		session.returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${
-			req.params.eventId
-		}/confirm`
+		session.returnTo = `/book/${req.params.courseId}/${req.params.moduleId}/${req.params.eventId}/confirm`
 	}
 
 	res.send(
@@ -231,10 +217,7 @@ export async function renderAccessibilityOptions(
 	)
 }
 
-export async function renderConfirmPayment(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function renderConfirmPayment(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	const course = req.course
@@ -251,9 +234,7 @@ export async function renderConfirmPayment(
 
 	const accessibilityReqs = [...session.accessibilityReqs]
 	if (accessibilityReqs.indexOf('other') > -1) {
-		accessibilityReqs[
-			accessibilityReqs.indexOf('other')
-		] = `Other: ${session.otherAccessibilityReqs || ''}`
+		accessibilityReqs[accessibilityReqs.indexOf('other')] = `Other: ${session.otherAccessibilityReqs || ''}`
 	}
 
 	res.send(
@@ -273,10 +254,7 @@ export async function renderOuch(ireq: express.Request, res: express.Response) {
 	res.send(template.render('booking/ouch', req, res, {}))
 }
 
-export async function renderPaymentOptions(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function renderPaymentOptions(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const session = req.session!
 	const module = req.module!
@@ -286,19 +264,12 @@ export async function renderPaymentOptions(
 			errors: req.flash('errors'),
 			event: req.event!,
 			module,
-			values:
-				req.flash('values')[0] ||
-				(session.payment
-					? {[session.payment.type]: session.payment.value}
-					: {}),
+			values: req.flash('values')[0] || (session.payment ? {[session.payment.type]: session.payment.value} : {}),
 		})
 	)
 }
 
-export async function enteredPaymentDetails(
-	req: express.Request,
-	res: express.Response
-) {
+export async function enteredPaymentDetails(req: express.Request, res: express.Response) {
 	const session = req.session!
 	session.payment = null
 	let errors: string[] = []
@@ -326,15 +297,8 @@ export async function enteredPaymentDetails(
 		})
 	} else {
 		session.save(() => {
-			const confirmPage =
-				session.payment.type === PURCHASE_ORDER
-					? 'payment/confirm-po'
-					: 'confirm'
-			res.redirect(
-				`/book/${req.params.courseId}/${req.params.moduleId}/${
-					req.params.eventId
-				}/${confirmPage}`
-			)
+			const confirmPage = session.payment.type === PURCHASE_ORDER ? 'payment/confirm-po' : 'confirm'
+			res.redirect(`/book/${req.params.courseId}/${req.params.moduleId}/${req.params.eventId}/${confirmPage}`)
 		})
 	}
 }
@@ -369,55 +333,44 @@ export function validate(type: string, po: string): string[] {
 	return errors
 }
 
-export async function trySkipBooking(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function trySkipBooking(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
+	const actionWorker = new SkipBookingActionWorker(course, req.user, event, module)
+	try {
+		actionWorker.applyActionToLearnerRecord()
+	} catch (e) {
+		if (e instanceof CourseRecordStateError) {
+			res.sendStatus(400)
+			return
+		}
 	}
 
-	course.record = record!
-
-	await xapi.record(req, course, xapi.Verb.Skipped, undefined, module, event)
-
 	req.flash('successTitle', req.__('learning_skipped_title', req.course.title))
-	req.flash(
-		'successMessage',
-		req.__('learning_skipped_from_plan_message', req.course.title)
-	)
+	req.flash('successMessage', req.__('learning_skipped_from_plan_message', req.course.title))
 	req.session!.save(() => {
 		res.redirect('/')
 	})
 }
 
-export async function tryMoveBooking(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function tryMoveBooking(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
-
-	if (!recordCheck(record, ireq)) {
-		res.sendStatus(400)
-		return
+	const actionWorker = new CompleteBookingActionWorker(course, req.user, event, module)
+	try {
+		await actionWorker.applyActionToLearnerRecord()
+	} catch (e) {
+		if (e instanceof CourseRecordStateError) {
+			res.sendStatus(400)
+			return
+		}
 	}
-
-	course.record = record!
-
-	await xapi.record(req, course, xapi.Verb.Completed, undefined, module, event)
 
 	req.session!.save(() => {
 		res.redirect('/')
@@ -432,17 +385,12 @@ export function renderConfirmPo(ireq: express.Request, res: express.Response) {
 			event: req.event!,
 			module: req.module!,
 			po: ireq.session!.po,
-			url: `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${
-				ireq.params.eventId
-			}`,
+			url: `/book/${ireq.params.courseId}/${ireq.params.moduleId}/${ireq.params.eventId}`,
 		})
 	)
 }
 
-export async function tryCompleteBooking(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function tryCompleteBooking(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const course = req.course
 	const module = req.module!
@@ -456,9 +404,7 @@ export async function tryCompleteBooking(
 			if (requirement === 'other') {
 				accessibilityArray.push(session.otherAccessibilityReqs)
 			} else {
-				accessibilityArray.push(
-					res.__(`accessibility-requirements`)[requirement]
-				)
+				accessibilityArray.push(res.__(`accessibility-requirements`)[requirement])
 			}
 		}
 	}
@@ -482,6 +428,12 @@ export async function tryCompleteBooking(
 			`event: ${event.id}`,
 			`response: ${response.status}`
 		)
+
+		if (!module.cost || module.cost === 0) {
+			await new ApprovedBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+		} else {
+			await new RegisterBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+		}
 
 		message = confirmedMessage.Booked
 	} else {
