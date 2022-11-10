@@ -3,11 +3,11 @@ import * as sinon from 'sinon'
 
 import { OrganisationalUnit, User } from '../../model'
 import * as csrsService from './csrsService'
-import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
 import {
 	OrganisationalUnitTypeaheadCache
 } from './organisationalUnit/organisationalUnitTypeaheadCache'
+import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 function getOrg(orgName: string, id: number, parentId?: number) {
 	const org = new OrganisationalUnit()
@@ -20,10 +20,10 @@ function getOrg(orgName: string, id: number, parentId?: number) {
 }
 
 describe('CsrsService tests', () => {
-	let orgUnitCache = sinon.createStubInstance(OrganisationalUnitCache)
-	let orgTypeaheadCache = sinon.createStubInstance(OrganisationalUnitTypeaheadCache)
-	let organisationalUnitClientStub = sinon.stub(organisationalUnitClient)
-	let user = sinon.createStubInstance(User)
+	const orgUnitCache = sinon.createStubInstance(OrganisationalUnitCache)
+	const orgTypeaheadCache = sinon.createStubInstance(OrganisationalUnitTypeaheadCache)
+	const organisationalUnitClientStub = sinon.stub(organisationalUnitClient)
+	const user = sinon.createStubInstance(User)
 
 	beforeEach(() => {
 		sinon.reset()
@@ -40,7 +40,7 @@ describe('CsrsService tests', () => {
 
 			csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
-			expect(hierarchy.map((o) => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
+			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
 	})
 	describe('Test getOrgHierarchy', () => {
@@ -52,13 +52,13 @@ describe('CsrsService tests', () => {
 			child.parent = parent
 
 			orgUnitCache.get.withArgs(3).resolves(undefined)
-			organisationalUnitClientStub.getOrganisationalUnit.withArgs(3,
-				{includeFormattedName: true, includeParents: true},
-				user).resolves(child)
+			organisationalUnitClientStub.getOrganisationalUnit
+				.withArgs(3, {includeFormattedName: true, includeParents: true}, user)
+				.resolves(child)
 
 			csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
-			expect(hierarchy.map((o) => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
+			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
 	})
 	describe('Test getOrgHierarchy', () => {
@@ -69,13 +69,13 @@ describe('CsrsService tests', () => {
 			parent.parent = grandparent
 
 			orgUnitCache.get.withArgs(3).resolves(child)
-			organisationalUnitClientStub.getOrganisationalUnit.withArgs(2,
-				{includeFormattedName: true, includeParents: true},
-				user).resolves(child)
+			organisationalUnitClientStub.getOrganisationalUnit
+				.withArgs(2, {includeFormattedName: true, includeParents: true}, user)
+				.resolves(child)
 
 			csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
-			expect(hierarchy.map((o) => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
+			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
 	})
 })
