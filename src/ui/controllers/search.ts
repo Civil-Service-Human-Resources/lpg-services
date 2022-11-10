@@ -161,7 +161,7 @@ export async function search(ireq: express.Request, res: express.Response) {
 }
 
 async function getDepartmentData(user: model.User, selectedDepartments: string[]) {
-	const allDepartments = await csrsService.getAllOrganisationUnits(user)
+	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
 
 	const yourDepartment = allDepartments.find(department => department.code === user.department)
 	const otherDepartments = allDepartments.filter(department => department.code !== user.department)

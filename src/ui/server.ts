@@ -52,6 +52,7 @@ import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
 import { completeVideoModule } from './controllers/video'
+import { OrganisationalUnitTypeaheadCache } from '../lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache';
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
@@ -96,6 +97,7 @@ app.use(
 	})
 )
 
+
 const orgCacheRedisClient = redis.createClient({
 	auth_pass: config.ORG_REDIS.password,
 	host: config.ORG_REDIS.host,
@@ -103,8 +105,9 @@ const orgCacheRedisClient = redis.createClient({
 	port: config.ORG_REDIS.port,
 })
 
-const orgCache = new OrganisationalUnitCache(orgCacheRedisClient)
-csrsService.setCache(orgCache)
+const orgCache = new OrganisationalUnitCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
+const orgTypeaheadCache = new OrganisationalUnitTypeaheadCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
+csrsService.setCaches(orgCache, orgTypeaheadCache)
 
 app.use(flash())
 

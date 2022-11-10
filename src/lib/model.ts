@@ -5,6 +5,7 @@ import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
+import {Duration} from 'moment'
 
 import { ModuleNotFoundError } from './exception/moduleNotFound'
 import { getOrgHierarchy } from './service/civilServantRegistry/csrsService'
@@ -22,7 +23,8 @@ const getAudienceForCourse = async (audiences: Audience[], user: User) => {
 	let depHierarchy: string[] = []
 
 	if (user.departmentId) {
-		depHierarchy = await getOrgHierarchy(user.departmentId, user)
+		const departmentHierarchy = await getOrgHierarchy(user.departmentId, user)
+		depHierarchy = departmentHierarchy.map(d => d.code)
 	}
 
 	for await (const audience of audiences) {
@@ -816,7 +818,12 @@ export class Feedback {
 export class AgencyToken {
 	token: string
 	uid: string
-	agencyDomains: string[]
+	agencyDomains: AgencyDomain[]
+}
+
+export class AgencyDomain {
+	id: string
+	domain: string
 }
 
 export class OrganisationalUnit {
@@ -825,6 +832,7 @@ export class OrganisationalUnit {
 		org.id = data.id
 		org.code = data.code
 		org.name = data.name
+		org.parent = data.parent
 		org.parentId = data.parentId
 		org.agencyToken = plainToClass(AgencyToken, data.agencyToken)
 		org.formattedName = data.formattedName ? data.formattedName : ''
@@ -835,6 +843,7 @@ export class OrganisationalUnit {
 	id: number
 	code: string
 	name: string
+	parent: OrganisationalUnit
 	parentId: number
 	agencyToken: AgencyToken
 	formattedName: string

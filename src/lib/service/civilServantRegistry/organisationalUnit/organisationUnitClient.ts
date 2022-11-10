@@ -1,43 +1,31 @@
 import {OrganisationalUnit, User} from '../../../model'
 import {client} from '../config'
+import { GetOrganisationsRequestOptions, GetOrganisationRequestOptions } from '../models/getOrganisationsRequestOptions';
+import { GetOrganisationsResponse } from '../models/getOrganisationsResponse';
+import { plainToInstance } from 'class-transformer';
 
-const URL = '/organisationalUnits'
+const URL = '/v2/organisationalUnits'
 
-export async function getAllOrgsFlat(user: User): Promise<OrganisationalUnit[]> {
-	const path: string = `${URL}/flat`
-	return await client._get<OrganisationalUnit[]>(
-		{
-			url: path,
-		},
-		user
-	)
-}
-
-export async function getAllOrgsFlatWithEmailFilter(userDomain: string, user: User): Promise<OrganisationalUnit[]> {
-	const path: string = `${URL}/flat/${userDomain}/`
-	return await client._get<OrganisationalUnit[]>(
-		{
-			url: path,
-		},
-		user
-	)
-}
-
-export async function getAllOrganisationUnits(user: User): Promise<OrganisationalUnit[]> {
-	return await client._get<OrganisationalUnit[]>(
-		{
+export async function getOrganisationalUnits(options: GetOrganisationsRequestOptions, user: User): Promise<OrganisationalUnit[]> {
+	const resp: GetOrganisationsResponse = await client._get<GetOrganisationsResponse>(
+		{ 
 			url: URL,
+			params: options
 		},
 		user
 	)
+	const responseData = plainToInstance(GetOrganisationsResponse, resp)
+	return responseData.organisationalUnits
 }
 
-export async function getParentOrgsWithId(organisationId: number, user: User): Promise<OrganisationalUnit[]> {
-	const path: string = `/organisationalUnits/parentWithId/${organisationId}`
-	return await client._get<OrganisationalUnit[]>(
+export async function getOrganisationalUnit(organisationId: number, options: GetOrganisationRequestOptions, user: User): Promise<OrganisationalUnit> {
+	const path: string = `${URL}/${organisationId}`
+	const resp: OrganisationalUnit = await client._get<OrganisationalUnit>(
 		{
 			url: path,
+			params: options
 		},
 		user
 	)
+	return plainToInstance(OrganisationalUnit, resp)
 }
