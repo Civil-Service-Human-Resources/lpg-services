@@ -37,6 +37,7 @@ export class OrganisationalUnitTypeAhead {
 			if (!domainOrgFound &&
 				org.agencyToken &&
 				org.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
+					filteredOrgs.push(org)
 				domainOrgFound = true
 			}
 			if (domainOrgFound && org.parentId) {
@@ -44,7 +45,7 @@ export class OrganisationalUnitTypeAhead {
 			}
 		}
 
-		if (filteredOrgs) {
+		if (filteredOrgs.length > 0) {
 			return filteredOrgs
 		}
 
