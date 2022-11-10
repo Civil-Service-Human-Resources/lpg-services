@@ -32,6 +32,7 @@ import { getLogger } from 'lib/logger'
 import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 /* tslint:disable:max-line-length */
 import { OrganisationalUnitCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
+import { OrganisationalUnitTypeaheadCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 /* tslint:enable */
 import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
@@ -52,7 +53,6 @@ import * as xApiController from './controllers/xapi'
 
 import * as errorController from './controllers/errorHandler'
 import { completeVideoModule } from './controllers/video'
-import { OrganisationalUnitTypeaheadCache } from '../lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache';
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
@@ -96,7 +96,6 @@ app.use(
 		}),
 	})
 )
-
 
 const orgCacheRedisClient = redis.createClient({
 	auth_pass: config.ORG_REDIS.password,

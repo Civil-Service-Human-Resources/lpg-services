@@ -136,10 +136,10 @@ export const REDIS = set({
 })
 
 export const ORG_REDIS = set({
+	defaultTTL: +(env.ORG_REDIS_TTL || '604800'),
 	host: env.ORG_REDIS_HOST || 'localhost',
 	password: env.ORG_REDIS_PASSWORD || '',
 	port: +(env.ORG_REDIS_PORT || '6379'),
-	defaultTTL: +(env.ORG_REDIS_TTL || '604800')
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT

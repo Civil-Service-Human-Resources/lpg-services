@@ -1,5 +1,5 @@
-import { OrganisationalUnit } from '../../../model'
+import {OrganisationalUnit} from '../../../model'
 
 export class GetOrganisationsResponse {
-    organisationalUnits: OrganisationalUnit[]
+	organisationalUnits: OrganisationalUnit[]
 }

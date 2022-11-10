@@ -1,17 +1,16 @@
 import { OrganisationalUnit, User } from '../../model'
+import { OrderBy } from './models/getOrganisationsRequestOptions'
+import { OrganisationalUnitTypeAhead } from './models/organisationalUnitTypeAhead'
 import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
+import {
+	OrganisationalUnitTypeaheadCache
+} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
-import { OrganisationalUnitTypeaheadCache } from './organisationalUnit/organisationalUnitTypeaheadCache';
-import { OrganisationalUnitTypeAhead } from './models/organisationalUnitTypeAhead';
-import { OrderBy } from './models/getOrganisationsRequestOptions';
 
 let organisationalUnitCache: OrganisationalUnitCache
 let organisationalUnitTypeaheadCache: OrganisationalUnitTypeaheadCache
 
-export function setCaches(
-	orgCache: OrganisationalUnitCache,
-	orgTypeaheadCache: OrganisationalUnitTypeaheadCache
-) {
+export function setCaches(orgCache: OrganisationalUnitCache, orgTypeaheadCache: OrganisationalUnitTypeaheadCache) {
 	organisationalUnitCache = orgCache
 	organisationalUnitTypeaheadCache = orgTypeaheadCache
 }
@@ -19,13 +18,18 @@ export function setCaches(
 async function refreshTypeahead(user: User) {
 	const organisationalUnits = await organisationalUnitClient.getOrganisationalUnits(
 		{includeFormattedName: true, orderBy: OrderBy.FORMATTED_NAME},
-		user)
+		user
+	)
 	const typeahead = new OrganisationalUnitTypeAhead(organisationalUnits)
 	await organisationalUnitTypeaheadCache.setTypeahead(typeahead)
 	return organisationalUnits
 }
 
-export async function getOrgHierarchy(organisationId: number, user: User, hierarchy: OrganisationalUnit[] = []): Promise<OrganisationalUnit[]> {
+export async function getOrgHierarchy(
+	organisationId: number,
+	user: User,
+	hierarchy: OrganisationalUnit[] = []
+): Promise<OrganisationalUnit[]> {
 	let org = await organisationalUnitCache.get(organisationId)
 	if (org == null) {
 		org = await organisationalUnitClient.getOrganisationalUnit(

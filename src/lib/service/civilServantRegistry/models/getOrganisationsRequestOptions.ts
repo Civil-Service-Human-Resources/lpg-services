@@ -1,25 +1,25 @@
 export enum OrderDirection {
-    ASC,
-    DESC
+	ASC,
+	DESC,
 }
 
 export enum OrderBy {
-    NAME,
-    FORMATTED_NAME
+	NAME,
+	FORMATTED_NAME,
 }
 
 export interface GetOrganisationsRequestOptions {
-    /**
-     * comma-separated organisational unit ids, leave blank to
-     * fetch all.
-     */
-    ids?: string
-    includeFormattedName?: boolean
-    orderBy?: OrderBy
-    orderDirection?: OrderDirection
+	/**
+	 * comma-separated organisational unit ids, leave blank to
+	 * fetch all.
+	 */
+	ids?: string
+	includeFormattedName?: boolean
+	orderBy?: OrderBy
+	orderDirection?: OrderDirection
 }
 
 export interface GetOrganisationRequestOptions {
-    includeFormattedName?: boolean
-    includeParents?: boolean
+	includeFormattedName?: boolean
+	includeParents?: boolean
 }
