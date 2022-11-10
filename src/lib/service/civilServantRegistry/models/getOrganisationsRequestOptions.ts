@@ -1,11 +1,11 @@
 export enum OrderDirection {
-	ASC,
-	DESC,
+	ASC = 'ASC',
+	DESC = 'DESC',
 }
 
 export enum OrderBy {
-	NAME,
-	FORMATTED_NAME,
+	NAME = 'NAME',
+	FORMATTED_NAME = 'FORMATTED_NAME',
 }
 
 export interface GetOrganisationsRequestOptions {
