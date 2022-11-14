@@ -1,12 +1,10 @@
-import { expect } from 'chai'
+import {expect} from 'chai'
 import * as sinon from 'sinon'
 
-import { OrganisationalUnit, User } from '../../model'
+import {OrganisationalUnit, User} from '../../model'
 import * as csrsService from './csrsService'
-import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
-import {
-	OrganisationalUnitTypeaheadCache
-} from './organisationalUnit/organisationalUnitTypeaheadCache'
+import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
+import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 function getOrg(orgName: string, id: number, parentId?: number) {
@@ -42,8 +40,7 @@ describe('CsrsService tests', () => {
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
-	})
-	describe('Test getOrgHierarchy', () => {
+
 		it('Should return the correct hierarchy when no orgs exist in the cache', async () => {
 			const grandparent = getOrg('Grandparent', 1)
 			const child = getOrg('Child', 3, 2)
@@ -60,8 +57,6 @@ describe('CsrsService tests', () => {
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
-	})
-	describe('Test getOrgHierarchy', () => {
 		it('Should return the correct hierarchy when there are mixed orgs in the cache', async () => {
 			const grandparent = getOrg('Grandparent', 1)
 			const child = getOrg('Child', 3, 2)
