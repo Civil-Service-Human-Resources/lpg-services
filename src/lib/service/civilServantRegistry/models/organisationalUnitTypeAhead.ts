@@ -31,12 +31,4 @@ export class OrganisationalUnitTypeAhead {
 
 		return this.typeahead
 	}
-
-	private getAllChildrenFromParent(parent: OrganisationalUnit, children: OrganisationalUnit[] = []) {
-		parent.children.forEach(c => {
-			children.push(c)
-			children.push(...this.getAllChildrenFromParent(c, children))
-		})
-		return children
-	}
 }
