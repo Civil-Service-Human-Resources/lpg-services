@@ -11,19 +11,26 @@ const URL = '/organisationalUnits'
 const V2_URL = `/v2${URL}`
 const MAX_PER_PAGE = 100
 
-export async function getAllOrganisationalUnits(
-	user: User,
-	fromPage: number = 0,
-	orgs: OrganisationalUnit[] = []
-): Promise<OrganisationalUnit[]> {
-	const options: GetOrganisationsRequestOptions = {
-		page: fromPage,
-		size: MAX_PER_PAGE,
-	}
-	const response = await getOrganisationalUnits(options, user)
+export async function getAllOrganisationalUnits(user: User): Promise<OrganisationalUnit[]> {
+	const orgs: OrganisationalUnit[] = []
+	const response = await getOrganisationalUnits(
+		{
+			page: 0,
+			size: MAX_PER_PAGE,
+		},
+		user
+	)
 	orgs.push(...response.embedded.organisationalUnits)
-	if (fromPage < response.page.totalPages) {
-		getAllOrganisationalUnits(user, fromPage + 1, orgs)
+	if (response.page.totalPages > 1) {
+		const requests: any[] = []
+		for (let page = 1; page < response.page.totalPages; page++) {
+			requests.push(
+				getOrganisationalUnits({size: MAX_PER_PAGE, page}, user).then(data => {
+					orgs.push(...data.embedded.organisationalUnits)
+				})
+			)
+		}
+		await Promise.all(requests)
 	}
 	return orgs
 }

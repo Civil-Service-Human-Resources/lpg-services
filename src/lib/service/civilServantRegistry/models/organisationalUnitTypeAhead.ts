@@ -1,14 +1,20 @@
-import {OrganisationalUnit} from '../../../model'
+import { Type } from 'class-transformer'
+
+import { OrganisationalUnit } from '../../../model'
 
 export class OrganisationalUnitTypeAhead {
-
 	static createAndSort(typeahead: OrganisationalUnit[]) {
 		const typeaheadObject = new OrganisationalUnitTypeAhead(typeahead)
 		typeaheadObject.resetFormattedNameAndSort()
 		return typeaheadObject
 	}
 
-	constructor(public typeahead: OrganisationalUnit[]) {}
+	@Type(() => OrganisationalUnit)
+	public typeahead: OrganisationalUnit[]
+
+	constructor(typeahead: OrganisationalUnit[]) {
+		this.typeahead = typeahead
+	}
 
 	/**
 	 * Create the typeahead from an organisationalUnit list.
@@ -37,11 +43,9 @@ export class OrganisationalUnitTypeAhead {
 		let domainOrgFound = false
 
 		for (const org of this.typeahead) {
-			if (!domainOrgFound &&
-				org.agencyToken &&
-				org.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
-					filteredOrgs.push(org)
-					domainOrgFound = true
+			if (!domainOrgFound && org.agencyToken && org.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
+				filteredOrgs.push(org)
+				domainOrgFound = true
 			}
 			if (domainOrgFound && org.parentId) {
 				filteredOrgs.push(org)
@@ -55,8 +59,7 @@ export class OrganisationalUnitTypeAhead {
 		return this.typeahead
 	}
 
-	private getFormattedName(
-		orgMap: Map<number, OrganisationalUnit>, orgId: number) {
+	private getFormattedName(orgMap: Map<number, OrganisationalUnit>, orgId: number) {
 		const org = orgMap.get(orgId)!
 		if (!org.formattedName) {
 			let formattedName = org.formatNameWithAbbrev()

@@ -1,12 +1,18 @@
-import {Expose} from 'class-transformer'
+import {Expose, Type} from 'class-transformer'
 import {OrganisationalUnit} from '../../../model'
 
 export class GetOrganisationsResponse {
 	@Expose({name: '_embedded'})
-	embedded: {
-		organisationalUnits: OrganisationalUnit[]
-	}
+	@Type(() => Embedded)
+	embedded: Embedded
+
+	@Type(() => PageObject)
 	page: PageObject
+}
+
+export class Embedded {
+	@Type(() => OrganisationalUnit)
+	organisationalUnits: OrganisationalUnit[]
 }
 
 export class PageObject {

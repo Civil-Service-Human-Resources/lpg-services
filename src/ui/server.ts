@@ -1,5 +1,4 @@
 /* tslint:disable:no-var-requires */
-import 'reflect-metadata'
 const appInsights = require('applicationinsights')
 import * as config from 'lib/config'
 

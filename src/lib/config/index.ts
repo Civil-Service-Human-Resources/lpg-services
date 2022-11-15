@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import 'reflect-metadata'
 
 export const ONE_YEAR_IN_SECONDS = 31536000
 
