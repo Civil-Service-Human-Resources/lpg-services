@@ -50,7 +50,7 @@ describe('CsrsService tests', () => {
 
 			orgUnitCache.get.withArgs(3).resolves(undefined)
 			organisationalUnitClientStub.getOrganisationalUnit
-				.withArgs(3, {includeFormattedName: true, includeParents: true}, user)
+				.withArgs(3, {includeParents: true}, user)
 				.resolves(child)
 
 			csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)

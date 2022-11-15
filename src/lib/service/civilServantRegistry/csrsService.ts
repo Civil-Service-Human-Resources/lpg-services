@@ -1,10 +1,7 @@
-import { OrganisationalUnit, User } from '../../model'
-import { OrderBy } from './models/getOrganisationsRequestOptions'
-import { OrganisationalUnitTypeAhead } from './models/organisationalUnitTypeAhead'
-import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
-import {
-	OrganisationalUnitTypeaheadCache
-} from './organisationalUnit/organisationalUnitTypeaheadCache'
+import {OrganisationalUnit, User} from '../../model'
+import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
+import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
+import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 let organisationalUnitCache: OrganisationalUnitCache
@@ -16,11 +13,8 @@ export function setCaches(orgCache: OrganisationalUnitCache, orgTypeaheadCache: 
 }
 
 async function refreshTypeahead(user: User): Promise<OrganisationalUnitTypeAhead> {
-	const organisationalUnits = await organisationalUnitClient.getOrganisationalUnits(
-		{includeFormattedName: true, orderBy: OrderBy.FORMATTED_NAME},
-		user
-	)
-	const typeahead = new OrganisationalUnitTypeAhead(organisationalUnits)
+	const organisationalUnits = await organisationalUnitClient.getAllOrganisationalUnits(user)
+	const typeahead = OrganisationalUnitTypeAhead.createAndSort(organisationalUnits)
 	await organisationalUnitTypeaheadCache.setTypeahead(typeahead)
 	return typeahead
 }
@@ -32,11 +26,7 @@ export async function getOrgHierarchy(
 ): Promise<OrganisationalUnit[]> {
 	let org = await organisationalUnitCache.get(organisationId)
 	if (org == null) {
-		org = await organisationalUnitClient.getOrganisationalUnit(
-			organisationId,
-			{includeFormattedName: true, includeParents: true},
-			user
-		)
+		org = await organisationalUnitClient.getOrganisationalUnit(organisationId, {includeParents: true}, user)
 		while (org != null) {
 			hierarchy.push(org)
 			organisationalUnitCache.set(org.id, org)

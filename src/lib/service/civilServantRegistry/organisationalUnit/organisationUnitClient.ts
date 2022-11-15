@@ -7,12 +7,31 @@ import {
 } from '../models/getOrganisationsRequestOptions'
 import { GetOrganisationsResponse } from '../models/getOrganisationsResponse'
 
-const URL = '/v2/organisationalUnits'
+const URL = '/organisationalUnits'
+const V2_URL = `/v2${URL}`
+const MAX_PER_PAGE = 100
+
+export async function getAllOrganisationalUnits(
+	user: User,
+	fromPage: number = 0,
+	orgs: OrganisationalUnit[] = []
+): Promise<OrganisationalUnit[]> {
+	const options: GetOrganisationsRequestOptions = {
+		page: fromPage,
+		size: MAX_PER_PAGE,
+	}
+	const response = await getOrganisationalUnits(options, user)
+	orgs.push(...response.embedded.organisationalUnits)
+	if (fromPage < response.page.totalPages) {
+		getAllOrganisationalUnits(user, fromPage + 1, orgs)
+	}
+	return orgs
+}
 
 export async function getOrganisationalUnits(
 	options: GetOrganisationsRequestOptions,
 	user: User
-): Promise<OrganisationalUnit[]> {
+): Promise<GetOrganisationsResponse> {
 	const resp: GetOrganisationsResponse = await client._get<GetOrganisationsResponse>(
 		{
 			params: options,
@@ -20,8 +39,7 @@ export async function getOrganisationalUnits(
 		},
 		user
 	)
-	const responseData = plainToInstance(GetOrganisationsResponse, resp)
-	return responseData.organisationalUnits
+	return plainToInstance(GetOrganisationsResponse, resp)
 }
 
 export async function getOrganisationalUnit(
@@ -29,7 +47,7 @@ export async function getOrganisationalUnit(
 	options: GetOrganisationRequestOptions,
 	user: User
 ): Promise<OrganisationalUnit> {
-	const path: string = `${URL}/${organisationId}`
+	const path: string = `${V2_URL}/${organisationId}`
 	const resp: OrganisationalUnit = await client._get<OrganisationalUnit>(
 		{
 			params: options,

@@ -831,6 +831,7 @@ export class OrganisationalUnit {
 		const org = new OrganisationalUnit()
 		org.id = data.id
 		org.code = data.code
+		org.abbreviation = data.abbreviation
 		org.name = data.name
 		org.parent = data.parent
 		org.parentId = data.parentId
@@ -843,12 +844,17 @@ export class OrganisationalUnit {
 	id: number
 	code: string
 	name: string
+	abbreviation?: string
 	parent: OrganisationalUnit
 	parentId: number
 	agencyToken: AgencyToken
 	formattedName: string
 	children: OrganisationalUnit[]
 	paymentMethods: string[]
+
+	formatNameWithAbbrev() {
+		return (this.abbreviation && this.abbreviation !== '') ? `${this.name} (${this.abbreviation})` : this.name
+	}
 }
 
 export class User {
