@@ -15,17 +15,24 @@ export interface LineManager {
 	name?: string
 }
 
-const getAudienceForCourse = async (audiences: Audience[], user: User) => {
+const getAudienceForCourse = async (
+	audiences: Audience[], user: User,
+	usersOrganisationHierarchy?: OrganisationalUnit[]) => {
 	let matchedAudience
 	let matchedRelevance = -1
 	let matchedHighPriorityAudience
 	let matchedHighestPriorityAudience
-	let depHierarchy: string[] = []
+	let departmentHierarchy: OrganisationalUnit[] = []
 
-	if (user.departmentId) {
-		const departmentHierarchy = await getOrgHierarchy(user.departmentId, user)
-		depHierarchy = departmentHierarchy.map(d => d.code)
+	if (user.departmentId && !usersOrganisationHierarchy) {
+		if (usersOrganisationHierarchy) {
+			departmentHierarchy = usersOrganisationHierarchy
+		} else {
+			departmentHierarchy = await getOrgHierarchy(user.departmentId, user)
+		}
 	}
+
+	const depHierarchy: string[] = departmentHierarchy.map(d => d.code)
 
 	for await (const audience of audiences) {
 		//Get the relevance of each audience
@@ -66,7 +73,7 @@ const getAudienceForCourse = async (audiences: Audience[], user: User) => {
 }
 
 export class CourseFactory {
-	static async create(data: any, user?: User) {
+	static async create(data: any, user?: User, usersOrganisationHierarchy?: OrganisationalUnit[]) {
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
@@ -80,7 +87,7 @@ export class CourseFactory {
 		course.audiences = audiences
 
 		if (user) {
-			course.audience = await getAudienceForCourse(audiences, user)
+			course.audience = await getAudienceForCourse(audiences, user, usersOrganisationHierarchy)
 		}
 
 		return course

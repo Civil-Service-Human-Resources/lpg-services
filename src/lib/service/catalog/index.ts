@@ -6,6 +6,7 @@ import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
 import * as query from 'querystring'
+import { getOrgHierarchy } from '../civilServantRegistry/csrsService'
 
 const logger = getLogger('catalog')
 
@@ -134,7 +135,8 @@ export async function findRequiredLearning(
 			// to replace the old endpoint called from above
 			//	`/courses/getrequiredlearning`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
 		)
-		return await convertNew(response.data, user) as api.PageResults
+		const usersOrganisationHierarchy = await getOrgHierarchy(user.departmentId!, user)
+		return await convertNew(response.data, user, usersOrganisationHierarchy) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
 	}
@@ -210,9 +212,11 @@ function convert(data: any, user?: model.User) {
 	return data
 }
 
-async function convertNew(data: any, user?: model.User) {
+async function convertNew(data: any, user?: model.User, usersOrganisationHierarchy?: model.OrganisationalUnit[]) {
 	if (data.results) {
-		data.results = await Promise.all(data.results.map(async (d: any) => await model.CourseFactory.create(d, user)))
+		data.results = await Promise.all(
+			data.results.map(async (d: any) => await model.CourseFactory.create(d, user, usersOrganisationHierarchy))
+		)
 	}
 	return data
 }
