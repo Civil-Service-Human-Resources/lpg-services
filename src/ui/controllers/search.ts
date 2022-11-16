@@ -162,9 +162,12 @@ export async function search(ireq: express.Request, res: express.Response) {
 
 async function getDepartmentData(user: model.User, selectedDepartments: string[]) {
 	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
+	const collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'})
+	allDepartments.sort((a, b) => collator.compare(a.name, b.name))
+	const finalDeps = allDepartments.slice(0, 20)
 
-	const yourDepartment = allDepartments.find(department => department.code === user.department)
-	const otherDepartments = allDepartments.filter(department => department.code !== user.department)
+	const yourDepartment = finalDeps.find(department => department.code === user.department)
+	const otherDepartments = finalDeps.filter(department => department.code !== user.department)
 
 	return {
 		other: otherDepartments,
