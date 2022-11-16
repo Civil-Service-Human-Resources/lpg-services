@@ -16,14 +16,13 @@ export async function getAllOrganisationalUnits(user: User): Promise<Organisatio
 	const response = await getOrganisationalUnits(
 		{
 			page: 0,
-			size: MAX_PER_PAGE,
+			size: 1,
 		},
 		user
 	)
-	orgs.push(...response.embedded.organisationalUnits)
-	if (response.page.totalPages > 1) {
+	if (response.page.totalPages >= 1) {
 		const requests: any[] = []
-		for (let page = 1; page < response.page.totalPages; page++) {
+		for (let page = 0; page < response.page.totalPages; page++) {
 			requests.push(
 				getOrganisationalUnits({size: MAX_PER_PAGE, page}, user).then(data => {
 					orgs.push(...data.embedded.organisationalUnits)
