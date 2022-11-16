@@ -20,14 +20,14 @@ export async function getAllOrganisationalUnits(user: User): Promise<Organisatio
 		},
 		user
 	)
-	if (response.page.totalPages >= 1) {
+	if (response.page.totalElements >= 1) {
+		const totalPages = Math.ceil(response.page.totalElements / MAX_PER_PAGE)
 		const requests: any[] = []
-		for (let page = 0; page < response.page.totalPages; page++) {
-			requests.push(
-				getOrganisationalUnits({size: MAX_PER_PAGE, page}, user).then(data => {
-					orgs.push(...data.embedded.organisationalUnits)
-				})
-			)
+		for (let page = 0; page < totalPages; page++) {
+			requests.push(getOrganisationalUnits({size: MAX_PER_PAGE, page}, user)
+			.then(data => {
+				orgs.push(...data.embedded.organisationalUnits)
+			}))
 		}
 		await Promise.all(requests)
 	}
