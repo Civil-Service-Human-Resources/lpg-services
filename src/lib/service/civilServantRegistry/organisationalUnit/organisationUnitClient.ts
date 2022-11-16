@@ -9,7 +9,7 @@ import { GetOrganisationsResponse } from '../models/getOrganisationsResponse'
 
 const URL = '/organisationalUnits'
 const V2_URL = `/v2${URL}`
-const MAX_PER_PAGE = 100
+const MAX_PER_PAGE = 200
 
 export async function getAllOrganisationalUnits(user: User): Promise<OrganisationalUnit[]> {
 	const orgs: OrganisationalUnit[] = []
