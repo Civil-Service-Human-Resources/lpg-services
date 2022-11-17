@@ -12,6 +12,39 @@ export function setCaches(orgCache: OrganisationalUnitCache, orgTypeaheadCache: 
 	organisationalUnitTypeaheadCache = orgTypeaheadCache
 }
 
+async function getOrganisationFromApi(
+	user: User,
+	organisationalUnitId: number,
+	includeParent: boolean = false
+): Promise<OrganisationalUnit> {
+	const organisation: OrganisationalUnit = await organisationalUnitClient.getOrganisationalUnit(
+		organisationalUnitId,
+		{includeParents: includeParent},
+		user
+	)
+	let fetchedOrg: OrganisationalUnit | undefined = organisation
+	while (fetchedOrg != null) {
+		await organisationalUnitCache.set(fetchedOrg.id, fetchedOrg)
+		fetchedOrg = fetchedOrg.parent
+	}
+	return organisation
+}
+
+export async function getOrganisation(
+	user: User,
+	organisationalUnitId: number,
+	includeParent: boolean = false
+): Promise<OrganisationalUnit> {
+	let org = await organisationalUnitCache.get(organisationalUnitId)
+	if (org === undefined) {
+		org = await getOrganisationFromApi(user, organisationalUnitId, includeParent)
+	}
+	if (includeParent && org.parentId != null && org.parent == null) {
+		org.parent = await getOrganisation(user, org.parentId)
+	}
+	return org
+}
+
 async function refreshTypeahead(user: User): Promise<OrganisationalUnitTypeAhead> {
 	const organisationalUnits = await organisationalUnitClient.getAllOrganisationalUnits(user)
 	const typeahead = OrganisationalUnitTypeAhead.createAndSort(organisationalUnits)
@@ -24,15 +57,10 @@ export async function getOrgHierarchy(
 	user: User,
 	hierarchy: OrganisationalUnit[] = []
 ): Promise<OrganisationalUnit[]> {
-	let org = await organisationalUnitCache.get(organisationId)
+	const org = await organisationalUnitCache.get(organisationId)
 	if (org == null) {
-		org = await organisationalUnitClient.getOrganisationalUnit(organisationId, {includeParents: true}, user)
-		while (org != null) {
-			hierarchy.push(org)
-			organisationalUnitCache.set(org.id, org)
-			org = org.parent
-		}
-		return hierarchy
+		const orgWithAllParents = await getOrganisationFromApi(user, organisationId, true)
+		return orgWithAllParents.getHierarchyAsArray()
 	} else {
 		hierarchy.push(org)
 		if (org.parentId) {

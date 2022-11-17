@@ -859,6 +859,16 @@ export class OrganisationalUnit {
 	children: OrganisationalUnit[]
 	paymentMethods: string[]
 
+	getHierarchyAsArray() {
+		const hierarchy: OrganisationalUnit[] = [this]
+		let currentParent = this.parent
+		while (currentParent) {
+			hierarchy.push(currentParent)
+			currentParent = currentParent.parent
+		}
+		return hierarchy
+	}
+
 	formatNameWithAbbrev() {
 		return (this.abbreviation && this.abbreviation !== '') ? `${this.name} (${this.abbreviation})` : this.name
 	}

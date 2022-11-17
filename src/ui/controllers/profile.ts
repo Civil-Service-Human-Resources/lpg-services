@@ -89,7 +89,7 @@ export async function addOrganisation(request: Request, response: Response) {
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
-	let value: string
+	let value: number
 	value = request.body.organisation
 	if (!value) {
 		request.flash('error', request.__('errors.empty-organisation'))
@@ -101,12 +101,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 	let organisationalUnit
 
 	try {
-		const organisationResponse: any = await registry.getWithoutHal(value)
-		organisationalUnit = {
-			code: organisationResponse.data.code,
-			name: organisationResponse.data.name,
-			paymentMethods: organisationResponse.data.paymentMethods,
-		}
+		organisationalUnit = await csrsService.getOrganisation(request.user, value)
 	} catch (error) {
 		console.log(error)
 		throw new Error(error)
@@ -121,6 +116,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 		throw new Error(error)
 	}
 	setLocalProfile(request, 'department', organisationalUnit.code)
+	setLocalProfile(request, 'departmentId', organisationalUnit.id)
 	setLocalProfile(request, 'organisationalUnit', organisationalUnit)
 	request.session!.save(() =>
 		response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
