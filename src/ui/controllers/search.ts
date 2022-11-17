@@ -162,8 +162,6 @@ export async function search(ireq: express.Request, res: express.Response) {
 
 async function getDepartmentData(user: model.User, selectedDepartments: string[]) {
 	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
-	allDepartments.sort((a, b) => a.id - b.id)
-
 	const yourDepartment = allDepartments.find(department => department.code === user.department)
 	/**
 	 * NOTE: 20221117 - the code below will sort/slice the department list based on ID. This is to
