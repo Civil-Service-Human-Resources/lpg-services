@@ -89,7 +89,7 @@ export async function addOrganisation(request: Request, response: Response) {
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
-	let value: number
+	let value: string
 	value = request.body.organisation
 	if (!value) {
 		request.flash('error', request.__('errors.empty-organisation'))
@@ -97,11 +97,12 @@ export async function updateOrganisation(request: Request, response: Response) {
 			response.redirect(`/profile/organisation`)
 		})
 	}
+	const organisationId = Number(value.split("/")[2])
 
 	let organisationalUnit
 
 	try {
-		organisationalUnit = await csrsService.getOrganisation(request.user, value)
+		organisationalUnit = await csrsService.getOrganisation(request.user, organisationId)
 	} catch (error) {
 		console.log(error)
 		throw new Error(error)
@@ -109,7 +110,7 @@ export async function updateOrganisation(request: Request, response: Response) {
 
 	try {
 		await registry.patch('/civilServants/' + request.user.userId,
-			{organisationalUnit: request.body.organisation},
+			{organisationalUnit: `${request.body.organisation}`},
 			request.user.accessToken)
 	} catch (error) {
 		console.log(error)
