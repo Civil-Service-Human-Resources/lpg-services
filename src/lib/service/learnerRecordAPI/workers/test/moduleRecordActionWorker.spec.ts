@@ -153,7 +153,6 @@ describe('Should test the course action worker classes', () => {
 				{op: 'replace', path: '/state', value: 'IN_PROGRESS'},
 				{op: 'remove', path: '/result', value: undefined},
 				{op: 'remove', path: '/score', value: undefined},
-				{op: 'replace', path: '/completionDate', value: testDateAsStr},
 				{op: 'replace', path: '/updatedAt', value: testDateAsStr},
 			])
 		})
