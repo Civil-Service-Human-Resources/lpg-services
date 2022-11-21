@@ -65,6 +65,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 
 	let body = req.body
+
 	if (body) {
 		if (Array.isArray(body)) {
 			body = body.map(statement => updateStatement(statement, agent, req))
@@ -90,6 +91,10 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	const ctype = req.header('Content-Type')
 	if (ctype) {
 		headers['Content-Type'] = ctype
+	}
+
+	if (body.verb && body.verb.id) {
+		logger.debug('PROCESSING XAPI VERB ' + body.verb.id)
 	}
 
 	if (body.verb && body.verb.id && learnerRecordVerbs.includes(body.verb.id)) {
