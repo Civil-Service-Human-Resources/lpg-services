@@ -40,7 +40,6 @@ export class InitialiseActionWorker extends ActionWorker {
 					setState(RecordState.InProgress),
 					clearResult(),
 					clearScore(),
-					setCompletionDate(new Date()),
 					setUpdatedAt(new Date()),
 				]
 			)
