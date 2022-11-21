@@ -65,7 +65,6 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 
 	let body = req.body
-
 	if (body) {
 		if (Array.isArray(body)) {
 			body = body.map(statement => updateStatement(statement, agent, req))
