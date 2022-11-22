@@ -852,7 +852,7 @@ export class OrganisationalUnit {
 	code: string
 	name: string
 	abbreviation?: string
-	parent: OrganisationalUnit
+	parent?: OrganisationalUnit
 	parentId: number
 	agencyToken: AgencyToken
 	formattedName: string
