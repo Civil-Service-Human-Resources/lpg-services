@@ -23,6 +23,7 @@ function createOrg(id: number, orgnisationName: string, domains: string[], paren
 	if (abbrev) {
 		org.abbreviation = abbrev
 	}
+	org.children = []
 	return org
 }
 
@@ -36,9 +37,9 @@ describe('organisationUnitTypeAhead tests', () => {
 			const grandChildOrg = createOrg(4, "D", [], 2)
 			const parentOrg2 = createOrg(5, "E", [], null)
 			const orgs = [parentOrg, childOrg, childOrg2, grandChildOrg, parentOrg2]
-			const typeahead = new OrganisationalUnitTypeAhead(orgs)
+			const typeahead = OrganisationalUnitTypeAhead.createAndSort(orgs)
 			const list = await typeahead.getDomainFilteredList(domain)
-			expect(list.map(o => o.name)).to.eql(["A", "B", "C", "D"])
+			expect(list.map(o => o.formattedName)).to.eql(["A", "A | B", "A | B | D", "A | C"])
 		})
 
 		it('Should return all organisations when an agency domain is passed in but no token matches', async () => {
@@ -49,9 +50,9 @@ describe('organisationUnitTypeAhead tests', () => {
 			const grandChildOrg = createOrg(4, "D", [], 2)
 			const parentOrg2 = createOrg(5, "E", [], null)
 			const orgs = [parentOrg, childOrg, childOrg2, grandChildOrg, parentOrg2]
-			const typeahead = new OrganisationalUnitTypeAhead(orgs)
+			const typeahead = OrganisationalUnitTypeAhead.createAndSort(orgs)
 			const list = await typeahead.getDomainFilteredList(domain)
-			expect(list.map(o => o.name)).to.eql(["A", "B", "C", "D", "E"])
+			expect(list.map(o => o.formattedName)).to.eql(["A", "A | B", "A | B | D", "A | C", "E"])
 		})
 	})
 

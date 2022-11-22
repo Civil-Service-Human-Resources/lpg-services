@@ -869,6 +869,25 @@ export class OrganisationalUnit {
 		return hierarchy
 	}
 
+	extractAllOrgs() {
+		const orgs: OrganisationalUnit[] = [this]
+		if (this.children) {
+			for (const child of this.children) {
+				orgs.push(...child.extractAllOrgs())
+			}
+		}
+		return orgs
+	}
+
+	doesDomainExistInToken(domain: string) {
+		let exists = false
+		if (this.agencyToken
+			&& this.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
+				exists = true
+		}
+		return exists
+	}
+
 	formatNameWithAbbrev() {
 		return (this.abbreviation && this.abbreviation !== '') ? `${this.name} (${this.abbreviation})` : this.name
 	}
