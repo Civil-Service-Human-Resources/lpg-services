@@ -93,19 +93,11 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		headers['Content-Type'] = ctype
 	}
 
-	logger.debug('PROCESSING body: ' + JSON.stringify(body))
-	if (Array.isArray(body)) {
-		if (body[0].verb && body[0].verb.id) {
-			logger.debug('PROCESSING XAPI VERB from Array: ' + body[0].verb.id)
-		}
-		if (body[0].verb && body[0].verb.id && learnerRecordVerbs.includes(body[0].verb.id)) {
-			syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body[0].verb.id)
-		}
-	} else {
-		logger.debug('PROCESSING XAPI VERB: ' + body.verb.id)
-		if (body.verb && body.verb.id && learnerRecordVerbs.includes(body.verb.id)) {
-			syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
-		}
+	const xapiBody = Array.isArray(body) ? body[0] : body
+	logger.debug('PROCESSING xapiBody: ' + JSON.stringify(xapiBody))
+	if (xapiBody.verb && xapiBody.verb.id && learnerRecordVerbs.includes(xapiBody.verb.id)) {
+		logger.debug('PROCESSING XAPI VERB: ' + xapiBody.verb.id)
+		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
 	}
 
 	try {
