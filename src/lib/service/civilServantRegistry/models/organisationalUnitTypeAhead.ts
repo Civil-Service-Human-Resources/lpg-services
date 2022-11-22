@@ -23,6 +23,7 @@ export class OrganisationalUnitTypeAhead {
 	resetFormattedNameAndSort() {
 		const orgMap: Map<number, OrganisationalUnit> = new Map()
 		this.typeahead.forEach(o => {
+			o.children = []
 			o.formattedName = ''
 			orgMap.set(o.id, o)
 		})
@@ -68,25 +69,26 @@ export class OrganisationalUnitTypeAhead {
 
 	getDomainFilteredList(domain: string) {
 		const tree = this.getAsTree()
-		const filteredOrgs: OrganisationalUnit[] = this.filterTreeOnAgency(domain, tree)
-		if (filteredOrgs.length > 0) {
-			return filteredOrgs
+		const agencyOrg = this.getAgencyOrganisationWithDomain(domain, tree)
+		if (agencyOrg) {
+			return agencyOrg.extractAllOrgs()
 		}
 		return this.typeahead
 	}
 
-	private filterTreeOnAgency(domain: string, tree: OrganisationalUnit[]): OrganisationalUnit[] {
-		let domainOrgFound = false
+	private getAgencyOrganisationWithDomain(domain: string, tree: OrganisationalUnit[]): OrganisationalUnit | undefined {
 		for (const org of tree) {
-			if (org.doesDomainExistInToken(domain) && !domainOrgFound) {
-				domainOrgFound = true
-				return org.extractAllOrgs()
+			if (org.doesDomainExistInToken(domain)) {
+				return org
 			}
-			if (!domainOrgFound && org.children) {
-				return this.filterTreeOnAgency(domain, org.children)
+			if (org.children) {
+				const organisation = this.getAgencyOrganisationWithDomain(domain, org.children)
+				if (organisation) {
+					return organisation
+				}
 			}
 		}
-		return []
+		return undefined
 	}
 
 	private getFormattedName(orgMap: Map<number, OrganisationalUnit>, orgId: number) {

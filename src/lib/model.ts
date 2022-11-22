@@ -856,7 +856,7 @@ export class OrganisationalUnit {
 	parentId: number
 	agencyToken: AgencyToken
 	formattedName: string
-	children: OrganisationalUnit[]
+	children: OrganisationalUnit[] = []
 	paymentMethods: string[]
 
 	getHierarchyAsArray() {
