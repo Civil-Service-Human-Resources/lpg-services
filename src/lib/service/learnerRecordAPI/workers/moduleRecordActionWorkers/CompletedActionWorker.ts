@@ -1,4 +1,3 @@
-import { getLogger } from 'lib/logger'
 import {Course, Module, User} from '../../../../model'
 import {patchCourseRecord} from '../../../learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from '../../../learnerRecordAPI/courseRecord/models/courseRecord'
@@ -9,8 +8,6 @@ import {ModuleRecord} from '../../../learnerRecordAPI/moduleRecord/models/module
 import {setCompletionDate, setUpdatedAt} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
 import {WorkerType} from '../workerType'
 import {ActionWorker} from './ActionWorker'
-
-const logger = getLogger('learnerRecordAPI/moduleRecordActionWorkers')
 
 export class CompletedActionWorker extends ActionWorker {
 	constructor(readonly course: Course, readonly user: User, readonly module: Module) {
@@ -46,7 +43,6 @@ export class CompletedActionWorker extends ActionWorker {
 
 	async updateModuleRecord(moduleRecord: ModuleRecord) {
 		const patches = [setUpdatedAt(new Date()), setState(RecordState.Completed), setCompletionDate(new Date())]
-		logger.debug('updateModuleRecord.patches: ' + patches)
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
 	}
 

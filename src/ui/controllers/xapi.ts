@@ -65,7 +65,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 
 	let body = req.body
-	logger.debug('PROCESSING req.body: ' + JSON.stringify(body))
+	logger.debug('PROCESSING XAPI VERB req.body: ' + JSON.stringify(body))
 	if (body) {
 		if (Array.isArray(body)) {
 			body = body.map(statement => updateStatement(statement, agent, req))
@@ -94,10 +94,11 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 
 	const xapiBody = Array.isArray(body) ? body[0] : body
-	logger.debug('PROCESSING xapiBody: ' + JSON.stringify(xapiBody))
+	logger.debug('PROCESSING XAPI VERB xapiBody: ' + JSON.stringify(xapiBody))
 	if (xapiBody.verb && xapiBody.verb.id && learnerRecordVerbs.includes(xapiBody.verb.id)) {
 		logger.debug('PROCESSING XAPI VERB: ' + xapiBody.verb.id)
 		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
+		logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: Done')
 	}
 
 	try {
@@ -181,6 +182,7 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 }
 
 async function syncToLearnerRecord(courseId: string, moduleId: string, user: User, verbId: string) {
+	logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: start')
 	const course = await get(courseId, user)
 	let actionWorker = null
 	if (course) {
@@ -192,7 +194,9 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 				actionWorker = new InitialiseActionWorker(course, user, module)
 				break
 			case xapi.Verb.Completed:
+				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling CompletedActionWorker')
 				actionWorker = new CompletedActionWorker(course, user, module)
+				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: CompletedActionWorker Done')
 				break
 			case xapi.Verb.Passed:
 				actionWorker = new PassModuleActionWorker(course, user, module)
@@ -204,7 +208,9 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 				break
 		}
 		if (actionWorker) {
+			logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling actionWorker.applyActionToLearnerRecord')
 			await actionWorker.applyActionToLearnerRecord()
+			logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: actionWorker.applyActionToLearnerRecord Done')
 		}
 	}
 }
