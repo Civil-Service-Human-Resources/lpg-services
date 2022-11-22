@@ -98,17 +98,11 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		if (body[0].verb && body[0].verb.id) {
 			logger.debug('PROCESSING XAPI VERB from Array: ' + body[0].verb.id)
 		}
-	} else {
-		if (body.verb && body.verb.id) {
-			logger.debug('PROCESSING XAPI VERB: ' + body.verb.id)
-		}
-	}
-
-	if (Array.isArray(body)) {
 		if (body[0].verb && body[0].verb.id && learnerRecordVerbs.includes(body[0].verb.id)) {
 			syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body[0].verb.id)
 		}
 	} else {
+		logger.debug('PROCESSING XAPI VERB: ' + body.verb.id)
 		if (body.verb && body.verb.id && learnerRecordVerbs.includes(body.verb.id)) {
 			syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
 		}
