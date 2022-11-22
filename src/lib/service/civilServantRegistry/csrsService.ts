@@ -1,8 +1,13 @@
-import {OrganisationalUnit, User} from '../../model'
-import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
-import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
-import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
+import { getLogger } from '../../logger'
+import { OrganisationalUnit, User } from '../../model'
+import { OrganisationalUnitTypeAhead } from './models/organisationalUnitTypeAhead'
+import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
+import {
+	OrganisationalUnitTypeaheadCache
+} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
+
+const logger = getLogger('csrsService')
 
 let organisationalUnitCache: OrganisationalUnitCache
 let organisationalUnitTypeaheadCache: OrganisationalUnitTypeaheadCache
@@ -79,6 +84,7 @@ export async function getAllOrganisationUnits(user: User): Promise<Organisationa
 }
 
 export async function getOrganisationDropdown(user: User): Promise<OrganisationalUnit[]> {
+	logger.debug(`Filtering dropdown for user ${user.userName}`)
 	const typeahead = await getAllOrganisationUnits(user)
 	const userDomain = user.userName.split('@')[1]
 	return typeahead.getDomainFilteredList(userDomain)
