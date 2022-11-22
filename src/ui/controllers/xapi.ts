@@ -183,6 +183,7 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 
 async function syncToLearnerRecord(courseId: string, moduleId: string, user: User, verbId: string) {
 	logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: start')
+	logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: verbId: ' + verbId)
 	const course = await get(courseId, user)
 	let actionWorker = null
 	if (course) {
@@ -191,6 +192,7 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 			case xapi.Verb.Attempted:
 			case xapi.Verb.Initialised:
 			case xapi.Verb.Launched:
+				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling InitialiseActionWorker')
 				actionWorker = new InitialiseActionWorker(course, user, module)
 				break
 			case xapi.Verb.Completed:
