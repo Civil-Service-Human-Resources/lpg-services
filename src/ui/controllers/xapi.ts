@@ -66,6 +66,8 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 
 	let body = req.body
 	logger.debug('PROCESSING req.body: ' + body)
+	logger.debug(body)
+	logger.debug(JSON.stringify(body))
 	if (body) {
 		if (Array.isArray(body)) {
 			body = body.map(statement => updateStatement(statement, agent, req))
@@ -93,6 +95,8 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		headers['Content-Type'] = ctype
 	}
 	logger.debug('PROCESSING body: ' + body)
+	logger.debug(body)
+	logger.debug(JSON.stringify(body))
 	if (body.verb && body.verb.id) {
 		logger.debug('PROCESSING XAPI VERB: ' + body.verb.id)
 	}
