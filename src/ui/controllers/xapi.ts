@@ -97,7 +97,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	logger.debug('PROCESSING XAPI VERB xapiBody: ' + JSON.stringify(xapiBody))
 	if (xapiBody.verb && xapiBody.verb.id && learnerRecordVerbs.includes(xapiBody.verb.id)) {
 		logger.debug('PROCESSING XAPI VERB: ' + xapiBody.verb.id)
-		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
+		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, xapiBody.verb.id)
 		logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: Done')
 	}
 
