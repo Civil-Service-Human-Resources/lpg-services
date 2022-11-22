@@ -189,21 +189,21 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 	if (course) {
 		const module = course.getModule(moduleId)
 		switch (verbId) {
-			case xapi.Verb.Attempted:
-			case xapi.Verb.Initialised:
-			case xapi.Verb.Launched:
+			case xapi.Verb.Attempted.toString():
+			case xapi.Verb.Initialised.toString():
+			case xapi.Verb.Launched.toString():
 				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling InitialiseActionWorker')
 				actionWorker = new InitialiseActionWorker(course, user, module)
 				break
-			case xapi.Verb.Completed:
+			case xapi.Verb.Completed.toString():
 				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling CompletedActionWorker')
 				actionWorker = new CompletedActionWorker(course, user, module)
 				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: CompletedActionWorker Done')
 				break
-			case xapi.Verb.Passed:
+			case xapi.Verb.Passed.toString():
 				actionWorker = new PassModuleActionWorker(course, user, module)
 				break
-			case xapi.Verb.Failed:
+			case xapi.Verb.Failed.toString():
 				actionWorker = new FailModuleActionWorker(course, user, module)
 				break
 			default:
