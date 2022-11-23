@@ -98,7 +98,6 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	if (xapiBody.verb && xapiBody.verb.id && learnerRecordVerbs.includes(xapiBody.verb.id)) {
 		logger.debug('PROCESSING XAPI VERB: ' + xapiBody.verb.id)
 		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, xapiBody.verb.id)
-		logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: Done')
 	}
 
 	try {
@@ -182,8 +181,6 @@ function updateStatement(statement: any, agent: any, req: extended.CourseRequest
 }
 
 async function syncToLearnerRecord(courseId: string, moduleId: string, user: User, verbId: string) {
-	logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: start')
-	logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: verbId: ' + verbId)
 	const course = await get(courseId, user)
 	let actionWorker = null
 	if (course) {
@@ -192,13 +189,10 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 			case xapi.Verb.Attempted:
 			case xapi.Verb.Initialised:
 			case xapi.Verb.Launched:
-				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling InitialiseActionWorker')
 				actionWorker = new InitialiseActionWorker(course, user, module)
 				break
 			case xapi.Verb.Completed:
-				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling CompletedActionWorker')
 				actionWorker = new CompletedActionWorker(course, user, module)
-				logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: CompletedActionWorker Done')
 				break
 			case xapi.Verb.Passed:
 				actionWorker = new PassModuleActionWorker(course, user, module)
@@ -210,9 +204,7 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 				break
 		}
 		if (actionWorker) {
-			logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: calling actionWorker.applyActionToLearnerRecord')
 			await actionWorker.applyActionToLearnerRecord()
-			logger.debug('PROCESSING XAPI VERB: syncToLearnerRecord: actionWorker.applyActionToLearnerRecord Done')
 		}
 	}
 }
