@@ -161,6 +161,7 @@ export async function findSuggestedLearningWithParameters(
 	parameters: string
 ): Promise<api.PageResults> {
 	try {
+		logger.debug(`Request to get suggested learning ${JSON.stringify(parameters)}`)
 		const response = await http.get(`/courses?${parameters}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
 		return convert(response.data, user) as api.PageResults
 	} catch (e) {
