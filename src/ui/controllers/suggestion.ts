@@ -230,7 +230,7 @@ async function getSuggestions(
 ): Promise<model.Course[]> {
 	const params: catalog.ApiParameters = new catalog.ApiParameters(
 		areasOfWork,
-		departments,
+		departments.join(","),
 		interests,
 		grade,
 		0,
