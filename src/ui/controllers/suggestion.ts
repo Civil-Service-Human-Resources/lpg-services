@@ -12,6 +12,7 @@ import {
 import {
 	RemoveCourseFromLearningplanActionWorker
 } from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
+import { getOrgHierarchy } from '../../lib/service/civilServantRegistry/csrsService';
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
@@ -141,7 +142,7 @@ export async function suggestionsByInterest(
 
 	const promises = (user.interests || []).map(async interest => {
 		courseSuggestions[interest.name as any] = await getSuggestions(
-			'',
+			[],
 			[],
 			[interest.name],
 			user.grade ? user.grade.code : '',
@@ -162,7 +163,7 @@ export async function suggestionsByAreaOfWork(
 
 	const promises = (user.areasOfWork || []).map(async aow => {
 		courseSuggestions[aow as any] = await getSuggestions(
-			'',
+			[],
 			[aow],
 			[],
 			user.grade ? user.grade.code : '',
@@ -183,7 +184,7 @@ export async function suggestionsByOtherAreasOfWork(
 
 	const promises = (user.otherAreasOfWork || []).map(async aow => {
 		courseSuggestions[aow.name as any] = await getSuggestions(
-			'',
+			[],
 			[aow.name],
 			[],
 			user.grade ? user.grade.code : '',
@@ -201,9 +202,12 @@ export async function suggestionsByDepartment(
 	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
-	if (user.department) {
+	if (user.departmentId) {
+		const hierarchyCodes = (await getOrgHierarchy(user.departmentId, user)).map(
+			o => o.code
+		)
 		courseSuggestions[user.department as any] = await getSuggestions(
-			user.department!,
+			hierarchyCodes,
 			[],
 			[],
 			user.grade ? user.grade.code : '',
@@ -215,23 +219,8 @@ export async function suggestionsByDepartment(
 	return courseSuggestions
 }
 
-export async function homeSuggestions(
-	user: model.User,
-	learningRecord: Record<string, learnerRecord.CourseRecord> = {}
-) {
-	return await getSuggestions(
-		user.department!,
-		user.areasOfWork || [],
-		[],
-		user.grade ? user.grade.code : '',
-		RECORDS_TO_SCAN_IN_ELASTIC,
-		learningRecord,
-		user
-	)
-}
-
 async function getSuggestions(
-	department: string,
+	departments: string[],
 	areasOfWork: string[],
 	interests: string[],
 	grade: string,
@@ -241,7 +230,7 @@ async function getSuggestions(
 ): Promise<model.Course[]> {
 	const params: catalog.ApiParameters = new catalog.ApiParameters(
 		areasOfWork,
-		department,
+		departments,
 		interests,
 		grade,
 		0,
