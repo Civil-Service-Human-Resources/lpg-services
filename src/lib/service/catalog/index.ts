@@ -129,13 +129,13 @@ export async function findRequiredLearning(
 	user: model.User
 ): Promise<api.PageResults> {
 	try {
-		const response = await http.get(
-			`/courses?mandatory=true&department=${user.department}`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
-			// This is the new endpoint in learning-catalogue to call when you chose
-			// to replace the old endpoint called from above
-			//	`/courses/getrequiredlearning`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
-		)
 		const usersOrganisationHierarchy = await getOrgHierarchy(user.departmentId!, user)
+		const usersOrganisationHierarchyCodes = usersOrganisationHierarchy.map(o => o.code).join(",")
+
+		const response = await http.get(
+			`/courses?mandatory=true&department=${usersOrganisationHierarchyCodes}`,
+			{headers: {Authorization: `Bearer ${user.accessToken}`}}
+		)
 		return await convertNew(response.data, user, usersOrganisationHierarchy) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
