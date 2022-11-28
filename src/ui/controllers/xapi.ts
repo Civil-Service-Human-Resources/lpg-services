@@ -65,6 +65,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 
 	let body = req.body
+	logger.debug('PROCESSING XAPI VERB req.body: ' + JSON.stringify(body))
 	if (body) {
 		if (Array.isArray(body)) {
 			body = body.map(statement => updateStatement(statement, agent, req))
@@ -92,8 +93,11 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		headers['Content-Type'] = ctype
 	}
 
-	if (body.verb && body.verb.id && learnerRecordVerbs.includes(body.verb.id)) {
-		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, body.verb.id)
+	const xapiBody = Array.isArray(body) ? body[0] : body
+	logger.debug('PROCESSING XAPI VERB xapiBody: ' + JSON.stringify(xapiBody))
+	if (xapiBody.verb && xapiBody.verb.id && learnerRecordVerbs.includes(xapiBody.verb.id)) {
+		logger.debug('PROCESSING XAPI VERB: ' + xapiBody.verb.id)
+		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, xapiBody.verb.id)
 	}
 
 	try {
