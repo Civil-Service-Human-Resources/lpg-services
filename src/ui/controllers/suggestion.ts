@@ -5,7 +5,7 @@ import * as model from 'lib/model'
 import * as client from 'lib/service/catalog/courseCatalogueClient'
 import * as template from 'lib/ui/template'
 
-import { GetCoursesParams } from '../../lib/service/catalog/models/GetCoursesParams'
+import { GetCoursesParams } from '../../lib/service/catalog/models/getCoursesParams'
 import { getOrgHierarchy } from '../../lib/service/civilServantRegistry/csrsService'
 import { getFullRecord } from '../../lib/service/learnerRecordAPI/courseRecord/client'
 import {
