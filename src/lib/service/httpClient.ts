@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios'
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
 import * as https from 'https'
 
 import {getLogger} from '../logger'
@@ -22,6 +22,18 @@ export class HttpClient {
 				maxSockets,
 			}),
 			timeout,
+		})
+
+		http.interceptors.response.use((response: AxiosResponse): AxiosResponse<any> => {
+			let logMsg = `Response from ${response.config.method} request to ${response.config.url}: ${response.status}`
+			if (response.data) {
+				logMsg += ` Data: ${JSON.stringify(response.data)}`
+			}
+			if (response.config.params) {
+				logMsg += ` Params: ${JSON.stringify(response.config.params)}`
+			}
+			logger.debug(logMsg)
+			return response
 		})
 		return new HttpClient(http)
 	}
