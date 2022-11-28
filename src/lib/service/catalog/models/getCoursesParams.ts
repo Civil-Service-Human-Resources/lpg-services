@@ -14,7 +14,7 @@ export class GetCoursesParams {
 	}
 
 	public static createForInterest(interest: string, grade?: string) {
-		return new GetCoursesParams(grade, undefined, interest)
+		return new GetCoursesParams(grade, undefined, undefined, interest)
 	}
 	constructor(
 		public grade?: string,
