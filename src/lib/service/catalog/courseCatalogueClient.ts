@@ -1,4 +1,4 @@
-import { plainToClass } from '../../../../node_modules/class-transformer'
+import { plainToClass } from 'class-transformer'
 import { User } from '../../model'
 import { client } from './config'
 import { GetCoursesParams, GetCoursesResponse } from './models/GetCoursesParams'
