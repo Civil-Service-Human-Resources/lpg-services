@@ -39,6 +39,17 @@ export async function createCourseRecord(courseRecord: CourseRecordInput, user: 
 	return plainToClass(CourseRecord, res)
 }
 
+export async function getFullRecord(user: model.User): Promise<CourseRecord[]> {
+	const resp = await client._get<CourseRecordResponse>({
+		params: {
+			userId: user.id,
+		},
+		url: URL,
+	}, user)
+	const courseRecords = plainToClass(CourseRecordResponse, resp)
+	return await Promise.all(courseRecords.courseRecords.map(buildCourseRecord))
+}
+
 export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
 	const resp = await client.makeRequest<CourseRecordResponse>(
 		{

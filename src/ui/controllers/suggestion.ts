@@ -1,12 +1,13 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
-import * as catalog from 'lib/service/catalog'
+import * as client from 'lib/service/catalog/courseCatalogueClient'
 import * as template from 'lib/ui/template'
 
+import { GetCoursesParams } from '../../lib/service/catalog/models/GetCoursesParams'
 import { getOrgHierarchy } from '../../lib/service/civilServantRegistry/csrsService'
+import { getFullRecord } from '../../lib/service/learnerRecordAPI/courseRecord/client'
 import {
 	AddCourseToLearningplanActionWorker
 } from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/AddCourseToLearningplanActionWorker'
@@ -16,7 +17,6 @@ import {
 
 const logger = getLogger('controllers/suggestion')
 const RECORD_COUNT_TO_DISPLAY = 6
-const RECORDS_TO_SCAN_IN_ELASTIC = 200
 
 export function hashArray<T>(records: T[], key: string) {
 	const hash: Record<string, T> = {}
@@ -93,7 +93,7 @@ export async function suggestionsPage(
 ) {
 	const user = req.user as model.User
 
-	const learningRecord = await getLearningRecord(user)
+	const courseIdsInLearningPlan = (await getFullRecord(user)).map(c => c.courseId)
 
 	const [
 		areaOfWork,
@@ -101,10 +101,10 @@ export async function suggestionsPage(
 		department,
 		interests,
 	] = await Promise.all([
-		suggestionsByAreaOfWork(user, learningRecord),
-		suggestionsByOtherAreasOfWork(user, learningRecord),
-		suggestionsByDepartment(user, learningRecord),
-		suggestionsByInterest(user, learningRecord),
+		suggestionsByAreaOfWork(user, courseIdsInLearningPlan),
+		suggestionsByOtherAreasOfWork(user, courseIdsInLearningPlan),
+		suggestionsByDepartment(user, courseIdsInLearningPlan),
+		suggestionsByInterest(user, courseIdsInLearningPlan),
 	])
 
 	res.send(
@@ -119,35 +119,17 @@ export async function suggestionsPage(
 	)
 }
 
-export async function getLearningRecord(
-	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
-) {
-	let learningRecord: Record<string, learnerRecord.CourseRecord> = {}
-
-	if (Object.keys(learningRecordIn).length > 0) {
-		learningRecord = learningRecordIn
-	} else {
-		const records = await learnerRecord.getRawLearningRecord(user)
-		learningRecord = records.length ? hashArray(records, 'courseId') : {}
-	}
-	return learningRecord
-}
-
 export async function suggestionsByInterest(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	courseIdsInLearningPlan: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.interests || []).map(async interest => {
+		const params = GetCoursesParams.createForInterest(interest.name, user.grade ? user.grade.code : '')
 		courseSuggestions[interest.name as any] = await getSuggestions(
-			[],
-			[],
-			[interest.name],
-			user.grade ? user.grade.code : '',
-			RECORDS_TO_SCAN_IN_ELASTIC,
-			await getLearningRecord(user, learningRecordIn),
+			params,
+			courseIdsInLearningPlan,
 			user
 		)
 	})
@@ -157,18 +139,15 @@ export async function suggestionsByInterest(
 
 export async function suggestionsByAreaOfWork(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	courseIdsInLearningPlan: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.areasOfWork || []).map(async aow => {
+		const params = GetCoursesParams.createForAreaOfWork(aow, user.grade ? user.grade.code : '')
 		courseSuggestions[aow as any] = await getSuggestions(
-			[],
-			[aow],
-			[],
-			user.grade ? user.grade.code : '',
-			RECORDS_TO_SCAN_IN_ELASTIC,
-			await getLearningRecord(user, learningRecordIn),
+			params,
+			courseIdsInLearningPlan,
 			user
 		)
 	})
@@ -178,18 +157,15 @@ export async function suggestionsByAreaOfWork(
 
 export async function suggestionsByOtherAreasOfWork(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	courseIdsInLearningPlan: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.otherAreasOfWork || []).map(async aow => {
+		const params = GetCoursesParams.createForAreaOfWork(aow.name, user.grade ? user.grade.code : '')
 		courseSuggestions[aow.name as any] = await getSuggestions(
-			[],
-			[aow.name],
-			[],
-			user.grade ? user.grade.code : '',
-			RECORDS_TO_SCAN_IN_ELASTIC,
-			await getLearningRecord(user, learningRecordIn),
+			params,
+			courseIdsInLearningPlan,
 			user
 		)
 	})
@@ -199,20 +175,17 @@ export async function suggestionsByOtherAreasOfWork(
 
 export async function suggestionsByDepartment(
 	user: model.User,
-	learningRecordIn: Record<string, learnerRecord.CourseRecord> = {}
+	courseIdsInLearningPlan: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 	if (user.departmentId) {
 		const hierarchyCodes = (await getOrgHierarchy(user.departmentId, user)).map(
 			o => o.code
 		)
+		const params = GetCoursesParams.createForDepartments(hierarchyCodes, user.grade ? user.grade.code : '')
 		courseSuggestions[user.department as any] = await getSuggestions(
-			hierarchyCodes,
-			[],
-			[],
-			user.grade ? user.grade.code : '',
-			RECORDS_TO_SCAN_IN_ELASTIC,
-			await getLearningRecord(user, learningRecordIn),
+			params,
+			courseIdsInLearningPlan,
 			user
 		)
 	}
@@ -220,50 +193,25 @@ export async function suggestionsByDepartment(
 }
 
 async function getSuggestions(
-	departments: string[],
-	areasOfWork: string[],
-	interests: string[],
-	grade: string,
-	count: number,
-	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>,
+	params: GetCoursesParams,
+	courseIdsInLearningPlan: string[],
 	user: model.User
 ): Promise<model.Course[]> {
-	const params: catalog.ApiParameters = new catalog.ApiParameters(
-		areasOfWork,
-		departments.join(","),
-		interests,
-		grade,
-		0,
-		count
-	)
 
-	let newSuggestions: model.Course[] = []
+	const newSuggestions: model.Course[] = []
 	let hasMore = true
 
-	while (newSuggestions.length < count && hasMore) {
-		const page = await catalog.findSuggestedLearningWithParameters(
-			user,
-			params.serialize() as string
-		)
-		newSuggestions = newSuggestions.concat(
-			modifyCourses(page.results, learningRecord)
-		)
+	while (newSuggestions.length <= RECORD_COUNT_TO_DISPLAY && hasMore) {
+		const page = await client.getCourses(params, user)
+		page.results.map(course => {
+			if (newSuggestions.length <= RECORD_COUNT_TO_DISPLAY
+				&& !courseIdsInLearningPlan.includes(course.id)) {
+					newSuggestions.push(course)
+			}
+		})
 		hasMore = page.totalResults > page.size * (page.page + 1)
 		params.page += 1
 	}
 
-	return newSuggestions.slice(0, RECORD_COUNT_TO_DISPLAY)
-}
-
-function modifyCourses(
-	courses: model.Course[],
-	learningRecord: Record<string, learnerRecord.CourseRecord | model.Course>
-) {
-	const modified: model.Course[] = []
-	for (const course of courses) {
-		if (!learningRecord[course.id]) {
-			modified.push(course)
-		}
-	}
-	return modified
+	return newSuggestions
 }

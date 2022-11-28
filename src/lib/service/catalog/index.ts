@@ -1,11 +1,11 @@
-import axios, {AxiosInstance} from 'axios'
-import * as https from "https"
+import axios, { AxiosInstance } from 'axios'
+import * as https from 'https'
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
-import * as query from 'querystring'
+
 import { getOrgHierarchy } from '../civilServantRegistry/csrsService'
 
 const logger = getLogger('catalog')
@@ -145,28 +145,12 @@ export async function findRequiredLearning(
 export class ApiParameters {
 	constructor(
 		public areaOfWork: string[],
-		public department: string,
+		public department: string[],
 		public interest: string[],
 		public grade: string,
 		public page: number = 0,
 		public size: number = 6
 	) {}
-	serialize(): string {
-		return query.stringify(this as any)
-	}
-}
-
-export async function findSuggestedLearningWithParameters(
-	user: model.User,
-	parameters: string
-): Promise<api.PageResults> {
-	try {
-		logger.debug(`Request to get suggested learning ${JSON.stringify(parameters)}`)
-		const response = await http.get(`/courses?${parameters}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return convert(response.data, user) as api.PageResults
-	} catch (e) {
-		throw new Error(`Error finding suggested learning - ${e}`)
-	}
 }
 
 export async function get(id: string, user: model.User) {

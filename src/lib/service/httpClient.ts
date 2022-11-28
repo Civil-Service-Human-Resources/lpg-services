@@ -1,4 +1,5 @@
-import {AxiosInstance, AxiosRequestConfig} from 'axios'
+import axios, {AxiosInstance, AxiosRequestConfig} from 'axios'
+import * as https from 'https'
 
 import {getLogger} from '../logger'
 import * as model from '../model'
@@ -6,6 +7,25 @@ import * as model from '../model'
 const logger = getLogger('service/httpClient')
 
 export class HttpClient {
+	static createFromParams(
+		baseURL: string,
+		timeout: number,
+		keepAlive: boolean = true,
+		maxFreeSockets: number = 15,
+		maxSockets: number = 100
+	) {
+		const http = axios.create({
+			baseURL,
+			httpsAgent: new https.Agent({
+				keepAlive,
+				maxFreeSockets,
+				maxSockets,
+			}),
+			timeout,
+		})
+		return new HttpClient(http)
+	}
+
 	constructor(readonly http: AxiosInstance) {}
 
 	async makeRequest<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
