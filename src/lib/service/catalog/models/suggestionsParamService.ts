@@ -30,45 +30,55 @@ export function createParamsForDepartmentSection(
 }
 
 export function createParamsForOtherAreaOfWorkSection(
-	otherAreaOfWork: string,
 	departmentCodes: string[],
 	user: User
-): GetCoursesParams {
-	return {
-		areaOfWork: otherAreaOfWork,
-		excludeAreasOfWork: getAllAreasOfWorkForUser(user).filter(aow => aow !== otherAreaOfWork).join(","),
-		excludeDepartments: departmentCodes.join(','),
-		grade: user.grade.code,
-		page: 0,
-		size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
-	}
+): GetCoursesParams[] {
+	return (user.otherAreasOfWork || [])
+	.map(aow => aow.name)
+	.filter(aow => !(user.areasOfWork || []).includes(aow))
+	.filter(aow => aow !== "I don't know")
+	.map(aow => {
+		return {
+			areaOfWork: aow,
+			excludeAreasOfWork: getAllAreasOfWorkForUser(user).filter(aAow => aow !== aAow).join(","),
+			excludeDepartments: departmentCodes.join(','),
+			grade: user.grade.code,
+			page: 0,
+			size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
+		}
+	})
 }
 
 export function createParamsForAreaOfWorkSection(
-	areaOfWork: string,
 	departmentCodes: string[],
 	user: User
-): GetCoursesParams {
-	return {
-		areaOfWork,
-		excludeDepartments: departmentCodes.join(','),
-		grade: user.grade.code,
-		page: 0,
-		size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
-	}
+): GetCoursesParams[] {
+	return (user.areasOfWork || [])
+	.filter(aow => aow !== "I don't know")
+	.map(aow => {
+		return {
+			areaOfWork: aow,
+			excludeDepartments: departmentCodes.join(','),
+			grade: user.grade.code,
+			page: 0,
+			size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
+		}
+	})
 }
 
 export function createParamsForInterestSection(
-	interest: string,
 	departmentCodes: string[],
 	user: User
-): GetCoursesParams {
-	return {
-		excludeAreasOfWork: getAllAreasOfWorkForUser(user).join(','),
-		excludeDepartments: departmentCodes.join(','),
-		grade: user.grade.code,
-		interest,
-		page: 0,
-		size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
-	}
+): GetCoursesParams[] {
+	return (user.interests || [])
+	.map(interest => {
+		return {
+			excludeAreasOfWork: getAllAreasOfWorkForUser(user).join(','),
+			excludeDepartments: departmentCodes.join(','),
+			grade: user.grade.code,
+			interest,
+			page: 0,
+			size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
+		}
+	})
 }

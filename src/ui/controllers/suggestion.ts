@@ -133,11 +133,11 @@ export async function suggestionsByInterest(
 	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
+	const paramsArray = createParamsForInterestSection(departmentCodes, user)
 
-	const promises = (user.interests || []).map(async interest => {
-		const params = createParamsForInterestSection(interest.name, departmentCodes, user)
-		courseSuggestions[interest.name as any] = await getSuggestions(
-			params,
+	const promises = paramsArray.map(async param => {
+		courseSuggestions[param.interest! as any] = await getSuggestions(
+			param,
 			courseIdsInLearningPlan,
 			user
 		)
@@ -152,11 +152,11 @@ export async function suggestionsByAreaOfWork(
 	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
+	const paramsArray = createParamsForAreaOfWorkSection(departmentCodes, user)
 
-	const promises = (user.areasOfWork || []).map(async aow => {
-		const params = createParamsForAreaOfWorkSection(aow, departmentCodes, user)
-		courseSuggestions[aow as any] = await getSuggestions(
-			params,
+	const promises = paramsArray.map(async param => {
+		courseSuggestions[param.areaOfWork!] = await getSuggestions(
+			param,
 			courseIdsInLearningPlan,
 			user
 		)
@@ -171,13 +171,10 @@ export async function suggestionsByOtherAreasOfWork(
 	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
-	const otherAreasOfWorkArray = (user.otherAreasOfWork || [])
-	.map(aow => aow.name).filter(aow => !(user.areasOfWork || []).includes(aow))
-
-	const promises = otherAreasOfWorkArray.map(async aow => {
-		const params = createParamsForOtherAreaOfWorkSection(aow, departmentCodes, user)
-		courseSuggestions[aow as any] = await getSuggestions(
-			params,
+	const paramsArray = createParamsForOtherAreaOfWorkSection(departmentCodes, user)
+	const promises = paramsArray.map(async param => {
+		courseSuggestions[param.areaOfWork!] = await getSuggestions(
+			param,
 			courseIdsInLearningPlan,
 			user
 		)
@@ -215,7 +212,7 @@ async function getSuggestions(
 	while (newSuggestions.length <= RECORD_COUNT_TO_DISPLAY && hasMore) {
 		const page = await client.getCoursesV2(params, user)
 		page.results.map(course => {
-			if (newSuggestions.length <= RECORD_COUNT_TO_DISPLAY
+			if (newSuggestions.length < RECORD_COUNT_TO_DISPLAY
 				&& !courseIdsInPlan.includes(course.id)) {
 				newSuggestions.push(course)
 		}})
