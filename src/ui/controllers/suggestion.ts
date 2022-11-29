@@ -104,14 +104,14 @@ export async function suggestionsPage(
 	)
 
 	const [
+		department,
 		areaOfWork,
 		otherAreasOfWork,
-		department,
 		interests,
 	] = await Promise.all([
+		suggestionsByDepartment(user, courseIdsInLearningPlan, hierarchyCodes),
 		suggestionsByAreaOfWork(user, courseIdsInLearningPlan, hierarchyCodes),
 		suggestionsByOtherAreasOfWork(user, courseIdsInLearningPlan, hierarchyCodes),
-		suggestionsByDepartment(user, courseIdsInLearningPlan, hierarchyCodes),
 		suggestionsByInterest(user, courseIdsInLearningPlan, hierarchyCodes),
 	])
 
@@ -169,10 +169,12 @@ export async function suggestionsByOtherAreasOfWork(
 	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
+	const otherAreasOfWorkArray = (user.otherAreasOfWork || [])
+	.map(aow => aow.name).filter(aow => !(user.areasOfWork || []).includes(aow))
 
-	const promises = (user.otherAreasOfWork || []).map(async aow => {
-		const params = createParamsForOtherAreaOfWorkSection(aow.name, departmentCodes, courseIdsInLearningPlan, user)
-		courseSuggestions[aow.name as any] = await getSuggestions(
+	const promises = otherAreasOfWorkArray.map(async aow => {
+		const params = createParamsForOtherAreaOfWorkSection(aow, departmentCodes, courseIdsInLearningPlan, user)
+		courseSuggestions[aow as any] = await getSuggestions(
 			params,
 			user
 		)
