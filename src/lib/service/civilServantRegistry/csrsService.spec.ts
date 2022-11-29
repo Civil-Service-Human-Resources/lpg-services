@@ -1,10 +1,12 @@
-import {expect} from 'chai'
+import { expect } from 'chai'
 import * as sinon from 'sinon'
 
-import {OrganisationalUnit, User, AgencyToken} from '../../model'
+import { AgencyToken, OrganisationalUnit, User } from '../../model'
 import * as csrsService from './csrsService'
-import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
-import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
+import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
+import {
+	OrganisationalUnitTypeaheadCache
+} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 function getOrg(orgName: string, id: number, parentId?: number) {
