@@ -8,7 +8,8 @@ import * as template from 'lib/ui/template'
 import { GetCoursesParams } from '../../lib/service/catalog/models/getCoursesParams'
 import {
 	createParamsForAreaOfWorkSection, createParamsForDepartmentSection,
-	createParamsForInterestSection
+	createParamsForInterestSection,
+	createParamsForOtherAreaOfWorkSection
 } from '../../lib/service/catalog/models/suggestionsParamService'
 import { getOrgHierarchy } from '../../lib/service/civilServantRegistry/csrsService'
 import { getFullRecord } from '../../lib/service/learnerRecordAPI/courseRecord/client'
@@ -170,7 +171,7 @@ export async function suggestionsByOtherAreasOfWork(
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.otherAreasOfWork || []).map(async aow => {
-		const params = createParamsForAreaOfWorkSection(aow.name, departmentCodes, courseIdsInLearningPlan, user)
+		const params = createParamsForOtherAreaOfWorkSection(aow.name, departmentCodes, courseIdsInLearningPlan, user)
 		courseSuggestions[aow.name as any] = await getSuggestions(
 			params,
 			user
