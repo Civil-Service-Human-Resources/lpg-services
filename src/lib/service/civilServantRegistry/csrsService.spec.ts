@@ -1,7 +1,7 @@
 import {expect} from 'chai'
 import * as sinon from 'sinon'
 
-import {OrganisationalUnit, User} from '../../model'
+import {OrganisationalUnit, User, AgencyToken} from '../../model'
 import * as csrsService from './csrsService'
 import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
 import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
@@ -26,6 +26,85 @@ describe('CsrsService tests', () => {
 	beforeEach(() => {
 		sinon.reset()
 	})
+
+	describe('getOrganisation tests', () => {
+		it('should get organisationalUnit with cache hit', async () => {
+			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
+			organisationalUnit.id = 1
+			csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
+			orgUnitCache.get.withArgs(1).resolves(organisationalUnit)
+			const result = await csrsService.getOrganisation(user, 1)
+
+			expect(result).to.eql(organisationalUnit)
+		})
+
+		it('should get organisationalUnit and parent with cache hit', async () => {
+			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
+			organisationalUnit.id = 1
+			organisationalUnit.parentId = 2
+
+			const parentOrganisationalUnit: OrganisationalUnit = new OrganisationalUnit()
+			parentOrganisationalUnit.id = 2
+
+			orgUnitCache.get.withArgs(1).resolves(organisationalUnit)
+			orgUnitCache.get.withArgs(2).resolves(parentOrganisationalUnit)
+			const result = await csrsService.getOrganisation(user, 1, true)
+
+			expect(result).to.eql(organisationalUnit)
+			expect(result.parent!).to.eql(parentOrganisationalUnit)
+		})
+
+		it('should get organisationalUnit and agency token with cache hit', async () => {
+			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
+			organisationalUnit.id = 1
+
+			const agencyToken = new AgencyToken()
+			agencyToken.uid = 'agencyUID'
+			organisationalUnit.agencyToken = agencyToken
+
+			orgUnitCache.get.withArgs(1).resolves(organisationalUnit)
+			const result = await csrsService.getOrganisation(user, 1, true)
+
+			expect(result.id).to.eql(1)
+			expect(result.agencyToken!.uid).to.eql('agencyUID')
+		})
+
+		it('should get organisationalUnit and set the cache on cache miss', async () => {
+			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
+			organisationalUnit.id = 1
+
+			organisationalUnitClientStub.getOrganisationalUnit.withArgs(1, {includeParents: false}).resolves(organisationalUnit)
+
+			orgUnitCache.get.withArgs(1).resolves(undefined)
+			const result = await csrsService.getOrganisation(user, 1)
+
+			expect(orgUnitCache.set).to.be.calledOnceWith(1, organisationalUnit)
+			expect(result.id).to.eql(1)
+		})
+
+		it('should get organisationalUnit and set the cache on cache miss, as well as set parents', async () => {
+			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
+			organisationalUnit.id = 1
+
+			const parentOrganisationalUnit: OrganisationalUnit = new OrganisationalUnit()
+			parentOrganisationalUnit.id = 2
+
+			organisationalUnit.parentId = 2
+			organisationalUnit.parent = parentOrganisationalUnit
+
+			organisationalUnitClientStub.getOrganisationalUnit.withArgs(1, {includeParents: true}).resolves(organisationalUnit)
+
+			orgUnitCache.get.withArgs(1).resolves(undefined)
+			const result = await csrsService.getOrganisation(user, 1, true)
+
+			expect(orgUnitCache.set).to.be.calledWith(1, organisationalUnit)
+			expect(orgUnitCache.set).to.be.calledWith(2, parentOrganisationalUnit)
+			expect(result.id).to.eql(1)
+			expect(result.parent!.id).to.eql(2)
+			expect(result.parent).to.eql(parentOrganisationalUnit)
+		})
+	})
+
 	describe('Test getOrgHierarchy', () => {
 		it('Should return the correct hierarchy when all orgs exist in the cache', async () => {
 			const grandparent = getOrg('Grandparent', 1)
