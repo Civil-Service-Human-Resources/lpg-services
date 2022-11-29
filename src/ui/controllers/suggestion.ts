@@ -155,11 +155,13 @@ export async function suggestionsByAreaOfWork(
 	const paramsArray = createParamsForAreaOfWorkSection(departmentCodes, user)
 
 	const promises = paramsArray.map(async param => {
-		courseSuggestions[param.areaOfWork!] = await getSuggestions(
-			param,
-			courseIdsInLearningPlan,
-			user
-		)
+		if (param.areaOfWork! !== "I don't know") {
+			courseSuggestions[param.areaOfWork!] = await getSuggestions(
+				param,
+				courseIdsInLearningPlan,
+				user
+			)
+		}
 	})
 	await Promise.all(promises)
 	return courseSuggestions
@@ -173,11 +175,13 @@ export async function suggestionsByOtherAreasOfWork(
 	const courseSuggestions: Record<string, model.Course[]> = {}
 	const paramsArray = createParamsForOtherAreaOfWorkSection(departmentCodes, user)
 	const promises = paramsArray.map(async param => {
-		courseSuggestions[param.areaOfWork!] = await getSuggestions(
-			param,
-			courseIdsInLearningPlan,
-			user
-		)
+		if (param.areaOfWork! !== "I don't know" || !(user.areasOfWork || []).includes(param.areaOfWork!)) {
+			courseSuggestions[param.areaOfWork!] = await getSuggestions(
+				param,
+				courseIdsInLearningPlan,
+				user
+			)
+		}
 	})
 	await Promise.all(promises)
 	return courseSuggestions

@@ -34,13 +34,10 @@ export function createParamsForOtherAreaOfWorkSection(
 	user: User
 ): GetCoursesParams[] {
 	return (user.otherAreasOfWork || [])
-	.map(aow => aow.name)
-	.filter(aow => !(user.areasOfWork || []).includes(aow))
-	.filter(aow => aow !== "I don't know")
 	.map(aow => {
 		return {
-			areaOfWork: aow,
-			excludeAreasOfWork: getAllAreasOfWorkForUser(user).filter(aAow => aow !== aAow).join(","),
+			areaOfWork: aow.name,
+			excludeAreasOfWork: getAllAreasOfWorkForUser(user).filter(aAow => aow.name !== aAow).join(","),
 			excludeDepartments: departmentCodes.join(','),
 			grade: user.grade.code,
 			page: 0,
@@ -54,7 +51,6 @@ export function createParamsForAreaOfWorkSection(
 	user: User
 ): GetCoursesParams[] {
 	return (user.areasOfWork || [])
-	.filter(aow => aow !== "I don't know")
 	.map(aow => {
 		return {
 			areaOfWork: aow,
@@ -76,7 +72,7 @@ export function createParamsForInterestSection(
 			excludeAreasOfWork: getAllAreasOfWorkForUser(user).join(','),
 			excludeDepartments: departmentCodes.join(','),
 			grade: user.grade.code,
-			interest,
+			interest: interest.name,
 			page: 0,
 			size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
 		}
