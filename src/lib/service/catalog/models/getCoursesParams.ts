@@ -5,7 +5,7 @@ import { Course } from '../../../model'
 export interface GetCoursesParams {
 	grade?: string,
 	areaOfWork?: string,
-	department?: string,
+	departments?: string,
 	interest?: string,
 	excludeAreasOfWork?: string,
 	excludeInterests?: string,

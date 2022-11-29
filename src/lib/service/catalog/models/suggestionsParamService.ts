@@ -22,7 +22,7 @@ export function createParamsForDepartmentSection(
 	user: User
 ): GetCoursesParams {
 	return {
-		department: departmentCodes.join(','),
+		departments: departmentCodes.join(','),
 		grade: user.grade.code,
 		page: 0,
 		size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
