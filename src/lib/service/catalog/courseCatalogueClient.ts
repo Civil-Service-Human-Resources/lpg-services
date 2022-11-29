@@ -15,3 +15,14 @@ export async function getCourses(getCoursesParams: GetCoursesParams, user: User)
 	)
 	return plainToClass(GetCoursesResponse, resp)
 }
+
+export async function getCoursesV2(getCoursesParams: GetCoursesParams, user: User) {
+	const resp = client._get<GetCoursesResponse>(
+		{
+			params: getCoursesParams,
+			url: `v2/${URL}`,
+		},
+		user
+	)
+	return plainToClass(GetCoursesResponse, resp)
+}

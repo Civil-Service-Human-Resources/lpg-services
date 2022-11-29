@@ -6,6 +6,10 @@ import * as client from 'lib/service/catalog/courseCatalogueClient'
 import * as template from 'lib/ui/template'
 
 import { GetCoursesParams } from '../../lib/service/catalog/models/getCoursesParams'
+import {
+	createParamsForAreaOfWorkSection, createParamsForDepartmentSection,
+	createParamsForInterestSection
+} from '../../lib/service/catalog/models/suggestionsParamService'
 import { getOrgHierarchy } from '../../lib/service/civilServantRegistry/csrsService'
 import { getFullRecord } from '../../lib/service/learnerRecordAPI/courseRecord/client'
 import {
@@ -94,6 +98,9 @@ export async function suggestionsPage(
 	const user = req.user as model.User
 
 	const courseIdsInLearningPlan = (await getFullRecord(user)).map(c => c.courseId)
+	const hierarchyCodes = (await getOrgHierarchy(user.departmentId!, user)).map(
+		o => o.code
+	)
 
 	const [
 		areaOfWork,
@@ -101,10 +108,10 @@ export async function suggestionsPage(
 		department,
 		interests,
 	] = await Promise.all([
-		suggestionsByAreaOfWork(user, courseIdsInLearningPlan),
-		suggestionsByOtherAreasOfWork(user, courseIdsInLearningPlan),
-		suggestionsByDepartment(user, courseIdsInLearningPlan),
-		suggestionsByInterest(user, courseIdsInLearningPlan),
+		suggestionsByAreaOfWork(user, courseIdsInLearningPlan, hierarchyCodes),
+		suggestionsByOtherAreasOfWork(user, courseIdsInLearningPlan, hierarchyCodes),
+		suggestionsByDepartment(user, courseIdsInLearningPlan, hierarchyCodes),
+		suggestionsByInterest(user, courseIdsInLearningPlan, hierarchyCodes),
 	])
 
 	res.send(
@@ -121,15 +128,15 @@ export async function suggestionsPage(
 
 export async function suggestionsByInterest(
 	user: model.User,
-	courseIdsInLearningPlan: string[]
+	courseIdsInLearningPlan: string[],
+	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.interests || []).map(async interest => {
-		const params = GetCoursesParams.createForInterest(interest.name, user.grade ? user.grade.code : '')
+		const params = createParamsForInterestSection(interest.name, departmentCodes, courseIdsInLearningPlan, user)
 		courseSuggestions[interest.name as any] = await getSuggestions(
 			params,
-			courseIdsInLearningPlan,
 			user
 		)
 	})
@@ -139,15 +146,15 @@ export async function suggestionsByInterest(
 
 export async function suggestionsByAreaOfWork(
 	user: model.User,
-	courseIdsInLearningPlan: string[]
+	courseIdsInLearningPlan: string[],
+	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.areasOfWork || []).map(async aow => {
-		const params = GetCoursesParams.createForAreaOfWork(aow, user.grade ? user.grade.code : '')
+		const params = createParamsForAreaOfWorkSection(aow, departmentCodes, courseIdsInLearningPlan, user)
 		courseSuggestions[aow as any] = await getSuggestions(
 			params,
-			courseIdsInLearningPlan,
 			user
 		)
 	})
@@ -157,15 +164,15 @@ export async function suggestionsByAreaOfWork(
 
 export async function suggestionsByOtherAreasOfWork(
 	user: model.User,
-	courseIdsInLearningPlan: string[]
+	courseIdsInLearningPlan: string[],
+	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 
 	const promises = (user.otherAreasOfWork || []).map(async aow => {
-		const params = GetCoursesParams.createForAreaOfWork(aow.name, user.grade ? user.grade.code : '')
+		const params = createParamsForAreaOfWorkSection(aow.name, departmentCodes, courseIdsInLearningPlan, user)
 		courseSuggestions[aow.name as any] = await getSuggestions(
 			params,
-			courseIdsInLearningPlan,
 			user
 		)
 	})
@@ -175,17 +182,14 @@ export async function suggestionsByOtherAreasOfWork(
 
 export async function suggestionsByDepartment(
 	user: model.User,
-	courseIdsInLearningPlan: string[]
+	courseIdsInLearningPlan: string[],
+	departmentCodes: string[]
 ) {
 	const courseSuggestions: Record<string, model.Course[]> = {}
 	if (user.departmentId) {
-		const hierarchyCodes = (await getOrgHierarchy(user.departmentId, user)).map(
-			o => o.code
-		)
-		const params = GetCoursesParams.createForDepartments(hierarchyCodes, user.grade ? user.grade.code : '')
+		const params = createParamsForDepartmentSection(departmentCodes, courseIdsInLearningPlan, user)
 		courseSuggestions[user.department as any] = await getSuggestions(
 			params,
-			courseIdsInLearningPlan,
 			user
 		)
 	}
@@ -194,7 +198,6 @@ export async function suggestionsByDepartment(
 
 async function getSuggestions(
 	params: GetCoursesParams,
-	courseIdsInLearningPlan: string[],
 	user: model.User
 ): Promise<model.Course[]> {
 
@@ -202,13 +205,11 @@ async function getSuggestions(
 	let hasMore = true
 
 	while (newSuggestions.length <= RECORD_COUNT_TO_DISPLAY && hasMore) {
-		const page = await client.getCourses(params, user)
+		const page = await client.getCoursesV2(params, user)
 		page.results.map(course => {
-			if (newSuggestions.length <= RECORD_COUNT_TO_DISPLAY
-				&& !courseIdsInLearningPlan.includes(course.id)) {
-					newSuggestions.push(course)
-			}
-		})
+			if (newSuggestions.length <= RECORD_COUNT_TO_DISPLAY) {
+				newSuggestions.push(course)
+		}})
 		hasMore = page.totalResults > page.size * (page.page + 1)
 		params.page += 1
 	}
