@@ -10,7 +10,6 @@ export interface GetCoursesParams {
 	excludeAreasOfWork?: string,
 	excludeInterests?: string,
 	excludeDepartments?: string,
-	excludeCourseIDs?: string,
 	page: number,
 	size: number
 }
