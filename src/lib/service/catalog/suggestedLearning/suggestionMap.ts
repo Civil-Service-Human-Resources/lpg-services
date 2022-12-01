@@ -2,7 +2,7 @@ import { Course } from '../../../model'
 import { Suggestion } from './suggestion'
 
 export class SuggestionsMap {
-	private map: Map<Suggestion, Record<string, Course[]>>
+	private map: Map<Suggestion, Record<string, Course[]>> = {}
 
 	addToMap(suggestion: Suggestion, key: string, courses: Course[]) {
 		const mappings = this.getMapping(suggestion)
