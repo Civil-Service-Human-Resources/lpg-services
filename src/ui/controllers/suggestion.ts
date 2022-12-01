@@ -17,6 +17,15 @@ import {
 
 const logger = getLogger('controllers/suggestion')
 
+export function hashArray<T>(records: T[], key: string) {
+	const hash: Record<string, T> = {}
+	for (const entry of records) {
+		const hashIndex: string = (entry as any)[key]
+		hash[hashIndex] = entry
+	}
+	return hash
+}
+
 export async function addToPlan(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const ref = req.query.ref
