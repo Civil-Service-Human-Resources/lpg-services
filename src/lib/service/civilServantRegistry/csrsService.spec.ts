@@ -20,10 +20,10 @@ function getOrg(orgName: string, id: number, parentId?: number) {
 }
 
 describe('CsrsService tests', () => {
-	let orgUnitCache: any
-	let orgTypeaheadCache: any
-	let organisationalUnitClientStub: any
-	let user: any
+	let orgUnitCache: sinon.SinonStubbedInstance<OrganisationalUnitCache>
+	let orgTypeaheadCache: sinon.SinonStubbedInstance<OrganisationalUnitTypeaheadCache>
+	let organisationalUnitClientStub: sinon.SinonStubbedInstance<typeof organisationalUnitClient>
+	let user: sinon.SinonStubbedInstance<User>
 
 	beforeEach(() => {
 		sinon.restore()
