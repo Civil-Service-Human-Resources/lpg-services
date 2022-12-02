@@ -1,16 +1,16 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as https from 'https'
-import {getLogger} from 'lib/logger'
-
 import * as axiosLogger from 'lib/axiosLogger'
+import * as config from 'lib/config'
+import * as passport from 'lib/config/passport'
 import * as extended from 'lib/extended'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as template from 'lib/ui/template'
 
-import * as config from 'lib/config'
-import * as passport from 'lib/config/passport'
+import * as csrsService from '../../lib/service/civilServantRegistry/csrsService'
 
 export interface Profile {
 	updateSuccessful: boolean
@@ -194,15 +194,11 @@ export async function renderEditPage(req: express.Request, res: express.Response
 
 			break
 		case 'department':
-			const email = req.user.userName
-			const domain = email.split('@')[1]
-			response = await registry.getWithoutHalWithAuth('/organisationalUnits/flat/' + domain + '/', req)
-			if (response.data !== '') {
-				response.data.map((x: any) => {
-					options[x.href.replace(config.REGISTRY_SERVICE_URL, '')] = x.formattedName
-				})
-				value = req.user.department
-			}
+			const orgDropdown = await csrsService.getOrganisationDropdown(req.user)
+			orgDropdown.map(o => {
+				options[`/organisationalUnits/${o.id}`] = o.formattedName
+			})
+			value = req.user.department
 			optionType = OptionTypes.Typeahead
 			break
 		case 'grade':

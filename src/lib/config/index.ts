@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import 'reflect-metadata'
 
 export const ONE_YEAR_IN_SECONDS = 31536000
 
@@ -133,6 +134,13 @@ export const REDIS = set({
 	host: env.REDIS_HOST || 'localhost',
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
+})
+
+export const ORG_REDIS = set({
+	defaultTTL: +(env.ORG_REDIS_TTL || '604800'),
+	host: env.ORG_REDIS_HOST || 'localhost',
+	password: env.ORG_REDIS_PASSWORD || '',
+	port: +(env.ORG_REDIS_PORT || '6379'),
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT

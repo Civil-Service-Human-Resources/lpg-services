@@ -1,5 +1,4 @@
 /* tslint:disable:no-var-requires */
-import 'reflect-metadata'
 const appInsights = require('applicationinsights')
 import * as config from 'lib/config'
 
@@ -29,6 +28,11 @@ import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
 import { getLogger } from 'lib/logger'
+import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
+/* tslint:disable:max-line-length */
+import { OrganisationalUnitCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
+import { OrganisationalUnitTypeaheadCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
+/* tslint:enable */
 import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
@@ -66,6 +70,8 @@ app.enable('trust proxy')
 const corsOptions = corsConfig.setCorsOptions()
 app.use(cors(corsOptions))
 
+// Caches
+
 const RedisStore = connectRedis(session)
 const redisClient = redis.createClient({
 	auth_pass: config.REDIS.password,
@@ -89,6 +95,18 @@ app.use(
 		}),
 	})
 )
+
+const orgCacheRedisClient = redis.createClient({
+	auth_pass: config.ORG_REDIS.password,
+	host: config.ORG_REDIS.host,
+	no_ready_check: true,
+	port: config.ORG_REDIS.port,
+})
+
+const orgCache = new OrganisationalUnitCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
+const orgTypeaheadCache = new OrganisationalUnitTypeaheadCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
+csrsService.setCaches(orgCache, orgTypeaheadCache)
+
 app.use(flash())
 
 app.use(bodyParser.json({strict: false}))
