@@ -1,8 +1,18 @@
-import {expect} from 'chai'
-import {User} from 'lib/model'
+import { expect } from 'chai'
+import { Course, OrganisationalUnit, User } from 'lib/model'
+import * as sinon from 'sinon'
 
+import * as courseCatalogueClient from '../../catalog/courseCatalogueClient'
+import * as csrsService from '../../civilServantRegistry/csrsService'
+import * as courseRecordClient from '../../learnerRecordAPI/courseRecord/client'
 import * as service from './suggestedLearningService'
-import {Suggestion} from './suggestion'
+import { Suggestion } from './suggestion'
+
+function fetchBasicOrg(code: string) {
+	const org = new OrganisationalUnit()
+	org.code = code
+	return org
+}
 
 const sampleUser = User.create({
 	grade: {code: '7', name: 'Grade 7'},
@@ -25,6 +35,12 @@ const sampleUser = User.create({
 const sampleDepartmentCodes = ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT']
 
 describe('suggestedLearningService tests', () => {
+	// afterEach(() => {
+	// 	sinon.restore()
+	// })
+	beforeEach(() => {
+		sinon.reset()
+	})
 	describe('User detail functions', () => {
 		it('Should test that getAreasOfWorkForUser', () => {
 			const areasOfWork = service.getAreasOfWorkForUser(sampleUser)
@@ -145,6 +161,42 @@ describe('suggestedLearningService tests', () => {
 				expect(euSection.key).to.eql('EU')
 				expect(euSection.suggestion).to.eql(Suggestion.INTERESTS)
 			})
+		})
+	})
+
+	describe('fetch suggested learning tests', () => {
+		it('Should get the suggested learning correctly for each section', async () => {
+			const courseCatalogueClientStub = sinon.stub(courseCatalogueClient)
+			courseCatalogueClientStub.getCoursesV2.resolves({
+				page: 0,
+				results: [],
+				size: 0,
+				totalResults: 0,
+			})
+			const courseRecordClientStub = sinon.stub(courseRecordClient)
+			const csrsServiceStub = sinon.stub(csrsService)
+			courseRecordClientStub.getFullRecord.resolves([new Course('A'), new Course('B'), new Course('C')])
+			csrsServiceStub.getOrgHierarchy.resolves(sampleDepartmentCodes.map(fetchBasicOrg))
+
+			const map = await service.fetchSuggestedLearning(sampleUser)
+
+			const department = map.getMapping(Suggestion.DEPARTMENT)
+			const areaOfWork = map.getMapping(Suggestion.AREA_OF_WORK)
+			const otherAreasOfWork = map.getMapping(Suggestion.OTHER_AREAS_OF_WORK)
+			const interests = map.getMapping(Suggestion.INTERESTS)
+
+			expect(department.ORG).to.eql([])
+
+			expect(areaOfWork.Analysis).to.eql([])
+
+			expect(otherAreasOfWork.Communications).to.eql([])
+			expect(otherAreasOfWork.DDaT).to.eql([])
+			expect(otherAreasOfWork["I don't know"]).to.eql([])
+
+			expect(interests.Commercial).to.eql([])
+			expect(interests.EU).to.eql([])
+
+			expect(courseCatalogueClientStub.getCoursesV2.getCalls().length).to.eql(6)
 		})
 	})
 })

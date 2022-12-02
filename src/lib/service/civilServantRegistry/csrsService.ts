@@ -65,7 +65,7 @@ export async function getOrgHierarchy(
 	const org = await organisationalUnitCache.get(organisationId)
 	if (org == null) {
 		const orgWithAllParents = await getOrganisationFromApi(user, organisationId, true)
-		return orgWithAllParents.getHierarchyAsArray()
+		hierarchy.push(...orgWithAllParents.getHierarchyAsArray())
 	} else {
 		hierarchy.push(org)
 		if (org.parentId) {
