@@ -19,7 +19,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 		const [learningRecord, requiredLearningResults] = await Promise.all([
 			learnerRecord.getRawLearningRecord(user),
-			catalog.findRequiredLearning(user),
+			catalog.findRequiredLearning(user, res.locals.departmentHierarchyCodes),
 		])
 		const requiredLearning = requiredLearningResults.results
 		const learningHash = suggestionController.hashArray(

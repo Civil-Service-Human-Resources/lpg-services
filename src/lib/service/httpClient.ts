@@ -1,7 +1,8 @@
-import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import * as https from 'https'
 
-import {getLogger} from '../logger'
+import { ResourceNotFoundError } from '../exception/ResourceNotFoundError'
+import { getLogger } from '../logger'
 import * as model from '../model'
 
 const logger = getLogger('service/httpClient')
@@ -65,6 +66,9 @@ export class HttpClient {
 				const data = JSON.stringify(e.response.data)
 				str = `${str} with a status ${e.response.status}. data: ${data}`
 				logger.error(str)
+				if (e.response.status === 404) {
+					throw new ResourceNotFoundError(req.url!)
+				}
 			}
 			throw e
 		}

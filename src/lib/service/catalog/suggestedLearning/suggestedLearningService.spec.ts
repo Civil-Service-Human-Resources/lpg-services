@@ -1,18 +1,11 @@
 import { expect } from 'chai'
-import { Course, OrganisationalUnit, User } from 'lib/model'
+import { Course, User } from 'lib/model'
 import * as sinon from 'sinon'
 
 import * as courseCatalogueClient from '../../catalog/courseCatalogueClient'
-import * as csrsService from '../../civilServantRegistry/csrsService'
 import * as courseRecordClient from '../../learnerRecordAPI/courseRecord/client'
 import * as service from './suggestedLearningService'
 import { Suggestion } from './suggestion'
-
-function fetchBasicOrg(code: string) {
-	const org = new OrganisationalUnit()
-	org.code = code
-	return org
-}
 
 const sampleUser = User.create({
 	grade: {code: '7', name: 'Grade 7'},
@@ -174,11 +167,9 @@ describe('suggestedLearningService tests', () => {
 				totalResults: 0,
 			})
 			const courseRecordClientStub = sinon.stub(courseRecordClient)
-			const csrsServiceStub = sinon.stub(csrsService)
 			courseRecordClientStub.getFullRecord.resolves([new Course('A'), new Course('B'), new Course('C')])
-			csrsServiceStub.getOrgHierarchy.resolves(sampleDepartmentCodes.map(fetchBasicOrg))
 
-			const map = await service.fetchSuggestedLearning(sampleUser)
+			const map = await service.fetchSuggestedLearning(sampleUser, sampleDepartmentCodes)
 
 			const department = map.getMapping(Suggestion.DEPARTMENT)
 			const areaOfWork = map.getMapping(Suggestion.AREA_OF_WORK)

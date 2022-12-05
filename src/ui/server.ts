@@ -1,15 +1,6 @@
 /* tslint:disable:no-var-requires */
 const appInsights = require('applicationinsights')
-import * as config from 'lib/config'
-
-appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
-.setAutoCollectConsole(true)
-
-appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-ui"
-appInsights.start()
-
 /* tslint:enable */
-
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as connectRedis from 'connect-redis'
@@ -18,27 +9,32 @@ import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as fs from 'fs'
-import * as redis from 'redis'
-import { URL } from 'url'
-
-import * as lusca from 'lusca'
-import * as serveStatic from 'serve-static'
-
+import * as config from 'lib/config'
 import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
 import { getLogger } from 'lib/logger'
 import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 /* tslint:disable:max-line-length */
-import { OrganisationalUnitCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
-import { OrganisationalUnitTypeaheadCache } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
+import {
+	OrganisationalUnitCache
+} from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
+import {
+	OrganisationalUnitTypeaheadCache
+} from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 /* tslint:enable */
 import * as i18n from 'lib/service/translation'
-import {ProfileChecker} from 'lib/ui/profileChecker'
+import { ProfileChecker } from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
+import * as lusca from 'lusca'
+import * as redis from 'redis'
+import * as serveStatic from 'serve-static'
+import { URL } from 'url'
 
+import { requiresDepartmentHierarchy } from '../lib/middleware/requiresDepartmentHierarchy'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
+import * as errorController from './controllers/errorHandler'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
@@ -48,10 +44,14 @@ import * as searchController from './controllers/search'
 import * as skillsController from './controllers/skills'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
+import { completeVideoModule } from './controllers/video'
 import * as xApiController from './controllers/xapi'
 
-import * as errorController from './controllers/errorHandler'
-import { completeVideoModule } from './controllers/video'
+appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
+.setAutoCollectConsole(true)
+
+appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-ui"
+appInsights.start()
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
@@ -243,7 +243,10 @@ app.post('/profile/email', asyncHandler(profileController.updateEmail))
 app.get('/profile/:profileDetail', asyncHandler(userController.renderEditPage))
 app.post('/profile/:profileDetail', asyncHandler(userController.tryUpdateProfile))
 
-app.get('/courses/:courseId', asyncHandler(courseController.display))
+app.get('/courses/:courseId',
+	asyncHandler(requiresDepartmentHierarchy),
+	asyncHandler(courseController.display)
+)
 
 app.use(
 	'/courses/:courseId/delete',
@@ -255,7 +258,11 @@ app.use(
 	asyncHandler(courseController.displayModule)
 )
 
-app.get('/learning-record', asyncHandler(learningRecordController.display))
+app.get('/learning-record',
+	asyncHandler(requiresDepartmentHierarchy),
+	asyncHandler(learningRecordController.display)
+)
+
 app.get(
 	'/learning-record/feedback',
 	asyncHandler(learningRecordFeedbackController.listItemsForFeedback)
@@ -278,6 +285,7 @@ app.get(
 app.get('/search', asyncHandler(searchController.search))
 app.get(
 	'/suggestions-for-you',
+	asyncHandler(requiresDepartmentHierarchy),
 	asyncHandler(suggestionController.suggestionsPage)
 )
 app.get(
@@ -297,7 +305,7 @@ app.post('/skills/questions/:questionIndex', asyncHandler(skillsController.answe
 app.get('/skills/summary/:answerSubmissionId', asyncHandler(skillsController.quizSummary))
 app.get('/skills/quiz-history', asyncHandler(skillsController.quizHistory))
 
-app.get('/home', asyncHandler(homeController.home))
+app.get('/home', asyncHandler(requiresDepartmentHierarchy), asyncHandler(homeController.home))
 
 app.use(bookingRouter.router)
 

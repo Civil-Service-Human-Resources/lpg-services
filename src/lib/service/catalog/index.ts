@@ -6,8 +6,6 @@ import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
 
-import { getOrgHierarchy } from '../civilServantRegistry/csrsService'
-
 const logger = getLogger('catalog')
 
 const http: AxiosInstance = axios.create({
@@ -126,17 +124,18 @@ export async function search(
 }
 
 export async function findRequiredLearning(
-	user: model.User
+	user: model.User,
+	departmentHierarchyCodes: string[]
 ): Promise<api.PageResults> {
 	try {
-		const usersOrganisationHierarchy = await getOrgHierarchy(user.departmentId!, user)
-		const usersOrganisationHierarchyCodes = usersOrganisationHierarchy.map(o => o.code).join(",")
+		// const usersOrganisationHierarchy = await getOrgHierarchy(user.departmentId!, user)
+		// const usersOrganisationHierarchyCodes = usersOrganisationHierarchy.map(o => o.code).join(",")
 
 		const response = await http.get(
-			`/courses?mandatory=true&department=${usersOrganisationHierarchyCodes}`,
+			`/courses?mandatory=true&department=${departmentHierarchyCodes}`,
 			{headers: {Authorization: `Bearer ${user.accessToken}`}}
 		)
-		return await convertNew(response.data, user, usersOrganisationHierarchy) as api.PageResults
+		return await convertNew(response.data, user, departmentHierarchyCodes) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
 	}
@@ -181,23 +180,7 @@ export async function list(ids: string[], user: model.User) {
 	}
 }
 
-export async function listAll(user: model.User): Promise<api.PageResults> {
-	try {
-		const response = await http.get(`/courses?size=999&page=0`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return convert(response.data) as api.PageResults
-	} catch (e) {
-		throw new Error(`Error listing all courses - ${e}`)
-	}
-}
-
-function convert(data: any, user?: model.User) {
-	if (data.results) {
-		data.results = data.results.map((d: any) => model.Course.create(d, user))
-	}
-	return data
-}
-
-async function convertNew(data: any, user?: model.User, usersOrganisationHierarchy?: model.OrganisationalUnit[]) {
+async function convertNew(data: any, user?: model.User, usersOrganisationHierarchy?: string[]) {
 	if (data.results) {
 		data.results = await Promise.all(
 			data.results.map(async (d: any) => await model.CourseFactory.create(d, user, usersOrganisationHierarchy))

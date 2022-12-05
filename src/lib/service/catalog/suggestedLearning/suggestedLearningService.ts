@@ -1,7 +1,6 @@
 import { Course, User } from 'lib/model'
 import * as client from 'lib/service/catalog/courseCatalogueClient'
 
-import { getOrgHierarchy } from '../../civilServantRegistry/csrsService'
 import { getFullRecord } from '../../learnerRecordAPI/courseRecord/client'
 import { GetCoursesParams } from '../models/getCoursesParams'
 import { Suggestion } from './suggestion'
@@ -26,10 +25,10 @@ export function getInterestsForUser(user: User): string[] {
 	return (user.interests || []).map(interest => interest.name)
 }
 
-export async function fetchSuggestedLearning(user: User): Promise<SuggestionsMap> {
+export async function fetchSuggestedLearning(user: User, departmentHierarchyCodes: string[]): Promise<SuggestionsMap> {
 	const courseIdsInLearningPlan = (await getFullRecord(user)).map(c => c.courseId)
 
-	const params = await extractSuggestionParams(user)
+	const params = await extractSuggestionParams(user, departmentHierarchyCodes)
 	const map = new SuggestionsMap()
 
 	await Promise.all(
@@ -46,17 +45,14 @@ export async function fetchSuggestedLearning(user: User): Promise<SuggestionsMap
 
 }
 
-export async function extractSuggestionParams(user: User) {
+export async function extractSuggestionParams(user: User, departmentHierarchyCodes: string[]) {
 	const params = []
-	if (user.department && user.departmentId) {
-		const hierarchyCodes = (await getOrgHierarchy(user.departmentId, user)).map(o => o.code)
-		params.push(
-			...createParamsForOtherAreasOfWorkSection(hierarchyCodes, user),
-			...createParamsForAreaOfWorkSection(hierarchyCodes, user),
-			...createParamsForDepartmentSection(hierarchyCodes, user),
-			...createParamsForInterestsSection(hierarchyCodes, user)
-		)
-	}
+	params.push(
+		...createParamsForOtherAreasOfWorkSection(departmentHierarchyCodes, user),
+		...createParamsForAreaOfWorkSection(departmentHierarchyCodes, user),
+		...createParamsForDepartmentSection(departmentHierarchyCodes, user),
+		...createParamsForInterestsSection(departmentHierarchyCodes, user)
+	)
 	return params
 }
 
