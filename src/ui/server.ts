@@ -31,7 +31,7 @@ import * as redis from 'redis'
 import * as serveStatic from 'serve-static'
 import { URL } from 'url'
 
-import { requiresDepartmentHierarchy } from '../lib/middleware/requiresDepartmentHierarchy'
+import { requiresDepartmentHierarchy } from '../lib/ui/requiresDepartmentHierarchy'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
 import * as errorController from './controllers/errorHandler'
