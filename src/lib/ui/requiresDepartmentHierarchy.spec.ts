@@ -77,6 +77,6 @@ describe('requiresDepartmentHierarchy tests', () => {
 		csrsServiceStub.getOrgHierarchy.withArgs(123).throws(new ResourceNotFoundError('organisation unit not found'))
 		await requiresDepartmentHierarchy(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation')
+		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/suggestions-for-you')
 	})
 })

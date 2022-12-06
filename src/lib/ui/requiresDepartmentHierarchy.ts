@@ -19,7 +19,7 @@ export async function requiresDepartmentHierarchy(req: Request, res: Response, n
 
 				/* tslint:disable-next-line:no-empty */
 				req.session!.save(() => {})
-				res.redirect('/profile/organisation')
+				res.redirect(`/profile/organisation?originalUrl=${req.originalUrl}`)
 			}
 		}
 	}
