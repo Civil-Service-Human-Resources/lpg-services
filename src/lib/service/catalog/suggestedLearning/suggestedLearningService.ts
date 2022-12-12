@@ -72,7 +72,7 @@ export function createParamsForAreaOfWorkSection(departmentCodes: string[], user
 			aow !== I_DONT_KNOW_AOW
 				? {
 						areaOfWork: aow,
-						excludeDepartments: departmentCodes.join(','),
+						excludeDepartments: departmentCodes,
 						grade: user.grade.code,
 						page: 0,
 						size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
@@ -87,13 +87,13 @@ export function createParamsForOtherAreasOfWorkSection(departmentCodes: string[]
 	const areasOfWork = getAreasOfWorkForUser(user)
 	return otherAreasOfWork.map(areaOfWork => {
 		const filteredOtherAreasOfWork = otherAreasOfWork.filter(otherAreaOfWork => areaOfWork !== otherAreaOfWork)
-		const excludeAreasOfWork = [...areasOfWork, ...filteredOtherAreasOfWork].join(',')
+		const excludeAreasOfWork = [...areasOfWork, ...filteredOtherAreasOfWork]
 		const param =
 			areaOfWork !== I_DONT_KNOW_AOW && !areasOfWork.includes(areaOfWork)
 					? {
 						areaOfWork,
 						excludeAreasOfWork,
-						excludeDepartments: departmentCodes.join(','),
+						excludeDepartments: departmentCodes,
 						grade: user.grade.code,
 						page: 0,
 						size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
@@ -104,12 +104,12 @@ export function createParamsForOtherAreasOfWorkSection(departmentCodes: string[]
 }
 
 export function createParamsForInterestsSection(departmentCodes: string[], user: User): SuggestionSection[] {
-	const excludeAreasOfWork = [...getAreasOfWorkForUser(user), ...getOtherAreasOfWorkForUser(user)].join(',')
+	const excludeAreasOfWork = [...getAreasOfWorkForUser(user), ...getOtherAreasOfWorkForUser(user)]
 	return getInterestsForUser(user).map(interest => {
-		const excludeInterests = getInterestsForUser(user).filter(otherInterest => otherInterest !== interest).join(",")
+		const excludeInterests = getInterestsForUser(user).filter(otherInterest => otherInterest !== interest)
 		const param: GetCoursesParams = {
 			excludeAreasOfWork,
-			excludeDepartments: departmentCodes.join(','),
+			excludeDepartments: departmentCodes,
 			excludeInterests,
 			grade: user.grade.code,
 			interest,

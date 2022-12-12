@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import * as https from 'https'
+import * as qs from 'qs'
 
 import { ResourceNotFoundError } from '../exception/ResourceNotFoundError'
 import { getLogger } from '../logger'
@@ -58,6 +59,9 @@ export class HttpClient {
 			req.headers = {Authorization: `Bearer ${user.accessToken}`}
 		}
 		try {
+			req.paramsSerializer = (params: any) => {
+				return qs.stringify(params, {arrayFormat: "repeat"})
+			}
 			const res = await this.http.request<T>(req)
 			return res.data
 		} catch (e) {

@@ -1,11 +1,11 @@
-import { expect } from 'chai'
-import { Course, User } from 'lib/model'
+import {expect} from 'chai'
+import {Course, User} from 'lib/model'
 import * as sinon from 'sinon'
 
 import * as courseCatalogueClient from '../../catalog/courseCatalogueClient'
 import * as courseRecordClient from '../../learnerRecordAPI/courseRecord/client'
 import * as service from './suggestedLearningService'
-import { Suggestion } from './suggestion'
+import {Suggestion} from './suggestion'
 
 const sampleUser = User.create({
 	grade: {code: '7', name: 'Grade 7'},
@@ -71,7 +71,7 @@ describe('suggestedLearningService tests', () => {
 				const section = sections[0]
 				expect(section.params!).to.eql({
 					areaOfWork: 'Analysis',
-					excludeDepartments: 'ORG,ORG-PARENT,ORG-GRANDPARENT',
+					excludeDepartments: ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT'],
 					grade: '7',
 					page: 0,
 					size: 200,
@@ -97,8 +97,8 @@ describe('suggestedLearningService tests', () => {
 				const commSection = sections[0]
 				expect(commSection.params!).to.eql({
 					areaOfWork: 'Communications',
-					excludeAreasOfWork: `Analysis,DDaT,I don't know`,
-					excludeDepartments: 'ORG,ORG-PARENT,ORG-GRANDPARENT',
+					excludeAreasOfWork: ['Analysis', 'DDaT', `I don't know`],
+					excludeDepartments: ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT'],
 					grade: '7',
 					page: 0,
 					size: 200,
@@ -109,8 +109,8 @@ describe('suggestedLearningService tests', () => {
 				const ddatSection = sections[1]
 				expect(ddatSection.params!).to.eql({
 					areaOfWork: 'DDaT',
-					excludeAreasOfWork: `Analysis,Communications,I don't know`,
-					excludeDepartments: 'ORG,ORG-PARENT,ORG-GRANDPARENT',
+					excludeAreasOfWork: ['Analysis', 'Communications', `I don't know`],
+					excludeDepartments: ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT'],
 					grade: '7',
 					page: 0,
 					size: 200,
@@ -130,9 +130,9 @@ describe('suggestedLearningService tests', () => {
 				const sections = service.createParamsForInterestsSection(sampleDepartmentCodes, sampleUser)
 				const commercialSection = sections[0]
 				expect(commercialSection.params!).to.eql({
-					excludeAreasOfWork: `Analysis,Communications,DDaT,I don't know`,
-					excludeDepartments: 'ORG,ORG-PARENT,ORG-GRANDPARENT',
-					excludeInterests: 'EU',
+					excludeAreasOfWork: ['Analysis', 'Communications', 'DDaT', `I don't know`],
+					excludeDepartments: ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT'],
+					excludeInterests: ['EU'],
 					grade: '7',
 					interest: 'Commercial',
 					page: 0,
@@ -143,9 +143,9 @@ describe('suggestedLearningService tests', () => {
 
 				const euSection = sections[1]
 				expect(euSection.params!).to.eql({
-					excludeAreasOfWork: `Analysis,Communications,DDaT,I don't know`,
-					excludeDepartments: 'ORG,ORG-PARENT,ORG-GRANDPARENT',
-					excludeInterests: 'Commercial',
+					excludeAreasOfWork: ['Analysis', 'Communications', 'DDaT', `I don't know`],
+					excludeDepartments: ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT'],
+					excludeInterests: ['Commercial'],
 					grade: '7',
 					interest: 'EU',
 					page: 0,
