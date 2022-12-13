@@ -139,17 +139,6 @@ export async function findRequiredLearning(
 	}
 }
 
-export class ApiParameters {
-	constructor(
-		public areaOfWork: string[],
-		public department: string[],
-		public interest: string[],
-		public grade: string,
-		public page: number = 0,
-		public size: number = 6
-	) {}
-}
-
 export async function get(id: string, user: model.User) {
 	try {
 		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
