@@ -128,8 +128,6 @@ export async function findRequiredLearning(
 	departmentHierarchyCodes: string[]
 ): Promise<api.PageResults> {
 	try {
-		// const usersOrganisationHierarchy = await getOrgHierarchy(user.departmentId!, user)
-		// const usersOrganisationHierarchyCodes = usersOrganisationHierarchy.map(o => o.code).join(",")
 
 		const response = await http.get(
 			`/courses?mandatory=true&department=${departmentHierarchyCodes}`,
