@@ -5,7 +5,7 @@ import {setLastUpdated, setState} from '../../courseRecord/patchFactory'
 import {RecordState} from '../../models/record'
 import {patchModuleRecord} from '../../moduleRecord/client'
 import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
-import {clearResult, clearScore, setCompletionDate, setUpdatedAt} from '../../moduleRecord/patchFactory'
+import {clearResult, clearScore, setUpdatedAt} from '../../moduleRecord/patchFactory'
 import {WorkerType} from '../workerType'
 import {ActionWorker} from './ActionWorker'
 
@@ -40,7 +40,6 @@ export class InitialiseActionWorker extends ActionWorker {
 					setState(RecordState.InProgress),
 					clearResult(),
 					clearScore(),
-					setCompletionDate(new Date()),
 					setUpdatedAt(new Date()),
 				]
 			)
