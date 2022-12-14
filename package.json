@@ -117,7 +117,7 @@
 		"notifications-node-client": "4.1.0",
 		"passport": "0.4.0",
 		"passport-oauth2": "1.4.0",
-		"passport-saml": "0.32.1",
+		"passport-saml": "3.2.4",
 		"protobufjs": "6.8.6",
 		"qs": "^6.11.0",
 		"redis": "^2.8.0",
