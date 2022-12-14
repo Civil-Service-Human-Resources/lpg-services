@@ -116,7 +116,7 @@
 		"node-sass": "6.0.0",
 		"notifications-node-client": "4.1.0",
 		"passport": "0.4.0",
-		"passport-oauth2": "1.4.0",
+		"passport-oauth2": "1.6.1",
 		"passport-saml": "0.32.1",
 		"protobufjs": "6.8.6",
 		"qs": "^6.11.0",
