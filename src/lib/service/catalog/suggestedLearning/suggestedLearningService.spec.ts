@@ -28,9 +28,6 @@ const sampleUser = User.create({
 const sampleDepartmentCodes = ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT']
 
 describe('suggestedLearningService tests', () => {
-	// afterEach(() => {
-	// 	sinon.restore()
-	// })
 	beforeEach(() => {
 		sinon.reset()
 	})

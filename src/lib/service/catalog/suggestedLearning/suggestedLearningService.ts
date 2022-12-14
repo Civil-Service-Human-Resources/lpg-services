@@ -7,9 +7,9 @@ import { Suggestion } from './suggestion'
 import { SuggestionsMap } from './suggestionMap'
 import { SuggestionSection } from './suggestionSection'
 
-const DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC = 200
-const RECORD_COUNT_TO_DISPLAY = 6
-const I_DONT_KNOW_AOW = "I don't know"
+const DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC: number = 200
+const RECORD_COUNT_TO_DISPLAY: number = 6
+const I_DONT_KNOW_AOW: string = "I don't know"
 
 export function getAreasOfWorkForUser(user: User): string[] {
 	// NOTE: areasOfWork can either be an array of strings OR an array made up

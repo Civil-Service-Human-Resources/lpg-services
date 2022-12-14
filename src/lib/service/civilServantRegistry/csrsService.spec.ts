@@ -121,7 +121,6 @@ describe('CsrsService tests', () => {
 			orgUnitCache.get.withArgs(2).resolves(parent)
 			orgUnitCache.get.withArgs(3).resolves(child)
 
-			// csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
@@ -138,7 +137,6 @@ describe('CsrsService tests', () => {
 				.withArgs(3, {includeParents: true}, user)
 				.resolves(child)
 
-			// csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
@@ -153,7 +151,6 @@ describe('CsrsService tests', () => {
 				.withArgs(2, {includeParents: true}, user)
 				.resolves(parent)
 
-			// csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
 		})
