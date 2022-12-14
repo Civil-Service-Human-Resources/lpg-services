@@ -8,7 +8,6 @@ import * as moment from 'moment'
 import {Duration} from 'moment'
 
 import { ModuleNotFoundError } from './exception/moduleNotFound'
-import { getOrgHierarchy } from './service/civilServantRegistry/csrsService'
 
 export interface LineManager {
 	email: string
@@ -17,22 +16,11 @@ export interface LineManager {
 
 const getAudienceForCourse = async (
 	audiences: Audience[], user: User,
-	usersOrganisationHierarchy?: OrganisationalUnit[]) => {
+	depHierarchy: string[]) => {
 	let matchedAudience
 	let matchedRelevance = -1
 	let matchedHighPriorityAudience
 	let matchedHighestPriorityAudience
-	let departmentHierarchy: OrganisationalUnit[] = []
-
-	if (user.departmentId && !usersOrganisationHierarchy) {
-		if (usersOrganisationHierarchy) {
-			departmentHierarchy = usersOrganisationHierarchy
-		} else {
-			departmentHierarchy = await getOrgHierarchy(user.departmentId, user)
-		}
-	}
-
-	const depHierarchy: string[] = departmentHierarchy.map(d => d.code)
 
 	for await (const audience of audiences) {
 		//Get the relevance of each audience
@@ -73,7 +61,7 @@ const getAudienceForCourse = async (
 }
 
 export class CourseFactory {
-	static async create(data: any, user?: User, usersOrganisationHierarchy?: OrganisationalUnit[]) {
+	static async create(data: any, user?: User, usersOrganisationHierarchy?: string[]) {
 		const course = new Course(data.id)
 		course.description = data.description
 		course.learningOutcomes = data.learningOutcomes
@@ -86,7 +74,7 @@ export class CourseFactory {
 		const audiences: Audience[] = (data.audiences || []).map(Audience.create)
 		course.audiences = audiences
 
-		if (user) {
+		if (user && usersOrganisationHierarchy) {
 			course.audience = await getAudienceForCourse(audiences, user, usersOrganisationHierarchy)
 		}
 

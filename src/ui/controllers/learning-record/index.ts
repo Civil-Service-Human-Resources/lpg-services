@@ -73,7 +73,7 @@ export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 
 	const [requiredLearning, learningRecord] = await Promise.all([
-		catalog.findRequiredLearning(req.user),
+		catalog.findRequiredLearning(req.user, res.locals.departmentHierarchyCodes),
 		learnerRecord.getRawLearningRecord(req.user, [], ['COMPLETED']),
 	])
 

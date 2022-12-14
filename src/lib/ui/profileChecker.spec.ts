@@ -117,6 +117,7 @@ describe('ProfileChecker tests', () => {
 			originalUrl: '/home',
 			user: {
 				department: 'co',
+				departmentId: 123,
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
@@ -145,6 +146,7 @@ describe('ProfileChecker tests', () => {
 					1, 'Analysis',
 				],
 				department: 'co',
+				departmentId: 123,
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
@@ -174,6 +176,7 @@ describe('ProfileChecker tests', () => {
 					1, 'Analysis',
 				],
 				department: 'co',
+				departmentId: 123,
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
@@ -209,6 +212,7 @@ describe('ProfileChecker tests', () => {
 					1, 'Analysis',
 				],
 				department: 'co',
+				departmentId: 123,
 				givenName: 'Test User',
 				interests: [
 					{
