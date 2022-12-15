@@ -37,7 +37,6 @@ const learnerRecordVerbs = [
 export async function proxy(ireq: express.Request, res: express.Response) {
 	let req = ireq as extended.CourseRequest
 	logger.debug(`Proxying xAPI request to ${req.path}`)
-	logger.debug('XAPI request req.body: ' + JSON.stringify(req.body))
 
 	if (req.query.method) {
 		// This indicates a request has been converted to a POST. The request body will contain headers and parameter
@@ -46,6 +45,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		req = await unwrapPost(req)
 	}
 
+	logger.debug('XAPI request req.body: ' + JSON.stringify(req.body))
 	const agent = {
 		account: {
 			homePage: xapi.HomePage,
