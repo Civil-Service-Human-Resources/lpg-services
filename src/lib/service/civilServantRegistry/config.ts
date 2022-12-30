@@ -1,11 +1,11 @@
 import axios from 'axios'
 import * as https from 'https'
+import * as config from 'lib/config'
 
-import * as config from '../../config'
-import { LearnerRecordClient } from './learnerRecordClient'
+import { HttpClient } from '../httpClient'
 
 const http = axios.create({
-	baseURL: config.LEARNER_RECORD.url,
+	baseURL: config.REGISTRY_SERVICE_URL,
 	httpsAgent: new https.Agent({
 		keepAlive: true,
 		maxFreeSockets: 15,
@@ -14,4 +14,4 @@ const http = axios.create({
 	timeout: config.REQUEST_TIMEOUT,
 })
 
-export const client = new LearnerRecordClient(http)
+export const client = new HttpClient(http)

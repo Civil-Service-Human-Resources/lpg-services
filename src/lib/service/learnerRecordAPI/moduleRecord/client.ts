@@ -1,14 +1,14 @@
 import { plainToClass } from 'class-transformer'
 import * as model from '../../../model'
 import {JsonPatch} from '../../shared/models/JsonPatch'
-import {makeRequest, patch} from '../baseConfig'
+import {client} from '../baseConfig'
 import {ModuleRecord} from './models/moduleRecord'
 import {ModuleRecordInput} from './models/moduleRecordInput'
 
 const URL = '/module_records'
 
 export async function patchModuleRecord(jsonPatch: JsonPatch[], user: model.User, moduleRecordId: number) {
-	const res =  await patch<ModuleRecord>(
+	const res =  await client.patch<ModuleRecord>(
 		{
 			data: jsonPatch,
 			url: `${URL}/${moduleRecordId}`,
@@ -19,7 +19,7 @@ export async function patchModuleRecord(jsonPatch: JsonPatch[], user: model.User
 }
 
 export async function createModuleRecord(moduleRecord: ModuleRecordInput, user: model.User) {
-	const res = await makeRequest<ModuleRecord>(
+	const res = await client.makeRequest<ModuleRecord>(
 		{
 			data: moduleRecord,
 			method: 'POST',

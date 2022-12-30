@@ -4,6 +4,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
+import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 import * as template from 'lib/ui/template'
 import * as striptags from 'striptags'
 
@@ -160,10 +161,15 @@ export async function search(ireq: express.Request, res: express.Response) {
 }
 
 async function getDepartmentData(user: model.User, selectedDepartments: string[]) {
-	const allDepartments = await registry.getAllOrganisationUnits()
-
+	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
 	const yourDepartment = allDepartments.find(department => department.code === user.department)
+	/**
+	 * NOTE: 20221117 - the code below will sort/slice the department list based on ID. This is to
+	 * replicate the current functionality of only showing the first 20 departments, in order of
+	 * ID.
+	 */
 	const otherDepartments = allDepartments.filter(department => department.code !== user.department)
+											.sort((a, b) => a.id - b.id).slice(0, 20)
 
 	return {
 		other: otherDepartments,

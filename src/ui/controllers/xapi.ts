@@ -45,6 +45,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		req = await unwrapPost(req)
 	}
 
+	logger.debug('XAPI request req.body: ' + JSON.stringify(req.body))
 	const agent = {
 		account: {
 			homePage: xapi.HomePage,
@@ -65,7 +66,6 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 
 	let body = req.body
-	logger.debug('PROCESSING XAPI VERB req.body: ' + JSON.stringify(body))
 	if (body) {
 		if (Array.isArray(body)) {
 			body = body.map(statement => updateStatement(statement, agent, req))
