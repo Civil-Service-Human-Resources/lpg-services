@@ -1,0 +1,6 @@
+export enum Suggestion {
+	DEPARTMENT,
+	AREA_OF_WORK,
+	OTHER_AREAS_OF_WORK,
+	INTERESTS,
+}

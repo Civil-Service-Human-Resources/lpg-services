@@ -162,12 +162,6 @@ export async function getWithoutHalWithAuth(path: string, request: Express.Reque
 	}
 }
 
-export async function getAllOrganisationUnits(): Promise<any[]> {
-	const path: string = "/organisationalUnits"
-	const response = await getWithoutHal(path)
-	return response.data._embedded.organisationalUnits
-}
-
 export async function getAllProfessions(): Promise<any[]> {
 	const path: string = "/professions"
 	const response = await getWithoutHal(path)

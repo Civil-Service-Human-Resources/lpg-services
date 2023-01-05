@@ -13,13 +13,7 @@ export async function handleError(
 ) {
 	try {
 		logger.error(
-			'Error handling request for',
-			request.method,
-			request.url,
-			request.body,
-			'\n',
-			error.stack
-		)
+			`Error handling request for ${request.method} ${request.url}\nStack: ${error.stack}`)
 		if (error.response && error.response.status === 401) {
 			return response.redirect('/sign-out')
 		}

@@ -3,6 +3,9 @@
         <p class="no-margin">
             <a class="link-back" href="/suggestions-for-you">Find another course</a>
         </p>
+        {#if course.status === "Archived"}
+            <ArchivedWarning />
+        {/if}
         <h1 class="heading-xlarge heading heading--page-heading ">
             {module.title || course.title}
         </h1>
@@ -16,7 +19,9 @@
                 <div>{@html $toHtml(course.learningOutcomes)}</div>
                 {/if}
 
-                <a class="button" href="/courses/{course.id}/{module.id}">Start this learning</a>
+                {#if course.status !== "Archived"}
+                    <a class="button" href="/courses/{course.id}/{module.id}">Start this learning</a>
+                {/if}
             </div>
             <div class="column-one-third">
                 {#if courseDetails.length} {#each courseDetails as dataRows}
@@ -30,6 +35,7 @@
 <script>
 	import Page from '../../component/Page.html'
     import Rightbox from '../../component/Rightbox.html'
+    import ArchivedWarning from '../../component/ArchivedWarning.html'
 
 	export default {
 		data() {
@@ -39,7 +45,8 @@
 
 		components: {
 			Page,
-			Rightbox
+			Rightbox,
+            ArchivedWarning
 		}
 	}
 </script>

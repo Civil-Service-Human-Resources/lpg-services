@@ -1110,22 +1110,20 @@
 </header>
 <div id="global-header-bar"></div>
 <div class="phase-banner">
-    <p><strong class="phase-tag">BETA</strong> <span>This is a new service – your <a class="lpg-feedback-link" href="https://www.smartsurvey.co.uk/s/QNJEE/">feedback</a> will help us to improve it.</span></p>
+    <p><strong class="phase-tag">BETA</strong> This service is currently in Beta.</p>
 </div>
 <main class="elements-index" id="content" role="main">
     <div class="main-content">
         <div class="container">
             <div class="grid-row">
                 <div class="column-two-thirds">
-                    <h1 class="heading-xlarge">Ouch</h1>
+                    <h1 class="heading-xlarge">Sorry, there is a problem with this service</h1>
 
                     {#if isNonProd}
                     <p id="error-time">{errorTime}</p>
                     <p id="error-stack">{error}</p>
                     {:else}
-                    <p id="generic-error" class="lede">Something went horribly wrong. But don't worry, we're looking into it.</p>
-                    <p class="generic-error">Please <a href="/sign-out">log-out</a> and try again.</p>
-                    <p id="error-message">Please wait a few minutes and try again.</p>
+                    <p class="generic-error">We're looking into it. Please <a href='/sign-out'>sign out</a> and try again.</p>
                     {/if}
                 </div>
             </div>
@@ -1143,7 +1141,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">© Crown copyright</a>
+                <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/">© Crown copyright</a>
             </div>
         </div>
     </div>

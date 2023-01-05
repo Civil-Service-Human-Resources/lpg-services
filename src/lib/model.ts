@@ -1,14 +1,85 @@
-import _ = require("lodash")
+import _ = require('lodash')
 
+import { plainToClass } from 'class-transformer'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
 import {Duration} from 'moment'
 
+import { ModuleNotFoundError } from './exception/moduleNotFound'
+
 export interface LineManager {
 	email: string
 	name?: string
+}
+
+const getAudienceForCourse = async (
+	audiences: Audience[], user: User,
+	depHierarchy: string[]) => {
+	let matchedAudience
+	let matchedRelevance = -1
+	let matchedHighPriorityAudience
+	let matchedHighestPriorityAudience
+
+	for await (const audience of audiences) {
+		//Get the relevance of each audience
+		const relevance = await audience.getRelevance(user!, depHierarchy)
+
+		//If the relevance of the audience is same or more then the previous audience
+		//then keep processing the further audiences in the course to get the highest relevance audience
+		if (relevance >= matchedRelevance) {
+			if (relevance === 4) {
+				if (
+					(matchedHighestPriorityAudience && audience.requiredBy! < matchedHighestPriorityAudience.requiredBy!) ||
+					!matchedHighestPriorityAudience
+				) {
+					audience.mandatory = true
+					matchedAudience = audience
+					matchedHighestPriorityAudience = audience
+					matchedRelevance = 4
+				}
+			} else if (relevance === 3) {
+				if (
+					(matchedHighPriorityAudience && audience.requiredBy! < matchedHighPriorityAudience.requiredBy!) ||
+					!matchedHighPriorityAudience
+				) {
+					audience.mandatory = true
+					matchedAudience = audience
+					matchedHighPriorityAudience = audience
+					matchedRelevance = 3
+				}
+			} else {
+				audience.mandatory = false
+				matchedAudience = audience
+				matchedRelevance = relevance
+			}
+		}
+	}
+
+	return matchedAudience
+}
+
+export class CourseFactory {
+	static async create(data: any, user?: User, usersOrganisationHierarchy?: string[]) {
+		const course = new Course(data.id)
+		course.description = data.description
+		course.learningOutcomes = data.learningOutcomes
+		course.shortDescription = data.shortDescription
+		course.title = data.title
+		course.status = data.status
+
+		course.modules = (data.modules || []).map(Module.create)
+
+		const audiences: Audience[] = (data.audiences || []).map(Audience.create)
+		course.audiences = audiences
+
+		if (user && usersOrganisationHierarchy) {
+			course.audience = await getAudienceForCourse(audiences, user, usersOrganisationHierarchy)
+		}
+
+		return course
+	}
 }
 
 export class Course {
@@ -36,7 +107,7 @@ export class Course {
 			let minRequiredByAudienceWithRelevanceOne = null
 			for (const audience of audiences) {
 				//Get the relevance of each audience
-				const relevance = audience.getRelevance(user!)
+				const relevance = audience.getRelevance(user!, [])
 				//If the relevance of the audience is same or more then the previous audience
 				//then keep processing the further audiences in the course to get the highest relevance audience
 				if (relevance >= matchedRelevance) {
@@ -144,6 +215,14 @@ export class Course {
 		return this.modules
 	}
 
+	getRequiredModules() {
+		return this.getModules().filter(m => !m.optional)
+	}
+
+	getOptionalModules() {
+		return this.getModules().filter(m => m.optional)
+	}
+
 	isAssociatedLearningModule(id: number) {
 		return this.modules[id].associatedLearning
 	}
@@ -167,22 +246,22 @@ export class Course {
 		// tslint:disable-next-line:only-arrow-functions
 		this.modules.forEach(function(module, i) {
 			if (module.type === "face-to-face") {
-				if (module.events && module.events.length > 0)  {
+				if (module.events && module.events.length > 0) {
 					const event = module.events[0]
 					let durationInSeconds = 0
 					if (event.dateRanges) {
 						event.dateRanges.forEach(dateRange => {
 							const tempStartDate = new Date()
-							const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
-							const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
-							const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
+							const startTimeInHours = _.get(dateRange, 'startTime', 0).split(':')[0]
+							const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(':')[1]
+							const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(':')[2]
 							tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
 							const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
 
 							const tempEndDate = new Date()
-							const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
-							const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
-							const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
+							const endTimeInHours = _.get(dateRange, 'endTime', 0).split(':')[0]
+							const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(':')[1]
+							const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(':')[2]
 							tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
 							const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
 
@@ -230,13 +309,9 @@ export class Course {
 
 	getDateRanges() {
 		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(
-				m => !!m.eventId && m.state !== 'SKIPPED'
-			)
+			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
 			if (bookedModuleRecord) {
-				const bookedModule = this.modules.find(
-					m => m.id === bookedModuleRecord.moduleId
-				)
+				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
 				if (bookedModule) {
 					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
 					if (event) {
@@ -341,6 +416,14 @@ export class Course {
 		}
 		return false
 	}
+
+	getModule(moduleId: string) {
+		const module = this.modules.find(m => m.id === moduleId)
+		if (!module) {
+			throw new ModuleNotFoundError(this.id, moduleId)
+		}
+		return module
+	}
 }
 
 export class CourseModule {
@@ -404,8 +487,7 @@ export class Module {
 	}
 
 	getDuration() {
-
-		if (this.type === "face-to-face") {
+		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
 				const startTimeHours = this.events[0].startDate.getHours()
 				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
@@ -417,24 +499,24 @@ export class Module {
 			}
 		}
 
-		if (this.type === "face-to-face") {
-			if (this.events && this.events.length > 0)  {
+		if (this.type === 'face-to-face') {
+			if (this.events && this.events.length > 0) {
 				sortEvents(this.events)
 				const event = this.events[0]
 				let durationInSeconds = 0
 
 				event.dateRanges.forEach(dateRange => {
 					const tempStartDate = new Date()
-					const startTimeInHours = _.get(dateRange, 'startTime', 0).split(":")[0]
-					const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(":")[1]
-					const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(":")[2]
+					const startTimeInHours = _.get(dateRange, 'startTime', 0).split(':')[0]
+					const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(':')[1]
+					const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(':')[2]
 					tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
 					const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
 
 					const tempEndDate = new Date()
-					const endTimeInHours = _.get(dateRange, 'endTime', 0).split(":")[0]
-					const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(":")[1]
-					const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(":")[2]
+					const endTimeInHours = _.get(dateRange, 'endTime', 0).split(':')[0]
+					const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(':')[1]
+					const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(':')[2]
 					tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
 					const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
 
@@ -474,12 +556,8 @@ export class Event {
 
 		if (data.dateRanges[0]) {
 			dateRanges = data.dateRanges
-			startDate = new Date(
-				data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime
-			)
-			endDate = new Date(
-				data.dateRanges[0].date + 'T' + data.dateRanges[0].endTime
-			)
+			startDate = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime)
+			endDate = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].endTime)
 		}
 
 		let location = ''
@@ -571,25 +649,37 @@ export class Audience {
 		this.mandatory = !value || value === 'false'
 	}
 
-	getRelevance(user: User) {
+	async getRelevance(user: User, depHierarchy: string[]): Promise<number> {
 		let relevance = -1
 
 		if (!(this.areasOfWork.length || this.departments.length || this.grades.length)) {
 			return 0
 		}
 
-		if (user.areasOfWork && this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length) {
+		if (
+			user.areasOfWork &&
+			this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length
+		) {
 			relevance += 1
 		}
-		if (user.department && this.departments.indexOf(user.department) > -1) {
-			//If the user's department matches to any of the departments in the audience then it is a relevant audience
-			relevance += 1
-			if (this.requiredBy) {
-				//For the matching department, if audience has a required by date then this audience makes the course as mandatory
-				//which increases the relevance further.
-				relevance += 1
+
+		let depScore = 0
+		for (const department of this.departments) {
+			const depIndex = depHierarchy.indexOf(department)
+			if (depIndex > -1) {
+				depScore = 1
+				if (this.requiredBy) {
+					// 4 = mandatory for the user's immediate dep
+					if (depIndex === 0) {
+						return 4
+					}
+					// 3 = mandatory for the user's parent/gparent dep
+					return 3
+				}
 			}
 		}
+		relevance += depScore
+
 		if (user.grade && this.grades.indexOf(user.grade.code) > -1) {
 			relevance += 1
 		}
@@ -720,11 +810,75 @@ export class Feedback {
 	relevance: number
 }
 
+export class AgencyToken {
+	token: string
+	uid: string
+	agencyDomains: AgencyDomain[]
+}
+
+export class AgencyDomain {
+	id: string
+	domain: string
+}
+
 export class OrganisationalUnit {
+	public static create(data: any): OrganisationalUnit {
+		const org = new OrganisationalUnit()
+		org.id = data.id
+		org.code = data.code
+		org.abbreviation = data.abbreviation
+		org.name = data.name
+		org.parent = data.parent
+		org.parentId = data.parentId
+		org.agencyToken = plainToClass(AgencyToken, data.agencyToken)
+		org.formattedName = data.formattedName ? data.formattedName : ''
+		org.children = (data.children || []).map(OrganisationalUnit.create)
+		org.paymentMethods = data.paymentMethods
+		return org
+	}
 	id: number
 	code: string
 	name: string
+	abbreviation?: string
+	parent?: OrganisationalUnit
+	parentId: number
+	agencyToken: AgencyToken
+	formattedName: string
+	children: OrganisationalUnit[] = []
 	paymentMethods: string[]
+
+	getHierarchyAsArray() {
+		const hierarchy: OrganisationalUnit[] = [this]
+		let currentParent = this.parent
+		while (currentParent) {
+			hierarchy.push(currentParent)
+			currentParent = currentParent.parent
+		}
+		return hierarchy
+	}
+
+	extractAllOrgs() {
+		const orgs: OrganisationalUnit[] = [this]
+		if (this.children) {
+			for (const child of this.children) {
+				orgs.push(...child.extractAllOrgs())
+			}
+		}
+		return orgs
+	}
+
+	doesDomainExistInToken(domain: string) {
+		let exists = false
+		if (this.agencyToken
+			&& this.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
+				exists = true
+		}
+		return exists
+	}
+
+	formatNameWithAbbrev() {
+		return (this.abbreviation && this.abbreviation !== '') ? `${this.name} (${this.abbreviation})` : this.name
+	}
 }
 
 export class User {
@@ -740,6 +894,7 @@ export class User {
 		user.userId = data.userId
 		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
 		user.department = data.organisationalUnit ? data.organisationalUnit.code : data.department
+		user.departmentId = data.organisationalUnit ? data.organisationalUnit.id : data.departmentId
 		user.givenName = data.fullName ? data.fullName : data.givenName
 		user.grade = data.grade
 		if (data.profession || data.areasOfWork) {
@@ -761,6 +916,9 @@ export class User {
 		return user
 	}
 
+	/**
+	 * The UID
+	 */
 	readonly id: string
 	readonly userName: string
 	readonly sessionIndex: string
@@ -768,6 +926,7 @@ export class User {
 	readonly accessToken: string
 
 	department?: string
+	departmentId?: number
 	areasOfWork?: string[]
 	lineManager?: LineManager
 	otherAreasOfWork?: any[]

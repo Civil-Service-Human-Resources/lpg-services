@@ -1,11 +1,10 @@
-import axios, {AxiosInstance} from 'axios'
-import * as https from "https"
+import axios, { AxiosInstance } from 'axios'
+import * as https from 'https'
 import * as axiosLogger from 'lib/axiosLogger'
 import * as config from 'lib/config'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
-import * as query from 'querystring'
 
 const logger = getLogger('catalog')
 
@@ -125,51 +124,25 @@ export async function search(
 }
 
 export async function findRequiredLearning(
-	user: model.User
+	user: model.User,
+	departmentHierarchyCodes: string[]
 ): Promise<api.PageResults> {
 	try {
+
 		const response = await http.get(
-			`/courses?mandatory=true&department=${user.department}`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
-			// This is the new endpoint in learning-catalogue to call when you chose
-			// to replace the old endpoint called from above
-			//	`/courses/getrequiredlearning`, {headers: {Authorization: `Bearer ${user.accessToken}`}}
+			`/courses?mandatory=true&department=${departmentHierarchyCodes}`,
+			{headers: {Authorization: `Bearer ${user.accessToken}`}}
 		)
-		return convert(response.data, user) as api.PageResults
+		return await convertNew(response.data, user, departmentHierarchyCodes) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
-	}
-}
-
-export class ApiParameters {
-	constructor(
-		public areaOfWork: string[],
-		public department: string,
-		public interest: string[],
-		public grade: string,
-		public page: number = 0,
-		public size: number = 6
-	) {}
-	serialize(): string {
-		return query.stringify(this as any)
-	}
-}
-
-export async function findSuggestedLearningWithParameters(
-	user: model.User,
-	parameters: string
-): Promise<api.PageResults> {
-	try {
-		const response = await http.get(`/courses?${parameters}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return convert(response.data, user) as api.PageResults
-	} catch (e) {
-		throw new Error(`Error finding suggested learning - ${e}`)
 	}
 }
 
 export async function get(id: string, user: model.User) {
 	try {
 		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return model.Course.create(response.data, user)
+		return await model.CourseFactory.create(response.data, user)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
 			return null
@@ -194,18 +167,11 @@ export async function list(ids: string[], user: model.User) {
 	}
 }
 
-export async function listAll(user: model.User): Promise<api.PageResults> {
-	try {
-		const response = await http.get(`/courses?size=999&page=0`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return convert(response.data) as api.PageResults
-	} catch (e) {
-		throw new Error(`Error listing all courses - ${e}`)
-	}
-}
-
-function convert(data: any, user?: model.User) {
+async function convertNew(data: any, user?: model.User, usersOrganisationHierarchy?: string[]) {
 	if (data.results) {
-		data.results = data.results.map((d: any) => model.Course.create(d, user))
+		data.results = await Promise.all(
+			data.results.map(async (d: any) => await model.CourseFactory.create(d, user, usersOrganisationHierarchy))
+		)
 	}
 	return data
 }

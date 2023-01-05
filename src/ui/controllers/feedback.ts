@@ -25,7 +25,9 @@ Got error: ${err}`
 	}
 	if (req.xhr) {
 		res.send(`<h2>Thank you for your help.</h2>
-<p>If you have more extensive feedback, please <a href="mailto:feedback@cslearning.gov.uk">send us an email</a>.</p>
+<p>If you have more extensive feedback, please
+<a href="mailto:support@governmentcampus.co.uk">send us an email</a>.
+</p>
     `)
 		return
 	}

@@ -1,7 +1,6 @@
 import * as config from '../extension/config'
 import loginPage, {selectors} from '../page/login'
 
-const smartSurveyLink = 'https://www.smartsurvey.co.uk/s/QNJEE/'
 const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
 
 describe('Login page funtionality', () => {
@@ -26,11 +25,6 @@ describe('Login page funtionality', () => {
 	it('Should display an error message when the incorrect login details are entered', () => {
 		loginPage.login('error@wron.g', 'details')
 		expect(browser.isVisible(selectors.loginFailure)).toBe(true)
-	})
-
-	it('Should display a feedback link with the correct survey link', () => {
-		const feedback = browser.getAttribute(selectors.feedbackLink, 'href')
-		expect(feedback).toEqual(smartSurveyLink)
 	})
 
 	it('Should display a link to the user allowing them to get in touch to create account', () => {

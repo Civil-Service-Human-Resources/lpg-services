@@ -1,21 +1,9 @@
 import * as dotenv from 'dotenv'
-import * as fs from 'fs'
 
 export const PROFILE = process.env.ENV_PROFILE || 'local'
 
-const envFile = '/keybase/team/lpg/dev/testenv'
-
-try {
-	if (fs.statSync(envFile).isFile()) {
-		dotenv.config({path: envFile})
-	}
-} catch (err) {
-	if (!process.env.CI) {
-		warn(`
-!!! Unable to load the env file at ${envFile} !!!
-
-`)
-	}
+if (PROFILE === 'development') {
+	dotenv.config()
 }
 
 function getEnv(obj: any, attr: string) {
@@ -27,14 +15,6 @@ function set<T>(localValue: T, nonLocalValue: T): T {
 		return localValue
 	}
 	return nonLocalValue
-}
-
-function warn(msg: string) {
-	if (process.stdout.isTTY && /-256(color)?$/i.test(process.env.TERM || '')) {
-		console.log(`\u001b[33m${msg}\u001b[0m`)
-	} else {
-		console.log(msg)
-	}
 }
 
 const env: Record<string, string> = new Proxy({}, {get: getEnv})

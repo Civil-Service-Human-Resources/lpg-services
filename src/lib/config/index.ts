@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import * as fs from 'fs'
+import 'reflect-metadata'
 
 export const ONE_YEAR_IN_SECONDS = 31536000
 
@@ -9,18 +9,7 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
-	const envFile = '/volumes/keybase/team/lpg/dev/dotenv'
-	try {
-		if (!fs.statSync(envFile).isFile()) {
-			throw new Error(`File not found: ${envFile}`)
-		}
-		dotenv.config({path: envFile})
-	} catch (err) {
-		warn(`
-!!! Unable to load the env file at ${envFile} !!!
-
-`)
-	}
+	dotenv.config()
 }
 
 function getEnv(obj: any, attr: string) {
@@ -33,14 +22,6 @@ function set<T>(defaultValue: T, envValues: Record<string, T> = {}): T {
 		return defaultValue
 	}
 	return val
-}
-
-function warn(msg: string) {
-	if (process.stdout.isTTY && /-256(color)?$/i.test(process.env.TERM || '')) {
-		console.log(`\u001b[33m${msg}\u001b[0m`)
-	} else {
-		console.log(msg)
-	}
 }
 
 const env: Record<string, string> = new Proxy({}, {get: getEnv})
@@ -153,6 +134,13 @@ export const REDIS = set({
 	host: env.REDIS_HOST || 'localhost',
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
+})
+
+export const ORG_REDIS = set({
+	defaultTTL: +(env.ORG_REDIS_TTL || '604800'),
+	host: env.ORG_REDIS_HOST || 'localhost',
+	password: env.ORG_REDIS_PASSWORD || '',
+	port: +(env.ORG_REDIS_PORT || '6379'),
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT

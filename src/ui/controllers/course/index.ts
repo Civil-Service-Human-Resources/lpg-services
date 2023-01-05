@@ -2,13 +2,23 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
 import * as youtube from 'lib/youtube'
+
+import {
+	RemoveCourseFromLearningplanActionWorker
+	// tslint:disable-next-line:max-line-length
+} from '../../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
+import {
+	CompletedActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
+import {
+	InitialiseActionWorker
+} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
 
 export interface CourseDetail {
 	label: string
@@ -83,54 +93,48 @@ export async function displayModule(
 	ireq: express.Request,
 	res: express.Response
 ) {
-	const req = ireq as extended.CourseRequest
+		const req = ireq as extended.CourseRequest
 
-	const course = req.course
-	const module = req.module!
+		const course = req.course
+		const module = req.module!
 
-	switch (module.type) {
-		case 'elearning':
-			res.redirect(
-				`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
-				encodeURIComponent(course.title)}` +
-				`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
-					course.id
-				}/${module.id}/xapi/&actor={"name":"Noop"}`
-			)
-			break
-		case 'face-to-face':
-			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
-			break
-		case 'link':
-		case 'file':
-			await xapi.record(req, course, xapi.Verb.Experienced, undefined, module)
-			res.redirect(module.url!)
-			break
-		case 'video':
-			const sessionId = await xapi.record(
-				req,
-				course,
-				xapi.Verb.Initialised,
-				undefined,
-				module
-			)
+		switch (module.type) {
+			case 'elearning':
+				res.redirect(
+					`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
+					encodeURIComponent(course.title)}` +
+					`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
+						course.id
+					}/${module.id}/xapi/&actor={"name":"Noop"}`
+				)
+				break
+			case 'face-to-face':
+				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
+				break
+			case 'link':
+			case 'file':
+				logger.debug("STARTING")
+				await new CompletedActionWorker(course, req.user, module).applyActionToLearnerRecord()
+				res.redirect(module.url!)
+				break
+			case 'video':
+				await new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
 
-			res.send(
-				template.render(`course/display-video`, req, res, {
-					course,
-					courseDetails: getCourseDetails(req, course, module),
-					module,
-					sessionId,
-					video: !module.url!.search('/http(.+)youtube(.*)/i')
-						? null
-						: await youtube.getBasicInfo(module.url!),
-				})
-			)
-			break
-		default:
-			logger.debug(`Unknown module type: ${module.type}`)
-			res.sendStatus(500)
-	}
+				res.send(
+					template.render(`course/display-video`, req, res, {
+						course,
+						courseDetails: getCourseDetails(req, course, module),
+						module,
+						video: !module.url!.search('/http(.+)youtube(.*)/i')
+							? null
+							: await youtube.getBasicInfo(module.url!),
+					})
+				)
+				break
+			default:
+				logger.debug(`Unknown module type: ${module.type}`)
+				res.sendStatus(500)
+		}
 }
 
 export async function display(ireq: express.Request, res: express.Response) {
@@ -162,6 +166,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'blended':
 			const record = await learnerRecord.getRecord(req.user, course)
 			const modules = course.modules.map(cm => {
+				logger.debug(`Mapping module ${cm.id}`)
 				const moduleRecord = record
 					? (record.modules || []).find(m => m.moduleId === cm.id)
 					: null
@@ -300,7 +305,7 @@ export async function markCourseDeleted(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	await xapi.record(req, req.course, xapi.Verb.Archived)
+	await new RemoveCourseFromLearningplanActionWorker(req.course, req.user).applyActionToLearnerRecord()
 
 	req.flash(
 		'successTitle',
