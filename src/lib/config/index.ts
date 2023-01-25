@@ -82,7 +82,7 @@ export const LEARNER_RECORD = set({
 	url: env.LEARNER_RECORD_URL || 'http://localhost:9000',
 })
 
-export const LOGGING_LEVEL = env.LOGGING_LEVEL
+export const LOGGING_LEVEL = env.LOGGING_LEVEL || 'INFO'
 
 export const LPG_UI_SERVER =
 	env.LPG_UI_SERVER || 'http://localhost:3001'
