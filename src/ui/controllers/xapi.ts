@@ -38,6 +38,12 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	let req = ireq as extended.CourseRequest
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
+	// Introduced filtering to remove excess e-learning xAPI state activities being persisted in learning locker
+	if (req.path === '/activities/state') {
+		logger.debug(`Filtered e-learning xAPI state activities`)
+		return res.sendStatus(200)
+	}
+
 	if (req.query.method) {
 		// This indicates a request has been converted to a POST. The request body will contain headers and parameter
 		// required for actually completing the request.
