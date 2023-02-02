@@ -39,7 +39,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
 	// Introduced filtering to remove excess e-learning xAPI state activities being persisted in learning locker
-	if (req.path === '/activities/state') {
+	if (req.path === '/activities/state' && config.IGNORE_STATES_FEATURE_FLAG) {
 		logger.debug(`Filtered e-learning xAPI /activities/state`)
 		return res.sendStatus(200)
 	}

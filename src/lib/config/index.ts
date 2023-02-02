@@ -84,6 +84,8 @@ export const LEARNER_RECORD = set({
 
 export const LOGGING_LEVEL = env.LOGGING_LEVEL || 'INFO'
 
+export const IGNORE_STATES_FEATURE_FLAG = [env.IGNORE_STATES_FEATURE_FLAG].includes('TRUE') || true
+
 export const LPG_UI_SERVER =
 	env.LPG_UI_SERVER || 'http://localhost:3001'
 
