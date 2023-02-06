@@ -187,15 +187,19 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 			case xapi.Verb.Attempted:
 			case xapi.Verb.Initialised:
 			case xapi.Verb.Launched:
+				logger.debug(`LC-1627: xapi.ts.syncToLearnerRecord.xapi.Verb.Attempted/Initialised/Launched`)
 				actionWorker = new InitialiseActionWorker(course, user, module)
 				break
 			case xapi.Verb.Completed:
+				logger.debug(`LC-1627: xapi.ts.syncToLearnerRecord.xapi.Verb.Completed`)
 				actionWorker = new CompletedActionWorker(course, user, module)
 				break
 			case xapi.Verb.Passed:
+				logger.debug(`LC-1627: xapi.ts.syncToLearnerRecord.xapi.Verb.Passed`)
 				actionWorker = new PassModuleActionWorker(course, user, module)
 				break
 			case xapi.Verb.Failed:
+				logger.debug(`LC-1627: xapi.ts.syncToLearnerRecord.xapi.Verb.Failed`)
 				actionWorker = new FailModuleActionWorker(course, user, module)
 				break
 			default:

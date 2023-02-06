@@ -35,6 +35,7 @@ export class HttpClient {
 				logMsg += ` Params: ${JSON.stringify(response.config.params)}`
 			}
 			logger.debug(logMsg)
+			logger.debug(`LC-1627: httpClient.ts.response.logMsg: ` + logMsg)
 			return response
 		})
 		return new HttpClient(http)
@@ -53,6 +54,7 @@ export class HttpClient {
 			logMsg += ` Params: ${stringedParams}`
 		}
 		logger.debug(logMsg)
+		logger.debug(`LC-1627: httpClient.ts.makeRequest.logMsg: ` + logMsg)
 		if (req.headers) {
 			req.headers.Authorization = `Bearer ${user.accessToken}`
 		} else {
