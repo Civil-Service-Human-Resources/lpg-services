@@ -21,26 +21,26 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 	async applyActionToLearnerRecord() {
 		try {
 			const courseRecord = await getCourseRecord(this.course.id, this.user)
-			logger.debug(`Applying action ${this.getType().toString()} to module ${this.module.id} ` +
-			`for course ${this.course.id} and user ${this.user.id}`)
+			logger.debug(`LC-1627: ActionWorker.ts.applyActionToLearnerRecord: Applying action ${this.getType().toString()} ` +
+				`to module ${this.module.id} for course ${this.course.id} and user ${this.user.id}`)
 			if (!courseRecord) {
-				logger.debug(`Creating course record`)
+				logger.debug(`LC-1627: ActionWorker.ts.Creating course record`)
 				await this.createCourseRecord()
 			} else {
 				let moduleRecord = courseRecord.getModuleRecord(this.module.id)
 				if (!moduleRecord) {
-					logger.debug(`Creating module record`)
+					logger.debug(`LC-1627: ActionWorker.ts.Creating module record`)
 					moduleRecord = await this.createModuleRecord()
 				} else {
-					logger.debug(`Updating module record`)
+					logger.debug(`LC-1627: ActionWorker.ts.Updating module record`)
 					moduleRecord = await this.updateModuleRecord(moduleRecord)
 				}
 				courseRecord.upsertModuleRecord(moduleRecord.id, moduleRecord)
-				logger.debug(`Updating course record`)
+				logger.debug(`LC-1627: ActionWorker.ts.Updating course record`)
 				await this.updateCourseRecord(courseRecord)
 			}
 		} catch (e) {
-			logger.error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
+			logger.error(`LC-1627: ActionWorker.ts.Failed to apply action to the course record. UserID: ${this.user.id}, ` +
 			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}, with action ${this.getType()}. Error: ${e}`)
 		}
 	}

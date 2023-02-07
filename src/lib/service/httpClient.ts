@@ -71,7 +71,7 @@ export class HttpClient {
 			if (e.response) {
 				const data = JSON.stringify(e.response.data)
 				str = `${str} with a status ${e.response.status}. data: ${data}`
-				logger.error(str)
+				logger.error(`LC-1627: httpClient.ts.error: ` + str)
 				if (e.response.status === 404) {
 					throw new ResourceNotFoundError(req.url!)
 				}
