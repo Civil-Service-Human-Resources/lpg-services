@@ -60,7 +60,7 @@ export const COURSE_CATALOGUE = set({
 })
 
 export const CSL_SERVICE = set({
-	url: env.CSL_SERVICE_URL || 'http://localhost:9003'
+	url: env.CSL_SERVICE_URL || 'http://localhost:9003',
 })
 
 export const FEEDBACK_RECIPIENTS = [
