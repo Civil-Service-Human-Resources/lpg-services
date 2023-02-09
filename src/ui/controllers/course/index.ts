@@ -8,6 +8,7 @@ import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
+import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
 
 import {
 	RemoveCourseFromLearningplanActionWorker
@@ -100,13 +101,8 @@ export async function displayModule(
 
 		switch (module.type) {
 			case 'elearning':
-				res.redirect(
-					`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
-					encodeURIComponent(course.title)}` +
-					`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
-						course.id
-					}/${module.id}/xapi/&actor={"name":"Noop"}`
-				)
+				const launchELearningResponse = await cslServiceClient.launchELearningModule(course.id, module.id, req.user)
+				res.redirect(launchELearningResponse.launchLink)
 				break
 			case 'face-to-face':
 				res.redirect(`/book/${course.id}/${module.id}/choose-date`)

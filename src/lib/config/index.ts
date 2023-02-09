@@ -59,6 +59,10 @@ export const COURSE_CATALOGUE = set({
 	url: env.COURSE_CATALOGUE_URL || 'http://localhost:9001',
 })
 
+export const CSL_SERVICE = set({
+	url: env.CSL_SERVICE_URL || 'http://localhost:9003'
+})
+
 export const FEEDBACK_RECIPIENTS = [
 	env.FEEDBACK_RECIPIENT || 'feedback@cslearning.gov.uk',
 ]
