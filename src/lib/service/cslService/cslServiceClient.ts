@@ -3,7 +3,7 @@ import {plainToInstance} from '../../../../node_modules/class-transformer'
 import {User} from '../../model'
 import {HttpClient} from '../httpClient'
 import {LaunchModuleRequest} from './models/launchModuleRequest'
-import {LaunchModuleResponse} from './models/LaunchModuleResponse'
+import {LaunchModuleResponse} from './models/launchModuleResponse'
 
 const client = HttpClient.createFromParams(config.CSL_SERVICE.url, config.REQUEST_TIMEOUT)
 
