@@ -11,15 +11,13 @@ trigger:
       - '*'
 
 variables:
-  - name: acr_repo
-    value: lpg-services
   - name: acr_repo_suffix
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
       value: 'prod'
     ${{ else }}:
       value: 'test'
 
-name: '${{ variables.acr_repo }}.$(SourceBranchName).$(Rev:r)'
+name: '$(SourceBranchName)-$(Rev:r)'
 
 pool:
   vmImage: ubuntu-latest
@@ -62,7 +60,7 @@ steps:
   - task: Docker@2
     inputs:
       containerRegistry: 'lpgregistry ACR'
-      repository: '${{ variables.acr_repo }}/${{ variables.acr_repo_suffix }}'
+      repository: 'lpg-services/${{ variables.acr_repo_suffix }}'
       command: 'buildAndPush'
       Dockerfile: '**/Dockerfile'
       tags: '$(Build.SourceBranchName)'
