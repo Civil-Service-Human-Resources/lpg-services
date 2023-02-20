@@ -98,7 +98,7 @@ export async function displayModule(
 
 		switch (module.type) {
 			case 'elearning':
-				const launchELearningResponse = await cslServiceClient.launchELearningModule(course.id, module.id, req.user)
+				const launchELearningResponse = await cslServiceClient.launchELearningModule(course, module, req.user)
 				res.redirect(launchELearningResponse.launchLink)
 				break
 			case 'face-to-face':
