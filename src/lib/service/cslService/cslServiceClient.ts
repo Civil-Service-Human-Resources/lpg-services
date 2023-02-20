@@ -26,7 +26,6 @@ export async function launchELearningModule(
 		},
 		learnerFirstName: user.givenName || '',
 		learnerLastName: '',
-		redirectOnExitUrl: `${config.LPG_UI_SERVER}/learning-record/${course.id}/${module.id}`,
 	}
 	const resp = await client._post<LaunchModuleRequest, LaunchModuleResponse>(
 		{
