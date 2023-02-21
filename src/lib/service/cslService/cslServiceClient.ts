@@ -1,5 +1,5 @@
+import { plainToInstance } from 'class-transformer'
 import * as config from 'lib/config'
-import { plainToInstance } from '../../../../node_modules/class-transformer'
 import { Course, Module, User } from '../../model'
 import { HttpClient } from '../httpClient'
 import { LaunchModuleRequest } from './models/launchModuleRequest'
