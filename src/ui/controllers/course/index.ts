@@ -6,19 +6,17 @@ import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
+import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
-
 import {
-	RemoveCourseFromLearningplanActionWorker
+RemoveCourseFromLearningplanActionWorker
 	// tslint:disable-next-line:max-line-length
 } from '../../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
-import {
-	CompletedActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
-import {
-	InitialiseActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
+	// tslint:disable-next-line:max-line-length
+import { CompletedActionWorker } from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
+	// tslint:disable-next-line:max-line-length
+import { InitialiseActionWorker } from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
 
 export interface CourseDetail {
 	label: string
@@ -100,13 +98,8 @@ export async function displayModule(
 
 		switch (module.type) {
 			case 'elearning':
-				res.redirect(
-					`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
-					encodeURIComponent(course.title)}` +
-					`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
-						course.id
-					}/${module.id}/xapi/&actor={"name":"Noop"}`
-				)
+				const launchELearningResponse = await cslServiceClient.launchELearningModule(course, module, req.user)
+				res.redirect(launchELearningResponse.launchLink)
 				break
 			case 'face-to-face':
 				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
