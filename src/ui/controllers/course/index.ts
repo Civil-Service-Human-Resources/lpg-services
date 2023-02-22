@@ -100,6 +100,7 @@ export async function displayModule(
 
 		switch (module.type) {
 			case 'elearning':
+				await new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
 				res.redirect(
 					`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
 					encodeURIComponent(course.title)}` +

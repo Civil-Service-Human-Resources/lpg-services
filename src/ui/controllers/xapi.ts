@@ -25,12 +25,8 @@ import {
 const logger = getLogger('controllers/xapi')
 
 const learnerRecordVerbs = [
-	xapi.Verb.Attempted,
 	xapi.Verb.Completed,
-	xapi.Verb.Experienced,
 	xapi.Verb.Failed,
-	xapi.Verb.Initialised,
-	xapi.Verb.Launched,
 	xapi.Verb.Passed,
 ]
 
@@ -184,11 +180,6 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 	if (course) {
 		const module = course.getModule(moduleId)
 		switch (verbId) {
-			case xapi.Verb.Attempted:
-			case xapi.Verb.Initialised:
-			case xapi.Verb.Launched:
-				actionWorker = new InitialiseActionWorker(course, user, module)
-				break
 			case xapi.Verb.Completed:
 				actionWorker = new CompletedActionWorker(course, user, module)
 				break
