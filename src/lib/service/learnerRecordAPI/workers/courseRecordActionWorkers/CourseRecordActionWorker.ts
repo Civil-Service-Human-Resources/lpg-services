@@ -4,7 +4,7 @@ import { createCourseRecord, patchCourseRecord } from '../../courseRecord/client
 import { CourseRecord } from '../../courseRecord/models/courseRecord'
 import { CourseRecordInput } from '../../courseRecord/models/courseRecordInput'
 import { setLastUpdated } from '../../courseRecord/patchFactory'
-import { setCourseRecord, getCourseRecord } from '../../courseRecord/service'
+import { getCourseRecord, setCourseRecord } from '../../courseRecord/service'
 import { RecordState } from '../../models/record'
 import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
 import { WorkerType } from '../workerType'
