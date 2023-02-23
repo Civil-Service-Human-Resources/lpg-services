@@ -16,7 +16,7 @@ export async function getCourseRecord(courseId: string, user: User): Promise<Cou
 	const cacheId = `${user.id}:${courseId}`
 	logger.debug(`Attempting to get course record from cache with ID ${cacheId}`)
 	let courseRecord = await courseRecordCache.get(cacheId)
-	if (!courseRecord) {
+	if (courseRecord === undefined) {
 		logger.debug(`Cache miss with ID '${cacheId}', getting record from API`)
 		courseRecord = await courseRecordClient.getCourseRecord(courseId, user)
 		if (courseRecord) {
