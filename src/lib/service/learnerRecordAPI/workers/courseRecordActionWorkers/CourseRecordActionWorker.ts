@@ -28,7 +28,7 @@ export abstract class CourseRecordActionWorker {
 				logger.debug(`Updating course record`)
 				courseRecord = await this.updateCourseRecord(courseRecord)
 			}
-			setCourseRecord(courseRecord.courseId, this.user, courseRecord)
+			await setCourseRecord(courseRecord.courseId, this.user, courseRecord)
 		} catch (e) {
 			logger.error(
 				`Failed to apply action to the course record. UserID: ${this.user.id}, ` +

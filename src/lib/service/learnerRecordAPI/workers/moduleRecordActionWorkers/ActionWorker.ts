@@ -38,8 +38,8 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 				courseRecord.upsertModuleRecord(moduleRecord.id, moduleRecord)
 				logger.debug(`Updating course record`)
 				courseRecord = await this.updateCourseRecord(courseRecord)
-				learnerRecordService.setCourseRecord(courseRecord.courseId, this.user, courseRecord)
 			}
+			await learnerRecordService.setCourseRecord(courseRecord.courseId, this.user, courseRecord)
 		} catch (e) {
 			logger.error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
 			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}, with action ${this.getType()}. Error: ${e}`)
