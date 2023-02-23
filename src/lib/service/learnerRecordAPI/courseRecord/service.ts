@@ -14,6 +14,7 @@ export function setCaches(crCache: CourseRecordCache) {
 
 export async function getCourseRecord(courseId: string, user: User): Promise<CourseRecord | undefined> {
 	const cacheId = `${user.id}:${courseId}`
+	logger.debug(`Attempting to get course record from cache with ID ${cacheId}`)
 	let courseRecord = await courseRecordCache.get(cacheId)
 	if (!courseRecord) {
 		logger.debug(`Cache miss with ID '${cacheId}', getting record from API`)
