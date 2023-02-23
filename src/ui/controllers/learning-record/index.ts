@@ -4,6 +4,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
+import { getCourseRecord } from '../../../lib/service/learnerRecordAPI/courseRecord/service'
 
 const logger = getLogger('controllers/learning-record')
 
@@ -20,20 +21,20 @@ export async function courseResult(
 	try {
 		const course = req.course
 		const module = req.module!
-		const courseRecord = await learnerRecord.getRecord(req.user, course, module)
+		const courseRecord = await getCourseRecord(course.id, req.user)
 		let moduleRecord = null
 
 		if (courseRecord && courseRecord.modules) {
 			moduleRecord = courseRecord.modules.find(mr => module.id === mr.moduleId)
 		}
-		if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
+		if (!moduleRecord || !moduleRecord.isCompleted()) {
 			res.redirect('/home')
 		} else {
 			let courseCompleted = true
 			let modulesCompleted = 0
 			course.modules.forEach(m => {
 				const r = courseRecord!.modules.find(mr => m.id === mr.moduleId)
-				if (!r || r.state !== 'COMPLETED') {
+				if (!r || !r.isCompleted()) {
 					courseCompleted = false
 				} else {
 					//LC-1054: module completion fix in the new learning period
