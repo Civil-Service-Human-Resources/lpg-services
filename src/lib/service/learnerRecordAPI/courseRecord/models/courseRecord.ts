@@ -1,4 +1,4 @@
-import { plainToClass } from 'class-transformer'
+import { Type } from 'class-transformer'
 
 import { Module } from '../../../../model'
 import { Record, RecordState } from '../../models/record'
@@ -10,15 +10,15 @@ export enum CourseRecordPreference {
 }
 
 export class CourseRecordResponse {
-	courseRecords: CourseRecord[]
 
-	constructor(courseRecords: CourseRecord[]) {
+	constructor(public courseRecords: CourseRecord[]) {
 		this.courseRecords = courseRecords
 	}
 }
 
 export class CourseRecord extends Record {
 	courseTitle: string
+	@Type(() => ModuleRecord)
 	modules: ModuleRecord[]
 	preference?: CourseRecordPreference
 	lastUpdated?: Date
@@ -42,8 +42,7 @@ export class CourseRecord extends Record {
 		if (lastUpdated) {
 			this.lastUpdated = new Date(lastUpdated)
 		}
-
-		this.fillRecords(modules)
+		this.modules = modules
 	}
 
 	public upsertModuleRecord(moduleRecordId: number, moduleRecord: ModuleRecord) {
@@ -79,7 +78,4 @@ export class CourseRecord extends Record {
 		return modulesRequiredForCompletion.every(i => completedModuleIds.includes(i))
 	}
 
-	private fillRecords = (moduleRecords: ModuleRecord[]) => {
-		this.modules = moduleRecords.map(m => plainToClass(ModuleRecord, m as ModuleRecord))
-	}
 }
