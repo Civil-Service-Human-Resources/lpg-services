@@ -63,15 +63,14 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		}
 	}
 
-	const xapiBody = Array.isArray(body) ? body[0] : body
-
 	// If the request is a statement request, sync the verb(s) to learner record and then throw away the request.
 	// Learning locker doesn't use the statements.
 	// Also, only sync COMPLETED, PASSED and FAILED verbs. IN_PROGRESS status can be set at module launch.
 	if (req.path === '/statements') {
-		await Promise.all(body.map((b: any) => {
+		const xapiBody = Array.isArray(body) ? body : [body]
+		await Promise.all(xapiBody.map((b: any) => {
 			if (b.verb && b.verb.id && learnerRecordVerbs.includes(b.verb.id)) {
-				syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, xapiBody.verb.id)
+				syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, b.verb.id)
 			}
 		}))
 		return res.sendStatus(200)
