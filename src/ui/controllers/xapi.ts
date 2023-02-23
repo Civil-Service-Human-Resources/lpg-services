@@ -1,7 +1,6 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
-import * as featureConfig from 'lib/config/featureConfig'
 import * as extended from 'lib/extended'
 import { getLogger } from 'lib/logger'
 import * as xapi from 'lib/xapi'
@@ -15,9 +14,6 @@ import {
 import {
 	FailModuleActionWorker
 } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/FailModuleActionWorker'
-import {
-	InitialiseActionWorker
-} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
 import {
 	PassModuleActionWorker
 } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/PassModuleActionWorker'
@@ -55,6 +51,32 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		objectType: 'Agent',
 	}
 
+	let body = req.body
+
+	if (body) {
+		if (Array.isArray(body)) {
+			body = body.map(statement => updateStatement(statement, agent, req))
+		} else if (typeof body === 'object') {
+			body = updateStatement(body, agent, req)
+		} else {
+			body = new Buffer(body)
+		}
+	}
+
+	const xapiBody = Array.isArray(body) ? body[0] : body
+
+	// If the request is a statement request, sync the verb(s) to learner record and then throw away the request.
+	// Learning locker doesn't use the statements.
+	// Also, only sync COMPLETED, PASSED and FAILED verbs. IN_PROGRESS status can be set at module launch.
+	if (req.path === '/statements') {
+		await Promise.all(body.map((b: any) => {
+			if (b.verb && b.verb.id && learnerRecordVerbs.includes(b.verb.id)) {
+				syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, xapiBody.verb.id)
+			}
+		}))
+		return res.sendStatus(200)
+	}
+
 	const query = req.query
 	if (query) {
 		if (query.agent) {
@@ -62,24 +84,6 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		}
 		if (query.activityId) {
 			query.activityId = `${config.XAPI.moduleBaseUri}/${req.params.proxyModuleId}`
-		}
-	}
-
-	let body = req.body
-	if (body) {
-		if (Array.isArray(body)) {
-			body = body.map(statement => updateStatement(statement, agent, req))
-		} else if (typeof body === 'object') {
-			// Introduced filtering to remove excess elearning experienced statements being persisted in Cosmos DB
-			if (!featureConfig.DB.PERSIST_ELEARNING_EXPERIENCED_STATEMENTS) {
-				if (req.path === '/statements' && body.verb && body.verb.id && body.verb.id === xapi.Verb.Experienced) {
-					logger.debug(`Filtered e-learning experienced statement: ${req.query.module}`)
-					return res.sendStatus(200)
-				}
-			}
-			body = updateStatement(body, agent, req)
-		} else {
-			body = new Buffer(body)
 		}
 	}
 
@@ -91,11 +95,6 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	const ctype = req.header('Content-Type')
 	if (ctype) {
 		headers['Content-Type'] = ctype
-	}
-
-	const xapiBody = Array.isArray(body) ? body[0] : body
-	if (xapiBody.verb && xapiBody.verb.id && learnerRecordVerbs.includes(xapiBody.verb.id)) {
-		syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, xapiBody.verb.id)
 	}
 
 	try {
@@ -184,11 +183,6 @@ async function syncToLearnerRecord(courseId: string, moduleId: string, user: Use
 	if (course) {
 		const module = course.getModule(moduleId)
 		switch (verbId) {
-			case xapi.Verb.Attempted:
-			case xapi.Verb.Initialised:
-			case xapi.Verb.Launched:
-				actionWorker = new InitialiseActionWorker(course, user, module)
-				break
 			case xapi.Verb.Completed:
 				actionWorker = new CompletedActionWorker(course, user, module)
 				break
