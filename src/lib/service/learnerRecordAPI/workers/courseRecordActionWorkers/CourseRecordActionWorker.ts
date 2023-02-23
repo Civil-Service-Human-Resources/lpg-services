@@ -1,12 +1,13 @@
-import {getLogger} from '../../../../logger'
-import {Course, User} from '../../../../model'
-import {createCourseRecord, getCourseRecord, patchCourseRecord} from '../../courseRecord/client'
-import {CourseRecord} from '../../courseRecord/models/courseRecord'
-import {CourseRecordInput} from '../../courseRecord/models/courseRecordInput'
-import {setLastUpdated} from '../../courseRecord/patchFactory'
-import {RecordState} from '../../models/record'
-import {ModuleRecordInput} from '../../moduleRecord/models/moduleRecordInput'
-import {WorkerType} from '../workerType'
+import { getLogger } from '../../../../logger'
+import { Course, User } from '../../../../model'
+import { createCourseRecord, patchCourseRecord } from '../../courseRecord/client'
+import { CourseRecord } from '../../courseRecord/models/courseRecord'
+import { CourseRecordInput } from '../../courseRecord/models/courseRecordInput'
+import { setLastUpdated } from '../../courseRecord/patchFactory'
+import { setCourseRecord, getCourseRecord } from '../../courseRecord/service'
+import { RecordState } from '../../models/record'
+import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
+import { WorkerType } from '../workerType'
 
 const logger = getLogger('LearnerRecordAPI/workers/CourseRecordActionWorker')
 
@@ -19,14 +20,15 @@ export abstract class CourseRecordActionWorker {
 	async applyActionToLearnerRecord() {
 		try {
 			logger.debug(`Applying action to for course ${this.course.id} and user ${this.user.id}`)
-			const courseRecord = await getCourseRecord(this.course.id, this.user)
+			let courseRecord = await getCourseRecord(this.course.id, this.user)
 			if (!courseRecord) {
 				logger.debug(`Creating course record`)
-				await this.createCourseRecord()
+				courseRecord = await this.createCourseRecord()
 			} else {
 				logger.debug(`Updating course record`)
-				await this.updateCourseRecord(courseRecord)
+				courseRecord = await this.updateCourseRecord(courseRecord)
 			}
+			setCourseRecord(courseRecord.courseId, this.user, courseRecord)
 		} catch (e) {
 			logger.error(
 				`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
@@ -35,8 +37,8 @@ export abstract class CourseRecordActionWorker {
 		}
 	}
 
-	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
-		await patchCourseRecord([setLastUpdated(new Date())], this.user, courseRecord.courseId)
+	async updateCourseRecord(courseRecord: CourseRecord): Promise<CourseRecord> {
+		return await patchCourseRecord([setLastUpdated(new Date())], this.user, courseRecord.courseId)
 	}
 
 	protected createNewCourseRecord = async (
@@ -53,9 +55,9 @@ export abstract class CourseRecordActionWorker {
 			state,
 			preference
 		)
-		await createCourseRecord(input, this.user)
+		return await createCourseRecord(input, this.user)
 	}
 
-	protected abstract createCourseRecord(): Promise<void>
+	protected abstract createCourseRecord(): Promise<CourseRecord>
 	protected abstract getType(): WorkerType
 }

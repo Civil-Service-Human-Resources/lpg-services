@@ -5,6 +5,7 @@ import * as sinon from 'sinon'
 import {Course, Event, Module, User} from '../../../../model'
 import {JsonPatchInterface} from '../../../shared/models/JsonPatch'
 import * as courseRecordClient from '../../courseRecord/client'
+import * as courseRecordService from '../../courseRecord/service'
 import {CourseRecord} from '../../courseRecord/models/courseRecord'
 import {RecordState} from '../../models/record'
 import * as moduleRecordClient from '../../moduleRecord/client'
@@ -176,12 +177,16 @@ export function mockPatchCourseRecord() {
 	return sinon.stub(courseRecordClient, 'patchCourseRecord').returns(Promise.resolve())
 }
 
-export function mockCreateCourseRecord() {
-	return sinon.stub(courseRecordClient, 'createCourseRecord').returns(Promise.resolve())
+export function mockCreateCourseRecord(resp?: CourseRecord) {
+	return sinon.stub(courseRecordClient, 'createCourseRecord').returns(Promise.resolve(resp))
 }
 
 export function mockGetCourseRecord(returnVal?: CourseRecord | undefined) {
-	return sinon.stub(courseRecordClient, 'getCourseRecord').returns(Promise.resolve(returnVal))
+	return sinon.stub(courseRecordService, 'getCourseRecord').returns(Promise.resolve(returnVal))
+}
+
+export function mockSetCourseRecord() {
+	return sinon.stub(courseRecordService, 'setCourseRecord').returns(Promise.resolve())
 }
 
 export function mockGetCourseRecordNotFound() {

@@ -16,7 +16,7 @@ export class InitialiseActionWorker extends ActionWorker {
 
 	async createCourseRecord() {
 		const moduleRecordInput = this.generateModuleRecordInput(RecordState.InProgress)
-		await this.createNewCourseRecord([moduleRecordInput], RecordState.InProgress)
+		return await this.createNewCourseRecord([moduleRecordInput], RecordState.InProgress)
 	}
 
 	async createModuleRecord() {
@@ -29,7 +29,7 @@ export class InitialiseActionWorker extends ActionWorker {
 		if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
 			patches.push(setState(RecordState.InProgress))
 		}
-		await patchCourseRecord(patches, this.user, this.course.id)
+		return await patchCourseRecord(patches, this.user, this.course.id)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord) {

@@ -26,7 +26,7 @@ export class SkipBookingActionWorker extends EventActionWorker {
 		super(course, user, event, module)
 	}
 
-	async createCourseRecord(): Promise<void> {
+	async createCourseRecord(): Promise<CourseRecord> {
 		const msg = `User ${this.user.id} attempted to skip
         event ${this.event.id} but a course record does not exist
         (course ${this.course.id}, module ${this.module.id})`
@@ -40,12 +40,12 @@ export class SkipBookingActionWorker extends EventActionWorker {
 		throw new CourseRecordStateError(msg)
 	}
 
-	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
+	async updateCourseRecord(courseRecord: CourseRecord): Promise<CourseRecord> {
 		const patches = [setLastUpdated(new Date())]
 		if (courseRecord.isRegistered()) {
 			patches.push(setState(RecordState.Skipped))
 		}
-		await patchCourseRecord(patches, this.user, courseRecord.courseId)
+		return await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {

@@ -19,7 +19,7 @@ export class RemoveCourseFromSuggestionsActionWorker extends CourseRecordActionW
 	}
 
 	async createCourseRecord() {
-		await this.createNewCourseRecord([], undefined, CourseRecordPreference.Disliked)
+		return await this.createNewCourseRecord([], undefined, CourseRecordPreference.Disliked)
 	}
 
 	protected getType(): WorkerType {

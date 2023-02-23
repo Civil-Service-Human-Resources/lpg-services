@@ -16,9 +16,6 @@ import {
 	FailModuleActionWorker
 } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/FailModuleActionWorker'
 import {
-	InitialiseActionWorker
-} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
-import {
 	PassModuleActionWorker
 } from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/PassModuleActionWorker'
 

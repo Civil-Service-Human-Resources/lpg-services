@@ -20,7 +20,7 @@ export class CompleteBookingActionWorker extends EventActionWorker {
 		super(course, user, event, module)
 	}
 
-	async createCourseRecord(): Promise<void> {
+	async createCourseRecord(): Promise<CourseRecord> {
 		const msg = `User ${this.user.id} attempted to record
         attendance against event ${this.event.id} but course record
         does not exist (course ${this.course.id}, module ${this.module.id})`
@@ -34,14 +34,14 @@ export class CompleteBookingActionWorker extends EventActionWorker {
 		throw new CourseRecordStateError(msg)
 	}
 
-	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
+	async updateCourseRecord(courseRecord: CourseRecord): Promise<CourseRecord> {
 		const patches = [setLastUpdated()]
 		if (courseRecord.areAllRelevantModulesComplete(this.course.modules)) {
 			patches.push(setState(RecordState.Completed))
 		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
 			patches.push(setState(RecordState.InProgress))
 		}
-		await patchCourseRecord(patches, this.user, this.course.id)
+		return await patchCourseRecord(patches, this.user, this.course.id)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {

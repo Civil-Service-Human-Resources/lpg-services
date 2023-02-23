@@ -12,11 +12,11 @@ export class AddCourseToLearningplanActionWorker extends CourseRecordActionWorke
 
 	async updateCourseRecord(courseRecord: CourseRecord) {
 		const patches = [setPreference(CourseRecordPreference.Liked), clearState(), setLastUpdated(new Date())]
-		await patchCourseRecord(patches, this.user, courseRecord.courseId)
+		return await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async createCourseRecord() {
-		await this.createNewCourseRecord([], undefined, CourseRecordPreference.Liked)
+		return await this.createNewCourseRecord([], undefined, CourseRecordPreference.Liked)
 	}
 
 	protected getType(): WorkerType {

@@ -21,9 +21,9 @@ export class ApprovedBookingActionWorker extends EventActionWorker {
 		super(course, user, event, module)
 	}
 
-	async createCourseRecord(): Promise<void> {
+	async createCourseRecord(): Promise<CourseRecord> {
 		const modules = [this.generateModuleRecordInput(RecordState.Approved)]
-		await this.createNewCourseRecord(modules, RecordState.Approved)
+		return await this.createNewCourseRecord(modules, RecordState.Approved)
 	}
 
 	async createModuleRecord(): Promise<ModuleRecord> {
@@ -35,7 +35,7 @@ export class ApprovedBookingActionWorker extends EventActionWorker {
 		if (courseRecord.isNull() || !courseRecord.isInProgress()) {
 			patches.push(setState(RecordState.Approved))
 		}
-		await patchCourseRecord(patches, this.user, courseRecord.courseId)
+		return await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {

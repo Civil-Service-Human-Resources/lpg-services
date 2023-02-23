@@ -24,7 +24,7 @@ export class CompletedActionWorker extends ActionWorker {
 				courseRecordState = RecordState.Completed
 			}
 		}
-		await this.createNewCourseRecord([moduleRecordInput], courseRecordState)
+		return await this.createNewCourseRecord([moduleRecordInput], courseRecordState)
 	}
 
 	async createModuleRecord() {
@@ -38,7 +38,7 @@ export class CompletedActionWorker extends ActionWorker {
 		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
 			patches.push(setState(RecordState.InProgress))
 		}
-		await patchCourseRecord(patches, this.user, this.course.id)
+		return await patchCourseRecord(patches, this.user, this.course.id)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord) {

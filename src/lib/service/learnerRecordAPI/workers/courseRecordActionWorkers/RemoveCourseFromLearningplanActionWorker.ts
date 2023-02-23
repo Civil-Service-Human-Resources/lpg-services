@@ -25,7 +25,7 @@ export class RemoveCourseFromLearningplanActionWorker extends CourseRecordAction
 			`Attempted removal from learning plan when no course record exists
 			(course: ${this.course.id}, user: ${this.user.id})`
 		)
-		this.createNewCourseRecord([], RecordState.Archived)
+		return await this.createNewCourseRecord([], RecordState.Archived)
 	}
 
 	protected getType(): WorkerType {

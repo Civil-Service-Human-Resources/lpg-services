@@ -20,9 +20,13 @@ import {
 	OrganisationalUnitCache
 } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import {
+	CourseRecordCache
+} from 'lib/service/learnerRecordAPI/courseRecord/cache'
+import {
 	OrganisationalUnitTypeaheadCache
 } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 /* tslint:enable */
+import * as learnerRecordService from 'lib/service/learnerRecordAPI/courseRecord/service'
 import * as i18n from 'lib/service/translation'
 import { ProfileChecker } from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
@@ -106,6 +110,17 @@ const orgCacheRedisClient = redis.createClient({
 const orgCache = new OrganisationalUnitCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
 const orgTypeaheadCache = new OrganisationalUnitTypeaheadCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
 csrsService.setCaches(orgCache, orgTypeaheadCache)
+
+const courseRecordCacheRedisClient = redis.createClient({
+	auth_pass: config.CR_REDIS.password,
+	host: config.CR_REDIS.host,
+	no_ready_check: true,
+	port: config.CR_REDIS.port,
+})
+
+
+const courseRecordCache = new CourseRecordCache(courseRecordCacheRedisClient, config.CR_REDIS.defaultTTL)
+learnerRecordService.setCaches(courseRecordCache)
 
 app.use(flash())
 

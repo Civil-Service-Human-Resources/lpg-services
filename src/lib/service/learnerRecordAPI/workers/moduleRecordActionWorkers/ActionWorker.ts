@@ -1,6 +1,6 @@
 import { getLogger } from '../../../../logger'
 import { Course, Module, User } from '../../../../model'
-import { getCourseRecord } from '../../courseRecord/client'
+import * as learnerRecordService from '../../courseRecord/service'
 import { RecordState } from '../../models/record'
 import * as moduleRecordClient from '../../moduleRecord/client'
 import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
@@ -20,12 +20,12 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 
 	async applyActionToLearnerRecord() {
 		try {
-			const courseRecord = await getCourseRecord(this.course.id, this.user)
+			let courseRecord = await learnerRecordService.getCourseRecord(this.course.id, this.user)
 			logger.debug(`Applying action ${this.getType().toString()} to module ${this.module.id} ` +
 			`for course ${this.course.id} and user ${this.user.id}`)
 			if (!courseRecord) {
 				logger.debug(`Creating course record`)
-				await this.createCourseRecord()
+				courseRecord = await this.createCourseRecord()
 			} else {
 				let moduleRecord = courseRecord.getModuleRecord(this.module.id)
 				if (!moduleRecord) {
@@ -37,7 +37,8 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 				}
 				courseRecord.upsertModuleRecord(moduleRecord.id, moduleRecord)
 				logger.debug(`Updating course record`)
-				await this.updateCourseRecord(courseRecord)
+				courseRecord = await this.updateCourseRecord(courseRecord)
+				learnerRecordService.setCourseRecord(courseRecord.courseId, this.user, courseRecord)
 			}
 		} catch (e) {
 			logger.error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +

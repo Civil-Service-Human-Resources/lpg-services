@@ -25,21 +25,21 @@ export class CancelBookingActionWorker extends EventActionWorker {
 		super(course, user, event, module)
 	}
 
-	async createCourseRecord(): Promise<void> {
+	async createCourseRecord(): Promise<CourseRecord> {
 		const modRecord = this.generateModuleRecordInput(RecordState.Unregistered)
-		await this.createNewCourseRecord([modRecord], RecordState.Unregistered)
+		return await this.createNewCourseRecord([modRecord], RecordState.Unregistered)
 	}
 
 	async createModuleRecord(): Promise<ModuleRecord> {
 		return await this.createNewModuleRecord(RecordState.Unregistered)
 	}
 
-	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
+	async updateCourseRecord(courseRecord: CourseRecord): Promise<CourseRecord> {
 		const patches = [setLastUpdated(new Date())]
 		if (courseRecord.isNull() || !courseRecord.isInProgress()) {
 			patches.push(setState(RecordState.Unregistered))
 		}
-		await patchCourseRecord(patches, this.user, courseRecord.courseId)
+		return await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {
