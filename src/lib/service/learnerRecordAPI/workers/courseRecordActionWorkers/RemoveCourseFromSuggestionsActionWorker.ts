@@ -1,6 +1,6 @@
 import {getLogger} from '../../../../logger'
 import {Course, User} from '../../../../model'
-import {CourseRecordPreference} from '../../courseRecord/models/courseRecord'
+import {CourseRecord, CourseRecordPreference} from '../../courseRecord/models/courseRecord'
 import {WorkerType} from '../workerType'
 import {CourseRecordActionWorker} from './CourseRecordActionWorker'
 
@@ -11,11 +11,12 @@ export class RemoveCourseFromSuggestionsActionWorker extends CourseRecordActionW
 		super(course, user)
 	}
 
-	async updateCourseRecord() {
+	async updateCourseRecord(courseRecord: CourseRecord) {
 		logger.warn(
 			`Attempted removal from suggested learning when
 			course record exists (course: ${this.course.id}, user: ${this.user.id})`
 		)
+		return courseRecord
 	}
 
 	async createCourseRecord() {

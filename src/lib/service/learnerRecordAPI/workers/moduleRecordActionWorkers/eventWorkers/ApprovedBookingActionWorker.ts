@@ -30,7 +30,7 @@ export class ApprovedBookingActionWorker extends EventActionWorker {
 		return await this.createNewModuleRecord(RecordState.Approved)
 	}
 
-	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
+	async updateCourseRecord(courseRecord: CourseRecord): Promise<CourseRecord> {
 		const patches = [setLastUpdated(new Date())]
 		if (courseRecord.isNull() || !courseRecord.isInProgress()) {
 			patches.push(setState(RecordState.Approved))
