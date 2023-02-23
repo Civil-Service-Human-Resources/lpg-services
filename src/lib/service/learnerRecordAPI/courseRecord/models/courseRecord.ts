@@ -21,6 +21,7 @@ export class CourseRecord extends Record {
 	@Type(() => ModuleRecord)
 	modules: ModuleRecord[]
 	preference?: CourseRecordPreference
+	@Type(() => Date)
 	lastUpdated?: Date
 	courseDisplayState?: string
 	required: boolean

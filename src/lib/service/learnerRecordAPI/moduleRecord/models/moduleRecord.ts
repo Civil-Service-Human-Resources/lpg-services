@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer'
+
 import {Record, RecordState} from '../../models/record'
 
 export enum ModuleRecordResult {
@@ -13,8 +15,10 @@ export enum BookingStatus {
 
 export class ModuleRecord extends Record {
 	id: number
+	@Type(() => Date)
 	completionDate?: Date
 	eventId?: string
+	@Type(() => Date)
 	eventDate?: Date
 	moduleId: string
 	moduleTitle: string
@@ -24,7 +28,9 @@ export class ModuleRecord extends Record {
 	duration?: number
 	rated?: boolean
 	bookingStatus?: BookingStatus
+	@Type(() => Date)
 	createdAt?: Date
+	@Type(() => Date)
 	updatedAt?: Date
 	result?: ModuleRecordResult
 
