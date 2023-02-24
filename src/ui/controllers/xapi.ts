@@ -55,7 +55,13 @@ export async function proxy(req: express.Request, res: express.Response) {
 			const xapiBody = Array.isArray(body) ? body : [body]
 			await Promise.all(xapiBody.map((b: any) => {
 				if (b.verb && b.verb.id && learnerRecordVerbs.includes(b.verb.id)) {
-					syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, b.verb.id)
+					try {
+						syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, b.verb.id)
+					} catch (e) {
+						console.error(`Error syncing data to learner record: ${e}. CourseID: ${req.params.proxyCourseId}.
+						ModuleID: ${req.params.proxyModuleId}. User: ${user.id}. Verb: ${b.verb.id}`)
+						res.sendStatus(500)
+					}
 				}
 			}))
 		}
