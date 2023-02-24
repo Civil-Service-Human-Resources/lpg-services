@@ -1,7 +1,6 @@
 import axios from 'axios'
 import * as express from 'express'
 import * as config from 'lib/config'
-import * as extended from 'lib/extended'
 import { getLogger } from 'lib/logger'
 import * as xapi from 'lib/xapi'
 import * as querystring from 'querystring'
@@ -26,8 +25,7 @@ const learnerRecordVerbs = [
 	xapi.Verb.Passed,
 ]
 
-export async function proxy(ireq: express.Request, res: express.Response) {
-	let req = ireq as extended.CourseRequest
+export async function proxy(req: express.Request, res: express.Response) {
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
 	const user = req.user
@@ -124,7 +122,7 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	}
 }
 
-async function unwrapPost(req: extended.CourseRequest) {
+async function unwrapPost(req: express.Request) {
 	// @ts-ignore
 	req.method = req.query.method
 	const data = querystring.parse(req.body)
@@ -147,7 +145,7 @@ async function unwrapPost(req: extended.CourseRequest) {
 	return req
 }
 
-function updateStatement(statement: any, agent: any, req: extended.CourseRequest) {
+function updateStatement(statement: any, agent: any, req: express.Request) {
 	if (statement.actor) {
 		statement.actor = agent
 	}
