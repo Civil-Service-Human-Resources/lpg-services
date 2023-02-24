@@ -59,7 +59,7 @@ export async function proxy(req: express.Request, res: express.Response) {
 						return syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, b.verb.id)
 					}
 				} catch (e) {
-					console.error(`Error syncing data to learner record: ${e}. CourseID: ${req.params.proxyCourseId}.
+					logger.error(`Error syncing data to learner record: ${e}. CourseID: ${req.params.proxyCourseId}.
 					ModuleID: ${req.params.proxyModuleId}. User: ${user.id}. Verb: ${b.verb.id}`)
 				}
 			}))
