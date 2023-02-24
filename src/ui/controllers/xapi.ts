@@ -21,12 +21,8 @@ import {
 const logger = getLogger('controllers/xapi')
 
 const learnerRecordVerbs = [
-	xapi.Verb.Attempted,
 	xapi.Verb.Completed,
-	xapi.Verb.Experienced,
 	xapi.Verb.Failed,
-	xapi.Verb.Initialised,
-	xapi.Verb.Launched,
 	xapi.Verb.Passed,
 ]
 
