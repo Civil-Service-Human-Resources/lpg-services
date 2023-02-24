@@ -30,6 +30,15 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 	let req = ireq as extended.CourseRequest
 	logger.debug(`Proxying xAPI request to ${req.path}`)
 
+	const user = req.user
+
+	if (user === undefined) {
+		logger.error(`User in xAPI request was undefined. CourseID: ${req.params.proxyCourseId}.
+						ModuleID: ${req.params.proxyModuleId}. Returning 500 to avoid an exception`)
+		logger.debug(JSON.stringify(req.cookies))
+		return res.sendStatus(500)
+	}
+
 	if (req.query.method) {
 		// This indicates a request has been converted to a POST. The request body will contain headers and parameter
 		// required for actually completing the request.
