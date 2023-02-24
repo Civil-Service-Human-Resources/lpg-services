@@ -41,7 +41,24 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		req = await unwrapPost(req)
 	}
 
-	logger.debug('XAPI request req.body: ' + JSON.stringify(req.body))
+	let body = req.body
+	logger.debug('XAPI request req.body: ' + JSON.stringify(body))
+
+	// If the request is a statement request, sync the verb(s) to learner record and then throw away the request.
+	// Learning locker doesn't use the statements.
+	// Also, only sync COMPLETED, PASSED and FAILED verbs. IN_PROGRESS status can be set at module launch.
+	if (req.path === '/statements') {
+		if (body) {
+			const xapiBody = Array.isArray(body) ? body : [body]
+			await Promise.all(xapiBody.map((b: any) => {
+				if (b.verb && b.verb.id && learnerRecordVerbs.includes(b.verb.id)) {
+					syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, b.verb.id)
+				}
+			}))
+		}
+		return res.sendStatus(200)
+	}
+
 	const agent = {
 		account: {
 			homePage: xapi.HomePage,
@@ -51,8 +68,6 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		objectType: 'Agent',
 	}
 
-	let body = req.body
-
 	if (body) {
 		if (Array.isArray(body)) {
 			body = body.map(statement => updateStatement(statement, agent, req))
@@ -61,19 +76,6 @@ export async function proxy(ireq: express.Request, res: express.Response) {
 		} else {
 			body = new Buffer(body)
 		}
-	}
-
-	// If the request is a statement request, sync the verb(s) to learner record and then throw away the request.
-	// Learning locker doesn't use the statements.
-	// Also, only sync COMPLETED, PASSED and FAILED verbs. IN_PROGRESS status can be set at module launch.
-	if (req.path === '/statements') {
-		const xapiBody = Array.isArray(body) ? body : [body]
-		await Promise.all(xapiBody.map((b: any) => {
-			if (b.verb && b.verb.id && learnerRecordVerbs.includes(b.verb.id)) {
-				syncToLearnerRecord(req.params.proxyCourseId, req.params.proxyModuleId, req.user, b.verb.id)
-			}
-		}))
-		return res.sendStatus(200)
 	}
 
 	const query = req.query
