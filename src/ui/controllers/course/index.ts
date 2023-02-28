@@ -106,7 +106,6 @@ export async function displayModule(
 				break
 			case 'link':
 			case 'file':
-				logger.debug("STARTING")
 				await new CompletedActionWorker(course, req.user, module).applyActionToLearnerRecord()
 				res.redirect(module.url!)
 				break
