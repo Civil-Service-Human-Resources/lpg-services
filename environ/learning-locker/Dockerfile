@@ -24,16 +24,6 @@ RUN cd /opt/learning-locker && \
     npm run build-ui-server && \
     npm run build-ui-client
 
-RUN git clone --branch v2.1.4 --depth 1 https://github.com/LearningLocker/xapi-service /opt/xapi-service
-
-RUN cd /opt/xapi-service && \
-    touch .env && \
-    npm install && \
-    npm run build
-
-COPY redis.patch /opt/xapi-service/
-RUN cd /opt/xapi-service && patch -p0 < redis.patch
-
 COPY mkadmin.js /opt/learning-locker/
 COPY run-ui.sh /opt/learning-locker/
 RUN chmod +x /opt/learning-locker/run-ui.sh

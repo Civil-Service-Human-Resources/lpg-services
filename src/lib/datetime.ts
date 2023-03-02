@@ -107,7 +107,7 @@ export function HTMLFormatDate(d: number | Date, withTime?: boolean) {
 }
 
 // Convert duration in seconds to an ISO 8601 format duration string. Used to
-// send appropriately formatted values to APIs like xAPI.
+// send appropriately formatted values to APIs.
 export function formatDuration(d: number) {
 	let out = 'P'
 	let timeSet = false
