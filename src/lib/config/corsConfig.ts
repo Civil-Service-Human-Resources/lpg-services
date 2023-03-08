@@ -1,6 +1,6 @@
 export function setCorsOptions() {
 	return {
-		allowedHeaders: ['Authorization', 'Content-Type', 'X-Experience-API-Version'],
+		allowedHeaders: ['Authorization', 'Content-Type'],
 		credentials: true,
 		origin: /\.civilservice\.gov\.uk$/,
 	}
