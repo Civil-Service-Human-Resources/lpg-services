@@ -1,7 +1,6 @@
 import _ = require('lodash')
 
 import { plainToClass } from 'class-transformer'
-import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
@@ -225,10 +224,6 @@ export class Course {
 
 	isAssociatedLearningModule(id: number) {
 		return this.modules[id].associatedLearning
-	}
-
-	getActivityId() {
-		return `${config.XAPI.courseBaseUri}/${this.id}`
 	}
 
 	getAreasOfWork() {
@@ -482,10 +477,6 @@ export class Module {
 		this.type = type
 	}
 
-	getActivityId() {
-		return `${config.XAPI.moduleBaseUri}/${this.id}`
-	}
-
 	getDuration() {
 		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
@@ -609,10 +600,6 @@ export class Event {
 		this.availability = availability
 		this.status = status
 		this.isLearnerBooked = false
-	}
-
-	getActivityId() {
-		return `${config.XAPI.eventBaseUri}/${this.id}`
 	}
 }
 

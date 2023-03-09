@@ -115,11 +115,11 @@ export async function getRecord(
 	module?: model.Module,
 	event?: model.Event
 ) {
-	let activityId = course.getActivityId()
+	let activityId = course.id
 	if (event) {
-		activityId = event.getActivityId()
+		activityId = event.id
 	} else if (module && !event) {
-		activityId = module.getActivityId()
+		activityId = module.id
 	}
 
 	const response = await http.get(`/records/${user.id}`, {
