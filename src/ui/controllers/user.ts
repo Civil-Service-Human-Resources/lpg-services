@@ -363,7 +363,7 @@ export async function patchAndUpdate(
 		req.flash(
 			'profileError',
 			`Server error. Update failed, please try again or contact the
-<a href="mailto:feedback@cslearning.gov.uk">Civil Service Learning Team</a>`
+<a href="mailto:support@governmentcampus.co.uk">Civil Service Learning Team</a>`
 		)
 		return req.session!.save(() => {
 			res.redirect(`/profile/${input}`)
