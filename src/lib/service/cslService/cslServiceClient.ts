@@ -18,6 +18,7 @@ export async function launchELearningModule(
 			isRequired: course.isRequired(),
 			moduleRecords: [
 				{
+					duration: module.duration,
 					moduleTitle: module.title,
 					moduleType: module.type,
 					optional: module.optional,
