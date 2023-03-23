@@ -64,7 +64,7 @@ export const CSL_SERVICE = set({
 })
 
 export const FEEDBACK_RECIPIENTS = [
-	env.FEEDBACK_RECIPIENT || 'feedback@cslearning.gov.uk',
+	env.FEEDBACK_RECIPIENT || 'support@governmentcampus.co.uk',
 ]
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
