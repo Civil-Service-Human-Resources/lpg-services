@@ -11,6 +11,7 @@ interface CourseRecordInput {
 }
 
 interface ModuleRecordInput {
+	duration: number
 	moduleTitle: string
 	optional: boolean
 	moduleType: string
