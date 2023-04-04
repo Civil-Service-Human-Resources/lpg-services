@@ -46,18 +46,18 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
 					record.courseDisplayState = record.state
 					if (record.isComplete()) {
-						logger.debug("Record is complete.")
+						console.log("Record is complete.")
 						if (!requiredCourse.shouldRepeatNew()) {
-							logger.debug("shouldRepeatNew is false")
+							console.log("shouldRepeatNew is false")
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
-							logger.debug("shouldRepeatNew is true")
+							console.log("shouldRepeatNew is true")
 							if (previousRequiredBy) {
 								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
-										logger.debug("Record set to in complete")
+										console.log("Record set to in complete")
 									record.state = 'COMPLETED'
 									record.courseDisplayState = 'COMPLETED'
 									requiredLearning.splice(i, 1)
@@ -72,7 +72,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 									const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
 									if (lastUpdated
 										&& previousRequiredBy < lastUpdated) {
-										logger.debug("Record set to in progress")
+										console.log("Record set to in progress")
 										record.state = 'IN_PROGRESS'
 										record.courseDisplayState = 'IN_PROGRESS'
 									}
@@ -86,7 +86,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							}
 						}
 					} else {
-						logger.debug("Record is in progress")
+						console.log("Record is in progress")
 						if (!record.state && record.modules && record.modules.length) {
 							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
