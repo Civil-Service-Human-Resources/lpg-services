@@ -58,6 +58,13 @@ export async function home(req: express.Request, res: express.Response, next: ex
 									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
 										console.log("Record set to in complete")
+										console.log("previousRequiredBy:")
+										console.log(previousRequiredBy)
+										console.log("earliestCompletionDateOfModulesForACourse:")
+										console.log(earliestCompletionDateOfModulesForACourse)
+										console.log("latestCompletionDateOfModulesForACourse:")
+										console.log(latestCompletionDateOfModulesForACourse)
+										
 									record.state = 'COMPLETED'
 									record.courseDisplayState = 'COMPLETED'
 									requiredLearning.splice(i, 1)
@@ -73,6 +80,13 @@ export async function home(req: express.Request, res: express.Response, next: ex
 									if (lastUpdated
 										&& previousRequiredBy < lastUpdated) {
 										console.log("Record set to in progress")
+										console.log("previousRequiredBy:")
+										console.log(previousRequiredBy)
+										console.log("earliestCompletionDateOfModulesForACourse:")
+										console.log(earliestCompletionDateOfModulesForACourse)
+										console.log("latestCompletionDateOfModulesForACourse:")
+										console.log(latestCompletionDateOfModulesForACourse)
+										
 										record.state = 'IN_PROGRESS'
 										record.courseDisplayState = 'IN_PROGRESS'
 									}
