@@ -32,6 +32,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
+			console.log("CourseID: " + requiredCourse.id);
+			
 			if (learningHash[requiredCourse.id]) {
 				const record = learningHash[requiredCourse.id]
 				if (record) {
@@ -86,7 +88,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 										console.log(earliestCompletionDateOfModulesForACourse)
 										console.log("latestCompletionDateOfModulesForACourse:")
 										console.log(latestCompletionDateOfModulesForACourse)
-										
+
 										record.state = 'IN_PROGRESS'
 										record.courseDisplayState = 'IN_PROGRESS'
 									}
