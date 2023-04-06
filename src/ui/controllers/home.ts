@@ -32,8 +32,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
-			console.log("CourseID: " + requiredCourse.id);
-			
 			if (learningHash[requiredCourse.id]) {
 				const record = learningHash[requiredCourse.id]
 				if (record) {
@@ -48,25 +46,21 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
 					record.courseDisplayState = record.state
 					if (record.isComplete()) {
-						console.log("Record is complete.")
+						console.log({
+							record, 
+							previousRequiredBy, 
+							earliestCompletionDateOfModulesForACourse, 
+							latestCompletionDateOfModulesForACourse,
+						})
+						
 						if (!requiredCourse.shouldRepeatNew()) {
-							console.log("shouldRepeatNew is false")
 							requiredLearning.splice(i, 1)
 							i -= 1
 						} else {
-							console.log("shouldRepeatNew is true")
 							if (previousRequiredBy) {
 								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
-										console.log("Record set to in complete")
-										console.log("previousRequiredBy:")
-										console.log(previousRequiredBy)
-										console.log("earliestCompletionDateOfModulesForACourse:")
-										console.log(earliestCompletionDateOfModulesForACourse)
-										console.log("latestCompletionDateOfModulesForACourse:")
-										console.log(latestCompletionDateOfModulesForACourse)
-										
 									record.state = 'COMPLETED'
 									record.courseDisplayState = 'COMPLETED'
 									requiredLearning.splice(i, 1)
@@ -81,14 +75,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 									const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
 									if (lastUpdated
 										&& previousRequiredBy < lastUpdated) {
-										console.log("Record set to in progress")
-										console.log("previousRequiredBy:")
-										console.log(previousRequiredBy)
-										console.log("earliestCompletionDateOfModulesForACourse:")
-										console.log(earliestCompletionDateOfModulesForACourse)
-										console.log("latestCompletionDateOfModulesForACourse:")
-										console.log(latestCompletionDateOfModulesForACourse)
-
 										record.state = 'IN_PROGRESS'
 										record.courseDisplayState = 'IN_PROGRESS'
 									}
@@ -102,7 +88,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							}
 						}
 					} else {
-						console.log("Record is in progress")
 						if (!record.state && record.modules && record.modules.length) {
 							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
