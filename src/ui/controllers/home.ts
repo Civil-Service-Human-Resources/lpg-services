@@ -46,14 +46,14 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
 					record.courseDisplayState = record.state
 					console.log({
-						courseId: record.courseId, 
+						record,
 						previousRequiredBy, 
 						earliestCompletionDateOfModulesForACourse, 
 						latestCompletionDateOfModulesForACourse,
 					})
-					
+
 					if (record.isComplete()) {
-						
+						console.log("Record is complete");
 						
 						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
@@ -90,6 +90,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							}
 						}
 					} else {
+						console.log("Record is incomplete");
+						
 						if (!record.state && record.modules && record.modules.length) {
 							record.state = 'IN_PROGRESS'
 							record.courseDisplayState = 'IN_PROGRESS'
