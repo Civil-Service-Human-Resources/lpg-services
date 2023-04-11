@@ -32,8 +32,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
-			console.log("REQUIRED COURSE:")
-			console.log(requiredCourse);
 			
 			if (learningHash[requiredCourse.id]) {
 				const record = learningHash[requiredCourse.id]
