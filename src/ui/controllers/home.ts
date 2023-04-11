@@ -45,13 +45,15 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					// tslint:disable-next-line:max-line-length
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
 					record.courseDisplayState = record.state
+					console.log({
+						courseId: record.courseId, 
+						previousRequiredBy, 
+						earliestCompletionDateOfModulesForACourse, 
+						latestCompletionDateOfModulesForACourse,
+					})
+					
 					if (record.isComplete()) {
-						console.log({
-							courseId: record.courseId, 
-							previousRequiredBy, 
-							earliestCompletionDateOfModulesForACourse, 
-							latestCompletionDateOfModulesForACourse,
-						})
+						
 						
 						if (!requiredCourse.shouldRepeatNew()) {
 							requiredLearning.splice(i, 1)
