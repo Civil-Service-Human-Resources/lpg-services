@@ -47,7 +47,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					record.courseDisplayState = record.state
 					if (record.isComplete()) {
 						console.log({
-							recordId: record.courseId, 
+							courseId: record.courseId, 
 							previousRequiredBy, 
 							earliestCompletionDateOfModulesForACourse, 
 							latestCompletionDateOfModulesForACourse,
