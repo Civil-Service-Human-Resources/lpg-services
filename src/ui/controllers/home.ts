@@ -32,8 +32,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
-			console.log("Required modules:")
-			console.log(requiredCourse.getRequiredModules())
+			console.log("Required module IDs:")
+			console.log(requiredCourse.getRequiredModules().map(module => module.id))
 			
 			if (learningHash[requiredCourse.id]) {
 				const record = learningHash[requiredCourse.id]
@@ -48,12 +48,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					// tslint:disable-next-line:max-line-length
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
 					record.courseDisplayState = record.state
-					console.log({
-						record,
-						previousRequiredBy, 
-						earliestCompletionDateOfModulesForACourse, 
-						latestCompletionDateOfModulesForACourse,
-					})
 
 					if (record.isComplete()) {
 						console.log("Record is complete");
