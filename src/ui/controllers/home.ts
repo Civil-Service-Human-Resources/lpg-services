@@ -33,7 +33,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
 
-			const courseFromCatalogue: Course|null = await catalog.get(requiredCourse.id, user)
+			const courseFromCatalogue: Course|null = await catalog.get(requiredCourse.id, req.user)
 			if(courseFromCatalogue){
 				console.log(`Modules for course: ${courseFromCatalogue.title} (${courseFromCatalogue.id}):`);
 				console.log(courseFromCatalogue.modules.map(module => module.id))
