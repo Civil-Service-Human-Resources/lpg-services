@@ -33,9 +33,9 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
 
-			console.log(`✅ Course from catalogue for ID ${requiredCourse.id}`)
+			console.log(`✅ Modules from catalogue for course with ID ${requiredCourse.id}`)
 			let courseFromCatalogue = await catalog.get(requiredCourse.id, user)
-			console.log(courseFromCatalogue);
+			console.log(courseFromCatalogue?.modules);
 			
 
 			if (learningHash[requiredCourse.id]) {
