@@ -35,7 +35,10 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 			console.log(`✅ Modules from catalogue for course with ID ${requiredCourse.id}`)
 			let courseFromCatalogue = await catalog.get(requiredCourse.id, user)
-			console.log(courseFromCatalogue?.modules);
+			if(courseFromCatalogue){
+				console.log(courseFromCatalogue.modules);
+			}
+			
 			
 
 			if (learningHash[requiredCourse.id]) {
