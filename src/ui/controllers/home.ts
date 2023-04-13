@@ -38,7 +38,10 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 				if (record) {
 					let existingModuleIds = await getExistingModuleIdsFromCatalogue(record.courseId, user)
-					record.modules = record.modules.filter(module => existingModuleIds?.includes(module.moduleId))
+
+					if(existingModuleIds){
+						record.modules = record.modules.filter(module => existingModuleIds?.includes(module.moduleId))
+					}
 					
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
