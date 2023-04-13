@@ -33,19 +33,18 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
 
-			console.log("✅ Modules from record:")
-			console.log(requiredCourse.modules.map(module => module.id))
-			
-
-			console.log(`✅ Modules from catalogue for course with ID ${requiredCourse.id}`)
-			let courseFromCatalogue = await catalog.get(requiredCourse.id, user)
-			if(courseFromCatalogue){
-				let modules = courseFromCatalogue.modules.map(module => module.id)
-				console.log(modules)
-			}
-
 			if (learningHash[requiredCourse.id]) {
 				const record = learningHash[requiredCourse.id]
+
+				console.log("✅ Modules from record:")
+				console.log(record.modules.map(module => module.moduleId))
+				
+				console.log(`✅ Modules from catalogue for course with ID ${requiredCourse.id}`)
+				let courseFromCatalogue = await catalog.get(requiredCourse.id, user)
+				if(courseFromCatalogue){
+					let modules = courseFromCatalogue.modules.map(module => module.id)
+					console.log(modules)
+				}
 				if (record) {
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
