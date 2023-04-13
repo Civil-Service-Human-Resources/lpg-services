@@ -33,10 +33,15 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
 
-			console.log(`Getting course from catalogue with ID ${requiredCourse.id}`);
+			console.log("Required course:")
+			console.log(requiredCourse)
 			
-			const courseFromCatalogue: Course|null = await catalog.get(requiredCourse.id, user)
-			console.log(courseFromCatalogue)
+			
+
+			// console.log(`Getting course from catalogue with ID ${requiredCourse.id}`);
+			
+			// const courseFromCatalogue: Course|null = await catalog.get(requiredCourse.id, user)
+			// console.log(courseFromCatalogue)
 			
 			// if(courseFromCatalogue){
 			// 	console.log(`Modules for course: ${courseFromCatalogue.title} (${courseFromCatalogue.id}):`);
