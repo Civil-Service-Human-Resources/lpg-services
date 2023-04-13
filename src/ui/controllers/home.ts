@@ -33,7 +33,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		for (let i = 0; i < requiredLearning.length; i++) {
 			const requiredCourse = requiredLearning[i]
 
-			console.log("Required course:")
+			console.log("Required Course:")
 			console.log(requiredCourse)
 			
 			
