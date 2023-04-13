@@ -37,11 +37,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				const record = learningHash[requiredCourse.id]
 
 				if (record) {
-					let existingModuleIds = await getExistingModuleIdsFromCatalogue(record.courseId, user)
-
-					if(existingModuleIds){
-						record.modules = record.modules.filter(module => existingModuleIds?.includes(module.moduleId))
-					}
+					record.modules = await getCourseModulesFromCatalogue(record, user)
 					
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
@@ -265,13 +261,10 @@ export function contactUs(req: express.Request, res: express.Response) {
 	}))
 }
 
-export async function getExistingModuleIdsFromCatalogue(courseId: string, user: model.User){
-	let courseFromCatalogue = await catalog.get(courseId, user)
+export async function getCourseModulesFromCatalogue(courseRecord: learnerRecord.CourseRecord, user: model.User){
+	let courseFromCatalogue = await catalog.get(courseRecord.courseId, user)
 
-	if(courseFromCatalogue === null){
-		return null
-	}
-
-	let moduleIds = courseFromCatalogue.modules.map(module => module.id)
-	return moduleIds
+	let moduleIds = courseFromCatalogue!.modules.map(module => module.id)
+	let modules = courseRecord.modules.filter(module => moduleIds.includes(module.moduleId))
+	return modules
 }
