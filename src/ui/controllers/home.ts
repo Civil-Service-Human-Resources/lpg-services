@@ -44,10 +44,10 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					const previousRequiredBy = requiredCourse.previousRequiredByNew()
 					const latestCompletionDateOfModulesForACourse1 = record.getLatestCompletionDateOfModulesForACourse()
 					// tslint:disable-next-line:max-line-length
-					const latestCompletionDateOfModulesForACourse = latestCompletionDateOfModulesForACourse1 ? new Date(latestCompletionDateOfModulesForACourse1.toDateString()) : null
+					const latestCompletionDateOfModulesForACourse = latestCompletionDateOfModulesForACourse1 ? new Date(latestCompletionDateOfModulesForACourse1) : null
 					const earliestCompletionDateOfModulesForACourse1 = record.getEarliestCompletionDateOfModulesForACourse()
 					// tslint:disable-next-line:max-line-length
-					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
+					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1) : null
 					record.courseDisplayState = record.state
 					if (record.isComplete()) {
 						if (!requiredCourse.shouldRepeatNew()) {
