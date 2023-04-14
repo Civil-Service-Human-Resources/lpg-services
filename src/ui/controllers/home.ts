@@ -38,6 +38,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 				if (record) {
 					// record.modules = await getCourseModulesFromCatalogue(record, user)
+					console.log("Modules:");
 					console.log(record.modules.map(m => m.moduleTitle));
 					
 					
