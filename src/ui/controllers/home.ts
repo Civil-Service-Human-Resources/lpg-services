@@ -37,7 +37,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				const record = learningHash[requiredCourse.id]
 
 				if (record) {
-					record.modules = await getCourseModulesFromCatalogue(record, user)
+					// record.modules = await getCourseModulesFromCatalogue(record, user)
 					
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
@@ -55,7 +55,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							i -= 1
 						} else {
 							if (previousRequiredBy) {
-								console.log("✅ Data:")
+								console.log("Data:")
 								console.log(
 									{
 										courseId: record.courseId,
