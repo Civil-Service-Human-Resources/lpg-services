@@ -58,6 +58,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 								console.log("✅ Data:")
 								console.log(
 									{
+										courseId: record.courseId,
 										earliestCompletionDateOfModulesForACourse, 
 										latestCompletionDateOfModulesForACourse, 
 										previousRequiredBy
