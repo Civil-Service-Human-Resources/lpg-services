@@ -38,6 +38,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 				if (record) {
 					// record.modules = await getCourseModulesFromCatalogue(record, user)
+					console.log(record.modules.map(m => m.moduleTitle));
+					
 					
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
