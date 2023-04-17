@@ -55,7 +55,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							i -= 1
 						} else {
 							if (previousRequiredBy) {
-								console.log("Data (without filtering):")
+								console.log("Data after filtering:")
 								console.log(
 									{
 										courseId: record.courseId,
