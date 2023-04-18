@@ -38,6 +38,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 				if (record) {
 					record.modules = await getCourseModulesFromCatalogue(record, user)
+					record.modules = record.modules.filter(module => module.optional === false)
 					
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
