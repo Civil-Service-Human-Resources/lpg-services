@@ -327,19 +327,21 @@ export class CourseRecord {
 	}
 
 	//LC-1054: Rather than renaming the above method a new method is Implemented as below
-	getLatestCompletionDateOfModulesForACourse() {
-		let completedModules = this.getCompletedModules()
-	
+	async getLatestCompletionDateOfModulesForACourse(user: model.User) {
+		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(user)
+
 		if (this.isComplete()) {
-			return _.max(completedModules.map(m => m.completionDate))
+			return _.max(availableCompletedMandatoryCourses.map(m => m.completionDate))
 		}
 		return undefined
 	}
 
 	//LC-1054: A new method implemented as below
-	getEarliestCompletionDateOfModulesForACourse() {
+	async getEarliestCompletionDateOfMandatoryModulesForACourse(user: model.User) {
+		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(user)
+
 		if (this.isComplete()) {
-			return _.min(this.getCompletedModules().map(m => m.completionDate))
+			return _.min(availableCompletedMandatoryCourses.map(m => m.completionDate))
 		}
 		return undefined
 	}
@@ -358,6 +360,21 @@ export class CourseRecord {
 			}
 		}
 		return startedDate
+	}
+
+	async getAvailableCompletedMandatoryModulesForCourse(user: model.User) {
+		const availableModuleIds = await this.getAvailableModuleIdsForCourse(user)
+
+		return this.getCompletedModules()
+			.filter(module => module.optional === false)
+			.filter(module => availableModuleIds.includes(module.moduleId))
+	}
+
+	async getAvailableModuleIdsForCourse(user: model.User) {
+		const courseFromCatalogue = await catalog.get(this.courseId, user)
+
+		const moduleIds = courseFromCatalogue!.modules.map(module => module.id)
+		return moduleIds
 	}
 }
 

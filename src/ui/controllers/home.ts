@@ -37,16 +37,15 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				const record = learningHash[requiredCourse.id]
 
 				if (record) {
-					record.modules = await getCourseModulesFromCatalogue(record, user)
-					record.modules = record.modules.filter(module => !module.optional)
-					
+
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
 					const previousRequiredBy = requiredCourse.previousRequiredByNew()
-					const latestCompletionDateOfModulesForACourse1 = record.getLatestCompletionDateOfModulesForACourse()
+					const latestCompletionDateOfModulesForACourse1 = await record.getLatestCompletionDateOfModulesForACourse(user)
 					// tslint:disable-next-line:max-line-length
 					const latestCompletionDateOfModulesForACourse = latestCompletionDateOfModulesForACourse1 ? new Date(latestCompletionDateOfModulesForACourse1) : null
-					const earliestCompletionDateOfModulesForACourse1 = record.getEarliestCompletionDateOfModulesForACourse()
+					const earliestCompletionDateOfModulesForACourse1 =
+						await record.getEarliestCompletionDateOfMandatoryModulesForACourse(user)
 					// tslint:disable-next-line:max-line-length
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1) : null
 					record.courseDisplayState = record.state
@@ -56,7 +55,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							i -= 1
 						} else {
 							if (previousRequiredBy) {
-								
+
 								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
@@ -261,12 +260,4 @@ export function contactUs(req: express.Request, res: express.Response) {
 		contactEmail: config.CONTACT_EMAIL,
 		contactNumber: config.CONTACT_NUMBER,
 	}))
-}
-
-export async function getCourseModulesFromCatalogue(courseRecord: learnerRecord.CourseRecord, user: model.User){
-	let courseFromCatalogue = await catalog.get(courseRecord.courseId, user)
-
-	let moduleIds = courseFromCatalogue!.modules.map(module => module.id)
-	let modules = courseRecord.modules.filter(module => moduleIds.includes(module.moduleId))
-	return modules
 }
