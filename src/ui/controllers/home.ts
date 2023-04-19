@@ -39,9 +39,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				if (record) {
 					record.modules = await getCourseModulesFromCatalogue(record, user)
 					record.modules = record.modules.filter(module => !module.optional)
-
-					console.log("Modules in home.ts:")
-					console.log(record.modules);
 					
 					requiredCourse.record = record
 					//LC-1054: course status fix on home page
@@ -59,16 +56,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 							i -= 1
 						} else {
 							if (previousRequiredBy) {
-								console.log("Data after filtering:")
-								console.log(
-									{
-										courseId: record.courseId,
-										earliestCompletionDateOfModulesForACourse, 
-										latestCompletionDateOfModulesForACourse, 
-										previousRequiredBy
-									}
-								);
-								
 								
 								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
 									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse

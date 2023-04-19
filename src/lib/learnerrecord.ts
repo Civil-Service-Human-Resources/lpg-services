@@ -329,9 +329,6 @@ export class CourseRecord {
 	//LC-1054: Rather than renaming the above method a new method is Implemented as below
 	getLatestCompletionDateOfModulesForACourse() {
 		let completedModules = this.getCompletedModules()
-
-		console.log("Completed Modules:");
-		console.log(completedModules);
 	
 		if (this.isComplete()) {
 			return _.max(completedModules.map(m => m.completionDate))
