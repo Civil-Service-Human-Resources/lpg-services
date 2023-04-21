@@ -327,8 +327,8 @@ export class CourseRecord {
 	}
 
 	//LC-1054: Rather than renaming the above method a new method is Implemented as below
-	async getLatestCompletionDateOfMandatoryModulesForACourse(user: model.User) {
-		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(user)
+	async getLatestCompletionDateOfMandatoryModulesForACourse(course: model.Course) {
+		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(course)
 
 		if (this.isComplete()) {
 			return _.max(availableCompletedMandatoryCourses.map(m => m.completionDate))
@@ -337,8 +337,8 @@ export class CourseRecord {
 	}
 
 	//LC-1054: A new method implemented as below
-	async getEarliestCompletionDateOfMandatoryModulesForACourse(user: model.User) {
-		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(user)
+	async getEarliestCompletionDateOfMandatoryModulesForACourse(course: model.Course) {
+		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(course)
 
 		if (this.isComplete()) {
 			return _.min(availableCompletedMandatoryCourses.map(m => m.completionDate))
@@ -362,17 +362,16 @@ export class CourseRecord {
 		return startedDate
 	}
 
-	async getAvailableCompletedMandatoryModulesForCourse(user: model.User) {
-		const availableModuleIds = await this.getAvailableModuleIdsForCourse(user)
+	async getAvailableCompletedMandatoryModulesForCourse(course: model.Course) {
+		const availableModuleIds = await this.getAvailableModuleIdsForCourse(course)
 
 		return this.getCompletedModules()
 			.filter(module => module.optional === false)
 			.filter(module => availableModuleIds.includes(module.moduleId))
 	}
 
-	async getAvailableModuleIdsForCourse(user: model.User) {
-		const courseFromCatalog = await catalog.get(this.courseId, user)
-		const moduleIds = courseFromCatalog!.modules.map(module => module.id)
+	async getAvailableModuleIdsForCourse(course: model.Course) {
+		const moduleIds = course.modules.map(module => module.id)
 		return moduleIds
 	}
 

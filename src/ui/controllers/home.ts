@@ -39,11 +39,11 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					//LC-1054: course status fix on home page
 					const previousRequiredBy = requiredCourse.previousRequiredByNew()
 					const latestCompletionDateOfModulesForACourse1 =
-						await record.getLatestCompletionDateOfMandatoryModulesForACourse(user)
+						await record.getLatestCompletionDateOfMandatoryModulesForACourse(requiredCourse)
 					// tslint:disable-next-line:max-line-length
 					const latestCompletionDateOfModulesForACourse = latestCompletionDateOfModulesForACourse1 ? new Date(latestCompletionDateOfModulesForACourse1.toDateString()) : null
 					const earliestCompletionDateOfModulesForACourse1 =
-						await record.getEarliestCompletionDateOfMandatoryModulesForACourse(user)
+						await record.getEarliestCompletionDateOfMandatoryModulesForACourse(requiredCourse)
 					// tslint:disable-next-line:max-line-length
 					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
 					record.courseDisplayState = record.state
