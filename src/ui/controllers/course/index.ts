@@ -235,20 +235,14 @@ export function getDisplayStateForModule(
 		const completionDate = moduleRecord.getCompletionDate().getTime()
 		const updatedAt = moduleRecord.getUpdatedAt().getTime()
 		const previousRequiredBy = audience.previousRequiredBy.getTime()
-		// If the module Has been progressed since the due date BUT not completed
-		if (completionDate <= previousRequiredBy &&
-			updatedAt > previousRequiredBy) {
+		if (completionDate <= previousRequiredBy && previousRequiredBy < updatedAt) {
 			displayStateLocal = 'IN_PROGRESS'
 		} else {
 			if (courseRecord.isCompleted()) {
-				// If the course has been completed
-				// and the module has NOT been progressed OR completed since the due date
-				if (completionDate <= previousRequiredBy &&
-					updatedAt <= previousRequiredBy) {
+				if (completionDate <= previousRequiredBy && updatedAt <= previousRequiredBy) {
 					displayStateLocal = null
 				}
 			} else {
-				// If the course has not been progressed since the due date
 				if (updatedAt <= previousRequiredBy) {
 					displayStateLocal = null
 				}
