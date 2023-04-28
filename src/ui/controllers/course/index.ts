@@ -144,7 +144,11 @@ export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	const course = req.course
-	const module = course.modules.length === 1 ? course.modules[0] : undefined
+	const singleModule = course.modules.length === 1 ? course.modules[0] : undefined
+	const module = singleModule !== undefined ? {
+		...singleModule,
+		isMandatory : !singleModule.optional,
+	} : undefined
 
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 
@@ -205,7 +209,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				template.render(`course/${type}`, req, res, {
 					canPayByPO,
 					course,
-					courseDetails: getCourseDetails(req, course, module),
+					courseDetails: getCourseDetails(req, course, singleModule),
 					module,
 					modules,
 					recordState,
