@@ -239,7 +239,7 @@ export function getDisplayStateForModule(
 			displayStateLocal = 'IN_PROGRESS'
 		} else {
 			if (courseRecord.isCompleted()) {
-				if (completionDate <= previousRequiredBy && updatedAt <= previousRequiredBy) {
+				if (updatedAt <= previousRequiredBy && completionDate <= previousRequiredBy) {
 					displayStateLocal = null
 				}
 			} else {
