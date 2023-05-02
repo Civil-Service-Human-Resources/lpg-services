@@ -15,7 +15,7 @@ const WINSTON_CONFIG = {
 		timestamp(),
 		loggingFormat
 	),
-	level: config.LOGGING_LEVEL,
+	level: config.LOGGING_LEVEL.toLowerCase(),
 	transports: [
 		new transports.Console(),
 	],

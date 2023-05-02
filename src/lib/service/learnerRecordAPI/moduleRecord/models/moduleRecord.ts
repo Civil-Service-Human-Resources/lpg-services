@@ -66,4 +66,12 @@ export class ModuleRecord extends Record {
 		this.cost = cost
 		this.optional = optional
 	}
+
+	getCompletionDate() {
+		return this.completionDate ? new Date(this.completionDate) : new Date(0)
+	}
+
+	getUpdatedAt() {
+		return this.updatedAt ? new Date(this.updatedAt) : new Date(0)
+	}
 }

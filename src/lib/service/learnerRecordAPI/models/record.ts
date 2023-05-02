@@ -22,6 +22,10 @@ export class Record {
 		this.state = state
 	}
 
+	getState() {
+		return this.state ? this.state : null
+	}
+
 	/**
 	 * NOTE: A course record can have state = NULL if it is added to
 	 * the learning plan (after being removed) - this is still true even
