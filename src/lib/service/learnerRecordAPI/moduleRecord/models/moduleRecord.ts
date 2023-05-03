@@ -13,6 +13,7 @@ export enum BookingStatus {
 
 export class ModuleRecord extends Record {
 	id: number
+	uid?: string
 	completionDate?: Date
 	eventId?: string
 	eventDate?: Date
@@ -43,6 +44,7 @@ export class ModuleRecord extends Record {
 		state: RecordState = RecordState.InProgress,
 		cost: number = 0,
 		optional: boolean,
+		uid?: string,
 		result?: ModuleRecordResult,
 		eventId?: string,
 		completionDate?: Date,
@@ -57,6 +59,7 @@ export class ModuleRecord extends Record {
 		this.createdAt = new Date(createdAt)
 		this.updatedAt = new Date(updatedAt)
 		this.eventId = eventId
+		this.uid = uid
 		this.result = result
 		this.completionDate = completionDate ? new Date(completionDate) : undefined
 		this.bookingStatus = bookingStatus
