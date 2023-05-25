@@ -181,6 +181,7 @@ passport.configure(
 )
 i18n.configure(app)
 
+app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
 app.param('courseId', asyncHandler(courseController.loadCourse))
 app.param('moduleId', asyncHandler(courseController.loadModule))
 app.param('eventId', asyncHandler(courseController.loadEvent))
@@ -264,7 +265,6 @@ app.get('/profile/:profileDetail', asyncHandler(userController.renderEditPage))
 app.post('/profile/:profileDetail', asyncHandler(userController.tryUpdateProfile))
 
 app.get('/courses/:courseId',
-	asyncHandler(requiresDepartmentHierarchy),
 	asyncHandler(courseController.display)
 )
 
