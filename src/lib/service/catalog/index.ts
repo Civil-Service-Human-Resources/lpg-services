@@ -139,10 +139,10 @@ export async function findRequiredLearning(
 	}
 }
 
-export async function get(id: string, user: model.User) {
+export async function get(id: string, user: model.User, departmentHierarchyCodes?: string[]) {
 	try {
 		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return await model.CourseFactory.create(response.data, user)
+		return await model.CourseFactory.create(response.data, user, departmentHierarchyCodes)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
 			return null

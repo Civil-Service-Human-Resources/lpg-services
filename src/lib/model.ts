@@ -195,6 +195,19 @@ export class Course {
 		this.id = id
 	}
 
+	getRequiredRecurringAudience() {
+		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
+			const today = new Date(new Date().toDateString())
+			let nextDate = new Date(this.audience.requiredBy.toDateString())
+			while (nextDate < today) {
+				nextDate = Frequency.increment(this.audience.frequency, nextDate)
+			}
+			const lastDate = Frequency.decrement(this.audience.frequency, nextDate)
+			return new RequiredRecurringAudience(lastDate, nextDate)
+		} else {
+			return null
+		}
+	}
 	isArchived() {
 		return this.status ? this.status === 'Archived' : false
 	}
@@ -354,14 +367,6 @@ export class Course {
 	nextRequiredByNew() {
 		if (this.audience) {
 			return this.audience!.nextRequiredByNew()
-		}
-		return null
-	}
-
-	previousRequiredBy() {
-		const completionDate = this.getCompletionDate()
-		if (this.audience) {
-			return this.audience!.previousRequiredBy(completionDate)
 		}
 		return null
 	}
@@ -784,6 +789,11 @@ export class Audience {
 		}
 		const lastDate = Frequency.decrement(this.frequency, nextDate)
 		return [lastDate, nextDate]
+	}
+}
+
+export class RequiredRecurringAudience {
+	constructor(public previousRequiredBy: Date, public nextRequiredBy: Date) {
 	}
 }
 

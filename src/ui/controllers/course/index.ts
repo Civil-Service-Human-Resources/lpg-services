@@ -1,24 +1,27 @@
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
+import {RequiredRecurringAudience} from 'lib/model'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
+import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
+import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 
 import {
 	RemoveCourseFromLearningplanActionWorker
 	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
+} from 'lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
 import {
 	CompletedActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
+} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
 import {
 	InitialiseActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
+} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
 
 export interface CourseDetail {
 	label: string
@@ -141,7 +144,11 @@ export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	const course = req.course
-	const module = course.modules.length === 1 ? course.modules[0] : undefined
+	const singleModule = course.modules.length === 1 ? course.modules[0] : undefined
+	const module = singleModule !== undefined ? {
+		...singleModule,
+		isMandatory : !singleModule.optional,
+	} : undefined
 
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 
@@ -164,59 +171,34 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'link':
 		case 'video':
 		case 'blended':
-			const record = await learnerRecord.getRecord(req.user, course)
-			const modules = course.modules.map(cm => {
-				logger.debug(`Mapping module ${cm.id}`)
-				const moduleRecord = record
-					? (record.modules || []).find(m => m.moduleId === cm.id)
-					: null
-				//LC-1054: module status fix on course details page
-				const moduleUpdatedAt1 = moduleRecord ? moduleRecord.updatedAt : null
-				const moduleUpdatedAt = moduleUpdatedAt1 ? new Date(moduleUpdatedAt1.toDateString()) : null
-				const moduleCompletionDate1 = moduleRecord ? moduleRecord.completionDate : null
-				const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
-				const coursePreviousRequiredDate = course.previousRequiredByNew()
-				let displayStateLocal = moduleRecord ? moduleRecord.state : null
-				if (course.isComplete()) {
-					if (course.audience && course.audience.mandatory &&
-						course.shouldRepeatNew() &&
-						moduleCompletionDate && moduleUpdatedAt && coursePreviousRequiredDate) {
-						if (moduleCompletionDate <= coursePreviousRequiredDate &&
-							moduleUpdatedAt <= coursePreviousRequiredDate) {
-							displayStateLocal = null
-						}
-						if (moduleCompletionDate <= coursePreviousRequiredDate &&
-							moduleUpdatedAt > coursePreviousRequiredDate) {
-							displayStateLocal = 'IN_PROGRESS'
-						}
+			const moduleMap: Map<string, any> = new Map()
+			course.modules.forEach(mod => {
+				moduleMap.set(mod.id, {
+				...mod,
+				displayState: null,
+				duration: mod.getDuration(),
+				isMandatory: !mod.optional,
+				state: null,
+			})})
+			const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
+			const audience = course.getRequiredRecurringAudience()
+			if (courseRecord) {
+				courseRecord.modules
+					.filter(moduleRecord => [...moduleMap.keys()].includes(moduleRecord.moduleId))
+					.forEach(moduleRecord => {
+					const mapEntry = moduleMap.get(moduleRecord.moduleId)
+					if (mapEntry) {
+						mapEntry.state = moduleRecord.state || null
+						mapEntry.displayState = getDisplayStateForModule(moduleRecord, courseRecord, audience)
 					}
-				} else {
-					if (course.audience && course.audience.mandatory &&
-						course.shouldRepeatNew()) {
-						if (moduleUpdatedAt && coursePreviousRequiredDate) {
-							if (moduleCompletionDate &&
-								moduleCompletionDate <= coursePreviousRequiredDate &&
-								moduleUpdatedAt > coursePreviousRequiredDate) {
-								displayStateLocal = 'IN_PROGRESS'
-							}
-							if (moduleUpdatedAt <= coursePreviousRequiredDate) {
-								displayStateLocal = null
-							}
-						}
-					}
-				}
-				return {
-					...cm,
-					displayState: displayStateLocal,
-					duration: cm.getDuration(),
-					isMandatory: !cm.optional,
-					state: moduleRecord ? moduleRecord.state : null,
-				}
-			})
+				})
+			}
+			const modules = [...moduleMap.values()]
 			let recordState = "none"
 
-			if (record && record.modules) {
-				const faceToFaceModules = record.modules.filter(moduleFiltered => moduleFiltered.moduleType === "face-to-face")
+			if (courseRecord && courseRecord.modules) {
+				const faceToFaceModules = courseRecord.modules
+					.filter(moduleFiltered => moduleFiltered.moduleType === "face-to-face")
 
 				if ( faceToFaceModules.length !== 0) {
 					// @ts-ignore
@@ -227,7 +209,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 				template.render(`course/${type}`, req, res, {
 					canPayByPO,
 					course,
-					courseDetails: getCourseDetails(req, course, module),
+					courseDetails: getCourseDetails(req, course, singleModule),
 					module,
 					modules,
 					recordState,
@@ -248,6 +230,32 @@ export async function display(ireq: express.Request, res: express.Response) {
 	}
 }
 
+export function getDisplayStateForModule(
+	moduleRecord: ModuleRecord,
+	courseRecord: CourseRecord,
+	audience: RequiredRecurringAudience | null) {
+	let displayStateLocal: string | null = moduleRecord.state ? moduleRecord.state : null
+	if (audience) {
+		const completionDate = moduleRecord.getCompletionDate().getTime()
+		const updatedAt = moduleRecord.getUpdatedAt().getTime()
+		const previousRequiredBy = audience.previousRequiredBy.getTime()
+		if (completionDate <= previousRequiredBy && previousRequiredBy < updatedAt) {
+			displayStateLocal = 'IN_PROGRESS'
+		} else {
+			if (courseRecord.isCompleted()) {
+				if (updatedAt <= previousRequiredBy && completionDate <= previousRequiredBy) {
+					displayStateLocal = null
+				}
+			} else {
+				if (updatedAt <= previousRequiredBy) {
+					displayStateLocal = null
+				}
+			}
+		}
+	}
+	return displayStateLocal
+}
+
 export async function loadCourse(
 	ireq: express.Request,
 	res: express.Response,
@@ -255,7 +263,7 @@ export async function loadCourse(
 ) {
 	const req = ireq as extended.CourseRequest
 	const courseId: string = req.params.courseId
-	const course = await catalog.get(courseId, req.user)
+	const course = await catalog.get(courseId, req.user, res.locals.departmentHierarchyCodes)
 	if (course) {
 		req.course = course
 		next()
