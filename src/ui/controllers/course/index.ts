@@ -225,7 +225,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 export function getDisplayStateForModule(
 	moduleRecord: ModuleRecord,
 	courseRecord: CourseRecord,
-	audience: RequiredRecurringAudience | null) {
+	audience: model.RequiredRecurringAudience | null) {
 	let displayStateLocal: string | null = moduleRecord.state ? moduleRecord.state : null
 	if (audience) {
 		const completionDate = moduleRecord.getCompletionDate().getTime()
