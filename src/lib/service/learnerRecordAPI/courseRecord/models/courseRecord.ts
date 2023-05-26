@@ -101,7 +101,7 @@ export class CourseRecord extends Record {
 	}
 
 	public getCompletionDate() {
-		let completionDate = undefined
+		let completionDate
 		if (this.isCompleted()) {
 			for (const moduleRecord of this.modules) {
 				const moduleRecordCompletionDate = moduleRecord.getCompletionDate()

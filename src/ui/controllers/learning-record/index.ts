@@ -1,15 +1,15 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
-import _ = require("lodash")
-import { Course } from 'lib/model';
+import { getLogger } from 'lib/logger'
+import { Course } from 'lib/model'
 import * as catalog from 'lib/service/catalog'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord';
-import { RecordState } from 'lib/service/learnerRecordAPI/models/record';
+import { CourseRecord } from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import { RecordState } from 'lib/service/learnerRecordAPI/models/record'
 import * as template from 'lib/ui/template'
 
+import _ = require("lodash")
 const logger = getLogger('controllers/learning-record')
 
 export async function courseResult(
@@ -80,7 +80,9 @@ export function getDisplayStateForCourse(requiredCourse: Course, courseRecord: C
 	if (audience) {
 		const previousRequiredBy = audience.previousRequiredBy.getTime()
 		if (courseRecord.isCompleted()) {
-			const requiredModuleCompletionDates = courseRecord.getCompletionDatesForModules(requiredCourse.modules.filter(m => !m.optional))
+			const requiredModuleCompletionDates = courseRecord.getCompletionDatesForModules(
+				requiredCourse.modules.filter(m => !m.optional)
+			)
 			const latestCompletionDateOfModulesForCourse = (_.max(requiredModuleCompletionDates) || new Date(0)).getTime()
 			const earliestCompletionDateOfModulesForCourse = (_.min(requiredModuleCompletionDates) || new Date(0)).getTime()
 			if (previousRequiredBy < earliestCompletionDateOfModulesForCourse
@@ -110,7 +112,7 @@ export async function display(req: express.Request, res: express.Response) {
 
 	const [requiredLearning, learningRecord] = await Promise.all([
 		catalog.findRequiredLearning(req.user, res.locals.departmentHierarchyCodes),
-		courseRecordClient.getFullRecord(req.user)
+		courseRecordClient.getFullRecord(req.user),
 	])
 
 	const requiredCourses = requiredLearning.results
@@ -128,11 +130,10 @@ export async function display(req: express.Request, res: express.Response) {
 
 	const completedCourseRecordsMap: Map<string, CourseRecord> = new Map()
 	completedCourseRecords.map(cr => completedCourseRecordsMap.set(cr.courseId, cr))
-	
+
 	const completedRequiredLearning = []
 	const completedLearning: CourseRecord[] = []
-	for (let i = 0; i < requiredCourses.length; i++) {
-		const requiredCourse = requiredCourses[i]
+	for (const requiredCourse of requiredCourses) {
 		const courseRecord = completedCourseRecordsMap.get(requiredCourse.id)
 		if (courseRecord) {
 			const actualState = getDisplayStateForCourse(requiredCourse, courseRecord)
