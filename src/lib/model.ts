@@ -196,17 +196,25 @@ export class Course {
 
 	getRequiredRecurringAudience() {
 		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
-			const today = new Date(new Date().toDateString())
-			let nextDate = new Date(this.audience.requiredBy.toDateString())
-			while (nextDate < today) {
-				nextDate = Frequency.increment(this.audience.frequency, nextDate)
+			let nextDate = moment(this.audience.requiredBy)
+			while (nextDate < moment()) {
+				console.log("Working")
+				nextDate.add({
+					years: this.audience.frequency.years(),
+					months: this.audience.frequency.months()
+				})
 			}
-			const lastDate = Frequency.decrement(this.audience.frequency, nextDate)
-			return new RequiredRecurringAudience(lastDate, nextDate)
+			const lastDate = moment(nextDate)
+			lastDate.subtract({
+				years: this.audience.frequency.years(),
+				months: this.audience.frequency.months()
+			})
+			return new RequiredRecurringAudience(lastDate.toDate(), nextDate.toDate())
 		} else {
 			return null
 		}
 	}
+
 	isArchived() {
 		return this.status ? this.status === 'Archived' : false
 	}
@@ -758,6 +766,7 @@ export class Audience {
 
 	//LC-1054: Rather than updating the above method a new method is Implemented as below
 	_getCurrentRecurrencePeriodNew() {
+		console.log("_getCurrentRecurrencePeriodNew")
 		if (!this.requiredBy) {
 			return [null, null]
 		}
@@ -775,6 +784,8 @@ export class Audience {
 			nextDate = Frequency.increment(this.frequency, nextDate)
 		}
 		const lastDate = Frequency.decrement(this.frequency, nextDate)
+		console.log(nextDate)
+		console.log(lastDate)
 		return [lastDate, nextDate]
 	}
 }
