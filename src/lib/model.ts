@@ -765,7 +765,6 @@ export class Audience {
 
 	//LC-1054: Rather than updating the above method a new method is Implemented as below
 	_getCurrentRecurrencePeriodNew() {
-		console.log("_getCurrentRecurrencePeriodNew")
 		if (!this.requiredBy) {
 			return [null, null]
 		}
@@ -783,8 +782,6 @@ export class Audience {
 			nextDate = Frequency.increment(this.frequency, nextDate)
 		}
 		const lastDate = Frequency.decrement(this.frequency, nextDate)
-		console.log(nextDate)
-		console.log(lastDate)
 		return [lastDate, nextDate]
 	}
 }
