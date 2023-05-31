@@ -196,18 +196,17 @@ export class Course {
 
 	getRequiredRecurringAudience() {
 		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
-			let nextDate = moment(this.audience.requiredBy)
+			const nextDate = moment(this.audience.requiredBy)
 			while (nextDate < moment()) {
-				console.log("Working")
 				nextDate.add({
+					months: this.audience.frequency.months(),
 					years: this.audience.frequency.years(),
-					months: this.audience.frequency.months()
 				})
 			}
 			const lastDate = moment(nextDate)
 			lastDate.subtract({
+				months: this.audience.frequency.months(),
 				years: this.audience.frequency.years(),
-				months: this.audience.frequency.months()
 			})
 			return new RequiredRecurringAudience(lastDate.toDate(), nextDate.toDate())
 		} else {
