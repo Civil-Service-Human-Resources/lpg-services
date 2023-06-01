@@ -85,21 +85,20 @@ export function getDisplayStateForCourse(requiredCourse: Course, courseRecord: C
 			)
 			const latestCompletionDateOfModulesForCourse = (_.max(requiredModuleCompletionDates) || new Date(0)).getTime()
 			const earliestCompletionDateOfModulesForCourse = (_.min(requiredModuleCompletionDates) || new Date(0)).getTime()
-			if (previousRequiredBy < earliestCompletionDateOfModulesForCourse
-				&& previousRequiredBy < latestCompletionDateOfModulesForCourse) {
-					displayStateLocal = RecordState.Completed
-			} else if (earliestCompletionDateOfModulesForCourse <= previousRequiredBy
-				&& latestCompletionDateOfModulesForCourse <= previousRequiredBy) {
+			if (earliestCompletionDateOfModulesForCourse <= previousRequiredBy) {
+				if (latestCompletionDateOfModulesForCourse <= previousRequiredBy) {
 					displayStateLocal = RecordState.Null
-			} else if (earliestCompletionDateOfModulesForCourse <= previousRequiredBy
-				&& previousRequiredBy < latestCompletionDateOfModulesForCourse) {
+				} else {
 					displayStateLocal = RecordState.InProgress
+				}
+			} else {
+				displayStateLocal = RecordState.Completed
 			}
 		} else {
 			const courseLastUpdated = courseRecord.getLastUpdated().getTime()
 			if (courseLastUpdated <= previousRequiredBy) {
 				displayStateLocal = RecordState.Null
-			} else if (previousRequiredBy < courseLastUpdated) {
+			} else {
 				displayStateLocal = RecordState.InProgress
 			}
 		}
