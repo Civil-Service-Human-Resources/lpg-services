@@ -114,8 +114,13 @@ export async function display(req: express.Request, res: express.Response) {
 		courseRecordClient.getFullRecord(req.user),
 	])
 
-	const requiredCourses = requiredLearning.results
-	const completedCourseRecords = learningRecord
+	const requiredCoursesMap: Map<string, Course> = new Map()
+	requiredLearning.results
+	.map(course => requiredCoursesMap.set(course.id, course))
+
+	const completedCourseRecordsMap: Map<string, CourseRecord> = new Map()
+
+	learningRecord
 	.filter(cr => cr.isCompleted())
 	.sort((a, b) => {
 		const bcd = b.getCompletionDate()
@@ -126,25 +131,21 @@ export async function display(req: express.Request, res: express.Response) {
 
 		return bt - at
 	})
+	.map(cr => completedCourseRecordsMap.set(cr.courseId, cr))
 
-	const completedCourseRecordsMap: Map<string, CourseRecord> = new Map()
-	completedCourseRecords.map(cr => completedCourseRecordsMap.set(cr.courseId, cr))
-
-	const completedRequiredLearning = []
+	const completedRequiredLearning: CourseRecord[] = []
 	const completedLearning: CourseRecord[] = []
-	for (const requiredCourse of requiredCourses) {
-		const courseRecord = completedCourseRecordsMap.get(requiredCourse.id)
-		if (courseRecord) {
+
+	completedCourseRecordsMap.forEach((courseRecord, courseId) => {
+		const requiredCourse = requiredCoursesMap.get(courseId)
+		if (requiredCourse) {
 			const actualState = getDisplayStateForCourse(requiredCourse, courseRecord)
 			if (actualState === RecordState.Completed) {
 				completedRequiredLearning.push(courseRecord)
 			}
-			completedCourseRecordsMap.delete(requiredCourse.id)
+		} else {
+			completedLearning.push(courseRecord)
 		}
-	}
-
-	completedCourseRecordsMap.forEach((cr, id) => {
-		completedLearning.push(cr)
 	})
 
 	res.send(
