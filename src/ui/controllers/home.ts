@@ -2,13 +2,15 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
-import {getLogger} from 'lib/logger'
-import {Course} from "lib/model"
+import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as catalog from 'lib/service/catalog'
+import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
 import * as template from 'lib/ui/template'
-import * as suggestionController from './suggestion'
+
+import { CourseRecord } from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import { RecordState } from '../../lib/service/learnerRecordAPI/models/record'
+import { getDisplayStateForCourse } from './learning-record'
 
 const logger = getLogger('controllers/home')
 
@@ -18,112 +20,47 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		const user = req.user as model.User
 
 		const [learningRecord, requiredLearningResults] = await Promise.all([
-			learnerRecord.getRawLearningRecord(user),
+			courseRecordClient.getFullRecord(user),
 			catalog.findRequiredLearning(user, res.locals.departmentHierarchyCodes),
 		])
-		const requiredLearning = requiredLearningResults.results
-		const learningHash = suggestionController.hashArray(
-			learningRecord,
-			'courseId'
-		)
+		const requiredCourses = requiredLearningResults.results
+		const requiredLearning: model.Course[] = []
+		const courseRecordMap: Map<string, CourseRecord> = new Map()
+		learningRecord.map(cr => courseRecordMap.set(cr.courseId, cr))
 
-		const readyForFeedback = await learnerRecord.countReadyForFeedback(
-			learningRecord
-		)
-		for (let i = 0; i < requiredLearning.length; i++) {
-			const requiredCourse = requiredLearning[i]
-			if (learningHash[requiredCourse.id]) {
-				const record = learningHash[requiredCourse.id]
-				if (record) {
-					requiredCourse.record = record
-					//LC-1054: course status fix on home page
-					const previousRequiredBy = requiredCourse.previousRequiredByNew()
-					const latestCompletionDateOfModulesForACourse1 =
-						await record.getLatestCompletionDateOfMandatoryModulesForACourse(requiredCourse)
-					// tslint:disable-next-line:max-line-length
-					const latestCompletionDateOfModulesForACourse = latestCompletionDateOfModulesForACourse1 ? new Date(latestCompletionDateOfModulesForACourse1.toDateString()) : null
-					const earliestCompletionDateOfModulesForACourse1 =
-						await record.getEarliestCompletionDateOfMandatoryModulesForACourse(requiredCourse)
-					// tslint:disable-next-line:max-line-length
-					const earliestCompletionDateOfModulesForACourse = earliestCompletionDateOfModulesForACourse1 ? new Date(earliestCompletionDateOfModulesForACourse1.toDateString()) : null
-					record.courseDisplayState = record.state
-					if (record.isComplete()) {
-						if (!requiredCourse.shouldRepeatNew()) {
-							requiredLearning.splice(i, 1)
-							i -= 1
-						} else {
-							if (previousRequiredBy) {
-
-								if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
-									&& previousRequiredBy < earliestCompletionDateOfModulesForACourse
-									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
-									record.state = 'COMPLETED'
-									record.courseDisplayState = 'COMPLETED'
-									requiredLearning.splice(i, 1)
-									i -= 1
-								} else if (earliestCompletionDateOfModulesForACourse && latestCompletionDateOfModulesForACourse
-									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
-									&& previousRequiredBy >= latestCompletionDateOfModulesForACourse) {
-									record.state = ''
-									record.courseDisplayState = ''
-									//Below if condition is the scenario where module is progressed in the new learning period but not completed
-									const lastUpdated1 = record.lastUpdated
-									const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
-									if (lastUpdated
-										&& previousRequiredBy < lastUpdated) {
-										record.state = 'IN_PROGRESS'
-										record.courseDisplayState = 'IN_PROGRESS'
-									}
-								} else if (earliestCompletionDateOfModulesForACourse
-									&& latestCompletionDateOfModulesForACourse
-									&& previousRequiredBy >= earliestCompletionDateOfModulesForACourse
-									&& previousRequiredBy < latestCompletionDateOfModulesForACourse) {
-									record.state = 'IN_PROGRESS'
-									record.courseDisplayState = 'IN_PROGRESS'
-								}
-							}
-						}
-					} else {
-						if (!record.state && record.modules && record.modules.length) {
-							record.state = 'IN_PROGRESS'
-							record.courseDisplayState = 'IN_PROGRESS'
-						}
-						if (requiredCourse.shouldRepeatNew()) {
-							const lastUpdated1 = record.lastUpdated
-							const lastUpdated = lastUpdated1 ? new Date(lastUpdated1.toDateString()) : null
-							if (lastUpdated && previousRequiredBy &&
-								previousRequiredBy >= lastUpdated) {
-								record.state = ''
-								record.courseDisplayState = ''
-							} else if (lastUpdated && previousRequiredBy &&
-								previousRequiredBy < lastUpdated) {
-								record.state = 'IN_PROGRESS'
-								record.courseDisplayState = 'IN_PROGRESS'
-							}
-						}
+		for (const requiredCourse of requiredCourses) {
+			console.log("\n======")
+			console.log(requiredCourse.id)
+			const courseRecord = courseRecordMap.get(requiredCourse.id)
+			if (courseRecord) {
+				const state = getDisplayStateForCourse(requiredCourse, courseRecord)
+				if (state !== RecordState.Completed) {
+					console.log(state)
+					if (state !== RecordState.Null) {
+						courseRecord.state = state
+						courseRecord.courseDisplayState = state
 					}
-					learningRecord.splice(
-						learningRecord.findIndex(
-							value => value.courseId === record.courseId
-						),
-						1
-					)
+					requiredCourse.record = courseRecord
+					console.log(requiredCourse)
+					requiredLearning.push(requiredCourse)
 				}
+			} else {
+				requiredLearning.push(requiredCourse)
 			}
 		}
 
-		const bookedLearning: learnerRecord.CourseRecord[] = []
-		let plannedLearning: learnerRecord.CourseRecord[] = []
+		const bookedLearning: CourseRecord[] = []
+		let plannedLearning: CourseRecord[] = []
 		for (const record of learningRecord) {
-			if (!record.isComplete() && learnerRecord.isActive(record)) {
+			if (!record.isComplete() && record.isActive()) {
 				if (!record.state && record.modules && record.modules.length) {
-					record.state = 'IN_PROGRESS'
-					record.courseDisplayState = 'IN_PROGRESS'
+					record.state = RecordState.InProgress
+					record.courseDisplayState = RecordState.InProgress
 				}
 				if (record.getSelectedDate()) {
 					const bookedModuleRecord = record.modules.find(m => !!m.eventId)
 					if (bookedModuleRecord) {
-						record.state = bookedModuleRecord.bookingStatus
+						record.setBookingStatus(bookedModuleRecord.bookingStatus)
 					}
 					bookedLearning.push(record)
 				} else {
@@ -147,7 +84,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			course.record = plannedLearning.find(l => l.courseId === course.id)
 		}
 
-		courses = courses.filter((course: Course) => course.modules && course.modules.length > 0)
+		courses = courses.filter((course: model.Course) => course.modules && course.modules.length > 0)
 
 		let removeCourseId
 		let confirmTitle
@@ -202,7 +139,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				isEventBookedForGivenCourse,
 				noOption,
 				plannedLearning: courses,
-				readyForFeedback,
 				removeCourseId,
 				requiredLearning,
 				successId: req.flash('successId')[0],

@@ -188,7 +188,7 @@ export class Course {
 	audiences: Audience[]
 	audience?: Audience
 
-	record?: learnerRecord.CourseRecord
+	record?: learnerRecord.CourseRcd
 
 	constructor(id: string) {
 		this.id = id
