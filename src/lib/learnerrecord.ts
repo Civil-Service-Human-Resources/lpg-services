@@ -7,7 +7,6 @@ import {getPurchaseOrder} from "lib/service/skills"
 import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'
-import * as catalog from './service/catalog'
 
 export enum CourseState {
 	Completed = 'COMPLETED',
@@ -132,19 +131,6 @@ export async function getRecord(
 		return convert(record)
 	}
 	return null
-}
-
-export async function getLearningRecord(
-	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[])
-	: Promise<model.Course[]> {
-	const records = await getRawLearningRecord(user, activityIds, includeStates, ignoreStates)
-	const courseIds = records.map(record => record.courseId)
-	const courses = await catalog.list(courseIds, user)
-
-	for (const course of courses) {
-		course.record = records.find(r => r.courseId === course.id)
-	}
-	return courses
 }
 
 export async function getRawLearningRecord(

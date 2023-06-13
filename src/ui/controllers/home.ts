@@ -40,6 +40,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					requiredCourse.record = courseRecord
 					requiredLearning.push(requiredCourse)
 				}
+				courseRecordMap.delete(requiredCourse.id)
 			} else {
 				requiredLearning.push(requiredCourse)
 			}
@@ -47,7 +48,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 		const bookedLearning: CourseRecord[] = []
 		let plannedLearning: CourseRecord[] = []
-		for (const record of learningRecord) {
+		courseRecordMap.forEach((record: CourseRecord) => {
 			if (!record.isComplete() && record.isActive()) {
 				if (!record.state && record.modules && record.modules.length) {
 					record.state = RecordState.InProgress
@@ -63,24 +64,21 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					plannedLearning.push(record)
 				}
 			}
-		}
+		})
 
 		bookedLearning.sort((a, b) => {
 			return a.getSelectedDate()!.getDate() - b.getSelectedDate()!.getDate()
 		})
 
 		plannedLearning = [...bookedLearning, ...plannedLearning]
+		const plannedLearningIds = plannedLearning.map(l => l.courseId)
 
-		let courses = await catalog.list(
-			plannedLearning.map(l => l.courseId),
-			user
-		)
-
-		for (const course of courses) {
-			course.record = plannedLearning.find(l => l.courseId === course.id)
-		}
-
-		courses = courses.filter((course: model.Course) => course.modules && course.modules.length > 0)
+		const courses = (plannedLearningIds.length > 0 ? await catalog.list(plannedLearningIds, user) : [])
+		.filter(c  => (c.modules || []).length > 0)
+		.map(c => {
+			c.record = plannedLearning.find(l => l.courseId === c.id)
+			return c
+		})
 
 		let removeCourseId
 		let confirmTitle

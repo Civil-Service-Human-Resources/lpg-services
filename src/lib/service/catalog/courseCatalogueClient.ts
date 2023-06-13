@@ -1,5 +1,6 @@
 import { plainToClass } from 'class-transformer'
-import { User } from '../../model'
+
+import { Course, User } from '../../model'
 import { client } from './config'
 import { GetCoursesParams, GetCoursesResponse } from './models/getCoursesParams'
 
@@ -14,6 +15,17 @@ export async function getCourses(getCoursesParams: GetCoursesParams, user: User)
 		user
 	)
 	return plainToClass(GetCoursesResponse, resp)
+}
+
+export async function getCoursesWithIds(ids: string[], user: User) {
+	const resp = await client._post<string[], Course[]>(
+		{
+			url: `${URL}/getIds`,
+		},
+		ids,
+		user
+	)
+	return resp.map(c => plainToClass(Course, c))
 }
 
 export async function getCoursesV2(getCoursesParams: GetCoursesParams, user: User) {
