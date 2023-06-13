@@ -29,19 +29,15 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		learningRecord.map(cr => courseRecordMap.set(cr.courseId, cr))
 
 		for (const requiredCourse of requiredCourses) {
-			console.log("\n======")
-			console.log(requiredCourse.id)
 			const courseRecord = courseRecordMap.get(requiredCourse.id)
 			if (courseRecord) {
 				const state = getDisplayStateForCourse(requiredCourse, courseRecord)
 				if (state !== RecordState.Completed) {
-					console.log(state)
 					if (state !== RecordState.Null) {
 						courseRecord.state = state
 						courseRecord.courseDisplayState = state
 					}
 					requiredCourse.record = courseRecord
-					console.log(requiredCourse)
 					requiredLearning.push(requiredCourse)
 				}
 			} else {
