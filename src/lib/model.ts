@@ -431,6 +431,10 @@ export class Course {
 		}
 		return module
 	}
+
+	hasModules() {
+		return (this.modules || []).length > 0
+	}
 }
 
 export class CourseModule {

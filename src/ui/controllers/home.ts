@@ -14,6 +14,56 @@ import { getDisplayStateForCourse } from './learning-record'
 
 const logger = getLogger('controllers/home')
 
+export const getRequiredLearning = (requiredCourses: model.Course[], courseRecordMap: Map<string, CourseRecord>): model.Course[] => {
+	const requiredLearning: model.Course[] = []
+	for (const requiredCourse of requiredCourses) {
+		const courseRecord = courseRecordMap.get(requiredCourse.id)
+		if (courseRecord) {
+			const state = getDisplayStateForCourse(requiredCourse, courseRecord)
+			if (state !== RecordState.Completed) {
+				if (state !== RecordState.Null) {
+					courseRecord.state = state
+					courseRecord.courseDisplayState = state
+				}
+				requiredCourse.record = courseRecord
+				requiredLearning.push(requiredCourse)
+			}
+			courseRecordMap.delete(requiredCourse.id)
+		} else {
+			requiredLearning.push(requiredCourse)
+		}
+	}
+	return requiredLearning
+}
+
+export const getLearningPlanRecords = async (courseRecordMap: Map<string, CourseRecord>): Promise<CourseRecord[]> => {
+	const bookedLearning: CourseRecord[] = []
+	const plannedLearning: CourseRecord[] = []
+	courseRecordMap.forEach((record: CourseRecord) => {
+		if (!record.isComplete() && record.isActive()) {
+			if (!record.state && (record.modules || []).length) {
+				record.state = RecordState.InProgress
+				record.courseDisplayState = RecordState.InProgress
+			}
+			if (record.getSelectedDate()) {
+				const bookedModuleRecord = record.modules.find(m => !!m.eventId)
+				if (bookedModuleRecord) {
+					record.setBookingStatus(bookedModuleRecord.bookingStatus)
+				}
+				bookedLearning.push(record)
+			} else {
+				plannedLearning.push(record)
+			}
+		}
+	})
+
+	bookedLearning.sort((a, b) => {
+		return a.getSelectedDate()!.getDate() - b.getSelectedDate()!.getDate()
+	})
+	return [...bookedLearning, ...plannedLearning]
+
+}
+
 export async function home(req: express.Request, res: express.Response, next: express.NextFunction) {
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
@@ -23,62 +73,23 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			courseRecordClient.getFullRecord(user),
 			catalog.findRequiredLearning(user, res.locals.departmentHierarchyCodes),
 		])
-		const requiredCourses = requiredLearningResults.results
-		const requiredLearning: model.Course[] = []
-		const courseRecordMap: Map<string, CourseRecord> = new Map()
-		learningRecord.map(cr => courseRecordMap.set(cr.courseId, cr))
-
-		for (const requiredCourse of requiredCourses) {
-			const courseRecord = courseRecordMap.get(requiredCourse.id)
-			if (courseRecord) {
-				const state = getDisplayStateForCourse(requiredCourse, courseRecord)
-				if (state !== RecordState.Completed) {
-					if (state !== RecordState.Null) {
-						courseRecord.state = state
-						courseRecord.courseDisplayState = state
-					}
-					requiredCourse.record = courseRecord
-					requiredLearning.push(requiredCourse)
+		const courseRecordMap: Map<string, CourseRecord> = new Map(
+			learningRecord.map((cr): [string, CourseRecord] => [cr.courseId, cr])
+		)
+		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
+		requiredLearning.forEach(course => courseRecordMap.delete(course.id))
+		
+		const plannedLearningRecords = await getLearningPlanRecords(courseRecordMap)
+		const plannedLearning = []
+		if (plannedLearningRecords.length > 0) {
+			const learningPlanCourseIds = plannedLearningRecords.map(cr => cr.courseId)
+			for (const course of await catalog.list(learningPlanCourseIds, user)) {
+				if (course.hasModules()) {
+					course.record = plannedLearningRecords.find(cr => cr.courseId === course.id)
+					plannedLearning.push(course)
 				}
-				courseRecordMap.delete(requiredCourse.id)
-			} else {
-				requiredLearning.push(requiredCourse)
 			}
 		}
-
-		const bookedLearning: CourseRecord[] = []
-		let plannedLearning: CourseRecord[] = []
-		courseRecordMap.forEach((record: CourseRecord) => {
-			if (!record.isComplete() && record.isActive()) {
-				if (!record.state && record.modules && record.modules.length) {
-					record.state = RecordState.InProgress
-					record.courseDisplayState = RecordState.InProgress
-				}
-				if (record.getSelectedDate()) {
-					const bookedModuleRecord = record.modules.find(m => !!m.eventId)
-					if (bookedModuleRecord) {
-						record.setBookingStatus(bookedModuleRecord.bookingStatus)
-					}
-					bookedLearning.push(record)
-				} else {
-					plannedLearning.push(record)
-				}
-			}
-		})
-
-		bookedLearning.sort((a, b) => {
-			return a.getSelectedDate()!.getDate() - b.getSelectedDate()!.getDate()
-		})
-
-		plannedLearning = [...bookedLearning, ...plannedLearning]
-		const plannedLearningIds = plannedLearning.map(l => l.courseId)
-
-		const courses = (plannedLearningIds.length > 0 ? await catalog.list(plannedLearningIds, user) : [])
-		.filter(c  => (c.modules || []).length > 0)
-		.map(c => {
-			c.record = plannedLearning.find(l => l.courseId === c.id)
-			return c
-		})
 
 		let removeCourseId
 		let confirmTitle
@@ -124,7 +135,6 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		}
 		res.send(
 			template.render('home', req, res, {
-				bookedLearning,
 				confirmMessage,
 				confirmTitle,
 				eventActionDetails,
@@ -132,7 +142,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				getModuleForEvent,
 				isEventBookedForGivenCourse,
 				noOption,
-				plannedLearning: courses,
+				plannedLearning,
 				removeCourseId,
 				requiredLearning,
 				successId: req.flash('successId')[0],
