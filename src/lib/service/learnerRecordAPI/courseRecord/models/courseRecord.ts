@@ -26,7 +26,6 @@ export class CourseRecord extends Record implements CourseRcd {
 	preference?: CourseRecordPreference
 	@Type(() => Date)
 	lastUpdated?: Date
-	courseDisplayState?: string
 	required: boolean
 
 	constructor(

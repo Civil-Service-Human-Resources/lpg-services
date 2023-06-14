@@ -14,7 +14,9 @@ import { getDisplayStateForCourse } from './learning-record'
 
 const logger = getLogger('controllers/home')
 
-export const getRequiredLearning = (requiredCourses: model.Course[], courseRecordMap: Map<string, CourseRecord>): model.Course[] => {
+export const getRequiredLearning = (
+	requiredCourses: model.Course[],
+	courseRecordMap: Map<string, CourseRecord>): model.Course[] => {
 	const requiredLearning: model.Course[] = []
 	for (const requiredCourse of requiredCourses) {
 		const courseRecord = courseRecordMap.get(requiredCourse.id)
@@ -23,7 +25,6 @@ export const getRequiredLearning = (requiredCourses: model.Course[], courseRecor
 			if (state !== RecordState.Completed) {
 				if (state !== RecordState.Null) {
 					courseRecord.state = state
-					courseRecord.courseDisplayState = state
 				}
 				requiredCourse.record = courseRecord
 				requiredLearning.push(requiredCourse)
@@ -36,14 +37,13 @@ export const getRequiredLearning = (requiredCourses: model.Course[], courseRecor
 	return requiredLearning
 }
 
-export const getLearningPlanRecords = async (courseRecordMap: Map<string, CourseRecord>): Promise<CourseRecord[]> => {
+export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord>): CourseRecord[] => {
 	const bookedLearning: CourseRecord[] = []
 	const plannedLearning: CourseRecord[] = []
 	courseRecordMap.forEach((record: CourseRecord) => {
 		if (!record.isComplete() && record.isActive()) {
 			if (!record.state && (record.modules || []).length) {
 				record.state = RecordState.InProgress
-				record.courseDisplayState = RecordState.InProgress
 			}
 			if (record.getSelectedDate()) {
 				const bookedModuleRecord = record.modules.find(m => !!m.eventId)
@@ -78,8 +78,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
 		requiredLearning.forEach(course => courseRecordMap.delete(course.id))
-		
-		const plannedLearningRecords = await getLearningPlanRecords(courseRecordMap)
+
+		const plannedLearningRecords = getLearningPlanRecords(courseRecordMap)
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {
 			const learningPlanCourseIds = plannedLearningRecords.map(cr => cr.courseId)

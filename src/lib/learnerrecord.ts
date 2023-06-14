@@ -228,7 +228,6 @@ export interface CourseRcd {
 	preference?: string
 	state?: string | undefined
 	lastUpdated?: Date
-	courseDisplayState?: string
 
 	isComplete(): boolean
 	getSelectedDate(): Date | undefined
@@ -245,7 +244,6 @@ export class CourseRecord implements CourseRcd {
 	preference?: string
 	state?: string | undefined
 	lastUpdated?: Date
-	courseDisplayState?: string
 
 	constructor(data: any) {
 		this.courseId = data.courseId
