@@ -4,7 +4,7 @@ import * as datetime from 'lib/datetime'
 import { CourseRcd } from '../../../../learnerrecord'
 import { Module } from '../../../../model'
 import { Record, RecordState } from '../../models/record'
-import { BookingStatus, ModuleRecord } from '../../moduleRecord/models/moduleRecord'
+import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
 
 export enum CourseRecordPreference {
 	Liked = 'LIKED',
@@ -75,22 +75,6 @@ export class CourseRecord extends Record implements CourseRcd {
 			!this.isSkipped() &&
 			!this.isDisliked()
 		)
-	}
-
-	public setBookingStatus(bookingStatus?: BookingStatus) {
-		switch (bookingStatus) {
-			case BookingStatus.CANCELLED:
-				this.state = RecordState.Cancelled
-				break
-			case BookingStatus.REQUESTED:
-				this.state = RecordState.Requested
-				break
-			case BookingStatus.CONFIRMED:
-				this.state = RecordState.Confirmed
-				break
-			default:
-				break
-		}
 	}
 
 	public getSelectedDate() {

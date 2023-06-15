@@ -48,7 +48,7 @@ export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord
 			if (record.getSelectedDate()) {
 				const bookedModuleRecord = record.modules.find(m => !!m.eventId)
 				if (bookedModuleRecord) {
-					record.setBookingStatus(bookedModuleRecord.bookingStatus)
+					record.state = bookedModuleRecord.bookingStatus
 				}
 				bookedLearning.push(record)
 			} else {
@@ -77,7 +77,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			learningRecord.map((cr): [string, CourseRecord] => [cr.courseId, cr])
 		)
 		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
-		
+
 		const plannedLearningRecords = getLearningPlanRecords(courseRecordMap)
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {
