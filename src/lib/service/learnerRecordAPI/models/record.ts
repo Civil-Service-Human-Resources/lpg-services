@@ -11,9 +11,6 @@ export enum RecordState {
 	Registered = 'REGISTERED',
 	Approved = 'APPROVED',
 	Booked = 'BOOKED',
-	// Cancelled = 'CANCELLED',
-	// Requested = 'REQUESTED',
-	// Confirmed = 'CONFIRMED',
 }
 
 export class Record {
