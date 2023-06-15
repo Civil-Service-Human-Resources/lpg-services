@@ -77,8 +77,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			learningRecord.map((cr): [string, CourseRecord] => [cr.courseId, cr])
 		)
 		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
-		requiredLearning.forEach(course => courseRecordMap.delete(course.id))
-
+		
 		const plannedLearningRecords = getLearningPlanRecords(courseRecordMap)
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {
