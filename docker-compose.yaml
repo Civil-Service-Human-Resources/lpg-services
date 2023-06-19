@@ -82,7 +82,6 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
-      - XAPI_URL=http://learning-locker-xapi:8083/data/xAPI
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
     image: lpgregistry.azurecr.io/lpg-learner-record:idt-release-7.0-1-20210722-145741

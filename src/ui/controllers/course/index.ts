@@ -2,19 +2,15 @@ import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import { getLogger } from 'lib/logger'
-import {RequiredRecurringAudience} from 'lib/model'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
+import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
-import * as template from 'lib/ui/template'
-import * as youtube from 'lib/youtube'
-
+import { CourseRecord } from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import { ModuleRecord } from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {
 	RemoveCourseFromLearningplanActionWorker
-	// tslint:disable-next-line:max-line-length
 } from 'lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
 import {
 	CompletedActionWorker
@@ -22,6 +18,8 @@ import {
 import {
 	InitialiseActionWorker
 } from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
+import * as template from 'lib/ui/template'
+import * as youtube from 'lib/youtube'
 
 export interface CourseDetail {
 	label: string
@@ -103,14 +101,8 @@ export async function displayModule(
 
 		switch (module.type) {
 			case 'elearning':
-				await new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
-				res.redirect(
-					`${module.url}/${module.startPage}?title=${encodeURIComponent(module.title) ||
-					encodeURIComponent(course.title)}` +
-					`&module=${module.id}&endpoint=${config.LPG_UI_SERVER}/courses/${
-						course.id
-					}/${module.id}/xapi/&actor={"name":"Noop"}`
-				)
+				const launchELearningResponse = await cslServiceClient.launchELearningModule(course, module, req.user)
+				res.redirect(launchELearningResponse.launchLink)
 				break
 			case 'face-to-face':
 				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
@@ -233,7 +225,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 export function getDisplayStateForModule(
 	moduleRecord: ModuleRecord,
 	courseRecord: CourseRecord,
-	audience: RequiredRecurringAudience | null) {
+	audience: model.RequiredRecurringAudience | null) {
 	let displayStateLocal: string | null = moduleRecord.state ? moduleRecord.state : null
 	if (audience) {
 		const completionDate = moduleRecord.getCompletionDate().getTime()

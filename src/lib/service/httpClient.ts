@@ -82,4 +82,10 @@ export class HttpClient {
 		req.method = 'GET'
 		return await this.makeRequest<T>(req, user)
 	}
+
+	async _post<Request, Response>(req: AxiosRequestConfig, data: Request, user: model.User): Promise<Response> {
+		req.method = 'POST'
+		req.data = data
+		return await this.makeRequest<Response>(req, user)
+	}
 }

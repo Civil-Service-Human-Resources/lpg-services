@@ -4,7 +4,6 @@ import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
 import * as template from 'lib/ui/template'
-import * as xapi from 'lib/xapi'
 
 import {
 	CancelBookingActionWorker
@@ -127,13 +126,11 @@ export async function tryCancelBooking(
 
 	course.record = record
 
-	const extensions: Record<string, any> = {}
 	const cancelReason = req.body['other-reason']
 		? req.body['cancel-reason']
 		: req.body['cancel-reason']
 
 	if (cancelReason) {
-		extensions[xapi.Extension.CancelReason] = cancelReason
 
 		const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
 

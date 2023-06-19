@@ -50,8 +50,6 @@ For a complete list of test dependencies check the `package.json` file. The main
 - `learner-record` for loading course completion data
 - `learning-catalogue` for searching for courses
 - `civil-servant-registry-service` for updating profile information
-- `learning-locker-xapi` to receive filtered experience statement and state updates from course packages
-- Azure CDN to cache the static web content such as styles, JS, fonts 
 
 #### External integrations
 
@@ -114,7 +112,6 @@ Significant configuration properties are highlighted here. For the full configur
 - `LEARNER_RECORD` path for the learner-record service
 - `COURSE_CATALOGUE` path for the learning-catalogue service
 - `REGISTRY_SERVICE_URL` path for the civil-servant-registry-service
-- `XAPI` path for the learning locker XAPI
 - `GOOGLE_ANALYTICS_ID` GA ID used to associate analytics with domain account
 - `GOV_NOTIFY_API_KEY` as named
 - `YOUTUBE_API_KEY` key from CSL account on Google Developer Console used to fetch video metadata

@@ -1,7 +1,6 @@
 import _ = require('lodash')
 
 import { plainToClass } from 'class-transformer'
-import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
@@ -197,17 +196,24 @@ export class Course {
 
 	getRequiredRecurringAudience() {
 		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
-			const today = new Date(new Date().toDateString())
-			let nextDate = new Date(this.audience.requiredBy.toDateString())
-			while (nextDate < today) {
-				nextDate = Frequency.increment(this.audience.frequency, nextDate)
+			const nextDate = moment(this.audience.requiredBy)
+			while (nextDate < moment()) {
+				nextDate.add({
+					months: this.audience.frequency.months(),
+					years: this.audience.frequency.years(),
+				})
 			}
-			const lastDate = Frequency.decrement(this.audience.frequency, nextDate)
-			return new RequiredRecurringAudience(lastDate, nextDate)
+			const lastDate = moment(nextDate)
+			lastDate.subtract({
+				months: this.audience.frequency.months(),
+				years: this.audience.frequency.years(),
+			})
+			return new RequiredRecurringAudience(lastDate.toDate(), nextDate.toDate())
 		} else {
 			return null
 		}
 	}
+
 	isArchived() {
 		return this.status ? this.status === 'Archived' : false
 	}
@@ -238,10 +244,6 @@ export class Course {
 
 	isAssociatedLearningModule(id: number) {
 		return this.modules[id].associatedLearning
-	}
-
-	getActivityId() {
-		return `${config.XAPI.courseBaseUri}/${this.id}`
 	}
 
 	getAreasOfWork() {
@@ -487,10 +489,6 @@ export class Module {
 		this.type = type
 	}
 
-	getActivityId() {
-		return `${config.XAPI.moduleBaseUri}/${this.id}`
-	}
-
 	getDuration() {
 		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
@@ -614,10 +612,6 @@ export class Event {
 		this.availability = availability
 		this.status = status
 		this.isLearnerBooked = false
-	}
-
-	getActivityId() {
-		return `${config.XAPI.eventBaseUri}/${this.id}`
 	}
 }
 
