@@ -312,7 +312,7 @@ export class Course {
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
 				if (bookedModule) {
-					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
+					const event = bookedModule.events.find(event => event.id === bookedModuleRecord.eventId!)
 					if (event) {
 						return event.startDate
 					}
@@ -328,7 +328,7 @@ export class Course {
 			if (bookedModuleRecord) {
 				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
 				if (bookedModule) {
-					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
+					const event = bookedModule.events.find(event => event.id === bookedModuleRecord.eventId!)
 					if (event) {
 						return event.dateRanges.sort(function compare(a, b) {
 							const dateA = new Date(_.get(a, 'date', ''))
@@ -539,10 +539,6 @@ export class Module {
 			return '0 minutes'
 		}
 		return datetime.formatCourseDuration(this.duration)
-	}
-
-	getEvent(eventId: string) {
-		return this.events.find(event => event.id === eventId)
 	}
 
 	isAssociatedLearning() {
