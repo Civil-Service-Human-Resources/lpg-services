@@ -25,7 +25,7 @@ export async function getCoursesWithIds(ids: string[], user: User) {
 		ids,
 		user
 	)
-	return resp.map(c => plainToClass(Course, c))
+	return resp.map(c => Course.create(c, user))
 }
 
 export async function getCoursesV2(getCoursesParams: GetCoursesParams, user: User) {
