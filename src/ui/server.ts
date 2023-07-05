@@ -271,11 +271,6 @@ app.get('/learning-record',
 )
 
 app.get(
-	'/learning-record/feedback',
-	asyncHandler(learningRecordFeedbackController.listItemsForFeedback)
-)
-
-app.get(
 	'/learning-record/:courseId/:moduleId/feedback',
 	asyncHandler(learningRecordFeedbackController.displayFeedback)
 )

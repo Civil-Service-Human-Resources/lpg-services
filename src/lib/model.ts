@@ -188,7 +188,7 @@ export class Course {
 	audiences: Audience[]
 	audience?: Audience
 
-	record?: learnerRecord.CourseRecord
+	record?: learnerRecord.CourseRcd
 
 	constructor(id: string) {
 		this.id = id
@@ -430,6 +430,10 @@ export class Course {
 			throw new ModuleNotFoundError(this.id, moduleId)
 		}
 		return module
+	}
+
+	hasModules() {
+		return (this.modules || []).length > 0
 	}
 }
 

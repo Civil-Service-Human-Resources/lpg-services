@@ -1,3 +1,5 @@
+import { BookingStatus } from "../moduleRecord/models/moduleRecord"
+
 export enum RecordState {
 	Null = '',
 	NotStarted = 'NOT_STARTED',
@@ -14,7 +16,7 @@ export enum RecordState {
 export class Record {
 	courseId: string
 	userId: string
-	state?: RecordState
+	state?: RecordState | BookingStatus
 
 	constructor(courseId: string, userId: string, state?: RecordState) {
 		this.courseId = courseId

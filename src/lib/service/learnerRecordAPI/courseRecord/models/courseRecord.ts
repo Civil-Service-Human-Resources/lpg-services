@@ -1,5 +1,7 @@
-import { plainToClass } from 'class-transformer'
+import { plainToClass, Type } from 'class-transformer'
 import * as datetime from 'lib/datetime'
+
+import { CourseRcd } from '../../../../learnerrecord'
 import { Module } from '../../../../model'
 import { Record, RecordState } from '../../models/record'
 import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
@@ -17,12 +19,13 @@ export class CourseRecordResponse {
 	}
 }
 
-export class CourseRecord extends Record {
+export class CourseRecord extends Record implements CourseRcd {
 	courseTitle: string
+	@Type(() => ModuleRecord)
 	modules: ModuleRecord[]
 	preference?: CourseRecordPreference
+	@Type(() => Date)
 	lastUpdated?: Date
-	courseDisplayState?: string
 	required: boolean
 
 	constructor(
@@ -54,6 +57,33 @@ export class CourseRecord extends Record {
 		} else {
 			this.modules.push(moduleRecord)
 		}
+	}
+
+	// For compatibility with legacy code; remove once the old
+	// CourseRecord class is redundant
+	public isComplete() {
+		return this.isCompleted()
+	}
+
+	public isDisliked() {
+		return this.preference === CourseRecordPreference.Disliked
+	}
+
+	public isActive() {
+		return (
+			!this.isArchived() &&
+			!this.isSkipped() &&
+			!this.isDisliked()
+		)
+	}
+
+	public getSelectedDate() {
+		for (const moduleRecord of this.modules) {
+			if (moduleRecord.eventDate) {
+				return moduleRecord.eventDate
+			}
+		}
+		return undefined
 	}
 
 	public hasBeenAddedToLearningPlan() {
