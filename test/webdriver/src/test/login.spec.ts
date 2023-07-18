@@ -1,7 +1,7 @@
 import * as config from '../extension/config'
 import loginPage, {selectors} from '../page/login'
 
-const contactUsEmailAddress = 'mailto:feedback@cslearning.gov.uk'
+const contactUsEmailAddress = 'mailto:support@governmentcampus.co.uk'
 
 describe('Login page funtionality', () => {
 	beforeAll(done => {

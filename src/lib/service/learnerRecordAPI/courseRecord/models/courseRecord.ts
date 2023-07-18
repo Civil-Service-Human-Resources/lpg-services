@@ -1,5 +1,7 @@
-import { plainToClass } from 'class-transformer'
+import { plainToClass, Type } from 'class-transformer'
+import * as datetime from 'lib/datetime'
 
+import { CourseRcd } from '../../../../learnerrecord'
 import { Module } from '../../../../model'
 import { Record, RecordState } from '../../models/record'
 import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
@@ -17,12 +19,13 @@ export class CourseRecordResponse {
 	}
 }
 
-export class CourseRecord extends Record {
+export class CourseRecord extends Record implements CourseRcd {
 	courseTitle: string
+	@Type(() => ModuleRecord)
 	modules: ModuleRecord[]
 	preference?: CourseRecordPreference
+	@Type(() => Date)
 	lastUpdated?: Date
-	courseDisplayState?: string
 	required: boolean
 
 	constructor(
@@ -56,6 +59,33 @@ export class CourseRecord extends Record {
 		}
 	}
 
+	// For compatibility with legacy code; remove once the old
+	// CourseRecord class is redundant
+	public isComplete() {
+		return this.isCompleted()
+	}
+
+	public isDisliked() {
+		return this.preference === CourseRecordPreference.Disliked
+	}
+
+	public isActive() {
+		return (
+			!this.isArchived() &&
+			!this.isSkipped() &&
+			!this.isDisliked()
+		)
+	}
+
+	public getSelectedDate() {
+		for (const moduleRecord of this.modules) {
+			if (moduleRecord.eventDate) {
+				return moduleRecord.eventDate
+			}
+		}
+		return undefined
+	}
+
 	public hasBeenAddedToLearningPlan() {
 		return this.isNull()
 	}
@@ -77,6 +107,61 @@ export class CourseRecord extends Record {
 			modulesRequiredForCompletion = modules.filter(m => !m.optional).map(m => m.id)
 		}
 		return modulesRequiredForCompletion.every(i => completedModuleIds.includes(i))
+	}
+
+	public getLastUpdated() {
+		return this.lastUpdated ? this.lastUpdated : new Date(0)
+	}
+
+	public getCompletionDatesForModules(filterModules?: Module[]) {
+		if (filterModules) {
+			const mrMap: Map<string, ModuleRecord> = new Map()
+			this.modules.forEach(mr => mrMap.set(mr.moduleId, mr))
+			return filterModules.map(mod => {
+				const moduleRecord = mrMap.get(mod.id)
+				if (moduleRecord) {
+					return moduleRecord.getCompletionDate()
+				} else {
+					return new Date(0)
+				}
+			})
+		} else {
+			return this.modules.map(mr => mr.getCompletionDate())
+		}
+	}
+
+	public getCompletionDate() {
+		let completionDate
+		if (this.isCompleted()) {
+			for (const moduleRecord of this.modules) {
+				const moduleRecordCompletionDate = moduleRecord.getCompletionDate()
+				if (!completionDate) {
+					completionDate = moduleRecordCompletionDate
+				} else if (
+					moduleRecordCompletionDate > completionDate
+				) {
+					completionDate = moduleRecordCompletionDate
+				}
+			}
+		}
+		return completionDate
+	}
+
+	getDuration() {
+		const durationArray = this.modules.map(m => m.duration || 0)
+		return durationArray.length
+			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
+			: null
+	}
+
+	public getType() {
+		if (!this.modules.length) {
+			return null
+		}
+		if (this.modules.length > 1) {
+			return 'blended'
+		}
+		return this.modules[0].moduleType
 	}
 
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {

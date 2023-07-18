@@ -4,7 +4,6 @@ import { getLogger } from 'lib/logger'
 import * as model from '../../../model'
 import { JsonPatch } from '../../shared/models/JsonPatch'
 import { client } from '../baseConfig'
-import { ModuleRecord } from '../moduleRecord/models/moduleRecord'
 import { CourseRecord, CourseRecordResponse } from './models/courseRecord'
 import { CourseRecordInput } from './models/courseRecordInput'
 
@@ -47,7 +46,7 @@ export async function getFullRecord(user: model.User): Promise<CourseRecord[]> {
 		url: URL,
 	}, user)
 	const courseRecords = plainToClass(CourseRecordResponse, resp)
-	return await Promise.all(courseRecords.courseRecords.map(buildCourseRecord))
+	return await Promise.all(courseRecords.courseRecords.map(c => plainToClass(CourseRecord, c)))
 }
 
 export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
@@ -65,16 +64,10 @@ export async function getCourseRecord(courseId: string, user: model.User): Promi
 	const courseRecords = plainToClass(CourseRecordResponse, resp).courseRecords
 	let courseRecord
 	if (courseRecords.length === 1) {
-		courseRecord = buildCourseRecord(courseRecords[0])
+		courseRecord = plainToClass(CourseRecord, courseRecords[0])
 	} else if (courseRecords.length > 1) {
 		logger.warn(`Course record for course ID ${courseId} and user ID ${user.id} returned a result set greater than 1`)
-		courseRecord = buildCourseRecord(courseRecords[0])
+		courseRecord = plainToClass(CourseRecord, courseRecords[0])
 	}
-	return courseRecord
-}
-
-async function buildCourseRecord(courseRecordData: CourseRecord) {
-	const courseRecord = plainToClass(CourseRecord, courseRecordData)
-	courseRecord.modules = courseRecordData.modules = courseRecordData.modules.map(m => plainToClass(ModuleRecord, m))
 	return courseRecord
 }

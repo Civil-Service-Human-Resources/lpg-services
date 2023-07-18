@@ -13,6 +13,7 @@
 		"sass": "gulp sass",
 		"start:all": "npm run start:ui",
 		"start:build": "npm run build && npm run start:ui",
+		"start:ts": "npm run compile && npm run start:ui",
 		"start:ui": "cd dist/ui && node --icu-data-dir=../../node_modules/full-icu ../node_modules/ui/server.js",
 		"test:ts": "npm run test-single:ts \"src/**/*.spec.ts\"",
 		"test-single:ts": "cross-env NODE_ICU_DATA=node_modules/full-icu ts-mocha --paths -p ./tsconfig.json --timeout 10000 --exit",

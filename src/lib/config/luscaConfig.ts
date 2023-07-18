@@ -1,6 +1,7 @@
 import * as config from "lib/config/index"
 
 export function setCspPolicy(staticAssetDomain: string) {
+
 	let contentCdn
 	if (config.PROFILE === 'prod') {
 		contentCdn = 'https://cdn.learn.civilservice.gov.uk'

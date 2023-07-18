@@ -5,6 +5,7 @@ import * as config from 'lib/config'
 import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as api from 'lib/service/catalog/api'
+import * as courseCatalogueClient from './courseCatalogueClient'
 
 const logger = getLogger('catalog')
 
@@ -139,10 +140,10 @@ export async function findRequiredLearning(
 	}
 }
 
-export async function get(id: string, user: model.User) {
+export async function get(id: string, user: model.User, departmentHierarchyCodes?: string[]) {
 	try {
 		const response = await http.get(`/courses/${id}`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return await model.CourseFactory.create(response.data, user)
+		return await model.CourseFactory.create(response.data, user, departmentHierarchyCodes)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
 			return null
@@ -152,19 +153,7 @@ export async function get(id: string, user: model.User) {
 }
 
 export async function list(ids: string[], user: model.User) {
-	if (ids.length === 0) {
-		return []
-	}
-	try {
-		const response = await http.post(`/courses/getIds`,
-			ids, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return response.data.map((r: any) => model.Course.create(r, user))
-	} catch (e) {
-		if (e.response && e.response.status === 404) {
-			return null
-		}
-		throw new Error(`Error getting course - ${e}`)
-	}
+	return await courseCatalogueClient.getCoursesWithIds(ids, user)
 }
 
 async function convertNew(data: any, user?: model.User, usersOrganisationHierarchy?: string[]) {

@@ -1,13 +1,12 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
 import * as template from 'lib/ui/template'
 
 import {
 	RateModuleActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/RateModuleActionWorker'
+} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/RateModuleActionWorker'
 
 const logger = getLogger('controllers/learning-record/feedback')
 
@@ -95,22 +94,4 @@ export async function submitFeedback(
 			res.redirect('/learning-record/feedback')
 		})
 	}
-}
-
-export async function listItemsForFeedback(
-	req: express.Request,
-	res: express.Response
-) {
-	const learningRecord = await learnerRecord.getLearningRecord(req.user)
-	const readyForFeedback = await learnerRecord.getReadyForFeedback(
-		learningRecord
-	)
-
-	res.send(
-		template.render('learning-record/feedback-list', req, res, {
-			readyForFeedback,
-			successMessage: req.flash('successMessage')[0],
-			successTitle: req.flash('successTitle')[0],
-		})
-	)
 }

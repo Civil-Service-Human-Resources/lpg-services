@@ -59,8 +59,12 @@ export const COURSE_CATALOGUE = set({
 	url: env.COURSE_CATALOGUE_URL || 'http://localhost:9001',
 })
 
+export const CSL_SERVICE = set({
+	url: env.CSL_SERVICE_URL || 'http://localhost:9003',
+})
+
 export const FEEDBACK_RECIPIENTS = [
-	env.FEEDBACK_RECIPIENT || 'feedback@cslearning.gov.uk',
+	env.FEEDBACK_RECIPIENT || 'support@governmentcampus.co.uk',
 ]
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
@@ -82,7 +86,7 @@ export const LEARNER_RECORD = set({
 	url: env.LEARNER_RECORD_URL || 'http://localhost:9000',
 })
 
-export const LOGGING_LEVEL = env.LOGGING_LEVEL
+export const LOGGING_LEVEL = env.LOGGING_LEVEL || 'INFO'
 
 export const LPG_UI_SERVER =
 	env.LPG_UI_SERVER || 'http://develop.learn.civilservice.gov.uk:3001'
@@ -93,17 +97,6 @@ export const LPG_MANAGMENT_SERVER =
 export const SESSION_SECRET =
 	env.SESSION_SECRET ||
 	'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
-
-export const XAPI = set({
-	auth: {
-		password: env.XAPI_PASS || '1c0e1b6827606d7efed71e204939d048f94f842b',
-		username: env.XAPI_USER || '66f2b4fc001e3da992d23b57d8a7457655bea078',
-	},
-	courseBaseUri: 'http://cslearning.gov.uk/courses',
-	eventBaseUri: 'http://cslearning.gov.uk/events',
-	moduleBaseUri: 'http://cslearning.gov.uk/modules',
-	url: env.XAPI_URL || 'http://localhost:8083/data/xAPI',
-})
 
 export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
 
@@ -147,3 +140,5 @@ export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
 export const STATIC_ASSET_TTL = env.STATIC_ASSET_TTL
 
 export const TOKEN_EXPIRY_BUFFER = Number(env.TOKEN_EXPIRY_BUFFER) || 30
+
+export const FEEDBACK_URL = env.FEEDBACK_URL || 'ChangeMe'

@@ -1,7 +1,6 @@
 import _ = require('lodash')
 
 import { plainToClass } from 'class-transformer'
-import * as config from 'lib/config'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as moment from 'moment'
@@ -189,10 +188,30 @@ export class Course {
 	audiences: Audience[]
 	audience?: Audience
 
-	record?: learnerRecord.CourseRecord
+	record?: learnerRecord.CourseRcd
 
 	constructor(id: string) {
 		this.id = id
+	}
+
+	getRequiredRecurringAudience() {
+		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
+			const nextDate = moment(this.audience.requiredBy)
+			while (nextDate < moment()) {
+				nextDate.add({
+					months: this.audience.frequency.months(),
+					years: this.audience.frequency.years(),
+				})
+			}
+			const lastDate = moment(nextDate)
+			lastDate.subtract({
+				months: this.audience.frequency.months(),
+				years: this.audience.frequency.years(),
+			})
+			return new RequiredRecurringAudience(lastDate.toDate(), nextDate.toDate())
+		} else {
+			return null
+		}
 	}
 
 	isArchived() {
@@ -225,10 +244,6 @@ export class Course {
 
 	isAssociatedLearningModule(id: number) {
 		return this.modules[id].associatedLearning
-	}
-
-	getActivityId() {
-		return `${config.XAPI.courseBaseUri}/${this.id}`
 	}
 
 	getAreasOfWork() {
@@ -358,14 +373,6 @@ export class Course {
 		return null
 	}
 
-	previousRequiredBy() {
-		const completionDate = this.getCompletionDate()
-		if (this.audience) {
-			return this.audience!.previousRequiredBy(completionDate)
-		}
-		return null
-	}
-
 	//LC-1054: Rather than updating the above method a new method is Implemented as below
 	previousRequiredByNew() {
 		if (this.audience) {
@@ -424,6 +431,10 @@ export class Course {
 		}
 		return module
 	}
+
+	hasModules() {
+		return (this.modules || []).length > 0
+	}
 }
 
 export class CourseModule {
@@ -480,10 +491,6 @@ export class Module {
 	constructor(id: string, type: string) {
 		this.id = id
 		this.type = type
-	}
-
-	getActivityId() {
-		return `${config.XAPI.moduleBaseUri}/${this.id}`
 	}
 
 	getDuration() {
@@ -609,10 +616,6 @@ export class Event {
 		this.availability = availability
 		this.status = status
 		this.isLearnerBooked = false
-	}
-
-	getActivityId() {
-		return `${config.XAPI.eventBaseUri}/${this.id}`
 	}
 }
 
@@ -784,6 +787,11 @@ export class Audience {
 		}
 		const lastDate = Frequency.decrement(this.frequency, nextDate)
 		return [lastDate, nextDate]
+	}
+}
+
+export class RequiredRecurringAudience {
+	constructor(public previousRequiredBy: Date, public nextRequiredBy: Date) {
 	}
 }
 

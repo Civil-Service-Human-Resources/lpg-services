@@ -45,7 +45,6 @@ import * as skillsController from './controllers/skills'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
 import { completeVideoModule } from './controllers/video'
-import * as xApiController from './controllers/xapi'
 
 appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
 .setAutoCollectConsole(true)
@@ -118,6 +117,26 @@ app.use(compression({threshold: 0}))
 app.locals.staticAssetDomain = ''
 app.locals.staticAssetRoot = ''
 
+app.locals.feedbackDomain = ''
+app.locals.feedbackRoot = ''
+
+if (config.FEEDBACK_URL) {
+	try {
+		const feedbackURL = new URL(config.FEEDBACK_URL)
+
+		app.locals.feedbackDomain = feedbackURL.hostname
+		app.locals.feedbackRoot = config.FEEDBACK_URL
+
+		if (feedbackURL.protocol !== "https:") {
+			logger.warn(`Feedback url is not being served over ssl (feedback route: ${app.locals.feedbackRoot})`)
+		}
+
+	} catch (error) {
+		// tslint:disable-next-line:max-line-length
+		logger.error(`The configured FEEDBACK_URL value ("${config.FEEDBACK_URL}") is not a valid URL. Feedback will not be available.\nFull error:\n${error}`)
+	}
+}
+
 if (config.STATIC_ASSET_ROOT) {
 	try {
 		const staticAssetUrl = new URL(config.STATIC_ASSET_ROOT)
@@ -161,21 +180,10 @@ passport.configure(
 )
 i18n.configure(app)
 
+app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
 app.param('courseId', asyncHandler(courseController.loadCourse))
 app.param('moduleId', asyncHandler(courseController.loadModule))
 app.param('eventId', asyncHandler(courseController.loadEvent))
-
-app.use('/courses/:proxyCourseId/:proxyModuleId/xapi', asyncHandler(xApiController.proxy))
-
-/**
- * The below handler is added as there are xapi calls done against learning-record which were not handled and were
- * caught by lusca CSRF check - resulting with big number of error messages.
- *
- * As it hit 100% error rate the below handler is proposed to remediate the errors appearing - it is to be
- * investigated whether the calls should be handled (or could they be removed completely).
- */
-app.use('/learning-record/:learnerRecordId/:notHandledModuleId/xapi',
-	(req: express.Request, res: express.Response) => res.sendStatus(204))
 
 app.use(lusca.csrf())
 
@@ -244,7 +252,6 @@ app.get('/profile/:profileDetail', asyncHandler(userController.renderEditPage))
 app.post('/profile/:profileDetail', asyncHandler(userController.tryUpdateProfile))
 
 app.get('/courses/:courseId',
-	asyncHandler(requiresDepartmentHierarchy),
 	asyncHandler(courseController.display)
 )
 
@@ -261,11 +268,6 @@ app.use(
 app.get('/learning-record',
 	asyncHandler(requiresDepartmentHierarchy),
 	asyncHandler(learningRecordController.display)
-)
-
-app.get(
-	'/learning-record/feedback',
-	asyncHandler(learningRecordFeedbackController.listItemsForFeedback)
 )
 
 app.get(
