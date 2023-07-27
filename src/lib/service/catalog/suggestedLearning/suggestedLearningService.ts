@@ -59,7 +59,7 @@ export async function extractSuggestionParams(user: User, departmentHierarchyCod
 export function createParamsForDepartmentSection(departmentCodes: string[], user: User): SuggestionSection[] {
 	const param = {
 		departments: departmentCodes.join(','),
-		grade: user.grade.code,
+		grade: user.getGradeCode(),
 		page: 0,
 		size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
 	}
@@ -73,7 +73,7 @@ export function createParamsForAreaOfWorkSection(departmentCodes: string[], user
 				? {
 						areaOfWork: aow,
 						excludeDepartments: departmentCodes,
-						grade: user.grade.code,
+						grade: user.getGradeCode(),
 						page: 0,
 						size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
 				}
@@ -94,7 +94,7 @@ export function createParamsForOtherAreasOfWorkSection(departmentCodes: string[]
 						areaOfWork,
 						excludeAreasOfWork,
 						excludeDepartments: departmentCodes,
-						grade: user.grade.code,
+						grade: user.getGradeCode(),
 						page: 0,
 						size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
 					}
@@ -111,7 +111,7 @@ export function createParamsForInterestsSection(departmentCodes: string[], user:
 			excludeAreasOfWork,
 			excludeDepartments: departmentCodes,
 			excludeInterests,
-			grade: user.grade.code,
+			grade: user.getGradeCode(),
 			interest,
 			page: 0,
 			size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
