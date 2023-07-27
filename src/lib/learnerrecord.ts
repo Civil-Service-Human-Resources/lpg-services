@@ -4,11 +4,9 @@ import * as axiosLogger from 'lib/axiosLogger'
 import * as datetime from 'lib/datetime'
 import {getLogger} from 'lib/logger'
 import {getPurchaseOrder} from "lib/service/skills"
-import _ = require("lodash")
 import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'
-import * as catalog from './service/catalog'
 
 export enum CourseState {
 	Completed = 'COMPLETED',
@@ -135,19 +133,6 @@ export async function getRecord(
 	return null
 }
 
-export async function getLearningRecord(
-	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[])
-	: Promise<model.Course[]> {
-	const records = await getRawLearningRecord(user, activityIds, includeStates, ignoreStates)
-	const courseIds = records.map(record => record.courseId)
-	const courses = await catalog.list(courseIds, user)
-
-	for (const course of courses) {
-		course.record = records.find(r => r.courseId === course.id)
-	}
-	return courses
-}
-
 export async function getRawLearningRecord(
 	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[]): Promise<CourseRecord[]> {
 	const params = {
@@ -235,7 +220,7 @@ export function isActive(record: CourseRecord) {
 	)
 }
 
-export class CourseRecord {
+export interface CourseRcd {
 	courseId: string
 	courseTitle: string
 	userId: string
@@ -243,7 +228,22 @@ export class CourseRecord {
 	preference?: string
 	state?: string | undefined
 	lastUpdated?: Date
-	courseDisplayState?: string
+
+	isComplete(): boolean
+	getSelectedDate(): Date | undefined
+	getType(): string | null
+	getDuration(): string | null
+	getCompletionDate(): Date | undefined
+}
+
+export class CourseRecord implements CourseRcd {
+	courseId: string
+	courseTitle: string
+	userId: string
+	modules: ModuleRecord[]
+	preference?: string
+	state?: string | undefined
+	lastUpdated?: Date
 
 	constructor(data: any) {
 		this.courseId = data.courseId
@@ -319,60 +319,6 @@ export class CourseRecord {
 			return completionDate
 		}
 		return undefined
-	}
-
-	getCompletedModules() {
-		// Return only the modules that are completed (where m.completionDate is not null)
-		return this.modules.filter(m => m.completionDate)
-	}
-
-	//LC-1054: Rather than renaming the above method a new method is Implemented as below
-	async getLatestCompletionDateOfMandatoryModulesForACourse(course: model.Course) {
-		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(course)
-
-		if (this.isComplete()) {
-			return _.max(availableCompletedMandatoryCourses.map(m => m.completionDate))
-		}
-		return undefined
-	}
-
-	//LC-1054: A new method implemented as below
-	async getEarliestCompletionDateOfMandatoryModulesForACourse(course: model.Course) {
-		const availableCompletedMandatoryCourses = await this.getAvailableCompletedMandatoryModulesForCourse(course)
-
-		if (this.isComplete()) {
-			return _.min(availableCompletedMandatoryCourses.map(m => m.completionDate))
-		}
-		return undefined
-	}
-
-	//LC-1054: Below method is no longer used
-	getStartedDate() {
-		let startedDate: Date | undefined
-		for (const moduleRecord of this.modules) {
-			if (!startedDate) {
-				startedDate = moduleRecord.createdAt
-			} else if (
-				moduleRecord.createdAt &&
-				moduleRecord.createdAt < startedDate
-			) {
-				startedDate = moduleRecord.createdAt
-			}
-		}
-		return startedDate
-	}
-
-	async getAvailableCompletedMandatoryModulesForCourse(course: model.Course) {
-		const availableModuleIds = await this.getAvailableModuleIdsForCourse(course)
-
-		return this.getCompletedModules()
-			.filter(module => module.optional === false)
-			.filter(module => availableModuleIds.includes(module.moduleId))
-	}
-
-	async getAvailableModuleIdsForCourse(course: model.Course) {
-		const moduleIds = course.modules.map(module => module.id)
-		return moduleIds
 	}
 
 }
