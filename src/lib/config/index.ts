@@ -69,7 +69,8 @@ export const FEEDBACK_RECIPIENTS = [
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
 
-export const GOOGLE_ANALYTICS_CSP_ORIGINS = env.GOOGLE_ANALYTICS_CSP_ORIGINS || "*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com"
+export const GOOGLE_ANALYTICS_CSP_ORIGINS =
+env.GOOGLE_ANALYTICS_CSP_ORIGINS || "*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com"
 
 export const GOOGLE_ANALYTICS_ID = env.GOOGLE_ANALYTICS_ID || 'UA-22141655-4'
 
