@@ -1,30 +1,14 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import { getLogger } from 'lib/logger'
+import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
+
+import {fetchSuggestedLearning} from 'lib/service/catalog/suggestedLearning/suggestedLearningService'
+import {Suggestion} from 'lib/service/catalog/suggestedLearning/suggestion'
+import * as cslService from 'lib/service/cslService/cslServiceClient'
 import * as template from 'lib/ui/template'
 
-import {
-	fetchSuggestedLearning
-} from '../../lib/service/catalog/suggestedLearning/suggestedLearningService'
-import { Suggestion } from '../../lib/service/catalog/suggestedLearning/suggestion'
-import {
-	AddCourseToLearningplanActionWorker
-} from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/AddCourseToLearningplanActionWorker'
-import {
-	RemoveCourseFromLearningplanActionWorker
-} from '../../lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
-
 const logger = getLogger('controllers/suggestion')
-
-export function hashArray<T>(records: T[], key: string) {
-	const hash: Record<string, T> = {}
-	for (const entry of records) {
-		const hashIndex: string = (entry as any)[key]
-		hash[hashIndex] = entry
-	}
-	return hash
-}
 
 export async function addToPlan(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
@@ -39,7 +23,7 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 			break
 	}
 	try {
-		await new AddCourseToLearningplanActionWorker(course, req.user).applyActionToLearnerRecord()
+		await cslService.addCourseToLearningPlan(course.id, req.user)
 
 		req.flash('successTitle', req.__('learning_added_to_plan_title', course.title))
 		req.flash('successMessage', req.__('learning_added_to_plan_message', course.title))
@@ -48,7 +32,7 @@ export async function addToPlan(ireq: express.Request, res: express.Response) {
 			res.redirect(redirectTo)
 		})
 	} catch (err) {
-		logger.error('Error recording xAPI statement', err)
+		logger.error('Error adding course to learning plan', err)
 		res.sendStatus(500)
 	}
 }
@@ -58,11 +42,11 @@ export async function removeFromSuggestions(ireq: express.Request, res: express.
 	const course = req.course
 
 	try {
-		await new RemoveCourseFromLearningplanActionWorker(course, req.user).applyActionToLearnerRecord()
+		await cslService.removeCourseFromSuggestions(course.id, req.user)
 		req.flash('successTitle', req.__('learning_removed_from_plan_title', course.title))
 		req.flash('successMessage', req.__('learning_removed_from_suggestions', course.title))
 	} catch (err) {
-		logger.error('Error recording xAPI statement', err)
+		logger.error('Error removing course from suggestions', err)
 		res.sendStatus(500)
 	} finally {
 		res.redirect(ref)

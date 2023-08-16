@@ -2,7 +2,6 @@ import {CourseRecordStateError} from '../../../../../exception/courseRecordState
 import {Course, Event, Module, User} from '../../../../../model'
 import {patchCourseRecord} from '../../../../learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from '../../../../learnerRecordAPI/courseRecord/models/courseRecord'
-import {setLastUpdated} from '../../../../learnerRecordAPI/courseRecord/patchFactory'
 import {RecordState} from '../../../../learnerRecordAPI/models/record'
 import {patchModuleRecord} from '../../../../learnerRecordAPI/moduleRecord/client'
 import {ModuleRecord} from '../../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
@@ -41,11 +40,9 @@ export class SkipBookingActionWorker extends EventActionWorker {
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
-		const patches = [setLastUpdated(new Date())]
 		if (courseRecord.isRegistered()) {
-			patches.push(setState(RecordState.Skipped))
+			await patchCourseRecord([setState(RecordState.Skipped)], this.user, courseRecord.courseId)
 		}
-		await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {

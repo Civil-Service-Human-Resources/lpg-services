@@ -1,17 +1,21 @@
 /* tslint:disable:no-unused-expression */
-import { expect } from 'chai'
+import {expect} from 'chai'
+import {ActionWorker} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/ActionWorker'
 
-import { SinonStub } from '../../../../../../node_modules/@types/sinon'
-import { Course } from '../../../../model'
-import { JsonPatch, JsonPatchInterface } from '../../../shared/models/JsonPatch'
-import { CourseRecord } from '../../courseRecord/models/courseRecord'
-import { CourseRecordInput } from '../../courseRecord/models/courseRecordInput'
-import { RecordState } from '../../models/record'
-import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
-import { CourseRecordActionWorker } from '../courseRecordActionWorkers/CourseRecordActionWorker'
+import {SinonStub} from '../../../../../../node_modules/@types/sinon'
+import {Course} from '../../../../model'
+import {JsonPatch, JsonPatchInterface} from '../../../shared/models/JsonPatch'
+import {CourseRecord} from '../../courseRecord/models/courseRecord'
+import {CourseRecordInput} from '../../courseRecord/models/courseRecordInput'
+import {RecordState} from '../../models/record'
+import {ModuleRecordInput} from '../../moduleRecord/models/moduleRecordInput'
 import {
-	assertJsonPatch, assertOneCallAndGetArgs, mockCreateCourseRecord, mockGetCourseRecord,
-	mockGetCourseRecordNotFound, mockPatchCourseRecord
+	assertJsonPatch,
+	assertOneCallAndGetArgs,
+	mockCreateCourseRecord,
+	mockGetCourseRecord,
+	mockGetCourseRecordNotFound,
+	mockPatchCourseRecord,
 } from './workerTestUtils'
 
 /**
@@ -29,7 +33,7 @@ export function updateCourseRecordTest(testFunc: Mocha.Func, extraDesc: string =
 }
 
 export async function testCreateCourseRecord(
-	worker: CourseRecordActionWorker,
+	worker: ActionWorker,
 	expState: RecordState | undefined,
 	expPrefernce: string | undefined,
 	expModuleRecordState: RecordState | undefined,
@@ -82,7 +86,7 @@ export function assertPatchCourseRecordCall(stub: SinonStub, expectedPatches: Js
 }
 
 export async function testUpdateCourseRecord(
-	worker: CourseRecordActionWorker,
+	worker: ActionWorker,
 	getCourseRecordMockResponse: CourseRecord,
 	expectedPatches: JsonPatchInterface[]
 ) {

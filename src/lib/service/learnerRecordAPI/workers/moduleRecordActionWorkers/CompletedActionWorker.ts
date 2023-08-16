@@ -1,11 +1,11 @@
 import {Course, Module, User} from '../../../../model'
 import {patchCourseRecord} from '../../../learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from '../../../learnerRecordAPI/courseRecord/models/courseRecord'
-import {setLastUpdated, setState} from '../../../learnerRecordAPI/courseRecord/patchFactory'
+import {setState} from '../../../learnerRecordAPI/courseRecord/patchFactory'
 import {RecordState} from '../../../learnerRecordAPI/models/record'
 import {patchModuleRecord} from '../../../learnerRecordAPI/moduleRecord/client'
 import {ModuleRecord} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
-import {setCompletionDate, setUpdatedAt} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
+import {setCompletionDate} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
 import {WorkerType} from '../workerType'
 import {ActionWorker} from './ActionWorker'
 
@@ -32,17 +32,15 @@ export class CompletedActionWorker extends ActionWorker {
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord) {
-		const patches = [setLastUpdated()]
 		if (courseRecord.areAllRelevantModulesComplete(this.course.modules)) {
-			patches.push(setState(RecordState.Completed))
+			await patchCourseRecord([setState(RecordState.Completed)], this.user, this.course.id)
 		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
-			patches.push(setState(RecordState.InProgress))
+			await patchCourseRecord([setState(RecordState.InProgress)], this.user, this.course.id)
 		}
-		await patchCourseRecord(patches, this.user, this.course.id)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord) {
-		const patches = [setUpdatedAt(new Date()), setState(RecordState.Completed), setCompletionDate(new Date())]
+		const patches = [setState(RecordState.Completed), setCompletionDate(new Date())]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
 	}
 

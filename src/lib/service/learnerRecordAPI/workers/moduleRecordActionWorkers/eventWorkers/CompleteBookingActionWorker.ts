@@ -2,11 +2,11 @@ import {CourseRecordStateError} from '../../../../../exception/courseRecordState
 import {Course, Event, Module, User} from '../../../../../model'
 import {patchCourseRecord} from '../../../courseRecord/client'
 import {CourseRecord} from '../../../courseRecord/models/courseRecord'
-import {setLastUpdated, setState} from '../../../courseRecord/patchFactory'
+import {setState} from '../../../courseRecord/patchFactory'
 import {RecordState} from '../../../models/record'
 import {patchModuleRecord} from '../../../moduleRecord/client'
 import {ModuleRecord} from '../../../moduleRecord/models/moduleRecord'
-import {setCompletionDate, setUpdatedAt} from '../../../moduleRecord/patchFactory'
+import {setCompletionDate} from '../../../moduleRecord/patchFactory'
 import {WorkerType} from '../../workerType'
 import {EventActionWorker} from './EventActionWorker'
 
@@ -35,19 +35,17 @@ export class CompleteBookingActionWorker extends EventActionWorker {
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
-		const patches = [setLastUpdated()]
 		if (courseRecord.areAllRelevantModulesComplete(this.course.modules)) {
-			patches.push(setState(RecordState.Completed))
+			await patchCourseRecord([setState(RecordState.Completed)], this.user, this.course.id)
 		} else if (courseRecord.hasBeenAddedToLearningPlan() || courseRecord.hasBeenRemovedFromLearningPlan()) {
-			patches.push(setState(RecordState.InProgress))
+			await patchCourseRecord([setState(RecordState.InProgress)], this.user, this.course.id)
 		}
-		await patchCourseRecord(patches, this.user, this.course.id)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {
 		// Only approved event modules can have attendance registered against them
 		if (moduleRecord.isApproved()) {
-			const patches = [setUpdatedAt(new Date()), setState(RecordState.Completed), setCompletionDate(new Date())]
+			const patches = [setState(RecordState.Completed), setCompletionDate(new Date())]
 			return await patchModuleRecord(patches, this.user, moduleRecord.id)
 		} else {
 			const msg = `User ${this.user.id} attempted to record

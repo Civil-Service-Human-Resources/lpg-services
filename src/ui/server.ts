@@ -13,38 +13,35 @@ import * as config from 'lib/config'
 import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
-import { getLogger } from 'lib/logger'
+import {getLogger} from 'lib/logger'
 import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 /* tslint:disable:max-line-length */
+import {OrganisationalUnitCache} from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import {
-	OrganisationalUnitCache
-} from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
-import {
-	OrganisationalUnitTypeaheadCache
+	OrganisationalUnitTypeaheadCache,
 } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 /* tslint:enable */
 import * as i18n from 'lib/service/translation'
-import { ProfileChecker } from 'lib/ui/profileChecker'
+import {ProfileChecker} from 'lib/ui/profileChecker'
 import * as template from 'lib/ui/template'
 import * as lusca from 'lusca'
 import * as redis from 'redis'
 import * as serveStatic from 'serve-static'
-import { URL } from 'url'
+import {URL} from 'url'
 
-import { requiresDepartmentHierarchy } from '../lib/ui/requiresDepartmentHierarchy'
+import {requiresDepartmentHierarchy} from '../lib/ui/requiresDepartmentHierarchy'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
 import * as errorController from './controllers/errorHandler'
 import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
-import * as learningRecordFeedbackController from './controllers/learning-record/feedback'
 import * as profileController from './controllers/profile'
 import * as searchController from './controllers/search'
 import * as skillsController from './controllers/skills'
 import * as suggestionController from './controllers/suggestion'
 import * as userController from './controllers/user'
-import { completeVideoModule } from './controllers/video'
+import {completeVideoModule} from './controllers/video'
 
 appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
 .setAutoCollectConsole(true)
@@ -268,15 +265,6 @@ app.use(
 app.get('/learning-record',
 	asyncHandler(requiresDepartmentHierarchy),
 	asyncHandler(learningRecordController.display)
-)
-
-app.get(
-	'/learning-record/:courseId/:moduleId/feedback',
-	asyncHandler(learningRecordFeedbackController.displayFeedback)
-)
-app.post(
-	'/learning-record/:courseId/:moduleId/feedback',
-	asyncHandler(learningRecordFeedbackController.submitFeedback)
 )
 
 app.get(

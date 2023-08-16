@@ -1,22 +1,20 @@
 import * as express from 'express'
 import * as config from 'lib/config'
 import * as extended from 'lib/extended'
-import { getLogger } from 'lib/logger'
+import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
+import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceClient'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import { ModuleRecord } from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {
-	RemoveCourseFromLearningplanActionWorker
-} from 'lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
-import {
-	CompletedActionWorker
+	CompletedActionWorker,
 } from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
 import {
-	InitialiseActionWorker
+	InitialiseActionWorker,
 } from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
@@ -305,7 +303,7 @@ export async function markCourseDeleted(
 	res: express.Response
 ) {
 	const req = ireq as extended.CourseRequest
-	await new RemoveCourseFromLearningplanActionWorker(req.course, req.user).applyActionToLearnerRecord()
+	await removeCourseFromLearningPlan(req.course.id, req.user)
 
 	req.flash(
 		'successTitle',

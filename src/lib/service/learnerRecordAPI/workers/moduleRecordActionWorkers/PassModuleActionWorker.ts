@@ -3,7 +3,7 @@ import {setState} from '../../../learnerRecordAPI/courseRecord/patchFactory'
 import {RecordState} from '../../../learnerRecordAPI/models/record'
 import {patchModuleRecord} from '../../../learnerRecordAPI/moduleRecord/client'
 import {ModuleRecord, ModuleRecordResult} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
-import {setCompletionDate, setResult, setUpdatedAt} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
+import {setCompletionDate, setResult} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
 import {WorkerType} from '../workerType'
 import {CompletedActionWorker} from './CompletedActionWorker'
 
@@ -16,7 +16,6 @@ export class PassModuleActionWorker extends CompletedActionWorker {
 		const patches = []
 		patches.push(
 			...[
-				setUpdatedAt(new Date()),
 				setState(RecordState.Completed),
 				setCompletionDate(new Date()),
 				setResult(ModuleRecordResult.Passed),
