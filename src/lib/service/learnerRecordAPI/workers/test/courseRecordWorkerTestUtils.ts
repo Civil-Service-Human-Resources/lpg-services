@@ -1,9 +1,9 @@
 /* tslint:disable:no-unused-expression */
 import {expect} from 'chai'
+import {Course} from 'lib/model'
 import {ActionWorker} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/ActionWorker'
 
 import {SinonStub} from '../../../../../../node_modules/@types/sinon'
-import {Course} from '../../../../model'
 import {JsonPatch, JsonPatchInterface} from '../../../shared/models/JsonPatch'
 import {CourseRecord} from '../../courseRecord/models/courseRecord'
 import {CourseRecordInput} from '../../courseRecord/models/courseRecordInput'

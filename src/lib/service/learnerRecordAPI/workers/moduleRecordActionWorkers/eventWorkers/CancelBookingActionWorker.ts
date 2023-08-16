@@ -1,4 +1,4 @@
-import {Course, Event, Module, User} from '../../../../../model'
+import {Course, Event, Module, User} from 'lib/model'
 import {patchCourseRecord} from '../../../courseRecord/client'
 import {CourseRecord} from '../../../courseRecord/models/courseRecord'
 import {setState} from '../../../courseRecord/patchFactory'

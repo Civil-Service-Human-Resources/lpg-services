@@ -23,13 +23,13 @@ import {
 /* tslint:enable */
 import * as i18n from 'lib/service/translation'
 import {ProfileChecker} from 'lib/ui/profileChecker'
+
+import {requiresDepartmentHierarchy} from 'lib/ui/requiresDepartmentHierarchy'
 import * as template from 'lib/ui/template'
 import * as lusca from 'lusca'
 import * as redis from 'redis'
 import * as serveStatic from 'serve-static'
 import {URL} from 'url'
-
-import {requiresDepartmentHierarchy} from '../lib/ui/requiresDepartmentHierarchy'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
 import * as errorController from './controllers/errorHandler'

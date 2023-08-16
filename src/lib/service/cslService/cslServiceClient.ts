@@ -1,6 +1,6 @@
 import {plainToInstance} from 'class-transformer'
 import * as config from 'lib/config'
-import {Course, Module, User} from '../../model'
+import {Course, Module, User} from 'lib/model'
 import {HttpClient} from '../httpClient'
 import {LaunchModuleRequest} from './models/launchModuleRequest'
 import {LaunchModuleResponse} from './models/launchModuleResponse'

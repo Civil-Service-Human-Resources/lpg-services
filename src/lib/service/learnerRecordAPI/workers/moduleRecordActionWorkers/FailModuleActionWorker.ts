@@ -1,4 +1,4 @@
-import {Course, Module, User} from '../../../../model'
+import {Course, Module, User} from 'lib/model'
 import {patchModuleRecord} from '../../../learnerRecordAPI/moduleRecord/client'
 import {ModuleRecord, ModuleRecordResult} from '../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {setResult} from '../../../learnerRecordAPI/moduleRecord/patchFactory'
