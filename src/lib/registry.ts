@@ -1,11 +1,8 @@
 import axios, {AxiosResponse} from 'axios'
 import * as https from 'https'
 import * as config from 'lib/config'
-import {getLogger} from 'lib/logger'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
-
-const logger = getLogger('registry')
 
 const http = axios.create({
 	baseURL: config.CHECK_LINEMANAGER_URL,
@@ -47,37 +44,6 @@ export async function get(node: string): Promise<{}> {
 export async function halNode(node: string): Promise<any[]> {
 	const result = await get(node)
 	return (result as any)._embedded[node]
-}
-
-export async function follow(path: string, nodes: string[], templateParameters?: any) {
-	if (nodes.length === 0) {
-		nodes = ['self']
-	}
-
-	const first = nodes[0]
-	nodes.shift()
-
-	const result = await new Promise((resolve, reject) => {
-		const builder = traverson
-			.from(path)
-			.jsonHal()
-			.follow(first, ...nodes)
-
-		if (templateParameters) {
-			builder.withTemplateParameters(templateParameters!)
-		}
-
-		builder.getResource((error, document) => {
-			if (error) {
-				logger.error(error)
-				reject(false)
-			} else {
-				resolve(document)
-			}
-		})
-	})
-
-	return result
 }
 
 export async function checkLineManager(data: any, token: string) {
@@ -145,18 +111,6 @@ export async function profile(token: string) {
 export async function getWithoutHal(path: string): Promise<AxiosResponse> {
 	try {
 		return await http.get(config.REGISTRY_SERVICE_URL + path)
-	} catch (error) {
-		throw new Error(error)
-	}
-}
-
-export async function getWithoutHalWithAuth(path: string, request: Express.Request): Promise<AxiosResponse> {
-	try {
-		return await http.get(config.REGISTRY_SERVICE_URL + path, {
-			headers: {
-				Authorization: `Bearer ${request.user.accessToken}`,
-			},
-		})
 	} catch (error) {
 		throw new Error(error)
 	}
