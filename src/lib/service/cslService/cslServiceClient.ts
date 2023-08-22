@@ -50,7 +50,7 @@ export async function removeCourseFromLearningPlan(courseId: string, user: User)
 
 export async function addCourseToLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
 	const resp = client._post({
-			url: `/courses/${courseId}/add_course_to_learning_plan`,
+			url: `/courses/${courseId}/add_to_learning_plan`,
 		},
 		undefined,
 		user)
