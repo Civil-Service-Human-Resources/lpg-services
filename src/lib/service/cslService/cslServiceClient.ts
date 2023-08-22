@@ -1,6 +1,7 @@
 import {plainToInstance} from 'class-transformer'
 import * as config from 'lib/config'
 import {Course, Module, User} from 'lib/model'
+import {CourseActionResponse} from 'lib/service/cslService/models/CourseActionResponse'
 import {HttpClient} from '../httpClient'
 import {LaunchModuleRequest} from './models/launchModuleRequest'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
@@ -38,26 +39,29 @@ export async function launchELearningModule(
 	return plainToInstance(LaunchModuleResponse, resp)
 }
 
-export async function removeCourseFromLearningPlan(courseId: string, user: User): Promise<void> {
-	await client._post({
+export async function removeCourseFromLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
+	const resp = client._post({
 		url: `/courses/${courseId}/remove_from_learning_plan`,
 	},
 		undefined,
 		user)
+	return plainToInstance(CourseActionResponse, resp)
 }
 
-export async function addCourseToLearningPlan(courseId: string, user: User) {
-	await client._post({
+export async function addCourseToLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
+	const resp = client._post({
 			url: `/courses/${courseId}/add_course_to_learning_plan`,
 		},
 		undefined,
 		user)
+	return plainToInstance(CourseActionResponse, resp)
 }
 
-export async function removeCourseFromSuggestions(courseId: string, user: User) {
-	await client._post({
+export async function removeCourseFromSuggestions(courseId: string, user: User): Promise<CourseActionResponse> {
+	const resp = client._post({
 			url: `/courses/${courseId}/remove_from_suggestions`,
 		},
 		undefined,
 		user)
+	return plainToInstance(CourseActionResponse, resp)
 }
