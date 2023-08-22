@@ -1,10 +1,9 @@
 import * as express from 'express'
-import * as config from 'lib/config'
 import * as extended from 'lib/extended'
 import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
-import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
+import {getOrganisation} from 'lib/service/civilServantRegistry/csrsService'
 import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
 import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceClient'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
@@ -143,19 +142,14 @@ export async function display(ireq: express.Request, res: express.Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 
 	const type = course.getType()
-	let canPayByPO = false
+	let canPayByPO = true
 
 	switch (type) {
 		case 'elearning':
 		case 'face-to-face':
-			if (req.user.department) {
-				const organisationalUnit = (await registry.follow(
-					config.REGISTRY_SERVICE_URL,
-					['organisationalUnits', 'search', 'findByCode'],
-					{code: req.user.department}
-				)) as any
-				canPayByPO =
-					organisationalUnit.paymentMethods.indexOf('PURCHASE_ORDER') > -1
+			if (req.user.departmentId) {
+				const organisationalUnit = await getOrganisation(req.user, req.user.departmentId)
+				canPayByPO = organisationalUnit.paymentMethods.indexOf('PURCHASE_ORDER') > -1
 			}
 		case 'file':
 		case 'link':
