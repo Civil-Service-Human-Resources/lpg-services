@@ -269,6 +269,7 @@ export async function loadModule(
 			return next()
 		}
 	}
+	console.log("404!")
 	res.sendStatus(404)
 }
 
@@ -291,21 +292,19 @@ export async function loadEvent(
 }
 
 export async function markCourseDeleted(
-	ireq: express.Request,
+	req: express.Request,
 	res: express.Response
 ) {
-	const req = ireq as extended.CourseRequest
-	await removeCourseFromLearningPlan(req.course.id, req.user)
-
-	req.flash(
-		'successTitle',
-		req.__('learning_removed_from_plan_title', req.course.title)
-	)
-	req.flash(
-		'successMessage',
-		req.__('learning_removed_from_plan_message', req.course.title)
-	)
-	req.session!.save(() => {
-		res.redirect('/')
+		const resp = await removeCourseFromLearningPlan(req.params.courseId, req.user)
+		req.flash(
+			'successTitle',
+			req.__('learning_removed_from_plan_title', resp.courseTitle)
+		)
+		req.flash(
+			'successMessage',
+			req.__('learning_removed_from_plan_message', resp.courseTitle)
+		)
+		req.session!.save(() => {
+			res.redirect('/')
 	})
 }

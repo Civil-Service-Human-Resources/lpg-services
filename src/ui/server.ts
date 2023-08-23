@@ -1,5 +1,5 @@
 /* tslint:disable:no-var-requires */
-const appInsights = require('applicationinsights')
+export const appInsights = require('applicationinsights')
 /* tslint:enable */
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
@@ -178,9 +178,8 @@ passport.configure(
 i18n.configure(app)
 
 app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
-app.param('courseId', asyncHandler(courseController.loadCourse))
-app.param('moduleId', asyncHandler(courseController.loadModule))
-app.param('eventId', asyncHandler(courseController.loadEvent))
+// app.param('courseId', asyncHandler(courseController.loadCourse))
+// app.param('moduleId', asyncHandler(courseController.loadModule))
 
 app.use(lusca.csrf())
 
@@ -249,6 +248,7 @@ app.get('/profile/:profileDetail', asyncHandler(userController.renderEditPage))
 app.post('/profile/:profileDetail', asyncHandler(userController.tryUpdateProfile))
 
 app.get('/courses/:courseId',
+	asyncHandler(courseController.loadCourse),
 	asyncHandler(courseController.display)
 )
 
@@ -259,6 +259,8 @@ app.use(
 
 app.use(
 	'/courses/:courseId/:moduleId',
+	asyncHandler(courseController.loadCourse),
+	asyncHandler(courseController.loadModule),
 	asyncHandler(courseController.displayModule)
 )
 
@@ -269,6 +271,8 @@ app.get('/learning-record',
 
 app.get(
 	'/learning-record/:courseId/:moduleId',
+	asyncHandler(courseController.loadCourse),
+	asyncHandler(courseController.loadModule),
 	asyncHandler(learningRecordController.courseResult)
 )
 

@@ -1,6 +1,4 @@
 import * as express from 'express'
-import * as extended from 'lib/extended'
-import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
 
 import {fetchSuggestedLearning} from 'lib/service/catalog/suggestedLearning/suggestedLearningService'
@@ -8,49 +6,33 @@ import {Suggestion} from 'lib/service/catalog/suggestedLearning/suggestion'
 import * as cslService from 'lib/service/cslService/cslServiceClient'
 import * as template from 'lib/ui/template'
 
-const logger = getLogger('controllers/suggestion')
-
-export async function addToPlan(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+export async function addToPlan(req: express.Request, res: express.Response) {
 	const ref = req.query.ref
-	const course = req.course
 
 	let redirectTo = '/suggestions-for-you'
+	const courseId = req.params.courseId
 	switch (ref) {
 		case 'home':
 		case 'search':
 			redirectTo = '/'
 			break
 	}
-	try {
-		await cslService.addCourseToLearningPlan(course.id, req.user)
+	const resp = await cslService.addCourseToLearningPlan(req.params.courseId, req.user)
 
-		req.flash('successTitle', req.__('learning_added_to_plan_title', course.title))
-		req.flash('successMessage', req.__('learning_added_to_plan_message', course.title))
-		req.flash('successId', course.id)
-		req.session!.save(() => {
-			res.redirect(redirectTo)
-		})
-	} catch (err) {
-		logger.error('Error adding course to learning plan', err)
-		res.sendStatus(500)
-	}
+	req.flash('successTitle', req.__('learning_added_to_plan_title', resp.courseTitle))
+	req.flash('successMessage', req.__('learning_added_to_plan_message', resp.courseTitle))
+	req.flash('successId', courseId)
+	req.session!.save(() => {
+		res.redirect(redirectTo)
+	})
 }
-export async function removeFromSuggestions(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+export async function removeFromSuggestions(req: express.Request, res: express.Response) {
 	const ref = req.query.ref === 'home' || req.query.ref === 'search' ? '/' : '/suggestions-for-you'
-	const course = req.course
-
-	try {
-		await cslService.removeCourseFromSuggestions(course.id, req.user)
-		req.flash('successTitle', req.__('learning_removed_from_plan_title', course.title))
-		req.flash('successMessage', req.__('learning_removed_from_suggestions', course.title))
-	} catch (err) {
-		logger.error('Error removing course from suggestions', err)
-		res.sendStatus(500)
-	} finally {
-		res.redirect(ref)
-	}
+	const courseId = req.params.courseId
+	const resp = await cslService.removeCourseFromSuggestions(courseId, req.user)
+	req.flash('successTitle', req.__('learning_removed_from_plan_title', resp.courseTitle))
+	req.flash('successMessage', req.__('learning_removed_from_suggestions', resp.courseTitle))
+	res.redirect(ref)
 }
 
 export async function suggestionsPage(req: express.Request, res: express.Response) {

@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import * as path from 'path'
 import 'reflect-metadata'
 
 export const ONE_YEAR_IN_SECONDS = 31536000
@@ -9,7 +10,10 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
-	dotenv.config()
+	console.log('Loading env from .env file')
+	dotenv.config({
+		path: path.resolve(__dirname + '/../../../../.env'),
+	})
 }
 
 function getEnv(obj: any, attr: string) {
