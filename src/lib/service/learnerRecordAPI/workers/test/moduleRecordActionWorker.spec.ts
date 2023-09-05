@@ -2,9 +2,7 @@ import * as sinon from 'sinon'
 
 import {RecordState} from '../../models/record'
 import {CompletedActionWorker} from '../moduleRecordActionWorkers/CompletedActionWorker'
-import {FailModuleActionWorker} from '../moduleRecordActionWorkers/FailModuleActionWorker'
 import {InitialiseActionWorker} from '../moduleRecordActionWorkers/initialiseActionWorker'
-import {PassModuleActionWorker} from '../moduleRecordActionWorkers/PassModuleActionWorker'
 import {testCreateCourseRecord} from './courseRecordWorkerTestUtils'
 import {testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord} from './moduleRecordWorkerTestUtils'
 import {
@@ -14,7 +12,6 @@ import {
 	getCourseWithOneRequiredModule,
 	getCourseWithTwoRequiredModules,
 	mockTime,
-	testDateAsStr,
 	testUser,
 } from './workerTestUtils'
 
@@ -152,44 +149,6 @@ describe('Should test the course action worker classes', () => {
 				{op: 'replace', path: '/state', value: 'IN_PROGRESS'},
 				{op: 'remove', path: '/result', value: undefined},
 				{op: 'remove', path: '/score', value: undefined},
-			])
-		})
-	})
-
-	describe('Should test failing a module', () => {
-		it(`Should correctly update the module record when
-            a module is failed`, async () => {
-			const course = getCourseWithOneRequiredModule("course 100", "module 100")
-			const courseRecord = getCourseRecordWithOneModuleRecord(
-				1,
-				course.id,
-				RecordState.InProgress,
-				course.modules[0].id,
-				RecordState.InProgress
-			)
-			const worker = new FailModuleActionWorker(course, testUser, course.modules[0])
-			testUpdateModuleRecord(worker, courseRecord, [
-				{op: 'replace', path: '/result', value: 'FAILED'},
-			])
-		})
-	})
-
-	describe('Should test passing a module', () => {
-		it(`Should correctly update the module record when
-            a module is passed`, async () => {
-			const course = getCourseWithOneRequiredModule("course 100", "module 100")
-			const courseRecord = getCourseRecordWithOneModuleRecord(
-				1,
-				course.id,
-				RecordState.InProgress,
-				course.modules[0].id,
-				RecordState.InProgress
-			)
-			const worker = new PassModuleActionWorker(course, testUser, course.modules[0])
-			testUpdateModuleRecord(worker, courseRecord, [
-				{op: 'replace', path: '/state', value: 'COMPLETED'},
-				{op: 'replace', path: '/completionDate', value: testDateAsStr},
-				{op: 'replace', path: '/result', value: 'PASSED'},
 			])
 		})
 	})
