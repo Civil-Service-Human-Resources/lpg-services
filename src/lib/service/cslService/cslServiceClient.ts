@@ -40,7 +40,7 @@ export async function launchELearningModule(
 }
 
 export async function removeCourseFromLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
-	const resp = client._post({
+	const resp = await client._post({
 		url: `/courses/${courseId}/remove_from_learning_plan`,
 	},
 		undefined,
@@ -49,7 +49,7 @@ export async function removeCourseFromLearningPlan(courseId: string, user: User)
 }
 
 export async function addCourseToLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
-	const resp = client._post({
+	const resp = await client._post({
 			url: `/courses/${courseId}/add_to_learning_plan`,
 		},
 		undefined,
@@ -58,7 +58,7 @@ export async function addCourseToLearningPlan(courseId: string, user: User): Pro
 }
 
 export async function removeCourseFromSuggestions(courseId: string, user: User): Promise<CourseActionResponse> {
-	const resp = client._post({
+	const resp = await client._post({
 			url: `/courses/${courseId}/remove_from_suggestions`,
 		},
 		undefined,
