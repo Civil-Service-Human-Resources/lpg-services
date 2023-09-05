@@ -1,5 +1,6 @@
 import {getLogger} from 'lib/logger'
 import {Course, Module, User} from 'lib/model'
+import {clearCourseRecordCache} from 'lib/service/cslService/cslServiceClient'
 import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {CourseRecordInput} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecordInput'
 import {WorkerType} from 'lib/service/learnerRecordAPI/workers/workerType'
@@ -41,6 +42,7 @@ export abstract class ActionWorker {
 				logger.debug(`Updating course record`)
 				await this.updateCourseRecord(courseRecord)
 			}
+			await clearCourseRecordCache(this.course.id, this.user)
 		} catch (e) {
 			logger.error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
 			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}, with action ${this.getType()}. Error: ${e}`)
