@@ -14,18 +14,7 @@ export async function launchELearningModule(
 	user: User
 ): Promise<LaunchModuleResponse> {
 	const body: LaunchModuleRequest = {
-		courseRecordInput: {
-			courseTitle: course.title,
-			isRequired: course.isRequired(),
-			moduleRecords: [
-				{
-					duration: module.duration,
-					moduleTitle: module.title,
-					moduleType: module.type,
-					optional: module.optional,
-				},
-			],
-		},
+		isRequired: course.isRequired(),
 		learnerFirstName: user.givenName || '',
 		learnerLastName: '',
 	}
