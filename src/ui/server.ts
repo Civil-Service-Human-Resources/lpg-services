@@ -178,8 +178,6 @@ passport.configure(
 i18n.configure(app)
 
 app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
-// app.param('courseId', asyncHandler(courseController.loadCourse))
-// app.param('moduleId', asyncHandler(courseController.loadModule))
 
 app.use(lusca.csrf())
 
