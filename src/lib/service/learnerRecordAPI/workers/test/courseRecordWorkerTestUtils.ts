@@ -18,20 +18,6 @@ import {
 	mockPatchCourseRecord,
 } from './workerTestUtils'
 
-/**
- * Test template for creating a course record
- */
-export function createCourseRecordTest(testFunc: Mocha.Func, extraDesc: string = '') {
-	return it('Should create the course record with correct data' + extraDesc, testFunc)
-}
-
-/**
- * Test template for updating a course record
- */
-export function updateCourseRecordTest(testFunc: Mocha.Func, extraDesc: string = '') {
-	return it('Should update the course record with correct data' + extraDesc, testFunc)
-}
-
 export async function testCreateCourseRecord(
 	worker: ActionWorker,
 	expState: RecordState | undefined,

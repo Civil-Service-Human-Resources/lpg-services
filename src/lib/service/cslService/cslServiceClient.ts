@@ -8,7 +8,7 @@ import {LaunchModuleResponse} from './models/launchModuleResponse'
 
 const client = HttpClient.createFromParams(config.CSL_SERVICE.url, config.REQUEST_TIMEOUT)
 
-export async function launchELearningModule(
+export async function launchModule(
 	course: Course,
 	module: Module,
 	user: User
@@ -26,6 +26,14 @@ export async function launchELearningModule(
 		user
 	)
 	return plainToInstance(LaunchModuleResponse, resp)
+}
+
+export async function completeModule(courseId: string, moduleId: string, user: User): Promise<void> {
+	await client._post({
+			url: `/courses/${courseId}/modules/${moduleId}/complete`,
+		},
+		undefined,
+		user)
 }
 
 export async function removeCourseFromLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {

@@ -8,12 +8,6 @@ import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceCli
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
-import {
-	CompletedActionWorker,
-} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
-import {
-	InitialiseActionWorker,
-} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 
@@ -97,28 +91,25 @@ export async function displayModule(
 
 		switch (module.type) {
 			case 'elearning':
-				const launchELearningResponse = await cslServiceClient.launchELearningModule(course, module, req.user)
-				res.redirect(launchELearningResponse.launchLink)
+			case 'link':
+			case 'file':
+				const launchModuleResponse = await cslServiceClient.launchModule(course, module, req.user)
+				res.redirect(launchModuleResponse.launchLink)
 				break
 			case 'face-to-face':
 				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 				break
-			case 'link':
-			case 'file':
-				await new CompletedActionWorker(course, req.user, module).applyActionToLearnerRecord()
-				res.redirect(module.url!)
-				break
 			case 'video':
-				await new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
-
+				const launchVideoModuleResponse = await cslServiceClient.launchModule(course, module, req.user)
+				const videoLink = launchVideoModuleResponse.launchLink
 				res.send(
 					template.render(`course/display-video`, req, res, {
 						course,
 						courseDetails: getCourseDetails(req, course, module),
 						module,
-						video: !module.url!.search('/http(.+)youtube(.*)/i')
+						video: videoLink.search('/http(.+)youtube(.*)/i')
 							? null
-							: await youtube.getBasicInfo(module.url!),
+							: await youtube.getBasicInfo(videoLink),
 					})
 				)
 				break

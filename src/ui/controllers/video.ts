@@ -1,11 +1,8 @@
 import * as express from 'express'
 import * as extended from 'lib/extended'
-import { getLogger } from 'lib/logger'
+import {getLogger} from 'lib/logger'
 import * as catalog from 'lib/service/catalog'
-
-import {
-	CompletedActionWorker
-} from '../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
+import {completeModule} from 'lib/service/cslService/cslServiceClient'
 
 const logger = getLogger('controllers/learning-record')
 
@@ -39,6 +36,6 @@ export async function completeVideoModule(ireq: express.Request, res: express.Re
 	}
 
 	logger.debug(`User ${req.user.id} completing video ${mod.id}`)
-	await new CompletedActionWorker(course, req.user, mod).applyActionToLearnerRecord()
+	await completeModule(course.id, mod.id, req.user)
 	res.sendStatus(200)
 }
