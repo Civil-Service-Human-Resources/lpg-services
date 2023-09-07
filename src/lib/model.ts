@@ -978,6 +978,10 @@ export class User {
 			this.hasRole('KNOWLEDGEPOOL_SUPPLIER_AUTHOR')
 		)
 	}
+
+	getGradeCode() {
+		return this.grade ? this.grade.code : ''
+	}
 }
 
 function sortEvents(events: Event[]) {

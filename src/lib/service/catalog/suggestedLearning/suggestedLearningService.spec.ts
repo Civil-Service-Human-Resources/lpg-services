@@ -7,29 +7,34 @@ import * as courseRecordClient from '../../learnerRecordAPI/courseRecord/client'
 import * as service from './suggestedLearningService'
 import {Suggestion} from './suggestion'
 
-const sampleUser = User.create({
-	grade: {code: '7', name: 'Grade 7'},
-	interests: [{name: 'Commercial'}, {name: 'EU'}],
-	organisationalUnit: {
-		code: 'ORG',
-		id: 123,
-	},
-	otherAreasOfWork: [
-		{id: 2, name: 'Communications'},
-		{id: 3, name: 'DDaT'},
-		{id: 4, name: "I don't know"},
-	],
-	profession: {
-		id: 1,
-		name: 'Analysis',
-	},
-})
-
 const sampleDepartmentCodes = ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT']
+
+const createSampleUser = () => {
+	return User.create({
+		grade: {code: '7', name: 'Grade 7'},
+		interests: [{name: 'Commercial'}, {name: 'EU'}],
+		organisationalUnit: {
+			code: 'ORG',
+			id: 123,
+		},
+		otherAreasOfWork: [
+			{id: 2, name: 'Communications'},
+			{id: 3, name: 'DDaT'},
+			{id: 4, name: "I don't know"},
+		],
+		profession: {
+			id: 1,
+			name: 'Analysis',
+		},
+	})
+}
+
+let sampleUser = createSampleUser()
 
 describe('suggestedLearningService tests', () => {
 	beforeEach(() => {
 		sinon.reset()
+		sampleUser = createSampleUser()
 	})
 	describe('User detail functions', () => {
 		it('Should test that getAreasOfWorkForUser', () => {
@@ -54,6 +59,20 @@ describe('suggestedLearningService tests', () => {
 				expect(section.params!).to.eql({
 					departments: 'ORG,ORG-PARENT,ORG-GRANDPARENT',
 					grade: '7',
+					page: 0,
+					size: 200,
+				})
+				expect(section.key).to.eql('ORG')
+				expect(section.suggestion).to.eql(Suggestion.DEPARTMENT)
+			})
+
+			it('Should create suggestion parameter for the users department when the user has no grade assigned', () => {
+				sampleUser.grade = undefined
+				const sections = service.createParamsForDepartmentSection(sampleDepartmentCodes, sampleUser)
+				const section = sections[0]
+				expect(section.params!).to.eql({
+					departments: 'ORG,ORG-PARENT,ORG-GRANDPARENT',
+					grade: '',
 					page: 0,
 					size: 200,
 				})
