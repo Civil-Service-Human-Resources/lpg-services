@@ -65,6 +65,6 @@ export async function removeCourseFromSuggestions(courseId: string, user: User):
 
 export async function clearCourseRecordCache(courseId: string, user: User) {
 	await client._get({
-			url: `/learner/${user.id}/course_record/${courseId}`,
+			url: `/reset-cache/learner/${user.id}/course_record/${courseId}`,
 		}, user)
 }
