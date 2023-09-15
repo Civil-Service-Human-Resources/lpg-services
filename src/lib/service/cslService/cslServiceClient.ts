@@ -14,7 +14,7 @@ export async function launchModule(
 	user: User
 ): Promise<LaunchModuleResponse> {
 	const body: LaunchModuleRequest = {
-		isRequired: course.isRequired(),
+		courseIsRequired: course.isRequired(),
 		learnerFirstName: user.givenName || '',
 		learnerLastName: '',
 	}
