@@ -1,9 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
 import * as https from 'https'
 import * as qs from 'qs'
 
-import { ResourceNotFoundError } from '../exception/ResourceNotFoundError'
-import { getLogger } from '../logger'
+import {ResourceNotFoundError} from '../exception/ResourceNotFoundError'
+import {getLogger} from '../logger'
 import * as model from '../model'
 
 const logger = getLogger('service/httpClient')
@@ -43,7 +43,8 @@ export class HttpClient {
 	constructor(readonly http: AxiosInstance) {}
 
 	async makeRequest<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
-		let logMsg = `${req.method} request to ${req.url}.`
+		const fullUrl = `${this.http.defaults.baseURL}${req.url}`
+		let logMsg = `${req.method} request to ${fullUrl}`
 		if (req.data) {
 			const stringedData = JSON.stringify(req.data)
 			logMsg += ` Data: ${stringedData}`
@@ -65,14 +66,18 @@ export class HttpClient {
 			const res = await this.http.request<T>(req)
 			return res.data
 		} catch (e) {
-			let str = `${req.method} request to ${req.url} failed`
+			let str = `${req.method} request to ${fullUrl} failed`
+			let respCode: number = 0
 			if (e.response) {
+				respCode = e.response.status
 				const data = JSON.stringify(e.response.data)
 				str = `${str} with a status ${e.response.status}. data: ${data}`
-				logger.error(str)
-				if (e.response.status === 404) {
-					throw new ResourceNotFoundError(req.url!)
-				}
+			} else {
+				str = `${str} with exception ${e}`
+			}
+			logger.error(str)
+			if (respCode === 404) {
+				throw new ResourceNotFoundError(fullUrl)
 			}
 			throw e
 		}

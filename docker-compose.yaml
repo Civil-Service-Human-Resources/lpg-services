@@ -10,58 +10,10 @@ services:
     command: 'elasticsearch -E cluster.name=local -E discovery.type=single-node'
   # /ElasticSearch
 
-  # Learning Locker
-  learning-locker-api-worker:
-    command: ['node', '/opt/learning-locker/worker/dist/server']
-    container_name: learning-locker-api-worker
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
-    working_dir: /opt/learning-locker
-
-  learning-locker-ui:
-    command: ['/opt/learning-locker/run-ui.sh']
-    container_name: learning-locker-ui
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
-    ports:
-      - 3000:3000
-    working_dir: /opt/learning-locker
-
-  learning-locker-xapi:
-    command: ['node', '/opt/xapi-service/dist/server']
-    container_name: learning-locker-xapi
-    depends_on:
-      - mongodb
-      - redis
-      - learning-locker-api-worker
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
-    ports:
-      - 8083:8083
-    working_dir: /opt/xapi-service
-
-  mongodb:
-    container_name: mongodb
-    image: mongo@sha256:fbb95eaa5a0c84d0d2098775f166003c568a79f993d91309cee7cda4135bbbfd
-    ports:
-      - 27017:27017
-
   redis:
-    container_name: redis
     image: redis@sha256:3446883dfe13ab3db67433aace0e72d8cd669c528e60c617c42d6c697f0fa41f
     ports:
       - 6379:6379
-
-  setup-learning-locker:
-    command:
-      [
-        '/opt/learning-locker/./node_modules/.bin/babel-node',
-        '/opt/learning-locker/mkadmin.js',
-      ]
-    depends_on:
-      - mongodb
-    environment:
-      - NODE_PATH=/opt/learning-locker
-    image: lpgregistry.azurecr.io/lpg-learning-locker:fe8104bf2f0fedb8f5af138bd8860a9c27dd2bb12ecb827f09e754e279a70fa8
-    working_dir: /opt/learning-locker
-  # /Learning Locker
 
   # CSHR
   identity:
@@ -70,7 +22,7 @@ services:
       - SPRING_PROFILES_ACTIVE=default
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/identity-service:idt-release-7.0-1-20210722-145741
+    image: lpgregistry.azurecr.io/identity-service/master:latest
     ports:
       - 8080:8080
       - 8081:8081
@@ -84,12 +36,11 @@ services:
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-learner-record:idt-release-7.0-1-20210722-145741
+    image: lpgregistry.azurecr.io/lpg-learner-record/test/master:latest
     depends_on:
       - civil-servant-registry
       - identity
       - learning-catalogue
-      - learning-locker-xapi
     ports:
       - 9000:9000
 
@@ -112,7 +63,7 @@ services:
       - REGISTRY_SERVICE_URL=http://civil-servant-registry:9002
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-learning-catalogue:idt-release-8.1.0-1-20210927-132326
+    image: lpgregistry.azurecr.io/lpg-learning-catalogue/test/master:latest
     depends_on:
       - identity
     ports:
@@ -125,7 +76,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/civil-servant-registry-service:idt-release-7.0-1-20210722-145923
+    image: lpgregistry.azurecr.io/civil-servant-registry-service/test/master:latest
     depends_on:
       - identity
     ports:
@@ -140,7 +91,7 @@ services:
       - LEARNING_CATALOGUE_SERVICE_URL=http://learning-catalogue:9001
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/lpg-report-service:idt-release-7.0-1-20210722-150049
+    image: lpgregistry.azurecr.io/lpg-report-service/test/master:latest
     depends_on:
       - identity
       - learner-record
@@ -153,7 +104,7 @@ services:
       - OAUTH_SERVICE_URL=http://identity:8080
       - APPINSIGHTS_INSTRUMENTATIONKEY=key
       - JWT_KEY=key
-    image: lpgregistry.azurecr.io/notification-service:idt-release-7.0-1-20210722-145922
+    image: lpgregistry.azurecr.io/notification-service/test/master:latest
     depends_on:
       - identity
     ports:

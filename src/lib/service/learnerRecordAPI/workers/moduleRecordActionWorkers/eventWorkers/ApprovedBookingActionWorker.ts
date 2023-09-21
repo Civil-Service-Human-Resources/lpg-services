@@ -1,15 +1,19 @@
-import { Course, Event, Module, User } from '../../../../../model'
-import { patchCourseRecord } from '../../../courseRecord/client'
-import { CourseRecord } from '../../../courseRecord/models/courseRecord'
-import { setLastUpdated, setState } from '../../../courseRecord/patchFactory'
-import { RecordState } from '../../../models/record'
-import { patchModuleRecord } from '../../../moduleRecord/client'
-import { ModuleRecord } from '../../../moduleRecord/models/moduleRecord'
+import {Course, Event, Module, User} from 'lib/model'
+import {patchCourseRecord} from '../../../courseRecord/client'
+import {CourseRecord} from '../../../courseRecord/models/courseRecord'
+import {setState} from '../../../courseRecord/patchFactory'
+import {RecordState} from '../../../models/record'
+import {patchModuleRecord} from '../../../moduleRecord/client'
+import {ModuleRecord} from '../../../moduleRecord/models/moduleRecord'
 import {
-	clearCompletionDate, clearResult, clearScore, setEventDate, setEventId, setUpdatedAt
+	clearCompletionDate,
+	clearResult,
+	clearScore,
+	setEventDate,
+	setEventId,
 } from '../../../moduleRecord/patchFactory'
-import { WorkerType } from '../../workerType'
-import { EventActionWorker } from './EventActionWorker'
+import {WorkerType} from '../../workerType'
+import {EventActionWorker} from './EventActionWorker'
 
 export class ApprovedBookingActionWorker extends EventActionWorker {
 	constructor(
@@ -31,11 +35,9 @@ export class ApprovedBookingActionWorker extends EventActionWorker {
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
-		const patches = [setLastUpdated(new Date())]
 		if (courseRecord.isNull() || !courseRecord.isInProgress()) {
-			patches.push(setState(RecordState.Approved))
+			await patchCourseRecord([setState(RecordState.Approved)], this.user, courseRecord.courseId)
 		}
-		await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {
@@ -46,7 +48,6 @@ export class ApprovedBookingActionWorker extends EventActionWorker {
 			clearCompletionDate(),
 			setEventId(this.event.id),
 			setEventDate(this.event.startDate),
-			setUpdatedAt(new Date()),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
 	}

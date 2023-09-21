@@ -38,12 +38,6 @@ steps:
     inputs:
       command: 'custom'
       customCommand: 'run lint'
-  
-  - task: Npm@1
-    displayName: 'Lint webdriver'
-    inputs:
-      command: 'custom'
-      customCommand: 'run lint:webdriver'
 
   - task: Npm@1
     displayName: 'Build'
@@ -56,7 +50,7 @@ steps:
     inputs:
       command: 'custom'
       customCommand: 'run test:ts'
-  
+
   - task: Docker@2
     inputs:
       containerRegistry: 'lpgregistry ACR'

@@ -1,11 +1,10 @@
-import { plainToClass } from 'class-transformer'
-import { getLogger } from 'lib/logger'
-
+import {plainToClass} from 'class-transformer'
+import {getLogger} from 'lib/logger'
 import * as model from '../../../model'
-import { JsonPatch } from '../../shared/models/JsonPatch'
-import { client } from '../baseConfig'
-import { CourseRecord, CourseRecordResponse } from './models/courseRecord'
-import { CourseRecordInput } from './models/courseRecordInput'
+import {JsonPatch} from '../../shared/models/JsonPatch'
+import {client} from '../baseConfig'
+import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
+import {CourseRecordInput} from './models/courseRecordInput'
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 
@@ -49,19 +48,23 @@ export async function getFullRecord(user: model.User): Promise<CourseRecord[]> {
 	return await Promise.all(courseRecords.courseRecords.map(c => plainToClass(CourseRecord, c)))
 }
 
-export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
+export async function getCourseRecords(courseIds: string[], user: model.User): Promise<CourseRecord[]> {
 	const resp = await client.makeRequest<CourseRecordResponse>(
 		{
 			method: 'GET',
 			params: {
-				courseId,
+				courseIds,
 				userId: user.id,
 			},
 			url: URL,
 		},
 		user
 	)
-	const courseRecords = plainToClass(CourseRecordResponse, resp).courseRecords
+	return plainToClass(CourseRecordResponse, resp).courseRecords
+}
+
+export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
+	const courseRecords = await getCourseRecords([courseId], user)
 	let courseRecord
 	if (courseRecords.length === 1) {
 		courseRecord = plainToClass(CourseRecord, courseRecords[0])

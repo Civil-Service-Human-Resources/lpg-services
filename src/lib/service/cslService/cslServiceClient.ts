@@ -1,30 +1,20 @@
-import { plainToInstance } from 'class-transformer'
+import {plainToInstance} from 'class-transformer'
 import * as config from 'lib/config'
-import { Course, Module, User } from '../../model'
-import { HttpClient } from '../httpClient'
-import { LaunchModuleRequest } from './models/launchModuleRequest'
-import { LaunchModuleResponse } from './models/launchModuleResponse'
+import {Course, Module, User} from 'lib/model'
+import {CourseActionResponse} from 'lib/service/cslService/models/CourseActionResponse'
+import {HttpClient} from '../httpClient'
+import {LaunchModuleRequest} from './models/launchModuleRequest'
+import {LaunchModuleResponse} from './models/launchModuleResponse'
 
 const client = HttpClient.createFromParams(config.CSL_SERVICE.url, config.REQUEST_TIMEOUT)
 
-export async function launchELearningModule(
+export async function launchModule(
 	course: Course,
 	module: Module,
 	user: User
 ): Promise<LaunchModuleResponse> {
 	const body: LaunchModuleRequest = {
-		courseRecordInput: {
-			courseTitle: course.title,
-			isRequired: course.isRequired(),
-			moduleRecords: [
-				{
-					duration: module.duration,
-					moduleTitle: module.title,
-					moduleType: module.type,
-					optional: module.optional,
-				},
-			],
-		},
+		courseIsRequired: course.isRequired(),
 		learnerFirstName: user.givenName || '',
 		learnerLastName: '',
 	}
@@ -36,4 +26,45 @@ export async function launchELearningModule(
 		user
 	)
 	return plainToInstance(LaunchModuleResponse, resp)
+}
+
+export async function completeModule(courseId: string, moduleId: string, user: User): Promise<void> {
+	await client._post({
+			url: `/courses/${courseId}/modules/${moduleId}/complete`,
+		},
+		undefined,
+		user)
+}
+
+export async function removeCourseFromLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
+	const resp = await client._post({
+		url: `/courses/${courseId}/remove_from_learning_plan`,
+	},
+		undefined,
+		user)
+	return plainToInstance(CourseActionResponse, resp)
+}
+
+export async function addCourseToLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
+	const resp = await client._post({
+			url: `/courses/${courseId}/add_to_learning_plan`,
+		},
+		undefined,
+		user)
+	return plainToInstance(CourseActionResponse, resp)
+}
+
+export async function removeCourseFromSuggestions(courseId: string, user: User): Promise<CourseActionResponse> {
+	const resp = await client._post({
+			url: `/courses/${courseId}/remove_from_suggestions`,
+		},
+		undefined,
+		user)
+	return plainToInstance(CourseActionResponse, resp)
+}
+
+export async function clearCourseRecordCache(courseId: string, user: User) {
+	await client._get({
+			url: `/reset-cache/learner/${user.id}/course_record/${courseId}`,
+		}, user)
 }
