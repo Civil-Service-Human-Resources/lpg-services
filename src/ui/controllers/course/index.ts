@@ -107,7 +107,7 @@ export async function displayModule(
 						course,
 						courseDetails: getCourseDetails(req, course, module),
 						module,
-						video: videoLink.search('/http(.+)youtube(.*)/i')
+						video: !videoLink.search('/http(.+)youtube(.*)/i')
 							? null
 							: await youtube.getBasicInfo(videoLink),
 					})
