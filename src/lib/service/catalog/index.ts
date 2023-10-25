@@ -71,9 +71,9 @@ export async function search(
 	interests?: string[]
 ): Promise<api.SearchResults> {
 	try {
-		let url = `/search/courses?page=${page}&size=${size}`
+		let url = `/v2/courses/search?page=${page}&size=${size}`
 		if (query) {
-			url += `&query=${query}`
+			url += `&searchTerm=${query}`
 		}
 		if (cost) {
 			url += `&cost=${cost}`
