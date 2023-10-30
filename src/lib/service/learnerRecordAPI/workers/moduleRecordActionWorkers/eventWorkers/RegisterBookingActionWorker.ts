@@ -1,7 +1,6 @@
-import {Course, Event, Module, User} from '../../../../../model'
+import {Course, Event, Module, User} from 'lib/model'
 import {patchCourseRecord} from '../../../../learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from '../../../../learnerRecordAPI/courseRecord/models/courseRecord'
-import {setLastUpdated} from '../../../../learnerRecordAPI/courseRecord/patchFactory'
 import {RecordState} from '../../../../learnerRecordAPI/models/record'
 import {patchModuleRecord} from '../../../../learnerRecordAPI/moduleRecord/client'
 import {ModuleRecord} from '../../../../learnerRecordAPI/moduleRecord/models/moduleRecord'
@@ -12,7 +11,6 @@ import {
 	setEventDate,
 	setEventId,
 	setState,
-	setUpdatedAt,
 } from '../../../../learnerRecordAPI/moduleRecord/patchFactory'
 import {WorkerType} from '../../workerType'
 import {EventActionWorker} from './EventActionWorker'
@@ -37,11 +35,9 @@ export class RegisterBookingActionWorker extends EventActionWorker {
 	}
 
 	async updateCourseRecord(courseRecord: CourseRecord): Promise<void> {
-		const patches = [setLastUpdated(new Date())]
 		if (courseRecord.isNull() || !courseRecord.isInProgress()) {
-			patches.push(setState(RecordState.Registered))
+			await patchCourseRecord([setState(RecordState.Registered)], this.user, courseRecord.courseId)
 		}
-		await patchCourseRecord(patches, this.user, courseRecord.courseId)
 	}
 
 	async updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord> {
@@ -52,7 +48,6 @@ export class RegisterBookingActionWorker extends EventActionWorker {
 			clearCompletionDate(),
 			setEventId(this.event.id),
 			setEventDate(this.event.startDate),
-			setUpdatedAt(new Date()),
 		]
 		return await patchModuleRecord(patches, this.user, moduleRecord.id)
 	}

@@ -1,32 +1,29 @@
-import { expect } from 'chai'
+import {expect} from 'chai'
 import * as sinon from 'sinon'
 
-import { RecordState } from '../../models/record'
+import {RecordState} from '../../models/record'
+import {ApprovedBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
+import {CancelBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
+import {CompleteBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
+import {RegisterBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
+import {SkipBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
+import {testCreateCourseRecord} from './courseRecordWorkerTestUtils'
+import {testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord} from './moduleRecordWorkerTestUtils'
 import {
-	ApprovedBookingActionWorker
-} from '../moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
-import {
-	CancelBookingActionWorker
-} from '../moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
-import {
-	CompleteBookingActionWorker
-} from '../moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
-import {
-	RegisterBookingActionWorker
-} from '../moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
-import {
-	SkipBookingActionWorker
-} from '../moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
-import { testCreateCourseRecord } from './courseRecordWorkerTestUtils'
-import {
-	testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord
-} from './moduleRecordWorkerTestUtils'
-import {
-	genericEvent, genericModuleRecord, getCourseRecordWithOneModuleRecord,
-	getCourseRecordWithTwoModuleRecords, getCourseWithOneRequiredModule,
-	getCourseWithTwoRequiredModules, getEventModuleRecord, mockCreateCourseRecord,
-	mockCreateModuleRecord, mockGetCourseRecord, mockPatchModuleRecord, mockTime, testDateAsStr,
-	testUser
+	genericEvent,
+	genericModuleRecord,
+	getCourseRecordWithOneModuleRecord,
+	getCourseRecordWithTwoModuleRecords,
+	getCourseWithOneRequiredModule,
+	getCourseWithTwoRequiredModules,
+	getEventModuleRecord,
+	mockCreateCourseRecord,
+	mockCreateModuleRecord,
+	mockGetCourseRecord,
+	mockPatchModuleRecord,
+	mockTime,
+	testDateAsStr,
+	testUser,
 } from './workerTestUtils'
 
 describe('Should test the module event action worker classes', () => {
@@ -77,7 +74,6 @@ describe('Should test the module event action worker classes', () => {
 			const event = genericEvent("event 100")
 			const worker = new ApprovedBookingActionWorker(course, testUser, event, course.modules[1])
 			await testUpdateCourseRecord(worker, courseRecord, courseRecord.modules[1], [
-				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 				{op: 'replace', path: '/state', value: 'APPROVED'},
 			])
 		})
@@ -103,7 +99,6 @@ describe('Should test the module event action worker classes', () => {
 				{op: 'remove', path: '/completionDate', value: undefined},
 				{op: 'replace', path: '/eventId', value: event.id},
 				{op: 'replace', path: '/eventDate', value: testDateAsStr},
-				{op: 'replace', path: '/updatedAt', value: testDateAsStr},
 			])
 		})
 	})
@@ -147,7 +142,6 @@ describe('Should test the module event action worker classes', () => {
 			const event = genericEvent("event 100")
 			const worker = new CancelBookingActionWorker(course, testUser, event, course.modules[1])
 			await testUpdateCourseRecord(worker, courseRecord, courseRecord.modules[1], [
-				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 				{op: 'replace', path: '/state', value: 'UNREGISTERED'},
 			])
 		})
@@ -171,7 +165,6 @@ describe('Should test the module event action worker classes', () => {
 				{op: 'remove', path: '/result', value: undefined},
 				{op: 'remove', path: '/score', value: undefined},
 				{op: 'remove', path: '/completionDate', value: undefined},
-				{op: 'replace', path: '/updatedAt', value: testDateAsStr},
 				{op: 'replace', path: '/bookingStatus', value: 'CANCELLED'},
 			])
 		})
@@ -224,7 +217,6 @@ describe('Should test the module event action worker classes', () => {
 			const event = genericEvent("event 100")
 			const worker = new SkipBookingActionWorker(course, testUser, event, course.modules[1])
 			await testUpdateCourseRecord(worker, courseRecord, courseRecord.modules[1], [
-				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 				{op: 'replace', path: '/state', value: 'SKIPPED'},
 			])
 		})
@@ -290,7 +282,6 @@ describe('Should test the module event action worker classes', () => {
 			const event = genericEvent("event 100")
 			const worker = new RegisterBookingActionWorker(course, testUser, event, course.modules[1])
 			await testUpdateCourseRecord(worker, courseRecord, courseRecord.modules[1], [
-				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 				{op: 'replace', path: '/state', value: 'REGISTERED'},
 			])
 		})
@@ -316,7 +307,6 @@ describe('Should test the module event action worker classes', () => {
 				{op: 'remove', path: '/completionDate', value: undefined},
 				{op: 'replace', path: '/eventId', value: event.id},
 				{op: 'replace', path: '/eventDate', value: testDateAsStr},
-				{op: 'replace', path: '/updatedAt', value: testDateAsStr},
 			])
 		})
 	})
@@ -376,7 +366,6 @@ describe('Should test the module event action worker classes', () => {
 			)
 			const worker = new CompleteBookingActionWorker(course, testUser, event, course.modules[1])
 			await testUpdateCourseRecord(worker, courseRecord, completedModuleRecord, [
-				{op: 'replace', path: '/lastUpdated', value: testDateAsStr},
 				{op: 'replace', path: '/state', value: 'COMPLETED'},
 			])
 		})
@@ -396,7 +385,6 @@ describe('Should test the module event action worker classes', () => {
 			const event = genericEvent("event 100")
 			const worker = new CompleteBookingActionWorker(course, testUser, event, course.modules[1])
 			await testUpdateModuleRecord(worker, courseRecord, [
-				{op: 'replace', path: '/updatedAt', value: testDateAsStr},
 				{op: 'replace', path: '/state', value: 'COMPLETED'},
 				{op: 'replace', path: '/completionDate', value: testDateAsStr},
 			])

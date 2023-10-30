@@ -1,8 +1,8 @@
 import * as moment from 'moment'
 
-import { JsonPatch } from '../../shared/models/JsonPatch'
-import { RecordState } from '../models/record'
-import { BookingStatus, ModuleRecordResult } from './models/moduleRecord'
+import {JsonPatch} from '../../shared/models/JsonPatch'
+import {RecordState} from '../models/record'
+import {BookingStatus, ModuleRecordResult} from './models/moduleRecord'
 
 export function clearBookingStatus() {
 	return JsonPatch.removePatch('bookingStatus')
@@ -20,14 +20,6 @@ export function clearCompletionDate() {
 	return JsonPatch.removePatch('completionDate')
 }
 
-export function setScore(score?: string) {
-	return JsonPatch.replacePatch('score', score)
-}
-
-export function setRated(rated: boolean) {
-	return JsonPatch.replacePatch('rated', rated.toString())
-}
-
 export function setResult(result?: ModuleRecordResult) {
 	return JsonPatch.replacePatch('result', result)
 }
@@ -43,10 +35,6 @@ export function setEventDate(eventDate: Date) {
 function setDate(key: string, date: Date) {
 	const convertedDate = moment(date).format('YYYY-MM-DDTHH:mm:ss')
 	return JsonPatch.replacePatch(key, convertedDate)
-}
-
-export function setUpdatedAt(updatedAt: Date) {
-	return setDate('updatedAt', updatedAt)
 }
 
 export function setBookingStatus(status: BookingStatus) {

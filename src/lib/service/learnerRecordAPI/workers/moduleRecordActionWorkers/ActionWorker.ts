@@ -1,22 +1,25 @@
-import { getLogger } from '../../../../logger'
-import { Course, Module, User } from '../../../../model'
-import { getCourseRecord } from '../../courseRecord/client'
-import { RecordState } from '../../models/record'
+import {getLogger} from 'lib/logger'
+import {Course, Module, User} from 'lib/model'
+import {clearCourseRecordCache} from 'lib/service/cslService/cslServiceClient'
+import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {CourseRecordInput} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecordInput'
+import {WorkerType} from 'lib/service/learnerRecordAPI/workers/workerType'
+import {createCourseRecord, getCourseRecord} from '../../courseRecord/client'
+import {RecordState} from '../../models/record'
 import * as moduleRecordClient from '../../moduleRecord/client'
-import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
-import { ModuleRecordInput } from '../../moduleRecord/models/moduleRecordInput'
-import { CourseRecordActionWorker } from '../courseRecordActionWorkers/CourseRecordActionWorker'
+import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
+import {ModuleRecordInput} from '../../moduleRecord/models/moduleRecordInput'
 
 const logger = getLogger('LearnerRecordAPI/workers/ActionWorker')
 
-export abstract class ActionWorker extends CourseRecordActionWorker {
-	constructor(protected readonly course: Course, protected readonly user: User, protected readonly module: Module) {
-		super(course, user)
-	}
+export abstract class ActionWorker {
+	constructor(protected readonly course: Course, protected readonly user: User, protected readonly module: Module) { }
 
 	abstract createModuleRecord(): Promise<ModuleRecord>
 
 	abstract updateModuleRecord(moduleRecord: ModuleRecord): Promise<ModuleRecord>
+
+	abstract updateCourseRecord(courseRecord: CourseRecord): Promise<void>
 
 	async applyActionToLearnerRecord() {
 		try {
@@ -39,6 +42,7 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 				logger.debug(`Updating course record`)
 				await this.updateCourseRecord(courseRecord)
 			}
+			await clearCourseRecordCache(this.course.id, this.user)
 		} catch (e) {
 			logger.error(`Failed to apply action to the course record. UserID: ${this.user.id}, ` +
 			`CourseID: ${this.course.id}, ModuleID: ${this.module.id}, with action ${this.getType()}. Error: ${e}`)
@@ -48,6 +52,23 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 	createNewModuleRecord = async (state: RecordState) => {
 		const input = this.generateModuleRecordInput(state)
 		return await moduleRecordClient.createModuleRecord(input, this.user)
+	}
+
+	protected createNewCourseRecord = async (
+		moduleRecords: ModuleRecordInput[],
+		state?: RecordState,
+		preference?: string
+	) => {
+		const input = new CourseRecordInput(
+			this.course.id,
+			this.course.title,
+			this.user.id,
+			this.course.isRequired(),
+			moduleRecords,
+			state,
+			preference
+		)
+		await createCourseRecord(input, this.user)
 	}
 
 	protected generateModuleRecordInput(state: RecordState) {
@@ -63,4 +84,6 @@ export abstract class ActionWorker extends CourseRecordActionWorker {
 			this.module.cost
 		)
 	}
+	protected abstract createCourseRecord(): Promise<void>
+	protected abstract getType(): WorkerType
 }

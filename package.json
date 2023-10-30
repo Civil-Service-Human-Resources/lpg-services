@@ -7,8 +7,6 @@
 		"compile": "gulp typescript",
 		"dev:ui": "concurrently \"npm run ts:watch\" \"gulp watchAssets\"  \"npm run start:ui\"",
 		"lint": "tslint --project tsconfig.json",
-		"lint:headless": "tslint --project test/headless/tsconfig.json",
-		"lint:webdriver": "tslint --project test/webdriver/tsconfig.json",
 		"nuke": "rm -rf dist node_modules",
 		"sass": "gulp sass",
 		"start:all": "npm run start:ui",

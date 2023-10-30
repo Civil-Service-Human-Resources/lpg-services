@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import * as path from 'path'
 import 'reflect-metadata'
 
 export const ONE_YEAR_IN_SECONDS = 31536000
@@ -9,7 +10,10 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 if (ENV === 'development') {
-	dotenv.config()
+	console.log('Loading env from .env file')
+	dotenv.config({
+		path: path.resolve(__dirname + '/../../../../.env'),
+	})
 }
 
 function getEnv(obj: any, attr: string) {
@@ -68,6 +72,9 @@ export const FEEDBACK_RECIPIENTS = [
 ]
 
 export const FEEDBACK_TEMPLATE_ID = '3fca8e51-ee09-4c4d-904f-bbd00d58f28d'
+
+export const GOOGLE_ANALYTICS_CSP_ORIGINS =
+env.GOOGLE_ANALYTICS_CSP_ORIGINS || "*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com"
 
 export const GOOGLE_ANALYTICS_ID = env.GOOGLE_ANALYTICS_ID || 'UA-22141655-4'
 

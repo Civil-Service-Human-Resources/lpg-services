@@ -1,23 +1,13 @@
 import * as express from 'express'
-import * as config from 'lib/config'
 import * as extended from 'lib/extended'
-import { getLogger } from 'lib/logger'
+import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
-import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
 import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
+import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceClient'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import { ModuleRecord } from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
-import {
-	RemoveCourseFromLearningplanActionWorker
-} from 'lib/service/learnerRecordAPI/workers/courseRecordActionWorkers/RemoveCourseFromLearningplanActionWorker'
-import {
-	CompletedActionWorker
-} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/CompletedActionWorker'
-import {
-	InitialiseActionWorker
-} from 'lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/initialiseActionWorker'
+import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 
@@ -101,28 +91,25 @@ export async function displayModule(
 
 		switch (module.type) {
 			case 'elearning':
-				const launchELearningResponse = await cslServiceClient.launchELearningModule(course, module, req.user)
-				res.redirect(launchELearningResponse.launchLink)
+			case 'link':
+			case 'file':
+				const launchModuleResponse = await cslServiceClient.launchModule(course, module, req.user)
+				res.redirect(launchModuleResponse.launchLink)
 				break
 			case 'face-to-face':
 				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 				break
-			case 'link':
-			case 'file':
-				await new CompletedActionWorker(course, req.user, module).applyActionToLearnerRecord()
-				res.redirect(module.url!)
-				break
 			case 'video':
-				await new InitialiseActionWorker(course, req.user, module).applyActionToLearnerRecord()
-
+				const launchVideoModuleResponse = await cslServiceClient.launchModule(course, module, req.user)
+				const videoLink = launchVideoModuleResponse.launchLink
 				res.send(
 					template.render(`course/display-video`, req, res, {
 						course,
 						courseDetails: getCourseDetails(req, course, module),
 						module,
-						video: !module.url!.search('/http(.+)youtube(.*)/i')
+						video: !videoLink.search('/http(.+)youtube(.*)/i')
 							? null
-							: await youtube.getBasicInfo(module.url!),
+							: await youtube.getBasicInfo(videoLink),
 					})
 				)
 				break
@@ -150,14 +137,8 @@ export async function display(ireq: express.Request, res: express.Response) {
 	switch (type) {
 		case 'elearning':
 		case 'face-to-face':
-			if (req.user.department) {
-				const organisationalUnit = (await registry.follow(
-					config.REGISTRY_SERVICE_URL,
-					['organisationalUnits', 'search', 'findByCode'],
-					{code: req.user.department}
-				)) as any
-				canPayByPO =
-					organisationalUnit.paymentMethods.indexOf('PURCHASE_ORDER') > -1
+			if (req.user.departmentId) {
+				canPayByPO = true
 			}
 		case 'file':
 		case 'link':
@@ -279,6 +260,7 @@ export async function loadModule(
 			return next()
 		}
 	}
+	console.log("404!")
 	res.sendStatus(404)
 }
 
@@ -301,21 +283,19 @@ export async function loadEvent(
 }
 
 export async function markCourseDeleted(
-	ireq: express.Request,
+	req: express.Request,
 	res: express.Response
 ) {
-	const req = ireq as extended.CourseRequest
-	await new RemoveCourseFromLearningplanActionWorker(req.course, req.user).applyActionToLearnerRecord()
-
-	req.flash(
-		'successTitle',
-		req.__('learning_removed_from_plan_title', req.course.title)
-	)
-	req.flash(
-		'successMessage',
-		req.__('learning_removed_from_plan_message', req.course.title)
-	)
-	req.session!.save(() => {
-		res.redirect('/')
+		const resp = await removeCourseFromLearningPlan(req.params.courseId, req.user)
+		req.flash(
+			'successTitle',
+			req.__('learning_removed_from_plan_title', resp.courseTitle)
+		)
+		req.flash(
+			'successMessage',
+			req.__('learning_removed_from_plan_message', resp.courseTitle)
+		)
+		req.session!.save(() => {
+			res.redirect('/')
 	})
 }
