@@ -3,7 +3,9 @@ import {expect} from 'chai'
 import {AgencyToken, Domain, OrganisationalUnit} from '../../../model'
 import {OrganisationalUnitTypeAhead} from './organisationalUnitTypeAhead'
 
-function createOrg(id: number, orgnisationName: string, domains: string[], agencyDomains: string[], parentId: number | null, abbrev?: string) {
+function createOrg(
+	id: number, orgnisationName: string, domains: string[], agencyDomains: string[],
+	parentId: number | null, abbrev?: string) {
 	const org = new OrganisationalUnit()
 	org.name = orgnisationName
 	org.id = id

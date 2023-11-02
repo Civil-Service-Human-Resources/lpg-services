@@ -1,8 +1,8 @@
-import _ = require('lodash')
 import {Type} from 'class-transformer'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
 import {CacheableObject} from 'lib/utils/cacheableObject'
+import _ = require('lodash')
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
