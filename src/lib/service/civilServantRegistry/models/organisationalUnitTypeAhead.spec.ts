@@ -1,7 +1,7 @@
-import { expect } from 'chai'
+import {expect} from 'chai'
 
-import { AgencyDomain, AgencyToken, OrganisationalUnit } from '../../../model'
-import { OrganisationalUnitTypeAhead } from './organisationalUnitTypeAhead'
+import {AgencyToken, Domain, OrganisationalUnit} from '../../../model'
+import {OrganisationalUnitTypeAhead} from './organisationalUnitTypeAhead'
 
 function createOrg(id: number, orgnisationName: string, domains: string[], parentId: number | null, abbrev?: string) {
 	const org = new OrganisationalUnit()
@@ -9,7 +9,7 @@ function createOrg(id: number, orgnisationName: string, domains: string[], paren
 	org.id = id
 	if (domains.length > 0) {
 		const agencyDomains = domains.map(d => {
-			const a = new AgencyDomain()
+			const a = new Domain()
 			a.domain = d
 			return a
 		})
