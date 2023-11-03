@@ -22,18 +22,18 @@ function create(token: string) {
 
 export async function getDetails(token: string) {
 	const http = create(token)
-	const response = await http.get(`/oauth/resolve`)
+	const response = await http.get(`/identity/resolve`)
 	return response.data
 }
 
 export async function logout(token: string) {
 	const http = create(token)
-	const response = await http.get(`/oauth/logout`)
+	const response = await http.get(`/logout`)
 	return response.data
 }
 
 export async function isWhitelisted(token: string, domain: string) {
 	const http = create(token)
-	const response = await http.get(`/domain/isWhitelisted/` + domain + `/`)
+	const response = await http.get(`/domain/isAllowListed/` + domain + `/`)
 	return response.data
 }

@@ -23,11 +23,11 @@ export function configure(
 	app.use(passport.session())
 	strategy = new oauth2.Strategy(
 		{
-			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
+			authorizationURL: `${authenticationServiceUrl}/oauth2/authorize`,
 			callbackURL: `${callbackUrl}/authenticate`,
 			clientID,
 			clientSecret,
-			tokenURL: `${authenticationServiceUrl}/oauth/token`,
+			tokenURL: `${authenticationServiceUrl}/oauth2/token`,
 		},
 		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			profile.accessToken = accessToken
