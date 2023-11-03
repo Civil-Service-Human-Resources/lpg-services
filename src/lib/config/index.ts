@@ -35,7 +35,7 @@ export const AUTHENTICATION = set({
 	clientSecret: env.OAUTH_CLIENT_SECRET || 'test',
 	endpoints: set({
 		authorization: env.OAUTH_AUTHORIZATION_ENDPOINT || '/oauth/authorize',
-		logout: env.AUTHENTICATION_SERVICE_LOGOUT_ENDPOINT || '/logout',
+		logout: env.AUTHENTICATION_SERVICE_LOGOUT_ENDPOINT || 'oauth/logout',
 		resolve: env.AUTHENTICATION_SERVICE_RESOLVE_ENDPOINT || '/oauth/resolve',
 		token: env.OAUTH_TOKEN_ENDPOINT || 'oauth/token',
 	}),
