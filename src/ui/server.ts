@@ -174,7 +174,7 @@ passport.configure(
 	`${config.AUTHENTICATION.serviceUrl}${config.AUTHENTICATION.endpoints.authorization}`,
 	`${config.AUTHENTICATION.serviceUrl}${config.AUTHENTICATION.endpoints.token}`,
 	app,
-	config.LPG_UI_SERVER
+	`${config.LPG_UI_SERVER}/authenticate`
 )
 i18n.configure(app)
 
