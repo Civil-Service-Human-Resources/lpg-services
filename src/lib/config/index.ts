@@ -37,7 +37,7 @@ export const AUTHENTICATION = set({
 		authorization: env.OAUTH_AUTHORIZATION_ENDPOINT || '/oauth/authorize',
 		logout: env.AUTHENTICATION_SERVICE_LOGOUT_ENDPOINT || '/oauth/logout',
 		resolve: env.AUTHENTICATION_SERVICE_RESOLVE_ENDPOINT || '/oauth/resolve',
-		token: env.OAUTH_TOKEN_ENDPOINT || 'oauth/token',
+		token: env.OAUTH_TOKEN_ENDPOINT || '/oauth/token',
 	}),
 	managementId: env.OAUTH_CLIENT_ID || 'f90a4080-e5e9-4a80-ace4-f738b4c9c30e',
 	managementSecret: env.OAUTH_CLIENT_SECRET || 'test',
