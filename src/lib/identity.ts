@@ -37,4 +37,3 @@ export async function isWhitelisted(token: string, domain: string) {
 	const response = await http.get(`/domain/isAllowListed/` + domain + `/`)
 	return response.data
 }
-
