@@ -67,13 +67,13 @@ export class OrganisationalUnitTypeAhead {
 		return roots
 	}
 
-	getDomainFilteredList(domain: string) {
+	getDomainFilteredList(domain: string): OrganisationalUnit[] {
 		const tree = this.getAsTree()
 		const agencyOrg = this.getAgencyOrganisationWithDomain(domain, tree)
-		if (agencyOrg) {
+		if (agencyOrg !== undefined) {
 			return agencyOrg.extractAllOrgs()
 		}
-		return this.typeahead
+		return this.typeahead.filter(o => o.doesDomainExist(domain))
 	}
 
 	private getAgencyOrganisationWithDomain(domain: string, tree: OrganisationalUnit[]): OrganisationalUnit | undefined {

@@ -15,19 +15,20 @@ let strategy: oauth2.Strategy
 export function configure(
 	clientID: string,
 	clientSecret: string,
-	authenticationServiceUrl: string,
+	authorizationURL: string,
+	tokenURL: string,
 	app: express.Express,
-	callbackUrl: string
+	callbackURL: string
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
 	strategy = new oauth2.Strategy(
 		{
-			authorizationURL: `${authenticationServiceUrl}/oauth/authorize`,
-			callbackURL: `${callbackUrl}/authenticate`,
+			authorizationURL,
+			callbackURL,
 			clientID,
 			clientSecret,
-			tokenURL: `${authenticationServiceUrl}/oauth/token`,
+			tokenURL,
 		},
 		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			profile.accessToken = accessToken

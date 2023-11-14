@@ -1,11 +1,9 @@
-import { plainToInstance } from 'class-transformer'
+import {plainToInstance} from 'class-transformer'
 
-import { OrganisationalUnit, User } from '../../../model'
-import { client } from '../config'
-import {
-	GetOrganisationRequestOptions, GetOrganisationsRequestOptions
-} from '../models/getOrganisationsRequestOptions'
-import { GetOrganisationsResponse } from '../models/getOrganisationsResponse'
+import {OrganisationalUnit, User} from '../../../model'
+import {client} from '../config'
+import {GetOrganisationRequestOptions, GetOrganisationsRequestOptions} from '../models/getOrganisationsRequestOptions'
+import {GetOrganisationsResponse} from '../models/getOrganisationsResponse'
 
 const URL = '/organisationalUnits'
 const V2_URL = `/v2${URL}`
@@ -20,13 +18,13 @@ export async function getAllOrganisationalUnits(user: User): Promise<Organisatio
 		},
 		user
 	)
-	if (response.page.totalElements >= 1) {
-		const totalPages = Math.ceil(response.page.totalElements / MAX_PER_PAGE)
+	if (response.totalElements >= 1) {
+		const totalPages = Math.ceil(response.totalElements / MAX_PER_PAGE)
 		const requests: any[] = []
 		for (let page = 0; page < totalPages; page++) {
 			requests.push(getOrganisationalUnits({size: MAX_PER_PAGE, page}, user)
 			.then(data => {
-				orgs.push(...data.embedded.organisationalUnits)
+				orgs.push(...data.content)
 			}))
 		}
 		await Promise.all(requests)
@@ -41,7 +39,7 @@ export async function getOrganisationalUnits(
 	const resp: GetOrganisationsResponse = await client._get<GetOrganisationsResponse>(
 		{
 			params: options,
-			url: URL,
+			url: V2_URL,
 		},
 		user
 	)
