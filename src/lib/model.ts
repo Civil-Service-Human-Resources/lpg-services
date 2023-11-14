@@ -881,11 +881,11 @@ export class OrganisationalUnit implements CacheableObject {
 		return exists
 	}
 
-	doesDomainExist(domain: string) {
+	doesDomainExist(domain: string): boolean {
 		return this.domains.find(d => d.domain === domain) !== undefined
 	}
 
-	formatNameWithAbbrev() {
+	formatNameWithAbbrev(): string {
 		return (this.abbreviation && this.abbreviation !== '') ? `${this.name} (${this.abbreviation})` : this.name
 	}
 }
