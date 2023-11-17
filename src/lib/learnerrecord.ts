@@ -62,7 +62,7 @@ export async function bookEvent(
 		event: `${config.COURSE_CATALOGUE.url}/courses/${course.id}/modules/${module.id}/events/${event.id}`,
 		learner: user.id,
 		learnerEmail: user.userName,
-		learnerName: user.givenName
+		learnerName: user.givenName,
 	}
 
 	const purchaseOrder = await getPurchaseOrder(poNumber)
