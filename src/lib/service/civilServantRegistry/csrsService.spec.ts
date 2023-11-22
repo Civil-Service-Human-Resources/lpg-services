@@ -1,12 +1,10 @@
-import { expect } from 'chai'
+import {expect} from 'chai'
 import * as sinon from 'sinon'
 
-import { AgencyToken, OrganisationalUnit, User } from '../../model'
+import {AgencyToken, OrganisationalUnit, User} from '../../model'
 import * as csrsService from './csrsService'
-import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
-import {
-	OrganisationalUnitTypeaheadCache
-} from './organisationalUnit/organisationalUnitTypeaheadCache'
+import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
+import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 function getOrg(orgName: string, id: number, parentId?: number) {
@@ -84,7 +82,7 @@ describe('CsrsService tests', () => {
 			orgUnitCache.get.withArgs(1).resolves(undefined)
 			const result = await csrsService.getOrganisation(user, 1)
 
-			expect(orgUnitCache.set).to.be.calledOnceWith(1, organisationalUnit)
+			expect(orgUnitCache.setMultiple).to.be.calledOnceWith([organisationalUnit])
 			expect(result.id).to.eql(1)
 		})
 
@@ -103,8 +101,7 @@ describe('CsrsService tests', () => {
 			orgUnitCache.get.withArgs(1).resolves(undefined)
 			const result = await csrsService.getOrganisation(user, 1, true)
 
-			expect(orgUnitCache.set).to.be.calledWith(1, organisationalUnit)
-			expect(orgUnitCache.set).to.be.calledWith(2, parentOrganisationalUnit)
+			expect(orgUnitCache.setMultiple).to.be.calledWith([organisationalUnit, parentOrganisationalUnit])
 			expect(result.id).to.eql(1)
 			expect(result.parent!.id).to.eql(2)
 			expect(result.parent).to.eql(parentOrganisationalUnit)

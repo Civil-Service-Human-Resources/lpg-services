@@ -1,10 +1,8 @@
-import { getLogger } from '../../logger'
-import { OrganisationalUnit, User } from '../../model'
-import { OrganisationalUnitTypeAhead } from './models/organisationalUnitTypeAhead'
-import { OrganisationalUnitCache } from './organisationalUnit/organisationalUnitCache'
-import {
-	OrganisationalUnitTypeaheadCache
-} from './organisationalUnit/organisationalUnitTypeaheadCache'
+import {getLogger} from '../../logger'
+import {OrganisationalUnit, User} from '../../model'
+import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
+import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
+import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 const logger = getLogger('csrsService')
@@ -29,7 +27,7 @@ export async function getOrganisation(
 			{includeParents: includeParent},
 			user
 		)
-		org.getHierarchyAsArray().map(async o => await organisationalUnitCache.set(o.id, o))
+		await organisationalUnitCache.setMultiple(org.getHierarchyAsArray())
 	}
 	if (includeParent && org.parentId != null && org.parent == null) {
 		org.parent = await getOrganisation(user, org.parentId)
@@ -57,7 +55,7 @@ export async function getOrgHierarchy(
 			user
 		)
 		const orgArray = orgWithAllParents.getHierarchyAsArray()
-		orgArray.map(async o => await organisationalUnitCache.set(o.id, o))
+		await organisationalUnitCache.setMultiple(orgArray)
 		hierarchy.push(...orgArray)
 	} else {
 		hierarchy.push(org)

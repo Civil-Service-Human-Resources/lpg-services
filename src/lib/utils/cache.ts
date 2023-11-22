@@ -1,11 +1,11 @@
-import { createClient } from 'redis'
-import { promisify } from 'util'
-import { Logger } from 'winston'
+import {createClient} from 'redis'
+import {promisify} from 'util'
+import {Logger} from 'winston'
 
-import { getLogger } from '../logger'
+import {getLogger} from '../logger'
 
 export abstract class Cache<T> {
-	private logger: Logger
+	protected logger: Logger
 	constructor(protected readonly redisClient: ReturnType<typeof createClient>, protected readonly defaultTTL: number) {
 		this.logger = getLogger('Cache')
 	}
