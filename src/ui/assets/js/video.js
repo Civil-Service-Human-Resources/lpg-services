@@ -15,7 +15,7 @@
 	var youTubePlayer = true
 	
 	var detectVideoPlayer = function(){
-		if ($('#video-player').size() !==0) {
+		if (document.getElementById("video-player")) {
 			youTubePlayer = true
 		} else {
 			youTubePlayer = false
