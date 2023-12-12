@@ -2,6 +2,10 @@ import { IsEmail, IsNotEmpty, validate } from 'class-validator'
 import { Request, Response } from 'express'
 import * as config from 'lib/config'
 import { getLogger } from 'lib/logger'
+import {User} from 'lib/model'
+import {
+	patchCivilServantOrganisation,
+} from 'lib/service/civilServantRegistry/civilServant/civilServantClient'
 import * as _ from 'lodash'
 
 import * as registry from '../../lib/registry'
@@ -88,6 +92,7 @@ export async function addOrganisation(request: Request, response: Response) {
 }
 
 export async function updateOrganisation(request: Request, response: Response) {
+	const user: User = request.user
 	let value: string
 	value = request.body.organisation
 	if (!value) {
@@ -101,16 +106,14 @@ export async function updateOrganisation(request: Request, response: Response) {
 	let organisationalUnit
 
 	try {
-		organisationalUnit = await csrsService.getOrganisation(request.user, organisationId)
+		organisationalUnit = await csrsService.getOrganisation(user, organisationId)
 	} catch (error) {
 		console.log(error)
 		throw new Error(error)
 	}
 
 	try {
-		await registry.patch('/civilServants/' + request.user.userId,
-			{organisationalUnit: `${request.body.organisation}`},
-			request.user.accessToken)
+		await patchCivilServantOrganisation(user, organisationalUnit.id)
 	} catch (error) {
 		console.log(error)
 		throw new Error(error)
@@ -118,8 +121,12 @@ export async function updateOrganisation(request: Request, response: Response) {
 	setLocalProfile(request, 'department', organisationalUnit.code)
 	setLocalProfile(request, 'departmentId', organisationalUnit.id)
 	setLocalProfile(request, 'organisationalUnit', organisationalUnit)
+	let redirect = defaultRedirectUrl
+	if (![undefined, null, 'undefined'].includes(request.body.originalUrl)) {
+		redirect = request.body.originalUrl
+	}
 	request.session!.save(() =>
-		response.redirect(request.body.originalUrl ? request.body.originalUrl : defaultRedirectUrl)
+		response.redirect(redirect)
 	)
 }
 
