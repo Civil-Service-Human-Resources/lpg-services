@@ -330,7 +330,8 @@ export async function patchAndUpdate(
 	let requestWasSuccessful = true
 	if (node === 'organisationalUnit') {
 		try {
-			await patchCivilServantOrganisation(user, Number(value))
+			const orgId = Number(value.split("/")[2])
+			await patchCivilServantOrganisation(user, orgId)
 		} catch (ex) {
 			logger.error(`Failed to update user organisational unit: ${ex.message}`)
 			requestWasSuccessful = false
