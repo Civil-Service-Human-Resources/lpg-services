@@ -965,7 +965,7 @@ export class User implements CSLUser {
 	}
 
 	isUnrestrictedOrgUser(): boolean {
-		return this.hasAnyRole(["UNRESTRICTED_ORGANISATION", "CSL_AUTHOR"])
+		return this.hasRole("UNRESTRICTED_ORGANISATION")
 	}
 
 	hasRole(role: string) {
