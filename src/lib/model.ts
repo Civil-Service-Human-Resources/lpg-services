@@ -197,14 +197,14 @@ export class Course {
 
 	getRequiredRecurringAudience() {
 		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
-			const nextDate = moment(this.audience.requiredBy)
+			const nextDate = moment(this.audience.requiredBy).endOf("day").utc()
 			while (nextDate < moment()) {
 				nextDate.add({
 					months: this.audience.frequency.months(),
 					years: this.audience.frequency.years(),
 				})
 			}
-			const lastDate = moment(nextDate)
+			const lastDate = moment(nextDate).endOf("day").utc()
 			lastDate.subtract({
 				months: this.audience.frequency.months(),
 				years: this.audience.frequency.years(),
@@ -358,20 +358,19 @@ export class Course {
 		return this.audience ? this.audience.mandatory : false
 	}
 
-	nextRequiredBy() {
-		const completionDate = this.getCompletionDate()
+	getDueByDate() {
+		let dueByDate: Date | null = null
 		if (this.audience) {
-			return this.audience!.nextRequiredBy(completionDate)
+			const requiredAudience = this.getRequiredRecurringAudience()
+			if (requiredAudience) {
+				dueByDate = requiredAudience.nextRequiredBy
+			} else {
+				if (this.audience.requiredBy) {
+					dueByDate = this.audience.requiredBy
+				}
+			}
 		}
-		return null
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below but it is not used
-	nextRequiredByNew() {
-		if (this.audience) {
-			return this.audience!.nextRequiredByNew()
-		}
-		return null
+		return dueByDate
 	}
 
 	//LC-1054: Rather than updating the above method a new method is Implemented as below
@@ -407,22 +406,6 @@ export class Course {
 			return completionDate
 		}
 		return undefined
-	}
-
-	shouldRepeat() {
-		const completionDate = this.getCompletionDate()
-		if (this.audience) {
-			return this.audience!.shouldRepeat(completionDate)
-		}
-		return false
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	shouldRepeatNew() {
-		if (this.audience) {
-			return this.audience!.shouldRepeatNew()
-		}
-		return false
 	}
 
 	getModule(moduleId: string) {
@@ -690,29 +673,6 @@ export class Audience {
 		return relevance
 	}
 
-	nextRequiredBy(completionDate?: Date) {
-		const [last, next] = this._getCurrentRecurrencePeriod()
-		if (!last || !next) {
-			return null
-		}
-		if (completionDate && completionDate > last) {
-			if (!this.frequency) {
-				return null
-			}
-			return Frequency.increment(this.frequency, next)
-		}
-		return next
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	nextRequiredByNew() {
-		const [last, next] = this._getCurrentRecurrencePeriodNew()
-		if (!last && !next) {
-			return null
-		}
-		return next
-	}
-
 	previousRequiredBy(completionDate?: Date) {
 		const [last, next] = this._getCurrentRecurrencePeriod()
 		if (!last || !next) {
@@ -734,25 +694,6 @@ export class Audience {
 			return null
 		}
 		return last
-	}
-
-	shouldRepeat(completionDate?: Date) {
-		const [last, next] = this._getCurrentRecurrencePeriod()
-		if (!last || !next) {
-			return !completionDate
-		}
-		if (!completionDate) {
-			return true
-		}
-		return completionDate < last
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	shouldRepeatNew() {
-		if (this.requiredBy && this.frequency) {
-			return true
-		}
-		return false
 	}
 
 	_getCurrentRecurrencePeriod() {
