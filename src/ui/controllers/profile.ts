@@ -159,7 +159,7 @@ export async function updateProfession(request: Request, response: Response) {
 				error: true,
 				originalUrl: request.body.originalUrl,
 				profession,
-				professions,
+				professions: Object.entries(professions),
 			})
 		)
 	} else {
