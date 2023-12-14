@@ -2,7 +2,6 @@ import { IsEmail, IsNotEmpty, validate } from 'class-validator'
 import { Request, Response } from 'express'
 import * as config from 'lib/config'
 import { getLogger } from 'lib/logger'
-import { User } from 'lib/model'
 import * as _ from 'lodash'
 
 import * as registry from '../../lib/registry'
@@ -425,33 +424,8 @@ export function addEmail(request: Request, response: Response) {
 	response.send(template.render('profile/email', request, response))
 }
 
-/**
- * This method sends the user to the update email form on Identity.
- * Clear any local profile info for dept/org.
- * This flag on csrs needs to be set here (as opposed to on the identity service),
- * as this is the last point in the journey at which there is an authenticated context for security.
- *
- * @param {Request} request
- * @param {Response} response
- * @returns response.redirect to change email form on Identity
- */
 export async function updateEmail(request: Request, response: Response) {
-	try {
-		const user: User = request.user
-		logger.debug(`User ${user.userName} confirming request to change email`)
-		try {
-			await registry.patch('/civilServants/' + request.user.userId, {organisationalUnit: null}, user.accessToken)
-		} catch (error) {
-			console.log(error)
-			throw new Error(error)
-		}
-		setLocalProfile(request, 'department', null)
-		setLocalProfile(request, 'organisationalUnit', null)
-		return request.session!.save(() => response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email'))
-	} catch (error) {
-		logger.error(error)
-		throw new Error(error)
-	}
+	return response.redirect(config.AUTHENTICATION.serviceUrl + '/account/email')
 }
 
 async function getOptions(type: string) {
