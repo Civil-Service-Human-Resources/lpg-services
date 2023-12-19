@@ -77,6 +77,11 @@ export async function getAllOrganisationUnits(user: User): Promise<Organisationa
 export async function getOrganisationDropdown(user: User): Promise<OrganisationalUnit[]> {
 	logger.debug(`Filtering dropdown for user ${user.userName}`)
 	const typeahead = await getAllOrganisationUnits(user)
-	const userDomain = user.userName.split('@')[1]
-	return typeahead.getDomainFilteredList(userDomain)
+	if (user.isUnrestrictedOrgUser()) {
+		logger.debug(`User is unrestricted, returning all organisations`)
+		return typeahead.typeahead
+	} else {
+		const userDomain = user.userName.split('@')[1]
+		return typeahead.getDomainFilteredList(userDomain)
+	}
 }
