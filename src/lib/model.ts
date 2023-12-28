@@ -831,7 +831,11 @@ export class OrganisationalUnit implements CacheableObject {
 	}
 }
 
-export class User {
+export interface CSLUser {
+	isUnrestrictedOrgUser(): boolean
+	isAdmin(): boolean
+}
+export class User implements CSLUser {
 	static create(data: any) {
 		const user = new User(
 			data.uid || data.id,
@@ -899,6 +903,10 @@ export class User {
 	hasCompleteProfile() {
 		//	return this.department && this.areasOfWork && this.grade
 		return true
+	}
+
+	isUnrestrictedOrgUser(): boolean {
+		return this.hasRole("UNRESTRICTED_ORGANISATION")
 	}
 
 	hasRole(role: string) {
