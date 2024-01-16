@@ -95,10 +95,8 @@ export async function renderCancelledBookingPage(
 
 	res.send(
 		template.render('booking/confirmed', req, res, {
-			course,
-			event,
+			bookingTitle: module.title || course.title,
 			message,
-			module,
 		})
 	)
 }

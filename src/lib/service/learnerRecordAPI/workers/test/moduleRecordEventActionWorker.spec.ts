@@ -2,10 +2,8 @@ import {expect} from 'chai'
 import * as sinon from 'sinon'
 
 import {RecordState} from '../../models/record'
-import {ApprovedBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
 import {CancelBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
 import {CompleteBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
-import {RegisterBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
 import {SkipBookingActionWorker} from '../moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
 import {testCreateCourseRecord} from './courseRecordWorkerTestUtils'
 import {testCreateModuleRecord, testUpdateCourseRecord, testUpdateModuleRecord} from './moduleRecordWorkerTestUtils'
@@ -33,74 +31,6 @@ describe('Should test the module event action worker classes', () => {
 
 	afterEach(() => {
 		sinon.restore()
-	})
-
-	describe('Should test approving a booking', () => {
-		it('Should create an approved course record when the booking is confirmed', async () => {
-			const course = getCourseWithOneRequiredModule("course 100", "module 100")
-			const event = genericEvent("event 100")
-			const worker = new ApprovedBookingActionWorker(course, testUser, event, course.modules[0])
-			await testCreateCourseRecord(worker, RecordState.Approved, undefined, RecordState.Approved, course)
-		})
-
-		it(`Should create an approved module record`, async () => {
-			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
-			const courseRecord = getCourseRecordWithOneModuleRecord(
-				1,
-				course.id,
-				RecordState.InProgress,
-				course.modules[0].id,
-				RecordState.Completed
-			)
-			const event = genericEvent("event 100")
-			const worker = new ApprovedBookingActionWorker(course, testUser, event, course.modules[1])
-			await testCreateModuleRecord(worker, courseRecord, RecordState.Approved, course.modules[1])
-		})
-
-		it(`Should approve the course record
-            when it isn't currently in progress`, async () => {
-			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
-			const courseRecord = getCourseRecordWithTwoModuleRecords(
-				1,
-				2,
-				course.id,
-				RecordState.InProgress,
-				course.modules[0].id,
-				RecordState.Completed,
-				course.modules[1].id,
-				RecordState.Completed
-			)
-			courseRecord.state = RecordState.Completed
-			const event = genericEvent("event 100")
-			const worker = new ApprovedBookingActionWorker(course, testUser, event, course.modules[1])
-			await testUpdateCourseRecord(worker, courseRecord, courseRecord.modules[1], [
-				{op: 'replace', path: '/state', value: 'APPROVED'},
-			])
-		})
-
-		it(`Should correctly update the module record`, async () => {
-			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
-			const courseRecord = getCourseRecordWithTwoModuleRecords(
-				1,
-				2,
-				course.id,
-				RecordState.Null,
-				course.modules[0].id,
-				RecordState.InProgress,
-				course.modules[1].id,
-				RecordState.InProgress
-			)
-			const event = genericEvent("event 100")
-			const worker = new ApprovedBookingActionWorker(course, testUser, event, course.modules[1])
-			await testUpdateModuleRecord(worker, courseRecord, [
-				{op: 'replace', path: '/state', value: 'APPROVED'},
-				{op: 'remove', path: '/result', value: undefined},
-				{op: 'remove', path: '/score', value: undefined},
-				{op: 'remove', path: '/completionDate', value: undefined},
-				{op: 'replace', path: '/eventId', value: event.id},
-				{op: 'replace', path: '/eventDate', value: testDateAsStr},
-			])
-		})
 	})
 
 	describe('Should test cancelling a booking', () => {
@@ -241,72 +171,6 @@ describe('Should test the module event action worker classes', () => {
 				{op: 'remove', path: '/result', value: undefined},
 				{op: 'remove', path: '/score', value: undefined},
 				{op: 'remove', path: '/completionDate', value: undefined},
-			])
-		})
-	})
-
-	describe('Should test registering for an event', () => {
-		it('Should create an approved course record when the booking is confirmed', async () => {
-			const course = getCourseWithOneRequiredModule("course 100", "module 100")
-			const event = genericEvent("event 100")
-			const worker = new RegisterBookingActionWorker(course, testUser, event, course.modules[0])
-			await testCreateCourseRecord(worker, RecordState.Registered, undefined, RecordState.Registered, course)
-		})
-
-		it(`Should create an approved module record`, async () => {
-			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
-			const courseRecord = getCourseRecordWithOneModuleRecord(
-				1,
-				course.id,
-				RecordState.InProgress,
-				course.modules[0].id,
-				RecordState.Completed
-			)
-			const event = genericEvent("event 100")
-			const worker = new RegisterBookingActionWorker(course, testUser, event, course.modules[1])
-			await testCreateModuleRecord(worker, courseRecord, RecordState.Registered, course.modules[1])
-		})
-
-		it(`Should unregsiter the course record if it is currently registered`, async () => {
-			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
-			const courseRecord = getCourseRecordWithTwoModuleRecords(
-				1,
-				2,
-				course.id,
-				RecordState.Registered,
-				course.modules[0].id,
-				RecordState.InProgress,
-				course.modules[1].id,
-				RecordState.Completed
-			)
-			const event = genericEvent("event 100")
-			const worker = new RegisterBookingActionWorker(course, testUser, event, course.modules[1])
-			await testUpdateCourseRecord(worker, courseRecord, courseRecord.modules[1], [
-				{op: 'replace', path: '/state', value: 'REGISTERED'},
-			])
-		})
-
-		it(`Should correctly update the module record`, async () => {
-			const course = getCourseWithTwoRequiredModules("course 100", "module 100", "module 101")
-			const courseRecord = getCourseRecordWithTwoModuleRecords(
-				1,
-				2,
-				course.id,
-				RecordState.Null,
-				course.modules[0].id,
-				RecordState.InProgress,
-				course.modules[1].id,
-				RecordState.InProgress
-			)
-			const event = genericEvent("event 100")
-			const worker = new RegisterBookingActionWorker(course, testUser, event, course.modules[1])
-			await testUpdateModuleRecord(worker, courseRecord, [
-				{op: 'replace', path: '/state', value: 'REGISTERED'},
-				{op: 'remove', path: '/result', value: undefined},
-				{op: 'remove', path: '/score', value: undefined},
-				{op: 'remove', path: '/completionDate', value: undefined},
-				{op: 'replace', path: '/eventId', value: event.id},
-				{op: 'replace', path: '/eventDate', value: testDateAsStr},
 			])
 		})
 	})

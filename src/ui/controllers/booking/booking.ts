@@ -1,25 +1,20 @@
 import _ = require('lodash')
 
 import * as express from 'express'
+import {ResourceNotFoundError} from 'lib/exception/ResourceNotFoundError'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
+import {bookEvent} from 'lib/service/cslService/cslServiceClient'
+import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
 import * as template from 'lib/ui/template'
 
 import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
 import {
-	ApprovedBookingActionWorker
-	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
-import {
 	CompleteBookingActionWorker
 	// tslint:disable-next-line:max-line-length
 } from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
-import {
-	RegisterBookingActionWorker
-	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
 import {
 	SkipBookingActionWorker
 	// tslint:disable-next-line:max-line-length
@@ -390,13 +385,8 @@ export function renderConfirmPo(ireq: express.Request, res: express.Response) {
 	)
 }
 
-export async function tryCompleteBooking(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
+function getBookEventDtoFromRequest(req: express.Request, res: express.Response) {
 	const session = req.session!
-
 	const accessibilityArray: string[] = []
 	for (const i in session.accessibilityReqs) {
 		if (i) {
@@ -408,36 +398,24 @@ export async function tryCompleteBooking(ireq: express.Request, res: express.Res
 			}
 		}
 	}
+	return new BookEventDto(accessibilityArray, session.payment.value, req.user.name)
+}
 
-	const accessibilityOptions = accessibilityArray.join(', ')
-	const response = await learnerRecord.bookEvent(
-		course,
-		module,
-		event,
-		req.user,
-		session.payment.value,
-		accessibilityOptions
-	)
+export async function tryCompleteBooking(req: express.Request, res: express.Response) {
+	const bookEventDto = getBookEventDtoFromRequest(req, res)
+	let message = confirmedMessage.Booked
+	let bookingTitle = null
 
-	let message
-
-	if (response.status === 201) {
-		logger.debug(
-			'Successfully booked event in learner record',
-			`user:${req.user}`,
-			`event: ${event.id}`,
-			`response: ${response.status}`
-		)
-
-		if (!module.cost || module.cost === 0) {
-			await new ApprovedBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+	try {
+		const response = await bookEvent(req.params.courseId, req.params.moduleId,
+			req.params.eventId, req.user, bookEventDto)
+		bookingTitle = response.moduleTitle
+	} catch (e) {
+		if (e instanceof ResourceNotFoundError) {
+			return res.sendStatus(404)
 		} else {
-			await new RegisterBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+			message = confirmedMessage.Error
 		}
-
-		message = confirmedMessage.Booked
-	} else {
-		message = confirmedMessage.Error
 	}
 
 	delete req.session!.payment
@@ -447,10 +425,8 @@ export async function tryCompleteBooking(ireq: express.Request, res: express.Res
 
 	res.send(
 		template.render('booking/confirmed', req, res, {
-			course,
-			event,
+			bookingTitle,
 			message,
-			module,
 		})
 	)
 }

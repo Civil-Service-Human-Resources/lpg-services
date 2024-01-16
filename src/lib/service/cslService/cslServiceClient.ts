@@ -1,7 +1,9 @@
 import {plainToInstance} from 'class-transformer'
 import * as config from 'lib/config'
 import {Course, Module, User} from 'lib/model'
+import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
 import {CourseActionResponse} from 'lib/service/cslService/models/CourseActionResponse'
+import {EventActionResponse} from 'lib/service/cslService/models/EventActionResponse'
 import {HttpClient} from '../httpClient'
 import {LaunchModuleRequest} from './models/launchModuleRequest'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
@@ -38,8 +40,8 @@ export async function completeModule(courseId: string, moduleId: string, user: U
 
 export async function removeCourseFromLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
 	const resp = await client._post({
-		url: `/courses/${courseId}/remove_from_learning_plan`,
-	},
+			url: `/courses/${courseId}/remove_from_learning_plan`,
+		},
 		undefined,
 		user)
 	return plainToInstance(CourseActionResponse, resp)
@@ -63,8 +65,19 @@ export async function removeCourseFromSuggestions(courseId: string, user: User):
 	return plainToInstance(CourseActionResponse, resp)
 }
 
+export async function bookEvent(
+	courseId: string, moduleId: string, eventId: string,
+	user: User, bookEventDto: BookEventDto): Promise<EventActionResponse> {
+	const resp = await client._post({
+			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/create_bookings`,
+		},
+		bookEventDto,
+		user)
+	return plainToInstance(EventActionResponse, resp)
+}
+
 export async function clearCourseRecordCache(courseId: string, user: User) {
 	await client._get({
-			url: `/reset-cache/learner/${user.id}/course_record/${courseId}`,
-		}, user)
+		url: `/reset-cache/learner/${user.id}/course_record/${courseId}`,
+	}, user)
 }
