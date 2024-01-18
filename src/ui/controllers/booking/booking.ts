@@ -398,7 +398,7 @@ function getBookEventDtoFromRequest(req: express.Request, res: express.Response)
 			}
 		}
 	}
-	return new BookEventDto(accessibilityArray, session.payment.value, req.user.name)
+	return new BookEventDto(accessibilityArray, session.payment.value, req.user.userName, req.user.name)
 }
 
 export async function tryCompleteBooking(req: express.Request, res: express.Response) {
