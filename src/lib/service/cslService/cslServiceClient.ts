@@ -2,6 +2,7 @@ import {plainToInstance} from 'class-transformer'
 import * as config from 'lib/config'
 import {Course, Module, User} from 'lib/model'
 import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
+import {CancelBookingDto} from 'lib/service/cslService/models/CancelBookingDto'
 import {CourseActionResponse} from 'lib/service/cslService/models/CourseActionResponse'
 import {EventActionResponse} from 'lib/service/cslService/models/EventActionResponse'
 import {HttpClient} from '../httpClient'
@@ -69,9 +70,20 @@ export async function bookEvent(
 	courseId: string, moduleId: string, eventId: string,
 	user: User, bookEventDto: BookEventDto): Promise<EventActionResponse> {
 	const resp = await client._post({
-			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/create_bookings`,
+			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/create_booking`,
 		},
 		bookEventDto,
+		user)
+	return plainToInstance(EventActionResponse, resp)
+}
+
+export async function cancelEventBooking(
+	courseId: string, moduleId: string, eventId: string,
+	user: User, dto: CancelBookingDto): Promise<EventActionResponse> {
+	const resp = await client._post({
+			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/cancel_booking`,
+		},
+		dto,
 		user)
 	return plainToInstance(EventActionResponse, resp)
 }

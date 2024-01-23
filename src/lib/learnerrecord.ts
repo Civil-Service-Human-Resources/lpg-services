@@ -30,25 +30,6 @@ const http = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function cancelBooking(event: any, cancellationReason: any, user: any): Promise<any> {
-	const data: any = {
-		cancellationReason,
-		status: 'Cancelled',
-	}
-	try {
-		return await http.patch(`/event/${event.id}/learner/${user.id}/`, data, {
-			headers: {
-				Authorization: `Bearer ${user.accessToken}`,
-			},
-			validateStatus: status => {
-				return status === 200 || status === 400 || status === 404
-			},
-		})
-	} catch (e) {
-		logger.error(e)
-	}
-}
-
 export async function getActiveBooking(eventId: string, user: any): Promise<any> {
 	return await http.get(`/event/${eventId}/booking/${user.id}/active`, {
 		headers: {
