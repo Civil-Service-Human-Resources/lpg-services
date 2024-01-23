@@ -1,6 +1,7 @@
 import {Type} from 'class-transformer'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import { getLogger } from 'lib/logger'
 import {CacheableObject} from 'lib/utils/cacheableObject'
 import _ = require('lodash')
 import * as moment from 'moment'
@@ -8,6 +9,8 @@ import {Duration} from 'moment'
 import 'reflect-metadata'
 
 import {ModuleNotFoundError} from './exception/moduleNotFound'
+
+const logger = getLogger('model')
 
 export interface LineManager {
 	email: string
@@ -356,6 +359,16 @@ export class Course {
 
 	isRequired() {
 		return this.audience ? this.audience.mandatory : false
+	}
+
+	getDueByDateDisplayString() {
+		let resp: string | undefined
+		const dueByDate = this.getDueByDate()
+		if (dueByDate !== null) {
+			resp = moment(dueByDate).utc().format("DD MMM YYYY")
+		}
+		logger.info(`Due by date str for course ${this.id} : ${resp}`)
+		return resp
 	}
 
 	getDueByDate() {
