@@ -1,3 +1,3 @@
 export class CancelBookingDto {
-	constructor(public cancellationReason: string) { }
+	constructor(public reason: string) { }
 }
