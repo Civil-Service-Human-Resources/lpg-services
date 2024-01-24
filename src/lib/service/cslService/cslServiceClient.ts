@@ -98,8 +98,12 @@ export async function completeEventBooking(
 	return plainToInstance(EventActionResponse, resp)
 }
 
-export async function clearCourseRecordCache(courseId: string, user: User) {
-	await client._get({
-		url: `/reset-cache/learner/${user.id}/course_record/${courseId}`,
-	}, user)
+export async function skipEventBooking(
+	courseId: string, moduleId: string, eventId: string, user: User): Promise<EventActionResponse> {
+	const resp = await client._post({
+			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/skip_booking`,
+		},
+		null,
+		user)
+	return plainToInstance(EventActionResponse, resp)
 }

@@ -6,15 +6,9 @@ import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
-import {bookEvent, completeEventBooking} from 'lib/service/cslService/cslServiceClient'
+import {bookEvent, completeEventBooking, skipEventBooking} from 'lib/service/cslService/cslServiceClient'
 import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
 import * as template from 'lib/ui/template'
-
-import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
-import {
-	SkipBookingActionWorker
-	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
 import * as courseController from '../course/index'
 
 const logger = getLogger('controllers/booking')
@@ -324,24 +318,15 @@ export function validate(type: string, po: string): string[] {
 	return errors
 }
 
-export async function trySkipBooking(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
-
-	const actionWorker = new SkipBookingActionWorker(course, req.user, event, module)
+export async function trySkipBooking(req: express.Request, res: express.Response) {
 	try {
-		actionWorker.applyActionToLearnerRecord()
+		const response = await skipEventBooking(req.params.courseId, req.params.moduleId, req.params.eventId, req.user)
+		req.flash('successTitle', req.__('learning_skipped_title', response.courseTitle))
+		req.flash('successMessage', req.__('learning_skipped_from_plan_message', response.courseTitle))
 	} catch (e) {
-		if (e instanceof CourseRecordStateError) {
-			res.sendStatus(400)
-			return
-		}
+		return res.sendStatus(400)
 	}
 
-	req.flash('successTitle', req.__('learning_skipped_title', req.course.title))
-	req.flash('successMessage', req.__('learning_skipped_from_plan_message', req.course.title))
 	req.session!.save(() => {
 		res.redirect('/')
 	})
