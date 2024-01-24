@@ -11,10 +11,8 @@ import * as moduleRecordClient from '../../moduleRecord/client'
 import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 
 const testDate = new Date(2020, 0, 1, 0, 0, 0)
-export const testDateAsStr = '2020-01-01T00:00:00'
 
 export const testUser = new User('100', 'TestUser', '', [], '')
-export const testCourse = new Course('TEST001')
 
 // Course data
 
@@ -25,26 +23,6 @@ export function getCourseWithOneRequiredModule(courseId: string, moduleId: strin
 
 export function getCourseWithTwoRequiredModules(courseId: string, moduleOneId: string, moduleTwoId: string) {
 	const course = getCourseWithOneRequiredModule(courseId, moduleOneId)
-	course.modules.push(getRequiredModule(moduleTwoId))
-	return course
-}
-
-export function getCourseWithOneOptionalModule(courseId: string, moduleId: string) {
-	const module = getOptionalModule(moduleId)
-	return genericCourse(courseId, [module])
-}
-
-export function getCourseWithTwoOptionalModules(courseId: string, moduleOneId: string, moduleTwoId: string) {
-	const course = getCourseWithOneOptionalModule(courseId, moduleOneId)
-	course.modules.push(getOptionalModule(moduleTwoId))
-}
-
-/**
- * - module [0] is opt
- * - module [1] is required
- */
-export function getCourseWithMixedModules(courseId: string, moduleOneId: string, moduleTwoId: string) {
-	const course = getCourseWithOneOptionalModule(courseId, moduleOneId)
 	course.modules.push(getRequiredModule(moduleTwoId))
 	return course
 }
@@ -134,18 +112,6 @@ export function createModuleRecord(moduleRecordId: number, moduleId: string, cou
 
 export function genericModuleRecord(moduleRecordId: number) {
 	return createModuleRecord(moduleRecordId, '', '', RecordState.InProgress)
-}
-
-export function getEventModuleRecord(
-	moduleRecordId: number,
-	moduleId: string,
-	courseId: string,
-	state: RecordState,
-	eventId: string
-) {
-	const moduleRecord = createModuleRecord(moduleRecordId, moduleId, courseId, state)
-	moduleRecord.eventId = eventId
-	return moduleRecord
 }
 
 export function mockTime() {
