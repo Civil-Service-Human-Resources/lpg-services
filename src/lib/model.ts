@@ -198,7 +198,7 @@ export class Course {
 	getRequiredRecurringAudience() {
 		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
 			const nextDate = moment(this.audience.requiredBy).endOf("day").utc()
-			while (nextDate < moment()) {
+			while (nextDate < moment().utc()) {
 				nextDate.add({
 					months: this.audience.frequency.months(),
 					years: this.audience.frequency.years(),
@@ -356,6 +356,15 @@ export class Course {
 
 	isRequired() {
 		return this.audience ? this.audience.mandatory : false
+	}
+
+	getDueByDateDisplayString() {
+		let resp: string | undefined
+		const dueByDate = this.getDueByDate()
+		if (dueByDate !== null) {
+			resp = moment(dueByDate).utc().format("DD MMM YYYY")
+		}
+		return resp
 	}
 
 	getDueByDate() {
