@@ -41,19 +41,18 @@ export function saveAccessibilityOptions(ireq: express.Request, res: express.Res
 	const req = ireq as extended.CourseRequest
 	const user = req.user as model.User
 
-	if (Array.isArray(ireq.body.accessibilityreqs)) {
-		session.accessibilityReqs = ireq.body.accessibilityreqs
-	} else {
-		session.accessibilityReqs = [ireq.body.accessibilityreqs]
+	const requirements: string[] = []
+
+	if (ireq.body.accessibilityreqs !== undefined) {
+		if (Array.isArray(ireq.body.accessibilityreqs)) {
+			requirements.push(...ireq.body.accessibilityreqs)
+		} else {
+			requirements.push(ireq.body.accessibilityreqs)
+		}
 	}
 
+	session.accessibilityReqs = requirements
 	session.otherAccessibilityReqs = ireq.body.otherDescription || ''
-	if (
-		(session.accessibilityReqs.indexOf('other') > -1 || ireq.body.otherDescription) &&
-		session.accessibilityReqs.indexOf('other') === -1
-	) {
-		session.accessibilityReqs.push('other')
-	}
 
 	let {returnTo} = ireq.session!
 	if (returnTo) {
@@ -359,18 +358,17 @@ export function renderConfirmPo(ireq: express.Request, res: express.Response) {
 
 function getBookEventDtoFromRequest(req: express.Request, res: express.Response) {
 	const session = req.session!
-	const accessibilityArray: string[] = []
-	for (const i in session.accessibilityReqs) {
-		if (i) {
-			const requirement = session.accessibilityReqs[i]
-			if (requirement === 'other') {
-				accessibilityArray.push(session.otherAccessibilityReqs)
-			} else {
-				accessibilityArray.push(res.__(`accessibility-requirements`)[requirement])
-			}
+	const accessibilityRequirements: string[] = session.accessibilityReqs || []
+	const finalAccessibilityRequirements: string[] = []
+	accessibilityRequirements.forEach(requirement => {
+		if (requirement === 'other') {
+			finalAccessibilityRequirements.push(session.otherAccessibilityReqs)
+		} else {
+			// @ts-ignore
+			finalAccessibilityRequirements.push(res.__(`accessibility-requirements`)[requirement])
 		}
-	}
-	return new BookEventDto(accessibilityArray, session.payment.value, req.user.userName, req.user.name)
+	})
+	return new BookEventDto(finalAccessibilityRequirements, session.payment.value, req.user.userName, req.user.name)
 }
 
 export async function tryCompleteBooking(req: express.Request, res: express.Response) {
