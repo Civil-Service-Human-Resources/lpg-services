@@ -368,7 +368,8 @@ function getBookEventDtoFromRequest(req: express.Request, res: express.Response)
 			finalAccessibilityRequirements.push(res.__(`accessibility-requirements`)[requirement])
 		}
 	})
-	return new BookEventDto(finalAccessibilityRequirements, session.payment.value, req.user.userName, req.user.name)
+	const poNumber = session.payment.value.length === 0 ? undefined : session.payment.value
+	return new BookEventDto(finalAccessibilityRequirements, req.user.userName, req.user.givenName, poNumber)
 }
 
 export async function tryCompleteBooking(req: express.Request, res: express.Response) {
