@@ -1,6 +1,8 @@
 import axios, {AxiosResponse} from 'axios'
+import {plainToInstance, Type} from 'class-transformer'
 import * as https from 'https'
 import * as config from 'lib/config'
+import {OrganisationalUnit} from 'lib/model'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
 
@@ -86,6 +88,51 @@ export async function patch(node: string, data: any, token: string) {
 	)
 
 	return result
+}
+
+export class Grade {
+	constructor(public code: string, public name: string) { }
+
+}
+
+export class AreaOfWork {
+	constructor(public id: number, public name: string) { }
+}
+
+export class Interest {
+	constructor(public name: string) { }
+}
+
+export class Identity {
+	constructor(public uid: string) { }
+}
+
+export class Profile {
+	fullName: string
+	@Type(() => Grade)
+	grade: Grade
+	@Type(() => OrganisationalUnit)
+	organisationalUnit: OrganisationalUnit
+	@Type(() => AreaOfWork)
+	profession: AreaOfWork
+	@Type(() => AreaOfWork)
+	otherAreasOfWork: AreaOfWork[]
+	@Type(() => Interest)
+	interests: Interest[]
+	lineManagerName: string
+	lineManagerEmailAddress: string
+	userId: number
+	@Type(() => Identity)
+	identity: Identity
+}
+
+export async function login(token: string) {
+	const resp = await http.post<Profile>(
+		config.REGISTRY_SERVICE_URL + '/civilServants/me/login',
+		{}, {
+		headers: { Authorization: `Bearer ${token}` },
+	})
+	return plainToInstance(Profile, resp.data)
 }
 
 export async function profile(token: string) {

@@ -1,6 +1,8 @@
 import {Type} from 'class-transformer'
+import {FullProfile} from 'lib/config/passport'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import {AreaOfWork, Grade, Interest} from 'lib/registry'
 import {CacheableObject} from 'lib/utils/cacheableObject'
 import _ = require('lodash')
 import * as moment from 'moment'
@@ -845,6 +847,19 @@ export interface CSLUser {
 	isAdmin(): boolean
 }
 export class User implements CSLUser {
+
+	// static createFromFullProfile(profile: FullProfile) {
+	// 	const user = new User(
+	// 		profile.uid, profile.username, '', profile.roles, profile.accessToken
+	// 	)
+	// 	user.userId = profile.userId.toString()
+	// 	user.organisationalUnit = profile.organisationalUnit
+	// 	user.givenName = profile.fullName
+	// 	user.grade = profile.grade
+	// 	user.areasOfWork = [profile.profession]
+	//
+	// }
+
 	static create(data: any) {
 		const user = new User(
 			data.uid || data.id,
@@ -890,16 +905,16 @@ export class User implements CSLUser {
 
 	department?: string
 	departmentId?: number
-	areasOfWork?: string[]
+	areasOfWork?: AreaOfWork[]
 	lineManager?: LineManager
-	otherAreasOfWork?: any[]
-	interests?: any[]
+	otherAreasOfWork?: AreaOfWork[]
+	interests?: Interest[]
 	givenName?: string
 	tokenzied?: string
 	organisationalUnit?: OrganisationalUnit
 	userId: string
 
-	grade?: any
+	grade?: Grade
 
 	constructor(id: string, userName: string, sessionIndex: string, roles: string[], accessToken: string) {
 		this.id = id

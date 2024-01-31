@@ -1,9 +1,11 @@
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
 import * as config from 'lib/config/index'
+import {IdentityDetails} from 'lib/identity'
 import * as identity from 'lib/identity'
 import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
+import {Profile} from 'lib/registry'
 import * as registry from 'lib/registry'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
@@ -11,6 +13,12 @@ import * as oauth2 from 'passport-oauth2'
 const logger = getLogger('config/passport')
 
 let strategy: oauth2.Strategy
+
+interface PassportProfile {
+	accessToken: string
+}
+
+export type FullProfile = Profile & IdentityDetails & PassportProfile
 
 export function configure(
 	clientID: string,
@@ -30,14 +38,16 @@ export function configure(
 			clientSecret,
 			tokenURL,
 		},
-		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
+		async (accessToken: string, refreshToken: string, profile: PassportProfile, cb: oauth2.VerifyCallback) => {
 			profile.accessToken = accessToken
 
 			try {
+				console.log(profile)
 				const identityDetails = await identity.getDetails(accessToken)
-				const regDetails = await registry.profile(accessToken)
+				console.log(identityDetails)
+				const regDetails = await registry.login(accessToken)
 
-				const combined = {
+				const combined: FullProfile = {
 					...profile,
 					...identityDetails,
 					...regDetails,
