@@ -84,14 +84,12 @@ function renderSignIn(req: express.Request, res: express.Response, props: SignIn
 	return template.render('account/sign-in', req, res, props)
 }
 
-async function updateUserObject(req: express.Request, updatedProfile: Record<string, string>) {
-	const newUser = model.User.create({
-		...req.user,
-		...updatedProfile,
-	})
+async function updateUserObject(req: express.Request, updatedProfile: registry.Profile) {
+	const user = req.user as model.User
+	user.updateWithProfile(updatedProfile)
 
 	await new Promise(resolve => {
-		req.login(newUser, () => {
+		req.login(user, () => {
 			req.session!.save(resolve)
 		})
 	})
@@ -373,7 +371,7 @@ export async function patchAndUpdate(
 		// seems like we have to get the profile again to get values
 		// which seems ...not good
 		const profile = await registry.profile(user.accessToken)
-		await updateUserObject(req, profile as Record<string, string>)
+		await updateUserObject(req, profile)
 		req.flash('profile-updated', 'profile-updated')
 		return req.session!.save(() => {
 			res.redirect('/profile')

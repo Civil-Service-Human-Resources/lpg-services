@@ -13,7 +13,7 @@ import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 const testDate = new Date(2020, 0, 1, 0, 0, 0)
 export const testDateAsStr = '2020-01-01T00:00:00'
 
-export const testUser = new User('100', 'TestUser', '', [], '')
+export const testUser = new User('100', 'TestUser', [], '')
 export const testCourse = new Course('TEST001')
 
 // Course data

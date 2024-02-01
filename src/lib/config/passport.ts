@@ -1,11 +1,10 @@
+import {plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
 import * as config from 'lib/config/index'
-import {IdentityDetails} from 'lib/identity'
 import * as identity from 'lib/identity'
 import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
-import {Profile} from 'lib/registry'
 import * as registry from 'lib/registry'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
@@ -13,12 +12,6 @@ import * as oauth2 from 'passport-oauth2'
 const logger = getLogger('config/passport')
 
 let strategy: oauth2.Strategy
-
-interface PassportProfile {
-	accessToken: string
-}
-
-export type FullProfile = Profile & IdentityDetails & PassportProfile
 
 export function configure(
 	clientID: string,
@@ -38,21 +31,15 @@ export function configure(
 			clientSecret,
 			tokenURL,
 		},
-		async (accessToken: string, refreshToken: string, profile: PassportProfile, cb: oauth2.VerifyCallback) => {
-			profile.accessToken = accessToken
-
+		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			try {
+				console.log("CB")
 				console.log(profile)
 				const identityDetails = await identity.getDetails(accessToken)
 				console.log(identityDetails)
-				const regDetails = await registry.login(accessToken)
+				const csrsProfile = await registry.login(accessToken, identityDetails)
 
-				const combined: FullProfile = {
-					...profile,
-					...identityDetails,
-					...regDetails,
-				}
-				const user = model.User.create(combined)
+				const user = model.User.createFromFullProfile(csrsProfile, identityDetails, accessToken)
 				return cb(null, user)
 			} catch (e) {
 				logger.warn(`Error retrieving user profile information`, e)
@@ -68,9 +55,11 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
+		console.log("DESIRIALISE")
+		console.log(data)
 		let user: model.User
 		try {
-			user = model.User.create(JSON.parse(data))
+			user = plainToInstance(model.User, JSON.parse(data) as model.User)
 			done(null, user)
 		} catch (error) {
 			done(error, undefined)

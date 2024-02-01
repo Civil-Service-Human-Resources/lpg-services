@@ -2,7 +2,8 @@ import axios, {AxiosResponse} from 'axios'
 import {plainToInstance, Type} from 'class-transformer'
 import * as https from 'https'
 import * as config from 'lib/config'
-import {OrganisationalUnit} from 'lib/model'
+import {IdentityDetails} from 'lib/identity'
+import {LineManager, OrganisationalUnit} from 'lib/model'
 import * as traverson from 'traverson'
 import * as hal from 'traverson-hal'
 
@@ -108,51 +109,52 @@ export class Identity {
 }
 
 export class Profile {
-	fullName: string
+	fullName?: string
 	@Type(() => Grade)
-	grade: Grade
+	grade?: Grade
 	@Type(() => OrganisationalUnit)
-	organisationalUnit: OrganisationalUnit
+	organisationalUnit?: OrganisationalUnit
 	@Type(() => AreaOfWork)
-	profession: AreaOfWork
+	profession?: AreaOfWork
 	@Type(() => AreaOfWork)
-	otherAreasOfWork: AreaOfWork[]
+	otherAreasOfWork?: AreaOfWork[]
 	@Type(() => Interest)
-	interests: Interest[]
-	lineManagerName: string
-	lineManagerEmailAddress: string
+	interests?: Interest[]
+	lineManagerName?: string
+	lineManagerEmailAddress?: string
 	userId: number
 	@Type(() => Identity)
 	identity: Identity
+
+	getLineManager(): LineManager | undefined {
+		if (this.lineManagerEmailAddress && this.lineManagerName) {
+			return {
+				email: this.lineManagerEmailAddress,
+				name: this.lineManagerName,
+			}
+		}
+	}
 }
 
-export async function login(token: string) {
+export async function login(token: string, identityDetails: IdentityDetails) {
 	const resp = await http.post<Profile>(
 		config.REGISTRY_SERVICE_URL + '/civilServants/me/login',
-		{}, {
+		identityDetails, {
 		headers: { Authorization: `Bearer ${token}` },
 	})
 	return plainToInstance(Profile, resp.data)
 }
 
-export async function profile(token: string) {
-	return await new Promise((resolve, reject) =>
-		traverson
-			.from(config.REGISTRY_SERVICE_URL + '/civilServants/me')
-			.json()
-			.withRequestOptions({
-				auth: {
-					bearer: token,
-				},
-			})
-			.getResource((error, document) => {
-				if (error) {
-					reject(error)
-				} else {
-					resolve(document)
-				}
-			})
-	)
+export async function profile(token: string): Promise<Profile> {
+	const resp = await http.get<Profile>(
+		config.REGISTRY_SERVICE_URL + '/civilServants/me',
+		{
+			headers: { Authorization: `Bearer ${token}` },
+		})
+	if (resp.data === undefined) {
+		throw new Error("Profile data was undefined")
+	}
+	return plainToInstance(Profile, resp.data)
 }
 
 export async function getWithoutHal(path: string): Promise<AxiosResponse> {
