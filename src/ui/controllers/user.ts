@@ -221,8 +221,6 @@ export async function renderEditPage(req: express.Request, res: express.Response
 				return interest.name
 			})
 			break
-		default:
-			return res.redirect('/profile')
 	}
 
 	res.send(
