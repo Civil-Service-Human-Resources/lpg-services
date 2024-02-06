@@ -1,41 +1,12 @@
 import {plainToClass} from 'class-transformer'
 import {getLogger} from 'lib/logger'
 import * as model from '../../../model'
-import {JsonPatch} from '../../shared/models/JsonPatch'
 import {client} from '../baseConfig'
 import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
-import {CourseRecordInput} from './models/courseRecordInput'
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 
 const URL = '/course_records'
-
-export async function patchCourseRecord(jsonPatch: JsonPatch[], user: model.User, courseId: string) {
-	const res =  await client.patch<CourseRecord>(
-		{
-			data: jsonPatch,
-			params: {
-				courseId,
-				userId: user.id,
-			},
-			url: URL,
-		},
-		user
-	)
-	return plainToClass(CourseRecord, res)
-}
-
-export async function createCourseRecord(courseRecord: CourseRecordInput, user: model.User) {
-	const res =  await client.makeRequest<CourseRecord>(
-		{
-			data: courseRecord,
-			method: 'POST',
-			url: URL,
-		},
-		user
-	)
-	return plainToClass(CourseRecord, res)
-}
 
 export async function getFullRecord(user: model.User): Promise<CourseRecord[]> {
 	const resp = await client._get<CourseRecordResponse>({
