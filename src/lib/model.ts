@@ -1,12 +1,13 @@
-import _ = require('lodash')
-
-import { plainToClass } from 'class-transformer'
+import {Type} from 'class-transformer'
 import * as datetime from 'lib/datetime'
 import * as learnerRecord from 'lib/learnerrecord'
+import {CacheableObject} from 'lib/utils/cacheableObject'
+import _ = require('lodash')
 import * as moment from 'moment'
 import {Duration} from 'moment'
+import 'reflect-metadata'
 
-import { ModuleNotFoundError } from './exception/moduleNotFound'
+import {ModuleNotFoundError} from './exception/moduleNotFound'
 
 export interface LineManager {
 	email: string
@@ -762,39 +763,35 @@ export class Feedback {
 export class AgencyToken {
 	token: string
 	uid: string
-	agencyDomains: AgencyDomain[]
+	@Type(() => Domain)
+	agencyDomains: Domain[]
 }
 
-export class AgencyDomain {
+export class Domain {
 	id: string
 	domain: string
 }
 
-export class OrganisationalUnit {
-	public static create(data: any): OrganisationalUnit {
-		const org = new OrganisationalUnit()
-		org.id = data.id
-		org.code = data.code
-		org.abbreviation = data.abbreviation
-		org.name = data.name
-		org.parent = data.parent
-		org.parentId = data.parentId
-		org.agencyToken = plainToClass(AgencyToken, data.agencyToken)
-		org.formattedName = data.formattedName ? data.formattedName : ''
-		org.children = (data.children || []).map(OrganisationalUnit.create)
-		org.paymentMethods = data.paymentMethods
-		return org
-	}
+export class OrganisationalUnit implements CacheableObject {
 	id: number
 	code: string
 	name: string
 	abbreviation?: string
+	@Type(() => OrganisationalUnit)
 	parent?: OrganisationalUnit
 	parentId: number
+	@Type(() => AgencyToken)
 	agencyToken: AgencyToken
 	formattedName: string
 	children: OrganisationalUnit[] = []
 	paymentMethods: string[]
+
+	@Type(() => Domain)
+	domains: Domain[] = []
+
+	getId(): string {
+		return this.id.toString()
+	}
 
 	getHierarchyAsArray() {
 		const hierarchy: OrganisationalUnit[] = [this]
@@ -825,12 +822,20 @@ export class OrganisationalUnit {
 		return exists
 	}
 
-	formatNameWithAbbrev() {
+	doesDomainExist(domain: string): boolean {
+		return this.domains.find(d => d.domain === domain) !== undefined
+	}
+
+	formatNameWithAbbrev(): string {
 		return (this.abbreviation && this.abbreviation !== '') ? `${this.name} (${this.abbreviation})` : this.name
 	}
 }
 
-export class User {
+export interface CSLUser {
+	isUnrestrictedOrgUser(): boolean
+	isAdmin(): boolean
+}
+export class User implements CSLUser {
 	static create(data: any) {
 		const user = new User(
 			data.uid || data.id,
@@ -898,6 +903,10 @@ export class User {
 	hasCompleteProfile() {
 		//	return this.department && this.areasOfWork && this.grade
 		return true
+	}
+
+	isUnrestrictedOrgUser(): boolean {
+		return this.hasRole("UNRESTRICTED_ORGANISATION")
 	}
 
 	hasRole(role: string) {

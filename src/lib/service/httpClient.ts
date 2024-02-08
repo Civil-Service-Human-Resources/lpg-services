@@ -83,6 +83,12 @@ export class HttpClient {
 		}
 	}
 
+	async _patch<Request>(req: AxiosRequestConfig, data: Request, user: model.User) {
+		req.method = 'PATCH'
+		req.data = data
+		return await this.makeRequest(req, user)
+	}
+
 	async _get<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
 		req.method = 'GET'
 		return await this.makeRequest<T>(req, user)

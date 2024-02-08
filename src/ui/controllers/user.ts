@@ -8,6 +8,9 @@ import * as extended from 'lib/extended'
 import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import * as registry from 'lib/registry'
+import {
+	patchCivilServantOrganisation,
+} from 'lib/service/civilServantRegistry/civilServant/civilServantClient'
 import * as template from 'lib/ui/template'
 
 import * as csrsService from '../../lib/service/civilServantRegistry/csrsService'
@@ -218,6 +221,10 @@ export async function renderEditPage(req: express.Request, res: express.Response
 				return interest.name
 			})
 			break
+		case 'line-manager':
+			break
+		default:
+			return res.redirect('/profile')
 	}
 
 	res.send(
@@ -321,39 +328,53 @@ export async function patchAndUpdate(
 	req: express.Request,
 	res: express.Response
 ) {
-	const call: Record<string, string> = {}
-	call[node] = value
-	const response =
-		node !== 'lineManager'
-			? await registry.patch('/civilServants/' + req.user.userId, call, req.user.accessToken)
-			: await registry.checkLineManager(call, req.user.accessToken)
-
-	const responseStatus = (response as any).status || (response as any).statusCode
-	const requestWasSuccessful = responseStatus === 200
-
-	if (node === 'lineManager' && !requestWasSuccessful) {
-		const inputName = 'line-manager'
-		let errorMessage = null
-
-		switch (responseStatus) {
-			case 404:
-				errorMessage = req.__('errors.lineManagerMissing')
-				break
-			case 400:
-				errorMessage = req.__('errors.lineManagerIsUser')
-				break
+	const user = req.user
+	let requestWasSuccessful = true
+	if (node === 'organisationalUnit') {
+		try {
+			const orgId = Number(value.split("/")[2])
+			await patchCivilServantOrganisation(user, orgId)
+		} catch (ex) {
+			logger.error(`Failed to update user organisational unit: ${ex.message}`)
+			requestWasSuccessful = false
 		}
+	} else {
+		const call: Record<string, string> = {}
+		call[node] = value
+		const response =
+			node !== 'lineManager'
+				? await registry.patch('/civilServants/' + user.userId, call, user.accessToken)
+				: await registry.checkLineManager(call, user.accessToken)
 
-		if (errorMessage) {
-			req.flash('profileError', errorMessage)
-			return req.session!.save(() => {
-				res.redirect(`/profile/${inputName}`)
-			})
+		const responseStatus = (response as any).status || (response as any).statusCode
+		requestWasSuccessful = responseStatus === 200
+
+		if (node === 'lineManager' && !requestWasSuccessful) {
+			const inputName = 'line-manager'
+			let errorMessage = null
+
+			switch (responseStatus) {
+				case 404:
+					errorMessage = req.__('errors.lineManagerMissing')
+					break
+				case 400:
+					errorMessage = req.__('errors.lineManagerIsUser')
+					break
+			}
+
+			if (errorMessage) {
+				req.flash('profileError', errorMessage)
+				return req.session!.save(() => {
+					res.redirect(`/profile/${inputName}`)
+				})
+			}
 		}
-	} else if (requestWasSuccessful) {
+	}
+
+	if (requestWasSuccessful) {
 		// seems like we have to get the profile again to get values
 		// which seems ...not good
-		const profile = await registry.profile(req.user.accessToken)
+		const profile = await registry.profile(user.accessToken)
 		await updateUserObject(req, profile as Record<string, string>)
 		req.flash('profile-updated', 'profile-updated')
 		return req.session!.save(() => {
@@ -425,12 +446,9 @@ export async function updateProfile(ireq: express.Request, res: express.Response
 		return
 	}
 
-	if (node in ['password']) {
-		// do something with identity
-	} else {
-		await patchAndUpdate(node, fieldValue, inputName, req, res)
-	}
+	await patchAndUpdate(node, fieldValue, inputName, req, res)
 }
+
 function sortList(list: any) {
 	return list.sort((a: any, b: any) => {
 		if (a.name === "I don't know") {
