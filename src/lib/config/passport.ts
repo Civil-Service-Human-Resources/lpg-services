@@ -1,3 +1,4 @@
+import {plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
 import * as config from 'lib/config/index'
@@ -31,18 +32,14 @@ export function configure(
 			tokenURL,
 		},
 		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
-			profile.accessToken = accessToken
-
 			try {
+				console.log("CB")
+				console.log(profile)
 				const identityDetails = await identity.getDetails(accessToken)
-				const regDetails = await registry.profile(accessToken)
+				console.log(identityDetails)
+				const csrsProfile = await registry.login(accessToken, identityDetails)
 
-				const combined = {
-					...profile,
-					...identityDetails,
-					...regDetails,
-				}
-				const user = model.User.create(combined)
+				const user = model.User.createFromFullProfile(csrsProfile, identityDetails, accessToken)
 				return cb(null, user)
 			} catch (e) {
 				logger.warn(`Error retrieving user profile information`, e)
@@ -58,9 +55,11 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
+		console.log("DESIRIALISE")
+		console.log(data)
 		let user: model.User
 		try {
-			user = model.User.create(JSON.parse(data))
+			user = plainToInstance(model.User, JSON.parse(data) as model.User)
 			done(null, user)
 		} catch (error) {
 			done(error, undefined)

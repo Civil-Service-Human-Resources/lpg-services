@@ -19,7 +19,7 @@ export class ProfileChecker {
 			return Boolean(user.department && user.departmentId)
 		}),
 		new ProfileSection('areasOfWork', '/profile/profession', (user: User) => {
-			return Boolean(user.areasOfWork && user.areasOfWork.length)
+			return Boolean(user.areasOfWork !== undefined)
 		}),
 		new ProfileSection('otherAreasOfWork', '/profile/otherAreasOfWork', (user: User) => {
 			return Boolean(user.otherAreasOfWork && user.otherAreasOfWork.length)
