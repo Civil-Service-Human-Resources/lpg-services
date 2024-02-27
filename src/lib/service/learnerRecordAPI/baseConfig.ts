@@ -4,7 +4,6 @@ import {LearnerRecordClient} from 'lib/service/learnerRecordAPI/learnerRecordCli
 
 import * as config from '../../config'
 
-
 const http = axios.create({
 	baseURL: config.LEARNER_RECORD.url,
 	httpsAgent: new https.Agent({
