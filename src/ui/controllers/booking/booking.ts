@@ -7,7 +7,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
 import {bookEvent, completeEventBooking, skipEventBooking} from 'lib/service/cslService/cslServiceClient'
-import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
+import {createBookEventDto} from 'lib/service/cslService/models/factory/BookEventDtoFactory'
 import * as template from 'lib/ui/template'
 import * as courseController from '../course/index'
 
@@ -356,7 +356,7 @@ export function renderConfirmPo(ireq: express.Request, res: express.Response) {
 	)
 }
 
-function getBookEventDtoFromRequest(req: express.Request, res: express.Response) {
+async function getBookEventDtoFromRequest(req: express.Request, res: express.Response) {
 	const session = req.session!
 	const accessibilityRequirements: string[] = session.accessibilityReqs || []
 	const finalAccessibilityRequirements: string[] = []
@@ -369,11 +369,11 @@ function getBookEventDtoFromRequest(req: express.Request, res: express.Response)
 		}
 	})
 	const poNumber = session.payment.value.length === 0 ? undefined : session.payment.value
-	return new BookEventDto(finalAccessibilityRequirements, req.user.userName, req.user.givenName, poNumber)
+	return await createBookEventDto(finalAccessibilityRequirements, req.user, poNumber)
 }
 
 export async function tryCompleteBooking(req: express.Request, res: express.Response) {
-	const bookEventDto = getBookEventDtoFromRequest(req, res)
+	const bookEventDto = await getBookEventDtoFromRequest(req, res)
 	let message = confirmedMessage.Booked
 	let bookingTitle = null
 

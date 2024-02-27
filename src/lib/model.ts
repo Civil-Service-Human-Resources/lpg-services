@@ -929,7 +929,6 @@ export class User implements CSLUser {
 	getGradeCode() {
 		return this.grade ? this.grade.code : ''
 	}
-
 	getDomain() {
 		return this.userName.split('@')[1].toLowerCase()
 	}
