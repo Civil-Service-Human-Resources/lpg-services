@@ -3,7 +3,7 @@ import * as model from 'lib/model'
 import {AreaOfWork, Grade} from 'lib/registry'
 
 const genericAOW = new AreaOfWork(1, 'co')
-const genericGrade = new Grade('Test', 'Test')
+const genericGrade = new Grade(1, 'Test', 'Test')
 
 describe('Should test User roles logic', () => {
 	it('User should have role if it was created with it', () => {
