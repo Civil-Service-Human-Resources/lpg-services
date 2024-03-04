@@ -1,6 +1,6 @@
 import {plainToInstance} from 'class-transformer'
 import * as config from 'lib/config'
-import {Course, Module, User} from 'lib/model'
+import {User} from 'lib/model'
 import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
 import {CancelBookingDto} from 'lib/service/cslService/models/CancelBookingDto'
 import {CourseActionResponse} from 'lib/service/cslService/models/CourseActionResponse'
@@ -13,14 +13,14 @@ import {LaunchModuleResponse} from './models/launchModuleResponse'
 const client = HttpClient.createFromParams(config.CSL_SERVICE.url, config.REQUEST_TIMEOUT)
 
 export async function launchModule(
-	course: Course,
-	module: Module,
+	courseId: string,
+	moduleId: string,
 	user: User
 ): Promise<LaunchModuleResponse> {
 	const body: UserDto = await createUserDto(user)
 	const resp = await client._post<UserDto, LaunchModuleResponse>(
 		{
-			url: `/courses/${course.id}/modules/${module.id}/launch`,
+			url: `/courses/${courseId}/modules/${moduleId}/launch`,
 		},
 		body,
 		user
