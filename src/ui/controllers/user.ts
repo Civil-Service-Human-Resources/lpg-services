@@ -219,6 +219,8 @@ export async function renderEditPage(req: express.Request, res: express.Response
 				return interest.name
 			})
 			break
+		case 'line-manager':
+			break
 		default:
 			return res.redirect('/profile')
 	}
