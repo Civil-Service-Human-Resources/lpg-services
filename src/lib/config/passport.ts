@@ -33,10 +33,7 @@ export function configure(
 		},
 		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			try {
-				console.log("CB")
-				console.log(profile)
 				const identityDetails = await identity.getDetails(accessToken)
-				console.log(identityDetails)
 				const csrsProfile = await registry.login(accessToken, identityDetails)
 
 				const user = model.User.createFromFullProfile(csrsProfile, identityDetails, accessToken)
