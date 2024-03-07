@@ -1,6 +1,8 @@
 import {Type} from 'class-transformer'
 import * as datetime from 'lib/datetime'
+import {IdentityDetails} from 'lib/identity'
 import * as learnerRecord from 'lib/learnerrecord'
+import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
 import {CacheableObject} from 'lib/utils/cacheableObject'
 import _ = require('lodash')
 import * as moment from 'moment'
@@ -652,13 +654,12 @@ export class Audience {
 			return 0
 		}
 
-		if (
-			user.areasOfWork &&
-			this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length
-		) {
-			relevance += 1
+		const areaOfWork = user.areasOfWork
+		if (areaOfWork !== undefined) {
+			if (this.areasOfWork.filter(aow => areaOfWork.name === aow).length > 0) {
+				relevance += 1
+			}
 		}
-
 		let depScore = 0
 		for (const department of this.departments) {
 			const depIndex = depHierarchy.indexOf(department)
@@ -845,37 +846,13 @@ export interface CSLUser {
 	isAdmin(): boolean
 }
 export class User implements CSLUser {
-	static create(data: any) {
+
+	static createFromFullProfile(csrsProfile: Profile, identityDetails: IdentityDetails, accessToken: string) {
 		const user = new User(
-			data.uid || data.id,
-			data.userName || data.username,
-			data.sessionIndex,
-			Array.isArray(data.roles) ? data.roles : [data.roles],
-			data.accessToken
+			identityDetails.uid, identityDetails.username, identityDetails.roles, accessToken
 		)
-
-		user.userId = data.userId
-		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
-		user.department = data.organisationalUnit ? data.organisationalUnit.code : data.department
-		user.departmentId = data.organisationalUnit ? data.organisationalUnit.id : data.departmentId
-		user.givenName = data.fullName ? data.fullName : data.givenName
-		user.grade = data.grade
-		if (data.profession || data.areasOfWork) {
-			user.areasOfWork = Object.values(data.profession || data.areasOfWork)
-		}
-		user.otherAreasOfWork = data.otherAreasOfWork
-		user.interests = data.interests
-		user.tokenzied = data.tokenzied
-
-		if (data.lineManagerEmailAddress) {
-			user.lineManager = {
-				email: data.lineManagerEmailAddress,
-				name: data.lineManagerName,
-			}
-		} else {
-			user.lineManager = data.lineManager
-		}
-
+		user.userId = csrsProfile.userId.toString()
+		user.updateWithProfile(csrsProfile)
 		return user
 	}
 
@@ -884,29 +861,40 @@ export class User implements CSLUser {
 	 */
 	readonly id: string
 	readonly userName: string
-	readonly sessionIndex: string
 	readonly roles: string[]
 	readonly accessToken: string
 
 	department?: string
 	departmentId?: number
-	areasOfWork?: string[]
+	areasOfWork?: AreaOfWork
 	lineManager?: LineManager
-	otherAreasOfWork?: any[]
-	interests?: any[]
+	otherAreasOfWork?: AreaOfWork[]
+	interests?: Interest[]
 	givenName?: string
-	tokenzied?: string
 	organisationalUnit?: OrganisationalUnit
 	userId: string
 
-	grade?: any
+	grade?: Grade
 
-	constructor(id: string, userName: string, sessionIndex: string, roles: string[], accessToken: string) {
+	constructor(id: string, userName: string, roles: string[], accessToken: string) {
 		this.id = id
 		this.userName = userName
-		this.sessionIndex = sessionIndex
 		this.roles = roles
 		this.accessToken = accessToken
+	}
+
+	updateWithProfile(profile: Profile) {
+		this.organisationalUnit = profile.organisationalUnit
+		if (this.organisationalUnit !== undefined) {
+			this.department = this.organisationalUnit.code
+			this.departmentId = this.organisationalUnit.id
+		}
+		this.givenName = profile.fullName
+		this.grade = profile.grade
+		this.areasOfWork = profile.profession
+		this.otherAreasOfWork = profile.otherAreasOfWork
+		this.interests = profile.interests
+		this.lineManager = profile.getLineManager()
 	}
 
 	hasCompleteProfile() {

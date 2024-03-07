@@ -97,7 +97,7 @@ export async function search(
 			url += `&profileGrades=${user.grade.code}`
 		}
 		if (user.areasOfWork) {
-			url += `&profileAreasOfWork=${user.areasOfWork.join('&profileAreasOfWork=')}`
+			url += `&profileAreasOfWork=${user.areasOfWork.name}`
 		}
 		if (user.otherAreasOfWork) {
 			for (const areaOfWork of user.otherAreasOfWork) {

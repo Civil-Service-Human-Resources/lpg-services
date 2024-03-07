@@ -37,8 +37,7 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: [
-					],
+					areasOfWork: undefined,
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -78,8 +77,7 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: [
-					],
+					areasOfWork: undefined,
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -122,9 +120,10 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: [
-							1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -175,9 +174,10 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -228,9 +228,10 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -289,9 +290,10 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -354,8 +356,7 @@ describe('Skills middleware', () => {
 				session: {
 				},
 				user: {
-					areasOfWork: [
-					],
+					areasOfWork: undefined,
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -397,8 +398,7 @@ describe('Skills middleware', () => {
 					quiz: sessionQuiz,
 				},
 				user: {
-					areasOfWork: [
-					],
+					areasOfWork: undefined,
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -438,8 +438,7 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: [
-					],
+					areasOfWork: undefined,
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -491,9 +490,10 @@ describe('Skills middleware', () => {
 					quiz: sessionQuiz,
 				},
 				user: {
-					areasOfWork: [
-							1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					id: '123',
@@ -568,9 +568,10 @@ describe('Skills middleware', () => {
 					quiz: sessionQuiz,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					id: '123',
@@ -645,9 +646,10 @@ describe('Skills middleware', () => {
 					quiz: sessionQuiz,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					id: '123',
@@ -716,9 +718,10 @@ describe('Skills middleware', () => {
 					questions: QuizQuestions18,
 				},
 				user: {
-					areasOfWork: [
-							1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -758,9 +761,10 @@ describe('Skills middleware', () => {
 					},
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -809,9 +813,10 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -861,9 +866,10 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -919,9 +925,10 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -972,9 +979,10 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -1025,9 +1033,10 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -1078,9 +1087,10 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -1129,9 +1139,10 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -1174,9 +1185,10 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -1224,9 +1236,10 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
@@ -1273,9 +1286,10 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: [
-						1, 'Analysis',
-					],
+					areasOfWork: {
+						id: 1,
+						name: 'Analysis',
+					},
 					department: 'co',
 					givenName: 'Test User',
 					organisationalUnit: {
