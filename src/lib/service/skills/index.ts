@@ -78,19 +78,6 @@ export async function getQuizHistory(user: model.User): Promise<QuizHistory> {
 	}
 }
 
-export async function getPurchaseOrder(code: string): Promise<boolean> {
-	try {
-		return await http.get(`/purchaseOrders/${code}`)
-			.then(response => {
-				return response.status === 200
-			}).catch(() => {
-				return false
-			})
-	} catch (e) {
-		throw new Error('Error getting purchase order')
-	}
-}
-
 function getAuthorizationHeader(user: model.User) {
 	return {
 		headers: {

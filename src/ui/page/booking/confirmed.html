@@ -3,21 +3,20 @@
         <div class="grid-row">
             <div class="column-full">
                 {#if message === 'Booked' || message === 'Cancelled'}
-                <div class="govuk-box-highlight">
-                    <h1 class="heading-xlarge">
-                        {message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }
-                    </h1>
-                    <h3 class="lede">Course</h3>
-                    <h2 class="heading-medium confirmed__heading confirmed__heading--caps lpg-booking-confirmed">
-                        {module.title || course.title}
-                    </h2>
-                </div>
+                    <div class="govuk-box-highlight">
+                        <h1 class="heading-xlarge">
+                            {message === 'Booked' ? 'Booking request submitted' : 'Booking request cancelled' }
+                        </h1>
+                        <h3 class="lede">Course</h3>
+                        <h2 class="heading-medium confirmed__heading confirmed__heading--caps lpg-booking-confirmed">
+                            {bookingTitle}
+                        </h2>
+                    </div>
                 {:elseif message === 'Error'}
-                <Error errorHeading="There was a problem with your booking">
-                Please contact your line manager.
-                </Error>
+                    <Error errorHeading="There was a problem with your booking">
+                        Please contact your line manager.
+                    </Error>
                 {/if}
-
 
                 <h4 class="heading-small">What happens next?</h4>
             </div>

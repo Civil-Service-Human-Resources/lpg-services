@@ -1,11 +1,14 @@
 import {expect} from 'chai'
+import {createSampleUser} from 'lib/service/catalog/suggestedLearning/suggestedLearningService.spec'
 import {
 	constructCourseCallToAction,
 	CourseActionType,
 } from 'lib/ui/courseCallToAction'
 
 import {CourseRecord, ModuleRecord} from 'lib/learnerrecord'
-import {Course, Module, User} from 'lib/model'
+import {Course, Module} from 'lib/model'
+
+export const testUser = createSampleUser()
 
 const courseSkeletonData: any = {
 	id: 'UT0',
@@ -62,21 +65,6 @@ const moduleData: {[module: string]: any} = {
 		url: null,
 	},
 }
-
-export const testUser = User.create({
-	accessToken: '',
-	id: '3c706a70-3fff-4e7b-ae7f-102c1d46f569',
-	userName: 'learner@domain.com',
-
-	department: 'co',
-	grade: 'PB3',
-
-	areasOfWork: ['Commercial'],
-	otherAreasOfWork: ['Finance', 'Fraud, error, debt and grants', 'Digital'],
-	roles: ['LEARNER'],
-
-	sessionIndex: '',
-})
 
 describe('Course Call to Actions', () => {
 	let course: Course
