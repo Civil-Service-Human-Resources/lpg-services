@@ -1,8 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="npm run-ui" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v16.3.0/bin/node" path-to-js-file="$PROJECT_DIR$/dist/build/ui/server.js" working-dir="$PROJECT_DIR$/dist/ui">
+  <configuration default="false" name="npm run-ui" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v16.4.0/bin/node" path-to-js-file="$PROJECT_DIR$/dist/build/ui/server.js" working-dir="$PROJECT_DIR$/dist/ui">
     <envs>
       <env name="NODE_ICU_DATA" value="$PROJECT_DIR$/node_modules/full-icu" />
-      <env name="APPLICATIONINSIGHTS_CONNECTION_STRING" value="app_insight_conn_str" />
+      <env name="APPLICATIONINSIGHTS_CONNECTION_STRING" value="InstrumentationKey=f145ec12-1234-4f12-9a12-64f0a4a5652f;IngestionEndpoint=https://localhost.com/" />
+      <env name="APPLICATIONINSIGHTS_ROLE_NAME" value="local-lpg-ui" />
       <env name="AUTHENTICATION_SERVICE_LOGOUT_ENDPOINT" value="/logout" />
       <env name="AUTHENTICATION_SERVICE_RESOLVE_ENDPOINT" value="/identity/resolve" />
       <env name="AUTHENTICATION_SERVICE_URL" value="http://localhost:9005" />
@@ -14,7 +15,8 @@
       <env name="COURSE_CATALOGUE_URL" value="http://localhost:9001" />
       <env name="CSL_SERVICE_URL" value="http://localhost:9003" />
       <env name="FEEDBACK_RECIPIENT" value="support@governmentcampus.co.uk" />
-      <env name="FEEDBACK_URL" value="http://localhost:3001/feedback" />
+      <env name="FEEDBACK_URL" value="https://localhost:3001/feedback" />
+      <env name="GOOGLE_ANALYTICS_ID" value="google-analytics-id" />
       <env name="GOOGLE_ANALYTICS_CSP_ORIGINS" value="*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com" />
       <env name="GOV_NOTIFY_API_KEY" value="test-22877568-4bca-40f9-8f54-8bf7922583cf-e2f80f22-e3de-4007-9ce2-b50a2b5785b7" />
       <env name="LEARNER_RECORD_URL" value="http://localhost:9000" />
@@ -37,7 +39,7 @@
       <env name="REQUEST_TIMEOUT" value="60000" />
       <env name="SERVER_TIMEOUT_MS" value="60000" />
       <env name="SESSION_SECRET" value="dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt" />
-      <env name="STATIC_ASSET_ROOT" value="http://localhost:3001" />
+      <env name="STATIC_ASSET_ROOT" value="https://asset-cdn.localhost" />
       <env name="STATIC_ASSET_TTL" value="300000" />
       <env name="TOKEN_EXPIRY_BUFFER" value="30" />
       <env name="YOUTUBE_API_KEY" value="youtube_api_key" />
