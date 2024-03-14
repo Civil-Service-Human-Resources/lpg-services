@@ -10,7 +10,6 @@ import * as template from 'lib/ui/template'
 
 import { CourseRecord } from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import { RecordState } from '../../lib/service/learnerRecordAPI/models/record'
-import { getDisplayStateForCourse } from './learning-record'
 
 const logger = getLogger('controllers/home')
 
@@ -21,7 +20,7 @@ export const getRequiredLearning = (
 	for (const requiredCourse of requiredCourses) {
 		const courseRecord = courseRecordMap.get(requiredCourse.id)
 		if (courseRecord) {
-			const state = getDisplayStateForCourse(requiredCourse, courseRecord)
+			const state = requiredCourse.getDisplayState(courseRecord)
 			if (state !== RecordState.Completed) {
 				if (state !== RecordState.Null) {
 					courseRecord.state = state

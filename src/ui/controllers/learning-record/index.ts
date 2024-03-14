@@ -9,7 +9,6 @@ import { CourseRecord } from 'lib/service/learnerRecordAPI/courseRecord/models/c
 import { RecordState } from 'lib/service/learnerRecordAPI/models/record'
 import * as template from 'lib/ui/template'
 
-import _ = require("lodash")
 const logger = getLogger('controllers/learning-record')
 
 export async function courseResult(
@@ -74,38 +73,6 @@ export async function courseResult(
 	}
 }
 
-export function getDisplayStateForCourse(requiredCourse: Course, courseRecord: CourseRecord) {
-	const audience = requiredCourse.getRequiredRecurringAudience()
-	let displayStateLocal = courseRecord.state || RecordState.Null
-	if (audience) {
-		const previousRequiredBy = audience.previousRequiredBy.getTime()
-		if (courseRecord.isCompleted()) {
-			const requiredModuleCompletionDates = courseRecord.getCompletionDatesForModules(
-				requiredCourse.modules.filter(m => !m.optional)
-			)
-			const latestCompletionDateOfModulesForCourse = (_.max(requiredModuleCompletionDates) || new Date(0)).getTime()
-			const earliestCompletionDateOfModulesForCourse = (_.min(requiredModuleCompletionDates) || new Date(0)).getTime()
-			if (earliestCompletionDateOfModulesForCourse <= previousRequiredBy) {
-				if (latestCompletionDateOfModulesForCourse <= previousRequiredBy) {
-					displayStateLocal = RecordState.Null
-				} else {
-					displayStateLocal = RecordState.InProgress
-				}
-			} else {
-				displayStateLocal = RecordState.Completed
-			}
-		} else {
-			const courseLastUpdated = courseRecord.getLastUpdated().getTime()
-			if (courseLastUpdated <= previousRequiredBy) {
-				displayStateLocal = RecordState.Null
-			} else {
-				displayStateLocal = RecordState.InProgress
-			}
-		}
-	}
-	return displayStateLocal
-}
-
 export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying learning record for ${req.user.id}`)
 
@@ -139,7 +106,7 @@ export async function display(req: express.Request, res: express.Response) {
 	completedCourseRecordsMap.forEach((courseRecord, courseId) => {
 		const requiredCourse = requiredCoursesMap.get(courseId)
 		if (requiredCourse) {
-			const actualState = getDisplayStateForCourse(requiredCourse, courseRecord)
+			const actualState = requiredCourse.getDisplayState(courseRecord)
 			if (actualState === RecordState.Completed) {
 				completedRequiredLearning.push(courseRecord)
 			}
