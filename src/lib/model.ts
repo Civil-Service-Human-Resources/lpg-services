@@ -3,12 +3,14 @@ import * as datetime from 'lib/datetime'
 import {IdentityDetails} from 'lib/identity'
 import * as learnerRecord from 'lib/learnerrecord'
 import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
+import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {RecordState} from 'lib/service/learnerRecordAPI/models/record'
 import {CacheableObject} from 'lib/utils/cacheableObject'
-import _ = require('lodash')
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
 
+import _ = require('lodash')
 import {ModuleNotFoundError} from './exception/moduleNotFound'
 
 export interface LineManager {
@@ -235,6 +237,54 @@ export class Course {
 
 	getModules() {
 		return this.modules
+	}
+
+	public getModulesRequiredForCompletion() {
+		const optModules: Module[] = []
+		const requiredModules: Module[] = []
+		this.modules.forEach(m => {
+			m.optional ? optModules.push(m) : requiredModules.push(m)
+		})
+		return requiredModules.length > 0 ? requiredModules : optModules
+	}
+
+	public getDisplayState(courseRecord: CourseRecord): RecordState {
+		const requiredModuleIdsForCompletion = this.getModulesRequiredForCompletion()
+		const displayStateForModules = this.getDisplayStateForModules(courseRecord)
+		let nullCount = 0
+		let completedCount = 0
+		for (const module of requiredModuleIdsForCompletion) {
+			const state = displayStateForModules.get(module.id) || null
+
+			if (state === 'COMPLETED') {
+				completedCount ++
+			} else if (state === null) {
+				nullCount ++
+			}
+		}
+
+		if (completedCount === requiredModuleIdsForCompletion.length) {
+			return RecordState.Completed
+		} else if (nullCount === requiredModuleIdsForCompletion.length) {
+			return RecordState.Null
+		} else {
+			return RecordState.InProgress
+		}
+	}
+
+	public getDisplayStateForModules(courseRecord: CourseRecord): Map<string, string | null> {
+		const results = new Map<string, string | null>()
+		const moduleRecords = courseRecord.getModuleRecordMap()
+		const audience = this.getRequiredRecurringAudience()
+		this.modules.forEach(m => {
+			const moduleRecord = moduleRecords.get(m.id)
+			let state: string | null = moduleRecord === undefined ? null : moduleRecord.getState()
+			if (moduleRecord && audience) {
+				state = moduleRecord.getDisplayState(audience)
+			}
+			results.set(m.id, state)
+		})
+		return results
 	}
 
 	getRequiredModules() {

@@ -6,8 +6,6 @@ import * as catalog from 'lib/service/catalog'
 import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
 import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceClient'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 
@@ -161,8 +159,8 @@ export async function display(ireq: express.Request, res: express.Response) {
 					.forEach(moduleRecord => {
 					const mapEntry = moduleMap.get(moduleRecord.moduleId)
 					if (mapEntry) {
-						mapEntry.state = moduleRecord.state || null
-						mapEntry.displayState = getDisplayStateForModule(moduleRecord, courseRecord, audience)
+						mapEntry.state = moduleRecord.getState()
+						mapEntry.displayState = moduleRecord.getDisplayState(audience)
 					}
 				})
 			}
@@ -201,32 +199,6 @@ export async function display(ireq: express.Request, res: express.Response) {
 			)
 			break
 	}
-}
-
-export function getDisplayStateForModule(
-	moduleRecord: ModuleRecord,
-	courseRecord: CourseRecord,
-	audience: model.RequiredRecurringAudience | null) {
-	let displayStateLocal: string | null = moduleRecord.state ? moduleRecord.state : null
-	if (audience) {
-		const completionDate = moduleRecord.getCompletionDate().getTime()
-		const updatedAt = moduleRecord.getUpdatedAt().getTime()
-		const previousRequiredBy = audience.previousRequiredBy.getTime()
-		if (completionDate <= previousRequiredBy && previousRequiredBy < updatedAt) {
-			displayStateLocal = 'IN_PROGRESS'
-		} else {
-			if (courseRecord.isCompleted()) {
-				if (updatedAt <= previousRequiredBy && completionDate <= previousRequiredBy) {
-					displayStateLocal = null
-				}
-			} else {
-				if (updatedAt <= previousRequiredBy) {
-					displayStateLocal = null
-				}
-			}
-		}
-	}
-	return displayStateLocal
 }
 
 export async function loadCourse(
