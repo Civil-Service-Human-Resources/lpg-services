@@ -1,3 +1,4 @@
+import {IdentityDetails} from 'lib/identity'
 import {User} from 'lib/model'
 import {client} from '../config'
 
@@ -9,4 +10,10 @@ export async function patchCivilServantOrganisation(user: User, organisationalUn
 	}, {
 		organisationalUnitId,
 	}, user)
+}
+
+export async function performLoginCheck(user: User, identityDto: IdentityDetails) {
+	await client._post({
+		url: `${URL}/me/login`,
+	}, identityDto, user)
 }

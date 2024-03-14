@@ -12,9 +12,7 @@ const RECORD_COUNT_TO_DISPLAY: number = 6
 const I_DONT_KNOW_AOW: string = "I don't know"
 
 export function getAreasOfWorkForUser(user: User): string[] {
-	// NOTE: areasOfWork can either be an array of strings OR an array made up
-	// of the [id,name] of the profession object from CSRS API
-	return (user.areasOfWork || []).filter(aow => isNaN(+aow))
+	return (user.areasOfWork ? [user.areasOfWork] : []).map(aow => aow.name)
 }
 
 export function getOtherAreasOfWorkForUser(user: User): string[] {

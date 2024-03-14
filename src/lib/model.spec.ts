@@ -1,19 +1,22 @@
 import {expect} from 'chai'
 import * as model from 'lib/model'
+import {AreaOfWork, Grade} from 'lib/registry'
+
+const genericAOW = new AreaOfWork(1, 'co')
+const genericGrade = new Grade('Test', 'Test')
 
 describe('Should test User roles logic', () => {
 	it('User should have role if it was created with it', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'session123',
 			['learner'],
 			''
 		)
 		user.department = 'commercial'
-		user.areasOfWork = ['co']
+		user.areasOfWork = genericAOW
 		user.givenName = 'Test'
-		user.grade = 'Test'
+		user.grade = genericGrade
 
 		expect(user.hasRole('learner')).to.equal(true)
 	})
@@ -22,14 +25,13 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'session123',
 			['learner', 'management', 'other'],
 			''
 		)
 		user.department = 'commercial'
-		user.areasOfWork = ['co']
+		user.areasOfWork = genericAOW
 		user.givenName = 'Test'
-		user.grade = 'Test'
+		user.grade = genericGrade
 
 		expect(user.hasRole('learner')).to.equal(true)
 	})
@@ -38,14 +40,13 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'session123',
 			['management'],
 			''
 		)
 		user.department = 'commercial'
-		user.areasOfWork = ['co']
+		user.areasOfWork = genericAOW
 		user.givenName = 'Test'
-		user.grade = 'Test'
+		user.grade = genericGrade
 
 		expect(user.hasRole('learner')).to.equal(false)
 	})
@@ -54,14 +55,13 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'session123',
 			[],
 			''
 		)
 		user.department = 'commercial'
-		user.areasOfWork = ['co']
+		user.areasOfWork = genericAOW
 		user.givenName = 'Test'
-		user.grade = 'Test'
+		user.grade = genericGrade
 
 		expect(user.hasRole('learner')).to.equal(false)
 		expect(user.hasRole('management')).to.equal(false)
@@ -71,14 +71,13 @@ describe('Should test User roles logic', () => {
 		const user = new model.User(
 			'id123',
 			'test@example.com',
-			'session123',
 			['Learner'],
 			''
 		)
 		user.department = 'commercial'
-		user.areasOfWork = ['co']
+		user.areasOfWork = genericAOW
 		user.givenName = 'Test'
-		user.grade = 'Test'
+		user.grade = genericGrade
 
 		expect(user.hasRole('learner')).to.equal(false)
 	})

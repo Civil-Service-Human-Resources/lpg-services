@@ -1,29 +1,14 @@
 import _ = require('lodash')
 
 import * as express from 'express'
+import {ResourceNotFoundError} from 'lib/exception/ResourceNotFoundError'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
 import * as model from 'lib/model'
+import {bookEvent, completeEventBooking, skipEventBooking} from 'lib/service/cslService/cslServiceClient'
+import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
 import * as template from 'lib/ui/template'
-
-import { CourseRecordStateError } from '../../../lib/exception/courseRecordStateError'
-import {
-	ApprovedBookingActionWorker
-	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/ApprovedBookingActionWorker'
-import {
-	CompleteBookingActionWorker
-	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CompleteBookingActionWorker'
-import {
-	RegisterBookingActionWorker
-	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/RegisterBookingActionWorker'
-import {
-	SkipBookingActionWorker
-	// tslint:disable-next-line:max-line-length
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/SkipBookingActionWorker'
 import * as courseController from '../course/index'
 
 const logger = getLogger('controllers/booking')
@@ -56,19 +41,18 @@ export function saveAccessibilityOptions(ireq: express.Request, res: express.Res
 	const req = ireq as extended.CourseRequest
 	const user = req.user as model.User
 
-	if (Array.isArray(ireq.body.accessibilityreqs)) {
-		session.accessibilityReqs = ireq.body.accessibilityreqs
-	} else {
-		session.accessibilityReqs = [ireq.body.accessibilityreqs]
+	const requirements: string[] = []
+
+	if (ireq.body.accessibilityreqs !== undefined) {
+		if (Array.isArray(ireq.body.accessibilityreqs)) {
+			requirements.push(...ireq.body.accessibilityreqs)
+		} else {
+			requirements.push(ireq.body.accessibilityreqs)
+		}
 	}
 
+	session.accessibilityReqs = requirements
 	session.otherAccessibilityReqs = ireq.body.otherDescription || ''
-	if (
-		(session.accessibilityReqs.indexOf('other') > -1 || ireq.body.otherDescription) &&
-		session.accessibilityReqs.indexOf('other') === -1
-	) {
-		session.accessibilityReqs.push('other')
-	}
 
 	let {returnTo} = ireq.session!
 	if (returnTo) {
@@ -333,43 +317,25 @@ export function validate(type: string, po: string): string[] {
 	return errors
 }
 
-export async function trySkipBooking(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
-
-	const actionWorker = new SkipBookingActionWorker(course, req.user, event, module)
+export async function trySkipBooking(req: express.Request, res: express.Response) {
 	try {
-		actionWorker.applyActionToLearnerRecord()
+		const response = await skipEventBooking(req.params.courseId, req.params.moduleId, req.params.eventId, req.user)
+		req.flash('successTitle', req.__('learning_skipped_title', response.courseTitle))
+		req.flash('successMessage', req.__('learning_skipped_from_plan_message', response.courseTitle))
 	} catch (e) {
-		if (e instanceof CourseRecordStateError) {
-			res.sendStatus(400)
-			return
-		}
+		return res.sendStatus(400)
 	}
 
-	req.flash('successTitle', req.__('learning_skipped_title', req.course.title))
-	req.flash('successMessage', req.__('learning_skipped_from_plan_message', req.course.title))
 	req.session!.save(() => {
 		res.redirect('/')
 	})
 }
 
-export async function tryMoveBooking(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
-
-	const actionWorker = new CompleteBookingActionWorker(course, req.user, event, module)
+export async function tryMoveBooking(req: express.Request, res: express.Response) {
 	try {
-		await actionWorker.applyActionToLearnerRecord()
+		await completeEventBooking(req.params.courseId, req.params.moduleId, req.params.eventId, req.user)
 	} catch (e) {
-		if (e instanceof CourseRecordStateError) {
-			res.sendStatus(400)
-			return
-		}
+		return res.sendStatus(400)
 	}
 
 	req.session!.save(() => {
@@ -390,54 +356,37 @@ export function renderConfirmPo(ireq: express.Request, res: express.Response) {
 	)
 }
 
-export async function tryCompleteBooking(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
+function getBookEventDtoFromRequest(req: express.Request, res: express.Response) {
 	const session = req.session!
-
-	const accessibilityArray: string[] = []
-	for (const i in session.accessibilityReqs) {
-		if (i) {
-			const requirement = session.accessibilityReqs[i]
-			if (requirement === 'other') {
-				accessibilityArray.push(session.otherAccessibilityReqs)
-			} else {
-				accessibilityArray.push(res.__(`accessibility-requirements`)[requirement])
-			}
-		}
-	}
-
-	const accessibilityOptions = accessibilityArray.join(', ')
-	const response = await learnerRecord.bookEvent(
-		course,
-		module,
-		event,
-		req.user,
-		session.payment.value,
-		accessibilityOptions
-	)
-
-	let message
-
-	if (response.status === 201) {
-		logger.debug(
-			'Successfully booked event in learner record',
-			`user:${req.user}`,
-			`event: ${event.id}`,
-			`response: ${response.status}`
-		)
-
-		if (!module.cost || module.cost === 0) {
-			await new ApprovedBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+	const accessibilityRequirements: string[] = session.accessibilityReqs || []
+	const finalAccessibilityRequirements: string[] = []
+	accessibilityRequirements.forEach(requirement => {
+		if (requirement === 'other') {
+			finalAccessibilityRequirements.push(session.otherAccessibilityReqs)
 		} else {
-			await new RegisterBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
+			// @ts-ignore
+			finalAccessibilityRequirements.push(res.__(`accessibility-requirements`)[requirement])
 		}
+	})
+	const poNumber = session.payment.value.length === 0 ? undefined : session.payment.value
+	return new BookEventDto(finalAccessibilityRequirements, req.user.userName, req.user.givenName, poNumber)
+}
 
-		message = confirmedMessage.Booked
-	} else {
-		message = confirmedMessage.Error
+export async function tryCompleteBooking(req: express.Request, res: express.Response) {
+	const bookEventDto = getBookEventDtoFromRequest(req, res)
+	let message = confirmedMessage.Booked
+	let bookingTitle = null
+
+	try {
+		const response = await bookEvent(req.params.courseId, req.params.moduleId,
+			req.params.eventId, req.user, bookEventDto)
+		bookingTitle = response.moduleTitle
+	} catch (e) {
+		if (e instanceof ResourceNotFoundError) {
+			return res.sendStatus(404)
+		} else {
+			message = confirmedMessage.Error
+		}
 	}
 
 	delete req.session!.payment
@@ -447,10 +396,8 @@ export async function tryCompleteBooking(ireq: express.Request, res: express.Res
 
 	res.send(
 		template.render('booking/confirmed', req, res, {
-			course,
-			event,
+			bookingTitle,
 			message,
-			module,
 		})
 	)
 }
