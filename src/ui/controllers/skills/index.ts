@@ -1,30 +1,31 @@
 import * as express from 'express'
 import * as model from 'lib/model'
-import * as registry from "lib/registry"
-import * as skillsApi from "lib/service/skills"
+import * as registry from 'lib/registry'
+import * as skillsApi from 'lib/service/skills'
 
 import {
 	Answer,
-	AnswerSubmission, AreaOfWorkKeysInterface,
+	AnswerSubmission,
+	AreaOfWorkKeysInterface,
 	Question,
-	Quiz, QuizHistory,
-	QuizMetadata, QuizType,
+	Quiz,
+	QuizHistory,
+	QuizMetadata,
+	QuizType,
 	SelectedAnswer,
-	SelectedAnswers
-} from "lib/service/skills/api"
+	SelectedAnswers,
+} from 'lib/service/skills/api'
 import * as template from 'lib/ui/template'
-import {formatAnswerSubmissionDate, saveSession} from "./helpers"
+import {formatAnswerSubmissionDate, saveSession} from './helpers'
 
 export async function introduction(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
-	if (!(user.areasOfWork && user.areasOfWork.length > 0) || !user.organisationalUnit!.id) {
+	if (!user.areasOfWork || !user.organisationalUnit!.id) {
 		showQuizScreen(req, res, false)
 		return
 	}
 
-	const professionId = parseInt(user.areasOfWork[0], 10)
-
-	const quizMetadata: QuizMetadata = await skillsApi.getQuizMetadata(professionId, user)
+	const quizMetadata: QuizMetadata = await skillsApi.getQuizMetadata(user.areasOfWork.id, user)
 
 	if (quizMetadata.numberOfQuestions === undefined || quizMetadata.numberOfQuestions < 18) {
 		showQuizScreen(req, res, false)
@@ -64,13 +65,13 @@ export async function startQuiz(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
 	const requestQuiz: Quiz = req.session!.quiz
 
-	if (!(user.areasOfWork && user.areasOfWork.length > 0)) {
+	if (!user.areasOfWork) {
 		showQuizScreen(req, res, false)
 		return
 	}
-	const professionId = parseInt(user.areasOfWork[0], 10)
+	const professionId = user.areasOfWork.id
 	// @ts-ignore
-	if (!(user.areasOfWork && user.areasOfWork.length > 0)) {
+	if (!user.areasOfWork) {
 		showQuizScreen(req, res, false)
 		return
 	}

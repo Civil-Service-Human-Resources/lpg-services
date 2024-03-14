@@ -182,7 +182,7 @@ async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[
 	const allAreasOfWork = await registry.getAllProfessions()
 
 	const userAreasOfWork = (user.otherAreasOfWork || []).map(aow => aow.name)
-		.concat(user.areasOfWork || [])
+		.concat((user.areasOfWork ? [user.areasOfWork] : []).map(aow => aow.name))
 
 	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.indexOf(aow.name) > -1)
 		.map(aow => aow.name)

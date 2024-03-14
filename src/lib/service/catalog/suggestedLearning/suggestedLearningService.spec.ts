@@ -1,5 +1,7 @@
 import {expect} from 'chai'
+import {plainToInstance} from 'class-transformer'
 import {Course, User} from 'lib/model'
+import {AreaOfWork} from 'lib/registry'
 import * as sinon from 'sinon'
 
 import * as courseCatalogueClient from '../../catalog/courseCatalogueClient'
@@ -9,9 +11,14 @@ import {Suggestion} from './suggestion'
 
 const sampleDepartmentCodes = ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT']
 
-const createSampleUser = () => {
-	return User.create({
+export const createSampleUser = () => {
+	return plainToInstance(User, {
+		areasOfWork: {
+			id: 1,
+			name: 'Analysis',
+		},
 		grade: {code: '7', name: 'Grade 7'},
+		id: 'userId',
 		interests: [{name: 'Commercial'}, {name: 'EU'}],
 		organisationalUnit: {
 			code: 'ORG',
@@ -22,10 +29,6 @@ const createSampleUser = () => {
 			{id: 3, name: 'DDaT'},
 			{id: 4, name: "I don't know"},
 		],
-		profession: {
-			id: 1,
-			name: 'Analysis',
-		},
 	})
 }
 
@@ -97,8 +100,8 @@ describe('suggestedLearningService tests', () => {
 			})
 			it(`Should create suggestion parameter for the users areas of work,
 				filtering out the API params if the profession is "I don't know"`, () => {
-				const user = User.create(sampleUser)
-				user.areasOfWork = ["I don't know"]
+				const user = createSampleUser()
+				user.areasOfWork = new AreaOfWork(1, "I don't know")
 				const sections = service.createParamsForAreaOfWorkSection(sampleDepartmentCodes, user)
 				const section = sections[0]
 				expect(section.params).to.eql(undefined)
