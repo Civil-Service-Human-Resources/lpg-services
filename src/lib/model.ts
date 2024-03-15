@@ -593,7 +593,9 @@ export class Module {
 		return this.associatedLearning
 	}
 
-	getDisplayState(moduleRecord: ModuleRecord | undefined | null, audience: RequiredRecurringAudience | undefined | null) {
+	getDisplayState(
+		moduleRecord: ModuleRecord | undefined | null,
+		audience: RequiredRecurringAudience | undefined | null) {
 		let state: string | null = null
 		if (moduleRecord) {
 			const completionDate = moduleRecord.getCompletionDate().getTime()
