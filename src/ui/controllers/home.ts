@@ -17,7 +17,7 @@ export const getRequiredLearning = (
 	requiredCourses: model.Course[],
 	courseRecordMap: Map<string, CourseRecord>): model.Course[] => {
 	return requiredCourses.filter(course => {
-		let completed = false
+		let required = false
 		let courseState = RecordState.Null
 		const courseRecord = courseRecordMap.get(course.id)
 		if (courseRecord) {
@@ -26,10 +26,10 @@ export const getRequiredLearning = (
 			courseRecordMap.delete(course.id)
 		}
 		course.record = courseRecord
-		if (courseState === RecordState.Completed) {
-			completed = true
+		if (courseState !== RecordState.Completed) {
+			required = true
 		}
-		return completed
+		return required
 	})
 }
 

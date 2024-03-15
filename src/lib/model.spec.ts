@@ -88,11 +88,11 @@ describe('Should test User roles logic', () => {
 	})
 })
 
-const getBasicCourseRecord = () => {
-	return new CourseRecord('Test001', '', RecordState.Null, [], '', false)
+export const getBasicCourseRecord = (id?: string) => {
+	return new CourseRecord(id || 'test1', '', RecordState.Null, [], '', false)
 }
 
-const getBasicModuleRecord = (moduleId: string, state: RecordState, lastUpdated: Date, completedDate?: Date) => {
+export const getBasicModuleRecord = (moduleId: string, state: RecordState, lastUpdated: Date, completedDate?: Date) => {
 	const moduleRecord = new ModuleRecord(0, moduleId, '', '', new Date(),
 		lastUpdated, '', 'link', state, 0, false, undefined)
 	moduleRecord.completionDate = completedDate
