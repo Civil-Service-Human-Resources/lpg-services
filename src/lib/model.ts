@@ -5,6 +5,7 @@ import * as learnerRecord from 'lib/learnerrecord'
 import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
 import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {RecordState} from 'lib/service/learnerRecordAPI/models/record'
+import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {CacheableObject} from 'lib/utils/cacheableObject'
 import * as moment from 'moment'
 import {Duration} from 'moment'
@@ -250,10 +251,12 @@ export class Course {
 
 	public getDisplayState(courseRecord: CourseRecord): RecordState {
 		const requiredModuleIdsForCompletion = this.getModulesRequiredForCompletion()
+		console.log(this.title)
 		const displayStateForModules = this.getDisplayStateForModules(courseRecord)
 		let nullCount = 0
 		let completedCount = 0
 		for (const module of requiredModuleIdsForCompletion) {
+			console.log(module.id)
 			const state = displayStateForModules.get(module.id) || null
 
 			if (state === 'COMPLETED') {
@@ -278,11 +281,7 @@ export class Course {
 		const audience = this.getRequiredRecurringAudience()
 		this.modules.forEach(m => {
 			const moduleRecord = moduleRecords.get(m.id)
-			let state: string | null = moduleRecord === undefined ? null : moduleRecord.getState()
-			if (moduleRecord && audience) {
-				state = moduleRecord.getDisplayState(audience)
-			}
-			results.set(m.id, state)
+			results.set(m.id, m.getDisplayState(moduleRecord, audience))
 		})
 		return results
 	}
@@ -592,6 +591,21 @@ export class Module {
 
 	isAssociatedLearning() {
 		return this.associatedLearning
+	}
+
+	getDisplayState(moduleRecord: ModuleRecord | undefined | null, audience: RequiredRecurringAudience | undefined | null) {
+		let state: string | null = null
+		if (moduleRecord) {
+			const completionDate = moduleRecord.getCompletionDate().getTime()
+			const updatedAt = moduleRecord.getUpdatedAt().getTime()
+			const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
+			if (previousRequiredBy < completionDate) {
+				state = 'COMPLETED'
+			} else if (previousRequiredBy < updatedAt) {
+				state = 'IN_PROGRESS'
+			}
+		}
+		return state
 	}
 }
 

@@ -6,6 +6,7 @@ import * as catalog from 'lib/service/catalog'
 import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
 import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceClient'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
+import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
 
@@ -142,29 +143,18 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'link':
 		case 'video':
 		case 'blended':
-			const moduleMap: Map<string, any> = new Map()
-			course.modules.forEach(mod => {
-				moduleMap.set(mod.id, {
+			const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
+			const moduleRecords: Map<string, ModuleRecord> = courseRecord ? courseRecord.getModuleRecordMap() : new Map()
+			const audience = course.getRequiredRecurringAudience()
+			const modules = course.modules.map(mod => {
+				const mr = moduleRecords.get(mod.id)
+				return {
 				...mod,
-				displayState: null,
+				displayState: mod.getDisplayState(mr, audience),
 				duration: mod.getDuration(),
 				isMandatory: !mod.optional,
-				state: null,
-			})})
-			const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
-			const audience = course.getRequiredRecurringAudience()
-			if (courseRecord) {
-				courseRecord.modules
-					.filter(moduleRecord => [...moduleMap.keys()].includes(moduleRecord.moduleId))
-					.forEach(moduleRecord => {
-					const mapEntry = moduleMap.get(moduleRecord.moduleId)
-					if (mapEntry) {
-						mapEntry.state = moduleRecord.getState()
-						mapEntry.displayState = moduleRecord.getDisplayState(audience)
-					}
-				})
-			}
-			const modules = [...moduleMap.values()]
+				state: mr ? mr.getState() : null,
+			}})
 			let recordState = "none"
 
 			if (courseRecord && courseRecord.modules) {

@@ -16,24 +16,21 @@ const logger = getLogger('controllers/home')
 export const getRequiredLearning = (
 	requiredCourses: model.Course[],
 	courseRecordMap: Map<string, CourseRecord>): model.Course[] => {
-	const requiredLearning: model.Course[] = []
-	for (const requiredCourse of requiredCourses) {
-		const courseRecord = courseRecordMap.get(requiredCourse.id)
+	return requiredCourses.filter(course => {
+		let completed = false
+		let courseState = RecordState.Null
+		const courseRecord = courseRecordMap.get(course.id)
 		if (courseRecord) {
-			const state = requiredCourse.getDisplayState(courseRecord)
-			if (state !== RecordState.Completed) {
-				if (state !== RecordState.Null) {
-					courseRecord.state = state
-				}
-				requiredCourse.record = courseRecord
-				requiredLearning.push(requiredCourse)
-			}
-			courseRecordMap.delete(requiredCourse.id)
-		} else {
-			requiredLearning.push(requiredCourse)
+			courseState = course.getDisplayState(courseRecord)
+			courseRecord.state = courseState
+			courseRecordMap.delete(course.id)
 		}
-	}
-	return requiredLearning
+		course.record = courseRecord
+		if (courseState === RecordState.Completed) {
+			completed = true
+		}
+		return completed
+	})
 }
 
 export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord>): CourseRecord[] => {

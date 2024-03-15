@@ -1,5 +1,4 @@
 import { Type } from 'class-transformer'
-import {RequiredRecurringAudience} from 'lib/model'
 
 import { Record, RecordState } from '../../models/record'
 
@@ -72,19 +71,6 @@ export class ModuleRecord extends Record {
 		this.eventDate = eventDate ? new Date(eventDate) : undefined
 		this.cost = cost
 		this.optional = optional
-	}
-
-	getDisplayState(audience: RequiredRecurringAudience | null) {
-		const completionDate = this.getCompletionDate().getTime()
-		const updatedAt = this.getUpdatedAt().getTime()
-		const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
-		if (previousRequiredBy < completionDate) {
-			return 'COMPLETED'
-		} else if (previousRequiredBy < updatedAt) {
-			return 'IN_PROGRESS'
-		} else {
-			return null
-		}
 	}
 
 	getCompletionDate() {
