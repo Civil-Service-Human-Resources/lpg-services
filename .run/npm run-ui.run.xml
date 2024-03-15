@@ -38,7 +38,7 @@
       <env name="REPORT_SERVICE_URL" value="http://localhost:9004" />
       <env name="REQUEST_TIMEOUT" value="60000" />
       <env name="SERVER_TIMEOUT_MS" value="60000" />
-      <env name="SESSION_SECRET" value="dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt" />
+      <env name="SESSION_SECRET" value="some-session-secret-value" />
       <env name="STATIC_ASSET_ROOT" value="https://asset-cdn.localhost" />
       <env name="STATIC_ASSET_TTL" value="300000" />
       <env name="TOKEN_EXPIRY_BUFFER" value="30" />
