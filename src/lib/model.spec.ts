@@ -131,25 +131,26 @@ describe('displayState tests', () => {
 				const result = course.getDisplayState(courseRecord)
 				assert.equal(result, RecordState.Null)
 			})
-			it('should set the state to not started (null) when all required modules have' +
-				'been completed during the previous learning year', () => {
-				courseRecord.getModuleRecord("1")!.completionDate = thisYearDate
-				courseRecord.getModuleRecord("2")!.completionDate = lastYearDate
-				courseRecord.getModuleRecord("3")!.completionDate = lastYearDate
-				const result = course.getDisplayState(courseRecord)
-				assert.equal(result, RecordState.Null)
-			})
-			it('should set the state to not started (null) when required modules have' +
-				'been completed during the previous learning year and an optional module' +
+			it('should set the state to in-progress when required modules have ' +
+				'been completed during the previous learning year and an optional module ' +
 				'is in-progress this year', () => {
+				courseRecord.getModuleRecord("1")!.updatedAt = thisYearDate
+				courseRecord.getModuleRecord("2")!.completionDate = lastYearDate
+				courseRecord.getModuleRecord("3")!.completionDate = lastYearDate
+				const result = course.getDisplayState(courseRecord)
+				assert.equal(result, RecordState.InProgress)
+			})
+			it('should set the state to in-progress when required modules have ' +
+				'been completed during the previous learning year and an optional module ' +
+				'is completed this year', () => {
 				courseRecord.getModuleRecord("1")!.completionDate = thisYearDate
 				courseRecord.getModuleRecord("2")!.completionDate = lastYearDate
 				courseRecord.getModuleRecord("3")!.completionDate = lastYearDate
 				const result = course.getDisplayState(courseRecord)
-				assert.equal(result, RecordState.Null)
+				assert.equal(result, RecordState.InProgress)
 			})
 			it('should set the state to in-progress when a module has ' +
-				'been completed during the previous learning year and another' +
+				'been completed during the previous learning year and another ' +
 				'required module has been completed in the current learning year', () => {
 				courseRecord.getModuleRecord("1")!.completionDate = lastYearDate
 				courseRecord.getModuleRecord("2")!.completionDate = lastYearDate

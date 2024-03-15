@@ -251,28 +251,31 @@ export class Course {
 
 	public getDisplayState(courseRecord: CourseRecord): RecordState {
 		const requiredModuleIdsForCompletion = this.getModulesRequiredForCompletion()
-		console.log(this.title)
-		const displayStateForModules = this.getDisplayStateForModules(courseRecord)
-		let nullCount = 0
-		let completedCount = 0
-		for (const module of requiredModuleIdsForCompletion) {
-			console.log(module.id)
-			const state = displayStateForModules.get(module.id) || null
+			.map(m => m.id)
+		const moduleRecordMap = courseRecord.getModuleRecordMap()
+		const audience = this.getRequiredRecurringAudience()
+		let inProgressCount = 0
+		let requiredCompletedCount = 0
+		for (const module of this.modules) {
+			const state = module.getDisplayState(moduleRecordMap.get(module.id), audience)
 
 			if (state === 'COMPLETED') {
-				completedCount ++
-			} else if (state === null) {
-				nullCount ++
+				if (requiredModuleIdsForCompletion.includes(module.id)) {
+					requiredCompletedCount ++
+				} else {
+					inProgressCount ++
+				}
+			} else if (state === 'IN_PROGRESS') {
+				inProgressCount ++
 			}
 		}
 
-		if (completedCount === requiredModuleIdsForCompletion.length) {
+		if (requiredCompletedCount === requiredModuleIdsForCompletion.length) {
 			return RecordState.Completed
-		} else if (nullCount === requiredModuleIdsForCompletion.length) {
-			return RecordState.Null
-		} else {
+		} else if (inProgressCount > 0 || requiredCompletedCount > 0) {
 			return RecordState.InProgress
 		}
+		return RecordState.Null
 	}
 
 	public getDisplayStateForModules(courseRecord: CourseRecord): Map<string, string | null> {
