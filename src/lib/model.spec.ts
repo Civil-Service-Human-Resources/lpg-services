@@ -104,25 +104,26 @@ describe('displayState tests', () => {
 	 * Audience with a due by date of 31/03/2020 on a yearly frequency
 	 */
 	const audience = new RequiredRecurringAudience(new Date("2020-03-31"), new Date("2021-03-31"))
-	const course = new Course("testId")
-	const module1 = Module.create({id: "1", type: "elearning", optional: true})
-	const module2 = Module.create({id: "2", type: "elearning", optional: false})
-	const module3 = Module.create({id: "3", type: "elearning", optional: false})
-	course.modules = [module1, module2, module3]
 
 	const lastYearDate = new Date("2020-03-30")
 	const thisYearDate = new Date("2020-04-05")
+	const module1 = Module.create({id: "1", type: "elearning", optional: true})
+	const module2 = Module.create({id: "2", type: "elearning", optional: false})
+	const module3 = Module.create({id: "3", type: "elearning", optional: false})
+	const module4 = Module.create({id: "4", type: "elearning", optional: true})
 	describe('getDisplayStateForCourse tests', () => {
 		const sandbox = sinon.createSandbox()
-		sandbox.stub(course, 'getRequiredRecurringAudience').returns(audience)
-		const courseRecord = getBasicCourseRecord()
-		courseRecord.modules = [
-			getBasicModuleRecord("1", RecordState.Completed, lastYearDate, lastYearDate),
-			getBasicModuleRecord("2", RecordState.Completed, lastYearDate, lastYearDate),
-			getBasicModuleRecord("3", RecordState.Completed, lastYearDate, lastYearDate),
-		]
 
-		describe("When the course has already been completed", () => {
+		describe("Course has both required and optional modules", () => {
+			const course = new Course("testId")
+			course.modules = [module1, module2, module3]
+			sandbox.stub(course, 'getRequiredRecurringAudience').returns(audience)
+			const courseRecord = getBasicCourseRecord()
+			courseRecord.modules = [
+				getBasicModuleRecord("1", RecordState.Completed, lastYearDate, lastYearDate),
+				getBasicModuleRecord("2", RecordState.Completed, lastYearDate, lastYearDate),
+				getBasicModuleRecord("3", RecordState.Completed, lastYearDate, lastYearDate),
+			]
 			it('should set the state to not started (null) when all modules have' +
 				'been completed during the previous learning year', () => {
 				courseRecord.getModuleRecord("1")!.completionDate = lastYearDate
@@ -172,6 +173,29 @@ describe('displayState tests', () => {
 				courseRecord.getModuleRecord("1")!.completionDate = lastYearDate
 				courseRecord.getModuleRecord("2")!.completionDate = thisYearDate
 				courseRecord.getModuleRecord("3")!.completionDate = thisYearDate
+				const result = course.getDisplayState(courseRecord)
+				assert.equal(result, RecordState.Completed)
+			})
+			it('should set the state to null when there are no module records', () => {
+				const emptyCourseRecord = getBasicCourseRecord()
+				const result = course.getDisplayState(emptyCourseRecord)
+				assert.equal(result, RecordState.Null)
+			})
+		})
+
+		describe("Course has only optional modules", () => {
+			const course = new Course("testId")
+			course.modules = [module1, module4]
+			sandbox.stub(course, 'getRequiredRecurringAudience').returns(audience)
+			const courseRecord = getBasicCourseRecord()
+			courseRecord.modules = [
+				getBasicModuleRecord("1", RecordState.Completed, lastYearDate, lastYearDate),
+				getBasicModuleRecord("4", RecordState.Completed, lastYearDate, lastYearDate),
+			]
+			it('should set the state to completed when all module records have been completed ' +
+				'this learning period', () => {
+				courseRecord.getModuleRecord("1")!.completionDate = thisYearDate
+				courseRecord.getModuleRecord("4")!.completionDate = thisYearDate
 				const result = course.getDisplayState(courseRecord)
 				assert.equal(result, RecordState.Completed)
 			})
