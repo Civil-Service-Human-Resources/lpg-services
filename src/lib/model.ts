@@ -3,12 +3,15 @@ import * as datetime from 'lib/datetime'
 import {IdentityDetails} from 'lib/identity'
 import * as learnerRecord from 'lib/learnerrecord'
 import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
+import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {RecordState} from 'lib/service/learnerRecordAPI/models/record'
+import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {CacheableObject} from 'lib/utils/cacheableObject'
-import _ = require('lodash')
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
 
+import _ = require('lodash')
 import {ModuleNotFoundError} from './exception/moduleNotFound'
 
 export interface LineManager {
@@ -235,6 +238,55 @@ export class Course {
 
 	getModules() {
 		return this.modules
+	}
+
+	public getModulesRequiredForCompletion() {
+		const optModules: Module[] = []
+		const requiredModules: Module[] = []
+		this.modules.forEach(m => {
+			m.optional ? optModules.push(m) : requiredModules.push(m)
+		})
+		return requiredModules.length > 0 ? requiredModules : optModules
+	}
+
+	public getDisplayState(courseRecord: CourseRecord): RecordState {
+		const requiredModuleIdsForCompletion = this.getModulesRequiredForCompletion()
+			.map(m => m.id)
+		const moduleRecordMap = courseRecord.getModuleRecordMap()
+		const audience = this.getRequiredRecurringAudience()
+		let inProgressCount = 0
+		let requiredCompletedCount = 0
+		for (const module of this.modules) {
+			const state = module.getDisplayState(moduleRecordMap.get(module.id), audience)
+
+			if (state === 'COMPLETED') {
+				if (requiredModuleIdsForCompletion.includes(module.id)) {
+					requiredCompletedCount ++
+				} else {
+					inProgressCount ++
+				}
+			} else if (state === 'IN_PROGRESS') {
+				inProgressCount ++
+			}
+		}
+
+		if (requiredCompletedCount === requiredModuleIdsForCompletion.length) {
+			return RecordState.Completed
+		} else if (inProgressCount > 0 || requiredCompletedCount > 0) {
+			return RecordState.InProgress
+		}
+		return RecordState.Null
+	}
+
+	public getDisplayStateForModules(courseRecord: CourseRecord): Map<string, string | null> {
+		const results = new Map<string, string | null>()
+		const moduleRecords = courseRecord.getModuleRecordMap()
+		const audience = this.getRequiredRecurringAudience()
+		this.modules.forEach(m => {
+			const moduleRecord = moduleRecords.get(m.id)
+			results.set(m.id, m.getDisplayState(moduleRecord, audience))
+		})
+		return results
 	}
 
 	getRequiredModules() {
@@ -542,6 +594,23 @@ export class Module {
 
 	isAssociatedLearning() {
 		return this.associatedLearning
+	}
+
+	getDisplayState(
+		moduleRecord: ModuleRecord | undefined | null,
+		audience: RequiredRecurringAudience | undefined | null) {
+		let state: string | null = null
+		if (moduleRecord) {
+			const completionDate = moduleRecord.getCompletionDate().getTime()
+			const updatedAt = moduleRecord.getUpdatedAt().getTime()
+			const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
+			if (previousRequiredBy < completionDate) {
+				state = 'COMPLETED'
+			} else if (previousRequiredBy < updatedAt) {
+				state = 'IN_PROGRESS'
+			}
+		}
+		return state
 	}
 }
 
