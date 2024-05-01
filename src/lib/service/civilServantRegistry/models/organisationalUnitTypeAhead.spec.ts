@@ -47,7 +47,7 @@ describe('organisationUnitTypeAhead tests', () => {
 			const parentOrg2 = createOrg(5, "E", [], [], null)
 			const orgs = [parentOrg, childOrg, childOrg2, grandChildOrg, parentOrg2]
 			const typeahead = OrganisationalUnitTypeAhead.createAndSort(orgs)
-			const list = await typeahead.getDomainFilteredList(domain, 'token')
+			const list = await typeahead.getDomainFilteredList(domain)
 			expect(list.map(o => o.formattedName)).to.eql(["A", "A | B", "A | B | D", "A | C"])
 		})
 
