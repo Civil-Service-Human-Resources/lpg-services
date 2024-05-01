@@ -81,6 +81,6 @@ export async function getOrganisationDropdown(user: User): Promise<Organisationa
 		logger.debug(`User is unrestricted, returning all organisations`)
 		return typeahead.typeahead
 	} else {
-		return typeahead.getDomainFilteredList(user.getDomain(), user.accessToken)
+		return typeahead.getDomainFilteredList(user.getDomain())
 	}
 }
