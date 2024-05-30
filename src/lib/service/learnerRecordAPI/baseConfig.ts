@@ -1,8 +1,8 @@
 import axios from 'axios'
 import * as https from 'https'
+import {LearnerRecordClient} from 'lib/service/learnerRecordAPI/learnerRecordClient'
 
 import * as config from '../../config'
-import { LearnerRecordClient } from './learnerRecordClient'
 
 const http = axios.create({
 	baseURL: config.LEARNER_RECORD.url,

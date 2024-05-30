@@ -1,29 +1,26 @@
 import {plainToInstance} from 'class-transformer'
 import * as config from 'lib/config'
-import {Course, Module, User} from 'lib/model'
+import {User} from 'lib/model'
 import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
 import {CancelBookingDto} from 'lib/service/cslService/models/CancelBookingDto'
 import {CourseActionResponse} from 'lib/service/cslService/models/CourseActionResponse'
 import {EventActionResponse} from 'lib/service/cslService/models/EventActionResponse'
+import {createUserDto} from 'lib/service/cslService/models/factory/UserDtoFactory'
+import {UserDto} from 'lib/service/cslService/models/UserDto'
 import {HttpClient} from '../httpClient'
-import {LaunchModuleRequest} from './models/launchModuleRequest'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
 
 const client = HttpClient.createFromParams(config.CSL_SERVICE.url, config.REQUEST_TIMEOUT)
 
 export async function launchModule(
-	course: Course,
-	module: Module,
+	courseId: string,
+	moduleId: string,
 	user: User
 ): Promise<LaunchModuleResponse> {
-	const body: LaunchModuleRequest = {
-		courseIsRequired: course.isRequired(),
-		learnerFirstName: user.givenName || '',
-		learnerLastName: '',
-	}
-	const resp = await client._post<LaunchModuleRequest, LaunchModuleResponse>(
+	const body: UserDto = await createUserDto(user)
+	const resp = await client._post<UserDto, LaunchModuleResponse>(
 		{
-			url: `/courses/${course.id}/modules/${module.id}/launch`,
+			url: `/courses/${courseId}/modules/${moduleId}/launch`,
 		},
 		body,
 		user
@@ -32,10 +29,11 @@ export async function launchModule(
 }
 
 export async function completeModule(courseId: string, moduleId: string, user: User): Promise<void> {
-	await client._post({
+	const body: UserDto = await createUserDto(user)
+	await client._post<UserDto, LaunchModuleResponse>({
 			url: `/courses/${courseId}/modules/${moduleId}/complete`,
 		},
-		undefined,
+		body,
 		user)
 }
 
@@ -90,10 +88,11 @@ export async function cancelEventBooking(
 
 export async function completeEventBooking(
 	courseId: string, moduleId: string, eventId: string, user: User): Promise<EventActionResponse> {
-	const resp = await client._post({
+	const userDto = await createUserDto(user)
+	const resp = await client._post<UserDto, EventActionResponse>({
 			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/complete_booking`,
 		},
-		null,
+		userDto,
 		user)
 	return plainToInstance(EventActionResponse, resp)
 }

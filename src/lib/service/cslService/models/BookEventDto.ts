@@ -1,6 +1,7 @@
+import {UserDto} from 'lib/service/cslService/models/UserDto'
+
 export class BookEventDto {
 	constructor(
-		public accessibilityOptions: string[], public learnerEmail: string,
-		public learnerName: string, public poNumber?: string) { }
+		public accessibilityOptions: string[], public userDetailsDto: UserDto, public poNumber?: string) { }
 
 }
