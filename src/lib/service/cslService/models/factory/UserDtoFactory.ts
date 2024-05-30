@@ -6,7 +6,7 @@ export async function createUserDto(user: User): Promise<UserDto> {
 	const orgHierarchy = (await getOrgHierarchy(user.organisationalUnit!.id, user))
 		.map(o => o.code)
 	return {
-		gradeId: user.grade!.id,
+		gradeId: user.grade !== undefined ? user.grade.id : undefined,
 		learnerEmail: user.userName,
 		learnerName: user.givenName!,
 		organisationId: user.organisationalUnit!.id,
