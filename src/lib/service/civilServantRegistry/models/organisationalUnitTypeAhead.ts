@@ -12,6 +12,8 @@ export class OrganisationalUnitTypeAhead {
 	@Type(() => OrganisationalUnit)
 	public typeahead: OrganisationalUnit[]
 
+	private collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'})
+
 	constructor(typeahead: OrganisationalUnit[]) {
 		this.typeahead = typeahead
 	}
@@ -34,7 +36,7 @@ export class OrganisationalUnitTypeAhead {
 	}
 
 	sort() {
-		this.typeahead.sort((a, b) => this.getCollator().compare(a.formattedName, b.formattedName))
+		this.typeahead.sort((a, b) => this.collator.compare(a.formattedName, b.formattedName))
 		return this.typeahead
 	}
 
@@ -72,7 +74,7 @@ export class OrganisationalUnitTypeAhead {
 		const agencyOrg = this.getAgencyOrganisationWithDomain(domain, tree)
 		if (agencyOrg !== undefined) {
 			list.push(...agencyOrg.extractAllOrgs())
-			list.sort((a, b) => this.getCollator().compare(a.formattedName, b.formattedName))
+			list.sort((a, b) => this.collator.compare(a.formattedName, b.formattedName))
 		}
 		return list
 	}
@@ -104,9 +106,5 @@ export class OrganisationalUnitTypeAhead {
 			orgMap.set(org.id, org)
 		}
 		return org.formattedName
-	}
-
-	private getCollator() {
-		return new Intl.Collator('en', {numeric: true, sensitivity: 'base'})
 	}
 }
