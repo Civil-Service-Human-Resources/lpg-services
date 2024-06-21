@@ -205,7 +205,7 @@ export async function updateProfession(request: Request, response: Response) {
 			const professionResponse: any = await registry.getWithoutHal(profession.replace(config.REGISTRY_SERVICE_URL, ''))
 			const data = professionResponse.data
 
-			setLocalProfile(request, 'areasOfWork', [data.id, data.name])
+			setLocalProfile(request, 'areasOfWork', {id: data.id, name: data.name})
 		} catch (error) {
 			logger.error(error)
 			throw new Error(error)
