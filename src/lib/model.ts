@@ -1,12 +1,17 @@
 import {Type} from 'class-transformer'
 import * as datetime from 'lib/datetime'
+import {IdentityDetails} from 'lib/identity'
 import * as learnerRecord from 'lib/learnerrecord'
+import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
+import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {RecordState} from 'lib/service/learnerRecordAPI/models/record'
+import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {CacheableObject} from 'lib/utils/cacheableObject'
-import _ = require('lodash')
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
 
+import _ = require('lodash')
 import {ModuleNotFoundError} from './exception/moduleNotFound'
 
 export interface LineManager {
@@ -198,7 +203,7 @@ export class Course {
 	getRequiredRecurringAudience() {
 		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
 			const nextDate = moment(this.audience.requiredBy).endOf("day").utc()
-			while (nextDate < moment()) {
+			while (nextDate < moment().utc()) {
 				nextDate.add({
 					months: this.audience.frequency.months(),
 					years: this.audience.frequency.years(),
@@ -233,6 +238,55 @@ export class Course {
 
 	getModules() {
 		return this.modules
+	}
+
+	public getModulesRequiredForCompletion() {
+		const optModules: Module[] = []
+		const requiredModules: Module[] = []
+		this.modules.forEach(m => {
+			m.optional ? optModules.push(m) : requiredModules.push(m)
+		})
+		return requiredModules.length > 0 ? requiredModules : optModules
+	}
+
+	public getDisplayState(courseRecord: CourseRecord): RecordState {
+		const requiredModuleIdsForCompletion = this.getModulesRequiredForCompletion()
+			.map(m => m.id)
+		const moduleRecordMap = courseRecord.getModuleRecordMap()
+		const audience = this.getRequiredRecurringAudience()
+		let inProgressCount = 0
+		let requiredCompletedCount = 0
+		for (const module of this.modules) {
+			const state = module.getDisplayState(moduleRecordMap.get(module.id), audience)
+
+			if (state === 'COMPLETED') {
+				if (requiredModuleIdsForCompletion.includes(module.id)) {
+					requiredCompletedCount ++
+				} else {
+					inProgressCount ++
+				}
+			} else if (state === 'IN_PROGRESS') {
+				inProgressCount ++
+			}
+		}
+
+		if (requiredCompletedCount === requiredModuleIdsForCompletion.length) {
+			return RecordState.Completed
+		} else if (inProgressCount > 0 || requiredCompletedCount > 0) {
+			return RecordState.InProgress
+		}
+		return RecordState.Null
+	}
+
+	public getDisplayStateForModules(courseRecord: CourseRecord): Map<string, string | null> {
+		const results = new Map<string, string | null>()
+		const moduleRecords = courseRecord.getModuleRecordMap()
+		const audience = this.getRequiredRecurringAudience()
+		this.modules.forEach(m => {
+			const moduleRecord = moduleRecords.get(m.id)
+			results.set(m.id, m.getDisplayState(moduleRecord, audience))
+		})
+		return results
 	}
 
 	getRequiredModules() {
@@ -356,6 +410,15 @@ export class Course {
 
 	isRequired() {
 		return this.audience ? this.audience.mandatory : false
+	}
+
+	getDueByDateDisplayString() {
+		let resp: string | undefined
+		const dueByDate = this.getDueByDate()
+		if (dueByDate !== null) {
+			resp = moment(dueByDate).utc().format("DD MMM YYYY")
+		}
+		return resp
 	}
 
 	getDueByDate() {
@@ -532,6 +595,23 @@ export class Module {
 	isAssociatedLearning() {
 		return this.associatedLearning
 	}
+
+	getDisplayState(
+		moduleRecord: ModuleRecord | undefined | null,
+		audience: RequiredRecurringAudience | undefined | null) {
+		let state: string | null = null
+		if (moduleRecord) {
+			const completionDate = moduleRecord.getCompletionDate().getTime()
+			const updatedAt = moduleRecord.getUpdatedAt().getTime()
+			const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
+			if (previousRequiredBy < completionDate) {
+				state = 'COMPLETED'
+			} else if (previousRequiredBy < updatedAt) {
+				state = 'IN_PROGRESS'
+			}
+		}
+		return state
+	}
 }
 
 export class ModuleWithCourse extends Module {
@@ -643,13 +723,12 @@ export class Audience {
 			return 0
 		}
 
-		if (
-			user.areasOfWork &&
-			this.areasOfWork.filter(areaOfWork => user.areasOfWork!.indexOf(areaOfWork) > -1).length
-		) {
-			relevance += 1
+		const areaOfWork = user.areasOfWork
+		if (areaOfWork !== undefined) {
+			if (this.areasOfWork.filter(aow => areaOfWork.name === aow).length > 0) {
+				relevance += 1
+			}
 		}
-
 		let depScore = 0
 		for (const department of this.departments) {
 			const depIndex = depHierarchy.indexOf(department)
@@ -836,37 +915,13 @@ export interface CSLUser {
 	isAdmin(): boolean
 }
 export class User implements CSLUser {
-	static create(data: any) {
+
+	static createFromFullProfile(csrsProfile: Profile, identityDetails: IdentityDetails, accessToken: string) {
 		const user = new User(
-			data.uid || data.id,
-			data.userName || data.username,
-			data.sessionIndex,
-			Array.isArray(data.roles) ? data.roles : [data.roles],
-			data.accessToken
+			identityDetails.uid, identityDetails.username, identityDetails.roles, accessToken
 		)
-
-		user.userId = data.userId
-		user.organisationalUnit = data.organisationalUnit || new OrganisationalUnit()
-		user.department = data.organisationalUnit ? data.organisationalUnit.code : data.department
-		user.departmentId = data.organisationalUnit ? data.organisationalUnit.id : data.departmentId
-		user.givenName = data.fullName ? data.fullName : data.givenName
-		user.grade = data.grade
-		if (data.profession || data.areasOfWork) {
-			user.areasOfWork = Object.values(data.profession || data.areasOfWork)
-		}
-		user.otherAreasOfWork = data.otherAreasOfWork
-		user.interests = data.interests
-		user.tokenzied = data.tokenzied
-
-		if (data.lineManagerEmailAddress) {
-			user.lineManager = {
-				email: data.lineManagerEmailAddress,
-				name: data.lineManagerName,
-			}
-		} else {
-			user.lineManager = data.lineManager
-		}
-
+		user.userId = csrsProfile.userId.toString()
+		user.updateWithProfile(csrsProfile)
 		return user
 	}
 
@@ -875,29 +930,40 @@ export class User implements CSLUser {
 	 */
 	readonly id: string
 	readonly userName: string
-	readonly sessionIndex: string
 	readonly roles: string[]
 	readonly accessToken: string
 
 	department?: string
 	departmentId?: number
-	areasOfWork?: string[]
+	areasOfWork?: AreaOfWork
 	lineManager?: LineManager
-	otherAreasOfWork?: any[]
-	interests?: any[]
+	otherAreasOfWork?: AreaOfWork[]
+	interests?: Interest[]
 	givenName?: string
-	tokenzied?: string
 	organisationalUnit?: OrganisationalUnit
 	userId: string
 
-	grade?: any
+	grade?: Grade
 
-	constructor(id: string, userName: string, sessionIndex: string, roles: string[], accessToken: string) {
+	constructor(id: string, userName: string, roles: string[], accessToken: string) {
 		this.id = id
 		this.userName = userName
-		this.sessionIndex = sessionIndex
 		this.roles = roles
 		this.accessToken = accessToken
+	}
+
+	updateWithProfile(profile: Profile) {
+		this.organisationalUnit = profile.organisationalUnit
+		if (this.organisationalUnit !== undefined) {
+			this.department = this.organisationalUnit.code
+			this.departmentId = this.organisationalUnit.id
+		}
+		this.givenName = profile.fullName
+		this.grade = profile.grade
+		this.areasOfWork = profile.profession
+		this.otherAreasOfWork = profile.otherAreasOfWork
+		this.interests = profile.interests
+		this.lineManager = profile.getLineManager()
 	}
 
 	hasCompleteProfile() {
@@ -931,6 +997,9 @@ export class User implements CSLUser {
 
 	getGradeCode() {
 		return this.grade ? this.grade.code : ''
+	}
+	getDomain() {
+		return this.userName.split('@')[1].toLowerCase()
 	}
 }
 

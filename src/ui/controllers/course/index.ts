@@ -6,7 +6,6 @@ import * as catalog from 'lib/service/catalog'
 import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
 import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceClient'
 import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import * as template from 'lib/ui/template'
 import * as youtube from 'lib/youtube'
@@ -93,14 +92,14 @@ export async function displayModule(
 			case 'elearning':
 			case 'link':
 			case 'file':
-				const launchModuleResponse = await cslServiceClient.launchModule(course, module, req.user)
+				const launchModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
 				res.redirect(launchModuleResponse.launchLink)
 				break
 			case 'face-to-face':
 				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 				break
 			case 'video':
-				const launchVideoModuleResponse = await cslServiceClient.launchModule(course, module, req.user)
+				const launchVideoModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
 				const videoLink = launchVideoModuleResponse.launchLink
 				res.send(
 					template.render(`course/display-video`, req, res, {
@@ -144,29 +143,18 @@ export async function display(ireq: express.Request, res: express.Response) {
 		case 'link':
 		case 'video':
 		case 'blended':
-			const moduleMap: Map<string, any> = new Map()
-			course.modules.forEach(mod => {
-				moduleMap.set(mod.id, {
+			const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
+			const moduleRecords: Map<string, ModuleRecord> = courseRecord ? courseRecord.getModuleRecordMap() : new Map()
+			const audience = course.getRequiredRecurringAudience()
+			const modules = course.modules.map(mod => {
+				const mr = moduleRecords.get(mod.id)
+				return {
 				...mod,
-				displayState: null,
+				displayState: mod.getDisplayState(mr, audience),
 				duration: mod.getDuration(),
 				isMandatory: !mod.optional,
-				state: null,
-			})})
-			const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
-			const audience = course.getRequiredRecurringAudience()
-			if (courseRecord) {
-				courseRecord.modules
-					.filter(moduleRecord => [...moduleMap.keys()].includes(moduleRecord.moduleId))
-					.forEach(moduleRecord => {
-					const mapEntry = moduleMap.get(moduleRecord.moduleId)
-					if (mapEntry) {
-						mapEntry.state = moduleRecord.state || null
-						mapEntry.displayState = getDisplayStateForModule(moduleRecord, courseRecord, audience)
-					}
-				})
-			}
-			const modules = [...moduleMap.values()]
+				state: mr ? mr.getState() : null,
+			}})
 			let recordState = "none"
 
 			if (courseRecord && courseRecord.modules) {
@@ -201,32 +189,6 @@ export async function display(ireq: express.Request, res: express.Response) {
 			)
 			break
 	}
-}
-
-export function getDisplayStateForModule(
-	moduleRecord: ModuleRecord,
-	courseRecord: CourseRecord,
-	audience: model.RequiredRecurringAudience | null) {
-	let displayStateLocal: string | null = moduleRecord.state ? moduleRecord.state : null
-	if (audience) {
-		const completionDate = moduleRecord.getCompletionDate().getTime()
-		const updatedAt = moduleRecord.getUpdatedAt().getTime()
-		const previousRequiredBy = audience.previousRequiredBy.getTime()
-		if (completionDate <= previousRequiredBy && previousRequiredBy < updatedAt) {
-			displayStateLocal = 'IN_PROGRESS'
-		} else {
-			if (courseRecord.isCompleted()) {
-				if (updatedAt <= previousRequiredBy && completionDate <= previousRequiredBy) {
-					displayStateLocal = null
-				}
-			} else {
-				if (updatedAt <= previousRequiredBy) {
-					displayStateLocal = null
-				}
-			}
-		}
-	}
-	return displayStateLocal
 }
 
 export async function loadCourse(

@@ -10,31 +10,27 @@ import * as template from 'lib/ui/template'
 
 import { CourseRecord } from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import { RecordState } from '../../lib/service/learnerRecordAPI/models/record'
-import { getDisplayStateForCourse } from './learning-record'
 
 const logger = getLogger('controllers/home')
 
 export const getRequiredLearning = (
 	requiredCourses: model.Course[],
 	courseRecordMap: Map<string, CourseRecord>): model.Course[] => {
-	const requiredLearning: model.Course[] = []
-	for (const requiredCourse of requiredCourses) {
-		const courseRecord = courseRecordMap.get(requiredCourse.id)
+	return requiredCourses.filter(course => {
+		let required = false
+		let courseState = RecordState.Null
+		const courseRecord = courseRecordMap.get(course.id)
 		if (courseRecord) {
-			const state = getDisplayStateForCourse(requiredCourse, courseRecord)
-			if (state !== RecordState.Completed) {
-				if (state !== RecordState.Null) {
-					courseRecord.state = state
-				}
-				requiredCourse.record = courseRecord
-				requiredLearning.push(requiredCourse)
-			}
-			courseRecordMap.delete(requiredCourse.id)
-		} else {
-			requiredLearning.push(requiredCourse)
+			courseState = course.getDisplayState(courseRecord)
+			courseRecord.state = courseState
+			courseRecordMap.delete(course.id)
 		}
-	}
-	return requiredLearning
+		course.record = courseRecord
+		if (courseState !== RecordState.Completed) {
+			required = true
+		}
+		return required
+	})
 }
 
 export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord>): CourseRecord[] => {

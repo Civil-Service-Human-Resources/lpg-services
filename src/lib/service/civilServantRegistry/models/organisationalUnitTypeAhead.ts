@@ -34,8 +34,7 @@ export class OrganisationalUnitTypeAhead {
 	}
 
 	sort() {
-		const collator = new Intl.Collator('en', {numeric: true, sensitivity: 'base'})
-		this.typeahead.sort((a, b) => collator.compare(a.formattedName, b.formattedName))
+		this.typeahead.sort((a, b) => this.getCollator().compare(a.formattedName, b.formattedName))
 		return this.typeahead
 	}
 
@@ -68,12 +67,14 @@ export class OrganisationalUnitTypeAhead {
 	}
 
 	getDomainFilteredList(domain: string): OrganisationalUnit[] {
+		const list = this.typeahead.filter(o => o.doesDomainExist(domain))
 		const tree = this.getAsTree()
 		const agencyOrg = this.getAgencyOrganisationWithDomain(domain, tree)
 		if (agencyOrg !== undefined) {
-			return agencyOrg.extractAllOrgs()
+			list.push(...agencyOrg.extractAllOrgs())
+			list.sort((a, b) => this.getCollator().compare(a.formattedName, b.formattedName))
 		}
-		return this.typeahead.filter(o => o.doesDomainExist(domain))
+		return list
 	}
 
 	private getAgencyOrganisationWithDomain(domain: string, tree: OrganisationalUnit[]): OrganisationalUnit | undefined {
@@ -103,5 +104,9 @@ export class OrganisationalUnitTypeAhead {
 			orgMap.set(org.id, org)
 		}
 		return org.formattedName
+	}
+
+	private getCollator() {
+		return new Intl.Collator('en', {numeric: true, sensitivity: 'base'})
 	}
 }

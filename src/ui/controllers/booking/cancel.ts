@@ -1,13 +1,14 @@
 
 import * as express from 'express'
+import {ResourceNotFoundError} from 'lib/exception/ResourceNotFoundError'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import { getLogger } from 'lib/logger'
+import {cancelEventBooking} from 'lib/service/cslService/cslServiceClient'
+import {CancelBookingDto} from 'lib/service/cslService/models/CancelBookingDto'
 import * as template from 'lib/ui/template'
+import {SessionFlash} from 'lib/utils/SessionUtils'
 
-import {
-	CancelBookingActionWorker
-} from '../../../lib/service/learnerRecordAPI/workers/moduleRecordActionWorkers/eventWorkers/CancelBookingActionWorker'
 import { confirmedMessage, recordCheck } from './booking'
 
 const logger = getLogger('controllers/booking/cancel')
@@ -95,72 +96,53 @@ export async function renderCancelledBookingPage(
 
 	res.send(
 		template.render('booking/confirmed', req, res, {
-			course,
-			event,
+			bookingTitle: module.title || course.title,
 			message,
-			module,
 		})
 	)
 }
 
-export async function tryCancelBooking(
-	ireq: express.Request,
-	res: express.Response
-) {
-	const req = ireq as extended.CourseRequest
-	const course = req.course
-	const module = req.module!
-	const event = req.event!
+export async function tryCancelBooking(req: express.Request, res: express.Response) {
+	const courseId = req.params.courseId
+	const moduleId = req.params.moduleId
+	const eventId = req.params.eventId
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	logger.info(`User ${req.user.id} attempting to cancel event ${eventId}`)
 
-	if (!record) {
-		logger.warn(
-			`Attempt to cancel a booking when not registered. user: ${
-				req.user.id
-			}, course: ${course.id}, module: ${module.id}, event: ${event.id}`
-		)
-		res.sendStatus(400)
-		return
-	}
+	const cancelReason: string = req.body['cancel-reason']
 
-	course.record = record
+	let sessionFlash: SessionFlash
+	let redirectUrl = `/book/${courseId}/${moduleId}/${eventId}/cancelled`
 
-	const cancelReason = req.body['other-reason']
-		? req.body['cancel-reason']
-		: req.body['cancel-reason']
-
-	if (cancelReason) {
-
-		const result = await learnerRecord.cancelBooking(event, cancelReason, req.user)
-
-		await new CancelBookingActionWorker(course, req.user, event, module).applyActionToLearnerRecord()
-
-		const response: any = {
-			404: async () => {
-				req.session!.save(() => {
-					req.flash('cancelBookingError', "The booking could not be found.")
-					res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-				})
-			},
-			400: async () => {
-				req.session!.save(() => {
-					req.flash('cancelBookingError', "An error occurred while trying to cancel your booking.")
-					res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-				})
-			},
-			200: async () => {
-				req.session!.save(() => {
-					res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancelled`)
-				})
-			},
+	if (cancelReason !== undefined) {
+		try {
+			await cancelEventBooking(courseId, moduleId, eventId, req.user, new CancelBookingDto(cancelReason))
+		} catch (e) {
+			if (e instanceof ResourceNotFoundError) {
+				sessionFlash = {
+					event: 'cancelBookingError',
+					message: 'The booking could not be found.',
+				}
+			} else {
+				sessionFlash = {
+					event: 'cancelBookingError',
+					message: 'An error occurred while trying to cancel your booking.',
+				}
+			}
+			redirectUrl = `/book/${courseId}/${moduleId}/${eventId}/cancel`
 		}
-
-		await response[result.status]()
-	} else {
-		req.session!.save(() => {
-			req.flash('cancelBookingError', "Please select a reason for cancelling your booking.")
-			res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
-		})
+	}  else {
+		sessionFlash = {
+			event: 'cancelBookingError',
+			message: 'Please select a reason for cancelling your booking.',
+		}
+		redirectUrl = `/book/${courseId}/${moduleId}/${eventId}/cancel`
 	}
+
+	req.session!.save(() => {
+		if (sessionFlash !== undefined) {
+			req.flash(sessionFlash.event, sessionFlash.message)
+		}
+		res.redirect(redirectUrl)
+	})
 }

@@ -94,6 +94,14 @@ export class CourseRecord extends Record implements CourseRcd {
 		return this.isArchived()
 	}
 
+	public getModuleRecordMap = () => {
+		const results = new Map<string, ModuleRecord>()
+		this.modules.forEach(m => {
+			results.set(m.moduleId, m)
+		})
+		return results
+	}
+
 	public getModuleRecord = (moduleId: string) => {
 		return this.modules.find(m => m.moduleId === moduleId)
 	}
@@ -111,23 +119,6 @@ export class CourseRecord extends Record implements CourseRcd {
 
 	public getLastUpdated() {
 		return this.lastUpdated ? this.lastUpdated : new Date(0)
-	}
-
-	public getCompletionDatesForModules(filterModules?: Module[]) {
-		if (filterModules) {
-			const mrMap: Map<string, ModuleRecord> = new Map()
-			this.modules.forEach(mr => mrMap.set(mr.moduleId, mr))
-			return filterModules.map(mod => {
-				const moduleRecord = mrMap.get(mod.id)
-				if (moduleRecord) {
-					return moduleRecord.getCompletionDate()
-				} else {
-					return new Date(0)
-				}
-			})
-		} else {
-			return this.modules.map(mr => mr.getCompletionDate())
-		}
 	}
 
 	public getCompletionDate() {
