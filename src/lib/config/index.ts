@@ -138,15 +138,13 @@ export const CONTACT_NUMBER = env.CONTACT_NUMBER || '020 3640 7985'
 
 export const REDIS = set({
 	host: env.REDIS_HOST || 'localhost',
+	keyPrefix: env.REDIS_KEY_PREFIX || 'csl_frontend',
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
 })
 
 export const ORG_REDIS = set({
 	defaultTTL: +(env.ORG_REDIS_TTL || '604800'),
-	host: env.ORG_REDIS_HOST || 'localhost',
-	password: env.ORG_REDIS_PASSWORD || '',
-	port: +(env.ORG_REDIS_PORT || '6379'),
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
