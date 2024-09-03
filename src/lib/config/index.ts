@@ -137,7 +137,7 @@ export const CONTACT_NUMBER = env.CONTACT_NUMBER || '020 3640 7985'
 
 export const REDIS = set({
 	host: env.REDIS_HOST || 'localhost',
-	keyPrefix: env.REDIS_KEY_PREFIX || 'csl_frontend',
+	keyPrefix: env.REDIS_KEY_PREFIX || 'csl_frontend_',
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
 })
