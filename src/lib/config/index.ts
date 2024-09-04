@@ -34,10 +34,9 @@ export const AUTHENTICATION = set({
 	clientId: env.OAUTH_CLIENT_ID || '9fbd4ae2-2db3-44c7-9544-88e80255b56e',
 	clientSecret: env.OAUTH_CLIENT_SECRET || 'test',
 	endpoints: set({
-		authorization: env.OAUTH_AUTHORIZATION_ENDPOINT || '/oauth/authorize',
-		logout: env.AUTHENTICATION_SERVICE_LOGOUT_ENDPOINT || '/oauth/logout',
-		resolve: env.AUTHENTICATION_SERVICE_RESOLVE_ENDPOINT || '/oauth/resolve',
-		token: env.OAUTH_TOKEN_ENDPOINT || '/oauth/token',
+		authorization: env.OAUTH_AUTHORIZATION_ENDPOINT || '/oauth2/authorize',
+		logout: env.AUTHENTICATION_SERVICE_LOGOUT_ENDPOINT || '/logout',
+		token: env.OAUTH_TOKEN_ENDPOINT || '/oauth2/token',
 	}),
 	managementId: env.OAUTH_CLIENT_ID || 'f90a4080-e5e9-4a80-ace4-f738b4c9c30e',
 	managementSecret: env.OAUTH_CLIENT_SECRET || 'test',
@@ -138,15 +137,13 @@ export const CONTACT_NUMBER = env.CONTACT_NUMBER || '020 3640 7985'
 
 export const REDIS = set({
 	host: env.REDIS_HOST || 'localhost',
+	keyPrefix: env.REDIS_KEY_PREFIX || 'csl_frontend_',
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
 })
 
 export const ORG_REDIS = set({
 	defaultTTL: +(env.ORG_REDIS_TTL || '604800'),
-	host: env.ORG_REDIS_HOST || 'localhost',
-	password: env.ORG_REDIS_PASSWORD || '',
-	port: +(env.ORG_REDIS_PORT || '6379'),
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT

@@ -1,7 +1,9 @@
 import {plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
+import {jwtDecode} from 'jwt-decode'
 import * as config from 'lib/config/index'
+import {IdentityDetails} from 'lib/identity'
 import * as identity from 'lib/identity'
 import {getLogger} from 'lib/logger'
 import * as model from 'lib/model'
@@ -33,7 +35,8 @@ export function configure(
 		},
 		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			try {
-				const identityDetails = await identity.getDetails(accessToken)
+				const token = jwtDecode(accessToken) as any
+				const identityDetails = new IdentityDetails(token.email, token.user_name, token.authorities)
 				const csrsProfile = await registry.login(accessToken, identityDetails)
 
 				const user = model.User.createFromFullProfile(csrsProfile, identityDetails, accessToken)
@@ -52,8 +55,6 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
-		console.log("DESIRIALISE")
-		console.log(data)
 		let user: model.User
 		try {
 			user = plainToInstance(model.User, JSON.parse(data) as model.User)
