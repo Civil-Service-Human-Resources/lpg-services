@@ -6,5 +6,7 @@ export class UserDto {
 		public professionName: string,
 		public departmentHierarchy: Array<{ id: number, code: string, name: string }>,
 		public gradeId?: number,
-		public gradeName?: string) {}
+		public gradeName?: string,
+		public lineManagerName?: string,
+		public lineManagerEmail?: string) {}
 }
