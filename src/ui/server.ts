@@ -26,8 +26,8 @@ import {ProfileChecker} from 'lib/ui/profileChecker'
 
 import {requiresDepartmentHierarchy} from 'lib/ui/requiresDepartmentHierarchy'
 import * as template from 'lib/ui/template'
+import {redisClient} from 'lib/utils/redis'
 import * as lusca from 'lusca'
-import * as redis from 'redis'
 import * as serveStatic from 'serve-static'
 import {URL} from 'url'
 import * as bookingRouter from './controllers/booking/routes'
@@ -69,12 +69,6 @@ app.use(cors(corsOptions))
 // Caches
 
 const RedisStore = connectRedis(session)
-const redisClient = redis.createClient({
-	auth_pass: config.REDIS.password,
-	host: config.REDIS.host,
-	no_ready_check: true,
-	port: config.REDIS.port,
-})
 app.use(
 	session({
 		cookie: {
@@ -92,15 +86,8 @@ app.use(
 	})
 )
 
-const orgCacheRedisClient = redis.createClient({
-	auth_pass: config.ORG_REDIS.password,
-	host: config.ORG_REDIS.host,
-	no_ready_check: true,
-	port: config.ORG_REDIS.port,
-})
-
-const orgCache = new OrganisationalUnitCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
-const orgTypeaheadCache = new OrganisationalUnitTypeaheadCache(orgCacheRedisClient, config.ORG_REDIS.defaultTTL)
+const orgCache = new OrganisationalUnitCache(redisClient, config.ORG_REDIS.defaultTTL)
+const orgTypeaheadCache = new OrganisationalUnitTypeaheadCache(redisClient, config.ORG_REDIS.defaultTTL)
 csrsService.setCaches(orgCache, orgTypeaheadCache)
 
 app.use(flash())

@@ -24,12 +24,6 @@ export class IdentityDetails {
 	constructor(public username: string, public uid: string, public roles: string[]) { }
 }
 
-export async function getDetails(token: string) {
-	const http = create(token)
-	const response = await http.get<IdentityDetails>(config.AUTHENTICATION.endpoints.resolve)
-	return response.data
-}
-
 export async function logout(token: string) {
 	const http = create(token)
 	const response = await http.get(config.AUTHENTICATION.endpoints.logout)
