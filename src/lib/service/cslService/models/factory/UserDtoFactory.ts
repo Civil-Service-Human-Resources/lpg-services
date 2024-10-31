@@ -11,8 +11,8 @@ export async function createUserDto(user: User): Promise<UserDto> {
 	const userLineManager = user.lineManager
 	return new UserDto(user.userName,
 				user.givenName!,
-				user.areasOfWork!.id,
-				user.areasOfWork!.name,
+				user.areaOfWork!.id,
+				user.areaOfWork!.name,
 				orgHierarchy,
 				userGrade !== undefined ? userGrade.id : undefined,
 				userGrade !== undefined ? userGrade.name : undefined,

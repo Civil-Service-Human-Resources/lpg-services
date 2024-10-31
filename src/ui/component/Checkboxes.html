@@ -8,8 +8,8 @@
 {/if}
 	{#each options as option}
         <div class="multiple-choice">
-            <input id="{option[1]}" type="checkbox" name="{inputName}" value="{option[0]}" checked="{(value || []).indexOf(option[1]) > -1 ? 'checked' : ''}">
-            <label for="{option[1]}">{option[1]}</label>
+            <input id="{option.name}" type="checkbox" name="{inputName}" value="{option.id}" checked="{option.checked ? 'checked' : ''}">
+            <label for="{option.name}">{option.name}</label>
         </div>
     {/each}
 </fieldset>

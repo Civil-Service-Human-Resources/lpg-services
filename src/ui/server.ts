@@ -9,12 +9,19 @@ import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
 import * as fs from 'fs'
+import {AUTHENTICATION, BACKEND_SERVER_PATH} from 'lib/config'
 import * as config from 'lib/config'
 import * as corsConfig from 'lib/config/corsConfig'
 import * as luscaConfig from 'lib/config/luscaConfig'
 import * as passport from 'lib/config/passport'
+import {configureAPI} from 'lib/config/passport-backend'
 import {getLogger} from 'lib/logger'
+import {logoutUser} from 'lib/service/api/cache/cacheService'
+import {AreasOfWork} from 'lib/service/civilServantRegistry/areaOfWork/areasOfWork'
+import {ProfileCache} from 'lib/service/civilServantRegistry/civilServant/profileCache'
 import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
+import {Grades} from 'lib/service/civilServantRegistry/grade/grades'
+import {Interests} from 'lib/service/civilServantRegistry/interest/interests'
 /* tslint:disable:max-line-length */
 import {OrganisationalUnitCache} from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import {
@@ -22,10 +29,11 @@ import {
 } from 'lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 /* tslint:enable */
 import * as i18n from 'lib/service/translation'
-import {ProfileChecker} from 'lib/ui/profileChecker'
+import * as profileChecker from 'lib/ui/profileChecker'
 
 import {requiresDepartmentHierarchy} from 'lib/ui/requiresDepartmentHierarchy'
 import * as template from 'lib/ui/template'
+import {AnonymousCache} from 'lib/utils/anonymousCache'
 import {redisClient} from 'lib/utils/redis'
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
@@ -33,14 +41,14 @@ import {URL} from 'url'
 import * as bookingRouter from './controllers/booking/routes'
 import * as courseController from './controllers/course'
 import * as errorController from './controllers/errorHandler'
-import * as feedbackController from './controllers/feedback'
 import * as homeController from './controllers/home'
 import * as learningRecordController from './controllers/learning-record'
+import {getGETProfileMiddleware, getPOSTProfileMiddleware} from './controllers/profile'
 import * as profileController from './controllers/profile'
+import {ProfileEndpoint} from './controllers/profile/pages/common'
 import * as searchController from './controllers/search'
 import * as skillsController from './controllers/skills'
 import * as suggestionController from './controllers/suggestion'
-import * as userController from './controllers/user'
 import {completeVideoModule} from './controllers/video'
 
 appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
@@ -48,6 +56,8 @@ appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING)
 
 appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "lpg-ui"
 appInsights.start()
+
+const backendServerPath = `/${BACKEND_SERVER_PATH}`
 
 /* tslint:disable:no-var-requires */
 const flash = require('connect-flash')
@@ -58,6 +68,12 @@ const {PORT = 3001} = process.env
 const logger = getLogger('server.ts')
 
 const app = express()
+
+const backendRouter = express.Router()
+
+configureAPI(AUTHENTICATION.jwtKey, backendRouter)
+backendRouter.post('/caches/user/:uid/logout', asyncHandler(logoutUser))
+app.use(backendServerPath,  backendRouter)
 
 app.disable('x-powered-by')
 app.disable('etag')
@@ -88,7 +104,11 @@ app.use(
 
 const orgCache = new OrganisationalUnitCache(redisClient, config.ORG_REDIS.defaultTTL)
 const orgTypeaheadCache = new OrganisationalUnitTypeaheadCache(redisClient, config.ORG_REDIS.defaultTTL)
-csrsService.setCaches(orgCache, orgTypeaheadCache)
+const csrsProfileCache = new ProfileCache(redisClient, config.PROFILE_REDIS.defaultTTL)
+const gradeCache = new AnonymousCache(redisClient, config.GRADE_REDIS.defaultTTL, "grades", Grades)
+const areaOfWorkCache = new AnonymousCache(redisClient, config.AOW_REDIS.defaultTTL, "areasOfWork", AreasOfWork)
+const interestCache = new AnonymousCache(redisClient, config.INTEREST_REDIS.defaultTTL, "Interests", Interests)
+csrsService.setCaches(orgCache, orgTypeaheadCache, csrsProfileCache, gradeCache, areaOfWorkCache, interestCache)
 
 app.use(flash())
 
@@ -167,12 +187,16 @@ i18n.configure(app)
 
 app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
 
-app.use(lusca.csrf())
+const csrf = lusca.csrf()
+
+app.use((req, res, next) => {
+	if (!req.url.startsWith(backendServerPath)) {
+		csrf(req, res, next)
+	}
+})
 
 app.get('/', homeController.index)
-app.get('/sign-in', userController.signIn)
-app.get('/sign-out', asyncHandler(userController.signOut))
-app.get('/reset-password', userController.resetPassword)
+app.get('/sign-out', asyncHandler(passport.logout))
 
 app.get('/privacy', (req, res) => {
 	res.send(template.render('privacy', req, res))
@@ -200,38 +224,32 @@ app.get('/status', (req, res) => {
 	})
 })
 
-app.post('/feedback.record', asyncHandler(feedbackController.record))
-
 app.use(passport.isAuthenticated)
+app.use(asyncHandler(passport.logOutMiddleware))
 app.use(passport.hasRole('LEARNER'))
 
-if (config.PROFILE !== 'local') {
-	app.use(new ProfileChecker().checkProfile())
-}
+profileChecker.register(app)
 
 app.get('/api/video/complete', asyncHandler(completeVideoModule))
 
-app.get('/profile', userController.viewProfile)
+app.get('/profile', profileController.viewProfile)
 
-app.get('/profile/name', profileController.addName)
-app.post('/profile/name', asyncHandler(profileController.updateName))
-app.get('/profile/organisation', asyncHandler(profileController.addOrganisation))
-app.post('/profile/organisation', asyncHandler(profileController.updateOrganisation))
-app.get('/profile/profession', asyncHandler(profileController.addProfession))
-app.post('/profile/profession', asyncHandler(profileController.updateProfession))
-app.get('/profile/otherAreasOfWork', asyncHandler(profileController.addOtherAreasOfWork))
-app.post('/profile/otherAreasOfWork', asyncHandler(profileController.updateOtherAreasOfWork))
-app.get('/profile/interests', asyncHandler(profileController.addInterests))
-app.post('/profile/interests', asyncHandler(profileController.updateInterests))
-app.get('/profile/grade', asyncHandler(profileController.addGrade))
-app.post('/profile/grade', asyncHandler(profileController.updateGrade))
-app.get('/profile/lineManager', profileController.addLineManager)
-app.post('/profile/lineManager', asyncHandler(profileController.updateLineManager))
 app.get('/profile/email', profileController.addEmail)
 app.post('/profile/email', asyncHandler(profileController.updateEmail))
 
-app.get('/profile/:profileDetail', asyncHandler(userController.renderEditPage))
-app.post('/profile/:profileDetail', asyncHandler(userController.tryUpdateProfile))
+Object.values(ProfileEndpoint).forEach((profileEndpoint, i) => {
+	const endpoint = `/profile/${profileEndpoint.valueOf()}`
+	logger.info(`Registering endpoint ${endpoint}`)
+	app.get(endpoint, asyncHandler(async (req: express.Request, res: express.Response) => {
+		const middleware = await getGETProfileMiddleware(req, profileEndpoint as ProfileEndpoint)
+		await middleware(req, res)
+	}))
+
+	app.post(endpoint, async (req: express.Request, res: express.Response) => {
+		const middleware = await getPOSTProfileMiddleware(req, profileEndpoint as ProfileEndpoint)
+		await middleware(req, res)
+	})
+})
 
 app.get('/courses/:courseId',
 	asyncHandler(courseController.loadCourse),
@@ -297,5 +315,12 @@ if (require.main === module) {
 	})
 	server.setTimeout(config.SERVER_TIMEOUT_MS)
 }
+
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+		if (req.originalUrl.includes('favicon.ico')) {
+			res.status(204).end()
+		}
+		next()
+})
 
 module.exports = app

@@ -1,27 +1,24 @@
 <PageNoNav title="Enter your name" {_csrf}>
     <div class="container">
         <div class="grid-row">
-            <div class="column-full">
-
+            <div class="column-two-thirds">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Set up your profile</span>
                     <span class="heading-primary">Enter your name</span>
                 </h1>
-                {#if (error)}
-                <div class="error-summary" role="alert" aria-labelledby="name" tabindex="-1">
-                    <div class="error-message">Please enter your name.</div>
-                </div>
+                {#if (errors)}
+                    <Error errorHeading='Update failed'>
+                        {#each errors as error}
+                            <p class="error-message">{$i18n(error)}</p>
+                        {/each}
+                    </Error>
                 {/if}
                 <form autocomplete="off" method="post" action="/profile/name">
                     <div class="form-group">
-                        <fieldset>
-                            <label class="form-label" for="name">Name</label>
-                            <input class="form-control" id="name" name="name" type="text" value="{name || ''}">
-                        </fieldset>
+                        <label class="form-label" for="given-name">Name</label>
+                        <input class="form-control" id="given-name" name="given-name" type="text" {value}">
                     </div>
-
                     <input type="hidden" name="_csrf" value="{_csrf}">
-                    <input type="hidden" name="originalUrl" value="{originalUrl}">
                     <button type="submit" class="button">Continue</button>
                 </form>
             </div>
@@ -30,6 +27,7 @@
 </PageNoNav>
 <script>
 	import PageNoNav from '../../component/PageNoNav.html'
+	import Error from '../../component/Error.html'
 
 	export default {
 		data() {
@@ -38,7 +36,8 @@
 		},
 
 		components: {
-			PageNoNav
+			PageNoNav,
+			Error
 		}
 	}
 </script>

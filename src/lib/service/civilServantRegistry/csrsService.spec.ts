@@ -1,4 +1,6 @@
 import {expect} from 'chai'
+import {ProfileCache} from 'lib/service/civilServantRegistry/civilServant/profileCache'
+import {AnonymousCache} from 'lib/utils/anonymousCache'
 import * as sinon from 'sinon'
 
 import {AgencyToken, OrganisationalUnit, User} from '../../model'
@@ -19,7 +21,11 @@ function getOrg(orgName: string, id: number, parentId?: number) {
 
 describe('CsrsService tests', () => {
 	let orgUnitCache: sinon.SinonStubbedInstance<OrganisationalUnitCache>
+	let csrsProfileCache: sinon.SinonStubbedInstance<ProfileCache>
 	let orgTypeaheadCache: sinon.SinonStubbedInstance<OrganisationalUnitTypeaheadCache>
+	let gradeCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
+	let areaOfWorkCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
+	let interestCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
 	let organisationalUnitClientStub: sinon.SinonStubbedInstance<typeof organisationalUnitClient>
 	let user: sinon.SinonStubbedInstance<User>
 
@@ -27,9 +33,14 @@ describe('CsrsService tests', () => {
 		sinon.restore()
 		orgUnitCache = sinon.createStubInstance(OrganisationalUnitCache)
 		orgTypeaheadCache = sinon.createStubInstance(OrganisationalUnitTypeaheadCache)
+		csrsProfileCache = sinon.createStubInstance(ProfileCache)
+		gradeCache = sinon.createStubInstance(AnonymousCache)
+		areaOfWorkCache = sinon.createStubInstance(AnonymousCache)
+		interestCache = sinon.createStubInstance(AnonymousCache)
 		organisationalUnitClientStub = sinon.stub(organisationalUnitClient)
 		user = sinon.createStubInstance(User)
-		csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
+		csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any, csrsProfileCache as any,
+			gradeCache as any, areaOfWorkCache as any, interestCache as any)
 	})
 
 	describe('getOrganisation tests', () => {

@@ -1,6 +1,7 @@
 import assert = require("assert")
 import * as chai from 'chai'
-import * as registry from "lib/registry"
+import {AreasOfWork} from 'lib/service/civilServantRegistry/areaOfWork/areasOfWork'
+import * as csrsService from "lib/service/civilServantRegistry/csrsService"
 import * as skillsApi from "lib/service/skills"
 import * as template from 'lib/ui/template'
 import * as sinon from 'sinon'
@@ -1262,8 +1263,8 @@ describe('Skills middleware', () => {
 			const templateStub = sinon.stub(template, 'render').returns(null)
 
 			const apiStub = sinon.stub(skillsApi, 'getQuizHistory').returns(expectedQuizHistoryResponse)
-
-			const registryStub = sinon.stub(registry, 'halNode').returns(areasOfWorkRegistryHalMock)
+			const areasOfWork = new AreasOfWork(areasOfWorkRegistryHalMock as any, areasOfWorkRegistryHalMock as any)
+			const registryStub = sinon.stub(csrsService, 'getAreasOfWork').resolves(areasOfWork)
 
 			await quizHistory(req, res)
 
@@ -1312,8 +1313,8 @@ describe('Skills middleware', () => {
 			const templateStub = sinon.stub(template, 'render').returns(null)
 
 			const apiStub = sinon.stub(skillsApi, 'getQuizHistory').returns(emptyQuizHistoryResponse)
-
-			const registryStub = sinon.stub(registry, 'halNode').returns(areasOfWorkRegistryHalMock)
+			const areasOfWork = new AreasOfWork(areasOfWorkRegistryHalMock as any, areasOfWorkRegistryHalMock as any)
+			const registryStub = sinon.stub(csrsService, 'getAreasOfWork').resolves(areasOfWork)
 
 			await quizHistory(req, res)
 

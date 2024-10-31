@@ -25,10 +25,10 @@ describe('requiresDepartmentHierarchy tests', () => {
 		const request = mockReq({
 			originalUrl: '/suggestions-for-you',
 			user: {
-				departmentId: 123,
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
+					id: 123,
 					name: 'Cabinet Office',
 					paymentMethods: [],
 				},
@@ -59,15 +59,18 @@ describe('requiresDepartmentHierarchy tests', () => {
 				},
 			},
 			user: {
-				departmentId: 123,
+				accessToken: '123',
 				givenName: 'Test User',
+				id: 1,
 				organisationalUnit: {
 					code: 'co',
+					id: 123,
 					name: 'Cabinet Office',
 					paymentMethods: [],
 				},
 			},
 		})
+		const profile = {}
 		request.session!.save = callback => {
 			callback(undefined)
 		}
@@ -75,8 +78,9 @@ describe('requiresDepartmentHierarchy tests', () => {
 		const response = mockRes()
 		const next = sinon.stub()
 		csrsServiceStub.getOrgHierarchy.withArgs(123).throws(new ResourceNotFoundError('organisation unit not found'))
+		csrsServiceStub.fetchProfile.withArgs(1, '123').resolves(profile as any)
 		await requiresDepartmentHierarchy(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/suggestions-for-you')
+		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation')
 	})
 })

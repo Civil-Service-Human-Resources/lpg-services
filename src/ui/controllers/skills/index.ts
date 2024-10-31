@@ -1,6 +1,6 @@
 import * as express from 'express'
 import * as model from 'lib/model'
-import * as registry from 'lib/registry'
+import {getAreasOfWork} from 'lib/service/civilServantRegistry/csrsService'
 import * as skillsApi from 'lib/service/skills'
 
 import {
@@ -20,12 +20,12 @@ import {formatAnswerSubmissionDate, saveSession} from './helpers'
 
 export async function introduction(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
-	if (!user.areasOfWork || !user.organisationalUnit!.id) {
+	if (!user.areaOfWork || !user.organisationalUnit!.id) {
 		showQuizScreen(req, res, false)
 		return
 	}
 
-	const quizMetadata: QuizMetadata = await skillsApi.getQuizMetadata(user.areasOfWork.id, user)
+	const quizMetadata: QuizMetadata = await skillsApi.getQuizMetadata(user.areaOfWork.id, user)
 
 	if (quizMetadata.numberOfQuestions === undefined || quizMetadata.numberOfQuestions < 18) {
 		showQuizScreen(req, res, false)
@@ -65,11 +65,11 @@ export async function startQuiz(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
 	const requestQuiz: Quiz = req.session!.quiz
 
-	if (!user.areasOfWork) {
+	if (!user.areaOfWork) {
 		showQuizScreen(req, res, false)
 		return
 	}
-	const professionId = user.areasOfWork.id
+	const professionId = user.areaOfWork.id
 	// @ts-ignore
 	if (!user.areasOfWork) {
 		showQuizScreen(req, res, false)
@@ -228,14 +228,13 @@ export async function quizHistory(req: express.Request, res: express.Response) {
 	}
 	let answerSubmissions: AnswerSubmission[] = quizResultHistory.quizResultDto
 
-	const allAreasOfWork = await registry.halNode('professions')
+	const allAreasOfWork = (await getAreasOfWork(req.user)).list
 
 	/* tslint:disable-next-line */
 	let areaOfWorkKeys: AreaOfWorkKeysInterface = {}
 
 	for (const areaOfWork of allAreasOfWork) {
-		const key = areaOfWork.id
-		areaOfWorkKeys[key] = areaOfWork.name
+		areaOfWorkKeys[areaOfWork.id] = areaOfWork.name
 	}
 
 	answerSubmissions = formatAnswerSubmissionDate(answerSubmissions)

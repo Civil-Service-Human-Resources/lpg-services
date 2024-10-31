@@ -1,5 +1,7 @@
-import {IdentityDetails} from 'lib/identity'
+import {plainToInstance} from 'class-transformer'
 import {User} from 'lib/model'
+import {Profile} from 'lib/registry'
+import {PatchCivilServant} from 'lib/service/civilServantRegistry/models/patchCivilServant'
 import {client} from '../config'
 
 const URL = 'civilServants'
@@ -12,8 +14,27 @@ export async function patchCivilServantOrganisation(user: User, organisationalUn
 	}, user)
 }
 
-export async function performLoginCheck(user: User, identityDto: IdentityDetails) {
-	await client._post({
+export async function checkAndUpdateLineManager(user: User, lineManagerEmail: string): Promise<Profile> {
+	const resp = await client._patch<null, Profile>({
+		params: {
+			email: lineManagerEmail,
+		},
+		url: `${URL}/manager`,
+	}, null, user)
+	return plainToInstance(Profile, resp)
+}
+
+export async function loginAndFetchProfile(accessToken: string): Promise<Profile> {
+	const resp = await client.makeRawRequest<Profile>({
+		data: {},
+		method: 'POST',
 		url: `${URL}/me/login`,
-	}, identityDto, user)
+	}, accessToken)
+	return plainToInstance(Profile, resp)
+}
+
+export async function patchCivilServant(user: User, update: PatchCivilServant) {
+	await client._patch({
+		url: `${URL}/${user.userId}`,
+	}, update.getAsApiParams(), user)
 }

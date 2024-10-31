@@ -1,0 +1,43 @@
+<Page title="Change your {$i18n('profile_given-name_label').toLowerCase()}" {_csrf}>
+    <div class="profile-container container">
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <p class="no-margin">
+                    <a class="link-back" href="/profile">Back</a>
+                </p>
+                <h1 class="heading-large"><span class="heading-primary">Your {$i18n('profile_given-name_label').toLowerCase()}</span></h1>
+                {#if (errors)}
+                    <Error errorHeading='Update failed'>
+                        {#each errors as error}
+                            <p class="error-message">{$i18n(error)}</p>
+                        {/each}
+                    </Error>
+                {/if}
+                <form autocomplete="off" method="post" action="/profile/name">
+                    <div class="form-group">
+                        <label class="form-label" for="given-name">New {$i18n('profile_given-name_label').toLowerCase()}</label>
+                        <input class="form-control" id="given-name" name="given-name" {value} type="text">
+                    </div>
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <button type="submit" class="button">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+	import Page from '../../../component/Page.html'
+	import Error from '../../../component/Error.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			Error
+		}
+	}
+</script>
