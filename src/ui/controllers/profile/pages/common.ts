@@ -17,7 +17,6 @@ export enum ProfileEndpoint {
 export async function validate<T extends ValidPageModel>(
 	classConstructor: ClassConstructor<T>, body: any) {
 	const pageModel = plainToInstance(classConstructor, body)
-	console.log(pageModel)
 	await pageModel.validate()
 	return pageModel
 }
@@ -39,7 +38,7 @@ export function getSubmitProfilePageMiddleware<T extends ValidPageModel>(
 export interface ProfileSetupDetails {
 	required: boolean,
 	userHasSet: (user: User) => boolean,
-	nextPage?: ProfileEndpoint,
+	nextPage?: ProfilePageSpecification,
 }
 
 export interface ProfilePageSpecification {
@@ -81,8 +80,8 @@ pageSpec: ProfilePageSpecification, user: User, setupOriginalUrl?: string): Page
 	let redirect: (req: express.Request, res: express.Response) => void
 	console.log(setupOriginalUrl)
 	if (userSetup) {
-		if (pageSpec.setupDetails.nextPage) {
-			redirect = generateRedirectMiddleware(`/profile/${pageSpec.setupDetails.nextPage}`)
+		if (pageSpec.setupDetails.nextPage && !pageSpec.setupDetails.nextPage.setupDetails.userHasSet(user)) {
+			redirect = generateRedirectMiddleware(`/profile/${pageSpec.setupDetails.nextPage.pageEndpoint}`)
 		} else {
 			redirect = redirectToProfileSetup()
 		}

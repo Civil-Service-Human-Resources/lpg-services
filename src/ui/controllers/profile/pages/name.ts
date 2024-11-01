@@ -4,13 +4,14 @@ import {patchCivilServantName} from 'lib/service/civilServantRegistry/csrsServic
 import * as template from 'lib/ui/template'
 import {GivenNamePageModel} from '../models/givenNamePageModel'
 import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {organisationPage} from './organisation'
 
 export const namePage: ProfilePageSpecification = {
 	get: getRenderGivenNamePage,
 	pageEndpoint: ProfileEndpoint.name,
 	post: confirmNameMiddleware,
 	setupDetails: {
-		nextPage: ProfileEndpoint.organisation,
+		nextPage: organisationPage,
 		required: true,
 		userHasSet: (user: User) => {
 			return user.givenName !== undefined

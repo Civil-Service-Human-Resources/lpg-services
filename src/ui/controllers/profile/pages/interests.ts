@@ -8,13 +8,14 @@ import {keysToOptions} from '../../../model/option'
 import {CreateInterestsPageModel} from '../models/interests/createInterestsPageModel'
 import {EditInterestsPageModel} from '../models/interests/editInterestsPageModel'
 import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {gradePage} from './grade'
 
 export const interestsPage: ProfilePageSpecification = {
 	get: getRenderInterestsPage,
 	pageEndpoint: ProfileEndpoint.interests,
 	post: selectInterestsMiddleware,
 	setupDetails: {
-		nextPage: ProfileEndpoint.grade,
+		nextPage: gradePage,
 		required: false,
 		userHasSet: (user: User) => {
 			return user.interests !== undefined

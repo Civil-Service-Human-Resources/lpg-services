@@ -5,13 +5,14 @@ import * as template from 'lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {GradePageModel} from '../models/gradePageModel'
 import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {lineManagerPage} from './lineManager'
 
 export const gradePage: ProfilePageSpecification = {
 	get: getRenderGradePage,
 	pageEndpoint: ProfileEndpoint.grade,
 	post: confirmGradeMiddleware,
 	setupDetails: {
-		nextPage: ProfileEndpoint.lineManager,
+		nextPage: lineManagerPage,
 		required: false,
 		userHasSet: (user: User) => {
 			return user.grade !== undefined

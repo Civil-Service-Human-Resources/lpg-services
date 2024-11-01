@@ -6,13 +6,14 @@ import * as template from 'lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {AreaOfWorkPageModel} from '../models/areaOfWorkPageModel'
 import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {organisationPage} from './organisation'
 
 export const areaOfWorkPage: ProfilePageSpecification = {
 	get: getRenderAreaOfWorkSelectionPage,
 	pageEndpoint: ProfileEndpoint.primaryAreaOfWork,
 	post: selectAreaOfWorkMiddleware,
 	setupDetails: {
-		nextPage: ProfileEndpoint.otherAreasOfWork,
+		nextPage: organisationPage,
 		required: true,
 		userHasSet: (user: User) => {
 			return user.areaOfWork !== undefined

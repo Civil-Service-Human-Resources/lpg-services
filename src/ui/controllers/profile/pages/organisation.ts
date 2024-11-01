@@ -4,6 +4,7 @@ import {getAllOrganisationUnits, patchCivilServantOrganisationUnit} from 'lib/se
 import * as template from 'lib/ui/template'
 import {organisationsToOptions} from '../../../model/option'
 import {OrganisationPageModel} from '../models/organisationPageModel'
+import {areaOfWorkPage} from './areaOfWork'
 import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 
 export const organisationPage: ProfilePageSpecification = {
@@ -11,7 +12,7 @@ export const organisationPage: ProfilePageSpecification = {
 	pageEndpoint: ProfileEndpoint.organisation,
 	post: selectOrganisationsMiddleware,
 	setupDetails: {
-		nextPage: ProfileEndpoint.primaryAreaOfWork,
+		nextPage: areaOfWorkPage,
 		required: true,
 		userHasSet: (user: User) => {
 			return user.organisationalUnit !== undefined

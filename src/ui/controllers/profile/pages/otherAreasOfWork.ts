@@ -7,13 +7,14 @@ import _ = require('lodash')
 import {keysToOptions} from '../../../model/option'
 import {OtherAreasOfWorkPageModel} from '../models/otherAreasOfWorkPageModel'
 import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {interestsPage} from './interests'
 
 export const otherAreasOfWorkPage: ProfilePageSpecification = {
 	get: getRenderOtherAreasOfWorkSelectionPage,
 	pageEndpoint: ProfileEndpoint.otherAreasOfWork,
 	post: selectOtherAreasOfWorkMiddleware,
 	setupDetails: {
-		nextPage: ProfileEndpoint.interests,
+		nextPage: interestsPage,
 		required: true,
 		userHasSet: (user: User) => {
 			return (user.otherAreasOfWork !== undefined && user.otherAreasOfWork.length > 0)
