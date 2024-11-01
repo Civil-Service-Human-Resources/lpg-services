@@ -1,3 +1,4 @@
+import {ClassConstructor, plainToInstance} from 'class-transformer'
 import * as express from 'express'
 
 export class MessageFlash {
@@ -14,4 +15,20 @@ export function generateRedirectMiddleware(url: string, messageFlash?: MessageFl
 			res.redirect(url)
 		})
 	}
+}
+
+export class SessionableObjectService<T> {
+	constructor(public key: string, public clazz: ClassConstructor<T>) { }
+	fetchObjectFromSession(req: express.Request) {
+		return plainToInstance(this.clazz, req.session![this.key] as T)
+	}
+
+	saveObjectToSession(req: express.Request, object: T) {
+		req.session![this.key] = object
+	}
+
+	deleteObjectFromSession(req: express.Request) {
+		delete req.session![this.key]
+	}
+
 }

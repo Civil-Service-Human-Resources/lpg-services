@@ -5,7 +5,7 @@ import {patchCivilServantLineManager} from 'lib/service/civilServantRegistry/csr
 import * as template from 'lib/ui/template'
 import {CreateLineManagerPageModel} from '../models/lineManager/createLineManagerPageModel'
 import {EditLineManagerPageModel} from '../models/lineManager/editLineManagerPageModel'
-import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 
 export const lineManagerPage: ProfilePageSpecification = {
 	get: getRenderLineManagerPage,
@@ -57,6 +57,6 @@ export function confirmLineManagerMiddleware(behaviour: PageBehaviour) {
 				return res.send(template.render(behaviour.templateName, req, res, pageModel))
 			}
 		}
-		return behaviour.redirect(req, res)
+		return generateRedirect(lineManagerPage, req)(req, res)
 	}
 }

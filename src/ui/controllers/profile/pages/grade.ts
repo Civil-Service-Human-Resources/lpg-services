@@ -4,7 +4,7 @@ import {getGrades, patchCivilServantGrade} from 'lib/service/civilServantRegistr
 import * as template from 'lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {GradePageModel} from '../models/gradePageModel'
-import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 import {lineManagerPage} from './lineManager'
 
 export const gradePage: ProfilePageSpecification = {
@@ -49,6 +49,6 @@ export function confirmGradeMiddleware(behaviour: PageBehaviour) {
 			const grade = grades.fetchOne(pageModel.grade)
 			await patchCivilServantGrade(user, grade)
 		}
-		return behaviour.redirect(req, res)
+		return generateRedirect(gradePage, req)(req, res)
 	}
 }

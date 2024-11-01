@@ -6,7 +6,7 @@ import * as template from 'lib/ui/template'
 import _ = require('lodash')
 import {keysToOptions} from '../../../model/option'
 import {OtherAreasOfWorkPageModel} from '../models/otherAreasOfWorkPageModel'
-import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 import {interestsPage} from './interests'
 
 export const otherAreasOfWorkPage: ProfilePageSpecification = {
@@ -52,6 +52,6 @@ export function selectOtherAreasOfWorkMiddleware(behaviour: PageBehaviour) {
 			const selectedAreasOfWork = areasOfWork.fetchWithIds(pageModel.otherAreasOfWork)
 			await patchCivilServantOtherAreasOfWork(user, selectedAreasOfWork)
 		}
-		return behaviour.redirect(req, res)
+		return generateRedirect(otherAreasOfWorkPage, req)(req, res)
 	}
 }

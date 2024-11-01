@@ -5,17 +5,18 @@ import {getAreasOfWork, patchCivilServantProfession} from 'lib/service/civilServ
 import * as template from 'lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {AreaOfWorkPageModel} from '../models/areaOfWorkPageModel'
-import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
-import {organisationPage} from './organisation'
+import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {otherAreasOfWorkPage} from './otherAreasOfWork'
 
 export const areaOfWorkPage: ProfilePageSpecification = {
 	get: getRenderAreaOfWorkSelectionPage,
 	pageEndpoint: ProfileEndpoint.primaryAreaOfWork,
 	post: selectAreaOfWorkMiddleware,
 	setupDetails: {
-		nextPage: organisationPage,
+		nextPage: otherAreasOfWorkPage,
 		required: true,
 		userHasSet: (user: User) => {
+			console.log(user.areaOfWork)
 			return user.areaOfWork !== undefined
 		},
 	},
@@ -61,6 +62,6 @@ export function selectAreaOfWorkMiddleware(behaviour: PageBehaviour) {
 			}
 			await patchCivilServantProfession(user, areaOfWork)
 		}
-		return behaviour.redirect(req, res)
+		return generateRedirect(areaOfWorkPage, req)(req, res)
 	}
 }

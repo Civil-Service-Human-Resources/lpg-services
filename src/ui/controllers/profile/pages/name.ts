@@ -3,7 +3,7 @@ import {User} from 'lib/model'
 import {patchCivilServantName} from 'lib/service/civilServantRegistry/csrsService'
 import * as template from 'lib/ui/template'
 import {GivenNamePageModel} from '../models/givenNamePageModel'
-import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 import {organisationPage} from './organisation'
 
 export const namePage: ProfilePageSpecification = {
@@ -38,6 +38,6 @@ export function confirmNameMiddleware(behaviour: PageBehaviour) {
 		if (userGivenName !== pageModel.value) {
 			await patchCivilServantName(user, pageModel.value)
 		}
-		return behaviour.redirect(req, res)
+		return generateRedirect(namePage, req)(req, res)
 	}
 }

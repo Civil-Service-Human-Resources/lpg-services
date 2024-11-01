@@ -2,7 +2,7 @@ import {ClassConstructor, plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import {User} from 'lib/model'
 import {ValidPageModel} from '../../models/ValidPageModel'
-import {generateRedirectMiddleware, MessageFlash} from '../../utils'
+import {generateRedirectMiddleware, MessageFlash, SessionableObjectService} from '../../utils'
 
 export enum ProfileEndpoint {
 	name = 'name',
@@ -24,14 +24,16 @@ export async function validate<T extends ValidPageModel>(
 export function getRenderProfilePageMiddleware(
 	pageSpec: ProfilePageSpecification, req: express.Request) {
 	const user: User = req.user
-	const behaviour = generateProfilePageBehaviour(pageSpec, user, req.session!.profileOriginalUrl)
+	const session = profileSessionObjectService.fetchObjectFromSession(req)
+	const behaviour = generateProfilePageBehaviour(pageSpec, user, session)
 	return pageSpec.get(behaviour)
 }
 
 export function getSubmitProfilePageMiddleware<T extends ValidPageModel>(
 	pageSpec: ProfilePageSpecification, req: express.Request): (req: express.Request, res: express.Response) => void {
 	const user: User = req.user
-	const behaviour = generateProfilePageBehaviour(pageSpec, user, req.session!.profileOriginalUrl)
+	const session = profileSessionObjectService.fetchObjectFromSession(req)
+	const behaviour = generateProfilePageBehaviour(pageSpec, user, session)
 	return pageSpec.post(behaviour)
 }
 
@@ -52,7 +54,6 @@ export interface ProfilePageSpecification {
 
 export interface PageBehaviour {
 	templateName: string,
-	redirect: (req: express.Request, res: express.Response) => void,
 	userSetup: boolean
 }
 
@@ -62,31 +63,43 @@ export function redirectToProfileSuccess() {
 
 export function redirectToProfileSetup() {
 	return (req: express.Request, res: express.Response) => {
-		const originalUrl = req.session!.profileOriginalUrl
-		if (originalUrl !== undefined) {
-			delete req.session!.profileOriginalUrl
+		const profileSession = profileSessionObjectService.fetchObjectFromSession(req)
+		let redirectTo = '/home'
+		if (profileSession.originalUrl !== undefined) {
+			redirectTo = profileSession.originalUrl
 		}
-		const redirectTo = originalUrl ? originalUrl : '/home'
+		profileSessionObjectService.deleteObjectFromSession(req)
 		res.redirect(redirectTo)
 	}
 }
 
+export class ProfileSession {
+	constructor(public firstTimeSetup: boolean, public originalUrl?: string) {
+	}
+}
+
+export const profileSessionObjectService =
+	new SessionableObjectService('profileSetup', ProfileSession)
+
+export function generateRedirect(
+	pageSpec: ProfilePageSpecification, req: express.Request):
+	(req: express.Request, res: express.Response) => void {
+	const profileSession: ProfileSession = profileSessionObjectService.fetchObjectFromSession(req)
+	const nextPageDetails = pageSpec.setupDetails.nextPage
+	if (profileSession.firstTimeSetup) {
+		if (nextPageDetails !== undefined) {
+			return generateRedirectMiddleware(`/profile/${nextPageDetails.pageEndpoint}`)
+		}
+		return redirectToProfileSetup()
+	}
+	return redirectToProfileSuccess()
+}
+
 export function generateProfilePageBehaviour(
-pageSpec: ProfilePageSpecification, user: User, setupOriginalUrl?: string): PageBehaviour {
+pageSpec: ProfilePageSpecification, user: User, profileSession: ProfileSession): PageBehaviour {
 	const userSetup = (pageSpec.setupDetails.required && !pageSpec.setupDetails.userHasSet(user)) ||
-		(setupOriginalUrl !== undefined)
+		(profileSession.firstTimeSetup)
 	const templateDir = userSetup ? '/profile' : '/profile/edit'
 	const templateName = `${templateDir}/${pageSpec.template}`
-	let redirect: (req: express.Request, res: express.Response) => void
-	console.log(setupOriginalUrl)
-	if (userSetup) {
-		if (pageSpec.setupDetails.nextPage && !pageSpec.setupDetails.nextPage.setupDetails.userHasSet(user)) {
-			redirect = generateRedirectMiddleware(`/profile/${pageSpec.setupDetails.nextPage.pageEndpoint}`)
-		} else {
-			redirect = redirectToProfileSetup()
-		}
-	} else {
-		redirect = redirectToProfileSuccess()
-	}
-	return {redirect, templateName, userSetup}
+	return {templateName, userSetup}
 }

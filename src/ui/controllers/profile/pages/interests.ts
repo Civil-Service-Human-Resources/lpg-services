@@ -7,7 +7,7 @@ import _ = require('lodash')
 import {keysToOptions} from '../../../model/option'
 import {CreateInterestsPageModel} from '../models/interests/createInterestsPageModel'
 import {EditInterestsPageModel} from '../models/interests/editInterestsPageModel'
-import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 import {gradePage} from './grade'
 
 export const interestsPage: ProfilePageSpecification = {
@@ -55,6 +55,6 @@ export function selectInterestsMiddleware(behaviour: PageBehaviour) {
 			const selectedInterests = interests.fetchWithIds(pageModel.interestIds)
 			await patchCivilServantInterests(user, selectedInterests)
 		}
-		return behaviour.redirect(req, res)
+		return generateRedirect(interestsPage, req)(req, res)
 	}
 }

@@ -5,7 +5,7 @@ import * as template from 'lib/ui/template'
 import {organisationsToOptions} from '../../../model/option'
 import {OrganisationPageModel} from '../models/organisationPageModel'
 import {areaOfWorkPage} from './areaOfWork'
-import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
+import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 
 export const organisationPage: ProfilePageSpecification = {
 	get: getRenderOrganisationsPage,
@@ -49,6 +49,6 @@ export function selectOrganisationsMiddleware(behaviour: PageBehaviour) {
 		if (userOrganisation !== pageModel.organisation) {
 			await patchCivilServantOrganisationUnit(user, pageModel.organisation)
 		}
-		return behaviour.redirect(req, res)
+		return generateRedirect(organisationPage, req)(req, res)
 	}
 }
