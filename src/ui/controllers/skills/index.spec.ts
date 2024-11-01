@@ -1220,7 +1220,8 @@
 // 			await quizSummary(req, res)
 //
 // 			assert(res.send.callCount === 1)
-// 			assert(templateStub.calledWith('skills/quiz-summary', req, res, {answerSubmission: expectedResultSummaryResponse}))
+// 			assert(templateStub.calledWith('skills/quiz-summary',
+// 			req, res, {answerSubmission: expectedResultSummaryResponse}))
 // 			assert(templateStub.calledOnce)
 // 			templateStub.restore()
 // 			apiStub.restore()
