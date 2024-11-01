@@ -22,7 +22,7 @@ function getMiddleware(requiredSections: ProfilePageSpecification[]) {
 		let profileSession = profileSessionObjectService.fetchObjectFromSession(req)
 		if (profileSession === undefined) {
 			const firstTimeSetup = requiredSections
-				.filter(rs => !rs.setupDetails.userHasSet(user)).length === requiredSections.length
+				.filter(rs => !rs.setupDetails.userHasSet(user)).length > 1
 			console.log(`First time setup: ${firstTimeSetup}`)
 			profileSession = new ProfileSession(firstTimeSetup)
 			profileSessionObjectService.saveObjectToSession(req, profileSession)
