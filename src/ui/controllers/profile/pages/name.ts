@@ -2,7 +2,7 @@ import * as express from 'express'
 import {User} from 'lib/model'
 import {patchCivilServantName} from 'lib/service/civilServantRegistry/csrsService'
 import * as template from 'lib/ui/template'
-import {GivenNamePageModel} from '../models/GivenNamePageModel'
+import {GivenNamePageModel} from '../models/givenNamePageModel'
 import {PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
 
 export const namePage: ProfilePageSpecification = {
