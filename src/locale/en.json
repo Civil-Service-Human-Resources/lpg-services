@@ -303,7 +303,7 @@
 		"passwordNotMetReq": "Password did not meet requirements",
 		"lineManagerConfirmation": "Line manager email does not match the confirmation.",
 		"lineManagerInvalid": "Line manager email is not valid",
-		"lineManagerMissing": "Your line manager's email address must be associated with a Civil Service Learning profile.",
+		"lineManagerMissing": "Your line manager has not fully completed their profile. Please contact your line manager.",
 		"lineManagerIsUser": "You may not be your own line manager",
 		"po-empty": "Enter a purchase order number",
 		"po-too-short": "A purchase order number must be longer than 2 characters",
