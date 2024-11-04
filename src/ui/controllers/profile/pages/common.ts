@@ -74,7 +74,7 @@ export function redirectToProfileSetup() {
 }
 
 export class ProfileSession {
-	constructor(public firstTimeSetup: boolean, public originalUrl?: string) {
+	constructor(public firstTimeSetup: boolean = false, public originalUrl?: string) {
 	}
 }
 
