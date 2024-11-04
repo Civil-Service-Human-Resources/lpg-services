@@ -38,7 +38,7 @@ describe('Profile checker tests', () => {
 		const user = createUser()
 		const result = runMiddleware(user)
 		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/name')
-		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)!
 		expect(sessionObject.firstTimeSetup).to.eql(true)
 		expect(sessionObject.originalUrl).to.eql('/home')
 	})
@@ -46,7 +46,7 @@ describe('Profile checker tests', () => {
 		const user = createUser('name')
 		const result = runMiddleware(user)
 		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/organisation')
-		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)!
 		expect(sessionObject.firstTimeSetup).to.eql(true)
 		expect(sessionObject.originalUrl).to.eql('/home')
 	})
@@ -54,7 +54,7 @@ describe('Profile checker tests', () => {
 		const user = createUser('name', new OrganisationalUnit())
 		const result = runMiddleware(user)
 		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/primary-area-of-work')
-		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)!
 		expect(sessionObject.firstTimeSetup).to.eql(true)
 		expect(sessionObject.originalUrl).to.eql('/home')
 	})
@@ -62,7 +62,7 @@ describe('Profile checker tests', () => {
 		const user = createUser('name', new OrganisationalUnit(), new AreaOfWork(1, ''))
 		const result = runMiddleware(user)
 		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/other-areas-of-work')
-		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)!
 		expect(sessionObject.firstTimeSetup).to.eql(false)
 		expect(sessionObject.originalUrl).to.eql('/home')
 	})
@@ -79,7 +79,7 @@ describe('Profile checker tests', () => {
 		const user = createUser()
 		const result = runMiddleware(user, '/profile/name')
 		expect(result.res.redirect.notCalled).to.eql(true)
-		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)!
 		expect(sessionObject.firstTimeSetup).to.eql(true)
 		expect(sessionObject.originalUrl).to.eql(undefined)
 	})

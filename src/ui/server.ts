@@ -228,8 +228,6 @@ app.use(passport.isAuthenticated)
 app.use(asyncHandler(passport.logOutMiddleware))
 app.use(passport.hasRole('LEARNER'))
 
-profileChecker.register(app)
-
 app.get('/api/video/complete', asyncHandler(completeVideoModule))
 
 app.get('/profile', profileController.viewProfile)
@@ -315,6 +313,8 @@ if (require.main === module) {
 	})
 	server.setTimeout(config.SERVER_TIMEOUT_MS)
 }
+
+profileChecker.register(app)
 
 app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
 		if (req.originalUrl.includes('favicon.ico')) {

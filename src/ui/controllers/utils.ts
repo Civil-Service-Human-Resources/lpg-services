@@ -19,7 +19,7 @@ export function generateRedirectMiddleware(url: string, messageFlash?: MessageFl
 
 export class SessionableObjectService<T> {
 	constructor(public key: string, public clazz: ClassConstructor<T>) { }
-	fetchObjectFromSession(req: express.Request) {
+	fetchObjectFromSession(req: express.Request): T | undefined {
 		return plainToInstance(this.clazz, req.session![this.key] as T)
 	}
 

@@ -65,7 +65,7 @@ export function redirectToProfileSetup() {
 	return (req: express.Request, res: express.Response) => {
 		const profileSession = profileSessionObjectService.fetchObjectFromSession(req)
 		let redirectTo = '/home'
-		if (profileSession.originalUrl !== undefined) {
+		if (profileSession && profileSession.originalUrl !== undefined) {
 			redirectTo = profileSession.originalUrl
 		}
 		profileSessionObjectService.deleteObjectFromSession(req)
@@ -84,9 +84,9 @@ export const profileSessionObjectService =
 export function generateRedirect(
 	pageSpec: ProfilePageSpecification, req: express.Request):
 	(req: express.Request, res: express.Response) => void {
-	const profileSession: ProfileSession = profileSessionObjectService.fetchObjectFromSession(req)
+	const profileSession = profileSessionObjectService.fetchObjectFromSession(req)
 	const nextPageDetails = pageSpec.setupDetails.nextPage
-	if (profileSession.firstTimeSetup) {
+	if (profileSession && profileSession.firstTimeSetup) {
 		if (nextPageDetails !== undefined) {
 			return generateRedirectMiddleware(`/profile/${nextPageDetails.pageEndpoint}`)
 		}
@@ -96,9 +96,9 @@ export function generateRedirect(
 }
 
 export function generateProfilePageBehaviour(
-pageSpec: ProfilePageSpecification, user: User, profileSession: ProfileSession): PageBehaviour {
+pageSpec: ProfilePageSpecification, user: User, profileSession?: ProfileSession): PageBehaviour {
 	const userSetup = (pageSpec.setupDetails.required && !pageSpec.setupDetails.userHasSet(user)) ||
-		(profileSession.firstTimeSetup)
+		(profileSession && profileSession.firstTimeSetup) || false
 	const templateDir = userSetup ? '/profile' : '/profile/edit'
 	const templateName = `${templateDir}/${pageSpec.template}`
 	return {templateName, userSetup}
