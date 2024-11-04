@@ -34,7 +34,9 @@ export function getMiddleware(requiredSections: ProfilePageSpecification[]) {
 			profileSessionObjectService.deleteObjectFromSession(req)
 			return next()
 		}
-		profileSession = new ProfileSession()
+		if (!profileSession) {
+			profileSession = new ProfileSession()
+		}
 		if (missingSections > 0) {
 			if (missingSections > 1) {
 				profileSession.firstTimeSetup = true

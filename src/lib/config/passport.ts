@@ -88,9 +88,7 @@ export function configure(
 }
 
 export function isAuthenticated(req: express.Request, res: express.Response, next: express.NextFunction) {
-	console.log("ISAUTH")
 	const authenticated = req.isAuthenticated()
-	console.log(authenticated)
 
 	if (authenticated) {
 		const token: any = jwt.decode(req.user.accessToken)
@@ -110,7 +108,6 @@ export function isAuthenticated(req: express.Request, res: express.Response, nex
 export async function logOutMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
 	const user = req.user as User
 	if (user.uiShouldLogout) {
-		console.log("Log out flag found")
 		await logout(req, res)
 	} else {
 		next()

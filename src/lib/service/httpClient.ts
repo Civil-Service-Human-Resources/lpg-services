@@ -48,7 +48,6 @@ export class HttpClient {
 		let logMsg = `${req.method} request to ${fullUrl}`
 		if (req.data) {
 			const stringedData = JSON.stringify(req.data)
-			console.log(stringedData)
 			logMsg += ` Data: ${stringedData}`
 		}
 		if (req.params) {

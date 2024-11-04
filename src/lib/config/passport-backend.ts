@@ -9,14 +9,12 @@ export function configureAPI(jwtKey: string, app: express.Router) {
 		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 		secretOrKey: jwtKey,
 	}, (jwtPayload: any, done) => {
-		console.log(jwtPayload)
 		return done(null, jwtPayload)
 	})
 
 	passportApi.use(jwtStrategy)
 
 	app.all('*', passportApi.authenticate('jwt', {session: false}), (req, res, next) => {
-		console.log("Passport")
 		next()
 	})
 }

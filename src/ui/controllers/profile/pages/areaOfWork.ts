@@ -16,7 +16,6 @@ export const areaOfWorkPage: ProfilePageSpecification = {
 		nextPage: otherAreasOfWorkPage,
 		required: true,
 		userHasSet: (user: User) => {
-			console.log(user.areaOfWork)
 			return user.areaOfWork !== undefined
 		},
 	},

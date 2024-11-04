@@ -34,7 +34,6 @@ async function getPageModel(user: User) {
 export function getRenderInterestsPage(behaviour: PageBehaviour) {
 	return async (req: express.Request, res: express.Response) => {
 		const model = await getPageModel(req.user)
-		console.log(model)
 		return res.send(template.render(behaviour.templateName, req, res, model))
 	}
 }

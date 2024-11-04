@@ -1,5 +1,8 @@
 import {ClassConstructor, plainToInstance} from 'class-transformer'
 import * as express from 'express'
+import {getLogger} from 'lib/logger'
+
+const logger = getLogger("Utils")
 
 export class MessageFlash {
 	constructor(public event: string, public message: string) {
@@ -28,6 +31,7 @@ export class SessionableObjectService<T> {
 	}
 
 	deleteObjectFromSession(req: express.Request) {
+		logger.debug(`Deleting session object with key '${this.key}'`)
 		delete req.session![this.key]
 	}
 

@@ -27,7 +27,6 @@ export class PatchCivilServant {
 		if (this.otherAreasOfWork && this.otherAreasOfWork.length > 0) {
 			params.otherAreasOfWork = this.otherAreasOfWork.map(p => `/professions/${p.getId()}`)
 		}
-		console.log(params)
 		return params
 	}
 }
