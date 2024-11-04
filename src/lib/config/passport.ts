@@ -147,8 +147,9 @@ export async function logout(
 		const redirectTo = req.user.isAdmin() && profile.managementLoggedIn ?
 			config.LPG_MANAGEMENT_URL + "/sign-out" : config.AUTHENTICATION.serviceUrl + config.AUTHENTICATION.endpoints.logout
 		await removeProfileFromCache(req.user.id)
-		req.logout()
-		res.redirect(redirectTo)
+		req.session!.destroy(() => {
+			res.redirect(redirectTo)
+		})
 	} else {
 		res.redirect(config.LPG_UI_SERVER)
 	}
