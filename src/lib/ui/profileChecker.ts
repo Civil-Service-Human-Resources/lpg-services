@@ -29,25 +29,29 @@ export function getMiddleware(requiredSections: ProfilePageSpecification[]) {
 				}
 			}
 		}
-		if (missingSections === 0) {
-			profileSessionObjectService.deleteObjectFromSession(req)
-			return next()
-		}
 		let profileSession = profileSessionObjectService.fetchObjectFromSession(req)
-		if (profileSession === undefined) {
-			profileSession = new ProfileSession()
-		}
-		if (missingSections > 1) {
-			profileSession.firstTimeSetup = true
-		}
-		if (redirect !== undefined && req.url !== redirect) {
-			if (profileSession.originalUrl === undefined) {
-				profileSession.originalUrl = req.originalUrl
-				profileSessionObjectService.saveObjectToSession(req, profileSession)
+		console.log(profileSession)
+		if (profileSession !== undefined) {
+			if (missingSections === 0 && !profileSession.firstTimeSetup) {
+				profileSessionObjectService.deleteObjectFromSession(req)
+				return next()
 			}
-			return res.redirect(redirect)
+		} else {
+			profileSession = new ProfileSession()
+			if (missingSections > 0) {
+				if (missingSections > 1) {
+					profileSession.firstTimeSetup = true
+				}
+				redirect = redirect!
+				if (profileSession.originalUrl === undefined) {
+					profileSession.originalUrl = req.originalUrl
+				}
+				profileSessionObjectService.saveObjectToSession(req, profileSession)
+				if (req.url !== redirect) {
+					return res.redirect(redirect)
+				}
+			}
 		}
-		profileSessionObjectService.saveObjectToSession(req, profileSession)
 		next()
 	}
 }

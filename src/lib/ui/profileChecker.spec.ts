@@ -81,6 +81,6 @@ describe('Profile checker tests', () => {
 		expect(result.res.redirect.notCalled).to.eql(true)
 		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)!
 		expect(sessionObject.firstTimeSetup).to.eql(true)
-		expect(sessionObject.originalUrl).to.eql(undefined)
+		expect(sessionObject.originalUrl).to.eql('/profile/name')
 	})
 })
