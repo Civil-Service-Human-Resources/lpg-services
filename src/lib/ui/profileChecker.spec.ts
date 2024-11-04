@@ -18,9 +18,11 @@ const createUser = (
 const requiredSections = profilePages.filter(p => p.setupDetails.required)
 const middleware = getMiddleware(requiredSections)
 
-const runMiddleware = (user: User) => {
+const runMiddleware = (user: User, url?: string) => {
+	url = url === undefined ? '/home' : url
 	const request = mockReq({
-		originalUrl: '/home',
+		originalUrl: url,
+		url,
 		user,
 	})
 	const res = mockRes()
@@ -72,5 +74,13 @@ describe('Profile checker tests', () => {
 		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)
 		expect(sessionObject).to.eql(undefined)
 		expect(result.next.calledOnce).to.eq(true)
+	})
+	it('Should NOT redirect when accessing a profile endpoint', () => {
+		const user = createUser()
+		const result = runMiddleware(user, '/profile/name')
+		expect(result.res.redirect.notCalled).to.eql(true)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.request)
+		expect(sessionObject.firstTimeSetup).to.eql(true)
+		expect(sessionObject.originalUrl).to.eql(undefined)
 	})
 })

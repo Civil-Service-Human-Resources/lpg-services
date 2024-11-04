@@ -18,14 +18,13 @@ export function register(app: Express) {
 export function getMiddleware(requiredSections: ProfilePageSpecification[]) {
 	return (req: Request, res: Response, next: NextFunction) => {
 		const user: User = req.user
-		const url = req.url
 		let missingSections = 0
 		let redirect: string | undefined
 		for (const section of requiredSections) {
 			const endpoint = `/profile/${section.pageEndpoint}`
 			if (!section.setupDetails.userHasSet(user)) {
 				missingSections++
-				if (url !== endpoint && redirect === undefined) {
+				if (redirect === undefined) {
 					redirect = endpoint
 				}
 			}
@@ -41,11 +40,14 @@ export function getMiddleware(requiredSections: ProfilePageSpecification[]) {
 		if (missingSections > 1) {
 			profileSession.firstTimeSetup = true
 		}
-		profileSession.originalUrl = req.originalUrl
-		profileSessionObjectService.saveObjectToSession(req, profileSession)
-		if (redirect !== undefined) {
+		if (redirect !== undefined && req.url !== redirect) {
+			if (profileSession.originalUrl === undefined) {
+				profileSession.originalUrl = req.originalUrl
+				profileSessionObjectService.saveObjectToSession(req, profileSession)
+			}
 			return res.redirect(redirect)
 		}
+		profileSessionObjectService.saveObjectToSession(req, profileSession)
 		next()
 	}
 }
