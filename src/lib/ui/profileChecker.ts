@@ -30,26 +30,22 @@ export function getMiddleware(requiredSections: ProfilePageSpecification[]) {
 			}
 		}
 		let profileSession = profileSessionObjectService.fetchObjectFromSession(req)
-		console.log(profileSession)
-		if (profileSession !== undefined) {
-			if (missingSections === 0 && !profileSession.firstTimeSetup) {
-				profileSessionObjectService.deleteObjectFromSession(req)
-				return next()
+		if (profileSession && !profileSession.firstTimeSetup && missingSections === 0) {
+			profileSessionObjectService.deleteObjectFromSession(req)
+			return next()
+		}
+		profileSession = new ProfileSession()
+		if (missingSections > 0) {
+			if (missingSections > 1) {
+				profileSession.firstTimeSetup = true
 			}
-		} else {
-			profileSession = new ProfileSession()
-			if (missingSections > 0) {
-				if (missingSections > 1) {
-					profileSession.firstTimeSetup = true
-				}
-				redirect = redirect!
-				if (profileSession.originalUrl === undefined) {
-					profileSession.originalUrl = req.originalUrl
-				}
-				profileSessionObjectService.saveObjectToSession(req, profileSession)
-				if (req.url !== redirect) {
-					return res.redirect(redirect)
-				}
+			redirect = redirect!
+			if (profileSession.originalUrl === undefined) {
+				profileSession.originalUrl = req.originalUrl
+			}
+			profileSessionObjectService.saveObjectToSession(req, profileSession)
+			if (req.url !== redirect) {
+				return res.redirect(redirect)
 			}
 		}
 		next()
