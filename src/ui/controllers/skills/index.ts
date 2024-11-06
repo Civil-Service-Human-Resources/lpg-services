@@ -64,14 +64,8 @@ export function chooseQuiz(req: express.Request, res: express.Response) {
 export async function startQuiz(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
 	const requestQuiz: Quiz = req.session!.quiz
-
-	if (!user.areaOfWork) {
-		showQuizScreen(req, res, false)
-		return
-	}
-	const professionId = user.areaOfWork.id
-	// @ts-ignore
-	if (!user.areasOfWork) {
+	const professionId = user.areaOfWork ? user.areaOfWork.id : undefined
+	if (!professionId) {
 		showQuizScreen(req, res, false)
 		return
 	}
