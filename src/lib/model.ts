@@ -901,6 +901,7 @@ export class OrganisationalUnit implements CacheableObject, KeyValue {
 export interface CSLUser {
 	isUnrestrictedOrgUser(): boolean
 	isAdmin(): boolean
+	isReporter(): boolean
 }
 
 export function createUser(identity: IdentityDetails, profile: Profile) {
@@ -958,6 +959,11 @@ export class User implements CSLUser {
 
 	hasAnyRole(roles: string[]) {
 		return this.roles && this.roles.some(value => roles.indexOf(value) > -1)
+	}
+
+	isReporter(): boolean {
+		return this.hasAnyRole(['CSHR_REPORTER', 'PROFESSION_REPORTER',
+			'ORGANISATION_REPORTER', 'KPMG_SUPPLIER_AUTHOR', 'KORNFERRY_SUPPLIER_REPORTER'])
 	}
 
 	isAdmin() {
