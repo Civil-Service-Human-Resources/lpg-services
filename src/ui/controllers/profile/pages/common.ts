@@ -57,12 +57,12 @@ export interface PageBehaviour {
 	userSetup: boolean
 }
 
-export function redirectToProfileSuccess() {
-	return generateRedirectMiddleware('/profile', new MessageFlash('profile-updated', 'profile-updated'))
+export function redirectToProfileSuccess(req: express.Request, res: express.Response) {
+	const redirect = generateRedirectMiddleware('/profile', new MessageFlash('profile-updated', 'profile-updated'))
+	return redirect(req, res)
 }
 
-export function redirectToProfileSetup() {
-	return (req: express.Request, res: express.Response) => {
+export function redirectToProfileSetup(req: express.Request, res: express.Response) {
 		const profileSession = profileSessionObjectService.fetchObjectFromSession(req)
 		let redirectTo = '/home'
 		if (profileSession && profileSession.originalUrl !== undefined) {
@@ -71,7 +71,6 @@ export function redirectToProfileSetup() {
 		profileSessionObjectService.deleteObjectFromSession(req)
 		res.redirect(redirectTo)
 	}
-}
 
 export class ProfileSession {
 	constructor(public firstTimeSetup: boolean = false, public originalUrl?: string) {
@@ -82,17 +81,17 @@ export const profileSessionObjectService =
 	new SessionableObjectService('profileSetup', ProfileSession)
 
 export function generateRedirect(
-	pageSpec: ProfilePageSpecification, req: express.Request):
-	(req: express.Request, res: express.Response) => void {
+	pageSpec: ProfilePageSpecification, req: express.Request, res: express.Response) {
 	const profileSession = profileSessionObjectService.fetchObjectFromSession(req)
 	const nextPageDetails = pageSpec.setupDetails.nextPage
 	if (profileSession && profileSession.firstTimeSetup) {
 		if (nextPageDetails !== undefined) {
-			return generateRedirectMiddleware(`/profile/${nextPageDetails.pageEndpoint}`)
+			const redirect = generateRedirectMiddleware(`/profile/${nextPageDetails.pageEndpoint}`)
+			return redirect(req, res)
 		}
-		return redirectToProfileSetup()
+		return redirectToProfileSetup(req, res)
 	}
-	return redirectToProfileSuccess()
+	return redirectToProfileSuccess(req, res)
 }
 
 export function generateProfilePageBehaviour(

@@ -54,6 +54,6 @@ export function selectInterestsMiddleware(behaviour: PageBehaviour) {
 			const selectedInterests = interests.fetchWithIds(pageModel.interestIds)
 			await patchCivilServantInterests(user, selectedInterests)
 		}
-		return generateRedirect(interestsPage, req)(req, res)
+		return generateRedirect(interestsPage, req, res)
 	}
 }

@@ -20,6 +20,7 @@ function getOrg(orgName: string, id: number, parentId?: number) {
 }
 
 describe('CsrsService tests', () => {
+	const sandbox = sinon.createSandbox()
 	let orgUnitCache: sinon.SinonStubbedInstance<OrganisationalUnitCache>
 	let csrsProfileCache: sinon.SinonStubbedInstance<ProfileCache>
 	let orgTypeaheadCache: sinon.SinonStubbedInstance<OrganisationalUnitTypeaheadCache>
@@ -30,17 +31,20 @@ describe('CsrsService tests', () => {
 	let user: sinon.SinonStubbedInstance<User>
 
 	beforeEach(() => {
-		sinon.restore()
-		orgUnitCache = sinon.createStubInstance(OrganisationalUnitCache)
-		orgTypeaheadCache = sinon.createStubInstance(OrganisationalUnitTypeaheadCache)
-		csrsProfileCache = sinon.createStubInstance(ProfileCache)
-		gradeCache = sinon.createStubInstance(AnonymousCache)
-		areaOfWorkCache = sinon.createStubInstance(AnonymousCache)
-		interestCache = sinon.createStubInstance(AnonymousCache)
-		organisationalUnitClientStub = sinon.stub(organisationalUnitClient)
-		user = sinon.createStubInstance(User)
+		orgUnitCache = sandbox.createStubInstance(OrganisationalUnitCache)
+		orgTypeaheadCache = sandbox.createStubInstance(OrganisationalUnitTypeaheadCache)
+		csrsProfileCache = sandbox.createStubInstance(ProfileCache)
+		gradeCache = sandbox.createStubInstance(AnonymousCache)
+		areaOfWorkCache = sandbox.createStubInstance(AnonymousCache)
+		interestCache = sandbox.createStubInstance(AnonymousCache)
+		organisationalUnitClientStub = sandbox.stub(organisationalUnitClient)
+		user = sandbox.createStubInstance(User)
 		csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any, csrsProfileCache as any,
 			gradeCache as any, areaOfWorkCache as any, interestCache as any)
+	})
+
+	afterEach(() => {
+		sandbox.restore()
 	})
 
 	describe('getOrganisation tests', () => {

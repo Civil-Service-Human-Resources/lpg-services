@@ -57,6 +57,6 @@ export function confirmLineManagerMiddleware(behaviour: PageBehaviour) {
 				return res.send(template.render(behaviour.templateName, req, res, pageModel))
 			}
 		}
-		return generateRedirect(lineManagerPage, req)(req, res)
+		return generateRedirect(lineManagerPage, req, res)
 	}
 }

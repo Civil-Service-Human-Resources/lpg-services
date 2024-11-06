@@ -5,7 +5,12 @@ import * as config from 'lib/config/index'
 import {getLogger} from 'lib/logger'
 import {createUser, User} from 'lib/model'
 import * as model from 'lib/model'
-import {fetchProfile, removeProfileFromCache, updateProfileCache} from 'lib/service/civilServantRegistry/csrsService'
+import {
+	fetchNewProfile,
+	fetchProfile,
+	removeProfileFromCache,
+	updateProfileCache,
+} from 'lib/service/civilServantRegistry/csrsService'
 import {IdentityDetails} from 'lib/service/identity/models/identityDetails'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
@@ -109,6 +114,10 @@ export async function logOutMiddleware(req: express.Request, res: express.Respon
 	const user = req.user as User
 	if (user.uiShouldLogout) {
 		await logout(req, res)
+	} else if (user.shouldRefresh) {
+		const profile = await fetchNewProfile(user.accessToken)
+		user.updateWithProfile(profile)
+		req.user = user
 	} else {
 		next()
 	}
@@ -140,10 +149,9 @@ export async function logout(
 ) {
 	if (req.isAuthenticated()) {
 		const user: User = req.user
-		const profile = await fetchProfile(user.id, user.accessToken)
-		const redirectTo = req.user.isAdmin() && profile.managementLoggedIn ?
+		const redirectTo = req.user.isAdmin() && user.managementLoggedIn ?
 			config.LPG_MANAGEMENT_URL + "/sign-out" : config.AUTHENTICATION.serviceUrl + config.AUTHENTICATION.endpoints.logout
-		await removeProfileFromCache(req.user.id)
+		await removeProfileFromCache(user.id)
 		req.session!.destroy(() => {
 			res.redirect(redirectTo)
 		})

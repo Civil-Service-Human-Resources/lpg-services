@@ -38,6 +38,6 @@ export function confirmNameMiddleware(behaviour: PageBehaviour) {
 		if (userGivenName !== pageModel.value) {
 			await patchCivilServantName(user, pageModel.value)
 		}
-		return generateRedirect(namePage, req)(req, res)
+		return generateRedirect(namePage, req, res)
 	}
 }

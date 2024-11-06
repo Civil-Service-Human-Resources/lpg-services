@@ -38,7 +38,7 @@ export function getRenderOrganisationsPage(behaviour: PageBehaviour) {
 export function selectOrganisationsMiddleware(behaviour: PageBehaviour) {
 	return async (req: express.Request, res: express.Response) => {
 		const user: User = req.user
-		const userOrganisation = user.organisationalUnit ? user.organisationalUnit.id : undefined
+		const userOrganisation = user.organisationalUnit ? user.organisationalUnit.id : 0
 		const pageModel = await validate(OrganisationPageModel, req.body)
 		if (pageModel.hasErrors()) {
 			const organisations = await getAllOrganisationUnits(user)
@@ -49,6 +49,6 @@ export function selectOrganisationsMiddleware(behaviour: PageBehaviour) {
 		if (userOrganisation !== pageModel.organisation) {
 			await patchCivilServantOrganisationUnit(user, pageModel.organisation)
 		}
-		return generateRedirect(organisationPage, req)(req, res)
+		return generateRedirect(organisationPage, req, res)
 	}
 }

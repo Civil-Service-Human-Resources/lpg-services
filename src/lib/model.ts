@@ -909,7 +909,7 @@ export function createUser(identity: IdentityDetails, profile: Profile) {
 	return new User(identity.uid, identity.roles, identity.accessToken, identity.username, profile.userId.toString(),
 		profile.profession, lineManager, profile.otherAreasOfWork, profile.interests, profile.fullName,
 		profile.organisationalUnit, profile.grade, profile.managementLoggedIn, profile.managementShouldLogout,
-		profile.uiLoggedIn, profile.uiShouldLogout)
+		profile.uiLoggedIn, profile.uiShouldLogout, profile.shouldRefresh)
 }
 
 export class User implements CSLUser {
@@ -930,7 +930,8 @@ export class User implements CSLUser {
 	public managementLoggedIn: boolean = false,
 	public managementShouldLogout: boolean = false,
 	public uiLoggedIn: boolean = false,
-	public uiShouldLogout: boolean = false) {
+	public uiShouldLogout: boolean = false,
+	public shouldRefresh: boolean = false) {
 	}
 
 	updateWithProfile(profile: Profile) {

@@ -54,11 +54,16 @@ export async function removeProfileFromCache(uid: string) {
 	await profileCache.delete(uid)
 }
 
-export async function fetchProfile(uid: string, accessToken: string) {
+export async function fetchNewProfile(accessToken: string) {
+	const profile = await civilServantClient.loginAndFetchProfile(accessToken)
+	await updateProfileCache(profile)
+	return profile
+}
+
+export async function fetchProfile(uid: string, accessToken: string): Promise<Profile> {
 	let profile = await profileCache.get(uid)
 	if (!profile) {
-		profile = await civilServantClient.loginAndFetchProfile(accessToken)
-		await updateProfileCache(profile)
+		profile = await fetchNewProfile(accessToken)
 	}
 	return profile
 }

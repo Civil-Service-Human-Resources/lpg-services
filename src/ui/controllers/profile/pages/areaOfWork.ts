@@ -46,7 +46,7 @@ export function getRenderAreaOfWorkSelectionPage(behaviour: PageBehaviour) {
 export function selectAreaOfWorkMiddleware(behaviour: PageBehaviour) {
 	return async (req: express.Request, res: express.Response) => {
 		const user: User = req.user
-		const userAreaOfWork = user.areaOfWork ? user.areaOfWork.id : undefined
+		const userAreaOfWork = user.areaOfWork ? user.areaOfWork.id : 0
 		const areasOfWork = await getAreasOfWork(user)
 		const pageModel = await validate(AreaOfWorkPageModel, req.body)
 		if (pageModel.hasErrors()) {
@@ -55,12 +55,12 @@ export function selectAreaOfWorkMiddleware(behaviour: PageBehaviour) {
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
 		const areaOfWork = areasOfWork.fetchOne(pageModel.areaOfWorkId)
-		if (areaOfWork.id !== userAreaOfWork) {
+		if (areaOfWork && (areaOfWork.id !== userAreaOfWork)) {
 			if (areaOfWork.children !== undefined && areaOfWork.children.length > 0) {
 				return renderAreaOfWorkPage(req, res, behaviour.templateName, areaOfWork.children)
 			}
 			await patchCivilServantProfession(user, areaOfWork)
 		}
-		return generateRedirect(areaOfWorkPage, req)(req, res)
+		return generateRedirect(areaOfWorkPage, req, res)
 	}
 }

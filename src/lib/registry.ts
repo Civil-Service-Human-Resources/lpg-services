@@ -72,10 +72,12 @@ export class Profile implements CacheableObject {
 	managementShouldLogout: boolean = false
 	uiLoggedIn: boolean = false
 	uiShouldLogout: boolean = false
+	shouldRefresh: boolean = false
 
 	setShouldLogout() {
 		this.managementShouldLogout = true
 		this.uiShouldLogout = true
+		this.shouldRefresh = true
 	}
 
 	getId(): string {

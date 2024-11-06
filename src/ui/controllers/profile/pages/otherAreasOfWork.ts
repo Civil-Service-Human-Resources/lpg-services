@@ -52,6 +52,6 @@ export function selectOtherAreasOfWorkMiddleware(behaviour: PageBehaviour) {
 			const selectedAreasOfWork = areasOfWork.fetchWithIds(pageModel.otherAreasOfWork)
 			await patchCivilServantOtherAreasOfWork(user, selectedAreasOfWork)
 		}
-		return generateRedirect(otherAreasOfWorkPage, req)(req, res)
+		return generateRedirect(otherAreasOfWorkPage, req, res)
 	}
 }

@@ -37,18 +37,18 @@ export function getRenderGradePage(behaviour: PageBehaviour) {
 export function confirmGradeMiddleware(behaviour: PageBehaviour) {
 	return async (req: express.Request, res: express.Response) => {
 		const user: User = req.user
-		const userGrade = user.grade ? user.grade.id.toString() : undefined
+		const userGrade = user.grade ? user.grade.id : 0
 		const grades = await getGrades(user)
 		const pageModel = await validate(GradePageModel, req.body)
 		if (pageModel.hasErrors()) {
 			pageModel.options = keysToOptions(
-				grades.getList(), userGrade ? [userGrade] : [])
+				grades.getList(), userGrade ? [userGrade.toString()] : [])
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
-		if (pageModel.grade !== userGrade) {
-			const grade = grades.fetchOne(pageModel.grade)
+		const grade = grades.fetchOne(pageModel.grade)
+		if (grade && (userGrade !== grade.id)) {
 			await patchCivilServantGrade(user, grade)
 		}
-		return generateRedirect(gradePage, req)(req, res)
+		return generateRedirect(gradePage, req, res)
 	}
 }
