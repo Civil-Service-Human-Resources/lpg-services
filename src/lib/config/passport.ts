@@ -39,10 +39,6 @@ export function configure(
 			try {
 				const token = jwt.decode(accessToken) as any
 				const identityDetails = new IdentityDetails(token.user_name, token.email, token.authorities, accessToken)
-				const csrsProfile = await fetchProfile(identityDetails.uid, identityDetails.accessToken)
-				if (csrsProfile.shouldRefresh) {
-					await fetchNewProfile(identityDetails.accessToken)
-				}
 				return cb(null, identityDetails)
 			} catch (e) {
 				logger.warn(`Error retrieving user profile information`, e)
@@ -62,6 +58,9 @@ export function configure(
 		try {
 			identity = plainToInstance(IdentityDetails, JSON.parse(data) as IdentityDetails)
 			const csrsProfile = await fetchProfile(identity.uid, identity.accessToken)
+			if (csrsProfile.shouldRefresh) {
+				await fetchNewProfile(identity.accessToken)
+			}
 			if (!csrsProfile.uiLoggedIn) {
 				csrsProfile.uiLoggedIn = true
 				await updateProfileCache(csrsProfile)
