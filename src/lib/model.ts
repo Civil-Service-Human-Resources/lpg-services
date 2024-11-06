@@ -962,8 +962,7 @@ export class User implements CSLUser {
 	}
 
 	isReporter(): boolean {
-		return this.hasAnyRole(['CSHR_REPORTER', 'PROFESSION_REPORTER',
-			'ORGANISATION_REPORTER', 'KPMG_SUPPLIER_AUTHOR', 'KORNFERRY_SUPPLIER_REPORTER'])
+		return this.hasAnyRole(['CSHR_REPORTER', 'PROFESSION_REPORTER', 'ORGANISATION_REPORTER'])
 	}
 
 	isAdmin() {
