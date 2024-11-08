@@ -378,5 +378,11 @@
 		"heading": "This course is no longer available.",
 		"description": "You can't start or resume this course. Previously completed courses will appear in your learning record."
 	},
-	"Analysis": "Analysis"
+	"Analysis": "Analysis",
+	"components": {
+		"notification_banner": {
+			"default_heading": "Important",
+			"course_not_bookable": "Unfortunately there are no bookable sessions at this time."
+		}
+	}
 }
