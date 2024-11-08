@@ -644,7 +644,6 @@ export class Event {
 
 		if (data.dateRanges[0]) {
 			dateRanges = data.dateRanges
-			console.log(data.dateRanges[0].date, data.dateRanges[0].startTime)
 			startDate = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].startTime)
 			endDate = new Date(data.dateRanges[0].date + 'T' + data.dateRanges[0].endTime)
 		}
@@ -662,8 +661,6 @@ export class Event {
 		}
 
 		const status = data.status ? data.status : 'Active'
-
-		console.log(startDate)
 
 		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}
@@ -968,7 +965,6 @@ export class User implements CSLUser {
 	}
 
 	isAdmin() {
-		console.log(this.roles)
 		return (
 			this.hasRole('LEARNING_MANAGER') ||
 			this.hasRole('CSL_AUTHOR') ||
