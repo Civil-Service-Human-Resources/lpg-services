@@ -15,7 +15,6 @@
 					sourceClass = this.getAttribute('class') || ''
 
 				if (targetClass.indexOf('js-visible') !== -1) {
-					console.log(document.getElementsByClassName('menu__icon'))
 					target.setAttribute(
 						'class',
 						targetClass.replace(/(^|\s)js-visible(\s|$)/, ''),
