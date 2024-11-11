@@ -25,40 +25,6 @@ const http: AxiosInstance = axios.create({
 axiosLogger.axiosRequestLogger(http, logger)
 axiosLogger.axiosResponseLogger(http, logger)
 
-export async function loadSearch(user: model.User) {
-	await http.get(`/search/create`, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-}
-
-export async function add(course: model.Course, user: model.User) {
-	try {
-		if (course.id) {
-			await http.put(`/courses/${course.id}`, course, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-			return course.id
-		}
-		const response = await http.post(`/courses`, course)
-		return response.headers.location.match(/.*courses\/([^/]+)/)[1]
-	} catch (e) {
-		throw new Error(
-			`Error adding or updating course (${
-				course.id
-			}) to course catalogue - ${e}`
-		)
-	}
-}
-
-export async function postFeedback(feedback: model.Feedback, user: model.User) {
-	try {
-		const response = await http.post(`/feedback`, feedback, {headers: {Authorization: `Bearer ${user.accessToken}`}})
-		return response.headers.location.match(/.*feedback\/([^/]+)/)[1]
-	} catch (e) {
-		throw new Error(
-			`Error adding or updating feedback (${
-				feedback.id
-			}) to course catalogue - ${e}`
-		)
-	}
-}
-
 export async function search(
 	user: model.User,
 	page: number,
@@ -90,14 +56,14 @@ export async function search(
 		if (interests) {
 			url += `&interests=${interests.join('&interests=')}`
 		}
-		if (user.department) {
-			url += `&profileDepartments=${user.department}`
+		if (user.getOrganisationCode()) {
+			url += `&profileDepartments=${user.getOrganisationCode()}`
 		}
 		if (user.grade) {
 			url += `&profileGrades=${user.grade.code}`
 		}
-		if (user.areasOfWork) {
-			url += `&profileAreasOfWork=${user.areasOfWork.name}`
+		if (user.areaOfWork) {
+			url += `&profileAreasOfWork=${user.areaOfWork.name}`
 		}
 		if (user.otherAreasOfWork) {
 			for (const areaOfWork of user.otherAreasOfWork) {

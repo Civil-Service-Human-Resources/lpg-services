@@ -1,6 +1,9 @@
 import {Type} from 'class-transformer'
+import {getLogger} from 'lib/logger'
 
-import {OrganisationalUnit} from '../../../model'
+import {OrganisationalUnit, User} from '../../../model'
+
+const logger = getLogger('organisationalUnitTypeAhead')
 
 export class OrganisationalUnitTypeAhead {
 	static createAndSort(typeahead: OrganisationalUnit[]) {
@@ -75,6 +78,15 @@ export class OrganisationalUnitTypeAhead {
 			list.sort((a, b) => this.getCollator().compare(a.formattedName, b.formattedName))
 		}
 		return list
+	}
+
+	getFilteredListForUser(user: User) {
+		if (user.isUnrestrictedOrgUser()) {
+			logger.debug(`User is unrestricted, returning all organisations`)
+			return this.typeahead
+		} else {
+			return this.getDomainFilteredList(user.getDomain())
+		}
 	}
 
 	private getAgencyOrganisationWithDomain(domain: string, tree: OrganisationalUnit[]): OrganisationalUnit | undefined {

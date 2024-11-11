@@ -1,4 +1,6 @@
 import {expect} from 'chai'
+import {ProfileCache} from 'lib/service/civilServantRegistry/civilServant/profileCache'
+import {AnonymousCache} from 'lib/utils/anonymousCache'
 import * as sinon from 'sinon'
 
 import {AgencyToken, OrganisationalUnit, User} from '../../model'
@@ -18,18 +20,31 @@ function getOrg(orgName: string, id: number, parentId?: number) {
 }
 
 describe('CsrsService tests', () => {
+	const sandbox = sinon.createSandbox()
 	let orgUnitCache: sinon.SinonStubbedInstance<OrganisationalUnitCache>
+	let csrsProfileCache: sinon.SinonStubbedInstance<ProfileCache>
 	let orgTypeaheadCache: sinon.SinonStubbedInstance<OrganisationalUnitTypeaheadCache>
+	let gradeCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
+	let areaOfWorkCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
+	let interestCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
 	let organisationalUnitClientStub: sinon.SinonStubbedInstance<typeof organisationalUnitClient>
 	let user: sinon.SinonStubbedInstance<User>
 
 	beforeEach(() => {
-		sinon.restore()
-		orgUnitCache = sinon.createStubInstance(OrganisationalUnitCache)
-		orgTypeaheadCache = sinon.createStubInstance(OrganisationalUnitTypeaheadCache)
-		organisationalUnitClientStub = sinon.stub(organisationalUnitClient)
-		user = sinon.createStubInstance(User)
-		csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any)
+		orgUnitCache = sandbox.createStubInstance(OrganisationalUnitCache)
+		orgTypeaheadCache = sandbox.createStubInstance(OrganisationalUnitTypeaheadCache)
+		csrsProfileCache = sandbox.createStubInstance(ProfileCache)
+		gradeCache = sandbox.createStubInstance(AnonymousCache)
+		areaOfWorkCache = sandbox.createStubInstance(AnonymousCache)
+		interestCache = sandbox.createStubInstance(AnonymousCache)
+		organisationalUnitClientStub = sandbox.stub(organisationalUnitClient)
+		user = sandbox.createStubInstance(User)
+		csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any, csrsProfileCache as any,
+			gradeCache as any, areaOfWorkCache as any, interestCache as any)
+	})
+
+	afterEach(() => {
+		sandbox.restore()
 	})
 
 	describe('getOrganisation tests', () => {

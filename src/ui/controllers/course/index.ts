@@ -136,9 +136,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 	switch (type) {
 		case 'elearning':
 		case 'face-to-face':
-			if (req.user.departmentId) {
-				canPayByPO = true
-			}
+			canPayByPO = true
 		case 'file':
 		case 'link':
 		case 'video':

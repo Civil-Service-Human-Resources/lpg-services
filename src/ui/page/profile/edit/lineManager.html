@@ -1,0 +1,48 @@
+<Page title="Change your {$i18n('profile_line-manager_label').toLowerCase()}" {_csrf}>
+    <div class="profile-container container">
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <p class="no-margin">
+                    <a class="link-back" href="/profile">Back</a>
+                </p>
+                <h1 class="heading-large"><span class="heading-primary">Add your line manager's email</span></h1>
+                <p class="govuk-body">To add a line manager, they must be registered with the service.</p>
+                {#if (errors)}
+                    <Error errorHeading='Update failed'>
+                        {#each errors as error}
+                            <p class="error-message">{$i18n(error)}</p>
+                        {/each}
+                    </Error>
+                {/if}
+                <form autocomplete="off" method="post" action="/profile/line-manager">
+                    <div class="form-group">
+                        <label class="form-label" for="email">New Line manager email</label>
+                        <input class="form-control" id="email" name="email" type="text" value="{email || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="confirm">Confirm {$i18n('profile_line-manager_label').toLowerCase()}</label>
+                        <input class="form-control" id="confirm" name="confirm" type="text" value="{confirm || ''}">
+                    </div>
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <button type="submit" class="button">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+	import Page from '../../../component/Page.html'
+	import Error from '../../../component/Error.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			Error
+		}
+	}
+</script>

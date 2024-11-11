@@ -1,37 +1,26 @@
 <PageNoNav title="Your other areas of work" {_csrf}>
     <div class="container">
         <div class="grid-row">
-            <div class="column-full">
+            <div class="column-two-thirds">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Set up your profile</span>
                     <span class="heading-primary">Your other areas of work</span>
                 </h1>
-
-                {#if (error)}
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-                    <div class="error-message">Please select your other areas of work.</div>
-                </div>
+                {#if (errors)}
+                    <Error errorHeading='Update failed'>
+                        {#each errors as error}
+                            <p class="error-message">{$i18n(error)}</p>
+                        {/each}
+                    </Error>
                 {/if}
-
                 <p>Select the other areas of work that are relevant to your job.</p>
 
-                <form autocomplete="off" method="post" action="/profile/otherAreasOfWork">
+                <form autocomplete="off" method="post" action="/profile/other-areas-of-work">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">What are your other areas of work?</legend>
-                    <input type="hidden" name="_csrf" value="{_csrf}">
-                    <input type="hidden" name="originalUrl" value="{originalUrl}">
-
-
                     <div class="form-group">
-                        <fieldset class="u-space-b30">
-                            {#each professions as profession}
-                            <div class="multiple-choice">
-                                <input id="{profession.name}" type="checkbox" name="otherAreasOfWork" value="{profession.id}">
-                                <label for="{profession.name}">{profession.name}</label>
-                            </div>
-                            {/each}
-                        </fieldset>
+                        <Checkboxes {options} inputName="other-areas-of-work" />
                     </div>
-
+                    <input type="hidden" name="_csrf" value="{_csrf}">
                     <button type="submit" class="button">Continue</button>
                 </form>
             </div>
@@ -40,6 +29,8 @@
 </PageNoNav>
 <script>
 	import PageNoNav from '../../component/PageNoNav.html'
+	import Error from '../../component/Error.html'
+	import Checkboxes from '../../component/Checkboxes.html'
 
 	export default {
 		data() {
@@ -48,7 +39,9 @@
 		},
 
 		components: {
-			PageNoNav
+			PageNoNav,
+			Error,
+			Checkboxes
 		}
 	}
 </script>

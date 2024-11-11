@@ -1,34 +1,37 @@
 import * as chai from 'chai'
 import {expect} from 'chai'
 import { plainToClass } from 'class-transformer'
+import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 import * as sinon from 'sinon'
 import * as sinonChai from 'sinon-chai'
 import { mockReq, mockRes } from 'sinon-express-mock'
 
 import { ResourceNotFoundError } from '../exception/ResourceNotFoundError'
 import { OrganisationalUnit } from '../model'
-import * as csrsService from '../service/civilServantRegistry/csrsService'
 import { requiresDepartmentHierarchy } from './requiresDepartmentHierarchy'
 
 chai.use(sinonChai)
 
 describe('requiresDepartmentHierarchy tests', () => {
-
-	let csrsServiceStub: sinon.SinonStubbedInstance<typeof csrsService>
+	const sandBox = sinon.createSandbox()
+	let csrsServiceStub: any
 
 	beforeEach(() => {
-		sinon.restore()
-		csrsServiceStub = sinon.stub(csrsService)
+		csrsServiceStub = sandBox.stub(csrsService)
+	})
+
+	afterEach(() => {
+		sandBox.restore()
 	})
 
 	it('Should fetch the department hierarchy for a user and apply it to the response locals', async () => {
 		const request = mockReq({
 			originalUrl: '/suggestions-for-you',
 			user: {
-				departmentId: 123,
 				givenName: 'Test User',
 				organisationalUnit: {
 					code: 'co',
+					id: 123,
 					name: 'Cabinet Office',
 					paymentMethods: [],
 				},
@@ -59,15 +62,18 @@ describe('requiresDepartmentHierarchy tests', () => {
 				},
 			},
 			user: {
-				departmentId: 123,
+				accessToken: '123',
 				givenName: 'Test User',
+				id: 1,
 				organisationalUnit: {
 					code: 'co',
+					id: 123,
 					name: 'Cabinet Office',
 					paymentMethods: [],
 				},
 			},
 		})
+		const profile = {}
 		request.session!.save = callback => {
 			callback(undefined)
 		}
@@ -75,8 +81,9 @@ describe('requiresDepartmentHierarchy tests', () => {
 		const response = mockRes()
 		const next = sinon.stub()
 		csrsServiceStub.getOrgHierarchy.withArgs(123).throws(new ResourceNotFoundError('organisation unit not found'))
+		csrsServiceStub.fetchProfile.withArgs(1, '123').resolves(profile as any)
 		await requiresDepartmentHierarchy(request, response, next)
 		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/suggestions-for-you')
+		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation')
 	})
 })

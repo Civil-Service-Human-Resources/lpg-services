@@ -1,33 +1,25 @@
 <PageNoNav title="Your interests" {_csrf}>
     <div class="container">
         <div class="grid-row">
-            <div class="column-full">
+            <div class="column-two-thirds">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Set up your profile</span>
                     <span class="heading-primary">Your interests</span>
                 </h1>
-
-                {#if (error)}
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading-example-1" tabindex="-1">
-                    <div class="error-message">Please select your interests.</div>
-                </div>
+                {#if (errors)}
+                    <Error errorHeading='Update failed'>
+                        {#each errors as error}
+                            <p class="error-message">{$i18n(error)}</p>
+                        {/each}
+                    </Error>
                 {/if}
 
                 <p>You can skip this question by not selecting an option.</p>
                 <form autocomplete="off" method="post" action="/profile/interests">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">What are your interests?</legend>
                     <input type="hidden" name="_csrf" value="{_csrf}">
-                    <input type="hidden" name="originalUrl" value="{originalUrl}">
-
                     <div class="form-group">
-                        <fieldset class="u-space-b30">
-                            {#each interests as interest}
-                            <div class="multiple-choice">
-                                <input id="{interest.name}" type="checkbox" name="interests" value="{interest._links.self.href}">
-                                <label for="{interest.name}">{interest.name}</label>
-                            </div>
-                            {/each}
-                        </fieldset>
+                        <Checkboxes {options} inputName="interests" label="{$i18n('profile_interest_label')}"/>
                     </div>
 
                     <button type="submit" class="button">Continue</button>
@@ -38,6 +30,8 @@
 </PageNoNav>
 <script>
 	import PageNoNav from '../../component/PageNoNav.html'
+	import Error from '../../component/Error.html'
+	import Checkboxes from '../../component/Checkboxes.html'
 
 	export default {
 		data() {
@@ -46,7 +40,9 @@
 		},
 
 		components: {
-			PageNoNav
+			PageNoNav,
+			Error,
+			Checkboxes
 		}
 	}
 </script>

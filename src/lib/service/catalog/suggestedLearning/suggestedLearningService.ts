@@ -12,7 +12,7 @@ const RECORD_COUNT_TO_DISPLAY: number = 6
 const I_DONT_KNOW_AOW: string = "I don't know"
 
 export function getAreasOfWorkForUser(user: User): string[] {
-	return (user.areasOfWork ? [user.areasOfWork] : []).map(aow => aow.name)
+	return (user.areaOfWork ? [user.areaOfWork] : []).map(aow => aow.name)
 }
 
 export function getOtherAreasOfWorkForUser(user: User): string[] {

@@ -7,13 +7,7 @@ require('svelte/ssr/register')
 /*tslint:enable*/
 
 const rootDir = process.cwd()
-export const uiPageDir = path.join(rootDir, 'dist', 'ui', 'page')
-export const managementPageDir = path.join(
-	rootDir,
-	'dist',
-	'management-ui',
-	'page'
-)
+export const uiPageDir = path.join(rootDir, 'src', 'ui', 'page')
 
 function readPageDir(dir: string, prevErr?: any[], nestedDirName?: string) {
 	const prev: any[] = prevErr || []

@@ -1,0 +1,44 @@
+<PageNoNav title="Your primary area of work" {_csrf}>
+    <div class="container">
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-large">
+                    <span class="heading-secondary">Set up your profile</span>
+                    <span class="heading-primary">Your primary area of work</span>
+                </h1>
+                {#if (errors)}
+                    <Error errorHeading='Update failed'>
+                        {#each errors as error}
+                            <p class="error-message">{$i18n(error)}</p>
+                        {/each}
+                    </Error>
+                {/if}
+                <form autocomplete="off" method="post" action="/profile/primary-area-of-work">
+                    <div class="form-group">
+                        <NewRadios {options} inputName="primary-area-of-work" label="{$i18n('profile_primary-area-of-work_label')}" {value} lede="{$i18n('register_area_page_intro')}" />
+                    </div>
+                    <input type="hidden" name="_csrf" value="{_csrf}">
+                    <button type="submit" class="button">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</PageNoNav>
+<script>
+	import PageNoNav from '../../component/PageNoNav.html'
+	import NewRadios from '../../component/NewRadios.html'
+	import Error from '../../component/Error.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			PageNoNav,
+			NewRadios,
+			Error
+		}
+	}
+</script>

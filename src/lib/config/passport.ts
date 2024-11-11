@@ -2,16 +2,20 @@ import {plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
 import * as config from 'lib/config/index'
-import * as identity from 'lib/identity'
 import {getLogger} from 'lib/logger'
+import {createUser, User} from 'lib/model'
 import * as model from 'lib/model'
-import * as registry from 'lib/registry'
+import {
+	fetchNewProfile,
+	fetchProfile,
+	removeProfileFromCache,
+	updateProfileCache,
+} from 'lib/service/civilServantRegistry/csrsService'
+import {IdentityDetails} from 'lib/service/identity/models/identityDetails'
 import * as passport from 'passport'
 import * as oauth2 from 'passport-oauth2'
 
 const logger = getLogger('config/passport')
-
-let strategy: oauth2.Strategy
 
 export function configure(
 	clientID: string,
@@ -23,7 +27,7 @@ export function configure(
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
-	strategy = new oauth2.Strategy(
+	const strategy = new oauth2.Strategy(
 		{
 			authorizationURL,
 			callbackURL,
@@ -33,11 +37,9 @@ export function configure(
 		},
 		async (accessToken: string, refreshToken: string, profile: any, cb: oauth2.VerifyCallback) => {
 			try {
-				const identityDetails = await identity.getDetails(accessToken)
-				const csrsProfile = await registry.login(accessToken, identityDetails)
-
-				const user = model.User.createFromFullProfile(csrsProfile, identityDetails, accessToken)
-				return cb(null, user)
+				const token = jwt.decode(accessToken) as any
+				const identityDetails = new IdentityDetails(token.user_name, token.email, token.authorities, accessToken)
+				return cb(null, identityDetails)
 			} catch (e) {
 				logger.warn(`Error retrieving user profile information`, e)
 				cb(e)
@@ -52,9 +54,18 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
-		let user: model.User
+		let identity: IdentityDetails
 		try {
-			user = plainToInstance(model.User, JSON.parse(data) as model.User)
+			identity = plainToInstance(IdentityDetails, JSON.parse(data) as IdentityDetails)
+			let csrsProfile = await fetchProfile(identity.uid, identity.accessToken)
+			if (csrsProfile.shouldRefresh) {
+				csrsProfile = await fetchNewProfile(identity.accessToken)
+			}
+			if (!csrsProfile.uiLoggedIn) {
+				csrsProfile.uiLoggedIn = true
+				await updateProfileCache(csrsProfile)
+			}
+			const user = createUser(identity, csrsProfile)
 			done(null, user)
 		} catch (error) {
 			done(error, undefined)
@@ -79,9 +90,7 @@ export function configure(
 				redirectTo = '/'
 			}
 			delete session.redirectTo
-			session.save(() => {
-				res.redirect(redirectTo)
-			})
+			res.redirect(redirectTo)
 		}
 	)
 }
@@ -98,11 +107,19 @@ export function isAuthenticated(req: express.Request, res: express.Response, nex
 	}
 	const session = req.session!
 	session.redirectTo = req.originalUrl
-	const authenticationServiceUrl = config.AUTHENTICATION.serviceUrl
-	session.save(() => {
-		req.logout()
-		res.redirect(`${authenticationServiceUrl}/logout`)
-	})
+	passport.authenticate('oauth2', {
+		failureFlash: true,
+		failureRedirect: '/',
+	})(req, res, next)
+}
+
+export async function logOutMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+	const user = req.user as User
+	if (user.uiShouldLogout) {
+		await logout(req, res)
+	} else {
+		next()
+	}
 }
 
 // @ts-ignore
@@ -126,14 +143,18 @@ export function hasAnyRole(roles: string[]) {
 }
 
 export async function logout(
-	authenticationServiceUrl: string,
-	callbackUrl: string,
 	req: express.Request,
-	res: express.Response,
-	accessToken: string
+	res: express.Response
 ) {
-	req.logout()
-	await identity.logout(accessToken)
-	res.redirect(`${authenticationServiceUrl}/logout?returnTo=${callbackUrl}`)
-	res.end()
+	if (req.isAuthenticated()) {
+		const user: User = req.user
+		const redirectTo = req.user.isAdmin() && user.managementLoggedIn ?
+			config.LPG_MANAGEMENT_URL + "/sign-out" : config.AUTHENTICATION.serviceUrl + config.AUTHENTICATION.endpoints.logout
+		await removeProfileFromCache(user.id)
+		req.session!.destroy(() => {
+			res.redirect(redirectTo)
+		})
+	} else {
+		res.redirect(config.LPG_UI_SERVER)
+	}
 }

@@ -7,11 +7,6 @@ import * as query from 'querystring'
 import * as config from './config'
 import * as model from './model'
 
-export enum CourseState {
-	Completed = 'COMPLETED',
-	InProgress = 'IN_PROGRESS',
-}
-
 const logger = getLogger('learner-record')
 
 const http = axios.create({
@@ -90,10 +85,6 @@ export async function getRawLearningRecord(
 
 function convert(record: CourseRecord) {
 	return new CourseRecord(record)
-}
-
-export interface EventRegistrations {
-	[eventId: string]: number
 }
 
 export interface CourseRcd {

@@ -1,246 +1,100 @@
 import {expect} from 'chai'
-import * as chai from 'chai'
-import {NextFunction} from 'express'
-import {beforeEach} from 'mocha'
+import {OrganisationalUnit, User} from 'lib/model'
+import {AreaOfWork} from 'lib/registry'
+import {getMiddleware} from 'lib/ui/profileChecker'
 import * as sinon from 'sinon'
-import * as sinonChai from 'sinon-chai'
 import {mockReq, mockRes} from 'sinon-express-mock'
-import {ProfileChecker} from './profileChecker'
+import {profilePages} from '../../ui/controllers/profile'
+import {ProfileSession, profileSessionObjectService} from '../../ui/controllers/profile/pages/common'
 
-chai.use(sinonChai)
+const createUser = (
+	name?: string, organisation?: OrganisationalUnit, areaOfWork?: AreaOfWork,
+	otherAreasOfWork?: AreaOfWork[]) => {
+	return new User('id', [], 'access-token', 'username', 'userid', areaOfWork,
+		undefined, otherAreasOfWork, undefined, name, organisation, undefined)
+}
 
-describe('ProfileChecker tests', () => {
-	let profileChecker: ProfileChecker
+const requiredSections = profilePages.filter(p => p.setupDetails.required)
+const middleware = getMiddleware(requiredSections)
 
-	beforeEach(() => {
-		profileChecker = new ProfileChecker()
+const runMiddleware = (user: User, url?: string, req?: any, res?: any) => {
+	url = url === undefined ? '/home' : url
+	req = req ? req : mockReq({
+		originalUrl: url,
+		url,
+		user,
 	})
+	res = res ? res : mockRes()
+	const next = sinon.stub()
+	middleware(req, res, next)
+	return {
+		next, req, res,
+	}
+}
 
-	it('should recognise profile requests', () => {
-		const request = mockReq()
-		const paths = [
-			'/profile/name',
-			'/profile/organisation',
-			'/profile/profession',
-			'/profile/otherAreasOfWork',
-		]
-
-		for (const path of paths) {
-			request.path = path
-
-			/* tslint:disable-next-line:no-unused-expression */
-			expect(profileChecker.isProfileRequest(request)).to.be.true
-		}
+describe('Profile checker tests', () => {
+	it('Should redirect to the name section', () => {
+		const user = createUser()
+		const result = runMiddleware(user)
+		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/name')
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.req)!
+		expect(sessionObject.firstTimeSetup).to.eql(true)
+		expect(sessionObject.originalUrl).to.eql('/home')
 	})
-
-	it('should redirect to profile name page if givenName is missing from profile', () => {
-		const request = mockReq({
+	it('Should redirect to the organisation section', () => {
+		const user = createUser('name')
+		const result = runMiddleware(user)
+		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/organisation')
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.req)!
+		expect(sessionObject.firstTimeSetup).to.eql(true)
+		expect(sessionObject.originalUrl).to.eql('/home')
+	})
+	it('Should redirect to the primary of work section', () => {
+		const user = createUser('name', new OrganisationalUnit())
+		const result = runMiddleware(user)
+		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/primary-area-of-work')
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.req)!
+		expect(sessionObject.firstTimeSetup).to.eql(true)
+		expect(sessionObject.originalUrl).to.eql('/home')
+	})
+	it('Should redirect to the other areas of work section', () => {
+		const user = createUser('name', new OrganisationalUnit(), new AreaOfWork(1, ''))
+		const result = runMiddleware(user)
+		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/other-areas-of-work')
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.req)!
+		expect(sessionObject.firstTimeSetup).to.eql(false)
+		expect(sessionObject.originalUrl).to.eql('/home')
+	})
+	it('Should NOT redirect when the profile is complete', () => {
+		const user = createUser('name', new OrganisationalUnit(), new AreaOfWork(1, ''),
+			[new AreaOfWork(1, '')])
+		const result = runMiddleware(user)
+		expect(result.res.redirect.notCalled).to.eql(true)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.req)
+		expect(sessionObject).to.eql(undefined)
+		expect(result.next.calledOnce).to.eq(true)
+	})
+	it('Should NOT redirect when accessing a profile endpoint', () => {
+		const user = createUser()
+		const result = runMiddleware(user, '/profile/name')
+		expect(result.res.redirect.notCalled).to.eql(true)
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.req)!
+		expect(sessionObject.firstTimeSetup).to.eql(true)
+		expect(sessionObject.originalUrl).to.eql('/profile/name')
+	})
+	it('Should redirect when re-accessing the site', () => {
+		const user = createUser('Name')
+		const session = new ProfileSession(true, '/home')
+		const req = mockReq({
 			originalUrl: '/home',
-			user: {},
+			url: '/home',
+			user,
 		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/name?originalUrl=/home')
-	})
-
-	it('should redirect to profile organisation page if organisationalUnit is missing from profile', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				givenName: 'Test User',
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		const next = (err => undefined) as NextFunction
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
-	})
-
-	it('should redirect to profile  page if organisationalUnit is missing from profile', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				givenName: 'Test User',
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		const next = (err => undefined) as NextFunction
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
-	})
-
-	it('should redirect to profile organisation page if department is missing from profile', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				givenName: 'Test User',
-				organisationalUnit: {
-					code: 'co',
-					name: 'Cabinet Office',
-					paymentMethods: [],
-				},
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		const next = (err => undefined) as NextFunction
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation?originalUrl=/home')
-	})
-
-	it('should redirect to profile profession page if areasOfWork is missing from profile', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				department: 'co',
-				departmentId: 123,
-				givenName: 'Test User',
-				organisationalUnit: {
-					code: 'co',
-					name: 'Cabinet Office',
-					paymentMethods: [],
-				},
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		const next = (err => undefined) as NextFunction
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/profession?originalUrl=/home')
-	})
-
-	it('should redirect to profile otherAreasOfWork page if otherAreasOfWork is missing from profile', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				areasOfWork: [
-					1, 'Analysis',
-				],
-				department: 'co',
-				departmentId: 123,
-				givenName: 'Test User',
-				organisationalUnit: {
-					code: 'co',
-					name: 'Cabinet Office',
-					paymentMethods: [],
-				},
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const next = <NextFunction> {}
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		expect(response.redirect).to.have.been.calledOnceWith('/profile/otherAreasOfWork?originalUrl=/home')
-	})
-
-	it('should redirect to profile interests page if interests is missing from profile', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				areasOfWork: [
-					1, 'Analysis',
-				],
-				department: 'co',
-				departmentId: 123,
-				givenName: 'Test User',
-				organisationalUnit: {
-					code: 'co',
-					name: 'Cabinet Office',
-					paymentMethods: [],
-				},
-				otherAreasOfWork: [
-					{
-						id: 2,
-						name: 'Commercial',
-					},
-				],
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		/* tslint:disable-next-line:no-angle-bracket-type-assertion */
-		const check = profileChecker.checkProfile()
-		const next = sinon.stub()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		expect(next).to.have.been.calledOnce
-	})
-
-	it('should call next if mandatory sections of profile are complete', () => {
-		const request = mockReq({
-			originalUrl: '/home',
-			user: {
-				areasOfWork: [
-					1, 'Analysis',
-				],
-				department: 'co',
-				departmentId: 123,
-				givenName: 'Test User',
-				interests: [
-					{
-						name: 'Leadership',
-					},
-				],
-				organisationalUnit: {
-					code: 'co',
-					name: 'Cabinet Office',
-					paymentMethods: [],
-				},
-				otherAreasOfWork: [
-					{
-						id: 2,
-						name: 'Commercial',
-					},
-				],
-			},
-		})
-		request.session!.save = callback => {
-			callback(undefined)
-		}
-
-		const response = mockRes()
-		const next = sinon.stub()
-		const check = profileChecker.checkProfile()
-		check(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
-		expect(next).to.have.been.calledOnce
+		profileSessionObjectService.saveObjectToSession(req, session)
+		const result = runMiddleware(user, undefined, req)
+		expect(result.res.redirect.firstCall.args[0]).to.eql('/profile/organisation')
+		const sessionObject = profileSessionObjectService.fetchObjectFromSession(result.req)!
+		expect(sessionObject.firstTimeSetup).to.eql(true)
+		expect(sessionObject.originalUrl).to.eql('/home')
 	})
 })

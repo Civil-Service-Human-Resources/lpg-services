@@ -174,11 +174,7 @@ export function getModuleForEvent(course: model.Course) {
 }
 
 export function index(req: express.Request, res: express.Response) {
-	if (req.isAuthenticated()) {
-		res.redirect('/home')
-	} else {
-		res.redirect('/sign-in')
-	}
+	res.redirect('/home')
 }
 
 export function cookies(ireq: express.Request, res: express.Response) {

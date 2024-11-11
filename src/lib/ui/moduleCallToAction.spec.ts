@@ -96,7 +96,6 @@ describe('Module call to actions', () => {
 				})
 
 				it('should return Add (to learning plan)', () => {
-					console.log(cta)
 					expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Add)
 				})
 			})

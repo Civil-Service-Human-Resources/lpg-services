@@ -3,6 +3,6 @@
 <select class="form-control type-ahead" id="{inputName}" name="{inputName}" aria-labelledby="{inputName}">
  <option value=""></option>
     {#each options as option}
-        <option label="{option}" value="{option[0]}">{option[1]}</option>
+        <option label="{option}" value="{option.id}">{option.name}</option>
     {/each}
 </select>

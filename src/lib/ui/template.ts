@@ -104,6 +104,7 @@ export function render(
 		}
 	}
 
+	logger.debug(`loading page: ${page}`)
 	const component = require(pagePath)
 
 	currentRequest = req
@@ -117,7 +118,17 @@ export function render(
 	const store = new Store({
 		...getHelpers(),
 	})
-	return component.render(data, {store}).html
+
+	let renderedComponent
+	try {
+		renderedComponent = component.render(data, {store}).html
+	} catch (e) {
+		console.log("Failed to render component")
+		throw e
+	}
+
+	return renderedComponent
+
 }
 
 export function isEmpty(object: any) {
