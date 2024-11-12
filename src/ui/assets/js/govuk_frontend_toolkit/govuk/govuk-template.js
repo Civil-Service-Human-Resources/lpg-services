@@ -18,11 +18,13 @@
 					target.setAttribute(
 						'class',
 						targetClass.replace(/(^|\s)js-visible(\s|$)/, ''),
-						(document.getElementById('visiblyHidden').innerHTML = 'Select to expand')
+						(document.getElementById('visiblyHidden').innerHTML = 'Select to expand'),
 					)
+					document.getElementsByClassName('menu__icon')[0].innerHTML = '▼'
 				} else {
 					target.setAttribute('class', targetClass + ' js-visible')
 					document.getElementById('visiblyHidden').innerHTML = 'Select to close'
+					document.getElementsByClassName('menu__icon')[0].innerHTML = '▲'
 				}
 				if (sourceClass.indexOf('js-hidden') !== -1) {
 					this.setAttribute(

@@ -160,17 +160,6 @@ a.menu {
 	&:hover {
 		text-decoration: underline;
 	}
-	&:after {
-		display: inline-block;
-		font-size: 8px;
-		height: 8px;
-		padding-left: 5px;
-		vertical-align: middle;
-		content: ' \25BC';
-	}
-	&.js-hidden:after {
-		content: ' \25B2';
-	}
 }
 #proposition-menu {
 	padding: 10px 0 0 0;
@@ -327,6 +316,14 @@ a.js-header-toggle.menu.js-hidden {
 	@include media(desktop) {
 		display: none;
 	}
+}
+
+.menu__icon {
+	font-size: 8px;
+	height: 8px;
+	padding-left: 2px;
+	vertical-align: middle;
+	display: inline-block;
 }
 
 .phase-tag
