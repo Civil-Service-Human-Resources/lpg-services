@@ -366,10 +366,6 @@ export class Course {
 		return this.modules.filter(m => m.canBeBooked()).length > 0
 	}
 
-	hasBookableEvents() {
-		return this.modules.flatMap(m => m.getBookableEvents()).length > 0
-	}
-
 	getSelectedDate() {
 		if (this.record) {
 			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
