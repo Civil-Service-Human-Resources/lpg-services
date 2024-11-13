@@ -166,6 +166,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 			}
 			res.send(
 				template.render(`course/${type}`, req, res, {
+					backLink: res.locals.backLink,
 					canPayByPO,
 					course,
 					courseDetails: getCourseDetails(req, course, singleModule),

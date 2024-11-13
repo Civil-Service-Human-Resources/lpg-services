@@ -30,6 +30,7 @@ import {
 /* tslint:enable */
 import * as i18n from 'lib/service/translation'
 import * as profileChecker from 'lib/ui/profileChecker'
+import * as dynamicBackLink from 'lib/ui/middleware/dynamicBackLink'
 
 import {requiresDepartmentHierarchy} from 'lib/ui/requiresDepartmentHierarchy'
 import * as template from 'lib/ui/template'
@@ -229,6 +230,7 @@ app.use(asyncHandler(passport.logOutMiddleware))
 app.use(passport.hasRole('LEARNER'))
 
 profileChecker.register(app)
+dynamicBackLink.register(app)
 
 app.get('/api/video/complete', asyncHandler(completeVideoModule))
 
