@@ -1,4 +1,16 @@
-<div class="lpg-notification">
-    <h2 class="lpg-notification--heading">{$i18n('archivedWarning.heading')}</h2>
-    <div class="lpg-notification--description">{$i18n('archivedWarning.description')}</div>
-</div>
+<NotificationBanner title={$i18n('archivedWarning.heading')} description={$i18n('archivedWarning.description')} />
+
+<script>
+	import NotificationBanner from './NotificationBanner.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			NotificationBanner
+		}
+	}
+</script>

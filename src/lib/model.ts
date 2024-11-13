@@ -362,6 +362,10 @@ export class Course {
 		return this.audience ? this.audience.grades : []
 	}
 
+	canBeBooked() {
+		return this.modules.filter(m => m.canBeBooked()).length > 0
+	}
+
 	getSelectedDate() {
 		if (this.record) {
 			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
@@ -593,6 +597,14 @@ export class Module {
 		return this.events.find(event => event.id === eventId)
 	}
 
+	canBeBooked() {
+		return this.getBookableEvents().length > 0
+	}
+
+	getBookableEvents(): Event[] {
+		return this.events.filter(e => e.isBookable())
+	}
+
 	isAssociatedLearning() {
 		return this.associatedLearning
 	}
@@ -649,38 +661,21 @@ export class Event {
 		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}
 
-	id: string
-	date: Date
-	startDate: Date
-	endDate: Date
-	dateRanges: Date[]
-	location: string
-	capacity: number
-	availability: number
-	status: string
-	isLearnerBooked: boolean
+	public isLearnerBooked?: boolean
 
 	constructor(
-		startDate: Date,
-		endDate: Date,
-		dateRanges: Date[],
-		location: string,
-		capacity: number,
-		availability: number,
-		status: string,
-		id?: string
-	) {
-		if (id) {
-			this.id = id!
-		}
-		this.startDate = startDate
-		this.endDate = endDate
-		this.dateRanges = dateRanges
-		this.location = location
-		this.capacity = capacity
-		this.availability = availability
-		this.status = status
-		this.isLearnerBooked = false
+		public startDate: Date,
+		public endDate: Date,
+		public dateRanges: Date[],
+		public location: string,
+		public capacity: number,
+		public availability: number,
+		public status: string,
+		public id: string
+	) { }
+
+	isBookable() {
+		return this.startDate > new Date()
 	}
 }
 

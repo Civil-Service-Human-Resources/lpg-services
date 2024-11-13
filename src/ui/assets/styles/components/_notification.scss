@@ -1,22 +1,36 @@
 $notification-main-color: #1d70b8;
 
-.lpg-notification{
-    border: 5px solid $notification-main-color;
+.govuk-notification-banner {
     margin: 30px 0 60px 0;
+    border: 5px solid $notification-main-color;
+    background-color: $notification-main-color;
+}
 
-    .lpg-notification--heading{
-        background-color: $notification-main-color;
-        color: white;
-        font-size: 2.5rem;
-    }
+.govuk-notification-banner__header {
+    padding: 2px 20px 5px;
+    border-bottom: 1px solid transparent;
+}
 
-    .lpg-notification--description{
-        font-size: 2.5rem;
-    }
+.govuk-notification-banner__title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    color: $white;
+}
 
-    .lpg-notification--heading,
-    .lpg-notification--description{
-        padding: 20px;
-        font-weight: bold;
+.govuk-notification-banner__content {
+    $padding-tablet: 20px;
+    padding: 15px;
+    background-color: $white;
+    > :last-child {
+        margin-bottom: 0;
     }
-} 
+}
+
+.govuk-notification-banner__heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0 0 15px;
+    padding: 0;
+}
