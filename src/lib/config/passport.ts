@@ -52,8 +52,6 @@ export function configure(
 	})
 
 	passport.deserializeUser<model.User, string>(async (data, done) => {
-		console.log("DESIRIALISE")
-		console.log(data)
 		let user: model.User
 		try {
 			user = plainToInstance(model.User, JSON.parse(data) as model.User)

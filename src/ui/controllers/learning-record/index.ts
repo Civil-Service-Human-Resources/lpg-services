@@ -31,7 +31,7 @@ export async function courseResult(
 			moduleRecord = courseRecord.modules.find(mr => module.id === mr.moduleId)
 		}
 		if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
-			res.redirect('/home')
+			res.redirect(`/courses/${course.id}`)
 		} else {
 			let courseCompleted = true
 			let modulesCompleted = 0

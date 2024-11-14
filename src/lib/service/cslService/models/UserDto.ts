@@ -2,11 +2,11 @@ export class UserDto {
 	constructor(
 		public learnerEmail: string,
 		public learnerName: string,
-		public organisationId: number,
-		public organisationAbbreviation: string | undefined,
 		public professionId: number,
 		public professionName: string,
-		public userDepartmentHierarchy: string[ ],
+		public departmentHierarchy: Array<{ id: number, code: string, name: string }>,
 		public gradeId?: number,
-		public gradeCode?: string) {}
+		public gradeName?: string,
+		public lineManagerName?: string,
+		public lineManagerEmail?: string) {}
 }
