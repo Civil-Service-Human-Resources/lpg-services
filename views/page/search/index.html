@@ -72,7 +72,7 @@
                         {#if x === searchResults.page}
                         <span aria-label="Page {x+1}">{x+1}</span>
                         {:else}
-                        <a href="/search?q={query}{courseTypes.length > 0 ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments.selected.length > 0 ? '&department=' + departments.selected.toString().split(',').join('&interest=') : ''}{interests.selected.length > 0 ? '&interest=' + interests.selected.toString().split(',').join('&interest=') : ''}{areasOfWork.selected.length > 0 ? '&areaOfWork=' + areasOfWork.selected.toString().split(',').join('&areaOfWork=') : ''}{cost != '' ? '&cost=' + cost : ''}&s={searchResults.size}&p={x}"><span aria-label="Page {x+1}">{x+1}</span></a>
+                        <a aria-label="Page {x+1}" href="/search?q={query}{courseTypes.length > 0 ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments.selected.length > 0 ? '&department=' + departments.selected.toString().split(',').join('&interest=') : ''}{interests.selected.length > 0 ? '&interest=' + interests.selected.toString().split(',').join('&interest=') : ''}{areasOfWork.selected.length > 0 ? '&areaOfWork=' + areasOfWork.selected.toString().split(',').join('&areaOfWork=') : ''}{cost != '' ? '&cost=' + cost : ''}&s={searchResults.size}&p={x}">{x+1}</a>
                         {/if}
                     </li>
                     {/each}
