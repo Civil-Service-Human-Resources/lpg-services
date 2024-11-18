@@ -1,12 +1,8 @@
 import {expect} from 'chai'
-import {createSampleUser} from 'lib/service/catalog/suggestedLearning/suggestedLearningService.spec'
-import {
-	constructCourseCallToAction,
-	CourseActionType,
-} from 'lib/ui/courseCallToAction'
-
-import {CourseRecord, ModuleRecord} from 'lib/learnerrecord'
-import {Course, Module} from 'lib/model'
+import {CourseRecord, ModuleRecord} from '../learnerrecord'
+import {Course, Module} from '../model'
+import {createSampleUser} from '../service/catalog/suggestedLearning/suggestedLearningService.spec'
+import {constructCourseCallToAction, CourseActionType} from './courseCallToAction'
 
 export const testUser = createSampleUser()
 
@@ -73,17 +69,16 @@ describe('Course Call to Actions', () => {
 		course = initCourse()
 	})
 	it('should return a CourseCallToAction struct', () => {
-		/* tslint:disable:no-unused-expression */
+		/* eslint-disable typescript-eslint/no-unused-expressions */
 		expect(constructCourseCallToAction(course)).to.exist
-		/* tsline:enable */
+		/* esline-enable */
 	})
 
 	describe('For unrequired courses', () => {
 		describe('That are not in the learning plan', () => {
 			it('isInLearningPlan should be false', () => {
-				expect(
-					constructCourseCallToAction(course).isInLearningPlan
-				).to.be.false
+				/* eslint-disable typescript-eslint/no-unused-expressions */
+				expect(constructCourseCallToAction(course).isInLearningPlan).to.be.false
 			})
 
 			it('for bookable courses it should return "action_BOOK"', () => {
@@ -123,9 +118,7 @@ describe('Course Call to Actions', () => {
 				course = initCourse(true)
 			})
 			it('should be in the learning plan', () => {
-				expect(
-					constructCourseCallToAction(course).isInLearningPlan
-				).to.be.equal(true)
+				expect(constructCourseCallToAction(course).isInLearningPlan).to.be.equal(true)
 			})
 
 			describe('on the search page', () => {
@@ -133,9 +126,7 @@ describe('Course Call to Actions', () => {
 					modifier = 'search'
 				})
 				it('should not have any actions to plan', () => {
-					expect(
-						constructCourseCallToAction(course, modifier).actionToPlan
-					).to.be.undefined
+					expect(constructCourseCallToAction(course, modifier).actionToPlan).to.be.undefined
 				})
 			})
 			describe('on the home page', () => {
@@ -144,10 +135,7 @@ describe('Course Call to Actions', () => {
 				})
 				describe('for unrequired courses', () => {
 					it('should have actions to plan', () => {
-						expect(
-							constructCourseCallToAction(course, modifier)
-								.actionToPlan
-						).to.exist
+						expect(constructCourseCallToAction(course, modifier).actionToPlan).to.exist
 					})
 					describe('for face to face courses that have been REGISTERED', () => {
 						beforeEach(() => {
@@ -158,10 +146,7 @@ describe('Course Call to Actions', () => {
 								course.record!.modules.push(initModuleRecord('future'))
 								course.record!.modules[0].state = 'UNREGISTERED'
 
-								const cta = constructCourseCallToAction(
-									course,
-									modifier
-								)
+								const cta = constructCourseCallToAction(course, modifier)
 
 								expect(cta.url).to.be.equal(`/book/${course.id}/${course.modules[0].id}/choose-date`)
 								expect(cta.message).to.be.equal('action_BOOK')

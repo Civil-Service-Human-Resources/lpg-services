@@ -1,25 +1,26 @@
-import assert = require("assert")
+import assert = require('assert')
 import {expect} from 'chai'
 import * as chai from 'chai'
 import {plainToInstance} from 'class-transformer'
-import {AreaOfWork} from 'lib/registry'
-import {AreasOfWork} from 'lib/service/civilServantRegistry/areaOfWork/areasOfWork'
-import * as csrsService from "lib/service/civilServantRegistry/csrsService"
-import * as skillsApi from "lib/service/skills"
-import * as template from 'lib/ui/template'
 import * as sinon from 'sinon'
 import * as sinonChai from 'sinon-chai'
 import {mockReq, mockRes} from 'sinon-express-mock'
-import {formatAnswerSubmissionDate} from "./helpers"
+import {AreaOfWork} from '../../../lib/registry'
+import {AreasOfWork} from '../../../lib/service/civilServantRegistry/areaOfWork/areasOfWork'
+import * as csrsService from '../../../lib/service/civilServantRegistry/csrsService'
+import * as skillsApi from '../../../lib/service/skills'
+import * as template from '../../../lib/ui/template'
+import {formatAnswerSubmissionDate} from './helpers'
 import * as helper from './helpers'
 import {
 	answerQuestion,
 	chooseQuiz,
 	displayQuestion,
 	generateKeysFromAnswers,
-	introduction, quizHistory,
+	introduction,
+	quizHistory,
 	quizSummary,
-	startQuiz
+	startQuiz,
 } from './index'
 import {
 	areasOfWorkRegistryHalMock,
@@ -29,8 +30,8 @@ import {
 	expectedResultSummaryResponse,
 	generateSelectedAnswers,
 	QuizQuestions18,
-	QuizQuestions36
-} from "./index.fixture"
+	QuizQuestions36,
+} from './index.fixture'
 
 chai.use(sinonChai)
 
@@ -73,9 +74,11 @@ describe('Skills middleware', () => {
 			await introduction(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/introduction', req, res, {
-				quizExists: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/introduction', req, res, {
+					quizExists: false,
+				})
+			)
 			assert(templateStub.calledOnce)
 		})
 
@@ -111,9 +114,11 @@ describe('Skills middleware', () => {
 			await introduction(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/introduction', req, res, {
-				quizExists: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/introduction', req, res, {
+					quizExists: false,
+				})
+			)
 			assert(templateStub.calledOnce)
 
 			templateStub.restore()
@@ -151,22 +156,22 @@ describe('Skills middleware', () => {
 			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns(
-				{
-					description: 'desc',
-					id: 1,
-					name: 'name',
-					numberOfQuestions: 17,
-					status: 'DRAFT',
-				}
-			)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns({
+				description: 'desc',
+				id: 1,
+				name: 'name',
+				numberOfQuestions: 17,
+				status: 'DRAFT',
+			})
 
 			await introduction(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/introduction', req, res, {
-				quizExists: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/introduction', req, res, {
+					quizExists: false,
+				})
+			)
 			assert(templateStub.calledOnce)
 
 			templateStub.restore()
@@ -204,22 +209,22 @@ describe('Skills middleware', () => {
 			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns(
-				{
-					description: 'desc',
-					id: 1,
-					name: 'name',
-					numberOfQuestions: 0,
-					status: 'DRAFT',
-				}
-			)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns({
+				description: 'desc',
+				id: 1,
+				name: 'name',
+				numberOfQuestions: 0,
+				status: 'DRAFT',
+			})
 
 			await introduction(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/introduction', req, res, {
-				quizExists: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/introduction', req, res, {
+					quizExists: false,
+				})
+			)
 			assert(templateStub.calledOnce)
 
 			templateStub.restore()
@@ -270,18 +275,23 @@ describe('Skills middleware', () => {
 			await introduction(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/introduction', req, res, {
-				quizExists: true,
-			}))
+			assert(
+				templateStub.calledWith('skills/introduction', req, res, {
+					quizExists: true,
+				})
+			)
 			assert(templateStub.calledOnce)
-			assert(JSON.stringify(req.session!.quiz) === JSON.stringify({
-				answers: [],
-				description: quiz.description,
-				id: quiz.id,
-				name: quiz.name,
-				numberOfQuestions: quiz.numberOfQuestions,
-				questions: [],
-			}))
+			assert(
+				JSON.stringify(req.session!.quiz) ===
+					JSON.stringify({
+						answers: [],
+						description: quiz.description,
+						id: quiz.id,
+						name: quiz.name,
+						numberOfQuestions: quiz.numberOfQuestions,
+						questions: [],
+					})
+			)
 
 			templateStub.restore()
 			apiStub.restore()
@@ -330,31 +340,34 @@ describe('Skills middleware', () => {
 			await introduction(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/introduction', req, res, {
-				quizExists: true,
-			}))
+			assert(
+				templateStub.calledWith('skills/introduction', req, res, {
+					quizExists: true,
+				})
+			)
 			assert(templateStub.calledOnce)
-			assert(JSON.stringify(req.session!.quiz) === JSON.stringify({
-				answers: [],
-				description: quiz.description,
-				id: quiz.id,
-				name: quiz.name,
-				numberOfQuestions: quiz.numberOfQuestions,
-				questions: [],
-			}))
+			assert(
+				JSON.stringify(req.session!.quiz) ===
+					JSON.stringify({
+						answers: [],
+						description: quiz.description,
+						id: quiz.id,
+						name: quiz.name,
+						numberOfQuestions: quiz.numberOfQuestions,
+						questions: [],
+					})
+			)
 			templateStub.restore()
 			apiStub.restore()
 			helperStub.restore()
 		})
-
 	})
 
 	describe('Choose a quiz page', () => {
 		it('No quiz in session, redirects to introduction page', async () => {
 			const request = {
 				originalUrl: '/home',
-				session: {
-				},
+				session: {},
 				user: {
 					areasOfWork: undefined,
 					department: 'co',
@@ -385,11 +398,11 @@ describe('Skills middleware', () => {
 		it('Redirects to correct page', async () => {
 			const sessionQuiz = {
 				answers: [],
-					description: 'description',
-					id: 1,
-					name: 'quiz name',
-					numberOfQuestions: 21,
-					questions: [],
+				description: 'description',
+				id: 1,
+				name: 'quiz name',
+				numberOfQuestions: 21,
+				questions: [],
 			}
 
 			const request = {
@@ -423,10 +436,12 @@ describe('Skills middleware', () => {
 			await chooseQuiz(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/choose-quiz', req, res, {
-				questionCount: sessionQuiz.numberOfQuestions,
-				quizDescription: sessionQuiz.description,
-			}))
+			assert(
+				templateStub.calledWith('skills/choose-quiz', req, res, {
+					questionCount: sessionQuiz.numberOfQuestions,
+					quizDescription: sessionQuiz.description,
+				})
+			)
 			assert(templateStub.calledOnce)
 
 			templateStub.restore()
@@ -463,9 +478,11 @@ describe('Skills middleware', () => {
 			await startQuiz(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/introduction', req, res, {
-				quizExists: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/introduction', req, res, {
+					quizExists: false,
+				})
+			)
 			assert(templateStub.calledOnce)
 
 			templateStub.restore()
@@ -533,16 +550,19 @@ describe('Skills middleware', () => {
 				question: quizQuestions[0],
 				skipped: false,
 			})
-			// tslint:disable-next-line:no-unused-expression
+			// eslint-disable-next-line typescript-eslint/no-unused-expressions
 			expect(templateStub).to.have.been.calledOnce
-			assert(JSON.stringify(req.session!.selectedAnswers) === JSON.stringify({
-				answers: [],
-				organisationId: 1,
-				professionId: 1,
-				quizId: sessionQuiz.id,
-				quizName: sessionQuiz.name,
-				staffId: '123',
-			}))
+			assert(
+				JSON.stringify(req.session!.selectedAnswers) ===
+					JSON.stringify({
+						answers: [],
+						organisationId: 1,
+						professionId: 1,
+						quizId: sessionQuiz.id,
+						quizName: sessionQuiz.name,
+						staffId: '123',
+					})
+			)
 			assert(JSON.stringify(req.session!.questions) === JSON.stringify(quizQuestions))
 
 			templateStub.restore()
@@ -604,24 +624,29 @@ describe('Skills middleware', () => {
 			await startQuiz(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/questions', req, res, {
-				answersToQuestionKeys: [],
-				count: quizQuestions.length,
-				index: 0,
-				keys: generateKeysFromAnswers(quizQuestions[0].answer.answers),
-				multipleAnswers: quizQuestions[0].type === 'MULTIPLE',
-				question: quizQuestions[0],
-				skipped: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/questions', req, res, {
+					answersToQuestionKeys: [],
+					count: quizQuestions.length,
+					index: 0,
+					keys: generateKeysFromAnswers(quizQuestions[0].answer.answers),
+					multipleAnswers: quizQuestions[0].type === 'MULTIPLE',
+					question: quizQuestions[0],
+					skipped: false,
+				})
+			)
 			assert(templateStub.calledOnce)
-			assert(JSON.stringify(req.session!.selectedAnswers) === JSON.stringify({
-				answers: [],
-				organisationId: 1,
-				professionId: 1,
-				quizId: sessionQuiz.id,
-				quizName: sessionQuiz.name,
-				staffId: '123',
-			}))
+			assert(
+				JSON.stringify(req.session!.selectedAnswers) ===
+					JSON.stringify({
+						answers: [],
+						organisationId: 1,
+						professionId: 1,
+						quizId: sessionQuiz.id,
+						quizName: sessionQuiz.name,
+						staffId: '123',
+					})
+			)
 			assert(JSON.stringify(req.session!.questions) === JSON.stringify(quizQuestions))
 
 			templateStub.restore()
@@ -640,8 +665,7 @@ describe('Skills middleware', () => {
 			}
 
 			const request = {
-				body: {
-				},
+				body: {},
 				originalUrl: '/home',
 				session: {
 					quiz: sessionQuiz,
@@ -682,24 +706,29 @@ describe('Skills middleware', () => {
 			await startQuiz(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/questions', req, res, {
-				answersToQuestionKeys: [],
-				count: quizQuestions.length,
-				index: 0,
-				keys: generateKeysFromAnswers(quizQuestions[0].answer.answers),
-				multipleAnswers: quizQuestions[0].type === 'MULTIPLE',
-				question: quizQuestions[0],
-				skipped: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/questions', req, res, {
+					answersToQuestionKeys: [],
+					count: quizQuestions.length,
+					index: 0,
+					keys: generateKeysFromAnswers(quizQuestions[0].answer.answers),
+					multipleAnswers: quizQuestions[0].type === 'MULTIPLE',
+					question: quizQuestions[0],
+					skipped: false,
+				})
+			)
 			assert(templateStub.calledOnce)
-			assert(JSON.stringify(req.session!.selectedAnswers) === JSON.stringify({
-				answers: [],
-				organisationId: 1,
-				professionId: 1,
-				quizId: sessionQuiz.id,
-				quizName: sessionQuiz.name,
-				staffId: '123',
-			}))
+			assert(
+				JSON.stringify(req.session!.selectedAnswers) ===
+					JSON.stringify({
+						answers: [],
+						organisationId: 1,
+						professionId: 1,
+						quizId: sessionQuiz.id,
+						quizName: sessionQuiz.name,
+						staffId: '123',
+					})
+			)
 			assert(JSON.stringify(req.session!.questions) === JSON.stringify(quizQuestions))
 
 			templateStub.restore()
@@ -789,15 +818,17 @@ describe('Skills middleware', () => {
 
 			await displayQuestion(req, res)
 
-			assert(templateStub.calledWith('skills/questions', req, res, {
-				answersToQuestionKeys: [],
-				count: QuizQuestions18.length,
-				index: questionIndex,
-				keys: generateKeysFromAnswers(QuizQuestions18[questionIndex].answer.answers),
-				multipleAnswers: QuizQuestions18[questionIndex].type === 'MULTIPLE',
-				question: QuizQuestions18[questionIndex],
-				skipped: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/questions', req, res, {
+					answersToQuestionKeys: [],
+					count: QuizQuestions18.length,
+					index: questionIndex,
+					keys: generateKeysFromAnswers(QuizQuestions18[questionIndex].answer.answers),
+					multipleAnswers: QuizQuestions18[questionIndex].type === 'MULTIPLE',
+					question: QuizQuestions18[questionIndex],
+					skipped: false,
+				})
+			)
 			templateStub.restore()
 		})
 
@@ -841,15 +872,17 @@ describe('Skills middleware', () => {
 
 			await displayQuestion(req, res)
 
-			assert(templateStub.calledWith('skills/questions', req, res, {
-				answersToQuestionKeys: selectedAnswersExisting.answers[0].submittedAnswers,
-				count: QuizQuestions18.length,
-				index: questionIndex,
-				keys: generateKeysFromAnswers(QuizQuestions18[questionIndex].answer.answers),
-				multipleAnswers: QuizQuestions18[questionIndex].type === 'MULTIPLE',
-				question: QuizQuestions18[questionIndex],
-				skipped: false,
-			}))
+			assert(
+				templateStub.calledWith('skills/questions', req, res, {
+					answersToQuestionKeys: selectedAnswersExisting.answers[0].submittedAnswers,
+					count: QuizQuestions18.length,
+					index: questionIndex,
+					keys: generateKeysFromAnswers(QuizQuestions18[questionIndex].answer.answers),
+					multipleAnswers: QuizQuestions18[questionIndex].type === 'MULTIPLE',
+					question: QuizQuestions18[questionIndex],
+					skipped: false,
+				})
+			)
 			templateStub.restore()
 		})
 
@@ -894,28 +927,28 @@ describe('Skills middleware', () => {
 
 			await displayQuestion(req, res)
 
-			assert(templateStub.calledWith('skills/questions', req, res, {
-				answersToQuestionKeys: selectedAnswersExisting.answers[0].submittedAnswers,
-				count: QuizQuestions18.length,
-				index: questionIndex,
-				keys: generateKeysFromAnswers(QuizQuestions18[questionIndex].answer.answers),
-				multipleAnswers: QuizQuestions18[questionIndex].type === 'MULTIPLE',
-				question: QuizQuestions18[questionIndex],
-				skipped: true,
-			}))
+			assert(
+				templateStub.calledWith('skills/questions', req, res, {
+					answersToQuestionKeys: selectedAnswersExisting.answers[0].submittedAnswers,
+					count: QuizQuestions18.length,
+					index: questionIndex,
+					keys: generateKeysFromAnswers(QuizQuestions18[questionIndex].answer.answers),
+					multipleAnswers: QuizQuestions18[questionIndex].type === 'MULTIPLE',
+					question: QuizQuestions18[questionIndex],
+					skipped: true,
+				})
+			)
 			templateStub.restore()
 		})
-
 	})
 
 	describe('Answer a question', () => {
-
 		it('Single answer is selected, saves single answer and redirects to next question', async () => {
 			const questionIndex = 5
 			const selectedAnswersExisting = generateSelectedAnswers(6)
 			const request = {
 				body: {
-					answers: "A",
+					answers: 'A',
 				},
 				originalUrl: '/home',
 				params: {
@@ -958,8 +991,10 @@ describe('Skills middleware', () => {
 			assert(res.redirect.callCount === 1)
 			assert(res.redirect.args[0][0] === '/skills/questions/6')
 
-			assert(JSON.stringify(req.session!.selectedAnswers.answers) ===
-				JSON.stringify([ { questionId: questionIndex + 1, skipped: false, submittedAnswers: [ 'A' ] } ]))
+			assert(
+				JSON.stringify(req.session!.selectedAnswers.answers) ===
+					JSON.stringify([{questionId: questionIndex + 1, skipped: false, submittedAnswers: ['A']}])
+			)
 			templateStub.restore()
 			helperStub.restore()
 		})
@@ -969,7 +1004,7 @@ describe('Skills middleware', () => {
 			const selectedAnswersExisting = generateSelectedAnswers(6)
 			const request = {
 				body: {
-					answers: ["A", "B", "C"],
+					answers: ['A', 'B', 'C'],
 				},
 				originalUrl: '/home',
 				params: {
@@ -1012,8 +1047,10 @@ describe('Skills middleware', () => {
 			assert(res.redirect.callCount === 1)
 			assert(res.redirect.args[0][0] === '/skills/questions/6')
 
-			assert(JSON.stringify(req.session!.selectedAnswers.answers) ===
-				JSON.stringify([ { questionId: questionIndex + 1, skipped: false, submittedAnswers: [ 'A', 'B', 'C' ] } ]))
+			assert(
+				JSON.stringify(req.session!.selectedAnswers.answers) ===
+					JSON.stringify([{questionId: questionIndex + 1, skipped: false, submittedAnswers: ['A', 'B', 'C']}])
+			)
 			templateStub.restore()
 			helperStub.restore()
 		})
@@ -1066,8 +1103,10 @@ describe('Skills middleware', () => {
 			assert(res.redirect.callCount === 1)
 			assert(res.redirect.args[0][0] === '/skills/questions/6')
 
-			assert(JSON.stringify(req.session!.selectedAnswers.answers) ===
-				JSON.stringify([ { questionId: questionIndex + 1, skipped: true, submittedAnswers: [] } ]))
+			assert(
+				JSON.stringify(req.session!.selectedAnswers.answers) ===
+					JSON.stringify([{questionId: questionIndex + 1, skipped: true, submittedAnswers: []}])
+			)
 			templateStub.restore()
 			helperStub.restore()
 		})
@@ -1127,11 +1166,9 @@ describe('Skills middleware', () => {
 			apiStub.restore()
 			helperStub.restore()
 		})
-
 	})
 
 	describe('Display quiz summary', () => {
-
 		it('Backend throws error when requesting result summary, redirected to main skills page', async () => {
 			const answerSubmissionId = 1
 			const request = {
@@ -1218,14 +1255,14 @@ describe('Skills middleware', () => {
 			await quizSummary(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/quiz-summary',
-			req, res, {answerSubmission: expectedResultSummaryResponse}))
+			assert(
+				templateStub.calledWith('skills/quiz-summary', req, res, {answerSubmission: expectedResultSummaryResponse})
+			)
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
 			helperStub.restore()
 		})
-
 	})
 
 	describe('Display quiz history', () => {
@@ -1269,10 +1306,12 @@ describe('Skills middleware', () => {
 			await quizHistory(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/quiz-history', req, res, {
-				answerSubmissions: formatAnswerSubmissionDate(expectedQuizHistoryResponse.quizResultDto),
-				areaOfWorkKeys: expectedAreasOfWork,
-			}))
+			assert(
+				templateStub.calledWith('skills/quiz-history', req, res, {
+					answerSubmissions: formatAnswerSubmissionDate(expectedQuizHistoryResponse.quizResultDto),
+					areaOfWorkKeys: expectedAreasOfWork,
+				})
+			)
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
@@ -1317,14 +1356,15 @@ describe('Skills middleware', () => {
 			await quizHistory(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/quiz-history', req, res, {
-				answerSubmissions: formatAnswerSubmissionDate([]),
-				areaOfWorkKeys: expectedAreasOfWork,
-			}))
+			assert(
+				templateStub.calledWith('skills/quiz-history', req, res, {
+					answerSubmissions: formatAnswerSubmissionDate([]),
+					areaOfWorkKeys: expectedAreasOfWork,
+				})
+			)
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
 		})
-
 	})
 })

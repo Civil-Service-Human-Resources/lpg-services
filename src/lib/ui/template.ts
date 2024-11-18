@@ -1,39 +1,39 @@
-import * as config from 'lib/config'
+import {STATIC_DIR} from '../config'
+import * as config from '../config'
 
-import {constructCourseCallToAction} from 'lib/ui/courseCallToAction'
-import {constructModuleCta} from 'lib/ui/moduleCallToAction'
+import {constructCourseCallToAction} from './courseCallToAction'
+import {constructModuleCta} from './moduleCallToAction'
 
-import * as datetime from 'lib/datetime'
-import * as fileHelpers from 'lib/filehelpers'
+import * as datetime from '../datetime'
+import * as fileHelpers from '../filehelpers'
 
 import * as express from 'express'
 import * as fs from 'fs'
 
-import {getLogger} from 'lib/logger'
 import * as path from 'path'
+import {getLogger} from '../logger'
 
-/*tslint:disable*/
+/*eslint-disable*/
 require('svelte/ssr/register')
 const {Store} = require('svelte/store.umd.js')
-/*tslint:enable*/
+/*eslint-enable*/
 
-const rootDir = process.cwd()
-export const pageDir = path.join(rootDir, 'page')
+export const pageDir = `${STATIC_DIR}/page`
 
 const logger = getLogger('lib/template')
 
-function isFile(path: string) {
+function isFile(filePath: string) {
 	try {
-		return fs.statSync(path).isFile()
-	} catch (err) {
+		return fs.statSync(filePath).isFile()
+	} catch {
 		return false
 	}
 }
 
-export function isDirectory(path: string) {
+export function isDirectory(filePath: string) {
 	try {
-		return fs.statSync(path).isDirectory()
-	} catch (err) {
+		return fs.statSync(filePath).isDirectory()
+	} catch {
 		return false
 	}
 }
@@ -90,22 +90,19 @@ function getCurrentRequest() {
 	return currentRequest
 }
 
-export function render(
-	page: string,
-	req: express.Request,
-	res: express.Response,
-	withData?: any
-) {
+export function render(page: string, req: express.Request, res: express.Response, withData?: any) {
 	let pagePath = path.join(pageDir, page + '.html')
 	if (!isFile(pagePath)) {
 		pagePath = path.join(pageDir, page, 'index.html')
 		if (!isFile(pagePath)) {
-			throw new Error(`Could not find a matching .html file for ${page}`)
+			throw new Error(`Could not find a matching .html file for ${page} using dir ${pagePath}`)
 		}
 	}
 
 	logger.debug(`loading page: ${page}`)
+	/*eslint-disable*/
 	const component = require(pagePath)
+	/*eslint-enable*/
 
 	currentRequest = req
 	logger.debug(`rendering page: ${page}`)
@@ -123,12 +120,11 @@ export function render(
 	try {
 		renderedComponent = component.render(data, {store}).html
 	} catch (e) {
-		console.log("Failed to render component")
+		console.log('Failed to render component')
 		throw e
 	}
 
 	return renderedComponent
-
 }
 
 export function isEmpty(object: any) {

@@ -1,6 +1,6 @@
 import axios from 'axios'
-import * as config from 'lib/config'
-import * as datetime from 'lib/datetime'
+import * as config from './config'
+import * as datetime from './datetime'
 
 export interface BasicInfo {
 	height: number
@@ -13,15 +13,11 @@ export interface BasicInfo {
 }
 
 // NOTE: Callers may want to retry in case of error with YouTube.
-export async function getBasicInfo(
-	url: string
-): Promise<BasicInfo | undefined> {
+export async function getBasicInfo(url: string): Promise<BasicInfo | undefined> {
 	let resp
 	try {
 		resp = await axios.get(
-			`https://www.youtube.com/oembed?url=${encodeURIComponent(
-				url
-			)}&format=json&key=${config.YOUTUBE_API_KEY}`
+			`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json&key=${config.YOUTUBE_API_KEY}`
 		)
 	} catch (err) {
 		console.error(`Error fetching basic info from YouTube: ${err}`)
@@ -52,15 +48,11 @@ export async function getBasicInfo(
 	}
 }
 
-export async function getDuration(
-	videoID: string
-): Promise<number | undefined> {
+export async function getDuration(videoID: string): Promise<number | undefined> {
 	let resp
 	try {
 		resp = await axios.get(
-			`https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoID}&key=${
-				config.YOUTUBE_API_KEY
-			}`
+			`https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoID}&key=${config.YOUTUBE_API_KEY}`
 		)
 	} catch (err) {
 		console.error(`Error fetching metadata from YouTube: ${err}`)

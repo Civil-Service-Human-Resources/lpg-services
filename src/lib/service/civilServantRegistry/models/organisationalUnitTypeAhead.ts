@@ -1,5 +1,5 @@
 import {Type} from 'class-transformer'
-import {getLogger} from 'lib/logger'
+import {getLogger} from '../../../logger'
 
 import {OrganisationalUnit, User} from '../../../model'
 

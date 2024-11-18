@@ -49,7 +49,7 @@ steps:
     displayName: 'Test'
     inputs:
       command: 'custom'
-      customCommand: 'run test:ts'
+      customCommand: 'run test'
 
   - task: Docker@2
     inputs:

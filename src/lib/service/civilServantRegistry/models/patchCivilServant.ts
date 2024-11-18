@@ -1,5 +1,5 @@
-import {AreaOfWork, Grade, Interest} from 'lib/registry'
-import {PatchCivilServantInterface} from 'lib/service/civilServantRegistry/models/patchCivilServantInterface'
+import {AreaOfWork, Grade, Interest} from '../../../registry'
+import {PatchCivilServantInterface} from './patchCivilServantInterface'
 
 export class PatchCivilServant {
 	constructor(
@@ -7,8 +7,8 @@ export class PatchCivilServant {
 		public grade?: Grade,
 		public interests?: Interest[],
 		public profession?: AreaOfWork,
-		public otherAreasOfWork?: AreaOfWork[]) {
-	}
+		public otherAreasOfWork?: AreaOfWork[]
+	) {}
 
 	public getAsApiParams(): PatchCivilServantInterface {
 		const params: PatchCivilServantInterface = {}

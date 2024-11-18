@@ -1,6 +1,6 @@
 import {plainToClass} from 'class-transformer'
-import {Profile} from 'lib/registry'
-import {CacheableObjectCache} from 'lib/utils/cacheableObjectCache'
+import {Profile} from '../../../registry'
+import {CacheableObjectCache} from '../../../utils/cacheableObjectCache'
 
 export class ProfileCache extends CacheableObjectCache<Profile> {
 	getBaseKey(): string {

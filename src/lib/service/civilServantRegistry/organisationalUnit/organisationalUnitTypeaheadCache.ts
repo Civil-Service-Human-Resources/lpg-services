@@ -1,5 +1,5 @@
 import {plainToClass} from 'class-transformer'
-import {Cache} from 'lib/utils/cache'
+import {Cache} from '../../../utils/cache'
 
 import {OrganisationalUnitTypeAhead} from '../models/organisationalUnitTypeAhead'
 

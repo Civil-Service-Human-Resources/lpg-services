@@ -1,4 +1,4 @@
-import * as model from 'lib/model'
+import * as model from '../model'
 
 export enum CourseActionType {
 	Add = 'Add',
@@ -17,14 +17,11 @@ export interface CallToActionProps {
 		skip: string
 	}
 	isInLearningPlan: boolean
-	message: string
-	url: string
+	message?: string
+	url?: string
 }
 
-export function constructCourseCallToAction(
-	course: model.Course,
-	modifier?: string
-) {
+export function constructCourseCallToAction(course: model.Course, modifier?: string) {
 	const courseType = course.getType()
 	const isRequired: boolean = course.isRequired()
 	const isHome: boolean = modifier === 'home'
@@ -32,8 +29,7 @@ export function constructCourseCallToAction(
 	const callToActionProps: CallToActionProps = {
 		accessibilityHelper: ` ${course.title}`,
 		isInLearningPlan: isRequired,
-		message:
-			courseType === 'face-to-face' ? 'action_BOOK' : 'action_NOT_STARTED',
+		message: courseType === 'face-to-face' ? 'action_BOOK' : 'action_NOT_STARTED',
 		url:
 			courseType === 'face-to-face'
 				? `/book/${course.id}/${course.modules[0].id}/choose-date`
@@ -46,12 +42,10 @@ export function constructCourseCallToAction(
 
 	if (course.record && course.record.state !== 'ARCHIVED') {
 		const record = course.record
-		callToActionProps.isInLearningPlan = (!!course.record || isRequired)
+		callToActionProps.isInLearningPlan = !!course.record || isRequired
 
 		const bookedModule = record.modules && record.modules.find(m => !!m.eventId)
-		const isBooked =
-			bookedModule &&
-			(bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED')
+		const isBooked = bookedModule && (bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED')
 		const isDatePassed = new Date() > course.getSelectedDate()!
 
 		switch (courseType) {
@@ -59,12 +53,8 @@ export function constructCourseCallToAction(
 				if (isBooked) {
 					if (isDatePassed) {
 						callToActionProps.actionToRecord = {
-							move: `/home?move=${course.id},${
-								course.record.modules[0].moduleId
-							},${course.record.modules[0].eventId}`,
-							skip: `/home?skip=${course.id},${
-								course.record.modules[0].moduleId
-							},${course.record.modules[0].eventId}`,
+							move: `/home?move=${course.id},${course.record.modules[0].moduleId},${course.record.modules[0].eventId}`,
+							skip: `/home?skip=${course.id},${course.record.modules[0].moduleId},${course.record.modules[0].eventId}`,
 						}
 						delete callToActionProps.url
 						delete callToActionProps.message
@@ -81,12 +71,14 @@ export function constructCourseCallToAction(
 				let isCourseModuleCompleted = true
 				const OptionalModules = []
 				const nonOptionalnotStartedCourses = []
-				const iDsOfNonOptionalnotStartedCourses = []
+				const iDsOfNonOptionalnotStartedCourses: string[] = []
 				for (const moduleCourse of course.getModules()) {
-					const isModuleInLearningRecord = record.modules.find(recordModule => recordModule.moduleId === moduleCourse.id)
+					const isModuleInLearningRecord = record.modules.find(
+						recordModule => recordModule.moduleId === moduleCourse.id
+					)
 					for (const moduleRecord of record.modules) {
 						const isItemAlreadyInArray = iDsOfNonOptionalnotStartedCourses.includes(moduleRecord.moduleId)
-						const isModuleCompleted = moduleRecord.state !== "COMPLETED"
+						const isModuleCompleted = moduleRecord.state !== 'COMPLETED'
 						if (!isModuleInLearningRecord && !moduleCourse.optional && !isItemAlreadyInArray && isModuleCompleted) {
 							nonOptionalnotStartedCourses.push(moduleCourse)
 							iDsOfNonOptionalnotStartedCourses.push(moduleRecord.moduleId)
@@ -105,8 +97,10 @@ export function constructCourseCallToAction(
 								}
 							}
 						} else {
-							const courseOptionalModule = OptionalModules.find(optionalModule => optionalModule.title === module.moduleTitle)
-							if (module.state !== "COMPLETED" && !courseOptionalModule) {
+							const courseOptionalModule = OptionalModules.find(
+								optionalModule => optionalModule.title === module.moduleTitle
+							)
+							if (module.state !== 'COMPLETED' && !courseOptionalModule) {
 								isCourseModuleCompleted = false
 								break
 							}
@@ -114,20 +108,20 @@ export function constructCourseCallToAction(
 					}
 				}
 				if (isFaceToFacePassed && isCourseModuleCompleted) {
-					callToActionProps.message = ""
+					callToActionProps.message = ''
 					const faceToFaceModule = record.modules.find(recordModule => recordModule.moduleType === 'face-to-face')
 					callToActionProps.actionToRecord = {
 						move: `/home?move=${course.id},${
 							// @ts-ignore
 							faceToFaceModule.moduleId
 							// @ts-ignore
-							},${faceToFaceModule.eventId}`,
+						},${faceToFaceModule.eventId}`,
 						// @ts-ignore
 						skip: `/home?skip=${course.id},${
 							// @ts-ignore
 							faceToFaceModule.moduleId
 							// @ts-ignore
-							},${faceToFaceModule.eventId}`,
+						},${faceToFaceModule.eventId}`,
 					}
 				}
 				break

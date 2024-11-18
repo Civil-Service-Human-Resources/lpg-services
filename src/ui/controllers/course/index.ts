@@ -1,14 +1,14 @@
 import * as express from 'express'
-import * as extended from 'lib/extended'
-import {getLogger} from 'lib/logger'
-import * as model from 'lib/model'
-import * as catalog from 'lib/service/catalog'
-import * as cslServiceClient from 'lib/service/cslService/cslServiceClient'
-import {removeCourseFromLearningPlan} from 'lib/service/cslService/cslServiceClient'
-import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
-import * as template from 'lib/ui/template'
-import * as youtube from 'lib/youtube'
+import * as extended from '../../../lib/extended'
+import {getLogger} from '../../../lib/logger'
+import * as model from '../../../lib/model'
+import * as catalog from '../../../lib/service/catalog'
+import * as cslServiceClient from '../../../lib/service/cslService/cslServiceClient'
+import {removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslServiceClient'
+import * as courseRecordClient from '../../../lib/service/learnerRecordAPI/courseRecord/client'
+import {ModuleRecord} from '../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import * as template from '../../../lib/ui/template'
+import * as youtube from '../../../lib/youtube'
 
 export interface CourseDetail {
 	label: string
@@ -79,43 +79,38 @@ export function getCourseDetails(
 	]
 }
 
-export async function displayModule(
-	ireq: express.Request,
-	res: express.Response
-) {
-		const req = ireq as extended.CourseRequest
+export async function displayModule(ireq: express.Request, res: express.Response) {
+	const req = ireq as extended.CourseRequest
 
-		const course = req.course
-		const module = req.module!
+	const course = req.course
+	const module = req.module!
 
-		switch (module.type) {
-			case 'elearning':
-			case 'link':
-			case 'file':
-				const launchModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
-				res.redirect(launchModuleResponse.launchLink)
-				break
-			case 'face-to-face':
-				res.redirect(`/book/${course.id}/${module.id}/choose-date`)
-				break
-			case 'video':
-				const launchVideoModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
-				const videoLink = launchVideoModuleResponse.launchLink
-				res.send(
-					template.render(`course/display-video`, req, res, {
-						course,
-						courseDetails: getCourseDetails(req, course, module),
-						module,
-						video: !videoLink.search('/http(.+)youtube(.*)/i')
-							? null
-							: await youtube.getBasicInfo(videoLink),
-					})
-				)
-				break
-			default:
-				logger.debug(`Unknown module type: ${module.type}`)
-				res.sendStatus(500)
-		}
+	switch (module.type) {
+		case 'elearning':
+		case 'link':
+		case 'file':
+			const launchModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
+			res.redirect(launchModuleResponse.launchLink)
+			break
+		case 'face-to-face':
+			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
+			break
+		case 'video':
+			const launchVideoModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
+			const videoLink = launchVideoModuleResponse.launchLink
+			res.send(
+				template.render(`course/display-video`, req, res, {
+					course,
+					courseDetails: getCourseDetails(req, course, module),
+					module,
+					video: !videoLink.search('/http(.+)youtube(.*)/i') ? null : await youtube.getBasicInfo(videoLink),
+				})
+			)
+			break
+		default:
+			logger.debug(`Unknown module type: ${module.type}`)
+			res.sendStatus(500)
+	}
 }
 
 export async function display(ireq: express.Request, res: express.Response) {
@@ -123,10 +118,13 @@ export async function display(ireq: express.Request, res: express.Response) {
 
 	const course = req.course
 	const singleModule = course.modules.length === 1 ? course.modules[0] : undefined
-	const module = singleModule !== undefined ? {
-		...singleModule,
-		isMandatory : !singleModule.optional,
-	} : undefined
+	const module =
+		singleModule !== undefined
+			? {
+					...singleModule,
+					isMandatory: !singleModule.optional,
+				}
+			: undefined
 
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 
@@ -147,19 +145,21 @@ export async function display(ireq: express.Request, res: express.Response) {
 			const modules = course.modules.map(mod => {
 				const mr = moduleRecords.get(mod.id)
 				return {
-				...mod,
-				displayState: mod.getDisplayState(mr, audience),
-				duration: mod.getDuration(),
-				isMandatory: !mod.optional,
-				state: mr ? mr.getState() : null,
-			}})
-			let recordState = "none"
+					...mod,
+					displayState: mod.getDisplayState(mr, audience),
+					duration: mod.getDuration(),
+					isMandatory: !mod.optional,
+					state: mr ? mr.getState() : null,
+				}
+			})
+			let recordState = 'none'
 
 			if (courseRecord && courseRecord.modules) {
-				const faceToFaceModules = courseRecord.modules
-					.filter(moduleFiltered => moduleFiltered.moduleType === "face-to-face")
+				const faceToFaceModules = courseRecord.modules.filter(
+					moduleFiltered => moduleFiltered.moduleType === 'face-to-face'
+				)
 
-				if ( faceToFaceModules.length !== 0) {
+				if (faceToFaceModules.length !== 0) {
 					// @ts-ignore
 					recordState = faceToFaceModules[0].state
 				}
@@ -190,11 +190,7 @@ export async function display(ireq: express.Request, res: express.Response) {
 	}
 }
 
-export async function loadCourse(
-	ireq: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) {
+export async function loadCourse(ireq: express.Request, res: express.Response, next: express.NextFunction) {
 	const req = ireq as extended.CourseRequest
 	const courseId: string = req.params.courseId
 	const course = await catalog.get(courseId, req.user, res.locals.departmentHierarchyCodes)
@@ -206,11 +202,7 @@ export async function loadCourse(
 	}
 }
 
-export async function loadModule(
-	ireq: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) {
+export async function loadModule(ireq: express.Request, res: express.Response, next: express.NextFunction) {
 	const req = ireq as extended.CourseRequest
 	const moduleId: string = req.params.moduleId
 	const course = req.course
@@ -221,15 +213,11 @@ export async function loadModule(
 			return next()
 		}
 	}
-	console.log("404!")
+	console.log('404!')
 	res.sendStatus(404)
 }
 
-export async function loadEvent(
-	ireq: express.Request,
-	res: express.Response,
-	next: express.NextFunction
-) {
+export async function loadEvent(ireq: express.Request, res: express.Response, next: express.NextFunction) {
 	const req = ireq as extended.CourseRequest
 	const eventId: string = req.params.eventId
 	const module = req.module
@@ -243,20 +231,11 @@ export async function loadEvent(
 	res.sendStatus(404)
 }
 
-export async function markCourseDeleted(
-	req: express.Request,
-	res: express.Response
-) {
-		const resp = await removeCourseFromLearningPlan(req.params.courseId, req.user)
-		req.flash(
-			'successTitle',
-			req.__('learning_removed_from_plan_title', resp.courseTitle)
-		)
-		req.flash(
-			'successMessage',
-			req.__('learning_removed_from_plan_message', resp.courseTitle)
-		)
-		req.session!.save(() => {
-			res.redirect('/')
+export async function markCourseDeleted(req: express.Request, res: express.Response) {
+	const resp = await removeCourseFromLearningPlan(req.params.courseId, req.user)
+	req.flash('successTitle', req.__('learning_removed_from_plan_title', resp.courseTitle))
+	req.flash('successMessage', req.__('learning_removed_from_plan_message', resp.courseTitle))
+	req.session!.save(() => {
+		res.redirect('/')
 	})
 }

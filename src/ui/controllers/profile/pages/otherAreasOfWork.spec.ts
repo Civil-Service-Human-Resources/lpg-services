@@ -1,20 +1,16 @@
 import {expect} from 'chai'
-import {AreaOfWork} from 'lib/registry'
-import {AreasOfWork} from 'lib/service/civilServantRegistry/areaOfWork/areasOfWork'
-import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
 import * as sinon from 'sinon'
 import {mockReq, mockRes} from 'sinon-express-mock'
+import {AreaOfWork} from '../../../../lib/registry'
+import {AreasOfWork} from '../../../../lib/service/civilServantRegistry/areaOfWork/areasOfWork'
+import * as csrsService from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {PageBehaviour} from './common'
 import * as common from './common'
 import {selectOtherAreasOfWorkMiddleware} from './otherAreasOfWork'
 
-describe("Other areas of work middleware tests", () => {
-	const areasOfWorkList = [
-		new AreaOfWork(1, 'aow1'),
-		new AreaOfWork(2, 'aow2'),
-		new AreaOfWork(3, 'aow3'),
-	]
+describe('Other areas of work middleware tests', () => {
+	const areasOfWorkList = [new AreaOfWork(1, 'aow1'), new AreaOfWork(2, 'aow2'), new AreaOfWork(3, 'aow3')]
 	const areasOfWork = new AreasOfWork(areasOfWorkList, areasOfWorkList)
 	const behaviour: PageBehaviour = {
 		templateName: 'aow',
@@ -24,7 +20,7 @@ describe("Other areas of work middleware tests", () => {
 	const run = async (userOtherAreaOfWorkIds: number[] | undefined, areaOfWorkIds: string[] | undefined) => {
 		const mockRequest = mockReq({
 			body: {
-				"other-areas-of-work": areaOfWorkIds,
+				'other-areas-of-work': areaOfWorkIds,
 			},
 			user: {
 				otherAreasOfWork: userOtherAreaOfWorkIds ? userOtherAreaOfWorkIds.map(aow => ({id: aow})) : undefined,
@@ -49,7 +45,7 @@ describe("Other areas of work middleware tests", () => {
 	afterEach(() => {
 		sandbox.restore()
 	})
-	it("Should update and redirect if there are no errors", async () => {
+	it('Should update and redirect if there are no errors', async () => {
 		await run(undefined, ['1', '2'])
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)
@@ -59,7 +55,7 @@ describe("Other areas of work middleware tests", () => {
 		expect(patchStub.called).to.eq(false)
 		expect(generateRedirectStub.called).to.eq(true)
 	})
-	it("Should re-render the page if no areas of work are selected", async () => {
+	it('Should re-render the page if no areas of work are selected', async () => {
 		await run([1], [])
 		expect(renderStub.calledOnce).to.eq(true)
 		expect(patchStub.calledOnce).to.eq(false)

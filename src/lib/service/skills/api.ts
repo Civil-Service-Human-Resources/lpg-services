@@ -52,8 +52,8 @@ export interface SelectedAnswers {
 export interface SelectedAnswer {
 	questionId: number
 	submittedAnswers: string[]
-	skipped: boolean,
-	question?: Question,
+	skipped: boolean
+	question?: Question
 	correct?: boolean
 }
 
@@ -62,7 +62,7 @@ export interface Answer {
 }
 
 export interface Answers {
-	answers: Answer,
+	answers: Answer
 }
 
 export interface Question {
@@ -78,8 +78,8 @@ export interface Question {
 	suggestions?: string
 	answer: {
 		id: number
-		correctAnswer: string []
-		answers: Answer,
+		correctAnswer: string[]
+		answers: Answer
 	}
 	status: string
 }
@@ -89,7 +89,7 @@ export class Quiz {
 	name: string
 	questions: Question[]
 	numberOfQuestions: number
-	answers: any []
+	answers: any[]
 	description: string
 
 	constructor(questions: Question[]) {
@@ -97,8 +97,4 @@ export class Quiz {
 		this.numberOfQuestions = questions.length
 		this.answers = []
 	}
-}
-
-export interface AreaOfWorkKeysInterface {
-	[key: string]: any
 }

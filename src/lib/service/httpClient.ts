@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
 import * as https from 'https'
-import {ClientError} from 'lib/exception/ClientError'
 import * as qs from 'qs'
+import {ClientError} from '../exception/ClientError'
 
 import {ResourceNotFoundError} from '../exception/ResourceNotFoundError'
 import {getLogger} from '../logger'
@@ -62,7 +62,7 @@ export class HttpClient {
 		}
 		try {
 			req.paramsSerializer = (params: any) => {
-				return qs.stringify(params, {arrayFormat: "repeat"})
+				return qs.stringify(params, {arrayFormat: 'repeat'})
 			}
 			const res = await this.http.request<T>(req)
 			return res.data

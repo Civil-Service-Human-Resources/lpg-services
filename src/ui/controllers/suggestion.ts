@@ -1,10 +1,9 @@
 import * as express from 'express'
-import * as model from 'lib/model'
-
-import {fetchSuggestedLearning} from 'lib/service/catalog/suggestedLearning/suggestedLearningService'
-import {Suggestion} from 'lib/service/catalog/suggestedLearning/suggestion'
-import * as cslService from 'lib/service/cslService/cslServiceClient'
-import * as template from 'lib/ui/template'
+import * as model from '../../lib/model'
+import {fetchSuggestedLearning} from '../../lib/service/catalog/suggestedLearning/suggestedLearningService'
+import {Suggestion} from '../../lib/service/catalog/suggestedLearning/suggestion'
+import * as cslService from '../../lib/service/cslService/cslServiceClient'
+import * as template from '../../lib/ui/template'
 
 export async function addToPlan(req: express.Request, res: express.Response) {
 	const ref = req.query.ref

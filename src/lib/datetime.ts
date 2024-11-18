@@ -10,8 +10,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 // From:
 // https://github.com/google/closure-library/blob/master/closure/goog/date/date.js
 const isoRegex = new RegExp(
-	'^(-)?P(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)D)?' +
-		'(T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+(?:\\.\\d+)?)S)?)?$'
+	'^(-)?P(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)D)?' + '(T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+(?:\\.\\d+)?)S)?)?$'
 )
 
 const timeFormat = new Intl.DateTimeFormat('en-GB', {
@@ -30,9 +29,7 @@ function divmod(a: number, b: number) {
 function ensureFullICU() {
 	const spanish = new Intl.DateTimeFormat('es', {month: 'long'})
 	if (spanish.format(new Date(2000, 0, 1)) !== 'enero') {
-		throw new Error(
-			'Please ensure that the NODE_ICU_DATA environment variable has been set'
-		)
+		throw new Error('Please ensure that the NODE_ICU_DATA environment variable has been set')
 	}
 }
 
@@ -99,9 +96,7 @@ export function HTMLFormatDate(d: number | Date, withTime?: boolean) {
 		const yearTime = arrDate[2].split(', ')
 		const arrDateTime = [...arrDate.slice(0, 2), ...yearTime]
 
-		formatted = `${arrDateTime[2]}-${arrDateTime[1]}-${arrDateTime[0]}T${
-			arrDateTime[3]
-		}`
+		formatted = `${arrDateTime[2]}-${arrDateTime[1]}-${arrDateTime[0]}T${arrDateTime[3]}`
 	}
 	return formatted
 }
@@ -142,10 +137,7 @@ export function formatTime(d: number | Date, timeOnly?: boolean) {
 		d = new Date(d)
 	}
 	if (timeOnly) {
-		return timeFormat
-			.format(d)
-			.split(',')
-			.pop()
+		return timeFormat.format(d).split(',').pop()
 	}
 
 	return timeFormat.format(d)
@@ -162,9 +154,7 @@ export function parseMP4Duration(duration: string) {
 	} else {
 		const arrDurration = duration.split(':')
 		const seconds =
-			parseInt(arrDurration[0], 10) * (60 * 60) +
-			parseInt(arrDurration[1], 10) * 60 +
-			parseInt(arrDurration[2], 10)
+			parseInt(arrDurration[0], 10) * (60 * 60) + parseInt(arrDurration[1], 10) * 60 + parseInt(arrDurration[2], 10)
 
 		return seconds
 	}

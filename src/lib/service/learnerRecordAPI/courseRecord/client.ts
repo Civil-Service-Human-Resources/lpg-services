@@ -1,5 +1,5 @@
 import {plainToClass} from 'class-transformer'
-import {getLogger} from 'lib/logger'
+import {getLogger} from '../../../logger'
 import * as model from '../../../model'
 import {client} from '../baseConfig'
 import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
@@ -9,12 +9,15 @@ const logger = getLogger('LearnerRecordAPI/client.ts')
 const URL = '/course_records'
 
 export async function getFullRecord(user: model.User): Promise<CourseRecord[]> {
-	const resp = await client._get<CourseRecordResponse>({
-		params: {
-			userId: user.id,
+	const resp = await client._get<CourseRecordResponse>(
+		{
+			params: {
+				userId: user.id,
+			},
+			url: URL,
 		},
-		url: URL,
-	}, user)
+		user
+	)
 	const courseRecords = plainToClass(CourseRecordResponse, resp)
 	return await Promise.all(courseRecords.courseRecords.map(c => plainToClass(CourseRecord, c)))
 }
@@ -34,7 +37,7 @@ export async function getCourseRecords(courseIds: string[], user: model.User): P
 	return plainToClass(CourseRecordResponse, resp).courseRecords
 }
 
-export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord|undefined> {
+export async function getCourseRecord(courseId: string, user: model.User): Promise<CourseRecord | undefined> {
 	const courseRecords = await getCourseRecords([courseId], user)
 	let courseRecord
 	if (courseRecords.length === 1) {

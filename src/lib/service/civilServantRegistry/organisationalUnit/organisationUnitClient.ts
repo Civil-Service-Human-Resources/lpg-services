@@ -22,10 +22,11 @@ export async function getAllOrganisationalUnits(user: User): Promise<Organisatio
 		const totalPages = Math.ceil(response.totalElements / MAX_PER_PAGE)
 		const requests: any[] = []
 		for (let page = 0; page < totalPages; page++) {
-			requests.push(getOrganisationalUnits({size: MAX_PER_PAGE, page}, user)
-			.then(data => {
-				orgs.push(...data.content)
-			}))
+			requests.push(
+				getOrganisationalUnits({size: MAX_PER_PAGE, page}, user).then(data => {
+					orgs.push(...data.content)
+				})
+			)
 		}
 		await Promise.all(requests)
 	}

@@ -1,9 +1,9 @@
 import {plainToInstance} from 'class-transformer'
-import * as fileHelpers from 'lib/filehelpers'
-import {CourseRecord} from 'lib/learnerrecord'
-import {Module} from 'lib/model'
-import * as model from 'lib/model'
-import {ActionToPlan, CourseActionType} from 'lib/ui/courseCallToAction'
+import * as fileHelpers from '../filehelpers'
+import {CourseRecord} from '../learnerrecord'
+import * as model from '../model'
+import {Module} from '../model'
+import {ActionToPlan, CourseActionType} from './courseCallToAction'
 
 export interface LearningAction {
 	text: string
@@ -18,7 +18,7 @@ export interface ModuleCallToActionProps {
 	url?: string
 	moduleType?: string
 	modifier?: string
-	isInLearningPlan: boolean,
+	isInLearningPlan: boolean
 	isActionable?: boolean
 }
 
@@ -50,14 +50,12 @@ export function constructModuleCta(
 		switch (moduleType) {
 			case 'face-to-face':
 				if (module.canBeBooked()) {
-					moduleCallToActionProps.url = `/book/${courseId}/${
-						module.id
-					}/choose-date`
+					moduleCallToActionProps.url = `/book/${courseId}/${module.id}/choose-date`
 					moduleCallToActionProps.learningAction = {
 						text: 'action_BOOK',
 					}
 				} else {
-					moduleCallToActionProps.message = "components.notification_banner.course_not_bookable"
+					moduleCallToActionProps.message = 'components.notification_banner.course_not_bookable'
 					isActionable = false
 				}
 				break

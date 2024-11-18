@@ -1,8 +1,8 @@
 import axios from 'axios'
 import * as https from 'https'
-import * as config from 'lib/config'
+import * as config from '../../config'
 
-import { HttpClient } from '../httpClient'
+import {HttpClient} from '../httpClient'
 
 const http = axios.create({
 	baseURL: config.REGISTRY_SERVICE_URL,

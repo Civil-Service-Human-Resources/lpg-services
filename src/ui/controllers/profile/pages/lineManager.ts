@@ -1,8 +1,8 @@
 import * as express from 'express'
-import {ResourceNotFoundError} from 'lib/exception/ResourceNotFoundError'
-import {User} from 'lib/model'
-import {patchCivilServantLineManager} from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
+import {ResourceNotFoundError} from '../../../../lib/exception/ResourceNotFoundError'
+import {User} from '../../../../lib/model'
+import {patchCivilServantLineManager} from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {CreateLineManagerPageModel} from '../models/lineManager/createLineManagerPageModel'
 import {EditLineManagerPageModel} from '../models/lineManager/editLineManagerPageModel'
 import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
@@ -29,8 +29,7 @@ export function getRenderLineManagerPage(behaviour: PageBehaviour) {
 export function confirmLineManagerMiddleware(behaviour: PageBehaviour) {
 	return async (req: express.Request, res: express.Response) => {
 		const user: User = req.user
-		const pageModelClass = behaviour.userSetup ?
-			CreateLineManagerPageModel : EditLineManagerPageModel
+		const pageModelClass = behaviour.userSetup ? CreateLineManagerPageModel : EditLineManagerPageModel
 		const pageModel = await validate(pageModelClass, req.body)
 		if (pageModel.hasErrors()) {
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
@@ -41,7 +40,7 @@ export function confirmLineManagerMiddleware(behaviour: PageBehaviour) {
 				return res.send(template.render(behaviour.templateName, req, res, pageModel))
 			}
 			const errors: string[] = []
-			if (pageModel.email !== undefined && pageModel.email !== "") {
+			if (pageModel.email !== undefined && pageModel.email !== '') {
 				try {
 					await patchCivilServantLineManager(user, pageModel.email)
 				} catch (error) {

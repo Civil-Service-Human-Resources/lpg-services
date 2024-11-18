@@ -1,11 +1,12 @@
 import * as express from 'express'
 import {Request, Response} from 'express'
-import * as config from 'lib/config'
-import {getLogger} from 'lib/logger'
+import * as config from '../../lib/config'
+import {getLogger} from '../../lib/logger'
 import * as template from '../../lib/ui/template'
 import {areaOfWorkPage} from './profile/pages/areaOfWork'
 import {
-	getRenderProfilePageMiddleware, getSubmitProfilePageMiddleware,
+	getRenderProfilePageMiddleware,
+	getSubmitProfilePageMiddleware,
 	ProfileEndpoint,
 	ProfilePageSpecification,
 } from './profile/pages/common'
@@ -41,7 +42,13 @@ export function viewProfile(req: express.Request, res: express.Response) {
 }
 
 export const profilePages = [
-	namePage, organisationPage, areaOfWorkPage, otherAreasOfWorkPage, interestsPage, gradePage, lineManagerPage,
+	namePage,
+	organisationPage,
+	areaOfWorkPage,
+	otherAreasOfWorkPage,
+	interestsPage,
+	gradePage,
+	lineManagerPage,
 ]
 
 export const profilePageMap: Map<ProfileEndpoint, ProfilePageSpecification> = new Map(

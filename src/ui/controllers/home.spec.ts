@@ -1,19 +1,19 @@
 import {expect} from 'chai'
-import {Course} from 'lib/model'
-import {getBasicCourseRecord} from 'lib/model.spec'
-import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from 'lib/service/learnerRecordAPI/models/record'
 import * as sinon from 'sinon'
+import {Course} from '../../lib/model'
+import {getBasicCourseRecord} from '../../lib/model.spec'
+import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
 import * as controller from './home'
 
 describe('home controller tests', () => {
 	describe('getRequiredLearning tests', () => {
 		const sandbox = sinon.createSandbox()
 		it('Should return the correct number of required learning courses', () => {
-			const notStartedCourse = new Course("not-started")
-			const notCompletedCourse = new Course("not-completed")
+			const notStartedCourse = new Course('not-started')
+			const notCompletedCourse = new Course('not-completed')
 			sandbox.stub(notCompletedCourse, 'getDisplayState').returns(RecordState.InProgress)
-			const completedCourse = new Course("completed")
+			const completedCourse = new Course('completed')
 			sandbox.stub(completedCourse, 'getDisplayState').returns(RecordState.Completed)
 			const requiredCourses = [notStartedCourse, notCompletedCourse, completedCourse]
 

@@ -1,25 +1,20 @@
 import * as express from 'express'
-import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
-import { getLogger } from 'lib/logger'
-import { Course } from 'lib/model'
-import * as catalog from 'lib/service/catalog'
-import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import { CourseRecord } from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import { RecordState } from 'lib/service/learnerRecordAPI/models/record'
-import * as template from 'lib/ui/template'
+import * as extended from '../../../lib/extended'
+import * as learnerRecord from '../../../lib/learnerrecord'
+import {getLogger} from '../../../lib/logger'
+import {Course} from '../../../lib/model'
+import * as catalog from '../../../lib/service/catalog'
+import * as courseRecordClient from '../../../lib/service/learnerRecordAPI/courseRecord/client'
+import {CourseRecord} from '../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {RecordState} from '../../../lib/service/learnerRecordAPI/models/record'
+import * as template from '../../../lib/ui/template'
 
 const logger = getLogger('controllers/learning-record')
 
-export async function courseResult(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function courseResult(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(
-		`Displaying course record for ${req.user.id}, courseId = ${
-			req.params.courseId
-		}, moduleId = ${req.params.moduleId}`
+		`Displaying course record for ${req.user.id}, courseId = ${req.params.courseId}, moduleId = ${req.params.moduleId}`
 	)
 	try {
 		const course = req.course
@@ -45,8 +40,7 @@ export async function courseResult(
 					if (coursePreviousRequiredDate) {
 						const moduleCompletionDate1 = r.completionDate
 						const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
-						if (moduleCompletionDate &&
-							moduleCompletionDate > coursePreviousRequiredDate) {
+						if (moduleCompletionDate && moduleCompletionDate > coursePreviousRequiredDate) {
 							modulesCompleted++
 						} else {
 							courseCompleted = false
@@ -82,23 +76,22 @@ export async function display(req: express.Request, res: express.Response) {
 	])
 
 	const requiredCoursesMap: Map<string, Course> = new Map()
-	requiredLearning.results
-	.map(course => requiredCoursesMap.set(course.id, course))
+	requiredLearning.results.map(course => requiredCoursesMap.set(course.id, course))
 
 	const completedCourseRecordsMap: Map<string, CourseRecord> = new Map()
 
 	learningRecord
-	.filter(cr => cr.isCompleted())
-	.sort((a, b) => {
-		const bcd = b.getCompletionDate()
-		const acd = a.getCompletionDate()
+		.filter(cr => cr.isCompleted())
+		.sort((a, b) => {
+			const bcd = b.getCompletionDate()
+			const acd = a.getCompletionDate()
 
-		const bt = bcd ? bcd.getTime() : 0
-		const at = acd ? acd.getTime() : 0
+			const bt = bcd ? bcd.getTime() : 0
+			const at = acd ? acd.getTime() : 0
 
-		return bt - at
-	})
-	.map(cr => completedCourseRecordsMap.set(cr.courseId, cr))
+			return bt - at
+		})
+		.map(cr => completedCourseRecordsMap.set(cr.courseId, cr))
 
 	const completedRequiredLearning: CourseRecord[] = []
 	const completedLearning: CourseRecord[] = []

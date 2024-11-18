@@ -1,8 +1,7 @@
-import {Cache} from 'lib/utils/cache'
-import {CacheableObject} from 'lib/utils/cacheableObject'
+import {Cache} from './cache'
+import {CacheableObject} from './cacheableObject'
 
-export abstract class CacheableObjectCache <T extends CacheableObject> extends Cache<T> {
-
+export abstract class CacheableObjectCache<T extends CacheableObject> extends Cache<T> {
 	async setObject(object: T, ttlOverride?: number) {
 		await this.set(object.getId(), object, ttlOverride)
 	}
@@ -15,5 +14,4 @@ export abstract class CacheableObjectCache <T extends CacheableObject> extends C
 	}
 	protected abstract convert(cacheHit: any): T
 	protected abstract getBaseKey(): string
-
 }
