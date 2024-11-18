@@ -6,7 +6,7 @@ export const configure = (app: IRouter) => {
 	i18n.configure({
 		defaultLocale: 'en',
 		directory: path.join(__dirname, '/../../../../locale'),
-		locales: ['en', 'de'],
+		locales: ['en'],
 		objectNotation: true,
 	})
 	app.use(i18n.init)
