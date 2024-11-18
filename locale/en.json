@@ -109,11 +109,7 @@
 	"register_grade_other_label": "Please clarify",
 	"register_password_page_title": "Create a password",
 	"register_password_page_intro": "Your password must have:",
-	"register_password_page_list_items": [
-		"8 or more characters",
-		"at least 1 number",
-		"upper and lower case letters"
-	],
+	"register_password_page_list_items": ["8 or more characters", "at least 1 number", "upper and lower case letters"],
 	"register_password_first_label": "Create a password",
 	"register_password_second_label": "Retype your password",
 	"register_password_error_title": "There was a problem with your password",
