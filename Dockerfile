@@ -7,6 +7,9 @@ COPY dist ./dist
 
 # Assets
 
+## Locale
+COPY locale ./locale
+
 ## Page
 COPY views/component ./views/component
 COPY views/page ./views/page
