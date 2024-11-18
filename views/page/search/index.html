@@ -63,7 +63,7 @@
         <div class="pager">
             <div class="pager__controls">
                 {#if searchResults.page > 0}
-                <a class="pager__prev" href="/search?q={query}{courseTypes.length > 0 ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments.selected.length > 0 ? '&department=' + departments.selected.toString().split(',').join('&interest=') : ''}{interests.selected.length > 0 ? '&interest=' + interests.selected.toString().split(',').join('&interest=') : ''}{areasOfWork.selected.length > 0 ? '&areaOfWork=' + areasOfWork.selected.toString().split(',').join('&areaOfWork=') : ''}{cost != '' ? '&cost=' + cost : ''}&s={searchResults.size}&p={searchResults.page - 1}">Previous<span class="govuk-visually-hidden"> page</span></a>
+                <a class="pager__prev" href="/search?q={query}{courseTypes.length > 0 ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments.selected.length > 0 ? '&department=' + departments.selected.toString().split(',').join('&interest=') : ''}{interests.selected.length > 0 ? '&interest=' + interests.selected.toString().split(',').join('&interest=') : ''}{areasOfWork.selected.length > 0 ? '&areaOfWork=' + areasOfWork.selected.toString().split(',').join('&areaOfWork=') : ''}{cost != '' ? '&cost=' + cost : ''}&s={searchResults.size}&p={searchResults.page - 1}">Previous<span class="visuallyhidden"> page</span></a>
                 {/if} {#if Math.ceil(searchResults.totalResults/searchResults.size) != 1}
                 <ul class="pager__list">
                     {#each range(Math.ceil(searchResults.totalResults/searchResults.size)) as x}
@@ -77,7 +77,7 @@
                     {/each}
                 </ul>
                 {/if} {#if searchResults.page != (Math.ceil(searchResults.totalResults/searchResults.size)-1)}
-                <a class="pager__next" href="/search?q={query}{courseTypes.length > 0 ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments.selected.length > 0 ? '&department=' + departments.selected.toString().split(',').join('&interest=') : ''}{interests.selected.length > 0 ? '&interest=' + interests.selected.toString().split(',').join('&interest=') : ''}{areasOfWork.selected.length > 0 ? '&areaOfWork=' + areasOfWork.selected.toString().split(',').join('&areaOfWork=') : ''}{cost != '' ? '&cost=' + cost : ''}&s={searchResults.size}&p={searchResults.page + 1}">Next<span class="govuk-visually-hidden"> page</span></a>
+                <a class="pager__next" href="/search?q={query}{courseTypes.length > 0 ? '&courseType=' + courseTypes.toString().split(',').join('&courseType=') : ''}{departments.selected.length > 0 ? '&department=' + departments.selected.toString().split(',').join('&interest=') : ''}{interests.selected.length > 0 ? '&interest=' + interests.selected.toString().split(',').join('&interest=') : ''}{areasOfWork.selected.length > 0 ? '&areaOfWork=' + areasOfWork.selected.toString().split(',').join('&areaOfWork=') : ''}{cost != '' ? '&cost=' + cost : ''}&s={searchResults.size}&p={searchResults.page + 1}">Next<span class="visuallyhidden"> page</span></a>
                 {/if}
             </div>
             <div class="pager__summary">Showing {((searchResults.page*searchResults.size)+1)} – {((searchResults.page*searchResults.size)+searchResults.results.length)}
