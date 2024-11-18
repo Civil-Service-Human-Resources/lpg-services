@@ -40,16 +40,16 @@ steps:
       customCommand: 'run lint'
 
   - task: Npm@1
-    displayName: 'Build'
-    inputs:
-      command: 'custom'
-      customCommand: 'run build'
-
-  - task: Npm@1
     displayName: 'Test'
     inputs:
       command: 'custom'
       customCommand: 'run test'
+
+  - task: Npm@1
+    displayName: 'Build'
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
 
   - task: Docker@2
     inputs:
