@@ -10,7 +10,6 @@ export abstract class ValidPageModel {
 
 	async validate(groups: string[] = []) {
 		const errors = await validate(this, {groups})
-		/*tslint:disable*/
 		this.errors = _.flatten(
 			errors.map(error => {
 				return Object.values(error.constraints)

@@ -25,7 +25,6 @@ declare module 'passport-oauth2' {
 		parseErrorResponse(body: any, status: number): Error | null
 	}
 
-	/*tslint:disable*/
 	// namespace OAuth2Strategy {
 	export type VerifyCallback = (err?: Error | null, user?: object, info?: object) => void
 

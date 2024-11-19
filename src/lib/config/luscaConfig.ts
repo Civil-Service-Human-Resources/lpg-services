@@ -24,7 +24,6 @@ export function setCspPolicy(staticAssetDomain: string) {
 		'frame-src': 'https://youtube.com https://www.youtube.com',
 		'img-src': `'self' data: ${gaCsp} ${contentCdn} ${staticCdn}`.trim(),
 		'script-src':
-			// tslint:disable-next-line:max-line-length
 			`'self' 'unsafe-eval' 'unsafe-inline' ${gaCsp} https://www.youtube.com https://s.ytimg.com ${staticCdn}`.trim(),
 		'style-src': `'self' 'unsafe-inline' ${staticCdn}`.trim(),
 	}

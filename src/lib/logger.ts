@@ -1,7 +1,6 @@
 import {createLogger, format, Logger, transports} from 'winston'
 const {combine, timestamp, printf} = format
 import * as config from './config'
-/*tslint:disable*/
 const loggingFormat = printf(info =>
 	JSON.stringify({
 		timestamp: info.timestamp,
@@ -10,7 +9,6 @@ const loggingFormat = printf(info =>
 		name: info.name,
 	})
 )
-/*tslint:enable*/
 
 const WINSTON_CONFIG = {
 	format: combine(timestamp(), loggingFormat),

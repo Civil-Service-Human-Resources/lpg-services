@@ -2,9 +2,7 @@ import {expect} from 'chai'
 import * as fs from 'fs'
 import * as path from 'path'
 import {isDirectory} from './template'
-/*tslint:disable*/
 require('svelte/ssr/register')
-/*tslint:enable*/
 
 const rootDir = process.cwd()
 export const uiPageDir = path.join(rootDir, 'views', 'page')

@@ -21,10 +21,8 @@ import {ProfileCache} from './lib/service/civilServantRegistry/civilServant/prof
 import * as csrsService from './lib/service/civilServantRegistry/csrsService'
 import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
-/* tslint:disable:max-line-length */
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import {OrganisationalUnitTypeaheadCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
-/* tslint:enable */
 import * as i18n from './lib/service/translation'
 import * as dynamicBackLink from './lib/ui/middleware/dynamicBackLink'
 import * as profileChecker from './lib/ui/profileChecker'
@@ -132,7 +130,6 @@ if (config.FEEDBACK_URL) {
 			logger.warn(`Feedback url is not being served over ssl (feedback route: ${app.locals.feedbackRoot})`)
 		}
 	} catch (error) {
-		// tslint:disable-next-line:max-line-length
 		logger.error(
 			`The configured FEEDBACK_URL value ("${config.FEEDBACK_URL}") is not a valid URL. Feedback will not be available.\nFull error:\n${error}`
 		)
@@ -150,7 +147,6 @@ if (config.STATIC_ASSET_ROOT) {
 			logger.warn(`Static assets are not being served over ssl (static asset route: ${app.locals.staticAssetRoot})`)
 		}
 	} catch (error) {
-		// tslint:disable-next-line:max-line-length
 		logger.error(
 			`The configured STATIC_ASSET_ROOT value ("${config.STATIC_ASSET_ROOT}") is not a valid URL, static content will default to being severed from the application server.\nFull error:\n${error}`
 		)

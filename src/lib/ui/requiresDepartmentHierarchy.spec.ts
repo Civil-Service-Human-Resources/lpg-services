@@ -82,7 +82,6 @@ describe('requiresDepartmentHierarchy tests', () => {
 		csrsServiceStub.getOrgHierarchy.withArgs(123).throws(new ResourceNotFoundError('organisation unit not found'))
 		csrsServiceStub.fetchProfile.withArgs(1, '123').resolves(profile as any)
 		await requiresDepartmentHierarchy(request, response, next)
-		/* tslint:disable-next-line:no-unused-expression */
 		expect(response.redirect).to.have.been.calledOnceWith('/profile/organisation')
 	})
 })
