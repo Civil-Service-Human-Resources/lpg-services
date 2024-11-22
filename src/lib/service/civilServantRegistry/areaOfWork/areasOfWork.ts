@@ -1,9 +1,8 @@
 import {Type} from 'class-transformer'
-import {AreaOfWork} from 'lib/registry'
-import {SortableList} from 'lib/service/civilServantRegistry/sortableList'
+import {AreaOfWork} from '../../../registry'
+import {SortableList} from '../sortableList'
 
 export class AreasOfWork extends SortableList<AreaOfWork> {
-
 	static createFromTree(areaOfWorkTree: AreaOfWork[]) {
 		const areasOfWork = areaOfWorkTree.flatMap(aow => aow.getFlat())
 		const areasOfWorkCache = new AreasOfWork(areasOfWork, areaOfWorkTree)
@@ -12,7 +11,7 @@ export class AreasOfWork extends SortableList<AreaOfWork> {
 	}
 
 	@Type(() => AreaOfWork)
-	public list: AreaOfWork[]
+	public declare list: AreaOfWork[]
 
 	@Type(() => AreaOfWork)
 	public topLevelList: AreaOfWork[]
@@ -26,5 +25,4 @@ export class AreasOfWork extends SortableList<AreaOfWork> {
 		super.sort()
 		this.topLevelList = this.topLevelList.sort(this.getCompareFn())
 	}
-
 }

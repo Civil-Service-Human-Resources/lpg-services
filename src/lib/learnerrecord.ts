@@ -1,10 +1,10 @@
 import axios from 'axios'
-import * as https from "https"
-import * as axiosLogger from 'lib/axiosLogger'
-import * as datetime from 'lib/datetime'
-import {getLogger} from 'lib/logger'
+import * as https from 'https'
 import * as query from 'querystring'
+import * as axiosLogger from './axiosLogger'
 import * as config from './config'
+import * as datetime from './datetime'
+import {getLogger} from './logger'
 import * as model from './model'
 
 const logger = getLogger('learner-record')
@@ -44,12 +44,7 @@ export async function getCancellationReasons(user: any): Promise<any> {
 	})
 }
 
-export async function getRecord(
-	user: model.User,
-	course: model.Course,
-	module?: model.Module,
-	event?: model.Event
-) {
+export async function getRecord(user: model.User, course: model.Course, module?: model.Module, event?: model.Event) {
 	let activityId = course.id
 	if (event) {
 		activityId = event.id
@@ -71,7 +66,11 @@ export async function getRecord(
 }
 
 export async function getRawLearningRecord(
-	user: model.User, activityIds?: string[], includeStates?: string[], ignoreStates?: string[]): Promise<CourseRecord[]> {
+	user: model.User,
+	activityIds?: string[],
+	includeStates?: string[],
+	ignoreStates?: string[]
+): Promise<CourseRecord[]> {
 	const params = {
 		activityId: activityIds,
 		ignoreState: ignoreStates,
@@ -165,9 +164,7 @@ export class CourseRecord implements CourseRcd {
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration || 0)
-		return durationArray.length
-			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
-			: null
+		return durationArray.length ? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0)) : null
 	}
 
 	getCompletionDate() {
@@ -176,10 +173,7 @@ export class CourseRecord implements CourseRcd {
 			for (const moduleRecord of this.modules) {
 				if (!completionDate) {
 					completionDate = moduleRecord.completionDate
-				} else if (
-					moduleRecord.completionDate &&
-					moduleRecord.completionDate > completionDate
-				) {
+				} else if (moduleRecord.completionDate && moduleRecord.completionDate > completionDate) {
 					completionDate = moduleRecord.completionDate
 				}
 			}
@@ -187,7 +181,6 @@ export class CourseRecord implements CourseRcd {
 		}
 		return undefined
 	}
-
 }
 
 export interface ModuleRecord {

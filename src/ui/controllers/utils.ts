@@ -1,12 +1,14 @@
 import {ClassConstructor, plainToInstance} from 'class-transformer'
 import * as express from 'express'
-import {getLogger} from 'lib/logger'
+import {getLogger} from '../../lib/logger'
 
-const logger = getLogger("Utils")
+const logger = getLogger('Utils')
 
 export class MessageFlash {
-	constructor(public event: string, public message: string) {
-	}
+	constructor(
+		public event: string,
+		public message: string
+	) {}
 }
 
 export function generateRedirectMiddleware(url: string, messageFlash?: MessageFlash) {
@@ -21,7 +23,10 @@ export function generateRedirectMiddleware(url: string, messageFlash?: MessageFl
 }
 
 export class SessionableObjectService<T> {
-	constructor(public key: string, public clazz: ClassConstructor<T>) { }
+	constructor(
+		public key: string,
+		public clazz: ClassConstructor<T>
+	) {}
 	fetchObjectFromSession(req: express.Request): T | undefined {
 		return plainToInstance(this.clazz, req.session![this.key] as T)
 	}
@@ -34,5 +39,4 @@ export class SessionableObjectService<T> {
 		logger.debug(`Deleting session object with key '${this.key}'`)
 		delete req.session![this.key]
 	}
-
 }

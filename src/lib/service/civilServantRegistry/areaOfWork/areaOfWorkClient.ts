@@ -1,9 +1,9 @@
 import {plainToInstance} from 'class-transformer'
-import {User} from 'lib/model'
-import {AreaOfWork} from 'lib/registry'
+import {User} from '../../../model'
+import {AreaOfWork} from '../../../registry'
 import {client} from '../config'
 
-const URL = "professions"
+const URL = 'professions'
 
 export async function getProfessionsTree(user: User): Promise<AreaOfWork[]> {
 	const resp: AreaOfWork[] = await client._get<AreaOfWork[]>(

@@ -1,4 +1,4 @@
 export interface SessionFlash {
-	event: string,
+	event: string
 	message: string
 }

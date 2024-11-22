@@ -1,16 +1,16 @@
-import { Type } from 'class-transformer'
+import {Type} from 'class-transformer'
 
-import { Course } from '../../../model'
+import {Course} from '../../../model'
 
 export interface GetCoursesParams {
-	grade?: string,
-	areaOfWork?: string,
-	departments?: string,
-	interest?: string,
-	excludeAreasOfWork?: string[],
-	excludeInterests?: string[],
-	excludeDepartments?: string[],
-	page: number,
+	grade?: string
+	areaOfWork?: string
+	departments?: string
+	interest?: string
+	excludeAreasOfWork?: string[]
+	excludeInterests?: string[]
+	excludeDepartments?: string[]
+	page: number
 	size: number
 }
 

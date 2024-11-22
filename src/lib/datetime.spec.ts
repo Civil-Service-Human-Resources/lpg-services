@@ -1,5 +1,5 @@
 import {expect} from 'chai'
-import * as datetime from 'lib/datetime'
+import * as datetime from './datetime'
 
 describe('Should return formatted the date', () => {
 	it('Should return a formatted date', () => {
@@ -9,21 +9,11 @@ describe('Should return formatted the date', () => {
 	})
 
 	it('Should return formated date and time', () => {
-		expect(datetime.formatTime(new Date(2018, 0, 1))).to.equal(
-			'01 Jan 2018, 00:00'
-		)
-		expect(datetime.formatTime(new Date(2018, 11, 1))).to.equal(
-			'01 Dec 2018, 00:00'
-		)
-		expect(datetime.formatTime(new Date(2018, 11, 1, 12, 0, 0))).to.equal(
-			'01 Dec 2018, 12:00'
-		)
-		expect(datetime.formatTime(new Date(2018, 11, 1, 11, 59, 59))).to.equal(
-			'01 Dec 2018, 11:59'
-		)
-		expect(datetime.formatTime(new Date(2018, 11, 1, 23, 59, 59))).to.equal(
-			'01 Dec 2018, 23:59'
-		)
+		expect(datetime.formatTime(new Date(2018, 0, 1))).to.equal('01 Jan 2018, 00:00')
+		expect(datetime.formatTime(new Date(2018, 11, 1))).to.equal('01 Dec 2018, 00:00')
+		expect(datetime.formatTime(new Date(2018, 11, 1, 12, 0, 0))).to.equal('01 Dec 2018, 12:00')
+		expect(datetime.formatTime(new Date(2018, 11, 1, 11, 59, 59))).to.equal('01 Dec 2018, 11:59')
+		expect(datetime.formatTime(new Date(2018, 11, 1, 23, 59, 59))).to.equal('01 Dec 2018, 23:59')
 	})
 
 	it('Should format duration seconds to ISO8601 ', () => {

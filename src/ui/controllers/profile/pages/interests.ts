@@ -1,9 +1,9 @@
 import * as express from 'express'
-import {User} from 'lib/model'
-import {Interest} from 'lib/registry'
-import {getInterests, patchCivilServantInterests} from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
 import _ = require('lodash')
+import {User} from '../../../../lib/model'
+import {Interest} from '../../../../lib/registry'
+import {getInterests, patchCivilServantInterests} from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {CreateInterestsPageModel} from '../models/interests/createInterestsPageModel'
 import {EditInterestsPageModel} from '../models/interests/editInterestsPageModel'
@@ -41,8 +41,7 @@ export function getRenderInterestsPage(behaviour: PageBehaviour) {
 export function selectInterestsMiddleware(behaviour: PageBehaviour) {
 	return async (req: express.Request, res: express.Response) => {
 		const user: User = req.user
-		const pageModelClass = behaviour.userSetup ?
-			CreateInterestsPageModel : EditInterestsPageModel
+		const pageModelClass = behaviour.userSetup ? CreateInterestsPageModel : EditInterestsPageModel
 		const userInterests = user.interests ? user.interests.map((i: Interest) => i.id.toString()) : []
 		const interests = await getInterests(user)
 		const pageModel = await validate(pageModelClass, req.body)

@@ -3,7 +3,6 @@ import {IsNotEmpty} from 'class-validator'
 import {ValidPageModel} from '../../models/ValidPageModel'
 
 export class GivenNamePageModel extends ValidPageModel {
-
 	@Expose({name: 'given-name'})
 	@IsNotEmpty({
 		message: 'profile.given-name',

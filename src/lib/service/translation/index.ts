@@ -2,11 +2,11 @@ import {IRouter} from 'express'
 import * as i18n from 'i18n'
 import * as path from 'path'
 
-export let configure = (app: IRouter) => {
+export const configure = (app: IRouter) => {
 	i18n.configure({
 		defaultLocale: 'en',
-		directory: path.join(path.dirname(process.cwd()), '/locale'),
-		locales: ['en', 'de'],
+		directory: path.join(__dirname, '/../../../../locale'),
+		locales: ['en'],
 		objectNotation: true,
 	})
 	app.use(i18n.init)

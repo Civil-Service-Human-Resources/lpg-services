@@ -1,8 +1,8 @@
 import * as express from 'express'
-import * as extended from 'lib/extended'
-import {getLogger} from 'lib/logger'
-import * as catalog from 'lib/service/catalog'
-import {completeModule} from 'lib/service/cslService/cslServiceClient'
+import * as extended from '../../lib/extended'
+import {getLogger} from '../../lib/logger'
+import * as catalog from '../../lib/service/catalog'
+import {completeModule} from '../../lib/service/cslService/cslServiceClient'
 
 const logger = getLogger('controllers/learning-record')
 

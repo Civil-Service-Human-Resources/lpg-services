@@ -9,8 +9,10 @@ export class AnonymousCache<T> {
 	protected logger: Logger
 
 	constructor(
-		protected readonly redisClient: ReturnType<typeof createClient>, protected readonly defaultTTL: number,
-		private readonly prefix: string, private readonly clazz: ClassConstructor<T>
+		protected readonly redisClient: ReturnType<typeof createClient>,
+		protected readonly defaultTTL: number,
+		private readonly prefix: string,
+		private readonly clazz: ClassConstructor<T>
 	) {
 		this.logger = getLogger('Cache')
 	}

@@ -1,4 +1,4 @@
-import * as model from 'lib/model'
+import * as model from '../../../lib/model'
 
 export interface PageResults {
 	page: number

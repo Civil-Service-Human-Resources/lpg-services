@@ -1,18 +1,15 @@
 import {expect} from 'chai'
-import {Grade} from 'lib/registry'
-import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
-import {Grades} from 'lib/service/civilServantRegistry/grade/grades'
 import * as sinon from 'sinon'
 import {mockReq, mockRes} from 'sinon-express-mock'
+import {Grade} from '../../../../lib/registry'
+import * as csrsService from '../../../../lib/service/civilServantRegistry/csrsService'
+import {Grades} from '../../../../lib/service/civilServantRegistry/grade/grades'
 import {PageBehaviour} from './common'
 import * as common from './common'
 import {confirmGradeMiddleware} from './grade'
 
-describe("Grade middleware tests", () => {
-	const gradeList = [
-		new Grade(1, 'G1', 'grade 1'),
-		new Grade(2, 'G2', 'grade 2'),
-	]
+describe('Grade middleware tests', () => {
+	const gradeList = [new Grade(1, 'G1', 'grade 1'), new Grade(2, 'G2', 'grade 2')]
 	const grades = new Grades(gradeList)
 	const behaviour: PageBehaviour = {
 		templateName: 'grade',
@@ -45,7 +42,7 @@ describe("Grade middleware tests", () => {
 	afterEach(() => {
 		sandbox.restore()
 	})
-	it("Should update and redirect if there are no errors", async () => {
+	it('Should update and redirect if there are no errors', async () => {
 		await run(undefined, '1')
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)

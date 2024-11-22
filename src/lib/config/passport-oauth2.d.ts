@@ -12,17 +12,11 @@ declare module 'passport-oauth2' {
 		name: string
 
 		constructor(options: StrategyOptions, verify: VerifyFunction)
-		constructor(
-			options: StrategyOptionsWithRequest,
-			verify: VerifyFunctionWithRequest
-		)
+		constructor(options: StrategyOptionsWithRequest, verify: VerifyFunctionWithRequest)
 
 		authenticate(req: Request, options?: any): void
 
-		userProfile(
-			accessToken: string,
-			done: (err?: Error | null, profile?: any) => void
-		): void
+		userProfile(accessToken: string, done: (err?: Error | null, profile?: any) => void): void
 
 		authorizationParams(options: any): object
 
@@ -31,36 +25,14 @@ declare module 'passport-oauth2' {
 		parseErrorResponse(body: any, status: number): Error | null
 	}
 
-	/*tslint:disable*/
 	// namespace OAuth2Strategy {
-	export type VerifyCallback = (
-		err?: Error | null,
-		user?: object,
-		info?: object
-	) => void
+	export type VerifyCallback = (err?: Error | null, user?: object, info?: object) => void
 
 	export type VerifyFunction =
-		| ((
-				accessToken: string,
-				refreshToken: string,
-				profile: any,
-				verified: VerifyCallback
-		  ) => void)
-		| ((
-				accessToken: string,
-				refreshToken: string,
-				results: any,
-				profile: any,
-				verified: VerifyCallback
-		  ) => void)
+		| ((accessToken: string, refreshToken: string, profile: any, verified: VerifyCallback) => void)
+		| ((accessToken: string, refreshToken: string, results: any, profile: any, verified: VerifyCallback) => void)
 	export type VerifyFunctionWithRequest =
-		| ((
-				req: Request,
-				accessToken: string,
-				refreshToken: string,
-				profile: any,
-				verified: VerifyCallback
-		  ) => void)
+		| ((req: Request, accessToken: string, refreshToken: string, profile: any, verified: VerifyCallback) => void)
 		| ((
 				req: Request,
 				accessToken: string,
@@ -90,12 +62,7 @@ declare module 'passport-oauth2' {
 	const Strategy: typeof OAuth2Strategy
 
 	class TokenError extends Error {
-		constructor(
-			message: string | undefined,
-			code: string,
-			uri?: string,
-			status?: number
-		)
+		constructor(message: string | undefined, code: string, uri?: string, status?: number)
 
 		code: string
 		uri?: string
@@ -103,12 +70,7 @@ declare module 'passport-oauth2' {
 	}
 
 	class AuthorizationError extends Error {
-		constructor(
-			message: string | undefined,
-			code: string,
-			uri?: string,
-			status?: number
-		)
+		constructor(message: string | undefined, code: string, uri?: string, status?: number)
 
 		code: string
 		uri?: string

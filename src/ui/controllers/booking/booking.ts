@@ -1,14 +1,14 @@
 import _ = require('lodash')
 
 import * as express from 'express'
-import {ResourceNotFoundError} from 'lib/exception/ResourceNotFoundError'
-import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
-import { getLogger } from 'lib/logger'
-import * as model from 'lib/model'
-import {bookEvent, completeEventBooking, skipEventBooking} from 'lib/service/cslService/cslServiceClient'
-import {createBookEventDto} from 'lib/service/cslService/models/factory/BookEventDtoFactory'
-import * as template from 'lib/ui/template'
+import {ResourceNotFoundError} from '../../../lib/exception/ResourceNotFoundError'
+import * as extended from '../../../lib/extended'
+import * as learnerRecord from '../../../lib/learnerrecord'
+import {getLogger} from '../../../lib/logger'
+import * as model from '../../../lib/model'
+import {bookEvent, completeEventBooking, skipEventBooking} from '../../../lib/service/cslService/cslServiceClient'
+import {createBookEventDto} from '../../../lib/service/cslService/models/factory/BookEventDtoFactory'
+import * as template from '../../../lib/ui/template'
 import * as courseController from '../course/index'
 
 const logger = getLogger('controllers/booking')
@@ -322,7 +322,7 @@ export async function trySkipBooking(req: express.Request, res: express.Response
 		const response = await skipEventBooking(req.params.courseId, req.params.moduleId, req.params.eventId, req.user)
 		req.flash('successTitle', req.__('learning_skipped_title', response.courseTitle))
 		req.flash('successMessage', req.__('learning_skipped_from_plan_message', response.courseTitle))
-	} catch (e) {
+	} catch {
 		return res.sendStatus(400)
 	}
 
@@ -334,7 +334,7 @@ export async function trySkipBooking(req: express.Request, res: express.Response
 export async function tryMoveBooking(req: express.Request, res: express.Response) {
 	try {
 		await completeEventBooking(req.params.courseId, req.params.moduleId, req.params.eventId, req.user)
-	} catch (e) {
+	} catch {
 		return res.sendStatus(400)
 	}
 
@@ -378,8 +378,13 @@ export async function tryCompleteBooking(req: express.Request, res: express.Resp
 	let bookingTitle = null
 
 	try {
-		const response = await bookEvent(req.params.courseId, req.params.moduleId,
-			req.params.eventId, req.user, bookEventDto)
+		const response = await bookEvent(
+			req.params.courseId,
+			req.params.moduleId,
+			req.params.eventId,
+			req.user,
+			bookEventDto
+		)
 		bookingTitle = response.moduleTitle
 	} catch (e) {
 		if (e instanceof ResourceNotFoundError) {

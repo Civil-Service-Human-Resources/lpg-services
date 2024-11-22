@@ -1,0 +1,55 @@
+<Page title="{module.title || course.title}" {_csrf}>
+    <div class="container">
+        <p class="no-margin">
+            {#if backLink }
+                <a class="link-back" href="{backLink}">Back</a>
+            {:else }
+                <a class="link-back" href="/suggestions-for-you">Find another course</a>
+            {/if}
+        </p>
+        {#if course.status === "Archived"}
+            <ArchivedWarning />
+        {/if}
+        <h1 class="heading-xlarge heading heading--page-heading ">
+            {module.title || course.title}
+        </h1>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <h2 class="description heading-medium">Overview</h2>
+                <div>{@html $toHtml(course.description)}</div>
+                {#if course.learningOutcomes}
+                <h2 class="heading-medium">Learning outcomes</h2>
+                <div>{@html $toHtml(course.learningOutcomes)}</div>
+                {/if}
+
+                {#if course.status !== "Archived"}
+                    <DisciteModule type="single" {course} {module} {recordState}/>
+                {/if}
+            </div>
+            <div class="column-one-third">
+                {#if courseDetails.length} {#each courseDetails as dataRows}
+                <RightBox {dataRows}/>
+                {/each} {/if}
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+    import Page from '../../component/Page.html'
+    import DisciteModule from '../../component/DisciteModule.html'
+    import RightBox from '../../component/Rightbox.html'
+    import ArchivedWarning from '../../component/ArchivedWarning.html'
+
+    export default {
+        data() {
+            return {
+            }
+        },
+        components: {
+            Page,
+            DisciteModule,
+            RightBox,
+            ArchivedWarning
+        }
+    }
+</script>

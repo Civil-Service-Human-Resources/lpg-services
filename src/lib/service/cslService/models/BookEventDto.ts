@@ -1,7 +1,9 @@
-import {UserDto} from 'lib/service/cslService/models/UserDto'
+import {UserDto} from './UserDto'
 
 export class BookEventDto {
 	constructor(
-		public accessibilityOptions: string[], public userDetailsDto: UserDto, public poNumber?: string) { }
-
+		public accessibilityOptions: string[],
+		public userDetailsDto: UserDto,
+		public poNumber?: string
+	) {}
 }

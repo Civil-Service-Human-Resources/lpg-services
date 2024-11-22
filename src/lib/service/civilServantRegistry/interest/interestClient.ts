@@ -1,10 +1,10 @@
 import {plainToInstance} from 'class-transformer'
-import {User} from 'lib/model'
-import {Interest} from 'lib/registry'
-import {GetInterestsResponse} from 'lib/service/civilServantRegistry/models/getInterestsResponse'
+import {User} from '../../../model'
+import {Interest} from '../../../registry'
 import {client} from '../config'
+import {GetInterestsResponse} from '../models/getInterestsResponse'
 
-const URL = "interests"
+const URL = 'interests'
 
 export async function getInterests(user: User): Promise<Interest[]> {
 	const resp: GetInterestsResponse = await client._get<GetInterestsResponse>(

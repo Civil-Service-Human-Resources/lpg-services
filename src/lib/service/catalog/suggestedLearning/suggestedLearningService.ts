@@ -1,11 +1,11 @@
-import { Course, User } from 'lib/model'
-import * as client from 'lib/service/catalog/courseCatalogueClient'
+import {Course, User} from '../../../model'
+import * as client from '../../catalog/courseCatalogueClient'
 
-import { getFullRecord } from '../../learnerRecordAPI/courseRecord/client'
-import { GetCoursesParams } from '../models/getCoursesParams'
-import { Suggestion } from './suggestion'
-import { SuggestionsMap } from './suggestionMap'
-import { SuggestionSection } from './suggestionSection'
+import {getFullRecord} from '../../learnerRecordAPI/courseRecord/client'
+import {GetCoursesParams} from '../models/getCoursesParams'
+import {Suggestion} from './suggestion'
+import {SuggestionsMap} from './suggestionMap'
+import {SuggestionSection} from './suggestionSection'
 
 const DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC: number = 200
 const RECORD_COUNT_TO_DISPLAY: number = 6
@@ -40,7 +40,6 @@ export async function fetchSuggestedLearning(user: User, departmentHierarchyCode
 	)
 
 	return map
-
 }
 
 export async function extractSuggestionParams(user: User, departmentHierarchyCodes: string[]) {
@@ -74,7 +73,7 @@ export function createParamsForAreaOfWorkSection(departmentCodes: string[], user
 						grade: user.getGradeCode(),
 						page: 0,
 						size: DEFAULT_RECORDS_TO_SCAN_IN_ELASTIC,
-				}
+					}
 				: undefined
 		return new SuggestionSection(aow, Suggestion.AREA_OF_WORK, param)
 	})
@@ -88,7 +87,7 @@ export function createParamsForOtherAreasOfWorkSection(departmentCodes: string[]
 		const excludeAreasOfWork = [...areasOfWork, ...filteredOtherAreasOfWork]
 		const param =
 			areaOfWork !== I_DONT_KNOW_AOW && !areasOfWork.includes(areaOfWork)
-					? {
+				? {
 						areaOfWork,
 						excludeAreasOfWork,
 						excludeDepartments: departmentCodes,

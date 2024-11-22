@@ -1,9 +1,9 @@
-import {OrganisationalUnit} from 'lib/model'
-import {KeyValue} from 'lib/utils/dataUtils'
+import {OrganisationalUnit} from '../../lib/model'
+import {KeyValue} from '../../lib/utils/dataUtils'
 
 export interface Option {
-	id: string,
-	name: string,
+	id: string
+	name: string
 	checked: boolean
 }
 

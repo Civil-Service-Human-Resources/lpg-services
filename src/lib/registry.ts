@@ -1,24 +1,29 @@
 import {Type} from 'class-transformer'
-import {LineManager, OrganisationalUnit} from 'lib/model'
-import {PatchCivilServant} from 'lib/service/civilServantRegistry/models/patchCivilServant'
-import {CacheableObject} from 'lib/utils/cacheableObject'
-import {KeyValue} from 'lib/utils/dataUtils'
+import {LineManager, OrganisationalUnit} from './model'
+import {PatchCivilServant} from './service/civilServantRegistry/models/patchCivilServant'
+import {CacheableObject} from './utils/cacheableObject'
+import {KeyValue} from './utils/dataUtils'
 
 export class Grade implements KeyValue {
-	constructor(public id: number, public code: string, public name: string) { }
+	constructor(
+		public id: number,
+		public code: string,
+		public name: string
+	) {}
 
 	getId(): string {
 		return this.id.toString()
 	}
-
 }
 
 export class AreaOfWork implements KeyValue {
-
 	@Type(() => AreaOfWork)
 	public children: AreaOfWork[]
 
-	constructor(public id: number, public name: string) { }
+	constructor(
+		public id: number,
+		public name: string
+	) {}
 
 	getFlat(): AreaOfWork[] {
 		const areasOfWork: AreaOfWork[] = [this]
@@ -33,20 +38,21 @@ export class AreaOfWork implements KeyValue {
 	getId(): string {
 		return this.id.toString()
 	}
-
 }
 
 export class Interest implements KeyValue {
-	constructor(public name: string, public id: number) { }
+	constructor(
+		public name: string,
+		public id: number
+	) {}
 
 	getId(): string {
 		return this.id.toString()
 	}
-
 }
 
 export class Identity {
-	constructor(public uid: string) { }
+	constructor(public uid: string) {}
 }
 
 export class Profile implements CacheableObject {

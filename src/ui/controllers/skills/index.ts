@@ -1,12 +1,10 @@
 import * as express from 'express'
-import * as model from 'lib/model'
-import {getAreasOfWork} from 'lib/service/civilServantRegistry/csrsService'
-import * as skillsApi from 'lib/service/skills'
-
+import * as model from '../../../lib/model'
+import {getAreasOfWork} from '../../../lib/service/civilServantRegistry/csrsService'
+import * as skillsApi from '../../../lib/service/skills'
 import {
 	Answer,
 	AnswerSubmission,
-	AreaOfWorkKeysInterface,
 	Question,
 	Quiz,
 	QuizHistory,
@@ -14,8 +12,8 @@ import {
 	QuizType,
 	SelectedAnswer,
 	SelectedAnswers,
-} from 'lib/service/skills/api'
-import * as template from 'lib/ui/template'
+} from '../../../lib/service/skills/api'
+import * as template from '../../../lib/ui/template'
 import {formatAnswerSubmissionDate, saveSession} from './helpers'
 
 export async function introduction(req: express.Request, res: express.Response) {
@@ -49,16 +47,18 @@ export async function introduction(req: express.Request, res: express.Response) 
 
 export function chooseQuiz(req: express.Request, res: express.Response) {
 	if (!req.session!.quiz) {
-			return res.redirect(`/skills`)
+		return res.redirect(`/skills`)
 	}
 
 	const requestQuiz: Quiz = req.session!.quiz
 	const quizDescription = requestQuiz.description
 	const questionCount = requestQuiz.numberOfQuestions
-	res.send(template.render('skills/choose-quiz', req, res, {
-		questionCount,
-		quizDescription,
-	}))
+	res.send(
+		template.render('skills/choose-quiz', req, res, {
+			questionCount,
+			quizDescription,
+		})
+	)
 }
 
 export async function startQuiz(req: express.Request, res: express.Response) {
@@ -72,7 +72,7 @@ export async function startQuiz(req: express.Request, res: express.Response) {
 
 	// @ts-ignore
 	const quizType: QuizType = req.body.quizType === undefined ? QuizType.short : req.body.quizType
-	let quizQuestions: Question [] = []
+	let quizQuestions: Question[] = []
 	if (quizType === QuizType.short) {
 		quizQuestions = await skillsApi.getQuizQuestions(professionId, 18, user)
 	}
@@ -108,22 +108,19 @@ export async function startQuiz(req: express.Request, res: express.Response) {
 }
 
 export function generateKeysFromAnswers(answers: Answer) {
-	/* tslint:disable-next-line */
-	let keys = []
-	for (const key of Object.keys(answers)) {
-		keys.push(
-			{
-				value: key,
-			}
-		)
-	}
-	return keys
+	return Object.keys(answers).map(key => {
+		return {
+			value: key,
+		}
+	})
 }
 
 export function showQuizScreen(req: express.Request, res: express.Response, quizExists: boolean) {
-	res.send(template.render('skills/introduction', req, res, {
-		quizExists,
-	}))
+	res.send(
+		template.render('skills/introduction', req, res, {
+			quizExists,
+		})
+	)
 }
 
 export async function displayQuestion(req: express.Request, res: express.Response) {
@@ -135,11 +132,11 @@ export async function displayQuestion(req: express.Request, res: express.Respons
 		return
 	}
 
-	const selectedAnswersArray: SelectedAnswer[] = selectedAnswers
-		.answers.filter(val => val.questionId === requestQuestions[index].id)
+	const selectedAnswersArray: SelectedAnswer[] = selectedAnswers.answers.filter(
+		val => val.questionId === requestQuestions[index].id
+	)
 
-	const answersToThisQuestion = selectedAnswersArray
-		.map(answer => answer.submittedAnswers)
+	const answersToThisQuestion = selectedAnswersArray.map(answer => answer.submittedAnswers)
 
 	let skippedAnswer = false
 	let answersToQuestionKeys: string[] = []
@@ -180,8 +177,9 @@ export async function answerQuestion(req: express.Request, res: express.Response
 		skipped: questionSkipped,
 		submittedAnswers: answersArray,
 	}
-	const newAnswers: SelectedAnswer[] = selectedAnswers.answers
-		.filter(val => val.questionId !== requestQuestions[index].id)
+	const newAnswers: SelectedAnswer[] = selectedAnswers.answers.filter(
+		val => val.questionId !== requestQuestions[index].id
+	)
 	newAnswers.push(selectedAnswer)
 	req.session!.selectedAnswers.answers = newAnswers
 
@@ -203,12 +201,9 @@ export async function quizSummary(req: express.Request, res: express.Response) {
 	await saveSession(req)
 
 	try {
-		const answerSubmission: AnswerSubmission = await skillsApi
-			.getResultsSummary(index, user)
-		res.send(
-			template.render('skills/quiz-summary', req, res, {answerSubmission})
-		)
-	} catch (e) {
+		const answerSubmission: AnswerSubmission = await skillsApi.getResultsSummary(index, user)
+		res.send(template.render('skills/quiz-summary', req, res, {answerSubmission}))
+	} catch {
 		return res.redirect(`/skills`)
 	}
 }
@@ -223,17 +218,9 @@ export async function quizHistory(req: express.Request, res: express.Response) {
 	let answerSubmissions: AnswerSubmission[] = quizResultHistory.quizResultDto
 
 	const allAreasOfWork = (await getAreasOfWork(req.user)).list
-
-	/* tslint:disable-next-line */
-	let areaOfWorkKeys: AreaOfWorkKeysInterface = {}
-
-	for (const areaOfWork of allAreasOfWork) {
-		areaOfWorkKeys[areaOfWork.id] = areaOfWork.name
-	}
+	const areaOfWorkKeys: Map<number, string> = new Map<number, string>(allAreasOfWork.map(aow => [aow.id, aow.name]))
 
 	answerSubmissions = formatAnswerSubmissionDate(answerSubmissions)
 
-	res.send(
-		template.render('skills/quiz-history', req, res, {answerSubmissions, areaOfWorkKeys})
-	)
+	res.send(template.render('skills/quiz-history', req, res, {answerSubmissions, areaOfWorkKeys}))
 }

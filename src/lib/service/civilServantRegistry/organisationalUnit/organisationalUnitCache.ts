@@ -1,7 +1,7 @@
 import {plainToClass} from 'class-transformer'
-import {CacheableObjectCache} from 'lib/utils/cacheableObjectCache'
 
 import {OrganisationalUnit} from '../../../model'
+import {CacheableObjectCache} from '../../../utils/cacheableObjectCache'
 
 export class OrganisationalUnitCache extends CacheableObjectCache<OrganisationalUnit> {
 	getBaseKey(): string {
