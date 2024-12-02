@@ -19,7 +19,7 @@ export interface CourseDetails {
 
 export interface BasicCoursePage extends CoursePage, PageWithBackLink {}
 
-export interface ContentCoursePage extends BasicCoursePage {
+export interface ContentCoursePage extends BasicCoursePage, CourseDetails {
 	type: string
 }
 

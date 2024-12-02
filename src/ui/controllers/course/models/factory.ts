@@ -33,6 +33,7 @@ export function getBasicModuleCard(module: Module, course: Course, moduleRecord?
 		launchLink: `/courses/${course.id}/${module.id}`,
 		duration: module.getDuration(),
 		cost: module.cost,
+		mustConfirmBooking: false,
 		displayState,
 		template: 'singleModule',
 	}
@@ -110,9 +111,8 @@ export function getBlendedCoursePage(course: Course, courseRecord?: CourseRecord
 	}
 	if (faceToFaceModule !== undefined && faceToFaceModule.displayState !== 'APPROVED') {
 		cards
-			.filter(c => c.associatedLearning)
 			.forEach(c => {
-				c.mustConfirmBooking = true
+				c.mustConfirmBooking = c.associatedLearning
 			})
 	}
 	const coursePage = getBasicCoursePage(course)

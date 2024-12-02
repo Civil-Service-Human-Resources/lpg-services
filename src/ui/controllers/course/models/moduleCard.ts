@@ -9,8 +9,8 @@ export interface BaseModuleCard {
 	type: ModuleType
 	template: string
 	duration: string
+	mustConfirmBooking: boolean
 	displayState?: string
-	mustConfirmBooking?: boolean
 	cost?: number
 }
 

@@ -570,7 +570,7 @@ export class Module {
 	}
 
 	getBookableEvents(): Event[] {
-		return this.events.filter(e => e.isBookable())
+		return (this.events || []).filter(e => e.isBookable())
 	}
 
 	isAssociatedLearning() {
