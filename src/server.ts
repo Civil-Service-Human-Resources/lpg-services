@@ -188,14 +188,6 @@ nunjucks.register(app)
 
 app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
 
-const csrf = lusca.csrf()
-
-app.use((req, res, next) => {
-	if (!req.url.startsWith(backendServerPath)) {
-		csrf(req, res, next)
-	}
-})
-
 app.get('/', homeController.index)
 app.get('/sign-out', asyncHandler(passport.logout))
 
@@ -216,8 +208,17 @@ app.get('/cookies', homeController.cookies)
 app.get('/contact-us', homeController.contactUs)
 
 app.use(passport.isAuthenticated)
+
 app.use(asyncHandler(passport.logOutMiddleware))
 app.use(passport.hasRole('LEARNER'))
+
+const csrf = lusca.csrf()
+
+app.use((req, res, next) => {
+	if (!req.url.startsWith(backendServerPath)) {
+		csrf(req, res, next)
+	}
+})
 
 profileChecker.register(app)
 dynamicBackLink.register(app)
