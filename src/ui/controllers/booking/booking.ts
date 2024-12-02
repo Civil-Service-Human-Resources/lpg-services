@@ -9,7 +9,6 @@ import * as model from '../../../lib/model'
 import {bookEvent, completeEventBooking, skipEventBooking} from '../../../lib/service/cslService/cslServiceClient'
 import {createBookEventDto} from '../../../lib/service/cslService/models/factory/BookEventDtoFactory'
 import * as template from '../../../lib/ui/template'
-import * as courseController from '../course/index'
 
 const logger = getLogger('controllers/booking')
 const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
@@ -128,7 +127,6 @@ export async function renderChooseDate(ireq: express.Request, res: express.Respo
 		template.render('booking/choose-date', req, res, {
 			accessibilityReqs: req.session!.accessibilityReqs,
 			course,
-			courseDetails: courseController.getCourseDetails(req, course, module),
 			errorMessage: req.flash('errorMessage')[0],
 			errorTitle: req.flash('errorTitle')[0],
 			events,
@@ -225,7 +223,6 @@ export async function renderConfirmPayment(ireq: express.Request, res: express.R
 		template.render('booking/summary', req, res, {
 			accessibilityReqs,
 			course,
-			courseDetails: courseController.getCourseDetails(req, course, module),
 			event,
 			module,
 			payment: session.payment,

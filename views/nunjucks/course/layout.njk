@@ -1,0 +1,55 @@
+{% extends baseLayout %}
+{% from components + "/notificationBanner/macro.njk" import notificationBanner %}
+{% from components + "/backLink/macro.njk" import backLink %}
+{% from "./components/courseDetails/macro.njk" import courseDetails %}
+
+{% set pageTitle = pageModel.title %}
+
+{% block content %}
+    <div class="container">
+        <p class="no-margin">
+            {% if pageModel.backLink %}
+                {{ backLink(pageModel.backLink, "Back") }}
+            {% else %}
+                {{ backLink("/suggestions-for-you", "Find another course") }}
+            {% endif %}
+        </p>
+        {% if pageModel.status === "Archived" %}
+            {{ notificationBanner({
+                title: i18n('archivedWarning.heading'),
+                description: i18n('archivedWarning.description')
+            }) }}
+        {% endif %}
+        <h1 id="page-heading" class="heading-xlarge heading heading--page-heading">
+            {{ pageModel.title }}
+        </h1>
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <h2 id="overview" class="description heading-medium">Overview</h2>
+                <div>{{ pageModel.description | toHtml | safe }}</div>
+
+                {% if pageModel.learningOutcomes %}
+                    <h2 id="learning-outcomes" class="heading-medium">Learning outcomes</h2>
+                    <div>{{ pageModel.learningOutcomes | toHtml | safe }}</div>
+                {% endif %}
+
+                {% if pageModel.status !== "Archived" %}
+                    {% block courseContent %}{% endblock %}
+                {% endif %}
+            </div>
+
+            {% if pageModel.type %}
+                <div class="column-one-third">
+                    {{ courseDetails({
+                        type: pageModel.type,
+                        duration: pageModel.duration,
+                        areasOfWork: pageModel.areasOfWork,
+                        grades: pageModel.grades,
+                        cost: pageModel.cost,
+                        location: pageModel.location
+                    }) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -11,9 +11,13 @@ export function extension(file: string): string {
 }
 
 export function fileName(url: string, withExt?: boolean): string {
-	if (withExt) {
-		return decodeURIComponent(url.split('/').pop()!)
-	} else {
-		return decodeURIComponent(url.split('/').pop()!.split('.')[0])
+	let fileNameString = url.split('/').pop()!
+	if (!withExt) {
+		fileNameString = fileNameString.split('.')[0]
 	}
+	return decodeURIComponent(fileNameString)
+}
+
+export function extensionAndSize(url: string, size: number): string {
+	return `${extension(url)}, ${appropriateFileSize(size)}`
 }

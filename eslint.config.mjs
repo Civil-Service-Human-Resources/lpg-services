@@ -16,10 +16,11 @@ export default tseslint.config(
 			}
 		},
 		ignores: [
-			"./dist/*",
+			"./dist/**",
 		],
 		files: [
-			"**/*.ts"
+			"./src/**/*.ts",
+			"./test/**/*.ts"
 		],
 		plugins: {
 			'jsdoc': jsdoc,
@@ -44,7 +45,7 @@ export default tseslint.config(
 			"typescript-eslint/explicit-module-boundary-types": "off",
 
 			"typescript-eslint/naming-convention": ["error", {
-				selector: "variable",
+				selector: ["variable", "typeProperty"],
 				format: ["camelCase", "UPPER_CASE", "PascalCase"],
 				leadingUnderscore: "allow",
 				trailingUnderscore: "forbid",

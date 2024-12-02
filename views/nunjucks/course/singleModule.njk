@@ -1,0 +1,9 @@
+{% extends "./layout.njk" %}
+{% from "./components/moduleCard/macro.njk" import moduleCardTitle, moduleCardCta %}
+
+{% block courseContent %}
+    <div class="discite__item u-clearfix discite__item--module">
+        {{ moduleCardTitle(pageModel.moduleDetails) }}
+        {{ moduleCardCta(pageModel.moduleDetails) }}
+    </div>
+{% endblock %}

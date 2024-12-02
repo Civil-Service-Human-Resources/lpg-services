@@ -13,7 +13,6 @@ import {CacheableObject} from './utils/cacheableObject'
 import {KeyValue} from './utils/dataUtils'
 
 import _ = require('lodash')
-import {ModuleNotFoundError} from './exception/moduleNotFound'
 
 export interface LineManager {
 	email: string
@@ -84,6 +83,11 @@ export class CourseFactory {
 
 		return course
 	}
+}
+
+export enum CourseStatus {
+	PUBLISHED = 'Published',
+	ARCHIVED = 'Archived',
 }
 
 export class Course {
@@ -186,7 +190,7 @@ export class Course {
 	description: string
 	duration: number
 	learningOutcomes: string
-	status: string
+	status: CourseStatus
 
 	modules: Module[]
 
@@ -280,36 +284,13 @@ export class Course {
 		return RecordState.Null
 	}
 
-	public getDisplayStateForModules(courseRecord: CourseRecord): Map<string, string | null> {
-		const results = new Map<string, string | null>()
-		const moduleRecords = courseRecord.getModuleRecordMap()
-		const audience = this.getRequiredRecurringAudience()
-		this.modules.forEach(m => {
-			const moduleRecord = moduleRecords.get(m.id)
-			results.set(m.id, m.getDisplayState(moduleRecord, audience))
-		})
-		return results
-	}
-
-	getRequiredModules() {
-		return this.getModules().filter(m => !m.optional)
-	}
-
-	getOptionalModules() {
-		return this.getModules().filter(m => m.optional)
-	}
-
-	isAssociatedLearningModule(id: number) {
-		return this.modules[id].associatedLearning
-	}
-
 	getAreasOfWork() {
 		return this.audience ? this.audience.areasOfWork : []
 	}
 
 	getCost() {
 		const costArray = this.modules.map(module => module.cost || 0)
-		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : null
+		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : undefined
 	}
 
 	getDuration() {
@@ -449,18 +430,6 @@ export class Course {
 		return null
 	}
 
-	getMandatoryCount() {
-		const modules = this.getModules()
-		let count = 0
-		modules.forEach(module => {
-			if (!module.optional) {
-				count++
-			}
-		})
-
-		return count
-	}
-
 	getCompletionDate() {
 		if (this.isComplete()) {
 			let completionDate: Date | undefined
@@ -474,14 +443,6 @@ export class Course {
 			return completionDate
 		}
 		return undefined
-	}
-
-	getModule(moduleId: string) {
-		const module = this.modules.find(m => m.id === moduleId)
-		if (!module) {
-			throw new ModuleNotFoundError(this.id, moduleId)
-		}
-		return module
 	}
 
 	hasModules() {
@@ -500,6 +461,14 @@ export class CourseModule {
 	course: Course
 	module: Module
 	type: string
+}
+
+export enum ModuleType {
+	ELEARNING = 'elearning',
+	FACE_TO_FACE = 'face-to-face',
+	FILE = 'file',
+	LINK = 'link',
+	VIDEO = 'video',
 }
 
 export class Module {
@@ -523,7 +492,7 @@ export class Module {
 	}
 
 	id: string
-	type: string
+	type: ModuleType
 
 	title: string
 	description: string
@@ -540,13 +509,13 @@ export class Module {
 
 	events: Event[]
 
-	constructor(id: string, type: string) {
+	constructor(id: string, type: ModuleType) {
 		this.id = id
 		this.type = type
 	}
 
 	getDuration() {
-		if (this.type === 'face-to-face') {
+		if (this.type === ModuleType.FACE_TO_FACE) {
 			if (this.events && this.events.length > 0) {
 				const startTimeHours = this.events[0].startDate.getHours()
 				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
@@ -558,7 +527,7 @@ export class Module {
 			}
 		}
 
-		if (this.type === 'face-to-face') {
+		if (this.type === ModuleType.FACE_TO_FACE) {
 			if (this.events && this.events.length > 0) {
 				sortEvents(this.events)
 				const event = this.events[0]
@@ -898,6 +867,7 @@ export interface CSLUser {
 	isUnrestrictedOrgUser(): boolean
 	isAdmin(): boolean
 	isReporter(): boolean
+	hasLineManager(): boolean
 }
 
 export function createUser(identity: IdentityDetails, profile: Profile) {
@@ -1007,6 +977,10 @@ export class User implements CSLUser {
 
 	getAreaOfWorkId() {
 		return this.areaOfWork ? this.areaOfWork.id : undefined
+	}
+
+	hasLineManager() {
+		return this.lineManager !== undefined
 	}
 }
 

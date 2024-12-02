@@ -1,0 +1,7 @@
+{% extends "./layout.njk" %}
+
+{% block courseContent %}
+    <h3 class="heading-small">Download document</h3>
+    <a href="{{ pageModel.moduleDetails.launchLink }}">{{ pageModel.moduleDetails.fileName }}</a>
+    ({{ pageModel.moduleDetails.fileExtAndSize }})
+{% endblock %}
