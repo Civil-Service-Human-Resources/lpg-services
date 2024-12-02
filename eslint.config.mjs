@@ -8,6 +8,12 @@ const __dirname = import.meta.url
 
 export default tseslint.config(
 	{
+		ignores: [
+			`**/dist/*`,
+			'**/node_modules/*'
+		],
+	},
+	{
 		languageOptions: {
 			parser: tsParser,
 			parserOptions: {
@@ -15,12 +21,9 @@ export default tseslint.config(
 				tsconfigRootDir: __dirname
 			}
 		},
-		ignores: [
-			"./dist/**",
-		],
 		files: [
-			"./src/**/*.ts",
-			"./test/**/*.ts"
+			"src/**/*.ts",
+			"test/**/*.ts",
 		],
 		plugins: {
 			'jsdoc': jsdoc,

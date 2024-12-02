@@ -49,7 +49,7 @@ describe('Course controller tests', () => {
 		sandbox.restore()
 	})
 	describe('Render course overview tests', () => {
-		const makeRequest = async (coursePageMock: CoursePage) => {
+		const makeRequest = async (coursePageMock: BasicCoursePage) => {
 			coursePageModelFactoryStub.getCoursePage.resolves(coursePageMock)
 			const res = await request(app).get('/courses/courseId').set({roles: 'LEARNER'})
 			expect(res.status).eql(200)
@@ -89,21 +89,19 @@ describe('Course controller tests', () => {
 				expect(res.text).contain('Test description').contain('Test Learning outcomes')
 			})
 			it('Should exclude the learning outcomes header when there are no learning outcomes', async () => {
-				const noModuleCoursePage: BasicCoursePage = {
+				const res = await makeRequest({
 					template: 'noModules',
 					...basicCourseData,
 					learningOutcomes: '',
-				}
-				const res = await makeRequest(noModuleCoursePage)
+				})
 				assertHtml(res.text, [idAssertion('learning-outcomes', null)])
 			})
 			it('Should Show the notification banner when the course is archived', async () => {
-				const noModuleCoursePage: BasicCoursePage = {
+				const res = await makeRequest({
 					template: 'noModules',
 					...basicCourseData,
 					status: CourseStatus.ARCHIVED,
-				}
-				const res = await makeRequest(noModuleCoursePage)
+				})
 				assertHtml(
 					res.text,
 					getAssertNotificationBanner(
@@ -118,12 +116,11 @@ describe('Course controller tests', () => {
 			})
 			it('Should show "Back" as a backlink when a custom backlink is provided', async () => {
 				const searchUrl = '/search?q=XYZ'
-				const noModuleCoursePage: BasicCoursePage = {
+				coursePageModelFactoryStub.getCoursePage.resolves({
 					template: 'noModules',
 					...basicCourseData,
 					backLink: searchUrl,
-				}
-				coursePageModelFactoryStub.getCoursePage.resolves(noModuleCoursePage)
+				})
 
 				const res = await request(app)
 					.get('/courses/courseId')

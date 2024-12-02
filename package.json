@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"build": "concurrently \"npm run compile\" \"npm run sass\"",
-		"compile": "tsc",
+		"compile": "tsc -p tsconfig.src.json",
 		"dev:ui": "concurrently \"npm run watch-sass\"  \"npm run start:dev\"",
 		"lint": "concurrently \"npm run eslint\" \"npm run format\"",
 		"fix-lint": "concurrently \"npm run fix-eslint\" \"npm run fix-format\"",

@@ -121,9 +121,9 @@ export const assertDoc = (doc: Document | Element, assertion: HtmlAssertion, exp
 	const elem = doc.querySelectorAll(assertion.querySelector)[0]
 	const expected = assertion.expected
 	if (expected === null) {
-		exp(elem || null).null
+		exp(elem || null).eql(null)
 	} else {
-		exp(elem || null, `Expected element with selector '${assertion.querySelector}' to not be null`).not.null
+		exp(elem || null, `Expected element with selector '${assertion.querySelector}' to not be null`).not.eql(null)
 		expected.content.assert(elem, exp)
 		const expClasses = expected.classes || []
 		expClasses.forEach(c =>

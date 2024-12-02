@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as config from './config'
 import * as datetime from './datetime'
 
+/*eslint-disable*/
 export interface BasicInfo {
 	height: number
 	id: string
@@ -11,6 +12,7 @@ export interface BasicInfo {
 	title: string
 	width: number
 }
+/*eslint-enable*/
 
 // NOTE: Callers may want to retry in case of error with YouTube.
 export async function getBasicInfo(url: string): Promise<BasicInfo | undefined> {

@@ -50,8 +50,8 @@ describe('Course page model tests', () => {
 			const result = getBasicModuleCard(module, course)
 			expect(result.title).eql('Module title')
 			expect(result.description).eql('Module description')
-			expect(result.associatedLearning).true
-			expect(result.isMandatory).true
+			expect(result.associatedLearning).eql(true)
+			expect(result.isMandatory).eql(true)
 			expect(result.duration).eql('1 minute')
 			expect(result.cost).eql(1)
 			expect(result.displayState).eql('')
@@ -61,8 +61,8 @@ describe('Course page model tests', () => {
 			const result = getElearningModuleCard(module, course)
 			expect(result.title).eql('Module title')
 			expect(result.description).eql('Module description')
-			expect(result.associatedLearning).true
-			expect(result.isMandatory).true
+			expect(result.associatedLearning).eql(true)
+			expect(result.isMandatory).eql(true)
 			expect(result.duration).eql('1 minute')
 			expect(result.cost).eql(1)
 			expect(result.displayState).eql('')
@@ -72,8 +72,8 @@ describe('Course page model tests', () => {
 			const result = getFileModuleCard(module, course)
 			expect(result.title).eql('Module title')
 			expect(result.description).eql('Module description')
-			expect(result.associatedLearning).true
-			expect(result.isMandatory).true
+			expect(result.associatedLearning).eql(true)
+			expect(result.isMandatory).eql(true)
 			expect(result.duration).eql('1 minute')
 			expect(result.cost).eql(1)
 			expect(result.displayState).eql('')
@@ -99,7 +99,7 @@ describe('Course page model tests', () => {
 				expect(result.description).eql('Course description')
 				expect(result.learningOutcomes).eql('Course learning outcomes')
 				expect(result.status).eql(CourseStatus.PUBLISHED)
-				expect(result.moduleDetails).not.undefined
+				expect(result.moduleDetails).not.eql(undefined)
 				expect(result.type).eql(ModuleType.FILE)
 			})
 			it('Should return a blended module course page when there is more than one module', async () => {
@@ -153,11 +153,11 @@ describe('Course page model tests', () => {
 				expect(result.learningOutcomes).eql('Course learning outcomes')
 				expect(result.status).eql(CourseStatus.PUBLISHED)
 				expect(result.modules).length(3)
-				expect(result.modules[0].isMandatory).true
-				expect(result.modules[1].mustConfirmBooking).true
-				expect(result.modules[1].isMandatory).false
-				expect(result.modules[2].mustConfirmBooking).false
-				expect(result.modules[2].isMandatory).true
+				expect(result.modules[0].isMandatory).eql(true)
+				expect(result.modules[1].mustConfirmBooking).eql(true)
+				expect(result.modules[1].isMandatory).eql(false)
+				expect(result.modules[2].mustConfirmBooking).eql(false)
+				expect(result.modules[2].isMandatory).eql(true)
 				expect(result.mandatoryModuleCount).eql(2)
 				expect(result.type).eql('blended')
 				expect(result.template).eql('blended')
