@@ -73,6 +73,7 @@ describe('Course controller tests', () => {
 			description: 'Module description',
 			associatedLearning: false,
 			isMandatory: false,
+			mustConfirmBooking: false,
 			launchLink: `/courses/courseID/moduleID`,
 			duration: '1 minute',
 			cost: 1,
@@ -147,9 +148,11 @@ describe('Course controller tests', () => {
 				const singleModuleCoursePage: SingleModuleCoursePage = {
 					template: 'elearning',
 					type: ModuleType.ELEARNING,
+					...details,
 					...basicCourseData,
 					moduleDetails: {
 						...basicModuleDetails,
+						mustConfirmBooking: false,
 						template: 'elearning',
 						type: ModuleType.ELEARNING,
 					},
@@ -161,6 +164,7 @@ describe('Course controller tests', () => {
 				it('Should show the cancel link when the user is booked', async () => {
 					const moduleDetails: F2FModuleCard = {
 						...basicModuleDetails,
+						mustConfirmBooking: false,
 						template: 'faceToface',
 						type: ModuleType.FACE_TO_FACE,
 						displayState: 'CONFIRMED',
@@ -170,6 +174,7 @@ describe('Course controller tests', () => {
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'faceToFace',
 						type: ModuleType.FACE_TO_FACE,
+						...details,
 						...basicCourseData,
 						moduleDetails,
 					}
@@ -192,6 +197,7 @@ describe('Course controller tests', () => {
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'faceToFace',
 						type: ModuleType.FACE_TO_FACE,
+						...details,
 						...basicCourseData,
 						moduleDetails,
 					}
@@ -213,6 +219,7 @@ describe('Course controller tests', () => {
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'faceToFace',
 						type: ModuleType.FACE_TO_FACE,
+						...details,
 						...basicCourseData,
 						moduleDetails,
 					}
@@ -234,6 +241,7 @@ describe('Course controller tests', () => {
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'file',
 						type: ModuleType.FILE,
+						...details,
 						...basicCourseData,
 						moduleDetails,
 					}
@@ -249,6 +257,7 @@ describe('Course controller tests', () => {
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'singleModule',
 						type: ModuleType.LINK,
+						...details,
 						...basicCourseData,
 						moduleDetails: {
 							...basicModuleDetails,
