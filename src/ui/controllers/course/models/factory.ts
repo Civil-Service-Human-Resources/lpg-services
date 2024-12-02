@@ -110,10 +110,9 @@ export function getBlendedCoursePage(course: Course, courseRecord?: CourseRecord
 		cards.push(card)
 	}
 	if (faceToFaceModule !== undefined && faceToFaceModule.displayState !== 'APPROVED') {
-		cards
-			.forEach(c => {
-				c.mustConfirmBooking = c.associatedLearning
-			})
+		cards.forEach(c => {
+			c.mustConfirmBooking = c.associatedLearning
+		})
 	}
 	const coursePage = getBasicCoursePage(course)
 	const courseDetails = getCourseDetails(course)

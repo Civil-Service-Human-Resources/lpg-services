@@ -11,7 +11,8 @@ import {
 	getBlendedCoursePage,
 	getCoursePage,
 	getElearningModuleCard,
-	getFileModuleCard, getSingleModuleCoursePage,
+	getFileModuleCard,
+	getSingleModuleCoursePage,
 } from './factory'
 
 describe('Course page model tests', () => {
@@ -127,7 +128,9 @@ describe('Course page model tests', () => {
 					new Date(),
 					'Face to face',
 					'face-to-face',
-					RecordState.InProgress, 0, false
+					RecordState.InProgress,
+					0,
+					false
 				)
 				const linkAssoc = new Module('link', ModuleType.LINK)
 				linkAssoc.optional = true
@@ -135,8 +138,14 @@ describe('Course page model tests', () => {
 				const file = new Module('file', ModuleType.FILE)
 				file.optional = false
 				file.associatedLearning = false
-				const courseRecord = new CourseRecord('course-id', 'user-id', RecordState.InProgress,
-					[f2fRecord], "Course Title", false)
+				const courseRecord = new CourseRecord(
+					'course-id',
+					'user-id',
+					RecordState.InProgress,
+					[f2fRecord],
+					'Course Title',
+					false
+				)
 				course.modules = [f2f, linkAssoc, file]
 				const result = getBlendedCoursePage(course, courseRecord)
 				expect(result.title).eql('Course title')
@@ -157,10 +166,10 @@ describe('Course page model tests', () => {
 		describe('getSingleModuleCoursePage tests', () => {
 			it('Should add the location to the course page when building a face-to-face course page', () => {
 				const f2f = new Module('f2f', ModuleType.FACE_TO_FACE)
-				f2f.location = "London"
+				f2f.location = 'London'
 				const result = getSingleModuleCoursePage(course, f2f)
 				expect(result.type).eql(ModuleType.FACE_TO_FACE)
-				expect(result.location).eql("London")
+				expect(result.location).eql('London')
 			})
 		})
 	})
