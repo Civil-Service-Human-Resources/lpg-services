@@ -1,0 +1,12 @@
+name: "Auto-create release backfills"
+
+on:
+  create:
+    branches:
+      - '*'
+
+jobs:
+  call-reusable-workflow:
+    uses: Civil-Service-Human-Resources/csl-devops-templates/.github/workflows/auto-backfill-template.yml@main
+    with:
+      source_branch: ${{ github.ref_name }}

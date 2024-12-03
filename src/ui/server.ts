@@ -230,7 +230,7 @@ app.use(passport.hasRole('LEARNER'))
 
 profileChecker.register(app)
 
-app.get('/api/video/complete', asyncHandler(completeVideoModule))
+app.get('/js/video/complete', asyncHandler(completeVideoModule))
 
 app.get('/profile', profileController.viewProfile)
 
