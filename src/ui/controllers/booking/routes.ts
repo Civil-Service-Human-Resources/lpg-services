@@ -1,3 +1,4 @@
+import {NextFunction, Request, Response} from 'express'
 import * as courseController from '../course'
 
 import * as express from 'express'
@@ -10,6 +11,13 @@ export const router: express.Router = express.Router()
 router.param('courseId', asyncHandler(courseController.loadCourse))
 router.param('moduleId', asyncHandler(courseController.loadModule))
 router.param('eventId', asyncHandler(courseController.loadEvent))
+
+router.use((req: Request, res: Response, next: NextFunction) => {
+	if (!req.user.hasLineManager()) {
+		return res.redirect(`/profile/line-manager?redirectTo=${req.originalUrl}`)
+	}
+	next()
+})
 
 router.get('/book/ouch', bookingController.renderOuch)
 

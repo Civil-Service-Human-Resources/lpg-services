@@ -5,7 +5,6 @@ import {ResourceNotFoundError} from '../../../lib/exception/ResourceNotFoundErro
 import * as extended from '../../../lib/extended'
 import * as learnerRecord from '../../../lib/learnerrecord'
 import {getLogger} from '../../../lib/logger'
-import * as model from '../../../lib/model'
 import {bookEvent, completeEventBooking, skipEventBooking} from '../../../lib/service/cslService/cslServiceClient'
 import {createBookEventDto} from '../../../lib/service/cslService/models/factory/BookEventDtoFactory'
 import * as template from '../../../lib/ui/template'
@@ -38,7 +37,6 @@ export function recordCheck(record: learnerRecord.CourseRecord | null, ireq: exp
 export function saveAccessibilityOptions(ireq: express.Request, res: express.Response) {
 	const session = ireq.session!
 	const req = ireq as extended.CourseRequest
-	const user = req.user as model.User
 
 	const requirements: string[] = []
 
@@ -56,8 +54,6 @@ export function saveAccessibilityOptions(ireq: express.Request, res: express.Res
 	let {returnTo} = ireq.session!
 	if (returnTo) {
 		delete ireq.session!.returnTo
-	} else if (!user.organisationalUnit || !user.lineManager) {
-		returnTo = '/profile'
 	} else if (req.module!.cost === 0) {
 		session.payment = {
 			type: '',

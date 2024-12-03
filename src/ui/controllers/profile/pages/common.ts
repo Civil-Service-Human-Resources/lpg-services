@@ -1,6 +1,7 @@
 import {ClassConstructor, plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import {User} from '../../../../lib/model'
+import {redirectToSessionService} from '../../../../lib/ui/middleware/redirectTo'
 import {ValidPageModel} from '../../models/ValidPageModel'
 import {generateRedirectMiddleware, MessageFlash, SessionableObjectService} from '../../utils'
 
@@ -89,6 +90,11 @@ export function generateRedirect(pageSpec: ProfilePageSpecification, req: expres
 			return redirect(req, res)
 		}
 		return redirectToProfileSetup(req, res)
+	}
+	const redirectSession = redirectToSessionService.fetchObjectFromSession(req)
+	if (redirectSession !== undefined) {
+		redirectToSessionService.deleteObjectFromSession(req)
+		return res.redirect(redirectSession.redirectTo)
 	}
 	return redirectToProfileSuccess(req, res)
 }

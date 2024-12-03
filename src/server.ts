@@ -25,8 +25,8 @@ import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organi
 import {OrganisationalUnitTypeaheadCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 import * as dynamicBackLink from './lib/ui/middleware/dynamicBackLink'
 import * as nunjucks from './lib/ui/middleware/nunjucks'
+import * as redirectTo from './lib/ui/middleware/redirectTo'
 import * as profileChecker from './lib/ui/profileChecker'
-
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import {URL} from 'url'
@@ -222,6 +222,7 @@ app.use((req, res, next) => {
 
 profileChecker.register(app)
 dynamicBackLink.register(app)
+redirectTo.registerGET(app)
 
 app.get('/api/video/complete', asyncHandler(completeVideoModule))
 
@@ -287,6 +288,8 @@ app.get('/skills/quiz-history', asyncHandler(skillsController.quizHistory))
 app.get('/home', asyncHandler(requiresDepartmentHierarchy), asyncHandler(homeController.home))
 
 app.use(bookingRouter.router)
+
+redirectTo.registerPOST(app)
 
 app.use(errorController.handleError)
 
