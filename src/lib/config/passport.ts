@@ -6,7 +6,6 @@ import {getLogger} from 'lib/logger'
 import {createUser, User} from 'lib/model'
 import * as model from 'lib/model'
 import {
-	fetchNewProfile,
 	fetchProfile,
 	removeProfileFromCache,
 	updateProfileCache,
@@ -58,9 +57,6 @@ export function configure(
 		try {
 			identity = plainToInstance(IdentityDetails, JSON.parse(data) as IdentityDetails)
 			let csrsProfile = await fetchProfile(identity.uid, identity.accessToken)
-			if (csrsProfile.shouldRefresh) {
-				csrsProfile = await fetchNewProfile(identity.accessToken)
-			}
 			if (!csrsProfile.uiLoggedIn) {
 				csrsProfile.uiLoggedIn = true
 				await updateProfileCache(csrsProfile)
