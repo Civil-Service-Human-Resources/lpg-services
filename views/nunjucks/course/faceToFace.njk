@@ -6,7 +6,7 @@
     {% else %}
         {% if not signedInUser.hasLineManager() %}
             <p class='govuk-body'>
-                You must <a href='/profile/line-manager'>add a line manager</a> to book
+                {% include "./partials/mustAddLineManager.html" %}
             </p>
         {% elseif not pageModel.moduleDetails.canBeBooked %}
             {{ notificationBanner({
