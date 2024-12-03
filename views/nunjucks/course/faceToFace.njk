@@ -6,7 +6,7 @@
     {% else %}
         {% if not signedInUser.hasLineManager() %}
             <p class='govuk-body'>
-                {% include "./partials/mustAddLineManager.html" %}
+                <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this course</span>
             </p>
         {% elseif not pageModel.moduleDetails.canBeBooked %}
             {{ notificationBanner({
