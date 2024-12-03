@@ -56,7 +56,7 @@ export function configure(
 		let identity: IdentityDetails
 		try {
 			identity = plainToInstance(IdentityDetails, JSON.parse(data) as IdentityDetails)
-			let csrsProfile = await fetchProfile(identity.uid, identity.accessToken)
+			const csrsProfile = await fetchProfile(identity.uid, identity.accessToken)
 			if (!csrsProfile.uiLoggedIn) {
 				csrsProfile.uiLoggedIn = true
 				await updateProfileCache(csrsProfile)
