@@ -13,6 +13,7 @@ COPY locale ./locale
 ## Page
 COPY views/component ./views/component
 COPY views/page ./views/page
+COPY views/nunjucks ./views/nunjucks
 
 ## Public assets
 COPY views/assets/styles/main.css ./views/assets/styles/main.css

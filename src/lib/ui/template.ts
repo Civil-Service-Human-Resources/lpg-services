@@ -2,7 +2,6 @@ import {STATIC_DIR} from '../config'
 import * as config from '../config'
 
 import {constructCourseCallToAction} from './courseCallToAction'
-import {constructModuleCta} from './moduleCallToAction'
 
 import * as datetime from '../datetime'
 import * as fileHelpers from '../filehelpers'
@@ -38,7 +37,7 @@ export function isDirectory(filePath: string) {
 	}
 }
 
-function toHtml(text: string) {
+export function toHtml(text: string) {
 	if (text) {
 		const lines = text
 			.split('\n')
@@ -73,7 +72,6 @@ function getHelpers(): {} {
 	return {
 		config,
 		constructCourseCallToAction,
-		constructModuleCta,
 		datetime,
 		fileHelpers,
 		getFirstKey,

@@ -186,14 +186,17 @@ $module: 'discite';
 		@extend %disciteRowDiv;
 		clear: both;
 
-		a {
-			display: inline-block;
-			margin-right: 8px;
-		}
-
 		@include media(desktop) {
 			display: block;
 			float: none;
+		}
+	}
+
+	@include e(action-link) {
+		display: inline-block;
+
+		@include m(main) {
+			margin-right: 8px;
 		}
 	}
 

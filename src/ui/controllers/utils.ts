@@ -28,10 +28,12 @@ export class SessionableObjectService<T> {
 		public clazz: ClassConstructor<T>
 	) {}
 	fetchObjectFromSession(req: express.Request): T | undefined {
+		logger.debug(`Fetching session object with key '${this.key}'`)
 		return plainToInstance(this.clazz, req.session![this.key] as T)
 	}
 
 	saveObjectToSession(req: express.Request, object: T) {
+		logger.debug(`Saving session object ${JSON.stringify(object)} with key '${this.key}'`)
 		req.session![this.key] = object
 	}
 

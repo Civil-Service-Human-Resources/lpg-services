@@ -33,16 +33,7 @@
                                 <p>{resultItem}</p>
                             {/each}
 
-                            {#if (result.type === "course") }
-                                <DisciteCourse course={result.course} modifier="search"/>
-                            {:else}
-                                <DisciteModule
-                                    course={result.course}
-                                    modifier="search"
-                                    module={result.module}
-                                    cta={$constructModuleCta(result.course.id, result.module, $req.user, result.module.state, result.course.record, 'search')}>
-                                </DisciteModule>
-                            {/if}
+                            <DisciteCourse course={result.course} modifier="search"/>
                         {/each}
                     {:else}
                         <p class="zero-result lede"><strong>0</strong> results found</p>
@@ -89,7 +80,6 @@
 
 <script>
 	import Page from '../../component/Page.html'
-	import DisciteModule from '../../component/DisciteModule.html'
 	import DisciteCourse from '../../component/DisciteCourse.html'
 	import LeftSearchBox from '../../component/LeftSearchBox.html'
     import Search from '../../component/Search.html'
@@ -103,7 +93,6 @@
 		components: {
 			Page,
             Search,
-			DisciteModule,
 			DisciteCourse,
 			LeftSearchBox,
 		}

@@ -23,10 +23,10 @@ import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import {OrganisationalUnitTypeaheadCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
-import * as i18n from './lib/service/translation'
 import * as dynamicBackLink from './lib/ui/middleware/dynamicBackLink'
+import * as nunjucks from './lib/ui/middleware/nunjucks'
+import * as redirectTo from './lib/ui/middleware/redirectTo'
 import * as profileChecker from './lib/ui/profileChecker'
-
 import * as lusca from 'lusca'
 import * as serveStatic from 'serve-static'
 import {URL} from 'url'
@@ -47,10 +47,14 @@ import * as skillsController from './ui/controllers/skills'
 import * as suggestionController from './ui/controllers/suggestion'
 import {completeVideoModule} from './ui/controllers/video'
 
-appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING).setAutoCollectConsole(true)
+export let appInsightsStarted = false
 
-appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = 'lpg-ui'
-appInsights.start()
+if (config.APPLICATIONINSIGHTS_CONNECTION_STRING) {
+	appInsights.setup(config.APPLICATIONINSIGHTS_CONNECTION_STRING).setAutoCollectConsole(true)
+	appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = 'lpg-ui'
+	appInsights.start()
+	appInsightsStarted = true
+}
 
 const backendServerPath = `/${BACKEND_SERVER_PATH}`
 
@@ -180,17 +184,9 @@ passport.configure(
 	app,
 	`${config.LPG_UI_SERVER}/authenticate`
 )
-i18n.configure(app)
+nunjucks.register(app)
 
 app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
-
-const csrf = lusca.csrf()
-
-app.use((req, res, next) => {
-	if (!req.url.startsWith(backendServerPath)) {
-		csrf(req, res, next)
-	}
-})
 
 app.get('/', homeController.index)
 app.get('/sign-out', asyncHandler(passport.logout))
@@ -212,11 +208,21 @@ app.get('/cookies', homeController.cookies)
 app.get('/contact-us', homeController.contactUs)
 
 app.use(passport.isAuthenticated)
+
 app.use(asyncHandler(passport.logOutMiddleware))
 app.use(passport.hasRole('LEARNER'))
 
+const csrf = lusca.csrf()
+
+app.use((req, res, next) => {
+	if (!req.url.startsWith(backendServerPath)) {
+		csrf(req, res, next)
+	}
+})
+
 profileChecker.register(app)
 dynamicBackLink.register(app)
+redirectTo.registerGET(app)
 
 app.get('/api/video/complete', asyncHandler(completeVideoModule))
 
@@ -281,7 +287,9 @@ app.get('/skills/quiz-history', asyncHandler(skillsController.quizHistory))
 
 app.get('/home', asyncHandler(requiresDepartmentHierarchy), asyncHandler(homeController.home))
 
-app.use(bookingRouter.router)
+app.use('/book', bookingRouter.router)
+
+redirectTo.registerPOST(app)
 
 app.use(errorController.handleError)
 

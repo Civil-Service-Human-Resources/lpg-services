@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="shortcut icon" href="{{ staticAssetRoot }}/img/favicon.ico" type="image/x-icon" />
+        <meta name="theme-color" content="#0b0c0c" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta property="og:image" content="{{ staticAssetRoot }}/img/opengraph-image.png">
+        <title>{{ pageTitle }} - {{ i18n('proposition_name') }}</title>
+        <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/main.css">
+        <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/video-js.min.css">
+        <script src="{{ staticAssetRoot }}/js/jquery.min.js"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script> {{ googleAnalyticsCode | safe }}
+    </head>
+    <body>
+        {% include "./skipLink.njk" %}
+        {% include "./cookieMessage.njk" %}
+        {% include "./header.njk" %}
+        <main class="elements-index" id="content" role="main">
+            <div class="main-content">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
+        {% include "./footer.njk" %}
+        <div class="container container--main bottom-main"></div>
+        <script>document.body.className = document.body.className.replace('', 'js-enabled');</script>
+        <script src="{{ staticAssetRoot }}/js/govuk_frontend_toolkit/govuk/show-hide-content.js"></script>
+        <script src="{{ staticAssetRoot }}/js/govuk_frontend_toolkit/govuk/modules.js"></script>
+        <script src="{{ staticAssetRoot }}/js/govuk_frontend_toolkit/govuk/govuk-template.js"></script>
+        <script type="text/javascript" src="{{ staticAssetRoot }}/js/accessible-autocomplete.min.js"></script>
+
+        <script src="{{ staticAssetRoot }}/js/main.js"></script>
+    </body>
+</html>

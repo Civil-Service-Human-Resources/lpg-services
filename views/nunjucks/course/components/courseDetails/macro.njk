@@ -1,0 +1,50 @@
+{% macro detailsRow(detailsRow) %}
+    <tr>
+        <th class="lpg-related-items__th">{{ detailsRow.heading }}</th>
+        <td class="lpg-related-items__td">{{ detailsRow.detail }}</td>
+    </tr>
+{% endmacro %}
+
+{% macro courseDetails(details) %}
+    <aside class="lpg-related-items lpg-related-items--course-overview" role="complementary">
+        <table class="table-simple table--top">
+            <caption class="visuallyhidden">Details about the course</caption>
+            <tbody>
+                {{ detailsRow({
+                    heading: "Course type",
+                    detail: i18n(details.type)
+                }) }}
+                {% if details.duration %}
+                    {{ detailsRow({
+                        heading: i18n("Duration"),
+                        detail: details.duration
+                    }) }}
+                {% endif %}
+                {% if details.areasOfWork.length > 0 %}
+                    {{ detailsRow({
+                        heading: i18n("Key area"),
+                        detail: details.areasOfWork | i18nList | join(", ")
+                    }) }}
+                {% endif %}
+                {% if details.location %}
+                    {{ detailsRow({
+                        heading: i18n("Location"),
+                        detail: details.location
+                    }) }}
+                {% endif %}
+                {% if details.grades.length > 0 %}
+                    {{ detailsRow({
+                        heading: i18n("Level"),
+                        detail: details.grades | i18nList | join(", ")
+                    }) }}
+                {% endif %}
+                {% if details.cost %}
+                    {{ detailsRow({
+                        heading: i18n("Cost"),
+                        detail: "£" + details.cost + " (ex VAT)"
+                    }) }}
+                {% endif %}
+            </tbody>
+        </table>
+    </aside>
+{% endmacro %}

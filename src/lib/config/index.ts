@@ -11,7 +11,9 @@ export const VER = process.env.npm_package_version
 
 export const STATIC_DIR = path.join(`${__dirname}/../../../views`)
 
-if (ENV === 'development') {
+export const IS_DEV = ENV === 'development'
+
+if (IS_DEV) {
 	console.log('Loading env from .env file')
 	dotenv.config({
 		path: path.resolve(__dirname + '/../../../.env'),
@@ -91,7 +93,7 @@ export const LPG_MANAGEMENT_URL = env.LPG_MANAGEMENT_SERVER || 'http://localhost
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 60000
 
-export const APPLICATIONINSIGHTS_CONNECTION_STRING = env.APPLICATIONINSIGHTS_CONNECTION_STRING || 'ai_key'
+export const APPLICATIONINSIGHTS_CONNECTION_STRING = env.APPLICATIONINSIGHTS_CONNECTION_STRING
 
 export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
 
