@@ -2,7 +2,7 @@ import {Express, NextFunction, Request, Response} from 'express'
 import {SessionableObjectService} from '../../../ui/controllers/utils'
 import {LPG_UI_SERVER} from '../../config'
 
-const validRedirectForEndpoints: Map<string, string[]> = new Map([['/profile/:section', ['/course']]])
+const validRedirectForEndpoints: Map<string, string[]> = new Map([['/profile/:section', ['/course', '/book']]])
 
 class RedirectToSession {
 	constructor(
