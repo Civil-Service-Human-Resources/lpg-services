@@ -44,7 +44,10 @@ export async function renderCancelBookingPage(
 	await learnerRecord
 		.getCancellationReasons(req.user)
 		.then(request => {
-			const options = Object.entries(request.data)
+			console.log(request.data)
+			const options = Object.entries(request.data).map(([key, value]) => ({
+				name: value, id: key
+			}))
 			res.send(
 				template.render('booking/cancel-booking', req, res, {
 					course,

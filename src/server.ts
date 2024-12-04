@@ -287,7 +287,7 @@ app.get('/skills/quiz-history', asyncHandler(skillsController.quizHistory))
 
 app.get('/home', asyncHandler(requiresDepartmentHierarchy), asyncHandler(homeController.home))
 
-app.use(bookingRouter.router)
+app.use('/book', bookingRouter.router)
 
 redirectTo.registerPOST(app)
 

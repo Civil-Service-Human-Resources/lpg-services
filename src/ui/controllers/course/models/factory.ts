@@ -2,7 +2,6 @@ import {extensionAndSize, fileName} from '../../../../lib/filehelpers'
 import {Course, Module, ModuleType, User} from '../../../../lib/model'
 import {getCourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from '../../../../lib/service/learnerRecordAPI/models/record'
 import {BookingStatus, ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
@@ -10,20 +9,25 @@ import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
 // Modules
 
 export function getModuleCard(course: Course, module: Module, moduleRecord?: ModuleRecord): BaseModuleCard {
+	const moduleCard = getBasicModuleCard(module, course, moduleRecord)
 	switch (module.type) {
 		case ModuleType.FACE_TO_FACE:
-			return getF2FModuleCard(module, course, moduleRecord)
+			return getF2FModuleCard(module, course, moduleCard, moduleRecord)
 		case ModuleType.FILE:
-			return getFileModuleCard(module, course)
+			return getFileModuleCard(module, moduleCard)
 		case ModuleType.ELEARNING:
-			return getElearningModuleCard(module, course)
+			return {
+				...moduleCard,
+				template: 'elearning',
+			}
 		default:
-			return getBasicModuleCard(module, course)
+			return moduleCard
 	}
 }
 
 export function getBasicModuleCard(module: Module, course: Course, moduleRecord?: ModuleRecord): BaseModuleCard {
 	const displayState = module.getDisplayState(moduleRecord, course.getRequiredRecurringAudience()) || ''
+	console.log(displayState)
 	return {
 		title: module.title,
 		description: module.description,
@@ -34,21 +38,12 @@ export function getBasicModuleCard(module: Module, course: Course, moduleRecord?
 		duration: module.getDuration(),
 		cost: module.cost,
 		mustConfirmBooking: false,
-		displayState,
 		template: 'singleModule',
+		displayState
 	}
 }
 
-export function getElearningModuleCard(module: Module, course: Course): BaseModuleCard {
-	const moduleCard: BaseModuleCard = getBasicModuleCard(module, course)
-	return {
-		...moduleCard,
-		template: 'elearning',
-	}
-}
-
-export function getFileModuleCard(module: Module, course: Course): FileModuleCard {
-	const moduleCard: BaseModuleCard = getBasicModuleCard(module, course)
+export function getFileModuleCard(module: Module, moduleCard: BaseModuleCard): FileModuleCard {
 	return {
 		...moduleCard,
 		fileExtAndSize: extensionAndSize(module.url!, module.fileSize!),
@@ -57,12 +52,9 @@ export function getFileModuleCard(module: Module, course: Course): FileModuleCar
 	}
 }
 
-export function getF2FModuleCard(module: Module, course: Course, moduleRecord?: ModuleRecord): F2FModuleCard {
-	const moduleCard: BaseModuleCard = getBasicModuleCard(module, course)
+export function getF2FModuleCard(module: Module, course: Course, moduleCard: BaseModuleCard, moduleRecord?: ModuleRecord): F2FModuleCard {
 	let eventId
-	let moduleRecordState: RecordState | BookingStatus = RecordState.Null
 	if (moduleRecord) {
-		moduleRecordState = moduleRecord.state || RecordState.Null
 		eventId = moduleRecord.eventId
 	}
 	const updatedCard: F2FModuleCard = {
@@ -71,7 +63,7 @@ export function getF2FModuleCard(module: Module, course: Course, moduleRecord?: 
 		launchLink: `/courses/${course.id}/${module.id}/choose-date`,
 		template: 'faceToFace',
 	}
-	if (moduleRecordState === BookingStatus.CONFIRMED && eventId !== undefined) {
+	if (updatedCard.displayState === BookingStatus.CONFIRMED && eventId !== undefined) {
 		updatedCard.cancellationLink = `/book/${course.id}/${module.id}/${eventId}/cancel`
 	}
 	return updatedCard
@@ -88,6 +80,7 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 			const module = course.modules[0]
 			return getSingleModuleCoursePage(course, module, courseRecord)
 		} else {
+			console.log(courseRecord)
 			return getBlendedCoursePage(course, courseRecord)
 		}
 	}

@@ -19,36 +19,36 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 	next()
 })
 
-router.get('/book/ouch', bookingController.renderOuch)
+router.get('/ouch', bookingController.renderOuch)
 
-router.get('/book/:courseId/:moduleId/choose-date', bookingController.renderChooseDate)
+router.get('/:courseId/:moduleId/choose-date', bookingController.renderChooseDate)
 
-router.post('/book/:courseId/:moduleId/choose-date', bookingController.selectedDate)
+router.post('/:courseId/:moduleId/choose-date', bookingController.selectedDate)
 
-router.get('/book/:courseId/:moduleId/:eventId/accessibility', bookingController.renderAccessibilityOptions)
-router.post('/book/:courseId/:moduleId/:eventId/accessibility', bookingController.saveAccessibilityOptions)
+router.get('/:courseId/:moduleId/:eventId/accessibility', bookingController.renderAccessibilityOptions)
+router.post('/:courseId/:moduleId/:eventId/accessibility', bookingController.saveAccessibilityOptions)
 
-router.get('/book/:courseId/:moduleId/:eventId/payment', bookingController.renderPaymentOptions)
+router.get('/:courseId/:moduleId/:eventId/payment', bookingController.renderPaymentOptions)
 
-router.get('/book/:courseId/:moduleId/:eventId/payment/confirm-po', bookingController.renderConfirmPo)
+router.get('/:courseId/:moduleId/:eventId/payment/confirm-po', bookingController.renderConfirmPo)
 
-router.post('/book/:courseId/:moduleId/:eventId/payment', bookingController.enteredPaymentDetails)
+router.post('/:courseId/:moduleId/:eventId/payment', bookingController.enteredPaymentDetails)
 
-router.get('/book/:courseId/:moduleId/:eventId/confirm', asyncHandler(bookingController.renderConfirmPayment))
+router.get('/:courseId/:moduleId/:eventId/confirm', asyncHandler(bookingController.renderConfirmPayment))
 
-router.get('/book/:courseId/:moduleId/:eventId/complete', asyncHandler(bookingController.tryCompleteBooking))
+router.get('/:courseId/:moduleId/:eventId/complete', asyncHandler(bookingController.tryCompleteBooking))
 
-router.get('/book/:courseId/:moduleId/:eventId/move', asyncHandler(bookingController.tryMoveBooking))
+router.get('/:courseId/:moduleId/:eventId/move', asyncHandler(bookingController.tryMoveBooking))
 
-router.get('/book/:courseId/:moduleId/:eventId/cancel', asyncHandler(cancelBookingController.renderCancelBookingPage))
+router.get('/:courseId/:moduleId/:eventId/cancel', asyncHandler(cancelBookingController.renderCancelBookingPage))
 
-router.get('/book/:courseId/:moduleId/:eventId/skip', asyncHandler(bookingController.trySkipBooking))
+router.get('/:courseId/:moduleId/:eventId/skip', asyncHandler(bookingController.trySkipBooking))
 
-router.post('/book/:courseId/:moduleId/:eventId/cancel', asyncHandler(cancelBookingController.tryCancelBooking))
+router.post('/:courseId/:moduleId/:eventId/cancel', asyncHandler(cancelBookingController.tryCancelBooking))
 
 router.get(
-	'/book/:courseId/:moduleId/:eventId/cancelled',
+	'/:courseId/:moduleId/:eventId/cancelled',
 	asyncHandler(cancelBookingController.renderCancelledBookingPage)
 )
 
-router.get('/book/cancelled', asyncHandler(cancelBookingController.renderCancelledBookingPage))
+router.get('/cancelled', asyncHandler(cancelBookingController.renderCancelledBookingPage))

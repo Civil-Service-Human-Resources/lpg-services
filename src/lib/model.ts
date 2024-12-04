@@ -583,13 +583,17 @@ export class Module {
 	) {
 		let state: string | null = null
 		if (moduleRecord) {
-			const completionDate = moduleRecord.getCompletionDate().getTime()
-			const updatedAt = moduleRecord.getUpdatedAt().getTime()
-			const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
-			if (previousRequiredBy < completionDate) {
-				state = 'COMPLETED'
-			} else if (previousRequiredBy < updatedAt) {
-				state = 'IN_PROGRESS'
+			if (this.type !== ModuleType.FACE_TO_FACE) {
+				const completionDate = moduleRecord.getCompletionDate().getTime()
+				const updatedAt = moduleRecord.getUpdatedAt().getTime()
+				const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
+				if (previousRequiredBy < completionDate) {
+					state = 'COMPLETED'
+				} else if (previousRequiredBy < updatedAt) {
+					state = 'IN_PROGRESS'
+				}
+			} else {
+				state = moduleRecord.state ? moduleRecord.state : ''
 			}
 		}
 		return state
