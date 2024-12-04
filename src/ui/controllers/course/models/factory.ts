@@ -39,7 +39,7 @@ export function getBasicModuleCard(module: Module, course: Course, moduleRecord?
 		cost: module.cost,
 		mustConfirmBooking: false,
 		template: 'singleModule',
-		displayState
+		displayState,
 	}
 }
 
@@ -52,7 +52,12 @@ export function getFileModuleCard(module: Module, moduleCard: BaseModuleCard): F
 	}
 }
 
-export function getF2FModuleCard(module: Module, course: Course, moduleCard: BaseModuleCard, moduleRecord?: ModuleRecord): F2FModuleCard {
+export function getF2FModuleCard(
+	module: Module,
+	course: Course,
+	moduleCard: BaseModuleCard,
+	moduleRecord?: ModuleRecord
+): F2FModuleCard {
 	let eventId
 	if (moduleRecord) {
 		eventId = moduleRecord.eventId

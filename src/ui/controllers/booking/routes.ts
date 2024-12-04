@@ -46,9 +46,6 @@ router.get('/:courseId/:moduleId/:eventId/skip', asyncHandler(bookingController.
 
 router.post('/:courseId/:moduleId/:eventId/cancel', asyncHandler(cancelBookingController.tryCancelBooking))
 
-router.get(
-	'/:courseId/:moduleId/:eventId/cancelled',
-	asyncHandler(cancelBookingController.renderCancelledBookingPage)
-)
+router.get('/:courseId/:moduleId/:eventId/cancelled', asyncHandler(cancelBookingController.renderCancelledBookingPage))
 
 router.get('/cancelled', asyncHandler(cancelBookingController.renderCancelledBookingPage))
