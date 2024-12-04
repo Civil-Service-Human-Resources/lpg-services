@@ -2,7 +2,7 @@ import {Express, NextFunction, Request, Response} from 'express'
 import * as nunjucks from 'nunjucks'
 import * as i18n from 'i18n'
 import * as path from 'path'
-import {IS_DEV, STATIC_DIR} from '../../config'
+import {IS_DEV, STATIC_DIR, LPG_MANAGEMENT_URL} from '../../config'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
 import {getLogger} from '../../logger'
 import {toHtml} from '../template'
@@ -28,8 +28,9 @@ export const register = (app: Express) => {
 		baseLayout,
 		components,
 		partials,
+		lpgManagementUrl: LPG_MANAGEMENT_URL
 	}
-	logger.debug(`Registering nunjucks globals: ${globals}`)
+	logger.debug(`Registering nunjucks globals: ${JSON.stringify(globals)}`)
 	Object.keys(globals).forEach(key => {
 		env.addGlobal(key, globals[key])
 	})
