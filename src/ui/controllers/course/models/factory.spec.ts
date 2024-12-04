@@ -10,10 +10,10 @@ import {
 	getBasicModuleCard,
 	getBlendedCoursePage,
 	getCoursePage,
-	getElearningModuleCard,
 	getFileModuleCard,
 	getSingleModuleCoursePage,
 } from './factory'
+import {FileModuleCard} from './moduleCard'
 
 describe('Course page model tests', () => {
 	const sandbox = sinon.createSandbox()
@@ -57,29 +57,11 @@ describe('Course page model tests', () => {
 			expect(result.displayState).eql('')
 			expect(result.template).eql('singleModule')
 		})
-		it('Should build an elearning module card', () => {
-			const result = getElearningModuleCard(module, course)
-			expect(result.title).eql('Module title')
-			expect(result.description).eql('Module description')
-			expect(result.associatedLearning).eql(true)
-			expect(result.isMandatory).eql(true)
-			expect(result.duration).eql('1 minute')
-			expect(result.cost).eql(1)
-			expect(result.displayState).eql('')
-			expect(result.template).eql('elearning')
-		})
 		it('Should build a file module card', () => {
-			const result = getFileModuleCard(module, course)
-			expect(result.title).eql('Module title')
-			expect(result.description).eql('Module description')
-			expect(result.associatedLearning).eql(true)
-			expect(result.isMandatory).eql(true)
-			expect(result.duration).eql('1 minute')
-			expect(result.cost).eql(1)
-			expect(result.displayState).eql('')
-			expect(result.fileExtAndSize).eql('pdf, 10KB')
-			expect(result.fileName).eql('filename')
-			expect(result.template).eql('file')
+			const fileCard = getFileModuleCard(module, getBasicModuleCard(module, course)) as FileModuleCard
+			expect(fileCard.fileExtAndSize).eql('pdf, 10KB')
+			expect(fileCard.fileName).eql('filename')
+			expect(fileCard.template).eql('file')
 		})
 	})
 	describe('Course overview page model tests', () => {
