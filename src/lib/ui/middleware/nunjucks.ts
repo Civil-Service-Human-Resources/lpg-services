@@ -28,7 +28,7 @@ export const register = (app: Express) => {
 		baseLayout,
 		components,
 		partials,
-		lpgManagementUrl: LPG_MANAGEMENT_URL
+		lpgManagementUrl: LPG_MANAGEMENT_URL,
 	}
 	logger.debug(`Registering nunjucks globals: ${JSON.stringify(globals)}`)
 	Object.keys(globals).forEach(key => {
