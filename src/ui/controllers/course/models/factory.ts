@@ -2,7 +2,7 @@ import {extensionAndSize, fileName} from '../../../../lib/filehelpers'
 import {Course, Module, ModuleType, User} from '../../../../lib/model'
 import {getCourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {BookingStatus, ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
 
@@ -68,7 +68,7 @@ export function getF2FModuleCard(
 		launchLink: `/courses/${course.id}/${module.id}/choose-date`,
 		template: 'faceToFace',
 	}
-	if (updatedCard.displayState === BookingStatus.CONFIRMED && eventId !== undefined) {
+	if (!['UNREGISTERED', undefined].includes(updatedCard.displayState) && eventId !== undefined) {
 		updatedCard.cancellationLink = `/book/${course.id}/${module.id}/${eventId}/cancel`
 	}
 	return updatedCard

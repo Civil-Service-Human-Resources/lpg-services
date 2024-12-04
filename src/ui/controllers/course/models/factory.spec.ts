@@ -10,10 +10,11 @@ import {
 	getBasicModuleCard,
 	getBlendedCoursePage,
 	getCoursePage,
+	getF2FModuleCard,
 	getFileModuleCard,
 	getSingleModuleCoursePage,
 } from './factory'
-import {FileModuleCard} from './moduleCard'
+import {F2FModuleCard, FileModuleCard} from './moduleCard'
 
 describe('Course page model tests', () => {
 	const sandbox = sinon.createSandbox()
@@ -62,6 +63,17 @@ describe('Course page model tests', () => {
 			expect(fileCard.fileExtAndSize).eql('pdf, 10KB')
 			expect(fileCard.fileName).eql('filename')
 			expect(fileCard.template).eql('file')
+		})
+		it('Should build a face to face module card', () => {
+			const fileCard = getF2FModuleCard(module, course, getBasicModuleCard(module, course)) as F2FModuleCard
+			expect(fileCard.cancellationLink).eql(undefined)
+			expect(fileCard.launchLink).eql('/courses/course-id/module-id/choose-date')
+			expect(fileCard.template).eql('faceToFace')
+		})
+		it('Should build a face to face module card that has been booked', () => {
+			const mr = {eventId: 'event-id'}
+			const fileCard = getF2FModuleCard(module, course, getBasicModuleCard(module, course), mr as any) as F2FModuleCard
+			expect(fileCard.cancellationLink).eql(`/book/course-id/module-id/event-id/cancel`)
 		})
 	})
 	describe('Course overview page model tests', () => {
