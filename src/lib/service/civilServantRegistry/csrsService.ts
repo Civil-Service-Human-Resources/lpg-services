@@ -1,17 +1,17 @@
-import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
-import {getProfessionsTree} from 'lib/service/civilServantRegistry/areaOfWork/areaOfWorkClient'
-import {AreasOfWork} from 'lib/service/civilServantRegistry/areaOfWork/areasOfWork'
-import * as civilServantClient from 'lib/service/civilServantRegistry/civilServant/civilServantClient'
-import {ProfileCache} from 'lib/service/civilServantRegistry/civilServant/profileCache'
-import * as gradeClient from 'lib/service/civilServantRegistry/grade/gradeClient'
-import {Grades} from 'lib/service/civilServantRegistry/grade/grades'
-import * as interestClient from 'lib/service/civilServantRegistry/interest/interestClient'
-import {Interests} from 'lib/service/civilServantRegistry/interest/interests'
-import {PatchCivilServant} from 'lib/service/civilServantRegistry/models/patchCivilServant'
-import {AnonymousCache} from 'lib/utils/anonymousCache'
 import {getLogger} from '../../logger'
 import {OrganisationalUnit, User} from '../../model'
+import {AreaOfWork, Grade, Interest, Profile} from '../../registry'
+import {AnonymousCache} from '../../utils/anonymousCache'
+import {getProfessionsTree} from './areaOfWork/areaOfWorkClient'
+import {AreasOfWork} from './areaOfWork/areasOfWork'
+import * as civilServantClient from './civilServant/civilServantClient'
+import {ProfileCache} from './civilServant/profileCache'
+import * as gradeClient from './grade/gradeClient'
+import {Grades} from './grade/grades'
+import * as interestClient from './interest/interestClient'
+import {Interests} from './interest/interests'
 import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
+import {PatchCivilServant} from './models/patchCivilServant'
 import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
 import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
@@ -31,7 +31,8 @@ export function setCaches(
 	csrsProfileCache: ProfileCache,
 	csrsGradeCache: AnonymousCache<Grades>,
 	csrsAreaOfWorkCache: AnonymousCache<AreasOfWork>,
-	csrsInterestCache: AnonymousCache<Interests>) {
+	csrsInterestCache: AnonymousCache<Interests>
+) {
 	organisationalUnitCache = orgCache
 	organisationalUnitTypeaheadCache = orgTypeaheadCache
 	profileCache = csrsProfileCache
@@ -81,32 +82,27 @@ export async function patchCivilServantOrganisationUnit(user: User, organisation
 }
 
 export async function patchCivilServantName(user: User, name: string) {
-	const patch = new PatchCivilServant(name, undefined, undefined,
-		undefined, undefined)
+	const patch = new PatchCivilServant(name, undefined, undefined, undefined, undefined)
 	await patchCivilServant(user, patch)
 }
 
 export async function patchCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
-	const patch = new PatchCivilServant(undefined, undefined, undefined,
-		areaOfWork, undefined)
+	const patch = new PatchCivilServant(undefined, undefined, undefined, areaOfWork, undefined)
 	await patchCivilServant(user, patch)
 }
 
 export async function patchCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[]) {
-	const patch = new PatchCivilServant(undefined, undefined, undefined,
-		undefined, areasOfWork)
+	const patch = new PatchCivilServant(undefined, undefined, undefined, undefined, areasOfWork)
 	await patchCivilServant(user, patch)
 }
 
 export async function patchCivilServantGrade(user: User, grade: Grade) {
-	const patch = new PatchCivilServant(undefined, grade, undefined,
-		undefined, undefined)
+	const patch = new PatchCivilServant(undefined, grade, undefined, undefined, undefined)
 	await patchCivilServant(user, patch)
 }
 
 export async function patchCivilServantInterests(user: User, interests: Interest[]) {
-	const patch = new PatchCivilServant(undefined, undefined, interests,
-		undefined, undefined)
+	const patch = new PatchCivilServant(undefined, undefined, interests, undefined, undefined)
 	await patchCivilServant(user, patch)
 }
 

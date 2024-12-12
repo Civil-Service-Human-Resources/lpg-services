@@ -1,23 +1,35 @@
-import { expect } from 'chai'
+import {expect} from 'chai'
 
-import { Module } from '../../../../model'
-import { RecordState } from '../../models/record'
-import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
-import { CourseRecord } from './courseRecord'
+import {Module, ModuleType} from '../../../../model'
+import {RecordState} from '../../models/record'
+import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
+import {CourseRecord} from './courseRecord'
 
-const requiredModule1 = new Module('required001', 'link')
+const requiredModule1 = new Module('required001', ModuleType.LINK)
 requiredModule1.optional = false
-const requiredModule2 = new Module('required002', 'link')
+const requiredModule2 = new Module('required002', ModuleType.LINK)
 requiredModule2.optional = false
 
-const optModule1 = new Module('optional001', 'link')
+const optModule1 = new Module('optional001', ModuleType.LINK)
 optModule1.optional = true
-const optModule2 = new Module('optional002', 'link')
+const optModule2 = new Module('optional002', ModuleType.LINK)
 optModule2.optional = true
 
 function moduleRecordFromModule(module: Module, state: RecordState) {
-	return new ModuleRecord(0, module.id, '', '', new Date(),
-	new Date(), '', 'link', state, 0, module.optional, undefined)
+	return new ModuleRecord(
+		0,
+		module.id,
+		'',
+		'',
+		new Date(),
+		new Date(),
+		'',
+		'link',
+		state,
+		0,
+		module.optional,
+		undefined
+	)
 }
 
 const mods = [requiredModule1, requiredModule2]
@@ -25,7 +37,6 @@ const mods = [requiredModule1, requiredModule2]
 const optionalMods = [optModule1, optModule2]
 
 describe('Should return course completion status', () => {
-
 	it('Should return "true" when all required modules are completed', () => {
 		const modRecords = mods.filter(m => !m.optional).map(m => moduleRecordFromModule(m, RecordState.Completed))
 		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
@@ -75,13 +86,37 @@ describe('Should upsert (update OR insert) a module record', () => {
 	it('should update the existing module record', () => {
 		const moduleRecordId = 1
 
-		const mod = new ModuleRecord(moduleRecordId, '', '', '', new Date(),
-		new Date(), '', 'link', RecordState.InProgress, 0, false, undefined)
+		const mod = new ModuleRecord(
+			moduleRecordId,
+			'',
+			'',
+			'',
+			new Date(),
+			new Date(),
+			'',
+			'link',
+			RecordState.InProgress,
+			0,
+			false,
+			undefined
+		)
 
 		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, [mod], '', false)
 
-		const updatedMod = new ModuleRecord(moduleRecordId, '', '', '', new Date(),
-		new Date(), '', 'link', RecordState.Completed, 0, false, undefined)
+		const updatedMod = new ModuleRecord(
+			moduleRecordId,
+			'',
+			'',
+			'',
+			new Date(),
+			new Date(),
+			'',
+			'link',
+			RecordState.Completed,
+			0,
+			false,
+			undefined
+		)
 
 		courseRecord.upsertModuleRecord(updatedMod.id, updatedMod)
 
@@ -90,14 +125,37 @@ describe('Should upsert (update OR insert) a module record', () => {
 	})
 
 	it('should insert the missing module record', () => {
-
-		const mod = new ModuleRecord(1, '', '', '', new Date(),
-		new Date(), '', 'link', RecordState.InProgress, 0, false, undefined)
+		const mod = new ModuleRecord(
+			1,
+			'',
+			'',
+			'',
+			new Date(),
+			new Date(),
+			'',
+			'link',
+			RecordState.InProgress,
+			0,
+			false,
+			undefined
+		)
 
 		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, [mod], '', false)
 
-		const updatedMod = new ModuleRecord(2, '', '', '', new Date(),
-		new Date(), '', 'link', RecordState.Completed, 0, false, undefined)
+		const updatedMod = new ModuleRecord(
+			2,
+			'',
+			'',
+			'',
+			new Date(),
+			new Date(),
+			'',
+			'link',
+			RecordState.Completed,
+			0,
+			false,
+			undefined
+		)
 
 		courseRecord.upsertModuleRecord(updatedMod.id, updatedMod)
 

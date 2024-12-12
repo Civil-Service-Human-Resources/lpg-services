@@ -1,9 +1,12 @@
-import {User} from 'lib/model'
-import {BookEventDto} from 'lib/service/cslService/models/BookEventDto'
-import {createUserDto} from 'lib/service/cslService/models/factory/UserDtoFactory'
+import {User} from '../../../../model'
+import {BookEventDto} from '../BookEventDto'
+import {createUserDto} from './UserDtoFactory'
 
 export async function createBookEventDto(
-	accessibilityOptions: string[], user: User, poNumber?: string): Promise<BookEventDto> {
+	accessibilityOptions: string[],
+	user: User,
+	poNumber?: string
+): Promise<BookEventDto> {
 	const userDto = await createUserDto(user)
 	return new BookEventDto(accessibilityOptions, userDto, poNumber)
 }

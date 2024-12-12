@@ -1,9 +1,12 @@
 import * as express from 'express'
-import {User} from 'lib/model'
-import {AreaOfWork} from 'lib/registry'
-import {getAreasOfWork, patchCivilServantOtherAreasOfWork} from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
 import _ = require('lodash')
+import {User} from '../../../../lib/model'
+import {AreaOfWork} from '../../../../lib/registry'
+import {
+	getAreasOfWork,
+	patchCivilServantOtherAreasOfWork,
+} from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {OtherAreasOfWorkPageModel} from '../models/otherAreasOfWorkPageModel'
 import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
@@ -17,7 +20,7 @@ export const otherAreasOfWorkPage: ProfilePageSpecification = {
 		nextPage: interestsPage,
 		required: true,
 		userHasSet: (user: User) => {
-			return (user.otherAreasOfWork !== undefined && user.otherAreasOfWork.length > 0)
+			return user.otherAreasOfWork !== undefined && user.otherAreasOfWork.length > 0
 		},
 	},
 	template: 'otherAreasOfWork',
@@ -41,8 +44,9 @@ export function selectOtherAreasOfWorkMiddleware(behaviour: PageBehaviour) {
 	return async (req: express.Request, res: express.Response) => {
 		const user: User = req.user
 		const areasOfWork = await getAreasOfWork(user)
-		const userOtherAreaOfWork = user.otherAreasOfWork ? user.otherAreasOfWork.map(
-			(aow: AreaOfWork) => aow.id.toString()) : []
+		const userOtherAreaOfWork = user.otherAreasOfWork
+			? user.otherAreasOfWork.map((aow: AreaOfWork) => aow.id.toString())
+			: []
 		const pageModel = await validate(OtherAreasOfWorkPageModel, req.body)
 		if (pageModel.hasErrors()) {
 			pageModel.options = keysToOptions(areasOfWork.topLevelList, userOtherAreaOfWork)

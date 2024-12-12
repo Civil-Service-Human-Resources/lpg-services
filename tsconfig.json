@@ -9,10 +9,7 @@
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
-		"outDir": "./dist/build",
-		"paths": {
-			"lib/*": ["src/lib/*"]
-		},
+		"outDir": "./dist",
 		"preserveConstEnums": true,
 		"pretty": true,
 		"sourceMap": true,
@@ -21,5 +18,10 @@
 		"target": "ESNext",
 		"skipLibCheck": true
 	},
-	"include": ["src/**/*"]
+	"include": ["src/**/*"],
+	"references": [
+		{
+			"path": "./tsconfig.test.json"
+		}
+	]
 }

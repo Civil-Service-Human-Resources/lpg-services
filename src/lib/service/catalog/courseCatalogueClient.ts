@@ -1,8 +1,8 @@
-import { plainToClass } from 'class-transformer'
+import {plainToClass} from 'class-transformer'
 
-import { Course, User } from '../../model'
-import { client } from './config'
-import { GetCoursesParams, GetCoursesResponse } from './models/getCoursesParams'
+import {Course, User} from '../../model'
+import {client} from './config'
+import {GetCoursesParams, GetCoursesResponse} from './models/getCoursesParams'
 
 const URL = 'courses'
 

@@ -1,18 +1,17 @@
 import {plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
-import * as config from 'lib/config/index'
-import {getLogger} from 'lib/logger'
-import {createUser, User} from 'lib/model'
-import * as model from 'lib/model'
+import * as passport from 'passport'
+import * as oauth2 from 'passport-oauth2'
+import * as config from '../config/index'
+import {getLogger} from '../logger'
+import {createUser, User} from '../model'
 import {
 	fetchProfile,
 	removeProfileFromCache,
 	updateProfileCache,
-} from 'lib/service/civilServantRegistry/csrsService'
-import {IdentityDetails} from 'lib/service/identity/models/identityDetails'
-import * as passport from 'passport'
-import * as oauth2 from 'passport-oauth2'
+} from '../service/civilServantRegistry/csrsService'
+import {IdentityDetails} from '../service/identity/models/identityDetails'
 
 const logger = getLogger('config/passport')
 
@@ -52,7 +51,7 @@ export function configure(
 		done(null, JSON.stringify(user))
 	})
 
-	passport.deserializeUser<model.User, string>(async (data, done) => {
+	passport.deserializeUser<User, string>(async (data, done) => {
 		let identity: IdentityDetails
 		try {
 			identity = plainToInstance(IdentityDetails, JSON.parse(data) as IdentityDetails)
@@ -97,7 +96,7 @@ export function isAuthenticated(req: express.Request, res: express.Response, nex
 	if (authenticated) {
 		const token: any = jwt.decode(req.user.accessToken)
 		const nowEpochSeconds: number = Math.round(Date.now() / 1000)
-		if (token !== null && (token.exp > (nowEpochSeconds + config.TOKEN_EXPIRY_BUFFER))) {
+		if (token !== null && token.exp > nowEpochSeconds + config.TOKEN_EXPIRY_BUFFER) {
 			return next()
 		}
 	}
@@ -138,14 +137,13 @@ export function hasAnyRole(roles: string[]) {
 	}
 }
 
-export async function logout(
-	req: express.Request,
-	res: express.Response
-) {
+export async function logout(req: express.Request, res: express.Response) {
 	if (req.isAuthenticated()) {
 		const user: User = req.user
-		const redirectTo = req.user.isAdmin() && user.managementLoggedIn ?
-			config.LPG_MANAGEMENT_URL + "/sign-out" : config.AUTHENTICATION.serviceUrl + config.AUTHENTICATION.endpoints.logout
+		const redirectTo =
+			req.user.isAdmin() && user.managementLoggedIn
+				? config.LPG_MANAGEMENT_URL + '/sign-out'
+				: config.AUTHENTICATION.serviceUrl + config.AUTHENTICATION.endpoints.logout
 		await removeProfileFromCache(user.id)
 		req.session!.destroy(() => {
 			res.redirect(redirectTo)

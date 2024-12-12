@@ -1,10 +1,7 @@
 import {AxiosInstance} from 'axios'
 import {Logger} from 'winston'
 
-export function axiosRequestLogger(
-	axiosInstance: AxiosInstance,
-	logger: Logger
-) {
+export function axiosRequestLogger(axiosInstance: AxiosInstance, logger: Logger) {
 	axiosInstance.interceptors.request.use(
 		config => {
 			// Do something before request is sent
@@ -23,10 +20,7 @@ export function axiosRequestLogger(
 	)
 }
 
-export function axiosResponseLogger(
-	axiosInstance: AxiosInstance,
-	logger: Logger
-) {
+export function axiosResponseLogger(axiosInstance: AxiosInstance, logger: Logger) {
 	// Add a response interceptor
 	axiosInstance.interceptors.response.use(
 		response => {
@@ -34,10 +28,7 @@ export function axiosResponseLogger(
 		},
 		error => {
 			// Do something with response error
-			logger.error(
-				`Error with external service: ${error.config.baseURL}`,
-				error
-			)
+			logger.error(`Error with external service: ${error.config.baseURL}`, error)
 
 			return Promise.reject(error)
 		}

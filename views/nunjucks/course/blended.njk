@@ -1,0 +1,15 @@
+{% extends "./layout.njk" %}
+{% from "./components/moduleCard/macro.njk" import moduleCard with context %}
+
+{% block courseContent %}
+    <div class="discite" id="modules">
+        {% if pageModel.mandatoryModuleCount > 0 %}
+            <p>
+                <strong>You must complete {{ "all" if model.modules.length === model.mandatoryModuleCount else model.mandatoryModuleCount }} learning modules to finish this topic.</strong>
+            </p>
+        {% endif %}
+        {% for module in pageModel.modules %}
+            {{ moduleCard(module) }}
+        {% endfor %}
+    </div>
+{% endblock %}

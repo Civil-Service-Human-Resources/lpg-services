@@ -1,8 +1,7 @@
-import {KeyValue} from 'lib/utils/dataUtils'
+import {KeyValue} from '../../utils/dataUtils'
 
 export class SortableList<T extends KeyValue> {
-
-	constructor(protected list: T[]) { }
+	constructor(protected list: T[]) {}
 
 	public getList(): T[] {
 		return this.list
@@ -37,5 +36,4 @@ export class SortableList<T extends KeyValue> {
 			return 0
 		}
 	}
-
 }

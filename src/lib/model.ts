@@ -1,28 +1,25 @@
 import {Type} from 'class-transformer'
-import * as datetime from 'lib/datetime'
-import * as learnerRecord from 'lib/learnerrecord'
-import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
-import {IdentityDetails} from 'lib/service/identity/models/identityDetails'
-import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from 'lib/service/learnerRecordAPI/models/record'
-import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
-import {CacheableObject} from 'lib/utils/cacheableObject'
-import {KeyValue} from 'lib/utils/dataUtils'
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
+import * as datetime from '../lib/datetime'
+import * as learnerRecord from '../lib/learnerrecord'
+import {AreaOfWork, Grade, Interest, Profile} from './registry'
+import {IdentityDetails} from './service/identity/models/identityDetails'
+import {CourseRecord} from './service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {RecordState} from './service/learnerRecordAPI/models/record'
+import {ModuleRecord} from './service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {CacheableObject} from './utils/cacheableObject'
+import {KeyValue} from './utils/dataUtils'
 
 import _ = require('lodash')
-import {ModuleNotFoundError} from './exception/moduleNotFound'
 
 export interface LineManager {
 	email: string
 	name?: string
 }
 
-const getAudienceForCourse = async (
-	audiences: Audience[], user: User,
-	depHierarchy: string[]) => {
+const getAudienceForCourse = async (audiences: Audience[], user: User, depHierarchy: string[]) => {
 	let matchedAudience
 	let matchedRelevance = -1
 	let matchedHighPriorityAudience
@@ -86,6 +83,11 @@ export class CourseFactory {
 
 		return course
 	}
+}
+
+export enum CourseStatus {
+	PUBLISHED = 'Published',
+	ARCHIVED = 'Archived',
 }
 
 export class Course {
@@ -188,7 +190,7 @@ export class Course {
 	description: string
 	duration: number
 	learningOutcomes: string
-	status: string
+	status: CourseStatus
 
 	modules: Module[]
 
@@ -203,14 +205,14 @@ export class Course {
 
 	getRequiredRecurringAudience() {
 		if (this.audience && this.audience.frequency && this.audience.requiredBy) {
-			const nextDate = moment(this.audience.requiredBy).endOf("day").utc()
+			const nextDate = moment(this.audience.requiredBy).endOf('day').utc()
 			while (nextDate < moment().utc()) {
 				nextDate.add({
 					months: this.audience.frequency.months(),
 					years: this.audience.frequency.years(),
 				})
 			}
-			const lastDate = moment(nextDate).endOf("day").utc()
+			const lastDate = moment(nextDate).endOf('day').utc()
 			lastDate.subtract({
 				months: this.audience.frequency.months(),
 				years: this.audience.frequency.years(),
@@ -245,14 +247,17 @@ export class Course {
 		const optModules: Module[] = []
 		const requiredModules: Module[] = []
 		this.modules.forEach(m => {
-			m.optional ? optModules.push(m) : requiredModules.push(m)
+			if (m.optional) {
+				optModules.push(m)
+			} else {
+				requiredModules.push(m)
+			}
 		})
 		return requiredModules.length > 0 ? requiredModules : optModules
 	}
 
 	public getDisplayState(courseRecord: CourseRecord): RecordState {
-		const requiredModuleIdsForCompletion = this.getModulesRequiredForCompletion()
-			.map(m => m.id)
+		const requiredModuleIdsForCompletion = this.getModulesRequiredForCompletion().map(m => m.id)
 		const moduleRecordMap = courseRecord.getModuleRecordMap()
 		const audience = this.getRequiredRecurringAudience()
 		let inProgressCount = 0
@@ -262,12 +267,12 @@ export class Course {
 
 			if (state === 'COMPLETED') {
 				if (requiredModuleIdsForCompletion.includes(module.id)) {
-					requiredCompletedCount ++
+					requiredCompletedCount++
 				} else {
-					inProgressCount ++
+					inProgressCount++
 				}
 			} else if (state === 'IN_PROGRESS') {
-				inProgressCount ++
+				inProgressCount++
 			}
 		}
 
@@ -279,44 +284,20 @@ export class Course {
 		return RecordState.Null
 	}
 
-	public getDisplayStateForModules(courseRecord: CourseRecord): Map<string, string | null> {
-		const results = new Map<string, string | null>()
-		const moduleRecords = courseRecord.getModuleRecordMap()
-		const audience = this.getRequiredRecurringAudience()
-		this.modules.forEach(m => {
-			const moduleRecord = moduleRecords.get(m.id)
-			results.set(m.id, m.getDisplayState(moduleRecord, audience))
-		})
-		return results
-	}
-
-	getRequiredModules() {
-		return this.getModules().filter(m => !m.optional)
-	}
-
-	getOptionalModules() {
-		return this.getModules().filter(m => m.optional)
-	}
-
-	isAssociatedLearningModule(id: number) {
-		return this.modules[id].associatedLearning
-	}
-
 	getAreasOfWork() {
 		return this.audience ? this.audience.areasOfWork : []
 	}
 
 	getCost() {
 		const costArray = this.modules.map(module => module.cost || 0)
-		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : null
+		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : undefined
 	}
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration)
 
-		// tslint:disable-next-line:only-arrow-functions
-		this.modules.forEach(function(module, i) {
-			if (module.type === "face-to-face") {
+		this.modules.forEach((module, i) => {
+			if (module.type === 'face-to-face') {
 				if (module.events && module.events.length > 0) {
 					const event = module.events[0]
 					let durationInSeconds = 0
@@ -347,7 +328,7 @@ export class Course {
 		})
 
 		let totalDuration = 0
-		// tslint:disable-next-line:prefer-for-of
+		// eslint-disable-next-line typescript-eslint/prefer-for-of
 		for (let i = 0; i < durationArray.length; i++) {
 			totalDuration += durationArray[i]
 		}
@@ -421,7 +402,7 @@ export class Course {
 		let resp: string | undefined
 		const dueByDate = this.getDueByDate()
 		if (dueByDate !== null) {
-			resp = moment(dueByDate).utc().format("DD MMM YYYY")
+			resp = moment(dueByDate).utc().format('DD MMM YYYY')
 		}
 		return resp
 	}
@@ -449,18 +430,6 @@ export class Course {
 		return null
 	}
 
-	getMandatoryCount() {
-		const modules = this.getModules()
-		let count = 0
-		modules.forEach(module => {
-			if (!module.optional) {
-				count++
-			}
-		})
-
-		return count
-	}
-
 	getCompletionDate() {
 		if (this.isComplete()) {
 			let completionDate: Date | undefined
@@ -474,14 +443,6 @@ export class Course {
 			return completionDate
 		}
 		return undefined
-	}
-
-	getModule(moduleId: string) {
-		const module = this.modules.find(m => m.id === moduleId)
-		if (!module) {
-			throw new ModuleNotFoundError(this.id, moduleId)
-		}
-		return module
 	}
 
 	hasModules() {
@@ -500,6 +461,14 @@ export class CourseModule {
 	course: Course
 	module: Module
 	type: string
+}
+
+export enum ModuleType {
+	ELEARNING = 'elearning',
+	FACE_TO_FACE = 'face-to-face',
+	FILE = 'file',
+	LINK = 'link',
+	VIDEO = 'video',
 }
 
 export class Module {
@@ -523,7 +492,7 @@ export class Module {
 	}
 
 	id: string
-	type: string
+	type: ModuleType
 
 	title: string
 	description: string
@@ -540,13 +509,13 @@ export class Module {
 
 	events: Event[]
 
-	constructor(id: string, type: string) {
+	constructor(id: string, type: ModuleType) {
 		this.id = id
 		this.type = type
 	}
 
 	getDuration() {
-		if (this.type === 'face-to-face') {
+		if (this.type === ModuleType.FACE_TO_FACE) {
 			if (this.events && this.events.length > 0) {
 				const startTimeHours = this.events[0].startDate.getHours()
 				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
@@ -558,7 +527,7 @@ export class Module {
 			}
 		}
 
-		if (this.type === 'face-to-face') {
+		if (this.type === ModuleType.FACE_TO_FACE) {
 			if (this.events && this.events.length > 0) {
 				sortEvents(this.events)
 				const event = this.events[0]
@@ -582,7 +551,6 @@ export class Module {
 					const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
 					durationInSeconds += durationInMinutes * 60
 				})
-				// tslint:disable-next-line:indent
 				this.duration = durationInSeconds
 			}
 		}
@@ -602,7 +570,7 @@ export class Module {
 	}
 
 	getBookableEvents(): Event[] {
-		return this.events.filter(e => e.isBookable())
+		return (this.events || []).filter(e => e.isBookable())
 	}
 
 	isAssociatedLearning() {
@@ -611,16 +579,21 @@ export class Module {
 
 	getDisplayState(
 		moduleRecord: ModuleRecord | undefined | null,
-		audience: RequiredRecurringAudience | undefined | null) {
+		audience: RequiredRecurringAudience | undefined | null
+	) {
 		let state: string | null = null
 		if (moduleRecord) {
-			const completionDate = moduleRecord.getCompletionDate().getTime()
-			const updatedAt = moduleRecord.getUpdatedAt().getTime()
-			const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
-			if (previousRequiredBy < completionDate) {
-				state = 'COMPLETED'
-			} else if (previousRequiredBy < updatedAt) {
-				state = 'IN_PROGRESS'
+			if (this.type !== ModuleType.FACE_TO_FACE) {
+				const completionDate = moduleRecord.getCompletionDate().getTime()
+				const updatedAt = moduleRecord.getUpdatedAt().getTime()
+				const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
+				if (previousRequiredBy < completionDate) {
+					state = 'COMPLETED'
+				} else if (previousRequiredBy < updatedAt) {
+					state = 'IN_PROGRESS'
+				}
+			} else {
+				state = moduleRecord.state ? moduleRecord.state : ''
 			}
 		}
 		return state
@@ -672,7 +645,7 @@ export class Event {
 		public availability: number,
 		public status: string,
 		public id: string
-	) { }
+	) {}
 
 	isBookable() {
 		return this.startDate > new Date()
@@ -808,8 +781,10 @@ export class Audience {
 }
 
 export class RequiredRecurringAudience {
-	constructor(public previousRequiredBy: Date, public nextRequiredBy: Date) {
-	}
+	constructor(
+		public previousRequiredBy: Date,
+		public nextRequiredBy: Date
+	) {}
 }
 
 export class Frequency {
@@ -877,9 +852,8 @@ export class OrganisationalUnit implements CacheableObject, KeyValue {
 
 	doesDomainExistInToken(domain: string) {
 		let exists = false
-		if (this.agencyToken
-			&& this.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
-				exists = true
+		if (this.agencyToken && this.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
+			exists = true
 		}
 		return exists
 	}
@@ -889,7 +863,7 @@ export class OrganisationalUnit implements CacheableObject, KeyValue {
 	}
 
 	formatNameWithAbbrev(): string {
-		return (this.abbreviation && this.abbreviation !== '') ? `${this.name} (${this.abbreviation})` : this.name
+		return this.abbreviation && this.abbreviation !== '' ? `${this.name} (${this.abbreviation})` : this.name
 	}
 }
 
@@ -897,38 +871,55 @@ export interface CSLUser {
 	isUnrestrictedOrgUser(): boolean
 	isAdmin(): boolean
 	isReporter(): boolean
+	hasLineManager(): boolean
 }
 
 export function createUser(identity: IdentityDetails, profile: Profile) {
-	const lineManager: LineManager | undefined = (profile.lineManagerName && profile.lineManagerEmailAddress) ?
-		{email: profile.lineManagerEmailAddress, name: profile.lineManagerName} : undefined
-	return new User(identity.uid, identity.roles, identity.accessToken, identity.username, profile.userId.toString(),
-		profile.profession, lineManager, profile.otherAreasOfWork, profile.interests, profile.fullName,
-		profile.organisationalUnit, profile.grade, profile.managementLoggedIn, profile.managementShouldLogout,
-		profile.uiLoggedIn, profile.uiShouldLogout, profile.shouldRefresh)
+	const lineManager: LineManager | undefined =
+		profile.lineManagerName && profile.lineManagerEmailAddress
+			? {email: profile.lineManagerEmailAddress, name: profile.lineManagerName}
+			: undefined
+	return new User(
+		identity.uid,
+		identity.roles,
+		identity.accessToken,
+		identity.username,
+		profile.userId.toString(),
+		profile.profession,
+		lineManager,
+		profile.otherAreasOfWork,
+		profile.interests,
+		profile.fullName,
+		profile.organisationalUnit,
+		profile.grade,
+		profile.managementLoggedIn,
+		profile.managementShouldLogout,
+		profile.uiLoggedIn,
+		profile.uiShouldLogout,
+		profile.shouldRefresh
+	)
 }
 
 export class User implements CSLUser {
-
 	constructor(
-	public readonly id: string,
-	public readonly roles: string[],
-	public readonly accessToken: string,
-	public readonly userName: string,
-	public userId: string,
-	public areaOfWork?: AreaOfWork,
-	public lineManager?: LineManager,
-	public otherAreasOfWork?: AreaOfWork[],
-	public interests?: Interest[],
-	public givenName?: string,
-	public organisationalUnit?: OrganisationalUnit,
-	public grade?: Grade,
-	public managementLoggedIn: boolean = false,
-	public managementShouldLogout: boolean = false,
-	public uiLoggedIn: boolean = false,
-	public uiShouldLogout: boolean = false,
-	public shouldRefresh: boolean = false) {
-	}
+		public readonly id: string,
+		public readonly roles: string[],
+		public readonly accessToken: string,
+		public readonly userName: string,
+		public userId: string,
+		public areaOfWork?: AreaOfWork,
+		public lineManager?: LineManager,
+		public otherAreasOfWork?: AreaOfWork[],
+		public interests?: Interest[],
+		public givenName?: string,
+		public organisationalUnit?: OrganisationalUnit,
+		public grade?: Grade,
+		public managementLoggedIn: boolean = false,
+		public managementShouldLogout: boolean = false,
+		public uiLoggedIn: boolean = false,
+		public uiShouldLogout: boolean = false,
+		public shouldRefresh: boolean = false
+	) {}
 
 	updateWithProfile(profile: Profile) {
 		this.organisationalUnit = profile.organisationalUnit
@@ -945,7 +936,7 @@ export class User implements CSLUser {
 	}
 
 	isUnrestrictedOrgUser(): boolean {
-		return this.hasRole("UNRESTRICTED_ORGANISATION")
+		return this.hasRole('UNRESTRICTED_ORGANISATION')
 	}
 
 	hasRole(role: string) {
@@ -990,6 +981,10 @@ export class User implements CSLUser {
 
 	getAreaOfWorkId() {
 		return this.areaOfWork ? this.areaOfWork.id : undefined
+	}
+
+	hasLineManager() {
+		return this.lineManager !== undefined
 	}
 }
 

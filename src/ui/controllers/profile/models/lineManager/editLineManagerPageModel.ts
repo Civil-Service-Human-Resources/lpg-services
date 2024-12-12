@@ -1,6 +1,6 @@
 import {Transform} from 'class-transformer'
 import {IsEmail, IsNotEmpty, ValidateIf} from 'class-validator'
-import {Match} from 'lib/utils/customValidators/match'
+import {Match} from '../../../../../lib/utils/customValidators/match'
 import {ValidPageModel} from '../../../models/ValidPageModel'
 import {LineManagerPageModel} from './lineManagerPageModel'
 

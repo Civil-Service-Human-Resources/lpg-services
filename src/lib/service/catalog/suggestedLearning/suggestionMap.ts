@@ -1,5 +1,5 @@
-import { Course } from '../../../model'
-import { Suggestion } from './suggestion'
+import {Course} from '../../../model'
+import {Suggestion} from './suggestion'
 
 export class SuggestionsMap {
 	private map: Map<Suggestion, Record<string, Course[]>> = new Map()

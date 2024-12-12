@@ -1,15 +1,14 @@
-
 import * as express from 'express'
-import {ResourceNotFoundError} from 'lib/exception/ResourceNotFoundError'
-import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
-import { getLogger } from 'lib/logger'
-import {cancelEventBooking} from 'lib/service/cslService/cslServiceClient'
-import {CancelBookingDto} from 'lib/service/cslService/models/CancelBookingDto'
-import * as template from 'lib/ui/template'
-import {SessionFlash} from 'lib/utils/SessionUtils'
+import {ResourceNotFoundError} from '../../../lib/exception/ResourceNotFoundError'
+import * as extended from '../../../lib/extended'
+import * as learnerRecord from '../../../lib/learnerrecord'
+import {getLogger} from '../../../lib/logger'
+import {cancelEventBooking} from '../../../lib/service/cslService/cslServiceClient'
+import {CancelBookingDto} from '../../../lib/service/cslService/models/CancelBookingDto'
+import * as template from '../../../lib/ui/template'
+import {SessionFlash} from '../../../lib/utils/SessionUtils'
 
-import { confirmedMessage, recordCheck } from './booking'
+import {confirmedMessage, recordCheck} from './booking'
 
 const logger = getLogger('controllers/booking/cancel')
 
@@ -32,22 +31,22 @@ export async function renderCancelBookingPage(
 
 	course.record = record!
 
-	const moduleRecord = record!.modules.find(
-		rm => rm.moduleId === module.id && rm.eventId === event.id
-	)
+	const moduleRecord = record!.modules.find(rm => rm.moduleId === module.id && rm.eventId === event.id)
 
 	if (!moduleRecord) {
 		res.sendStatus(400)
 		return
 	}
-	(module as any).record = moduleRecord
+	;(module as any).record = moduleRecord
 
 	const optionType = 'radio'
 
-	await learnerRecord.getCancellationReasons(req.user)
+	await learnerRecord
+		.getCancellationReasons(req.user)
 		.then(request => {
 			const options = Object.entries(request.data).map(([key, value]) => ({
-				id: key, name: value,
+				name: value,
+				id: key,
 			}))
 			res.send(
 				template.render('booking/cancel-booking', req, res, {
@@ -63,10 +62,7 @@ export async function renderCancelBookingPage(
 		.catch(error => next(error))
 }
 
-export async function renderCancelledBookingPage(
-	ireq: express.Request,
-	res: express.Response
-) {
+export async function renderCancelledBookingPage(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 
 	const course = req.course
@@ -79,9 +75,7 @@ export async function renderCancelledBookingPage(
 	if (!recordCheck(record, ireq)) {
 		error = req.__('errors.registrationNotFound')
 	} else {
-		const moduleRecord = record!.modules.find(
-			rm => rm.moduleId === module.id && rm.eventId === event.id
-		)
+		const moduleRecord = record!.modules.find(rm => rm.moduleId === module.id && rm.eventId === event.id)
 
 		if (moduleRecord && moduleRecord.state !== 'UNREGISTERED') {
 			req.flash('cancelBookingError', req.__('errors.cancelBooking'))
@@ -133,7 +127,7 @@ export async function tryCancelBooking(req: express.Request, res: express.Respon
 			}
 			redirectUrl = `/book/${courseId}/${moduleId}/${eventId}/cancel`
 		}
-	}  else {
+	} else {
 		sessionFlash = {
 			event: 'cancelBookingError',
 			message: 'Please select a reason for cancelling your booking.',

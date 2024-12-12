@@ -9,10 +9,14 @@ export const PRODUCTION_ENV = ENV === 'production'
 export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
-if (ENV === 'development') {
+export const STATIC_DIR = path.join(`${__dirname}/../../../views`)
+
+export const IS_DEV = ENV === 'development'
+
+if (IS_DEV) {
 	console.log('Loading env from .env file')
 	dotenv.config({
-		path: path.resolve(__dirname + '/../../../../.env'),
+		path: path.resolve(__dirname + '/../../../.env'),
 	})
 }
 
@@ -58,7 +62,7 @@ export const CSL_SERVICE = set({
 })
 
 export const GOOGLE_ANALYTICS_CSP_ORIGINS =
-env.GOOGLE_ANALYTICS_CSP_ORIGINS || "*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com"
+	env.GOOGLE_ANALYTICS_CSP_ORIGINS || '*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com'
 
 export const GOOGLE_ANALYTICS_ID = env.GOOGLE_ANALYTICS_ID || 'UA-22141655-4'
 
@@ -75,26 +79,21 @@ export const LEARNER_RECORD = set({
 
 export const LOGGING_LEVEL = env.LOGGING_LEVEL || 'INFO'
 
-export const LPG_UI_SERVER =
-	env.LPG_UI_SERVER || 'http://localhost:3001'
+export const LPG_UI_SERVER = env.LPG_UI_SERVER || 'http://localhost:3001'
 
 export const BACKEND_SERVER_PATH = env.BACKEND_SERVER_PATH || 'api'
 
-export const SESSION_SECRET =
-	env.SESSION_SECRET ||
-	'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
+export const SESSION_SECRET = env.SESSION_SECRET || 'dcOVe-ZW3ul77l23GiQSNbTJtMRio87G2yUOUAk_otcbL3uywfyLMZ9NBmDMuuOt'
 
 export const YOUTUBE_API_KEY = env.YOUTUBE_API_KEY
 
-export const REGISTRY_SERVICE_URL =
-	env.REGISTRY_SERVICE_URL || 'http://localhost:9002'
+export const REGISTRY_SERVICE_URL = env.REGISTRY_SERVICE_URL || 'http://localhost:9002'
 
-export const LPG_MANAGEMENT_URL =
-	env.LPG_MANAGEMENT_SERVER || 'http://localhost:3005'
+export const LPG_MANAGEMENT_URL = env.LPG_MANAGEMENT_SERVER || 'http://localhost:3005'
 
 export const REQUEST_TIMEOUT = Number(env.REQUEST_TIMEOUT) || 60000
 
-export const APPLICATIONINSIGHTS_CONNECTION_STRING = env.APPLICATIONINSIGHTS_CONNECTION_STRING || 'ai_key'
+export const APPLICATIONINSIGHTS_CONNECTION_STRING = env.APPLICATIONINSIGHTS_CONNECTION_STRING
 
 export const SERVER_TIMEOUT_MS = Number(env.SERVER_TIMEOUT_MS) || 240000
 

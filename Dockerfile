@@ -1,16 +1,26 @@
-FROM node:16.3.0-slim
+FROM node:20.18.0-slim
 
 WORKDIR /var/www/app
 
-COPY . .
+COPY node_modules ./node_modules
+COPY dist ./dist
 
-RUN npm install
-RUN npm run build
+# Assets
+
+## Locale
+COPY locale ./locale
+
+## Page
+COPY views/component ./views/component
+COPY views/page ./views/page
+COPY views/nunjucks ./views/nunjucks
+
+## Public assets
+COPY views/assets/styles/main.css ./views/assets/styles/main.css
+COPY views/assets/fonts ./views/assets/fonts
+COPY views/assets/img ./views/assets/img
+COPY views/assets/js ./views/assets/js
 
 EXPOSE 3001
 
-ARG VERSION=dev
-RUN echo ${VERSION} > ./VERSION.txt
-
-# This needs to be specified after the `npm install`
-ENV NODE_ICU_DATA=/var/www/app/node_modules/full-icu
+CMD ["node", "dist/server.js"]

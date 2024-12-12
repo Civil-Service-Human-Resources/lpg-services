@@ -2,11 +2,7 @@ import {NextFunction, Request, Response} from 'express'
 
 import {ResourceNotFoundError} from '../exception/ResourceNotFoundError'
 import {User} from '../model'
-import {
-	fetchProfile,
-	getOrgHierarchy,
-	updateProfileCache,
-} from '../service/civilServantRegistry/csrsService'
+import {fetchProfile, getOrgHierarchy, updateProfileCache} from '../service/civilServantRegistry/csrsService'
 
 export async function requiresDepartmentHierarchy(req: Request, res: Response, next: NextFunction) {
 	const user: User = req.user

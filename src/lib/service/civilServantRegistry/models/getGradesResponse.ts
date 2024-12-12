@@ -1,10 +1,9 @@
 import {Expose, plainToInstance, Transform} from 'class-transformer'
-import {Grade} from 'lib/registry'
-import {HalObject} from 'lib/service/civilServantRegistry/models/hal/halObject'
+import {Grade} from '../../../registry'
+import {HalObject} from './hal/halObject'
 
 export class GetGradesResponse {
-
-	@Expose({name: "_embedded"})
+	@Expose({name: '_embedded'})
 	@Transform(({value}) => {
 		return value.grades.map((i: any) => {
 			const obj = plainToInstance(HalObject, i)
@@ -12,5 +11,4 @@ export class GetGradesResponse {
 		})
 	})
 	public grades: Grade[]
-
 }
