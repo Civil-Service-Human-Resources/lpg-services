@@ -1,6 +1,10 @@
 import assert = require("assert")
+import {expect} from 'chai'
 import * as chai from 'chai'
-import * as registry from "lib/registry"
+import {plainToInstance} from 'class-transformer'
+import {AreaOfWork} from 'lib/registry'
+import {AreasOfWork} from 'lib/service/civilServantRegistry/areaOfWork/areasOfWork'
+import * as csrsService from "lib/service/civilServantRegistry/csrsService"
 import * as skillsApi from "lib/service/skills"
 import * as template from 'lib/ui/template'
 import * as sinon from 'sinon'
@@ -31,6 +35,13 @@ import {
 chai.use(sinonChai)
 
 describe('Skills middleware', () => {
+	const sandbox = sinon.createSandbox()
+	let helperStub: any
+	let templateStub: any
+
+	afterEach(() => {
+		sandbox.restore()
+	})
 
 	describe('Introduction page', () => {
 		it('User has no areas of work, not shown any quiz', async () => {
@@ -56,10 +67,8 @@ describe('Skills middleware', () => {
 			}
 			const req = mockReq(request)
 			const res = mockRes()
-
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
-
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await introduction(req, res)
 
@@ -68,9 +77,6 @@ describe('Skills middleware', () => {
 				quizExists: false,
 			}))
 			assert(templateStub.calledOnce)
-
-			templateStub.restore()
-			helperStub.restore()
 		})
 
 		it('No quiz metadata available for current profession, not shown any quiz', async () => {
@@ -97,11 +103,10 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
-
-			const apiStub = sinon.stub(skillsApi, 'getQuizMetadata').returns(null)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns(null)
 
 			await introduction(req, res)
 
@@ -120,7 +125,7 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -143,11 +148,10 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
-
-			const apiStub = sinon.stub(skillsApi, 'getQuizMetadata').returns(
+			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns(
 				{
 					description: 'desc',
 					id: 1,
@@ -174,7 +178,7 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -197,11 +201,10 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
-
-			const apiStub = sinon.stub(skillsApi, 'getQuizMetadata').returns(
+			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns(
 				{
 					description: 'desc',
 					id: 1,
@@ -228,7 +231,7 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -251,9 +254,8 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
-
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			const quiz = {
 				description: 'desc',
@@ -263,7 +265,7 @@ describe('Skills middleware', () => {
 				status: 'DRAFT',
 			}
 
-			const apiStub = sinon.stub(skillsApi, 'getQuizMetadata').returns(quiz)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns(quiz)
 
 			await introduction(req, res)
 
@@ -290,7 +292,7 @@ describe('Skills middleware', () => {
 			const request = {
 				originalUrl: '/home',
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -312,10 +314,8 @@ describe('Skills middleware', () => {
 			}
 			const req = mockReq(request)
 			const res = mockRes()
-
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
-
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			const quiz = {
 				description: 'desc',
@@ -325,7 +325,7 @@ describe('Skills middleware', () => {
 				status: 'DRAFT',
 			}
 
-			const apiStub = sinon.stub(skillsApi, 'getQuizMetadata').returns(quiz)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizMetadata').returns(quiz)
 
 			await introduction(req, res)
 
@@ -418,7 +418,7 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await chooseQuiz(req, res)
 
@@ -458,7 +458,7 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await startQuiz(req, res)
 
@@ -490,7 +490,7 @@ describe('Skills middleware', () => {
 					quiz: sessionQuiz,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -514,17 +514,17 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			const quizQuestions = QuizQuestions18
 
-			const apiStub = sinon.stub(skillsApi, 'getQuizQuestions').returns(quizQuestions)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizQuestions').returns(quizQuestions)
 
 			await startQuiz(req, res)
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/questions', req, res, {
+			expect(templateStub).to.have.been.calledWith('skills/questions', req, res, {
 				answersToQuestionKeys: [],
 				count: quizQuestions.length,
 				index: 0,
@@ -532,8 +532,9 @@ describe('Skills middleware', () => {
 				multipleAnswers: quizQuestions[0].type === 'MULTIPLE',
 				question: quizQuestions[0],
 				skipped: false,
-			}))
-			assert(templateStub.calledOnce)
+			})
+			// tslint:disable-next-line:no-unused-expression
+			expect(templateStub).to.have.been.calledOnce
 			assert(JSON.stringify(req.session!.selectedAnswers) === JSON.stringify({
 				answers: [],
 				organisationId: 1,
@@ -568,7 +569,7 @@ describe('Skills middleware', () => {
 					quiz: sessionQuiz,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -592,13 +593,13 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			const quizQuestions = QuizQuestions36
 
-			const apiStub = sinon.stub(skillsApi, 'getQuizQuestions').returns(quizQuestions)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizQuestions').returns(quizQuestions)
 
 			await startQuiz(req, res)
 
@@ -646,7 +647,7 @@ describe('Skills middleware', () => {
 					quiz: sessionQuiz,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -670,13 +671,13 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			const quizQuestions = QuizQuestions18
 
-			const apiStub = sinon.stub(skillsApi, 'getQuizQuestions').returns(quizQuestions)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizQuestions').returns(quizQuestions)
 
 			await startQuiz(req, res)
 
@@ -718,7 +719,7 @@ describe('Skills middleware', () => {
 					questions: QuizQuestions18,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -761,7 +762,7 @@ describe('Skills middleware', () => {
 					},
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -784,7 +785,7 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await displayQuestion(req, res)
 
@@ -813,7 +814,7 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -836,7 +837,7 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await displayQuestion(req, res)
 
@@ -866,7 +867,7 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -889,7 +890,7 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await displayQuestion(req, res)
 
@@ -925,7 +926,7 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -948,9 +949,9 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await answerQuestion(req, res)
 
@@ -979,7 +980,7 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -1002,9 +1003,9 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await answerQuestion(req, res)
 
@@ -1033,7 +1034,7 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -1056,9 +1057,9 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			await answerQuestion(req, res)
 
@@ -1087,7 +1088,7 @@ describe('Skills middleware', () => {
 					selectedAnswers: selectedAnswersExisting,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -1110,12 +1111,12 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
 			const newResultId = 144
-			const apiStub = sinon.stub(skillsApi, 'submitAnswers').returns(newResultId)
+			const apiStub = sandbox.stub(skillsApi, 'submitAnswers').returns(newResultId)
 
 			await answerQuestion(req, res)
 
@@ -1139,7 +1140,7 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -1162,11 +1163,11 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const apiStub = sinon.stub(skillsApi, 'getResultsSummary').throwsException('error')
+			const apiStub = sandbox.stub(skillsApi, 'getResultsSummary').throwsException('error')
 
 			await quizSummary(req, res)
 
@@ -1185,7 +1186,7 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -1208,16 +1209,17 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const helperStub = sinon.stub(helper, 'saveSession').returns(Promise.resolve())
+			helperStub = sandbox.stub(helper, 'saveSession').returns(Promise.resolve())
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const apiStub = sinon.stub(skillsApi, 'getResultsSummary').returns(expectedResultSummaryResponse)
+			const apiStub = sandbox.stub(skillsApi, 'getResultsSummary').returns(expectedResultSummaryResponse)
 
 			await quizSummary(req, res)
 
 			assert(res.send.callCount === 1)
-			assert(templateStub.calledWith('skills/quiz-summary', req, res, {answerSubmission: expectedResultSummaryResponse}))
+			assert(templateStub.calledWith('skills/quiz-summary',
+			req, res, {answerSubmission: expectedResultSummaryResponse}))
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
@@ -1227,7 +1229,8 @@ describe('Skills middleware', () => {
 	})
 
 	describe('Display quiz history', () => {
-
+		const areaOfWorkList = plainToInstance(AreaOfWork, areasOfWorkRegistryHalMock as AreaOfWork[])
+		const areasOfWork = new AreasOfWork(areaOfWorkList, areaOfWorkList)
 		it('Backend returns data, displays quiz history', async () => {
 			const answerSubmissionId = 1
 			const request = {
@@ -1236,7 +1239,7 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -1259,11 +1262,9 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
-
-			const apiStub = sinon.stub(skillsApi, 'getQuizHistory').returns(expectedQuizHistoryResponse)
-
-			const registryStub = sinon.stub(registry, 'halNode').returns(areasOfWorkRegistryHalMock)
+			templateStub = sandbox.stub(template, 'render').returns(null)
+			sandbox.stub(csrsService, 'getAreasOfWork').resolves(areasOfWork)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizHistory').returns(expectedQuizHistoryResponse)
 
 			await quizHistory(req, res)
 
@@ -1275,7 +1276,6 @@ describe('Skills middleware', () => {
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
-			registryStub.restore()
 		})
 
 		it('Backend returns data, displays quiz history', async () => {
@@ -1286,7 +1286,7 @@ describe('Skills middleware', () => {
 					answerSubmissionId,
 				},
 				user: {
-					areasOfWork: {
+					areaOfWork: {
 						id: 1,
 						name: 'Analysis',
 					},
@@ -1309,11 +1309,10 @@ describe('Skills middleware', () => {
 			const req = mockReq(request)
 			const res = mockRes()
 
-			const templateStub = sinon.stub(template, 'render').returns(null)
+			sandbox.stub(csrsService, 'getAreasOfWork').resolves(areasOfWork)
+			templateStub = sandbox.stub(template, 'render').returns(null)
 
-			const apiStub = sinon.stub(skillsApi, 'getQuizHistory').returns(emptyQuizHistoryResponse)
-
-			const registryStub = sinon.stub(registry, 'halNode').returns(areasOfWorkRegistryHalMock)
+			const apiStub = sandbox.stub(skillsApi, 'getQuizHistory').returns(emptyQuizHistoryResponse)
 
 			await quizHistory(req, res)
 
@@ -1325,7 +1324,6 @@ describe('Skills middleware', () => {
 			assert(templateStub.calledOnce)
 			templateStub.restore()
 			apiStub.restore()
-			registryStub.restore()
 		})
 
 	})

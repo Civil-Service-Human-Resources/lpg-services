@@ -1,26 +1,18 @@
 <PageNoNav title="Your grade" {_csrf}>
     <div class="container">
         <div class="grid-row">
-            <div class="column-full">
+            <div class="column-two-thirds">
                 <h1 class="heading-large">
                     <span class="heading-secondary">Set up your profile</span>
                     <span class="heading-primary">Your grade</span>
                 </h1>
-
                 <p>You can skip this question by not selecting an option.</p>
                 <form autocomplete="off" method="post" action="/profile/grade">
                     <input type="hidden" name="_csrf" value="{_csrf}">
-                    <input type="hidden" name="originalUrl" value="{originalUrl}">
-
                     <div class="form-group">
                         <fieldset class="u-space-b30">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">What is your grade?</legend>
-                            {#each grades as grade}
-                            <div class="multiple-choice">
-                                <input id="{grade.name}" type="radio" name="grade" value="{grade._links.self.href}">
-                                <label for="{grade.name}">{grade.name}</label>
-                            </div>
-                            {/each}
+                            <NewRadios {options} inputName="grade" label="{$i18n('profile_grade_label')}"/>
                         </fieldset>
                     </div>
 
@@ -32,6 +24,7 @@
 </PageNoNav>
 <script>
 	import PageNoNav from '../../component/PageNoNav.html'
+    import NewRadios from '../../component/NewRadios.html'
 
 	export default {
 		data() {
@@ -40,7 +33,8 @@
 		},
 
 		components: {
-			PageNoNav
+			PageNoNav,
+            NewRadios
 		}
 	}
 </script>

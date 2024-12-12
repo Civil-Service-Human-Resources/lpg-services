@@ -4,6 +4,7 @@
     <base href="/">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
     <meta name="theme-color" content="#0b0c0c" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:image" content="/img/opengraph-image.png">
@@ -14,6 +15,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id={($config.GOOGLE_ANALYTICS_ID)}"></script> {@html $config.GOOGLE_ANALYTICS_CODE}
 </head>
 <body>
+    <SkipLink />
     <div id="global-cookie-message">
         <p>
             Civil Service Learning uses cookies to make the site simpler.
@@ -39,6 +41,7 @@
 <script>
 	import Layout from './Layout.html';
 	import HeaderNoNav from './HeaderNoNav.html';
+    import SkipLink from './SkipLink.html';
 
 	export default {
 		data() {
@@ -49,7 +52,7 @@
 		components: {
 			Layout,
 			HeaderNoNav,
-
+            SkipLink
 		}
 	};
 </script>

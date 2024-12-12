@@ -1,12 +1,13 @@
 import {Type} from 'class-transformer'
 import * as datetime from 'lib/datetime'
-import {IdentityDetails} from 'lib/identity'
 import * as learnerRecord from 'lib/learnerrecord'
 import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
+import {IdentityDetails} from 'lib/service/identity/models/identityDetails'
 import {CourseRecord} from 'lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {RecordState} from 'lib/service/learnerRecordAPI/models/record'
 import {ModuleRecord} from 'lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {CacheableObject} from 'lib/utils/cacheableObject'
+import {KeyValue} from 'lib/utils/dataUtils'
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
@@ -171,7 +172,7 @@ export class Course {
 			if (course.audience) {
 				course.audience.mandatory = false
 				course.audience.departments.forEach(a => {
-					if (a === user.department && course.audience!.type === 'REQUIRED_LEARNING') {
+					if (a === user.getOrganisationCode() && course.audience!.type === 'REQUIRED_LEARNING') {
 						course.audience!.mandatory = true
 					}
 				})
@@ -359,6 +360,10 @@ export class Course {
 
 	getGrades() {
 		return this.audience ? this.audience.grades : []
+	}
+
+	canBeBooked() {
+		return this.modules.filter(m => m.canBeBooked()).length > 0
 	}
 
 	getSelectedDate() {
@@ -592,6 +597,14 @@ export class Module {
 		return this.events.find(event => event.id === eventId)
 	}
 
+	canBeBooked() {
+		return this.getBookableEvents().length > 0
+	}
+
+	getBookableEvents(): Event[] {
+		return this.events.filter(e => e.isBookable())
+	}
+
 	isAssociatedLearning() {
 		return this.associatedLearning
 	}
@@ -648,38 +661,21 @@ export class Event {
 		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}
 
-	id: string
-	date: Date
-	startDate: Date
-	endDate: Date
-	dateRanges: Date[]
-	location: string
-	capacity: number
-	availability: number
-	status: string
-	isLearnerBooked: boolean
+	public isLearnerBooked?: boolean
 
 	constructor(
-		startDate: Date,
-		endDate: Date,
-		dateRanges: Date[],
-		location: string,
-		capacity: number,
-		availability: number,
-		status: string,
-		id?: string
-	) {
-		if (id) {
-			this.id = id!
-		}
-		this.startDate = startDate
-		this.endDate = endDate
-		this.dateRanges = dateRanges
-		this.location = location
-		this.capacity = capacity
-		this.availability = availability
-		this.status = status
-		this.isLearnerBooked = false
+		public startDate: Date,
+		public endDate: Date,
+		public dateRanges: Date[],
+		public location: string,
+		public capacity: number,
+		public availability: number,
+		public status: string,
+		public id: string
+	) { }
+
+	isBookable() {
+		return this.startDate > new Date()
 	}
 }
 
@@ -723,7 +719,7 @@ export class Audience {
 			return 0
 		}
 
-		const areaOfWork = user.areasOfWork
+		const areaOfWork = user.areaOfWork
 		if (areaOfWork !== undefined) {
 			if (this.areasOfWork.filter(aow => areaOfWork.name === aow).length > 0) {
 				relevance += 1
@@ -826,19 +822,6 @@ export class Frequency {
 	}
 }
 
-export class Feedback {
-	id: string
-	courseId: string
-	moduleId: string
-	userId: string
-
-	comments: string
-	content: number
-	interactivity: number
-	presentation: number
-	relevance: number
-}
-
 export class AgencyToken {
 	token: string
 	uid: string
@@ -851,7 +834,7 @@ export class Domain {
 	domain: string
 }
 
-export class OrganisationalUnit implements CacheableObject {
+export class OrganisationalUnit implements CacheableObject, KeyValue {
 	id: number
 	code: string
 	name: string
@@ -913,61 +896,51 @@ export class OrganisationalUnit implements CacheableObject {
 export interface CSLUser {
 	isUnrestrictedOrgUser(): boolean
 	isAdmin(): boolean
+	isReporter(): boolean
 }
+
+export function createUser(identity: IdentityDetails, profile: Profile) {
+	const lineManager: LineManager | undefined = (profile.lineManagerName && profile.lineManagerEmailAddress) ?
+		{email: profile.lineManagerEmailAddress, name: profile.lineManagerName} : undefined
+	return new User(identity.uid, identity.roles, identity.accessToken, identity.username, profile.userId.toString(),
+		profile.profession, lineManager, profile.otherAreasOfWork, profile.interests, profile.fullName,
+		profile.organisationalUnit, profile.grade, profile.managementLoggedIn, profile.managementShouldLogout,
+		profile.uiLoggedIn, profile.uiShouldLogout, profile.shouldRefresh)
+}
+
 export class User implements CSLUser {
 
-	static createFromFullProfile(csrsProfile: Profile, identityDetails: IdentityDetails, accessToken: string) {
-		const user = new User(
-			identityDetails.uid, identityDetails.username, identityDetails.roles, accessToken
-		)
-		user.userId = csrsProfile.userId.toString()
-		user.updateWithProfile(csrsProfile)
-		return user
-	}
-
-	/**
-	 * The UID
-	 */
-	readonly id: string
-	readonly userName: string
-	readonly roles: string[]
-	readonly accessToken: string
-
-	department?: string
-	departmentId?: number
-	areasOfWork?: AreaOfWork
-	lineManager?: LineManager
-	otherAreasOfWork?: AreaOfWork[]
-	interests?: Interest[]
-	givenName?: string
-	organisationalUnit?: OrganisationalUnit
-	userId: string
-
-	grade?: Grade
-
-	constructor(id: string, userName: string, roles: string[], accessToken: string) {
-		this.id = id
-		this.userName = userName
-		this.roles = roles
-		this.accessToken = accessToken
+	constructor(
+	public readonly id: string,
+	public readonly roles: string[],
+	public readonly accessToken: string,
+	public readonly userName: string,
+	public userId: string,
+	public areaOfWork?: AreaOfWork,
+	public lineManager?: LineManager,
+	public otherAreasOfWork?: AreaOfWork[],
+	public interests?: Interest[],
+	public givenName?: string,
+	public organisationalUnit?: OrganisationalUnit,
+	public grade?: Grade,
+	public managementLoggedIn: boolean = false,
+	public managementShouldLogout: boolean = false,
+	public uiLoggedIn: boolean = false,
+	public uiShouldLogout: boolean = false,
+	public shouldRefresh: boolean = false) {
 	}
 
 	updateWithProfile(profile: Profile) {
 		this.organisationalUnit = profile.organisationalUnit
-		if (this.organisationalUnit !== undefined) {
-			this.department = this.organisationalUnit.code
-			this.departmentId = this.organisationalUnit.id
-		}
 		this.givenName = profile.fullName
 		this.grade = profile.grade
-		this.areasOfWork = profile.profession
+		this.areaOfWork = profile.profession
 		this.otherAreasOfWork = profile.otherAreasOfWork
 		this.interests = profile.interests
 		this.lineManager = profile.getLineManager()
 	}
 
 	hasCompleteProfile() {
-		//	return this.department && this.areasOfWork && this.grade
 		return true
 	}
 
@@ -981,6 +954,10 @@ export class User implements CSLUser {
 
 	hasAnyRole(roles: string[]) {
 		return this.roles && this.roles.some(value => roles.indexOf(value) > -1)
+	}
+
+	isReporter(): boolean {
+		return this.hasAnyRole(['CSHR_REPORTER', 'PROFESSION_REPORTER', 'ORGANISATION_REPORTER'])
 	}
 
 	isAdmin() {
@@ -998,8 +975,21 @@ export class User implements CSLUser {
 	getGradeCode() {
 		return this.grade ? this.grade.code : ''
 	}
+
+	getGradeId() {
+		return this.grade ? this.grade.id : undefined
+	}
+
 	getDomain() {
 		return this.userName.split('@')[1].toLowerCase()
+	}
+
+	getOrganisationCode() {
+		return this.organisationalUnit ? this.organisationalUnit.code : undefined
+	}
+
+	getAreaOfWorkId() {
+		return this.areaOfWork ? this.areaOfWork.id : undefined
 	}
 }
 

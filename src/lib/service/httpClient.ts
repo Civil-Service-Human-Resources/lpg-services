@@ -1,5 +1,6 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
 import * as https from 'https'
+import {ClientError} from 'lib/exception/ClientError'
 import * as qs from 'qs'
 
 import {ResourceNotFoundError} from '../exception/ResourceNotFoundError'
@@ -42,7 +43,7 @@ export class HttpClient {
 
 	constructor(readonly http: AxiosInstance) {}
 
-	async makeRequest<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
+	async makeRawRequest<T>(req: AxiosRequestConfig, accessToken: string): Promise<T> {
 		const fullUrl = `${this.http.defaults.baseURL}${req.url}`
 		let logMsg = `${req.method} request to ${fullUrl}`
 		if (req.data) {
@@ -55,9 +56,9 @@ export class HttpClient {
 		}
 		logger.debug(logMsg)
 		if (req.headers) {
-			req.headers.Authorization = `Bearer ${user.accessToken}`
+			req.headers.Authorization = `Bearer ${accessToken}`
 		} else {
-			req.headers = {Authorization: `Bearer ${user.accessToken}`}
+			req.headers = {Authorization: `Bearer ${accessToken}`}
 		}
 		try {
 			req.paramsSerializer = (params: any) => {
@@ -79,14 +80,21 @@ export class HttpClient {
 			if (respCode === 404) {
 				throw new ResourceNotFoundError(fullUrl)
 			}
+			if (respCode === 400) {
+				throw new ClientError(str)
+			}
 			throw e
 		}
 	}
 
-	async _patch<Request>(req: AxiosRequestConfig, data: Request, user: model.User) {
+	async makeRequest<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
+		return await this.makeRawRequest<T>(req, user.accessToken)
+	}
+
+	async _patch<Request, Response>(req: AxiosRequestConfig, data: Request, user: model.User) {
 		req.method = 'PATCH'
 		req.data = data
-		return await this.makeRequest(req, user)
+		return await this.makeRequest<Response>(req, user)
 	}
 
 	async _get<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {

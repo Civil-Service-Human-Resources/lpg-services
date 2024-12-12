@@ -13,7 +13,7 @@ const sampleDepartmentCodes = ['ORG', 'ORG-PARENT', 'ORG-GRANDPARENT']
 
 export const createSampleUser = () => {
 	return plainToInstance(User, {
-		areasOfWork: {
+		areaOfWork: {
 			id: 1,
 			name: 'Analysis',
 		},
@@ -101,7 +101,7 @@ describe('suggestedLearningService tests', () => {
 			it(`Should create suggestion parameter for the users areas of work,
 				filtering out the API params if the profession is "I don't know"`, () => {
 				const user = createSampleUser()
-				user.areasOfWork = new AreaOfWork(1, "I don't know")
+				user.areaOfWork = new AreaOfWork(1, "I don't know")
 				const sections = service.createParamsForAreaOfWorkSection(sampleDepartmentCodes, user)
 				const section = sections[0]
 				expect(section.params).to.eql(undefined)

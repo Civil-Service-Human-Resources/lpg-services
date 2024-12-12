@@ -36,25 +36,29 @@
         </div>
     {/if}
 
-    {#if course.status !== "Archived"}
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                {#if canPayByPO}
-                    <div class="notice push-bottom">
-                    <i class="icon icon-important">
-                        <span class="visually-hidden">Warning</span>
-                    </i>
-                    <strong class="bold-small">
-                        By proceeding, you are confirming you have gained approval to book this course and have a purchase
-                        order number.
-                    </strong>
-                    </div>
-                    <HowToGetPo/>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            {#if course.status !== "Archived"}
+                {#if !course.canBeBooked() }
+                    <NotificationBanner description={$i18n('components.notification_banner.course_not_bookable')} />
+                {:else}
+                    {#if canPayByPO}
+                        <div class="notice push-bottom">
+                        <i class="icon icon-important">
+                            <span class="visually-hidden">Warning</span>
+                        </i>
+                        <strong class="bold-small">
+                            By proceeding, you are confirming you have gained approval to book this course and have a purchase
+                            order number.
+                        </strong>
+                        </div>
+                        <HowToGetPo/>
+                    {/if}
+                    <a class="button" href="/book/{course.id}/{module.id}/choose-date">View availability</a>
                 {/if}
-                <a class="button" href="/book/{course.id}/{module.id}/choose-date">View availability</a>
-            </div>
+            {/if}
         </div>
-    {/if}
+    </div>
 </div>
 
 </Page>
@@ -63,6 +67,7 @@
 	import Page from '../../component/Page.html'
     import Rightbox from '../../component/Rightbox.html'
     import HowToGetPo from '../../component/statics/Hidden-howtogetpo.html'
+    import NotificationBanner from '../../component/NotificationBanner.html'
     import ArchivedWarning from '../../component/ArchivedWarning.html'
 
 	export default {
@@ -75,6 +80,7 @@
 			Page,
 			Rightbox,
 			HowToGetPo,
+            NotificationBanner,
             ArchivedWarning
 		}
 	}

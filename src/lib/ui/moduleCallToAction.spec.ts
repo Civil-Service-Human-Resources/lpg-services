@@ -8,7 +8,8 @@ import {
 
 import {CourseActionType} from 'lib/ui/courseCallToAction'
 
-import {Course} from 'lib/model'
+import {Course, Event} from 'lib/model'
+import * as moment from 'moment'
 
 describe('Module call to actions', () => {
 	let course: Course
@@ -96,13 +97,21 @@ describe('Module call to actions', () => {
 				})
 
 				it('should return Add (to learning plan)', () => {
-					console.log(cta)
 					expect(cta.actionToPlan!.type).to.be.equal(CourseActionType.Add)
 				})
 			})
 			describe('on the course overview page', () => {
-				it('should show "action_BOOK" action', () => {
+				it('should show "action_BOOK" action when there are bookable events', () => {
 					modifier = 'overview'
+					const date = moment().add(1, 'day')
+					course.modules[0].events = [
+						Event.create({
+							capacity: 30,
+							dateRanges: [{date: date.format("YYYY-MM-DD"), startTime: date.format("HH:mm")}],
+							id: 'past',
+							venue: {location: 'London'},
+						}),
+					]
 					cta = constructModuleCta(
 						course.id,
 						course.modules[0],
@@ -113,6 +122,19 @@ describe('Module call to actions', () => {
 					)
 					expect(cta.url).to.contain('/book/')
 					expect(cta.learningAction.text).to.be.equal('action_BOOK')
+				})
+				it('should show "cannot book" message when there are no bookable events', () => {
+					modifier = 'overview'
+					cta = constructModuleCta(
+						course.id,
+						course.modules[0],
+						testUser,
+						'',
+						course.record!,
+						modifier
+					)
+					expect(cta.url).to.contain('/courses/')
+					expect(cta.message).to.be.equal('components.notification_banner.course_not_bookable')
 				})
 			})
 		})

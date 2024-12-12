@@ -6,17 +6,6 @@ import { GetCoursesParams, GetCoursesResponse } from './models/getCoursesParams'
 
 const URL = 'courses'
 
-export async function getCourses(getCoursesParams: GetCoursesParams, user: User) {
-	const resp = client._get<GetCoursesResponse>(
-		{
-			params: getCoursesParams,
-			url: URL,
-		},
-		user
-	)
-	return plainToClass(GetCoursesResponse, resp)
-}
-
 export async function getCoursesWithIds(ids: string[], user: User) {
 	const resp = await client._post<string[], Course[]>(
 		{

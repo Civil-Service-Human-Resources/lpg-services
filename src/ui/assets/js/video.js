@@ -13,7 +13,7 @@
 	var videoLength = 0
 
 	var youTubePlayer = true
-	
+
 	var detectVideoPlayer = function(){
 		if (document.getElementById("video-player")) {
 			youTubePlayer = true
@@ -58,7 +58,7 @@
 			},
 			false
 		)
-	
+
 		window.addEventListener(
 			'DOMContentLoaded',
 			function() {
@@ -80,7 +80,7 @@
 
 	var completeModule = function() {
 		var url =
-			'/api/video/complete?courseId=' +
+			'/js/video/complete?courseId=' +
 			encodeURIComponent(courseId) +
 			'&moduleId=' +
 			encodeURIComponent(moduleId)
@@ -88,7 +88,7 @@
 		xhr.open('GET', url, true)
 		xhr.send()
 	}
-	
+
 	var onStateChange = function(e,player) {
 			// NOTE(tav): The current time will differ from the actual time the
 			// event was received by a few milliseconds. Polling will solve this
@@ -97,7 +97,7 @@
 			currentTime = Math.floor(abstraction(player,'currentTime') * 1000) / 1000
 			if (currentTime >videoLength) currentTime = videoLength
 			currentProgress = Math.floor(currentTime / videoLength * 1000) / 1000
-			
+
 			switch (abstraction(player,'event',event)) {
 				case abstraction(player,'ended'):
 					if (terminated) {
@@ -139,7 +139,7 @@
 					onStateChange: function(e){
 						onStateChange(e,player)
 					}
-				} 	
+				}
 			})
 		} else {
 			var player = videojs('videojs-player',null,function(){
@@ -158,7 +158,7 @@
 				readyFunction()
 		})
 	}
-	
+
 	window.addEventListener(
 		'DOMContentLoaded',
 		function() {

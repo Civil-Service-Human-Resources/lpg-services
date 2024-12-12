@@ -57,7 +57,7 @@ export function saveAccessibilityOptions(ireq: express.Request, res: express.Res
 	let {returnTo} = ireq.session!
 	if (returnTo) {
 		delete ireq.session!.returnTo
-	} else if (!user.department || !user.lineManager) {
+	} else if (!user.organisationalUnit || !user.lineManager) {
 		returnTo = '/profile'
 	} else if (req.module!.cost === 0) {
 		session.payment = {

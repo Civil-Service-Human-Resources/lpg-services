@@ -2,6 +2,11 @@ import {Cache} from 'lib/utils/cache'
 import {CacheableObject} from 'lib/utils/cacheableObject'
 
 export abstract class CacheableObjectCache <T extends CacheableObject> extends Cache<T> {
+
+	async setObject(object: T, ttlOverride?: number) {
+		await this.set(object.getId(), object, ttlOverride)
+	}
+
 	async setMultiple(objects: T[]) {
 		this.logger.debug(
 			`Setting ${objects.length} objects with ids [${objects.map(o => o.getId())}] to the '${this.getBaseKey()}' cache`

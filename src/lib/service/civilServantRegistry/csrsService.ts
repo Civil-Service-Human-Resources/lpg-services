@@ -1,3 +1,14 @@
+import {AreaOfWork, Grade, Interest, Profile} from 'lib/registry'
+import {getProfessionsTree} from 'lib/service/civilServantRegistry/areaOfWork/areaOfWorkClient'
+import {AreasOfWork} from 'lib/service/civilServantRegistry/areaOfWork/areasOfWork'
+import * as civilServantClient from 'lib/service/civilServantRegistry/civilServant/civilServantClient'
+import {ProfileCache} from 'lib/service/civilServantRegistry/civilServant/profileCache'
+import * as gradeClient from 'lib/service/civilServantRegistry/grade/gradeClient'
+import {Grades} from 'lib/service/civilServantRegistry/grade/grades'
+import * as interestClient from 'lib/service/civilServantRegistry/interest/interestClient'
+import {Interests} from 'lib/service/civilServantRegistry/interest/interests'
+import {PatchCivilServant} from 'lib/service/civilServantRegistry/models/patchCivilServant'
+import {AnonymousCache} from 'lib/utils/anonymousCache'
 import {getLogger} from '../../logger'
 import {OrganisationalUnit, User} from '../../model'
 import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
@@ -9,10 +20,138 @@ const logger = getLogger('csrsService')
 
 let organisationalUnitCache: OrganisationalUnitCache
 let organisationalUnitTypeaheadCache: OrganisationalUnitTypeaheadCache
+let profileCache: ProfileCache
+let gradeCache: AnonymousCache<Grades>
+let areaOfWorkCache: AnonymousCache<AreasOfWork>
+let interestCache: AnonymousCache<Interests>
 
-export function setCaches(orgCache: OrganisationalUnitCache, orgTypeaheadCache: OrganisationalUnitTypeaheadCache) {
+export function setCaches(
+	orgCache: OrganisationalUnitCache,
+	orgTypeaheadCache: OrganisationalUnitTypeaheadCache,
+	csrsProfileCache: ProfileCache,
+	csrsGradeCache: AnonymousCache<Grades>,
+	csrsAreaOfWorkCache: AnonymousCache<AreasOfWork>,
+	csrsInterestCache: AnonymousCache<Interests>) {
 	organisationalUnitCache = orgCache
 	organisationalUnitTypeaheadCache = orgTypeaheadCache
+	profileCache = csrsProfileCache
+	gradeCache = csrsGradeCache
+	areaOfWorkCache = csrsAreaOfWorkCache
+	interestCache = csrsInterestCache
+}
+
+export async function setLogoutFlag(uid: string) {
+	logger.info(`Logout flag being set for user ${uid}`)
+	const profile = await profileCache.get(uid)
+	if (profile) {
+		profile.setShouldLogout()
+		await updateProfileCache(profile)
+	}
+}
+
+export async function removeProfileFromCache(uid: string) {
+	logger.debug(`Removing user ${uid} from profile cache`)
+	await profileCache.delete(uid)
+}
+
+export async function fetchNewProfile(accessToken: string) {
+	const profile = await civilServantClient.loginAndFetchProfile(accessToken)
+	await updateProfileCache(profile)
+	return profile
+}
+
+export async function fetchProfile(uid: string, accessToken: string): Promise<Profile> {
+	let profile = await profileCache.get(uid)
+	if (!profile) {
+		profile = await fetchNewProfile(accessToken)
+	}
+	return profile
+}
+
+export async function updateProfileCache(profile: Profile) {
+	await profileCache.setObject(profile)
+}
+
+export async function patchCivilServantOrganisationUnit(user: User, organisationUnitId: number) {
+	await civilServantClient.patchCivilServantOrganisation(user, organisationUnitId)
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.organisationalUnit = await getOrganisation(user, organisationUnitId)
+	await updateProfileCache(profile)
+	user.updateWithProfile(profile)
+}
+
+export async function patchCivilServantName(user: User, name: string) {
+	const patch = new PatchCivilServant(name, undefined, undefined,
+		undefined, undefined)
+	await patchCivilServant(user, patch)
+}
+
+export async function patchCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
+	const patch = new PatchCivilServant(undefined, undefined, undefined,
+		areaOfWork, undefined)
+	await patchCivilServant(user, patch)
+}
+
+export async function patchCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[]) {
+	const patch = new PatchCivilServant(undefined, undefined, undefined,
+		undefined, areasOfWork)
+	await patchCivilServant(user, patch)
+}
+
+export async function patchCivilServantGrade(user: User, grade: Grade) {
+	const patch = new PatchCivilServant(undefined, grade, undefined,
+		undefined, undefined)
+	await patchCivilServant(user, patch)
+}
+
+export async function patchCivilServantInterests(user: User, interests: Interest[]) {
+	const patch = new PatchCivilServant(undefined, undefined, interests,
+		undefined, undefined)
+	await patchCivilServant(user, patch)
+}
+
+export async function patchCivilServant(user: User, patch: PatchCivilServant) {
+	await civilServantClient.patchCivilServant(user, patch)
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.updateWithPatch(patch)
+	await updateProfileCache(profile)
+	user.updateWithProfile(profile)
+}
+
+export async function patchCivilServantLineManager(user: User, lineManagerEmail: string) {
+	const updatedrofile = await civilServantClient.checkAndUpdateLineManager(user, lineManagerEmail)
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.lineManagerEmailAddress = updatedrofile.lineManagerEmailAddress
+	profile.lineManagerName = updatedrofile.lineManagerName
+	await updateProfileCache(profile)
+	user.updateWithProfile(profile)
+}
+
+export async function getAreasOfWork(user: User): Promise<AreasOfWork> {
+	let areasOfWork = await areaOfWorkCache.get()
+	if (areasOfWork === undefined) {
+		areasOfWork = AreasOfWork.createFromTree(await getProfessionsTree(user))
+		await areaOfWorkCache.set(areasOfWork)
+	}
+	return areasOfWork
+}
+
+export async function getGrades(user: User): Promise<Grades> {
+	let grades = await gradeCache.get()
+	if (!grades) {
+		grades = new Grades(await gradeClient.getGrades(user))
+		await gradeCache.set(grades)
+	}
+	return grades
+}
+
+export async function getInterests(user: User): Promise<Interests> {
+	let interests = await interestCache.get()
+	if (!interests) {
+		interests = new Interests(await interestClient.getInterests(user))
+		await interestCache.set(interests)
+	}
+	return interests
 }
 
 export async function getOrganisation(
@@ -72,15 +211,4 @@ export async function getAllOrganisationUnits(user: User): Promise<Organisationa
 		typeahead = await refreshTypeahead(user)
 	}
 	return typeahead
-}
-
-export async function getOrganisationDropdown(user: User): Promise<OrganisationalUnit[]> {
-	logger.debug(`Filtering dropdown for user ${user.userName}`)
-	const typeahead = await getAllOrganisationUnits(user)
-	if (user.isUnrestrictedOrgUser()) {
-		logger.debug(`User is unrestricted, returning all organisations`)
-		return typeahead.typeahead
-	} else {
-		return typeahead.getDomainFilteredList(user.getDomain())
-	}
 }

@@ -2,8 +2,8 @@ import * as express from 'express'
 import * as extended from 'lib/extended'
 import * as learnerRecord from 'lib/learnerrecord'
 import * as model from 'lib/model'
-import * as registry from 'lib/registry'
 import * as catalog from 'lib/service/catalog'
+import {getAreasOfWork, getInterests} from 'lib/service/civilServantRegistry/csrsService'
 import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
 import * as template from 'lib/ui/template'
 import * as striptags from 'striptags'
@@ -162,13 +162,13 @@ export async function search(ireq: express.Request, res: express.Response) {
 
 async function getDepartmentData(user: model.User, selectedDepartments: string[]) {
 	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
-	const yourDepartment = allDepartments.find(department => department.code === user.department)
+	const yourDepartment = allDepartments.find(department => department.code === user.getOrganisationCode())
 	/**
 	 * NOTE: 20221117 - the code below will sort/slice the department list based on ID. This is to
 	 * replicate the current functionality of only showing the first 20 departments, in order of
 	 * ID.
 	 */
-	const otherDepartments = allDepartments.filter(department => department.code !== user.department)
+	const otherDepartments = allDepartments.filter(department => department.code !== user.getOrganisationCode())
 											.sort((a, b) => a.id - b.id).slice(0, 20)
 
 	return {
@@ -179,10 +179,11 @@ async function getDepartmentData(user: model.User, selectedDepartments: string[]
 }
 
 async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[]) {
-	const allAreasOfWork = await registry.getAllProfessions()
+	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList
+		.filter(aow => aow.name !== "I don't know")
 
 	const userAreasOfWork = (user.otherAreasOfWork || []).map(aow => aow.name)
-		.concat((user.areasOfWork ? [user.areasOfWork] : []).map(aow => aow.name))
+		.concat((user.areaOfWork ? [user.areaOfWork] : []).map(aow => aow.name))
 
 	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.indexOf(aow.name) > -1)
 		.map(aow => aow.name)
@@ -198,7 +199,7 @@ async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[
 }
 
 async function getInterestsData(user: model.User, selectedInterests: string[]) {
-	const allInterests = await registry.getAllInterests()
+	const allInterests = (await getInterests(user)).list
 
 	const userInterests = (user.interests || []).map(interest => interest.name)
 
