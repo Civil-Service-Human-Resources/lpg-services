@@ -224,7 +224,7 @@ profileChecker.register(app)
 dynamicBackLink.register(app)
 redirectTo.registerGET(app)
 
-app.get('/api/video/complete', asyncHandler(completeVideoModule))
+app.get('/js/video/complete', asyncHandler(completeVideoModule))
 
 app.get('/profile', profileController.viewProfile)
 

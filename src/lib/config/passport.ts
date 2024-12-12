@@ -6,12 +6,7 @@ import * as oauth2 from 'passport-oauth2'
 import * as config from '../config/index'
 import {getLogger} from '../logger'
 import {createUser, User} from '../model'
-import {
-	fetchNewProfile,
-	fetchProfile,
-	removeProfileFromCache,
-	updateProfileCache,
-} from '../service/civilServantRegistry/csrsService'
+import {fetchProfile, removeProfileFromCache, updateProfileCache} from '../service/civilServantRegistry/csrsService'
 import {IdentityDetails} from '../service/identity/models/identityDetails'
 
 const logger = getLogger('config/passport')
@@ -56,10 +51,7 @@ export function configure(
 		let identity: IdentityDetails
 		try {
 			identity = plainToInstance(IdentityDetails, JSON.parse(data) as IdentityDetails)
-			let csrsProfile = await fetchProfile(identity.uid, identity.accessToken)
-			if (csrsProfile.shouldRefresh) {
-				csrsProfile = await fetchNewProfile(identity.accessToken)
-			}
+			const csrsProfile = await fetchProfile(identity.uid, identity.accessToken)
 			if (!csrsProfile.uiLoggedIn) {
 				csrsProfile.uiLoggedIn = true
 				await updateProfileCache(csrsProfile)
