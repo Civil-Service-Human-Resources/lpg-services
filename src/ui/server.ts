@@ -158,7 +158,7 @@ if (config.STATIC_ASSET_ROOT) {
 	}
 }
 
-app.use(serveStatic('assets', { maxAge: config.STATIC_ASSET_TTL }))
+app.use(serveStatic('assets', {maxAge: config.STATIC_ASSET_TTL, etag: false, acceptRanges: false}))
 
 const luscaPolicy = luscaConfig.setCspPolicy(app.locals.staticAssetDomain)
 
