@@ -159,7 +159,7 @@ if (config.STATIC_ASSET_ROOT) {
 
 const staticAssetPath = `${STATIC_DIR}/assets`
 logger.debug(`Registering static assets at ${staticAssetPath}`)
-app.use(serveStatic(staticAssetPath, {maxAge: config.STATIC_ASSET_TTL}))
+app.use(serveStatic(staticAssetPath, {maxAge: config.STATIC_ASSET_TTL, etag: false, acceptRanges: false}))
 
 const luscaPolicy = luscaConfig.setCspPolicy(app.locals.staticAssetDomain)
 
