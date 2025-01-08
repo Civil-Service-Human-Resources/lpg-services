@@ -4,7 +4,7 @@ import {SortableList} from '../sortableList'
 
 export class Grades extends SortableList<Grade> {
 	@Type(() => Grade)
-	public declare list: Grade[]
+	declare public list: Grade[]
 
 	constructor(list: Grade[]) {
 		super(list)

@@ -11,7 +11,7 @@ export class AreasOfWork extends SortableList<AreaOfWork> {
 	}
 
 	@Type(() => AreaOfWork)
-	public declare list: AreaOfWork[]
+	declare public list: AreaOfWork[]
 
 	@Type(() => AreaOfWork)
 	public topLevelList: AreaOfWork[]
