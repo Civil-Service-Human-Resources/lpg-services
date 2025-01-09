@@ -89,10 +89,11 @@
 		"ts-mocha": "^10.0.0",
 		"ts-node": "7.0.0",
 		"ts-node-register": "^1.0.0",
-		"typescript": "^5.6.3",
+		"typescript": "5.6.3",
 		"typescript-eslint": "^8.14.0"
 	},
 	"dependencies": {
+		"@types/serve-static": "^1.15.7",
 		"app-root-path": "^2.1.0",
 		"applicationinsights": "^3.4.0",
 		"axios": "^1.7.7",
@@ -137,6 +138,7 @@
 		"request": "2.83.0",
 		"request-promise": "4.2.2",
 		"serve-favicon": "2.4.5",
+		"serve-static": "^1.16.2",
 		"session-file-store": "1.2.0",
 		"shortid": "2.2.8",
 		"striptags": "3.1.1",
