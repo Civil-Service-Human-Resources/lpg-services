@@ -365,8 +365,7 @@
 		"primary-area-of-work": "Primary area of work is required",
 		"organisation": "Organisation is required",
 		"given-name": "Your name is required",
-		"other-areas-of-work": "Your other areas of work are required",
-		"interests": "Your interests are required"
+		"other-areas-of-work": "Your other areas of work are required"
 	},
 	"profile_undefined_label": "profile_undefined_label",
 	"undefined": "undefined",
