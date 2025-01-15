@@ -18,7 +18,7 @@ export class PatchCivilServant {
 		if (this.grade) {
 			params.grade = `/grades/${this.grade.getId()}`
 		}
-		if (this.interests && this.interests.length > 0) {
+		if (this.interests) {
 			params.interests = this.interests.map(i => `/interests/${i.getId()}`)
 		}
 		if (this.profession) {

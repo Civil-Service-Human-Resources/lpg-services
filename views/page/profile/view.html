@@ -110,7 +110,7 @@
                             {$i18n('profile_interest_label')}
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {#if $signedInUser.interests}
+                            {#if $signedInUser.interests && $signedInUser.interests.length > 0}
                                 <ul>
                                 {#each $signedInUser.interests as interest}
                                     <li>
@@ -118,6 +118,8 @@
                                     </li>
                                 {/each}
                                 </ul>
+                            {:else}
+                                <div>No interests selected</div>
                             {/if}
                         </dd>
                         <dd class="govuk-summary-list__actions">
