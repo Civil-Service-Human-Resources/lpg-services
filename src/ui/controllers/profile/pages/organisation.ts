@@ -1,7 +1,10 @@
 import * as express from 'express'
-import {User} from 'lib/model'
-import {getAllOrganisationUnits, patchCivilServantOrganisationUnit} from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
+import {User} from '../../../../lib/model'
+import {
+	getAllOrganisationUnits,
+	patchCivilServantOrganisationUnit,
+} from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {organisationsToOptions} from '../../../model/option'
 import {OrganisationPageModel} from '../models/organisationPageModel'
 import {areaOfWorkPage} from './areaOfWork'

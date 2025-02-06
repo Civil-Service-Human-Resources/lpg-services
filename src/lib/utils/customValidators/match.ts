@@ -20,7 +20,6 @@ export function Match(property: string, validationOptions?: ValidationOptions) {
 
 @ValidatorConstraint({name: 'Match'})
 export class MatchConstraint implements ValidatorConstraintInterface {
-
 	validate(value: any, args: ValidationArguments) {
 		const [relatedPropertyName] = args.constraints
 		const relatedValue = (args.object as any)[relatedPropertyName]

@@ -1,0 +1,19 @@
+{% from "./components/navbarLink.njk" import navbarLink %}
+
+<nav id="proposition-menu">
+    <ul id="proposition-links">
+        {% if signedInUser.hasCompleteProfile() %}
+            {{ navbarLink(originalUrl, "/home", "Home") }}
+            {{ navbarLink(originalUrl, "/suggestions-for-you", i18n('suggestions_page_title')) }}
+            {{ navbarLink(originalUrl, "/learning-record", "Learning record") }}
+            {{ navbarLink(originalUrl, "/profile", "Profile") }}
+            {% if signedInUser.isAdmin() %}
+                {{ navbarLink(originalUrl, lpgManagementUrl + "/content-management", "Admin") }}
+            {% endif %}
+            {% if signedInUser.isReporter() %}
+                {{ navbarLink(originalUrl, lpgManagementUrl + "/reporting", "Reporting") }}
+            {% endif %}
+            {{ navbarLink(originalUrl, "/sign-out", "Sign out") }}
+        {% endif %}
+    </ul>
+</nav>

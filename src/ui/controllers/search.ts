@@ -1,12 +1,12 @@
 import * as express from 'express'
-import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
-import * as model from 'lib/model'
-import * as catalog from 'lib/service/catalog'
-import {getAreasOfWork, getInterests} from 'lib/service/civilServantRegistry/csrsService'
-import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
 import * as striptags from 'striptags'
+import * as extended from '../../lib/extended'
+import * as learnerRecord from '../../lib/learnerrecord'
+import * as model from '../../lib/model'
+import * as catalog from '../../lib/service/catalog'
+import {getAreasOfWork, getInterests} from '../../lib/service/civilServantRegistry/csrsService'
+import * as csrsService from '../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../lib/ui/template'
 
 export interface SearchFilter {
 	label: string
@@ -115,18 +115,28 @@ export async function search(ireq: express.Request, res: express.Response) {
 
 	const user = req.user as model.User
 
-	const searchResults = await catalog.search(user, page, size, query, courseTypes, cost, areasOfWork,
-		departments, interests)
+	const searchResults = await catalog.search(
+		user,
+		page,
+		size,
+		query,
+		courseTypes,
+		cost,
+		areasOfWork,
+		departments,
+		interests
+	)
 
-	const courseRecords = await learnerRecord.getRawLearningRecord(user, searchResults.results.map(r => r.course.id))
+	const courseRecords = await learnerRecord.getRawLearningRecord(
+		user,
+		searchResults.results.map(r => r.course.id)
+	)
 
 	searchResults.results.forEach(result => {
 		const cmResult = result as model.CourseModule
 		delete cmResult.course.record
 
-		const courseRecord = courseRecords.find(
-			record => cmResult.course.id === record.courseId
-		)
+		const courseRecord = courseRecords.find(record => cmResult.course.id === record.courseId)
 		if (courseRecord) {
 			// we have a course record add it to the course
 			cmResult.course.record = courseRecord
@@ -138,7 +148,7 @@ export async function search(ireq: express.Request, res: express.Response) {
 
 	const end: string = (((new Date() as any) - (start as any)) / 1000).toFixed(2)
 
-	const [ departmentData, areasOfWorkData, interestsData ] = await Promise.all([
+	const [departmentData, areasOfWorkData, interestsData] = await Promise.all([
 		getDepartmentData(user, departments),
 		getAreasOfWorkData(user, areasOfWork),
 		getInterestsData(user, interests),
@@ -168,8 +178,10 @@ async function getDepartmentData(user: model.User, selectedDepartments: string[]
 	 * replicate the current functionality of only showing the first 20 departments, in order of
 	 * ID.
 	 */
-	const otherDepartments = allDepartments.filter(department => department.code !== user.getOrganisationCode())
-											.sort((a, b) => a.id - b.id).slice(0, 20)
+	const otherDepartments = allDepartments
+		.filter(department => department.code !== user.getOrganisationCode())
+		.sort((a, b) => a.id - b.id)
+		.slice(0, 20)
 
 	return {
 		other: otherDepartments,
@@ -179,17 +191,15 @@ async function getDepartmentData(user: model.User, selectedDepartments: string[]
 }
 
 async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[]) {
-	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList
-		.filter(aow => aow.name !== "I don't know")
+	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList.filter(aow => aow.name !== "I don't know")
 
-	const userAreasOfWork = (user.otherAreasOfWork || []).map(aow => aow.name)
+	const userAreasOfWork = (user.otherAreasOfWork || [])
+		.map(aow => aow.name)
 		.concat((user.areaOfWork ? [user.areaOfWork] : []).map(aow => aow.name))
 
-	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.indexOf(aow.name) > -1)
-		.map(aow => aow.name)
+	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.indexOf(aow.name) > -1).map(aow => aow.name)
 
-	const otherAreasOfWork = allAreasOfWork.filter(aow => yourAreasOfWork.indexOf(aow.name) === -1)
-		.map(aow => aow.name)
+	const otherAreasOfWork = allAreasOfWork.filter(aow => yourAreasOfWork.indexOf(aow.name) === -1).map(aow => aow.name)
 
 	return {
 		other: otherAreasOfWork,
@@ -203,10 +213,12 @@ async function getInterestsData(user: model.User, selectedInterests: string[]) {
 
 	const userInterests = (user.interests || []).map(interest => interest.name)
 
-	const yourInterests = allInterests.filter(interest => userInterests.indexOf(interest.name) > -1)
+	const yourInterests = allInterests
+		.filter(interest => userInterests.indexOf(interest.name) > -1)
 		.map(interest => interest.name)
 
-	const otherInterests = allInterests.filter(interest => yourInterests.indexOf(interest.name) === -1)
+	const otherInterests = allInterests
+		.filter(interest => yourInterests.indexOf(interest.name) === -1)
 		.map(interest => interest.name)
 
 	return {

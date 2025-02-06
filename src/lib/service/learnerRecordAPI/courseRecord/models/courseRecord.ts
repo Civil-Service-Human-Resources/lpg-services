@@ -1,10 +1,10 @@
-import { plainToClass, Type } from 'class-transformer'
-import * as datetime from 'lib/datetime'
+import {plainToClass, Type} from 'class-transformer'
+import * as datetime from '../../../../datetime'
 
-import { CourseRcd } from '../../../../learnerrecord'
-import { Module } from '../../../../model'
-import { Record, RecordState } from '../../models/record'
-import { ModuleRecord } from '../../moduleRecord/models/moduleRecord'
+import {CourseRcd} from '../../../../learnerrecord'
+import {Module} from '../../../../model'
+import {Record, RecordState} from '../../models/record'
+import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
 
 export enum CourseRecordPreference {
 	Liked = 'LIKED',
@@ -70,11 +70,7 @@ export class CourseRecord extends Record implements CourseRcd {
 	}
 
 	public isActive() {
-		return (
-			!this.isArchived() &&
-			!this.isSkipped() &&
-			!this.isDisliked()
-		)
+		return !this.isArchived() && !this.isSkipped() && !this.isDisliked()
 	}
 
 	public getSelectedDate() {
@@ -128,9 +124,7 @@ export class CourseRecord extends Record implements CourseRcd {
 				const moduleRecordCompletionDate = moduleRecord.getCompletionDate()
 				if (!completionDate) {
 					completionDate = moduleRecordCompletionDate
-				} else if (
-					moduleRecordCompletionDate > completionDate
-				) {
+				} else if (moduleRecordCompletionDate > completionDate) {
 					completionDate = moduleRecordCompletionDate
 				}
 			}
@@ -140,9 +134,7 @@ export class CourseRecord extends Record implements CourseRcd {
 
 	getDuration() {
 		const durationArray = this.modules.map(m => m.duration || 0)
-		return durationArray.length
-			? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0))
-			: null
+		return durationArray.length ? datetime.formatCourseDuration(durationArray.reduce((p, c) => p + c, 0)) : null
 	}
 
 	public getType() {

@@ -1,0 +1,72 @@
+{% macro moduleCardTitle(params) %}
+    <div class="discite__main discite__main--module">
+        <h3 class="heading bold-small heading--text">{{ params.title }}</h3>
+        {% if params.description %}
+            <p class="discite__description">{{ params.description }}</p>
+        {% endif %}
+        {% if not params.isMandatory %}
+            <p class="discite__optional">This module is optional</p>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro moduleCardDetails(params) %}
+    <div class="discite__properties u-clearfix">
+        <ul class="discite__property">
+            <li class="discite__property-item">
+                <span>Type:</span>
+                <span class="lpg-course-type">{{ i18n(params.type) }}</span>
+            </li>
+            {% if params.duration %}
+                <li class="discite__property-item">
+                    <span>Duration:</span>
+                    <span class="lpg-course-duration">{{ params.duration }}</span>
+                </li>
+            {% endif %}
+            {% if params.type !== 'file' %}
+                <li class="discite__property-item">
+                    <span>Cost:</span>
+                    <span class="lpg-course-cost">&pound;{{ params.cost or 'Free' }}</span>
+                </li>
+            {% endif %}
+        </ul>
+        {% if params.displayState %}
+            <div class="discite__status"><span class="badge badge--info ">{{ i18n(params.displayState) }}</span></div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro moduleCardCtaLink(url, action, moduleTitle, newTab = false) %}
+    <a class='discite__action-link--main' href='{{ url }}' {% if newTab %}target="_blank"{% endif %}>{{ i18n(action) }} <span class='visually-hidden'> module {{ moduleTitle }}</span></a>
+{% endmacro %}
+
+{% macro moduleCardCta(params) %}
+    {% if params.mustConfirmBooking %}
+        <p style="display: inline-block">Available on confirmation of a booking</p>
+    {% else %}
+        <div class="discite__action discite__action--module">
+            {% if params.type === "face-to-face" %}
+                {% if not signedInUser.lineManager %}
+                    <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this module</span>
+                {% elseif not params.canBeBooked %}
+                    <span>{{ i18n('components.notification_banner.course_not_bookable') }}</span>
+                {% else %}
+                    {{ moduleCardCtaLink(params.launchLink, "action_BOOK", params.title) }}
+                {% endif %}
+            {% elseif params.type === "file" %}
+                {{ moduleCardCtaLink(params.launchLink, "action_DOWNLOAD", params.title) }}
+                {{ params.fileExtAndSize }}
+            {% else %}
+                {{ moduleCardCtaLink(params.launchLink, "action_NOT_STARTED", params.title, params.type === "link") }}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro moduleCard(module) %}
+    <div class="discite__item u-clearfix discite__item--module">
+        {{ moduleCardTitle(module) }}
+        {{ moduleCardDetails(module) }}
+        {{ moduleCardCta(module) }}
+    </div>
+{% endmacro %}

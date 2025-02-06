@@ -1,19 +1,18 @@
 import {expect} from 'chai'
-import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
 import * as sinon from 'sinon'
 import {mockReq, mockRes} from 'sinon-express-mock'
+import * as csrsService from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {PageBehaviour} from './common'
 import * as common from './common'
 import {confirmNameMiddleware} from './name'
 
-describe("Given name middleware tests", () => {
+describe('Given name middleware tests', () => {
 	const setupBehaviour: PageBehaviour = {
 		templateName: 'name',
 		userSetup: false,
 	}
-	const run = async (
-		userGivenName: string | undefined, name: string | undefined) => {
+	const run = async (userGivenName: string | undefined, name: string | undefined) => {
 		const mockRequest = mockReq({
 			body: {
 				'given-name': name,
@@ -40,7 +39,7 @@ describe("Given name middleware tests", () => {
 	afterEach(() => {
 		sandbox.restore()
 	})
-	it("Should update and redirect if there are no errors", async () => {
+	it('Should update and redirect if there are no errors', async () => {
 		await run(undefined, 'Name')
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)
@@ -50,7 +49,7 @@ describe("Given name middleware tests", () => {
 		expect(patchStub.called).to.eq(false)
 		expect(generateRedirectStub.called).to.eq(true)
 	})
-	it("Should re-render the template if the user enters a blank name", async () => {
+	it('Should re-render the template if the user enters a blank name', async () => {
 		await run('Name', '')
 		expect(renderStub.called).to.eq(true)
 		expect(patchStub.called).to.eq(false)

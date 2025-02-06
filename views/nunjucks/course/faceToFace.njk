@@ -1,0 +1,29 @@
+{% extends "./layout.njk" %}
+
+{% block courseContent %}
+    {% if pageModel.moduleDetails.cancellationLink %}
+        <p>You are already booked on this course. <a href="{{ pageModel.moduleDetails.cancellationLink }}">Do you wish to cancel your booking?</a></p>
+    {% else %}
+        {% if not signedInUser.hasLineManager() %}
+            <p class='govuk-body'>
+                <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this course</span>
+            </p>
+        {% elseif not pageModel.moduleDetails.canBeBooked %}
+            {{ notificationBanner({
+                description: i18n('components.notification_banner.course_not_bookable')
+            }) }}
+        {% else %}
+            <div class="notice push-bottom">
+                <i class="icon icon-important">
+                    <span class="visually-hidden">Warning</span>
+                </i>
+                <strong class="bold-small">
+                    By proceeding, you are confirming you have gained approval to book this course and have a purchase
+                    order number.
+                </strong>
+            </div>
+            {% include partials + "/howToGetPO.html" %}
+            <a class="button" href="{{ pageModel.moduleDetails.launchLink }}">View availability</a>
+        {% endif %}
+    {% endif %}
+{% endblock %}

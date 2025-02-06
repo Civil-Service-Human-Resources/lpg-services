@@ -1,7 +1,7 @@
 import * as express from 'express'
-import {User} from 'lib/model'
-import {getGrades, patchCivilServantGrade} from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
+import {User} from '../../../../lib/model'
+import {getGrades, patchCivilServantGrade} from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {GradePageModel} from '../models/gradePageModel'
 import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
@@ -41,12 +41,11 @@ export function confirmGradeMiddleware(behaviour: PageBehaviour) {
 		const grades = await getGrades(user)
 		const pageModel = await validate(GradePageModel, req.body)
 		if (pageModel.hasErrors()) {
-			pageModel.options = keysToOptions(
-				grades.getList(), userGrade ? [userGrade.toString()] : [])
+			pageModel.options = keysToOptions(grades.getList(), userGrade ? [userGrade.toString()] : [])
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
 		const grade = grades.fetchOne(pageModel.grade)
-		if (grade && (userGrade !== grade.id)) {
+		if (grade && userGrade !== grade.id) {
 			await patchCivilServantGrade(user, grade)
 		}
 		return generateRedirect(gradePage, req, res)

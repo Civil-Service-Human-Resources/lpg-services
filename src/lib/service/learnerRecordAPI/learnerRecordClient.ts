@@ -1,7 +1,7 @@
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
+import {AxiosInstance, AxiosRequestConfig} from 'axios'
 
 import * as model from '../../model'
-import { HttpClient } from '../httpClient'
+import {HttpClient} from '../httpClient'
 
 export class LearnerRecordClient extends HttpClient {
 	constructor(readonly httpClient: AxiosInstance) {

@@ -1,8 +1,8 @@
 import * as express from 'express'
-import {User} from 'lib/model'
-import {AreaOfWork} from 'lib/registry'
-import {getAreasOfWork, patchCivilServantProfession} from 'lib/service/civilServantRegistry/csrsService'
-import * as template from 'lib/ui/template'
+import {User} from '../../../../lib/model'
+import {AreaOfWork} from '../../../../lib/registry'
+import {getAreasOfWork, patchCivilServantProfession} from '../../../../lib/service/civilServantRegistry/csrsService'
+import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {AreaOfWorkPageModel} from '../models/areaOfWorkPageModel'
 import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
@@ -31,7 +31,11 @@ async function getAreaOfWorkPageModel(user: User, areasOfWork?: AreaOfWork[]) {
 }
 
 export async function renderAreaOfWorkPage(
-	req: express.Request, res: express.Response, templateName: string, areasOfWork: AreaOfWork[]) {
+	req: express.Request,
+	res: express.Response,
+	templateName: string,
+	areasOfWork: AreaOfWork[]
+) {
 	const model = await getAreaOfWorkPageModel(req.user, areasOfWork)
 	return res.send(template.render(templateName, req, res, model))
 }
@@ -50,12 +54,11 @@ export function selectAreaOfWorkMiddleware(behaviour: PageBehaviour) {
 		const areasOfWork = await getAreasOfWork(user)
 		const pageModel = await validate(AreaOfWorkPageModel, req.body)
 		if (pageModel.hasErrors()) {
-			pageModel.options = keysToOptions(
-				areasOfWork.topLevelList, userAreaOfWork ? [userAreaOfWork.toString()] : [])
+			pageModel.options = keysToOptions(areasOfWork.topLevelList, userAreaOfWork ? [userAreaOfWork.toString()] : [])
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
 		const areaOfWork = areasOfWork.fetchOne(pageModel.areaOfWorkId)
-		if (areaOfWork && (areaOfWork.id !== userAreaOfWork)) {
+		if (areaOfWork && areaOfWork.id !== userAreaOfWork) {
 			if (areaOfWork.children !== undefined && areaOfWork.children.length > 0) {
 				return renderAreaOfWorkPage(req, res, behaviour.templateName, areaOfWork.children)
 			}

@@ -1,11 +1,10 @@
 import axios, {AxiosInstance} from 'axios'
-import * as https from "https"
-import * as axiosLogger from 'lib/axiosLogger'
-import * as config from 'lib/config'
-import {getLogger} from 'lib/logger'
-import * as model from "lib/model"
-
-import {AnswerSubmission, Question, QuizHistory, QuizMetadata, SelectedAnswers} from "lib/service/skills/api"
+import * as https from 'https'
+import * as axiosLogger from '../../axiosLogger'
+import * as config from '../../config'
+import {getLogger} from '../../logger'
+import * as model from '../../model'
+import {AnswerSubmission, Question, QuizHistory, QuizMetadata, SelectedAnswers} from './api'
 
 const logger = getLogger('skills')
 
@@ -27,9 +26,12 @@ axiosLogger.axiosResponseLogger(http, logger)
 
 export async function getQuizQuestions(professionId: number, limit: number, user: model.User): Promise<Question[]> {
 	try {
-		const response = await http.get(`/api/quiz?professionId=${professionId}&limit=${limit}`, getAuthorizationHeader(user))
+		const response = await http.get(
+			`/api/quiz?professionId=${professionId}&limit=${limit}`,
+			getAuthorizationHeader(user)
+		)
 		return response.data as Question[]
-	} catch (e) {
+	} catch {
 		throw new Error('Error searching quizzes')
 	}
 }
@@ -38,20 +40,18 @@ export async function getQuizMetadata(professionId: number, user: model.User): P
 	try {
 		const response = await http.get(`/api/quiz/${professionId}/info`, getAuthorizationHeader(user))
 		return response.data as QuizMetadata
-	} catch (e) {
+	} catch {
 		throw new Error('Error getting quiz metadata')
 	}
 }
 
 export async function submitAnswers(selectedAnswers: SelectedAnswers, user: model.User): Promise<number> {
 	try {
-		const response = await http.post(`/api/quiz/submit-answers`, selectedAnswers,
-			getAuthorizationHeader(user))
+		const response = await http.post(`/api/quiz/submit-answers`, selectedAnswers, getAuthorizationHeader(user))
 		return response.data as number
-	} catch (e) {
+	} catch {
 		throw new Error('Error submitting answers')
 	}
-
 }
 
 export async function getResultsSummary(quizResultId: number, user: model.User): Promise<AnswerSubmission> {
@@ -61,7 +61,7 @@ export async function getResultsSummary(quizResultId: number, user: model.User):
 			getAuthorizationHeader(user)
 		)
 		return response.data as AnswerSubmission
-	} catch (e) {
+	} catch {
 		throw new Error('Error getting result summary')
 	}
 }
@@ -73,7 +73,7 @@ export async function getQuizHistory(user: model.User): Promise<QuizHistory> {
 			return {quizResultDto: []}
 		}
 		return response.data as QuizHistory
-	} catch (e) {
+	} catch {
 		throw new Error('Error getting quiz history')
 	}
 }

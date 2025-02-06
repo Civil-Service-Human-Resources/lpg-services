@@ -1,21 +1,22 @@
 import * as express from 'express'
-import * as config from 'lib/config'
-import * as datetime from 'lib/datetime'
-import * as extended from 'lib/extended'
-import { getLogger } from 'lib/logger'
-import * as model from 'lib/model'
-import * as catalog from 'lib/service/catalog'
-import * as courseRecordClient from 'lib/service/learnerRecordAPI/courseRecord/client'
-import * as template from 'lib/ui/template'
+import * as config from '../../lib/config'
+import * as datetime from '../../lib/datetime'
+import * as extended from '../../lib/extended'
+import {getLogger} from '../../lib/logger'
+import * as model from '../../lib/model'
+import * as catalog from '../../lib/service/catalog'
+import * as courseRecordClient from '../../lib/service/learnerRecordAPI/courseRecord/client'
+import * as template from '../../lib/ui/template'
 
-import { CourseRecord } from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import { RecordState } from '../../lib/service/learnerRecordAPI/models/record'
+import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
 
 const logger = getLogger('controllers/home')
 
 export const getRequiredLearning = (
 	requiredCourses: model.Course[],
-	courseRecordMap: Map<string, CourseRecord>): model.Course[] => {
+	courseRecordMap: Map<string, CourseRecord>
+): model.Course[] => {
 	return requiredCourses.filter(course => {
 		let required = false
 		let courseState = RecordState.Null
@@ -57,7 +58,6 @@ export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord
 		return a.getSelectedDate()!.getDate() - b.getSelectedDate()!.getDate()
 	})
 	return [...bookedLearning, ...plannedLearning]
-
 }
 
 export async function home(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -97,10 +97,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		if (req.query.delete) {
 			// @ts-ignore
 			const courseToDelete = await catalog.get(req.query.delete, user)
-			confirmTitle = req.__(
-				'learning_confirm_removal_plan_title',
-				courseToDelete!.title
-			)
+			confirmTitle = req.__('learning_confirm_removal_plan_title', courseToDelete!.title)
 			removeCourseId = courseToDelete!.id
 			confirmMessage = req.__('learning_confirm_removal_plan_message')
 		}
@@ -119,10 +116,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			eventActionDetails.push(action)
 			const module = await catalog.get(eventActionDetails[0], user)
 
-			confirmTitle = req.__(
-				'learning_confirm_' + action + '_plan_title',
-				module!.title
-			)
+			confirmTitle = req.__('learning_confirm_' + action + '_plan_title', module!.title)
 
 			confirmMessage = req.__('learning_confirm_' + action + '_plan_message')
 			yesOption = req.__('learning_confirm_' + action + '_yes_option')
@@ -159,9 +153,7 @@ function formatEventDuration(duration: number) {
 function filterCourseByEvent(course: model.Course) {
 	return (
 		course.record &&
-		course.record.modules.filter(
-			(module: any) => module.moduleType === 'face-to-face' && module.eventId
-		)
+		course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId)
 	)
 }
 
@@ -185,8 +177,10 @@ export function cookies(ireq: express.Request, res: express.Response) {
 }
 
 export function contactUs(req: express.Request, res: express.Response) {
-	res.send(template.render('/contact-us', req, res, {
-		contactEmail: config.CONTACT_EMAIL,
-		contactNumber: config.CONTACT_NUMBER,
-	}))
+	res.send(
+		template.render('/contact-us', req, res, {
+			contactEmail: config.CONTACT_EMAIL,
+			contactNumber: config.CONTACT_NUMBER,
+		})
+	)
 }

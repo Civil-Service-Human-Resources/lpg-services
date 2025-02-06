@@ -1,7 +1,7 @@
 import {expect} from 'chai'
-import {ProfileCache} from 'lib/service/civilServantRegistry/civilServant/profileCache'
-import {AnonymousCache} from 'lib/utils/anonymousCache'
 import * as sinon from 'sinon'
+import {AnonymousCache} from '../../utils/anonymousCache'
+import {ProfileCache} from './civilServant/profileCache'
 
 import {AgencyToken, OrganisationalUnit, User} from '../../model'
 import * as csrsService from './csrsService'
@@ -39,8 +39,14 @@ describe('CsrsService tests', () => {
 		interestCache = sandbox.createStubInstance(AnonymousCache)
 		organisationalUnitClientStub = sandbox.stub(organisationalUnitClient)
 		user = sandbox.createStubInstance(User)
-		csrsService.setCaches(orgUnitCache as any, orgTypeaheadCache as any, csrsProfileCache as any,
-			gradeCache as any, areaOfWorkCache as any, interestCache as any)
+		csrsService.setCaches(
+			orgUnitCache as any,
+			orgTypeaheadCache as any,
+			csrsProfileCache as any,
+			gradeCache as any,
+			areaOfWorkCache as any,
+			interestCache as any
+		)
 	})
 
 	afterEach(() => {
@@ -92,7 +98,9 @@ describe('CsrsService tests', () => {
 			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
 			organisationalUnit.id = 1
 
-			organisationalUnitClientStub.getOrganisationalUnit.withArgs(1, {includeParents: false}).resolves(organisationalUnit)
+			organisationalUnitClientStub.getOrganisationalUnit
+				.withArgs(1, {includeParents: false})
+				.resolves(organisationalUnit)
 
 			orgUnitCache.get.withArgs(1).resolves(undefined)
 			const result = await csrsService.getOrganisation(user, 1)
@@ -111,7 +119,9 @@ describe('CsrsService tests', () => {
 			organisationalUnit.parentId = 2
 			organisationalUnit.parent = parentOrganisationalUnit
 
-			organisationalUnitClientStub.getOrganisationalUnit.withArgs(1, {includeParents: true}).resolves(organisationalUnit)
+			organisationalUnitClientStub.getOrganisationalUnit
+				.withArgs(1, {includeParents: true})
+				.resolves(organisationalUnit)
 
 			orgUnitCache.get.withArgs(1).resolves(undefined)
 			const result = await csrsService.getOrganisation(user, 1, true)
@@ -145,9 +155,7 @@ describe('CsrsService tests', () => {
 			child.parent = parent
 
 			orgUnitCache.get.withArgs(3).resolves(undefined)
-			organisationalUnitClientStub.getOrganisationalUnit
-				.withArgs(3, {includeParents: true}, user)
-				.resolves(child)
+			organisationalUnitClientStub.getOrganisationalUnit.withArgs(3, {includeParents: true}, user).resolves(child)
 
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
@@ -159,9 +167,7 @@ describe('CsrsService tests', () => {
 			parent.parent = grandparent
 
 			orgUnitCache.get.withArgs(3).resolves(child)
-			organisationalUnitClientStub.getOrganisationalUnit
-				.withArgs(2, {includeParents: true}, user)
-				.resolves(parent)
+			organisationalUnitClientStub.getOrganisationalUnit.withArgs(2, {includeParents: true}, user).resolves(parent)
 
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])

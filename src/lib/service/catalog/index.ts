@@ -1,10 +1,10 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, {AxiosInstance} from 'axios'
 import * as https from 'https'
-import * as axiosLogger from 'lib/axiosLogger'
-import * as config from 'lib/config'
-import { getLogger } from 'lib/logger'
-import * as model from 'lib/model'
-import * as api from 'lib/service/catalog/api'
+import * as axiosLogger from '../../../lib/axiosLogger'
+import * as config from '../../../lib/config'
+import * as model from '../../../lib/model'
+import * as api from '../../../lib/service/catalog/api'
+import {getLogger} from '../../logger'
 import * as courseCatalogueClient from './courseCatalogueClient'
 
 const logger = getLogger('catalog')
@@ -95,12 +95,10 @@ export async function findRequiredLearning(
 	departmentHierarchyCodes: string[]
 ): Promise<api.PageResults> {
 	try {
-
-		const response = await http.get(
-			`/courses?mandatory=true&department=${departmentHierarchyCodes}`,
-			{headers: {Authorization: `Bearer ${user.accessToken}`}}
-		)
-		return await convertNew(response.data, user, departmentHierarchyCodes) as api.PageResults
+		const response = await http.get(`/courses?mandatory=true&department=${departmentHierarchyCodes}`, {
+			headers: {Authorization: `Bearer ${user.accessToken}`},
+		})
+		return (await convertNew(response.data, user, departmentHierarchyCodes)) as api.PageResults
 	} catch (e) {
 		throw new Error(`Error finding required learning - ${e}`)
 	}

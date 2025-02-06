@@ -1,15 +1,13 @@
 import _ = require('lodash')
 
 import * as express from 'express'
-import {ResourceNotFoundError} from 'lib/exception/ResourceNotFoundError'
-import * as extended from 'lib/extended'
-import * as learnerRecord from 'lib/learnerrecord'
-import { getLogger } from 'lib/logger'
-import * as model from 'lib/model'
-import {bookEvent, completeEventBooking, skipEventBooking} from 'lib/service/cslService/cslServiceClient'
-import {createBookEventDto} from 'lib/service/cslService/models/factory/BookEventDtoFactory'
-import * as template from 'lib/ui/template'
-import * as courseController from '../course/index'
+import {ResourceNotFoundError} from '../../../lib/exception/ResourceNotFoundError'
+import * as extended from '../../../lib/extended'
+import * as learnerRecord from '../../../lib/learnerrecord'
+import {getLogger} from '../../../lib/logger'
+import {bookEvent, completeEventBooking, skipEventBooking} from '../../../lib/service/cslService/cslServiceClient'
+import {createBookEventDto} from '../../../lib/service/cslService/models/factory/BookEventDtoFactory'
+import * as template from '../../../lib/ui/template'
 
 const logger = getLogger('controllers/booking')
 const PURCHASE_ORDER: string = 'PURCHASE_ORDER'
@@ -39,7 +37,6 @@ export function recordCheck(record: learnerRecord.CourseRecord | null, ireq: exp
 export function saveAccessibilityOptions(ireq: express.Request, res: express.Response) {
 	const session = ireq.session!
 	const req = ireq as extended.CourseRequest
-	const user = req.user as model.User
 
 	const requirements: string[] = []
 
@@ -57,8 +54,6 @@ export function saveAccessibilityOptions(ireq: express.Request, res: express.Res
 	let {returnTo} = ireq.session!
 	if (returnTo) {
 		delete ireq.session!.returnTo
-	} else if (!user.organisationalUnit || !user.lineManager) {
-		returnTo = '/profile'
 	} else if (req.module!.cost === 0) {
 		session.payment = {
 			type: '',
@@ -128,7 +123,6 @@ export async function renderChooseDate(ireq: express.Request, res: express.Respo
 		template.render('booking/choose-date', req, res, {
 			accessibilityReqs: req.session!.accessibilityReqs,
 			course,
-			courseDetails: courseController.getCourseDetails(req, course, module),
 			errorMessage: req.flash('errorMessage')[0],
 			errorTitle: req.flash('errorTitle')[0],
 			events,
@@ -225,7 +219,6 @@ export async function renderConfirmPayment(ireq: express.Request, res: express.R
 		template.render('booking/summary', req, res, {
 			accessibilityReqs,
 			course,
-			courseDetails: courseController.getCourseDetails(req, course, module),
 			event,
 			module,
 			payment: session.payment,
@@ -322,7 +315,7 @@ export async function trySkipBooking(req: express.Request, res: express.Response
 		const response = await skipEventBooking(req.params.courseId, req.params.moduleId, req.params.eventId, req.user)
 		req.flash('successTitle', req.__('learning_skipped_title', response.courseTitle))
 		req.flash('successMessage', req.__('learning_skipped_from_plan_message', response.courseTitle))
-	} catch (e) {
+	} catch {
 		return res.sendStatus(400)
 	}
 
@@ -334,7 +327,7 @@ export async function trySkipBooking(req: express.Request, res: express.Response
 export async function tryMoveBooking(req: express.Request, res: express.Response) {
 	try {
 		await completeEventBooking(req.params.courseId, req.params.moduleId, req.params.eventId, req.user)
-	} catch (e) {
+	} catch {
 		return res.sendStatus(400)
 	}
 
@@ -378,8 +371,13 @@ export async function tryCompleteBooking(req: express.Request, res: express.Resp
 	let bookingTitle = null
 
 	try {
-		const response = await bookEvent(req.params.courseId, req.params.moduleId,
-			req.params.eventId, req.user, bookEventDto)
+		const response = await bookEvent(
+			req.params.courseId,
+			req.params.moduleId,
+			req.params.eventId,
+			req.user,
+			bookEventDto
+		)
 		bookingTitle = response.moduleTitle
 	} catch (e) {
 		if (e instanceof ResourceNotFoundError) {

@@ -1,6 +1,6 @@
-import { Type } from 'class-transformer'
+import {Type} from 'class-transformer'
 
-import { Record, RecordState } from '../../models/record'
+import {Record, RecordState} from '../../models/record'
 
 export enum ModuleRecordResult {
 	Failed = 'FAILED',

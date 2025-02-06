@@ -1,4 +1,4 @@
-import { BookingStatus } from "../moduleRecord/models/moduleRecord"
+import {BookingStatus} from '../moduleRecord/models/moduleRecord'
 
 export enum RecordState {
 	Null = '',

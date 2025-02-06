@@ -1,15 +1,15 @@
 import {expect} from 'chai'
-import {OrganisationalUnit} from 'lib/model'
-import * as csrsService from 'lib/service/civilServantRegistry/csrsService'
-import {OrganisationalUnitTypeAhead} from 'lib/service/civilServantRegistry/models/organisationalUnitTypeAhead'
-import * as template from 'lib/ui/template'
 import * as sinon from 'sinon'
 import {mockReq, mockRes} from 'sinon-express-mock'
+import {OrganisationalUnit} from '../../../../lib/model'
+import * as csrsService from '../../../../lib/service/civilServantRegistry/csrsService'
+import {OrganisationalUnitTypeAhead} from '../../../../lib/service/civilServantRegistry/models/organisationalUnitTypeAhead'
+import * as template from '../../../../lib/ui/template'
 import {PageBehaviour} from './common'
 import * as common from './common'
 import {selectOrganisationsMiddleware} from './organisation'
 
-describe("Organisation middleware tests", () => {
+describe('Organisation middleware tests', () => {
 	const org1 = new OrganisationalUnit()
 	org1.id = 1
 	const org2 = new OrganisationalUnit()
@@ -51,7 +51,7 @@ describe("Organisation middleware tests", () => {
 	afterEach(() => {
 		sandbox.restore()
 	})
-	it("Should update and redirect if there are no errors", async () => {
+	it('Should update and redirect if there are no errors', async () => {
 		await run(undefined, 1)
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)
@@ -61,7 +61,7 @@ describe("Organisation middleware tests", () => {
 		expect(patchStub.called).to.eq(false)
 		expect(generateRedirectStub.called).to.eq(true)
 	})
-	it("Should render the page with errors if there are errors", async () => {
+	it('Should render the page with errors if there are errors', async () => {
 		await run(undefined, undefined)
 		expect(patchStub.called).to.eq(false)
 		expect(generateRedirectStub.called).to.eq(false)

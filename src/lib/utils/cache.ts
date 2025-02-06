@@ -6,7 +6,10 @@ import {getLogger} from '../logger'
 
 export abstract class Cache<T> {
 	protected logger: Logger
-	constructor(protected readonly redisClient: ReturnType<typeof createClient>, protected readonly defaultTTL: number) {
+	constructor(
+		protected readonly redisClient: ReturnType<typeof createClient>,
+		protected readonly defaultTTL: number
+	) {
 		this.logger = getLogger('Cache')
 	}
 

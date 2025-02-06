@@ -1,0 +1,185 @@
+<Page title="Your profile" {_csrf}>
+    <div class="container">
+        <h1 class="heading-large">
+            <span class="heading-primary">Your profile</span>
+        </h1>
+        {#if updateSuccessful}
+            <Banner type="confirmation" customClass={'profile-banner'} message={$i18n('profile_updated')} />
+        {/if}
+        <div class="grid-row">
+            <div class="column-full">
+                <h2 class="heading heading-medium">
+                    Personal details
+                </h2>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_name_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {$signedInUser.givenName || ''}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/name">Change <span class="visuallyhidden"> your name</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_email_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {$signedInUser.userName}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/email">Change <span class="visuallyhidden"> your email address</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_password_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span aria-hidden="true">••••••••</span><span class="visuallyhidden">Password is hidden</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="{$config.AUTHENTICATION.serviceUrl}/account/password">Change <span
+                                    class="visuallyhidden"> your password</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+                <h2 class="heading heading-medium ">
+                    Job details
+                </h2>
+                <p class="govuk-body">Job details are required to help create suggestions for your learning</p>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_department_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {#if $signedInUser.organisationalUnit.name}
+                                {$signedInUser.organisationalUnit.name}
+                            {/if}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/organisation">Change <span class="visuallyhidden"> your organisation</span></a>
+                        </dd>
+                    </div>
+                
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_primary-area-of-work_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {#if $signedInUser.areaOfWork}
+                                {$signedInUser.areaOfWork.name}
+                            {/if}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/primary-area-of-work">Change <span class="visuallyhidden"> your primary area of work</span></a>
+                        </dd>
+                    </div>
+                
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_other-areas-of-work_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {#if $signedInUser.otherAreasOfWork}
+                                <ul>
+                                {#each $signedInUser.otherAreasOfWork as aow}
+                                    <li>
+                                        {aow === 'other' ? 'Other' : aow.name}
+                                    </li>
+                                {/each}
+                                </ul>
+                            {/if}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/other-areas-of-work">Change <span class="visuallyhidden"> your other areas of work</span></a>
+                        </dd>
+                    </div>
+                
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_interest_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {#if $signedInUser.interests && $signedInUser.interests.length > 0}
+                                <ul>
+                                {#each $signedInUser.interests as interest}
+                                    <li>
+                                        {interest.name}
+                                    </li>
+                                {/each}
+                                </ul>
+                            {:else}
+                                <div>No interests selected</div>
+                            {/if}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/interests">Change<span class="visuallyhidden"> your interests</span></a>
+                        </dd>
+                    </div>
+                
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_grade_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {#if $signedInUser.grade}
+                                {$signedInUser.grade ? $signedInUser.grade.name : '' }
+                            {/if}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/grade">Change
+                                <span class="visuallyhidden"> your grade</span>
+                            </a>
+                        </dd>
+                    </div>
+                
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            {$i18n('profile_line-manager_label')}
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {#if $signedInUser.lineManager && $signedInUser.lineManager.email}
+                                { $signedInUser.lineManager.email }
+                            {/if}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/profile/line-manager">Change
+                                <span class="visuallyhidden"> your line manager's email</span>
+                            </a>
+                        </dd>
+                    </div>
+                
+                    
+                </dl>
+
+
+            </div>
+        </div>
+    </div>
+</Page>
+<script>
+	import Page from '../../component/Page.html'
+	import Banner from '../../component/Banner.html'
+
+	export default {
+		data() {
+			return {
+			}
+		},
+
+		components: {
+			Page,
+			Banner
+		}
+	}
+</script>

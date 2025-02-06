@@ -1,8 +1,8 @@
 import {expect} from 'chai'
 import {plainToInstance} from 'class-transformer'
-import {Course, User} from 'lib/model'
-import {AreaOfWork} from 'lib/registry'
 import * as sinon from 'sinon'
+import {Course, User} from '../../../model'
+import {AreaOfWork} from '../../../registry'
 
 import * as courseCatalogueClient from '../../catalog/courseCatalogueClient'
 import * as courseRecordClient from '../../learnerRecordAPI/courseRecord/client'
