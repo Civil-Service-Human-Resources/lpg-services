@@ -77,7 +77,7 @@
 
 	var completeModule = function () {
 		var url =
-			'/api/video/complete?courseId=' + encodeURIComponent(courseId) + '&moduleId=' + encodeURIComponent(moduleId)
+			'/js/video/complete?courseId=' + encodeURIComponent(courseId) + '&moduleId=' + encodeURIComponent(moduleId)
 		var xhr = new XMLHttpRequest()
 		xhr.open('GET', url, true)
 		xhr.send()
