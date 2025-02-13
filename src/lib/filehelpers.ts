@@ -3,8 +3,11 @@ export function appropriateFileSize(fileSize: number): string {
 	const decimalPlaces = 2
 	const fileSizeUnits = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 	const fileSizeUnitIndex = Math.floor(Math.log(fileSize) / Math.log(sizeMultiple))
-
-	return parseFloat((fileSize / Math.pow(sizeMultiple, fileSizeUnitIndex)).toFixed(decimalPlaces)) + ' ' + fileSizeUnits[fileSizeUnitIndex]
+	return (
+		parseFloat((fileSize / Math.pow(sizeMultiple, fileSizeUnitIndex)).toFixed(decimalPlaces)) +
+		' ' +
+		fileSizeUnits[fileSizeUnitIndex]
+	)
 }
 
 export function extension(file: string): string {
