@@ -8,7 +8,7 @@ export class CourseSearchParams {
 							public size: number,
 							public status: string,
 							public visibility: string,
-							public searchTerm?: string,
+							public query?: string,
 							public areasOfWork?: string[],
 							public departments?: string[],
 							public interests?: string[],

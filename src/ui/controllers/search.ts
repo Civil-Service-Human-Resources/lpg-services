@@ -6,16 +6,6 @@ import * as template from '../../lib/ui/template'
 import {CourseSearchQuery} from './search/models/courseSearchQuery'
 import {searchForCourses} from './search/searchService'
 
-export interface SearchFilter {
-	label: string
-	dataRows: DataRow[]
-}
-
-export interface DataRow {
-	label: string
-	value: string
-}
-
 export async function search(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	const user = req.user
