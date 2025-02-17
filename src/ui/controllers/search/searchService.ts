@@ -12,7 +12,10 @@ import {FilterBox, OrgFilterBox, Pagination, PaginationNumberedPage, SearchPageM
 export async function searchForCourses(params: CourseSearchQuery, user: User) {
 	const searchQuery = buildParams(params)
 	const searchResults = await courseSearch(searchQuery, user)
-	const courseRecords = await courseRecordClient.getCourseRecords(searchResults.results.map(r => r.id), user)
+	const courseRecords = await courseRecordClient.getCourseRecords(
+		searchResults.results.map(r => r.id),
+		user
+	)
 
 	searchResults.results.forEach(result => {
 		const cmResult = result as Course
@@ -33,8 +36,16 @@ export async function searchForCourses(params: CourseSearchQuery, user: User) {
 
 	const pagination = getPagination(params, searchResults)
 
-	return new SearchPageModel(areasOfWorkData, departmentData, interestsData,
-		params.courseType, params.q, searchResults.results, pagination, params.cost)
+	return new SearchPageModel(
+		areasOfWorkData,
+		departmentData,
+		interestsData,
+		params.courseType,
+		params.q,
+		searchResults.results,
+		pagination,
+		params.cost
+	)
 }
 
 export function getPagination(params: CourseSearchQuery, searchResults: CourseSearchResponse): Pagination {
@@ -43,7 +54,7 @@ export function getPagination(params: CourseSearchQuery, searchResults: CourseSe
 	const numberedPages: PaginationNumberedPage[] = []
 	if (searchResults.totalResults > 0) {
 		const fePage = searchResults.page + 1
-		const pages = Math.ceil(searchResults.totalResults/searchResults.size)
+		const pages = Math.ceil(searchResults.totalResults / searchResults.size)
 		if (fePage > 1) {
 			prevLink = params.getAsUrlParams(fePage - 1)
 		}
@@ -65,12 +76,11 @@ export function getPagination(params: CourseSearchQuery, searchResults: CourseSe
 		nextLink,
 		prevLink,
 		numberedPages,
-		start: (searchResults.page*searchResults.size)+1,
-		end: (searchResults.page*searchResults.size)+searchResults.results.length,
-		total: searchResults.totalResults
+		start: searchResults.page * searchResults.size + 1,
+		end: searchResults.page * searchResults.size + searchResults.results.length,
+		total: searchResults.totalResults,
 	}
 }
-
 
 async function getDepartmentData(user: model.User, selectedDepartmentCodes: string[]): Promise<OrgFilterBox> {
 	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
@@ -80,7 +90,9 @@ async function getDepartmentData(user: model.User, selectedDepartmentCodes: stri
 	 * replicate the current functionality of only showing the first 20 departments, in order of
 	 * ID.
 	 */
-	const selectedDepartments: string[] = allDepartments.filter(o => selectedDepartmentCodes.includes(o.code)).map(o => o.code)
+	const selectedDepartments: string[] = allDepartments
+		.filter(o => selectedDepartmentCodes.includes(o.code))
+		.map(o => o.code)
 	const otherDepartments = allDepartments
 		.filter(department => department.code !== user.getOrganisationCode())
 		.sort((a, b) => a.id - b.id)

@@ -1,4 +1,3 @@
-// import {plainToInstance} from 'class-transformer'
 import {plainToInstance} from 'class-transformer'
 import * as express from 'express'
 import * as extended from '../../lib/extended'
@@ -11,7 +10,5 @@ export async function search(ireq: express.Request, res: express.Response) {
 	const user = req.user
 	const params = plainToInstance(CourseSearchQuery, req.query)
 	const pageModel = await searchForCourses(params, user)
-	res.send(
-		template.render('search', req, res, {...pageModel})
-	)
+	res.send(template.render('search', req, res, {...pageModel}))
 }

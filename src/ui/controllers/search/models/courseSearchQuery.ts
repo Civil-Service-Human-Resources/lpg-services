@@ -4,7 +4,7 @@ import {costType, typesType} from '../../../../lib/service/catalog/models/course
 
 function stringToArrayTransformer() {
 	return (params: TransformFnParams) => {
-		if (typeof params.value === "string") {
+		if (typeof params.value === 'string') {
 			return [params.value]
 		} else {
 			return [...params.value]
@@ -13,7 +13,6 @@ function stringToArrayTransformer() {
 }
 
 export class CourseSearchQuery {
-
 	@Transform(({value}) => {
 		return +value
 	})
@@ -52,6 +51,6 @@ export class CourseSearchQuery {
 		if (page) {
 			urlParts.push(`p=${page}`)
 		}
-		return "/search?" + urlParts.join("&")
+		return '/search?' + urlParts.join('&')
 	}
 }

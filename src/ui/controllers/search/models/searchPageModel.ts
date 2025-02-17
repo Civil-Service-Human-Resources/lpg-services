@@ -2,38 +2,37 @@ import {Course} from '../../../../lib/model'
 import {costType, typesType} from '../../../../lib/service/catalog/models/courseSearchParams'
 
 export interface FilterBox {
-	other: string[],
-	selected: string[],
+	other: string[]
+	selected: string[]
 	yours: string[]
 }
 
 export interface OrgPartial {
-	code: string,
+	code: string
 	name: string
 }
 
 export interface OrgFilterBox {
-	other: OrgPartial[],
-	selected: string[],
+	other: OrgPartial[]
+	selected: string[]
 	yours: OrgPartial
 }
 
 export interface PaginationNumberedPage {
-	number: number,
+	number: number
 	link?: string
 }
 
 export interface Pagination {
-	start: number,
-	end: number,
-	total: number,
-	prevLink?: string,
-	nextLink?: string,
+	start: number
+	end: number
+	total: number
+	prevLink?: string
+	nextLink?: string
 	numberedPages?: PaginationNumberedPage[]
 }
 
 export class SearchPageModel {
-
 	constructor(
 		public areasOfWork: FilterBox,
 		public departments: OrgFilterBox,
@@ -42,6 +41,6 @@ export class SearchPageModel {
 		public query: string,
 		public searchResults: Course[],
 		public pagination: Pagination,
-		public cost?: costType) { }
-
+		public cost?: costType
+	) {}
 }
