@@ -44,7 +44,7 @@ export class HttpClient {
 	constructor(readonly http: AxiosInstance) {}
 
 	async makeRawRequest<T>(req: AxiosRequestConfig, accessToken: string): Promise<T> {
-		const fullUrl = `${this.http.defaults.baseURL}${req.url}`
+		const fullUrl = `${this.http.defaults.baseURL}/${req.url}`
 		let logMsg = `${req.method} request to ${fullUrl}`
 		if (req.data) {
 			const stringedData = JSON.stringify(req.data)

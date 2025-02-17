@@ -1,4 +1,4 @@
-<Page title="Cancel Booking" {_csrf}>
+`<Page title="Cancel Booking" {_csrf}>
     <div class="container">
         <div class="grid-row">
             <div class="column-full">
@@ -31,7 +31,7 @@
                             <div class="div-table__th">Location</div>
                             <div class="div-table__th"><span class="visuallyhidden">Action</span></div>
                         </div>
-                      
+
                         <div class="div-table__row u-clearfix lpg-date-row">
                             <div class="div-table__cell lpg-date">{$datetime.formatDate(event.startDate)}</div>
 
@@ -39,20 +39,20 @@
                                 {$datetime.formatTime(event.startDate, true)} to {$datetime.formatTime(event.endDate, true)}
                             </div>
                             <div class="div-table__cell">{event.location}</div>
-                       
-                            <div class="div-table__cell div-table__cell--action">    
+
+                            <div class="div-table__cell div-table__cell--action">
                                 <div class="discite__status discite__status--home">
                                     <span class="badge badge--discite badge--info">{module.record.state ? $i18n(module.record.state) : ''}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <Selects {options} {optionType} inputName="cancel-reason" />
 
                     <BookingCancellationPolicy />
                     <TermsAndConditions />
-                
+
                     <div class="notice booking__notice push-bottom">
                     <i class="icon icon-important">
                         <span class="visually-hidden">Warning</span>
@@ -66,7 +66,7 @@
                         <input class="button" type="submit" value="Cancel Booking">
                         <input type="hidden" name="_csrf" value="{_csrf}">
                     </div>
-                </form>    
+                </form>
             </div>
         </div>
     </div>

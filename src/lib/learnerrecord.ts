@@ -1,6 +1,5 @@
 import axios from 'axios'
 import * as https from 'https'
-import * as query from 'querystring'
 import * as axiosLogger from './axiosLogger'
 import * as config from './config'
 import * as datetime from './datetime'
@@ -63,23 +62,6 @@ export async function getRecord(user: model.User, course: model.Course, module?:
 		return convert(record)
 	}
 	return null
-}
-
-export async function getRawLearningRecord(
-	user: model.User,
-	activityIds?: string[],
-	includeStates?: string[],
-	ignoreStates?: string[]
-): Promise<CourseRecord[]> {
-	const params = {
-		activityId: activityIds,
-		ignoreState: ignoreStates,
-		includeState: includeStates,
-	}
-	const response = await http.get(`/records/${user.id}?${query.stringify(params)}`, {
-		headers: {Authorization: `Bearer ${user.accessToken}`},
-	})
-	return response.data.records.map(convert)
 }
 
 function convert(record: CourseRecord) {
