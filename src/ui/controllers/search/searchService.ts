@@ -1,31 +1,25 @@
 import * as model from '../../../lib/model'
-import {Course, User} from '../../../lib/model'
+import {User} from '../../../lib/model'
 import {courseSearch} from '../../../lib/service/catalog/courseCatalogueClient'
 import {buildParams} from '../../../lib/service/catalog/models/courseSearchParams'
 import {CourseSearchResponse} from '../../../lib/service/catalog/models/courseSearchResponse'
 import {getAreasOfWork, getInterests} from '../../../lib/service/civilServantRegistry/csrsService'
 import * as csrsService from '../../../lib/service/civilServantRegistry/csrsService'
 import * as courseRecordClient from '../../../lib/service/learnerRecordAPI/courseRecord/client'
+import {CourseRecord} from '../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {CourseSearchQuery} from './models/courseSearchQuery'
 import {FilterBox, OrgFilterBox, Pagination, PaginationNumberedPage, SearchPageModel} from './models/searchPageModel'
 
 export async function searchForCourses(params: CourseSearchQuery, user: User) {
 	const searchQuery = buildParams(params)
 	const searchResults = await courseSearch(searchQuery, user)
-	const courseRecords = await courseRecordClient.getCourseRecords(
+	const courseRecords: Map<string, CourseRecord> = new Map((await courseRecordClient.getCourseRecords(
 		searchResults.results.map(r => r.id),
 		user
-	)
+	)).map((cr): [string, CourseRecord] => [cr.courseId, cr]))
 
-	searchResults.results.forEach(result => {
-		const cmResult = result as Course
-		delete cmResult.record
-
-		const courseRecord = courseRecords.find(record => cmResult.id === record.courseId)
-		if (courseRecord) {
-			// we have a course record add it to the course
-			cmResult.record = courseRecord
-		}
+	searchResults.results.forEach(course => {
+		course.record = courseRecords.get(course.id)
 	})
 
 	const [departmentData, areasOfWorkData, interestsData] = await Promise.all([
@@ -109,14 +103,11 @@ async function getDepartmentData(user: model.User, selectedDepartmentCodes: stri
 }
 
 async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[]): Promise<FilterBox> {
-	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList.filter(aow => aow.name !== "I don't know")
+	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList.filter(aow => aow.name !== "I don't know").map(aow => aow.name)
 
-	const userAreasOfWork = (user.otherAreasOfWork || [])
-		.map(aow => aow.name)
-		.concat((user.areaOfWork ? [user.areaOfWork] : []).map(aow => aow.name))
-
-	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.includes(aow.name)).map(aow => aow.name)
-	const otherAreasOfWork = allAreasOfWork.filter(aow => !yourAreasOfWork.includes(aow.name)).map(aow => aow.name)
+	const userAreasOfWork = user.getAllAreasOfWork().map(aow => aow.name)
+	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.includes(aow))
+	const otherAreasOfWork = allAreasOfWork.filter(aow => !yourAreasOfWork.includes(aow))
 
 	return {
 		other: otherAreasOfWork,
@@ -126,17 +117,11 @@ async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[
 }
 
 async function getInterestsData(user: model.User, selectedInterests: string[]): Promise<FilterBox> {
-	const allInterests = (await getInterests(user)).list
+	const allInterests = (await getInterests(user)).list.map(interest => interest.name)
 
 	const userInterests = (user.interests || []).map(interest => interest.name)
-
-	const yourInterests = allInterests
-		.filter(interest => userInterests.includes(interest.name))
-		.map(interest => interest.name)
-
-	const otherInterests = allInterests
-		.filter(interest => !yourInterests.includes(interest.name))
-		.map(interest => interest.name)
+	const yourInterests = allInterests.filter(interest => userInterests.includes(interest))
+	const otherInterests = allInterests.filter(interest => !yourInterests.includes(interest))
 
 	return {
 		other: otherInterests,
