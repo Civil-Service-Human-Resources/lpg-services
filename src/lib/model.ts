@@ -983,6 +983,18 @@ export class User implements CSLUser {
 		return this.areaOfWork ? this.areaOfWork.id : undefined
 	}
 
+	getAreaOfWorkName() {
+		return this.areaOfWork ? this.areaOfWork.name : undefined
+	}
+
+	getAllAreasOfWork() {
+		const aow = this.otherAreasOfWork || []
+		if (this.areaOfWork) {
+			aow.push(this.areaOfWork)
+		}
+		return aow
+	}
+
 	hasLineManager() {
 		return this.lineManager !== undefined
 	}

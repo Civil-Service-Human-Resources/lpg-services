@@ -74,7 +74,9 @@ export async function search(
 			url += `&profileInterests=${user.interests.join('&profileInterests=')}`
 		}
 
+
 		const response = await http.get(url, {headers: {Authorization: `Bearer ${user.accessToken}`}})
+		console.log(response.data)
 		return convertToMixed(response.data, user) as api.SearchResults
 	} catch (e) {
 		if (e.response && e.response.status === 400) {

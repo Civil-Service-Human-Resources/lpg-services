@@ -21,7 +21,7 @@
 	"include": ["src/**/*"],
 	"references": [
 		{
-			"path": "./tsconfig.test.json"
+			"path": "./config/tsconfig.test.json"
 		}
 	]
 }
