@@ -7,6 +7,17 @@ export interface FilterBox {
 	yours: string[]
 }
 
+export interface OrgPartial {
+	code: string,
+	name: string
+}
+
+export interface OrgFilterBox {
+	other: OrgPartial[],
+	selected: string[],
+	yours: OrgPartial
+}
+
 export interface PaginationNumberedPage {
 	number: number,
 	link?: string
@@ -25,7 +36,7 @@ export class SearchPageModel {
 
 	constructor(
 		public areasOfWork: FilterBox,
-		public departments: FilterBox,
+		public departments: OrgFilterBox,
 		public interests: FilterBox,
 		public courseTypes: typesType[],
 		public query: string,

@@ -7,7 +7,7 @@ import {getAreasOfWork, getInterests} from '../../../lib/service/civilServantReg
 import * as csrsService from '../../../lib/service/civilServantRegistry/csrsService'
 import * as courseRecordClient from '../../../lib/service/learnerRecordAPI/courseRecord/client'
 import {CourseSearchQuery} from './models/courseSearchQuery'
-import {FilterBox, Pagination, PaginationNumberedPage, SearchPageModel} from './models/searchPageModel'
+import {FilterBox, OrgFilterBox, Pagination, PaginationNumberedPage, SearchPageModel} from './models/searchPageModel'
 
 export async function searchForCourses(params: CourseSearchQuery, user: User) {
 	const searchQuery = buildParams(params)
@@ -72,23 +72,27 @@ export function getPagination(params: CourseSearchQuery, searchResults: CourseSe
 }
 
 
-async function getDepartmentData(user: model.User, selectedDepartments: string[]): Promise<FilterBox> {
+async function getDepartmentData(user: model.User, selectedDepartmentCodes: string[]): Promise<OrgFilterBox> {
 	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
-	const yourDepartment = allDepartments.find(department => department.code === user.getOrganisationCode())
+	const yourDepartment = user.organisationalUnit!
 	/**
 	 * NOTE: 20221117 - the code below will sort/slice the department list based on ID. This is to
 	 * replicate the current functionality of only showing the first 20 departments, in order of
 	 * ID.
 	 */
+	const selectedDepartments: string[] = allDepartments.filter(o => selectedDepartmentCodes.includes(o.code)).map(o => o.code)
 	const otherDepartments = allDepartments
 		.filter(department => department.code !== user.getOrganisationCode())
 		.sort((a, b) => a.id - b.id)
 		.slice(0, 20)
+		.map(o => {
+			return {code: o.code, name: o.name}
+		})
 
 	return {
-		other: otherDepartments.map(o => o.code),
+		other: otherDepartments,
 		selected: selectedDepartments,
-		yours: yourDepartment ? [yourDepartment.code] : [],
+		yours: {code: yourDepartment.code, name: yourDepartment.name},
 	}
 }
 

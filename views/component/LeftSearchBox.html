@@ -38,12 +38,10 @@
                 <legend>
                     <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Your department</h2>
                 </legend>
-                {#each departments.yours as filter}
                 <div class="multiple-choice">
-                    <input type="checkbox" value="{filter.code}" name="department" id="{filter.code}" checked="{departments.selected.indexOf(filter.code) > -1 ? 'checked' : ''}" >
-                    <label for="{filter.code}">{filter.name}</label>
+                    <input type="checkbox" value="{departments.yours.code}" name="department" id="{departments.yours.code}" checked="{departments.selected.indexOf(departments.yours.code) > -1 ? 'checked' : ''}" >
+                    <label for="{departments.yours.code}">{departments.yours.name}</label>
                 </div>
-                {/each}
             </fieldset>
         </div>
 

@@ -20,7 +20,7 @@ export class CourseSearchParams {
 export function buildParams(query: CourseSearchQuery) {
 	const page = query.p === 0 ? query.p : query.p - 1
 	return new CourseSearchParams(
-		page, 10, 'Published', 'PUBLIC',
+		page, 10, 'PUBLISHED', 'PUBLIC',
 		query.q, query.areaOfWork, query.department, query.interest, query.cost, query.courseType
 	)
 }
