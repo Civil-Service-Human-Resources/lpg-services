@@ -13,10 +13,14 @@ import {FilterBox, OrgFilterBox, Pagination, PaginationNumberedPage, SearchPageM
 export async function searchForCourses(params: CourseSearchQuery, user: User) {
 	const searchQuery = buildParams(params)
 	const searchResults = await courseSearch(searchQuery, user)
-	const courseRecords: Map<string, CourseRecord> = new Map((await courseRecordClient.getCourseRecords(
-		searchResults.results.map(r => r.id),
-		user
-	)).map((cr): [string, CourseRecord] => [cr.courseId, cr]))
+	const courseRecords: Map<string, CourseRecord> = new Map(
+		(
+			await courseRecordClient.getCourseRecords(
+				searchResults.results.map(r => r.id),
+				user
+			)
+		).map((cr): [string, CourseRecord] => [cr.courseId, cr])
+	)
 
 	searchResults.results.forEach(course => {
 		course.record = courseRecords.get(course.id)
@@ -103,7 +107,9 @@ async function getDepartmentData(user: model.User, selectedDepartmentCodes: stri
 }
 
 async function getAreasOfWorkData(user: model.User, selectedAreasOfWork: string[]): Promise<FilterBox> {
-	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList.filter(aow => aow.name !== "I don't know").map(aow => aow.name)
+	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList
+		.filter(aow => aow.name !== "I don't know")
+		.map(aow => aow.name)
 
 	const userAreasOfWork = user.getAllAreasOfWork().map(aow => aow.name)
 	const yourAreasOfWork = allAreasOfWork.filter(aow => userAreasOfWork.includes(aow))

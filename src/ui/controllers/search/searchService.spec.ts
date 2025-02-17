@@ -8,7 +8,7 @@ import {getPagination} from './searchService'
 describe('searchService tests', () => {
 	describe('getPagination tests', () => {
 		const params = new CourseSearchQuery()
-		params.q = "query"
+		params.q = 'query'
 		const searchResults = new CourseSearchResponse()
 		it('Should render 1 page with no prev/next links', () => {
 			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
