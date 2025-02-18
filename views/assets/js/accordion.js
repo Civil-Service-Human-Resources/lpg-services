@@ -1,8 +1,8 @@
 let filterToggleClass = 'filter-toggle'
 let filterHeadingsClass = 'filter-headings'
 let toggleShutClass = 'filter-toggle--shut'
-let showThisSection = ". Show this section"
-let hideThisSection = ". Hide this section"
+let showThisSection = '. Show this section'
+let hideThisSection = '. Hide this section'
 
 let filterToggles = document.getElementsByClassName(filterToggleClass)
 function close(toggle, button) {
@@ -27,8 +27,7 @@ for (let i = 0; i < filterToggles.length; i++) {
 		filterToggleBtn.addEventListener('click', function (e) {
 			e.preventDefault()
 			let closed =
-				filterToggle.classList.contains(toggleShutClass) &&
-				filterToggleBtn.getAttribute('aria-expanded') === 'false'
+				filterToggle.classList.contains(toggleShutClass) && filterToggleBtn.getAttribute('aria-expanded') === 'false'
 			if (closed) {
 				open(filterToggle, filterToggleBtn)
 			} else {

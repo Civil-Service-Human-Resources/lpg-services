@@ -1,3 +1,4 @@
 build
 **/*.json
 views/assets/js/govuk_frontend_toolkit
+views/assets/js/**.min.js

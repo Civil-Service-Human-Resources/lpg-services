@@ -1,4 +1,4 @@
-const accessibleAutocomplete = require("./accessible-autocomplete.min")
+const accessibleAutocomplete = require('./accessible-autocomplete.min')
 
 var selectEl = document.querySelector('.type-ahead')
 if (selectEl) {
