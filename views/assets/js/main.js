@@ -29,7 +29,8 @@ $(document).ready(function () {
 			filterToggleBtn.addEventListener('click', function (e) {
 				e.preventDefault()
 				console.log(e)
-				let closed = filterToggle.classList.contains('filter-toggle--shut') &&
+				let closed =
+					filterToggle.classList.contains('filter-toggle--shut') &&
 					filterToggleBtn.getAttribute('aria-expanded') === 'false'
 				if (closed) {
 					filterToggle.classList.remove('filter-toggle--shut')
