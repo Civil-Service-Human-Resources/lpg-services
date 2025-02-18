@@ -8,39 +8,33 @@
         <div class="lpg-related-items form-group govuk-related-items--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Learning type</h2>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-learning-type" aria-expanded="true" aria-label="Learning type. Hide this section" tabindex="0">Learning type</button>
+                    </h2>
                 </legend>
-                {#each Object.entries($i18n('courseTypes')) as filter}
-                    <div class="multiple-choice">
-                        <input type="checkbox" value="{filter[0]}" name="courseType" id="{filter[0]}"  checked="{(courseTypes || []).indexOf(filter[0]) > -1 ? 'checked' : ''}" >
-                        <label for="{filter[0]}">{filter[1]}</label>
-                    </div>
-                {/each}
+                <div id="accordion-learning-type">
+                    {#each Object.entries($i18n('courseTypes')) as filter}
+                        <div class="multiple-choice">
+                            <input type="checkbox" value="{filter[0]}" name="courseType" id="{filter[0]}"  checked="{(courseTypes || []).indexOf(filter[0]) > -1 ? 'checked' : ''}" >
+                            <label for="{filter[0]}">{filter[1]}</label>
+                        </div>
+                    {/each}
+                </div>
             </fieldset>
         </div>
 
         <div class="lpg-related-items govuk-related-items--flush form-group  govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
-
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Cost</h2>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-cost" aria-expanded="true" aria-label="Cost. Hide this section" tabindex="0">Cost</button>
+                    </h2>
                 </legend>
-
-                <div class="multiple-choice">
+                <div id="accordion-cost">
+                    <div class="multiple-choice">
                         <input id="cost" type="checkbox" name="cost" value="free" checked="{(cost || []).indexOf('free') > -1 ? 'checked' : ''}"  >
                         <label for="cost">Show only free</label>
                     </div>
-            </fieldset>
-        </div>
-
-        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
-            <fieldset>
-                <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Your department</h2>
-                </legend>
-                <div class="multiple-choice">
-                    <input type="checkbox" value="{departments.yours.code}" name="department" id="{departments.yours.code}" checked="{departments.selected.indexOf(departments.yours.code) > -1 ? 'checked' : ''}" >
-                    <label for="{departments.yours.code}">{departments.yours.name}</label>
                 </div>
             </fieldset>
         </div>
@@ -48,70 +42,106 @@
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Other departments</h2>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-your-department" aria-expanded="true" aria-label="Your department. Hide this section" tabindex="0">Your department</button>
+                    </h2>
                 </legend>
-                {#each departments.other as filter}
-                <div class="multiple-choice">
-                    <input type="checkbox" value="{filter.code}" name="department" id="{filter.code}" checked="{departments.selected.indexOf(filter.code) > -1 ? 'checked' : ''}" >
-                    <label for="{filter.code}">{filter.name}</label>
+                <div id="accordion-your-department">
+                    <div class="multiple-choice">
+                        <input type="checkbox" value="{departments.yours.code}" name="department" id="{departments.yours.code}" checked="{departments.selected.indexOf(departments.yours.code) > -1 ? 'checked' : ''}" >
+                        <label for="{departments.yours.code}">{departments.yours.name}</label>
+                    </div>
                 </div>
-                {/each}
             </fieldset>
         </div>
 
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Your areas of work</h2>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-other-departments" aria-expanded="true" aria-label="Other departments. Hide this section" tabindex="0">Other departments</button>
+                    </h2>
                 </legend>
-                {#each areasOfWork.yours as filter}
-                <div class="multiple-choice">
-                    <input type="checkbox" value="{filter}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
-                    <label for="{filter}">{filter}</label>
+                <div id="accordion-other-departments">
+                    {#each departments.other as filter}
+                        <div class="multiple-choice">
+                            <input type="checkbox" value="{filter.code}" name="department" id="{filter.code}" checked="{departments.selected.indexOf(filter.code) > -1 ? 'checked' : ''}" >
+                            <label for="{filter.code}">{filter.name}</label>
+                        </div>
+                    {/each}
                 </div>
-                {/each}
             </fieldset>
         </div>
 
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Other areas of work</h2>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-your-areas-of-work" aria-expanded="true" aria-label="Your areas of work. Hide this section" tabindex="0">Your areas of work</button>
+                    </h2>
                 </legend>
-                {#each areasOfWork.other as filter}
-                <div class="multiple-choice">
-                    <input type="checkbox" value="{filter}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
-                    <label for="{filter}">{filter}</label>
+                <div id="accordion-your-areas-of-work">
+                    {#each areasOfWork.yours as filter}
+                        <div class="multiple-choice">
+                            <input type="checkbox" value="{filter}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                            <label for="{filter}">{filter}</label>
+                        </div>
+                    {/each}
                 </div>
-                {/each}
             </fieldset>
         </div>
 
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Your interests</h2>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-other-areas-of-work" aria-expanded="true" aria-label="Other areas of work. Hide this section" tabindex="0">Other areas of work</button>
+                    </h2>
                 </legend>
-                {#each interests.yours as filter}
-                <div class="multiple-choice">
-                    <input type="checkbox" value="{filter}" name="interest" id="{filter}" checked="{interests.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
-                    <label for="{filter}">{filter}</label>
+                <div id="accordion-other-areas-of-work">
+                    {#each areasOfWork.other as filter}
+                        <div class="multiple-choice">
+                            <input type="checkbox" value="{filter}" name="areaOfWork" id="{filter}" checked="{areasOfWork.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                            <label for="{filter}">{filter}</label>
+                        </div>
+                    {/each}
                 </div>
-                {/each}
             </fieldset>
         </div>
 
         <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
             <fieldset>
                 <legend>
-                    <h2 class="govuk-related-items__heading heading-small filter-headings" tabindex="0">Other interests</h2>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-your-interests" aria-expanded="true" aria-label="Your interests. Hide this section" tabindex="0">Your interests</button>
+                    </h2>
                 </legend>
-                {#each interests.other as filter}
-                <div class="multiple-choice">
-                    <input type="checkbox" value="{filter}" name="interest" id="{filter}" checked="{interests.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
-                    <label for="{filter}">{filter}</label>
+                <div id="accordion-your-interests">
+                    {#each interests.yours as filter}
+                        <div class="multiple-choice">
+                            <input type="checkbox" value="{filter}" name="interest" id="{filter}" checked="{interests.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                            <label for="{filter}">{filter}</label>
+                        </div>
+                    {/each}
                 </div>
-                {/each}
+            </fieldset>
+        </div>
+
+        <div class="lpg-related-items govuk-related-items--flush form-group govuk-related-items--keylined govuk-related-items--keylined--search leftSearchBox filter-toggle">
+            <fieldset>
+                <legend>
+                    <h2 class="govuk-related-items__heading">
+                        <button class="filter-headings" type="button" aria-controls="accordion-other-interests" aria-expanded="true" aria-label="Other interests. Hide this section" tabindex="0">Other interests</button>
+                    </h2>
+                </legend>
+                <div id="accordion-other-interests">
+                    {#each interests.other as filter}
+                        <div class="multiple-choice">
+                            <input type="checkbox" value="{filter}" name="interest" id="{filter}" checked="{interests.selected.indexOf(filter) > -1 ? 'checked' : ''}" >
+                            <label for="{filter}">{filter}</label>
+                        </div>
+                    {/each}
+                </div>
             </fieldset>
         </div>
 

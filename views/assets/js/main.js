@@ -15,16 +15,32 @@ $(document).ready(function () {
 		})
 	}
 
-	$('.filter-toggle').not(':has(input[checked])').addClass('filter-toggle--shut')
+	let filterToggles = document.getElementsByClassName('filter-toggle')
+	for (let i = 0; i < filterToggles.length; i++) {
+		let filterToggle = filterToggles[i]
+		let filterToggleBtn = filterToggle.getElementsByClassName('filter-headings')[0]
+		if (filterToggleBtn) {
+			let anyChecked = filterToggle.querySelectorAll('input[type="checkbox"]:checked').length > 0
+			if (!anyChecked) {
+				filterToggle.classList.add('filter-toggle--shut')
+				filterToggleBtn.setAttribute('aria-expanded', 'false')
+			}
 
-	$('.filter-toggle legend').click(function (e) {
-		e.preventDefault()
-		$(this).parents('.filter-toggle').toggleClass('filter-toggle--shut')
-	})
-	$('.filter-toggle legend').on('keypress', function (e) {
-		e.preventDefault()
-		$(this).parents('.filter-toggle').toggleClass('filter-toggle--shut')
-	})
+			filterToggleBtn.addEventListener('click', function (e) {
+				e.preventDefault()
+				console.log(e)
+				let closed = filterToggle.classList.contains('filter-toggle--shut') &&
+					filterToggleBtn.getAttribute('aria-expanded') === 'false'
+				if (closed) {
+					filterToggle.classList.remove('filter-toggle--shut')
+					filterToggleBtn.setAttribute('aria-expanded', 'true')
+				} else {
+					filterToggle.classList.add('filter-toggle--shut')
+					filterToggleBtn.setAttribute('aria-expanded', 'false')
+				}
+			})
+		}
+	}
 })
 
 function getCookie(cname) {
