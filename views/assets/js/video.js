@@ -146,7 +146,7 @@
 	if (youTubePlayer) {
 		window.onYouTubeIframeAPIReady = readyFunction
 	} else {
-		$(document).ready(function () {
+		window.addEventListener('DOMContentLoaded', () => {
 			readyFunction()
 		})
 	}
