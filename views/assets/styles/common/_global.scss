@@ -158,6 +158,20 @@ input:focus, textarea:focus, select:focus, button:focus, .button:focus {
 			cursor: pointer;
 		}
 	}
+	&:focus {
+		outline: 3px solid transparent!important;
+		background: #fd0;
+		color: $black;
+		box-shadow: 0 2px 0 $black;
+		&:hover {
+			outline: 3px solid #fd0!important;
+			box-shadow: none;
+		}
+	}
+	&:hover {
+		background-color: $green;
+		color: $white;
+	}
 }
 
 .button-container {

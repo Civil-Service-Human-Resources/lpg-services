@@ -8,8 +8,8 @@
     {/if}
     {#each options as option}
         <div class="multiple-choice">
-            <input id="{option.name}" type="radio" name="{inputName}" value="{option.id}" checked="{option.checked ? 'checked' : ''}">
-            <label for="{option.name}">{option.name}</label>
+            <input id="{inputName}-{option.id}" type="radio" name="{inputName}" value="{option.id}" checked="{option.checked ? 'checked' : ''}">
+            <label for="{inputName}-{option.id}">{option.name}</label>
         </div>
     {/each}
 </fieldset>
