@@ -18,7 +18,7 @@
             <div class="column-two-thirds">
                 <div class="resources">
                     {#if searchResults && searchResults.length}
-                        <p class="lede search-lede">
+                        <p class="lede search-lede" role="status">
                             { $req.__n('%s result', pagination.total) } found
                         </p>
                         {#each searchResults as result}
