@@ -3,7 +3,7 @@
  
 ## Purpose
 
-LPG-UI (previously called lpg-services when the project was a monolithic application) is the NodeJS/Express/GOV.UK Frontend based web application that forms the main website for regular users of the Learning Platform for Government application.
+LPG-UI (previously called lpg-services when the project was a monolithic application) is the NodeJS/Express/GOV.UK Frontend based web application that forms the main website for regular users of the Civil Service Learning application.
 
 This app hosts the main homepage of the website, redirects users to the management and identity-management areas, acts as a client of backend APIs such as CSRS, Learning Record and Learning Catalogue, and shows the course content uploaded by learning admins.
 
