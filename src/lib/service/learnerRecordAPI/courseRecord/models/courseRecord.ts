@@ -150,4 +150,8 @@ export class CourseRecord extends Record implements CourseRcd {
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {
 		this.modules = moduleRecords.map(m => plainToClass(ModuleRecord, m as ModuleRecord))
 	}
+
+	public findEventModuleRecord = (eventId: string) => {
+		return this.modules.find(mr => mr.eventId === eventId)
+	}
 }

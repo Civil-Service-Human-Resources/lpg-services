@@ -1,6 +1,5 @@
 import * as express from 'express'
 import * as extended from '../../../lib/extended'
-import * as learnerRecord from '../../../lib/learnerrecord'
 import {getLogger} from '../../../lib/logger'
 import {Course} from '../../../lib/model'
 import * as catalog from '../../../lib/service/catalog'
@@ -19,7 +18,7 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 	try {
 		const course = req.course
 		const module = req.module!
-		const courseRecord = await learnerRecord.getRecord(req.user, course, module)
+		const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
 		let moduleRecord = null
 
 		if (courseRecord && courseRecord.modules) {
