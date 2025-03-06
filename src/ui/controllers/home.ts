@@ -10,6 +10,8 @@ import * as template from '../../lib/ui/template'
 
 import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
+import { updateStatusForCancelledEventsInCourseRecord } from '../../lib/service/learnerRecordAPI/event/service'
+import { BookingStatus } from '../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 
 const logger = getLogger('controllers/home')
 
@@ -74,7 +76,10 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
 
-		const plannedLearningRecords = getLearningPlanRecords(courseRecordMap)
+		let plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
+
+		plannedLearningRecords = await Promise.all(plannedLearningRecords.map(async(courseRecord) => await updateStatusForCancelledEventsInCourseRecord(courseRecord, user, RecordState.Unregistered)))
+				
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {
 			const learningPlanCourseIds = plannedLearningRecords.map(cr => cr.courseId)
@@ -84,8 +89,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 					plannedLearning.push(course)
 				}
 			}
-		}
-
+		}				
+		
 		let removeCourseId
 		let confirmTitle
 		let confirmMessage
