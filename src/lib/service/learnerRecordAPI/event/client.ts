@@ -11,6 +11,6 @@ export async function getEventsByUids(eventUids: string[], user: model.User): Pr
         },
         user
     )
-    
+
     return response
 }

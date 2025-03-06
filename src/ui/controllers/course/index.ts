@@ -46,8 +46,8 @@ export async function displayModule(ireq: express.Request, res: express.Response
 export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const pageModel = await getCoursePage(req.user, req.course)	
-	
+	const pageModel = await getCoursePage(req.user, req.course)
+
 	pageModel.backLink = res.locals.backLink
 	return res.render(`course/${pageModel.template}.njk`, {pageModel})
 }

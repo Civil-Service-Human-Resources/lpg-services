@@ -580,7 +580,7 @@ export class Module {
 	getDisplayState(
 		moduleRecord: ModuleRecord | undefined | null,
 		audience: RequiredRecurringAudience | undefined | null
-	) {		
+	) {
 		let state: string | null = null
 		if (moduleRecord) {
 			if (this.type !== ModuleType.FACE_TO_FACE) {

@@ -7,7 +7,7 @@ import { BookingStatus } from "../moduleRecord/models/moduleRecord";
 
 export async function updateStatusForCancelledEventsInCourseRecord(courseRecord: CourseRecord, user: User, statusForCancelledEvents: RecordState | BookingStatus) {
     const eventIds = getEventIdsFromCourseRecord(courseRecord)
-    
+
     if(eventIds.length === 0){
         return courseRecord
     }
@@ -15,12 +15,12 @@ export async function updateStatusForCancelledEventsInCourseRecord(courseRecord:
     const events: Event[] = await getEventsFromUids(eventIds, user)
     setStatusForCancelledEvents(courseRecord, events, statusForCancelledEvents)
     console.log(`courseRecord: ${JSON.stringify(courseRecord)}`)
-    
+
     return courseRecord
 }
 
 export function getEventIdsFromCourseRecord(courseRecord: CourseRecord) {
-    let eventIds: string[] = []
+    const eventIds: string[] = []
     courseRecord.modules.forEach(moduleRecord => {
         if (moduleRecord.eventId !== undefined) {
             eventIds.push(moduleRecord.eventId)
@@ -30,14 +30,14 @@ export function getEventIdsFromCourseRecord(courseRecord: CourseRecord) {
 }
 
 export async function getEventsFromUids(eventUids: string[], user: User): Promise<Event[]> {
-    let events: Event[] = await getEventsByUids(eventUids, user)
+    const events: Event[] = await getEventsByUids(eventUids, user)
     return events
 }
 
 export function setStatusForCancelledEvents(courseRecord: CourseRecord, events: Event[], statusForCancelledEvents: RecordState | BookingStatus) {
     courseRecord?.modules.forEach(moduleRecord => {
-        if (moduleRecord.eventId && events.find(event => event.uid === moduleRecord.eventId)?.status === "Cancelled") {            
+        if (moduleRecord.eventId && events.find(event => event.uid === moduleRecord.eventId)?.status === "Cancelled") {
             moduleRecord.state = statusForCancelledEvents
         }
-    })    
+    })
 }

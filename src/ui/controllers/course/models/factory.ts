@@ -6,13 +6,12 @@ import {BookingStatus, ModuleRecord} from '../../../../lib/service/learnerRecord
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
 import { updateStatusForCancelledEventsInCourseRecord } from '../../../../lib/service/learnerRecordAPI/event/service'
-import { RecordState } from '../../../../lib/service/learnerRecordAPI/models/record'
 
 // Modules
 
-export function getModuleCard(course: Course, module: Module, moduleRecord?: ModuleRecord): BaseModuleCard {	
+export function getModuleCard(course: Course, module: Module, moduleRecord?: ModuleRecord): BaseModuleCard {
 	const moduleCard = getBasicModuleCard(module, course, moduleRecord)
-	
+
 	switch (module.type) {
 		case ModuleType.FACE_TO_FACE:
 			return getF2FModuleCard(module, course, moduleCard, moduleRecord)
@@ -28,8 +27,8 @@ export function getModuleCard(course: Course, module: Module, moduleRecord?: Mod
 	}
 }
 
-export function getBasicModuleCard(module: Module, course: Course, moduleRecord?: ModuleRecord): BaseModuleCard {	
-	
+export function getBasicModuleCard(module: Module, course: Course, moduleRecord?: ModuleRecord): BaseModuleCard {
+
 	const displayState = module.getDisplayState(moduleRecord, course.getRequiredRecurringAudience()) || ''
 	console.log(displayState)
 	return {
@@ -61,7 +60,7 @@ export function getF2FModuleCard(
 	course: Course,
 	moduleCard: BaseModuleCard,
 	moduleRecord?: ModuleRecord
-): F2FModuleCard {	
+): F2FModuleCard {
 	let eventId
 	if (moduleRecord) {
 		eventId = moduleRecord.eventId
@@ -95,17 +94,17 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 	}
 }
 
-export function getBlendedCoursePage(course: Course, courseRecord?: CourseRecord): BlendedCoursePage {	
+export function getBlendedCoursePage(course: Course, courseRecord?: CourseRecord): BlendedCoursePage {
 	let faceToFaceModule: F2FModuleCard | undefined
 	const moduleRecords: Map<string, ModuleRecord> = courseRecord ? courseRecord.getModuleRecordMap() : new Map()
-	
+
 	const cards: BaseModuleCard[] = []
 	let mandatoryCount = 0
 	for (const module of course.modules) {
 		const mr = moduleRecords.get(module.id)
-		
+
 		const card = getModuleCard(course, module, mr)
-		
+
 		if (card.isMandatory) {
 			mandatoryCount++
 		}
