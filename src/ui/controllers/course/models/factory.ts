@@ -5,7 +5,7 @@ import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecor
 import {BookingStatus, ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
-import { updateStatusForCancelledEventsInCourseRecord } from '../../../../lib/service/learnerRecordAPI/event/service'
+import {updateStatusForCancelledEventsInCourseRecord} from '../../../../lib/service/learnerRecordAPI/event/service'
 
 // Modules
 
@@ -28,7 +28,6 @@ export function getModuleCard(course: Course, module: Module, moduleRecord?: Mod
 }
 
 export function getBasicModuleCard(module: Module, course: Course, moduleRecord?: ModuleRecord): BaseModuleCard {
-
 	const displayState = module.getDisplayState(moduleRecord, course.getRequiredRecurringAudience()) || ''
 	console.log(displayState)
 	return {
@@ -84,7 +83,8 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		return getNoModuleCoursePage(course)
 	} else {
 		let courseRecord = await getCourseRecord(course.id, user)
-		courseRecord = courseRecord && await updateStatusForCancelledEventsInCourseRecord(courseRecord, user, BookingStatus.CANCELLED)
+		courseRecord =
+			courseRecord && (await updateStatusForCancelledEventsInCourseRecord(courseRecord, user, BookingStatus.CANCELLED))
 		if (course.modules.length === 1) {
 			const module = course.modules[0]
 			return getSingleModuleCoursePage(course, module, courseRecord)
