@@ -5,7 +5,10 @@ import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecor
 import {BookingStatus, ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
-import {updateStatusForCancelledEventsInCourseRecord} from '../../../../lib/service/learnerRecordAPI/event/service'
+import {
+	getCancelledEventUidsFromCourseRecord,
+	updateStatusForCancelledEventsInCourseRecord,
+} from '../../../../lib/service/learnerRecordAPI/event/service'
 
 // Modules
 
@@ -83,8 +86,13 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		return getNoModuleCoursePage(course)
 	} else {
 		let courseRecord = await getCourseRecord(course.id, user)
-		courseRecord =
-			courseRecord && (await updateStatusForCancelledEventsInCourseRecord(courseRecord, user, BookingStatus.CANCELLED))
+		if (courseRecord) {
+			const cancelledEventUids = await getCancelledEventUidsFromCourseRecord(courseRecord, user)
+			courseRecord =
+				courseRecord &&
+				(await updateStatusForCancelledEventsInCourseRecord(courseRecord, cancelledEventUids, BookingStatus.CANCELLED))
+		}
+
 		if (course.modules.length === 1) {
 			const module = course.modules[0]
 			return getSingleModuleCoursePage(course, module, courseRecord)
