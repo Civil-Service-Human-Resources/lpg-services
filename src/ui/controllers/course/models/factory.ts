@@ -88,9 +88,16 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		let courseRecord = await getCourseRecord(course.id, user)
 		if (courseRecord) {
 			const cancelledEventUids = await getCancelledEventUidsFromCourseRecord(courseRecord, user)
-			courseRecord =
-				courseRecord &&
-				(await updateStatusForCancelledEventsInCourseRecord(courseRecord, cancelledEventUids, BookingStatus.CANCELLED))
+
+			if (cancelledEventUids.length > 0) {
+				courseRecord =
+					courseRecord &&
+					(await updateStatusForCancelledEventsInCourseRecord(
+						courseRecord,
+						cancelledEventUids,
+						BookingStatus.CANCELLED
+					))
+			}
 		}
 
 		if (course.modules.length === 1) {

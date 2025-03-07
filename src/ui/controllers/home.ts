@@ -79,16 +79,18 @@ export async function home(req: express.Request, res: express.Response, next: ex
 
 		const cancelledEventUids = await eventClient.getCancelledEventUidsFromCourseRecord(plannedLearningRecords, user)
 
-		plannedLearningRecords = await Promise.all(
-			plannedLearningRecords.map(
-				async courseRecord =>
-					await eventClient.updateStatusForCancelledEventsInCourseRecord(
-						courseRecord,
-						cancelledEventUids,
-						RecordState.Unregistered
-					)
+		if (cancelledEventUids.length > 0) {
+			plannedLearningRecords = await Promise.all(
+				plannedLearningRecords.map(
+					async courseRecord =>
+						await eventClient.updateStatusForCancelledEventsInCourseRecord(
+							courseRecord,
+							cancelledEventUids,
+							RecordState.Unregistered
+						)
+				)
 			)
-		)
+		}
 
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {

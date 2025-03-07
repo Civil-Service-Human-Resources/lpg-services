@@ -14,6 +14,11 @@ export async function getCancelledEventUidsFromCourseRecord(courseRecords: Cours
 	}
 
 	const eventIds = getEventUidsFromCourseRecords(records)
+
+	if (eventIds.length === 0) {
+		return []
+	}
+
 	const learnerRecordEvents: Event[] = await getEventsByUids(eventIds, user)
 	const cancelledEvents = learnerRecordEvents.filter(event => event.status === 'Cancelled')
 	const cancelledEventUids = cancelledEvents.map(event => event.uid)

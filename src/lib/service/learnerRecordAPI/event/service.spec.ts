@@ -1,10 +1,31 @@
 import {CourseRecord} from '../courseRecord/models/courseRecord'
 import {ModuleRecord} from '../moduleRecord/models/moduleRecord'
 import {RecordState} from '../models/record'
-import {getEventUidsFromCourseRecords, updateStatusForCancelledEventsInCourseRecord} from './service'
+import {
+	getCancelledEventUidsFromCourseRecord,
+	getEventUidsFromCourseRecords,
+	updateStatusForCancelledEventsInCourseRecord,
+} from './service'
 import {expect} from 'chai'
+import {User} from 'src/lib/model'
+import * as sinon from 'sinon'
+import * as eventClient from './client'
 
 describe('Event Service', () => {
+	describe('getCancelledEventUidsFromCourseRecord', () => {
+		it('should not call events API if no event IDs are retrieved', () => {
+			const clientSpy = sinon.spy(eventClient, 'getEventsByUids')
+
+			const user = getFakeUser()
+
+			const courseRecord = getFakeCourseRecord()
+
+			getCancelledEventUidsFromCourseRecord(courseRecord, user)
+
+			sinon.assert.notCalled(clientSpy)
+		})
+	})
+
 	describe('getEventUidsFromCourseRecords', () => {
 		it('should should return 4 UIDs with their correct name', () => {
 			const courseRecords: CourseRecord[] = getFakeCourseRecordArray()
@@ -37,6 +58,10 @@ describe('Event Service', () => {
 })
 
 // Fake objects:
+
+function getFakeUser() {
+	return new User('abc', [], 'abc', 'userName', 'def')
+}
 
 function getFakeCourseRecordArray(): CourseRecord[] {
 	const moduleRecord1: ModuleRecord = getFakeModuleRecordWithEventId('eventUid1')
