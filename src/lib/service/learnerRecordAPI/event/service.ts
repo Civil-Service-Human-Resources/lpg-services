@@ -18,7 +18,6 @@ export async function updateStatusForCancelledEventsInCourseRecord(
 
 	const events: Event[] = await getEventsFromUids(eventIds, user)
 	setStatusForCancelledEvents(courseRecord, events, statusForCancelledEvents)
-	console.log(`courseRecord: ${JSON.stringify(courseRecord)}`)
 
 	return courseRecord
 }
