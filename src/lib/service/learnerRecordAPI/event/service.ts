@@ -34,7 +34,7 @@ export async function updateStatusForCancelledEventsInCourseRecord(
 	return courseRecord
 }
 
-export function getEventUidsFromCourseRecords(courseRecords: CourseRecord[]){
+export function getEventUidsFromCourseRecords(courseRecords: CourseRecord[]) {
 	const eventIds: string[] = courseRecords
 		.map(courseRecord => courseRecord.modules)
 		.flat()
