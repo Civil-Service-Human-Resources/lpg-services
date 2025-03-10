@@ -51,7 +51,9 @@
                         </li>
                     {/each}
                 </ul>
-                {#if bookedModule.state !== "UNREGISTERED"}
+                {#if bookedModule.state === "UNREGISTERED"}
+                    <a class="discite__property-item" href="/courses/{course.id}/{bookedModule.moduleId}/{bookedModule.eventId}/choose-date">Book</a>
+                {:else}
                     <a class="discite__property-item" href="/book/{course.id}/{bookedModule.moduleId}/{bookedModule.eventId}/cancel">Cancel booking</a>
                 {/if}
             </div>

@@ -10,6 +10,7 @@ import * as template from '../../lib/ui/template'
 
 import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
+import * as eventClient from '../../lib/service/learnerRecordAPI/event/service'
 
 const logger = getLogger('controllers/home')
 
@@ -74,7 +75,23 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
 
-		const plannedLearningRecords = getLearningPlanRecords(courseRecordMap)
+		let plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
+
+		const cancelledEventUids = await eventClient.getCancelledEventUidsFromCourseRecord(plannedLearningRecords, user)
+
+		if (cancelledEventUids.length > 0) {
+			plannedLearningRecords = await Promise.all(
+				plannedLearningRecords.map(
+					async courseRecord =>
+						await eventClient.updateStatusForCancelledEventsInCourseRecord(
+							courseRecord,
+							cancelledEventUids,
+							RecordState.Unregistered
+						)
+				)
+			)
+		}
+
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {
 			const learningPlanCourseIds = plannedLearningRecords.map(cr => cr.courseId)
