@@ -10,23 +10,25 @@
         </div>
         <div class="grid-row">
             {#if errors && errors.length}
-                <Error errorHeading="There was an issue with the data you entered" errors={errors} />
+            <Error errorHeading="There was an issue with the data you entered" errors={errors} />
             {/if}
             <div class="column-full">
                 <form autocomplete="off" method="post">
                     <div class="form-group u-border-bgrey2 u-pad-b30">
-                        <HowToGetPo/>
-                        <input class="form-control" id="PURCHASE_ORDER" type="text" name="PURCHASE_ORDER" value="{values[pm] || ''}">
+                        <HowToGetPo />
+                        <input class="form-control" id="PURCHASE_ORDER" type="text" name="PURCHASE_ORDER"
+                            value="{values[pm] || ''}">
                     </div>
 
                     <div class="column-two-thirds">
                         <div class="grid-row">
-                        <BookingCancellationPolicy/>
-                        <input type="submit" class="button" value="Continue">
-                        <input type="hidden" name="_csrf" value="{_csrf}">
-                        <a class="link--block" href="/suggestions-for-you/add/{course.id}?ref=home">
-                            Add <span class="visually-hidden">{course.title}</span> to learning plan
-                        </a>
+                            <PaymentOptionsDetails />
+                            <BookingCancellationPolicy />
+                            <input type="submit" class="button" value="Continue">
+                            <input type="hidden" name="_csrf" value="{_csrf}">
+                            <a class="link--block" href="/suggestions-for-you/add/{course.id}?ref=home">
+                                Add <span class="visually-hidden">{course.title}</span> to learning plan
+                            </a>
                         </div>
                     </div>
                 </form>
@@ -36,22 +38,24 @@
 </Page>
 
 <script>
-	import Page from '../../component/Page.html'
-	import Error from '../../component/Error.html'
+    import Page from '../../component/Page.html'
+    import Error from '../../component/Error.html'
     import HowToGetPo from '../../component/statics/Hidden-howtogetpo.html'
     import BookingCancellationPolicy from '../../component/statics/BookingCancellationPolicy.html'
+    import PaymentOptionsDetails from '../../component/statics/payment-options-details.html'
 
-	export default {
-		data() {
-			return {
-			}
-		},
+    export default {
+        data() {
+            return {
+            }
+        },
 
-		components: {
-			Page,
-			Error,
+        components: {
+            Page,
+            Error,
             HowToGetPo,
-            BookingCancellationPolicy
-		}
-	}
+            BookingCancellationPolicy,
+            PaymentOptionsDetails
+        }
+    }
 </script>
