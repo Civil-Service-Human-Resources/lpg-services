@@ -18,22 +18,6 @@ export enum confirmedMessage {
 	Error = 'Error',
 }
 
-export function recordCheck(record: learnerRecord.CourseRecord | null, ireq: express.Request) {
-	const req = ireq as extended.CourseRequest
-
-	if (!record) {
-		logger.warn(
-			`Attempt to cancel a booking when not registered. user: ${req.user.id}, course: ${req.course.id}, module: ${
-				req.module!.id
-			}, event: ${req.event!.id}`
-		)
-
-		return false
-	} else {
-		return true
-	}
-}
-
 export function saveAccessibilityOptions(ireq: express.Request, res: express.Response) {
 	const session = ireq.session!
 	const req = ireq as extended.CourseRequest

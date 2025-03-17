@@ -4,7 +4,6 @@ import * as axiosLogger from './axiosLogger'
 import * as config from './config'
 import * as datetime from './datetime'
 import {getLogger} from './logger'
-import * as model from './model'
 
 const logger = getLogger('learner-record')
 
@@ -41,31 +40,6 @@ export async function getCancellationReasons(user: any): Promise<any> {
 			Authorization: `Bearer ${user.accessToken}`,
 		},
 	})
-}
-
-export async function getRecord(user: model.User, course: model.Course, module?: model.Module, event?: model.Event) {
-	let activityId = course.id
-	if (event) {
-		activityId = event.id
-	} else if (module && !event) {
-		activityId = module.id
-	}
-
-	const response = await http.get(`/records/${user.id}`, {
-		headers: {Authorization: `Bearer ${user.accessToken}`},
-		params: {
-			activityId,
-		},
-	})
-	if (response.data.records.length > 0) {
-		const record = response.data.records[0]
-		return convert(record)
-	}
-	return null
-}
-
-function convert(record: CourseRecord) {
-	return new CourseRecord(record)
 }
 
 export interface CourseRcd {
