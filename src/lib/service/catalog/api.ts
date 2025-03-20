@@ -6,15 +6,3 @@ export interface PageResults {
 	size: number
 	totalResults: number
 }
-
-export interface ResourceResults {
-	page: number
-	results: model.CourseModule[]
-	size: number
-	totalResults: number
-}
-
-export interface SearchResults extends ResourceResults {
-	combinedResults: model.CourseModule[]
-	suggestion?: string
-}

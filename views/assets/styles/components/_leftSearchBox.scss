@@ -37,14 +37,21 @@
 
 .filter-headings {
 	margin: 8px 0 12px 0;
-	font-size: 22px;
+	text-align: left;
+	width: 100%;
 	color: #1d70b8;
 	font-weight: 700;
+	font-size: 22px;
+	border: none;
+	padding: 0;
+	background: none;
+	position: relative;
+	cursor: pointer;
 }
 
 .filter-headings:focus {
 	text-decoration: none;
-	outline:3px solid transparent;
+	outline: 3px solid transparent!important;
 	color: #0b0c0c;
 	background-color: #fd0;
 	box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
@@ -75,7 +82,6 @@
 }
 
 .filter-label {
-	font-weight: 16px;
 	text-align: center;
 	background-color: $alt-color;
 	display: block;
