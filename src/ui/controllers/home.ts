@@ -10,7 +10,6 @@ import * as template from '../../lib/ui/template'
 
 import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
-import * as eventClient from '../../lib/service/learnerRecordAPI/event/service'
 
 const logger = getLogger('controllers/home')
 
@@ -75,22 +74,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
 
-		let plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
-
-		const cancelledEventUids = await eventClient.getCancelledEventUidsFromCourseRecord(plannedLearningRecords, user)
-
-		if (cancelledEventUids.length > 0) {
-			plannedLearningRecords = await Promise.all(
-				plannedLearningRecords.map(
-					async courseRecord =>
-						await eventClient.updateStatusForCancelledEventsInCourseRecord(
-							courseRecord,
-							cancelledEventUids,
-							RecordState.Unregistered
-						)
-				)
-			)
-		}
+		const plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
 
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {
@@ -168,18 +152,22 @@ function formatEventDuration(duration: number) {
 }
 
 function filterCourseByEvent(course: model.Course) {
-	return (
-		course.record &&
-		course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId)
-	)
+	const moduleRecords = course.record ? course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId) : undefined
+	if (moduleRecords && moduleRecords.length > 0) {
+		const event = course.getEvent(moduleRecords[0].eventId!)
+		if (event && event.status === 'Active') {
+			return moduleRecords[0]
+		}
+	}
+	return undefined
 }
 
 export function isEventBookedForGivenCourse(course: model.Course) {
-	return filterCourseByEvent(course)!.length > 0
+	return filterCourseByEvent(course) !== undefined
 }
 
 export function getModuleForEvent(course: model.Course) {
-	return filterCourseByEvent(course)!.pop()
+	return filterCourseByEvent(course)!
 }
 
 export function index(req: express.Request, res: express.Response) {

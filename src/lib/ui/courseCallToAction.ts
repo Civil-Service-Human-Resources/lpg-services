@@ -44,8 +44,15 @@ export function constructCourseCallToAction(course: model.Course, modifier?: str
 		const record = course.record
 		callToActionProps.isInLearningPlan = !!course.record || isRequired
 
+		let isBooked = false
 		const bookedModule = record.modules && record.modules.find(m => !!m.eventId)
-		const isBooked = bookedModule && (bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED')
+		if (bookedModule) {
+			console.log(bookedModule)
+			const event = course.getEvent(bookedModule.eventId!)
+			console.log(event)
+			isBooked = (bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED') &&
+				(event !== undefined && event.status === 'Active')
+		}
 		const isDatePassed = new Date() > course.getSelectedDate()!
 
 		switch (courseType) {
