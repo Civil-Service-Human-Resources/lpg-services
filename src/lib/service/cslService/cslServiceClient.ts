@@ -1,7 +1,6 @@
 import {plainToInstance} from 'class-transformer'
-import * as config from '../../config'
+import {client} from './baseConfig'
 import {User} from '../../model'
-import {HttpClient} from '../httpClient'
 import {BookEventDto} from './models/BookEventDto'
 import {CancelBookingDto} from './models/CancelBookingDto'
 import {CourseActionResponse} from './models/CourseActionResponse'
@@ -9,8 +8,6 @@ import {EventActionResponse} from './models/EventActionResponse'
 import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
 import {UserDto} from './models/UserDto'
-
-const client = HttpClient.createFromParams(config.CSL_SERVICE.url, config.REQUEST_TIMEOUT)
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
 	const body: UserDto = await createUserDto(user)

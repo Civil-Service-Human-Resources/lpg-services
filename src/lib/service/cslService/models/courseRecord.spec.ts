@@ -1,9 +1,9 @@
 import {expect} from 'chai'
 
-import {Module, ModuleType} from '../../../../model'
-import {RecordState} from '../../models/record'
-import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
+import {Module, ModuleType} from '../../../model'
 import {CourseRecord} from './courseRecord'
+import {ModuleRecord} from './moduleRecord'
+import {RecordState} from './record'
 
 const requiredModule1 = new Module('required001', ModuleType.LINK)
 requiredModule1.optional = false
@@ -38,47 +38,47 @@ const optionalMods = [optModule1, optModule2]
 
 describe('Should return course completion status', () => {
 	it('Should return "true" when all required modules are completed', () => {
-		const modRecords = mods.filter(m => !m.optional).map(m => moduleRecordFromModule(m, RecordState.Completed))
-		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
+		const modRecords = mods.filter(m => !m.optional).map(m => moduleRecordFromModule(m, 'COMPLETED'))
+		const courseRecord = new CourseRecord('Test001', '', 'IN_PROGRESS', modRecords, '', false)
 		const completed = courseRecord.areAllRelevantModulesComplete(mods)
-		expect(completed === true)
+		expect(completed)
 	})
 
 	it('Should return "true" when all required modules are completed, with an optional module', () => {
 		const modules = [optModule1, requiredModule1, requiredModule2]
-		const modRecords = mods.map(m => moduleRecordFromModule(m, RecordState.Completed))
-		modRecords.unshift(moduleRecordFromModule(optModule1, RecordState.Completed))
-		const courseRecord = new CourseRecord('Test001', '', RecordState.Completed, modRecords, '', false)
+		const modRecords = mods.map(m => moduleRecordFromModule(m, 'COMPLETED'))
+		modRecords.unshift(moduleRecordFromModule(optModule1, 'COMPLETED'))
+		const courseRecord = new CourseRecord('Test001', '', 'COMPLETED', modRecords, '', false)
 		const completed = courseRecord.areAllRelevantModulesComplete(modules)
-		expect(completed === true)
+		expect(completed)
 	})
 
 	it('Should return "false" when one required module is still in progress', () => {
-		const modRecords = mods.map(m => moduleRecordFromModule(m, RecordState.Completed))
-		modRecords[0].state = RecordState.InProgress
-		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
+		const modRecords = mods.map(m => moduleRecordFromModule(m, 'COMPLETED'))
+		modRecords[0].state = 'IN_PROGRESS'
+		const courseRecord = new CourseRecord('Test001', '', 'IN_PROGRESS', modRecords, '', false)
 		const completed = courseRecord.areAllRelevantModulesComplete(mods)
-		expect(completed === false)
+		expect(!completed)
 	})
 
 	it('Should return "false" when both required modules are still in progress but optional is completed', () => {
-		const modRecords = mods.map(m => moduleRecordFromModule(m, RecordState.Completed))
-		modRecords.push(moduleRecordFromModule(optModule1, RecordState.Completed))
-		modRecords[0].state = RecordState.InProgress
-		modRecords[1].state = RecordState.InProgress
-		modRecords[2].state = RecordState.Completed
-		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
+		const modRecords = mods.map(m => moduleRecordFromModule(m, 'COMPLETED'))
+		modRecords.push(moduleRecordFromModule(optModule1, 'COMPLETED'))
+		modRecords[0].state = 'IN_PROGRESS'
+		modRecords[1].state = 'IN_PROGRESS'
+		modRecords[2].state = 'COMPLETED'
+		const courseRecord = new CourseRecord('Test001', '', 'IN_PROGRESS', modRecords, '', false)
 		const completed = courseRecord.areAllRelevantModulesComplete(mods)
-		expect(completed === false)
+		expect(!completed)
 	})
 
 	it('Should return "true" when all optional modules are completed on a course containing only optional modules', () => {
-		const modRecords = optionalMods.map(m => moduleRecordFromModule(m, RecordState.Completed))
-		modRecords[0].state = RecordState.Completed
-		modRecords[1].state = RecordState.Completed
-		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, modRecords, '', false)
+		const modRecords = optionalMods.map(m => moduleRecordFromModule(m, 'COMPLETED'))
+		modRecords[0].state = 'COMPLETED'
+		modRecords[1].state = 'COMPLETED'
+		const courseRecord = new CourseRecord('Test001', '', 'IN_PROGRESS', modRecords, '', false)
 		const completed = courseRecord.areAllRelevantModulesComplete(mods)
-		expect(completed === true)
+		expect(completed)
 	})
 })
 
@@ -95,13 +95,13 @@ describe('Should upsert (update OR insert) a module record', () => {
 			new Date(),
 			'',
 			'link',
-			RecordState.InProgress,
+			'IN_PROGRESS',
 			0,
 			false,
 			undefined
 		)
 
-		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, [mod], '', false)
+		const courseRecord = new CourseRecord('Test001', '', 'IN_PROGRESS', [mod], '', false)
 
 		const updatedMod = new ModuleRecord(
 			moduleRecordId,
@@ -112,7 +112,7 @@ describe('Should upsert (update OR insert) a module record', () => {
 			new Date(),
 			'',
 			'link',
-			RecordState.Completed,
+			'COMPLETED',
 			0,
 			false,
 			undefined
@@ -134,13 +134,13 @@ describe('Should upsert (update OR insert) a module record', () => {
 			new Date(),
 			'',
 			'link',
-			RecordState.InProgress,
+			'IN_PROGRESS',
 			0,
 			false,
 			undefined
 		)
 
-		const courseRecord = new CourseRecord('Test001', '', RecordState.InProgress, [mod], '', false)
+		const courseRecord = new CourseRecord('Test001', '', 'IN_PROGRESS', [mod], '', false)
 
 		const updatedMod = new ModuleRecord(
 			2,
@@ -151,7 +151,7 @@ describe('Should upsert (update OR insert) a module record', () => {
 			new Date(),
 			'',
 			'link',
-			RecordState.Completed,
+			'COMPLETED',
 			0,
 			false,
 			undefined

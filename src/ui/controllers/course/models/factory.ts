@@ -1,8 +1,8 @@
 import {extensionAndSize, fileName} from '../../../../lib/filehelpers'
 import {Course, Module, ModuleType, User} from '../../../../lib/model'
-import {getCourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/client'
-import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {getCourseRecord} from '../../../../lib/service/cslService/courseRecord/client'
+import {CourseRecord} from '../../../../lib/service/cslService/models/courseRecord'
+import {ModuleRecord} from '../../../../lib/service/cslService/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
 

@@ -5,7 +5,7 @@ import {Course, User} from '../../../model'
 import {AreaOfWork} from '../../../registry'
 
 import * as courseCatalogueClient from '../../catalog/courseCatalogueClient'
-import * as courseRecordClient from '../../learnerRecordAPI/courseRecord/client'
+import * as courseRecordClient from '../../cslService/courseRecord/client'
 import * as service from './suggestedLearningService'
 import {Suggestion} from './suggestion'
 

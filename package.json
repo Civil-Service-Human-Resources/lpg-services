@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"build": "concurrently \"npm run compile\" \"npm run sass\" \"npm run js\"",
-		"compile": "tsc",
+		"compile": "tsc -p ./tsconfig.json",
 		"dev": "nodemon src/server.ts",
 		"lint": "concurrently \"npm run eslint\" \"npm run format\"",
 		"fix-lint": "concurrently \"npm run fix-eslint\" \"npm run fix-format\"",
