@@ -2,8 +2,7 @@ import {expect} from 'chai'
 import * as sinon from 'sinon'
 import {Course} from '../../lib/model'
 import {getBasicCourseRecord} from '../../lib/model.spec'
-import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
+import {CourseRecord} from '../../lib/service/cslService/models/courseRecord'
 import * as controller from './home'
 
 describe('home controller tests', () => {
@@ -12,9 +11,9 @@ describe('home controller tests', () => {
 		it('Should return the correct number of required learning courses', () => {
 			const notStartedCourse = new Course('not-started')
 			const notCompletedCourse = new Course('not-completed')
-			sandbox.stub(notCompletedCourse, 'getDisplayState').returns(RecordState.InProgress)
+			sandbox.stub(notCompletedCourse, 'getDisplayState').returns('IN_PROGRESS')
 			const completedCourse = new Course('completed')
-			sandbox.stub(completedCourse, 'getDisplayState').returns(RecordState.Completed)
+			sandbox.stub(completedCourse, 'getDisplayState').returns('COMPLETED')
 			const requiredCourses = [notStartedCourse, notCompletedCourse, completedCourse]
 
 			const notCompletedRecord = getBasicCourseRecord('not-completed')
@@ -29,7 +28,7 @@ describe('home controller tests', () => {
 			expect(result[0].id).to.equal('not-started')
 			expect(result[0].record).to.equal(undefined)
 			expect(result[1].id).to.equal('not-completed')
-			expect(result[1].record!.state).to.equal(RecordState.InProgress)
+			expect(result[1].record!.state).to.equal('IN_PROGRESS')
 
 			expect(courseRecordMap.size).to.equal(0)
 		})

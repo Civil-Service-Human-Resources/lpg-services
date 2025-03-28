@@ -3,9 +3,8 @@ import * as extended from '../../../lib/extended'
 import {getLogger} from '../../../lib/logger'
 import {Course} from '../../../lib/model'
 import * as catalog from '../../../lib/service/catalog'
-import * as courseRecordClient from '../../../lib/service/learnerRecordAPI/courseRecord/client'
-import {CourseRecord} from '../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from '../../../lib/service/learnerRecordAPI/models/record'
+import * as courseRecordClient from '../../../lib/service/cslService/courseRecord/client'
+import {CourseRecord} from '../../../lib/service/cslService/models/courseRecord'
 import * as template from '../../../lib/ui/template'
 
 const logger = getLogger('controllers/learning-record')
@@ -99,7 +98,7 @@ export async function display(req: express.Request, res: express.Response) {
 		const requiredCourse = requiredCoursesMap.get(courseId)
 		if (requiredCourse) {
 			const actualState = requiredCourse.getDisplayState(courseRecord)
-			if (actualState === RecordState.Completed) {
+			if (actualState === 'COMPLETED') {
 				completedRequiredLearning.push(courseRecord)
 			}
 		} else {

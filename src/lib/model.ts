@@ -6,9 +6,9 @@ import * as datetime from '../lib/datetime'
 import * as learnerRecord from '../lib/learnerrecord'
 import {AreaOfWork, Grade, Interest, Profile} from './registry'
 import {IdentityDetails} from './service/identity/models/identityDetails'
-import {CourseRecord} from './service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from './service/learnerRecordAPI/models/record'
-import {ModuleRecord} from './service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {CourseRecord} from './service/cslService/models/courseRecord'
+import {RecordState} from './service/cslService/models/record'
+import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {CacheableObject} from './utils/cacheableObject'
 import {KeyValue} from './utils/dataUtils'
 
@@ -250,7 +250,6 @@ export class Course {
 	getEvent(eventId: string): Event | undefined {
 		for (const module of this.getModules()) {
 			const event = module.getEvent(eventId)
-			console.log(event)
 			if (event !== undefined) {
 				return event
 			}
@@ -292,11 +291,11 @@ export class Course {
 		}
 
 		if (requiredCompletedCount === requiredModuleIdsForCompletion.length) {
-			return RecordState.Completed
+			return 'COMPLETED'
 		} else if (inProgressCount > 0 || requiredCompletedCount > 0) {
-			return RecordState.InProgress
+			return 'IN_PROGRESS'
 		}
-		return RecordState.Null
+		return ''
 	}
 
 	getAreasOfWork() {
@@ -648,8 +647,6 @@ export class Event {
 		}
 
 		const status = data.status
-
-		console.log(data)
 
 		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}

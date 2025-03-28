@@ -1,7 +1,7 @@
 import {Course, User} from '../../../model'
 import * as client from '../../catalog/courseCatalogueClient'
 
-import {getFullRecord} from '../../learnerRecordAPI/courseRecord/client'
+import {getFullRecord} from '../../cslService/courseRecord/client'
 import {GetCoursesParams} from '../models/getCoursesParams'
 import {Suggestion} from './suggestion'
 import {SuggestionsMap} from './suggestionMap'

@@ -5,11 +5,10 @@ import * as extended from '../../lib/extended'
 import {getLogger} from '../../lib/logger'
 import * as model from '../../lib/model'
 import * as catalog from '../../lib/service/catalog'
-import * as courseRecordClient from '../../lib/service/learnerRecordAPI/courseRecord/client'
+import {CourseRecord} from '../../lib/service/cslService/models/courseRecord'
+import * as courseRecordClient from '../../lib/service/cslService/courseRecord/client'
+import {RecordState} from '../../lib/service/cslService/models/record'
 import * as template from '../../lib/ui/template'
-
-import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
 
 const logger = getLogger('controllers/home')
 
@@ -19,7 +18,7 @@ export const getRequiredLearning = (
 ): model.Course[] => {
 	return requiredCourses.filter(course => {
 		let required = false
-		let courseState = RecordState.Null
+		let courseState: RecordState = ''
 		const courseRecord = courseRecordMap.get(course.id)
 		if (courseRecord) {
 			courseState = course.getDisplayState(courseRecord)
@@ -27,7 +26,7 @@ export const getRequiredLearning = (
 			courseRecordMap.delete(course.id)
 		}
 		course.record = courseRecord
-		if (courseState !== RecordState.Completed) {
+		if (courseState !== 'COMPLETED') {
 			required = true
 		}
 		return required
@@ -40,7 +39,7 @@ export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord
 	courseRecordMap.forEach((record: CourseRecord) => {
 		if (!record.isComplete() && record.isActive()) {
 			if (!record.state && (record.modules || []).length) {
-				record.state = RecordState.InProgress
+				record.state = 'IN_PROGRESS'
 			}
 			if (record.getSelectedDate()) {
 				const bookedModuleRecord = record.modules.find(m => !!m.eventId)
