@@ -21,7 +21,7 @@ describe('Course page model tests', () => {
 	let fileHelperStub: sinon.SinonStubbedInstance<typeof fileHelpers>
 
 	const user = new User('user-id', ['LEARNER'], 'access-token', 'user@email.com', 'user-id')
-	const event = new Event(new Date(), new Date(), [], "Bristol", 10, 10, 'Active', 'event-id')
+	const event = new Event(new Date(), new Date(), [], 'Bristol', 10, 10, 'Active', 'event-id')
 	const module = new Module('module-id', ModuleType.FILE)
 	module.title = 'Module title'
 	module.description = 'Module description'
@@ -78,7 +78,7 @@ describe('Course page model tests', () => {
 		})
 		it('Should build a face to face module card that has been booked but the event has been cancelled', () => {
 			const mr = {eventId: 'event-id'}
-			const cancelledEvent = new Event(new Date(), new Date(), [], "Bristol", 10, 10, 'Cancelled', 'event-id')
+			const cancelledEvent = new Event(new Date(), new Date(), [], 'Bristol', 10, 10, 'Cancelled', 'event-id')
 			const cancelledModule = new Module('module-id', ModuleType.FACE_TO_FACE)
 			cancelledModule.title = 'Module title'
 			cancelledModule.description = 'Module description'
@@ -93,7 +93,12 @@ describe('Course page model tests', () => {
 			cancelledCourse.description = 'Course description'
 			cancelledCourse.learningOutcomes = 'Course learning outcomes'
 			cancelledCourse.status = CourseStatus.PUBLISHED
-			const fileCard = getF2FModuleCard(cancelledModule, cancelledCourse, getBasicModuleCard(module, course), mr as any) as F2FModuleCard
+			const fileCard = getF2FModuleCard(
+				cancelledModule,
+				cancelledCourse,
+				getBasicModuleCard(module, course),
+				mr as any
+			) as F2FModuleCard
 			expect(fileCard.cancellationLink).eql(undefined)
 		})
 	})

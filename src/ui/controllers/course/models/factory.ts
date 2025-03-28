@@ -69,7 +69,11 @@ export function getF2FModuleCard(
 		launchLink: `/courses/${course.id}/${module.id}/choose-date`,
 		template: 'faceToFace',
 	}
-	if (!['UNREGISTERED', undefined].includes(updatedCard.displayState) && event !== undefined && event.status === 'Active') {
+	if (
+		!['UNREGISTERED', undefined].includes(updatedCard.displayState) &&
+		event !== undefined &&
+		event.status === 'Active'
+	) {
 		updatedCard.cancellationLink = `/book/${course.id}/${module.id}/${event.id}/cancel`
 	}
 	return updatedCard

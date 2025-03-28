@@ -152,7 +152,9 @@ function formatEventDuration(duration: number) {
 }
 
 function filterCourseByEvent(course: model.Course) {
-	const moduleRecords = course.record ? course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId) : undefined
+	const moduleRecords = course.record
+		? course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId)
+		: undefined
 	if (moduleRecords && moduleRecords.length > 0) {
 		const event = course.getEvent(moduleRecords[0].eventId!)
 		if (event && event.status === 'Active') {

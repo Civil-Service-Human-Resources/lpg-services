@@ -54,7 +54,6 @@ export function saveAccessibilityOptions(ireq: express.Request, res: express.Res
 }
 
 export async function renderChooseDate(req: express.Request, res: express.Response) {
-
 	const course = await getCourse(req.params.bookingCourseId, req.user, true)
 	let module
 	if (course) {

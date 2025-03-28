@@ -668,7 +668,7 @@ export class Event {
 	) {}
 
 	isBookable() {
-		return (this.startDate > new Date()) && this.status === 'Active'
+		return this.startDate > new Date() && this.status === 'Active'
 	}
 }
 

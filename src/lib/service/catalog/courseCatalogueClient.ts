@@ -11,12 +11,15 @@ const SEARCH_URL = 'search'
 
 export async function getCourse(id: string, user: User, includeAvailability: boolean = false) {
 	try {
-		const resp = await client._get({
-			url: `${COURSES_URL}/${id}`,
-			params: {
-				includeAvailability
-			}
-		}, user)
+		const resp = await client._get(
+			{
+				url: `${COURSES_URL}/${id}`,
+				params: {
+					includeAvailability,
+				},
+			},
+			user
+		)
 		return Course.create(resp)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {

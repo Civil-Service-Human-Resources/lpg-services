@@ -50,8 +50,10 @@ export function constructCourseCallToAction(course: model.Course, modifier?: str
 			console.log(bookedModule)
 			const event = course.getEvent(bookedModule.eventId!)
 			console.log(event)
-			isBooked = (bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED') &&
-				(event !== undefined && event.status === 'Active')
+			isBooked =
+				(bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED') &&
+				event !== undefined &&
+				event.status === 'Active'
 		}
 		const isDatePassed = new Date() > course.getSelectedDate()!
 
