@@ -1,6 +1,15 @@
 import {BookingStatus} from './moduleRecord'
 
-export type RecordState = '' |	'COMPLETED' |	'IN_PROGRESS' |	'ARCHIVED' |	'SKIPPED' |	'UNREGISTERED' |	'REGISTERED' |	'APPROVED' |	'BOOKED'
+export type RecordState =
+	| ''
+	| 'COMPLETED'
+	| 'IN_PROGRESS'
+	| 'ARCHIVED'
+	| 'SKIPPED'
+	| 'UNREGISTERED'
+	| 'REGISTERED'
+	| 'APPROVED'
+	| 'BOOKED'
 
 export class Record {
 	courseId: string
@@ -65,5 +74,4 @@ export class Record {
 	isApproved() {
 		return this.state === 'APPROVED'
 	}
-
 }

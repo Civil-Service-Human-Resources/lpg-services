@@ -157,14 +157,7 @@ describe('Course page model tests', () => {
 				const file = new Module('file', ModuleType.FILE)
 				file.optional = false
 				file.associatedLearning = false
-				const courseRecord = new CourseRecord(
-					'course-id',
-					'user-id',
-					'IN_PROGRESS',
-					[f2fRecord],
-					'Course Title',
-					false
-				)
+				const courseRecord = new CourseRecord('course-id', 'user-id', 'IN_PROGRESS', [f2fRecord], 'Course Title', false)
 				course.modules = [f2f, linkAssoc, file]
 				const result = getBlendedCoursePage(course, courseRecord)
 				expect(result.title).eql('Course title')
