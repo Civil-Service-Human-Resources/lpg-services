@@ -12,7 +12,7 @@ export async function getFullRecord(user: model.User): Promise<CourseRecord[]> {
 	const resp = await client._get<CourseRecordResponse>(
 		{
 			params: {
-				userId: user.id,
+				userIds: user.id,
 			},
 			url: URL,
 		},
@@ -28,7 +28,7 @@ export async function getCourseRecords(courseIds: string[], user: model.User): P
 			method: 'GET',
 			params: {
 				courseIds,
-				userId: user.id,
+				userIds: user.id,
 			},
 			url: URL,
 		},

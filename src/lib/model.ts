@@ -243,6 +243,10 @@ export class Course {
 		return this.modules
 	}
 
+	getModule(moduleId: string) {
+		return this.getModules().find(m => m.id === moduleId)
+	}
+
 	getEvent(eventId: string): Event | undefined {
 		for (const module of this.getModules()) {
 			const event = module.getEvent(eventId)
@@ -664,7 +668,7 @@ export class Event {
 	) {}
 
 	isBookable() {
-		return this.startDate > new Date() && this.status === 'Active'
+		return (this.startDate > new Date()) && this.status === 'Active'
 	}
 }
 
