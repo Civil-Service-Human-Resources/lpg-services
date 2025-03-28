@@ -6,7 +6,6 @@ export type ModuleRecordResult = 'FAILED' | 'PASSED'
 
 export type BookingStatus = '' | 'REQUESTED' | 'CONFIRMED' | 'CANCELLED'
 
-
 export class ModuleRecord extends Record {
 	id: number
 	@Type(() => Date)

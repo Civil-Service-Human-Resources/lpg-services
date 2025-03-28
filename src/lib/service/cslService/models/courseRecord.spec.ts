@@ -125,20 +125,7 @@ describe('Should upsert (update OR insert) a module record', () => {
 	})
 
 	it('should insert the missing module record', () => {
-		const mod = new ModuleRecord(
-			1,
-			'',
-			'',
-			'',
-			new Date(),
-			new Date(),
-			'',
-			'link',
-			'IN_PROGRESS',
-			0,
-			false,
-			undefined
-		)
+		const mod = new ModuleRecord(1, '', '', '', new Date(), new Date(), '', 'link', 'IN_PROGRESS', 0, false, undefined)
 
 		const courseRecord = new CourseRecord('Test001', '', 'IN_PROGRESS', [mod], '', false)
 

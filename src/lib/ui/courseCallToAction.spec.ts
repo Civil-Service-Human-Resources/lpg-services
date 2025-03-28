@@ -199,14 +199,7 @@ describe('Course Call to Actions', () => {
 export function initCourse(withRecord?: boolean): Course {
 	const c = Course.create(courseSkeletonData)
 	if (withRecord) {
-		c.record = new CourseRecord(
-			c.id,
-			testUser.id,
-			'IN_PROGRESS',
-			[],
-			'title',
-			false
-		)
+		c.record = new CourseRecord(c.id, testUser.id, 'IN_PROGRESS', [], 'title', false)
 	}
 	return c
 }
