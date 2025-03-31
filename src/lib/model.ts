@@ -243,6 +243,21 @@ export class Course {
 		return this.modules
 	}
 
+	getModule(moduleId: string) {
+		return this.getModules().find(m => m.id === moduleId)
+	}
+
+	getEvent(eventId: string): Event | undefined {
+		for (const module of this.getModules()) {
+			const event = module.getEvent(eventId)
+			console.log(event)
+			if (event !== undefined) {
+				return event
+			}
+		}
+		return undefined
+	}
+
 	public getModulesRequiredForCompletion() {
 		const optModules: Module[] = []
 		const requiredModules: Module[] = []
@@ -604,6 +619,9 @@ export class ModuleWithCourse extends Module {
 	courseId?: string
 	course?: Course
 }
+
+export type EventStatus = 'Active' | 'Cancelled'
+
 export class Event {
 	static create(data: any) {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
@@ -629,7 +647,9 @@ export class Event {
 			capacity = data.capacity
 		}
 
-		const status = data.status ? data.status : 'Active'
+		const status = data.status
+
+		console.log(data)
 
 		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}
@@ -643,12 +663,12 @@ export class Event {
 		public location: string,
 		public capacity: number,
 		public availability: number,
-		public status: string,
+		public status: EventStatus,
 		public id: string
 	) {}
 
 	isBookable() {
-		return this.startDate > new Date()
+		return this.startDate > new Date() && this.status === 'Active'
 	}
 }
 

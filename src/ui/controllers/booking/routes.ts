@@ -21,7 +21,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 router.get('/ouch', bookingController.renderOuch)
 
-router.get('/:courseId/:moduleId/choose-date', bookingController.renderChooseDate)
+router.get('/:bookingCourseId/:bookingModuleId/choose-date', bookingController.renderChooseDate)
 
 router.post('/:courseId/:moduleId/choose-date', bookingController.selectedDate)
 

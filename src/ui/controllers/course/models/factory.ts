@@ -2,13 +2,9 @@ import {extensionAndSize, fileName} from '../../../../lib/filehelpers'
 import {Course, Module, ModuleType, User} from '../../../../lib/model'
 import {getCourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/client'
 import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {BookingStatus, ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
-import {
-	getCancelledEventUidsFromCourseRecord,
-	updateStatusForCancelledEventsInCourseRecord,
-} from '../../../../lib/service/learnerRecordAPI/event/service'
 
 // Modules
 
@@ -63,9 +59,9 @@ export function getF2FModuleCard(
 	moduleCard: BaseModuleCard,
 	moduleRecord?: ModuleRecord
 ): F2FModuleCard {
-	let eventId
-	if (moduleRecord) {
-		eventId = moduleRecord.eventId
+	let event
+	if (moduleRecord && moduleRecord.eventId) {
+		event = module.getEvent(moduleRecord.eventId)
 	}
 	const updatedCard: F2FModuleCard = {
 		...moduleCard,
@@ -73,8 +69,12 @@ export function getF2FModuleCard(
 		launchLink: `/courses/${course.id}/${module.id}/choose-date`,
 		template: 'faceToFace',
 	}
-	if (!['UNREGISTERED', undefined].includes(updatedCard.displayState) && eventId !== undefined) {
-		updatedCard.cancellationLink = `/book/${course.id}/${module.id}/${eventId}/cancel`
+	if (
+		!['UNREGISTERED', undefined].includes(updatedCard.displayState) &&
+		event !== undefined &&
+		event.status === 'Active'
+	) {
+		updatedCard.cancellationLink = `/book/${course.id}/${module.id}/${event.id}/cancel`
 	}
 	return updatedCard
 }
@@ -85,21 +85,7 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 	if (course.modules.length === 0) {
 		return getNoModuleCoursePage(course)
 	} else {
-		let courseRecord = await getCourseRecord(course.id, user)
-		if (courseRecord) {
-			const cancelledEventUids = await getCancelledEventUidsFromCourseRecord(courseRecord, user)
-
-			if (cancelledEventUids.length > 0) {
-				courseRecord =
-					courseRecord &&
-					(await updateStatusForCancelledEventsInCourseRecord(
-						courseRecord,
-						cancelledEventUids,
-						BookingStatus.CANCELLED
-					))
-			}
-		}
-
+		const courseRecord = await getCourseRecord(course.id, user)
 		if (course.modules.length === 1) {
 			const module = course.modules[0]
 			return getSingleModuleCoursePage(course, module, courseRecord)
