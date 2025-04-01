@@ -18,6 +18,7 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 	)
 	try {
 		const course = req.course
+
 		const module = req.module!
 		const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
 		let moduleRecord = null
@@ -27,17 +28,19 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 		}
 
 		const moduleState = module.getDisplayState(moduleRecord, course.getRequiredRecurringAudience())
-		
-		if (moduleState === "IN_PROGRESS") {
+
+		if (moduleState === 'IN_PROGRESS') {
 			res.redirect(`/courses/${course.id}`)
 		} else {
-			const courseModuleDisplayStates: (string | null)[] = course.modules.map((module) => {
-				const recordForModule = courseRecord!.modules.find(mr => module.id === mr.moduleId)
-				return module.getDisplayState(recordForModule, course.getRequiredRecurringAudience())
+			const courseModuleDisplayStates: (string | null)[] = course.modules.map(m => {
+				const recordForModule = courseRecord!.modules.find(mr => m.id === mr.moduleId)
+				return m.getDisplayState(recordForModule, course.getRequiredRecurringAudience())
 			})
 
-			let courseCompleted = courseRecord && course.getDisplayState(courseRecord) === RecordState.Completed
-			let numberOfmodulesCompleted = courseModuleDisplayStates.filter((displayState) => displayState === "COMPLETED").length
+			const courseCompleted = courseRecord && course.getDisplayState(courseRecord) === RecordState.Completed
+			const numberOfmodulesCompleted = courseModuleDisplayStates.filter(
+				displayState => displayState === 'COMPLETED'
+			).length
 
 			res.send(
 				template.render('learning-record/course-result', req, res, {
@@ -45,10 +48,10 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 						headingI18n: courseCompleted ? 'courseResult.complete' : 'moduleResult.complete',
 						date: moduleRecord && moduleRecord.completionDate && datetime.formatDate(moduleRecord.completionDate),
 						resourceTitle: courseCompleted ? `${course.title}` : `${module.title} (${course.title})`,
-						completionIndicator: `${numberOfmodulesCompleted} out of ${course.modules.length} modules completed`
+						completionIndicator: `${numberOfmodulesCompleted} out of ${course.modules.length} modules completed`,
 					},
-					pageBodyName: courseCompleted ? "LEARNER_RECORD_UPDATED" : "LINK_TO_COURSE_OVERVIEW",
-					courseId: course.id
+					pageBodyName: courseCompleted ? 'LEARNER_RECORD_UPDATED' : 'LINK_TO_COURSE_OVERVIEW',
+					courseId: course.id,
 				})
 			)
 		}
