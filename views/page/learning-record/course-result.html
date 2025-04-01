@@ -4,28 +4,24 @@
             <div class="column-full">
                 <div class="govuk-box-highlight results">
                     <h1 class="heading-xlarge">
-                        { courseCompleted ? $i18n('courseResult.complete') : $i18n('moduleResult.complete') }
+                        { $i18n(highlight.headingI18n) }
+
                     </h1>
-                    <div>{ $datetime.formatDate(record.completionDate) }</div>
+                    <div>{ highlight.date }</div>
                     <div>
-                        <strong>{ courseCompleted ? course.title : module.title} ({course.title})</strong>
+                        <strong>{ highlight.resourceTitle }</strong>
                     </div>
                     <div>
-                        <p>{modulesCompleted} out of {course.modules.length} completed</p>
+                        <p>{ highlight.completionIndicator }</p>
                     </div>
-                    {#if record.score}
-                    <div>Your score</div>
-                    <div>
-                        <strong>{ record.score.scaled * 100 }</strong>%
-                    </div>
-                    {/if}
                 </div>
-                {#if courseCompleted}
+                {#if pageBodyName === "LEARNER_RECORD_UPDATED"}
                     <p>Your
                         <a href="/learning-record">learning record</a> has been updated to show this completed learning.</p>
-                {:else}
+                {/if}
+                {#if pageBodyName === "LINK_TO_COURSE_OVERVIEW"}
                     <p>Do you want to continue to the course overview?</p>
-                    <a class="button" href="/courses/{course.id}">Continue</a>
+                    <a class="button" href="/courses/{courseId}" aria-label="Continue to the course overview">Continue</a>
                 {/if}
             </div>
         </div>
