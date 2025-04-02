@@ -2,9 +2,8 @@ import {expect} from 'chai'
 import * as sinon from 'sinon'
 import * as fileHelpers from '../../../../lib/filehelpers'
 import {Course, CourseStatus, Event, Module, ModuleType, User} from '../../../../lib/model'
-import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from '../../../../lib/service/learnerRecordAPI/models/record'
-import {ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {CourseRecord} from '../../../../lib/service/cslService/models/courseRecord'
+import {ModuleRecord} from '../../../../lib/service/cslService/models/moduleRecord'
 import {BlendedCoursePage, SingleModuleCoursePage} from './coursePage'
 import {
 	getBasicModuleCard,
@@ -148,7 +147,7 @@ describe('Course page model tests', () => {
 					new Date(),
 					'Face to face',
 					'face-to-face',
-					RecordState.InProgress,
+					'IN_PROGRESS',
 					0,
 					false
 				)
@@ -158,14 +157,7 @@ describe('Course page model tests', () => {
 				const file = new Module('file', ModuleType.FILE)
 				file.optional = false
 				file.associatedLearning = false
-				const courseRecord = new CourseRecord(
-					'course-id',
-					'user-id',
-					RecordState.InProgress,
-					[f2fRecord],
-					'Course Title',
-					false
-				)
+				const courseRecord = new CourseRecord('course-id', 'user-id', 'IN_PROGRESS', [f2fRecord], 'Course Title', false)
 				course.modules = [f2f, linkAssoc, file]
 				const result = getBlendedCoursePage(course, courseRecord)
 				expect(result.title).eql('Course title')

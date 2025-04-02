@@ -1,12 +1,12 @@
 import {assert} from 'chai'
 import * as sinon from 'sinon'
 import {Course, Module, RequiredRecurringAudience} from './model'
-import {CourseRecord} from './service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from './service/learnerRecordAPI/models/record'
-import {ModuleRecord} from './service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {CourseRecord} from './service/cslService/models/courseRecord'
+import {ModuleRecord} from './service/cslService/models/moduleRecord'
+import {RecordState} from './service/cslService/models/record'
 
 export const getBasicCourseRecord = (id?: string) => {
-	return new CourseRecord(id || 'test1', '', RecordState.Null, [], '', false)
+	return new CourseRecord(id || 'test1', '', '', [], '', false)
 }
 
 export const getBasicModuleRecord = (moduleId: string, state: RecordState, lastUpdated: Date, completedDate?: Date) => {
@@ -49,9 +49,9 @@ describe('displayState tests', () => {
 			sandbox.stub(course, 'getRequiredRecurringAudience').returns(audience)
 			const courseRecord = getBasicCourseRecord()
 			courseRecord.modules = [
-				getBasicModuleRecord('1', RecordState.Completed, lastYearDate, lastYearDate),
-				getBasicModuleRecord('2', RecordState.Completed, lastYearDate, lastYearDate),
-				getBasicModuleRecord('3', RecordState.Completed, lastYearDate, lastYearDate),
+				getBasicModuleRecord('1', 'COMPLETED', lastYearDate, lastYearDate),
+				getBasicModuleRecord('2', 'COMPLETED', lastYearDate, lastYearDate),
+				getBasicModuleRecord('3', 'COMPLETED', lastYearDate, lastYearDate),
 			]
 			it(
 				'should set the state to not started (null) when all modules have' +
@@ -61,7 +61,7 @@ describe('displayState tests', () => {
 					courseRecord.getModuleRecord('2')!.completionDate = lastYearDate
 					courseRecord.getModuleRecord('3')!.completionDate = lastYearDate
 					const result = course.getDisplayState(courseRecord)
-					assert.equal(result, RecordState.Null)
+					assert.equal(result, '')
 				}
 			)
 			it(
@@ -73,7 +73,7 @@ describe('displayState tests', () => {
 					courseRecord.getModuleRecord('2')!.completionDate = lastYearDate
 					courseRecord.getModuleRecord('3')!.completionDate = lastYearDate
 					const result = course.getDisplayState(courseRecord)
-					assert.equal(result, RecordState.InProgress)
+					assert.equal(result, 'IN_PROGRESS')
 				}
 			)
 			it(
@@ -85,7 +85,7 @@ describe('displayState tests', () => {
 					courseRecord.getModuleRecord('2')!.completionDate = lastYearDate
 					courseRecord.getModuleRecord('3')!.completionDate = lastYearDate
 					const result = course.getDisplayState(courseRecord)
-					assert.equal(result, RecordState.InProgress)
+					assert.equal(result, 'IN_PROGRESS')
 				}
 			)
 			it(
@@ -97,7 +97,7 @@ describe('displayState tests', () => {
 					courseRecord.getModuleRecord('2')!.completionDate = lastYearDate
 					courseRecord.getModuleRecord('3')!.completionDate = thisYearDate
 					const result = course.getDisplayState(courseRecord)
-					assert.equal(result, RecordState.InProgress)
+					assert.equal(result, 'IN_PROGRESS')
 				}
 			)
 			it(
@@ -109,7 +109,7 @@ describe('displayState tests', () => {
 					courseRecord.getModuleRecord('2')!.updatedAt = thisYearDate
 					courseRecord.getModuleRecord('3')!.completionDate = lastYearDate
 					const result = course.getDisplayState(courseRecord)
-					assert.equal(result, RecordState.InProgress)
+					assert.equal(result, 'IN_PROGRESS')
 				}
 			)
 			it(
@@ -120,13 +120,13 @@ describe('displayState tests', () => {
 					courseRecord.getModuleRecord('2')!.completionDate = thisYearDate
 					courseRecord.getModuleRecord('3')!.completionDate = thisYearDate
 					const result = course.getDisplayState(courseRecord)
-					assert.equal(result, RecordState.Completed)
+					assert.equal(result, 'COMPLETED')
 				}
 			)
 			it('should set the state to null when there are no module records', () => {
 				const emptyCourseRecord = getBasicCourseRecord()
 				const result = course.getDisplayState(emptyCourseRecord)
-				assert.equal(result, RecordState.Null)
+				assert.equal(result, '')
 			})
 		})
 
@@ -136,8 +136,8 @@ describe('displayState tests', () => {
 			sandbox.stub(course, 'getRequiredRecurringAudience').returns(audience)
 			const courseRecord = getBasicCourseRecord()
 			courseRecord.modules = [
-				getBasicModuleRecord('1', RecordState.Completed, lastYearDate, lastYearDate),
-				getBasicModuleRecord('4', RecordState.Completed, lastYearDate, lastYearDate),
+				getBasicModuleRecord('1', 'COMPLETED', lastYearDate, lastYearDate),
+				getBasicModuleRecord('4', 'COMPLETED', lastYearDate, lastYearDate),
 			]
 			it(
 				'should set the state to completed when all module records have been completed ' + 'this learning period',
@@ -145,7 +145,7 @@ describe('displayState tests', () => {
 					courseRecord.getModuleRecord('1')!.completionDate = thisYearDate
 					courseRecord.getModuleRecord('4')!.completionDate = thisYearDate
 					const result = course.getDisplayState(courseRecord)
-					assert.equal(result, RecordState.Completed)
+					assert.equal(result, 'COMPLETED')
 				}
 			)
 		})
@@ -155,7 +155,7 @@ describe('displayState tests', () => {
 		it(
 			'should set the state to not started (null) when a module is' + 'completed during the previous learning year',
 			() => {
-				const moduleRecord = getBasicModuleRecord('1', RecordState.Completed, lastYearDate, lastYearDate)
+				const moduleRecord = getBasicModuleRecord('1', 'COMPLETED', lastYearDate, lastYearDate)
 				const result = module1.getDisplayState(moduleRecord, audience)
 				assert.equal(result, null)
 			}
@@ -163,23 +163,23 @@ describe('displayState tests', () => {
 		it(
 			'should set the state to not started (null) when a module is' + 'in progress during the previous learning year',
 			() => {
-				const moduleRecord = getBasicModuleRecord('1', RecordState.InProgress, lastYearDate)
+				const moduleRecord = getBasicModuleRecord('1', 'IN_PROGRESS', lastYearDate)
 				const result = module1.getDisplayState(moduleRecord, audience)
 				assert.equal(result, null)
 			}
 		)
 		it('should set the state to IN_PROGRESS when a module is' + 'in progress during the current learning year', () => {
-			const moduleRecord = getBasicModuleRecord('1', RecordState.InProgress, thisYearDate)
+			const moduleRecord = getBasicModuleRecord('1', 'IN_PROGRESS', thisYearDate)
 			const result = module1.getDisplayState(moduleRecord, audience)
 			assert.equal(result, 'IN_PROGRESS')
 		})
 		it('should set the state to COMPLETED when a module is' + 'completed during the current learning year', () => {
-			const moduleRecord = getBasicModuleRecord('1', RecordState.Completed, thisYearDate, thisYearDate)
+			const moduleRecord = getBasicModuleRecord('1', 'COMPLETED', thisYearDate, thisYearDate)
 			const result = module1.getDisplayState(moduleRecord, audience)
 			assert.equal(result, 'COMPLETED')
 		})
 		it('should set the state to COMPLETED when a module has been completed on a non-recurring course ', () => {
-			const moduleRecord = getBasicModuleRecord('1', RecordState.Completed, lastYearDate, lastYearDate)
+			const moduleRecord = getBasicModuleRecord('1', 'COMPLETED', lastYearDate, lastYearDate)
 			const result = module1.getDisplayState(moduleRecord, null)
 			assert.equal(result, 'COMPLETED')
 		})

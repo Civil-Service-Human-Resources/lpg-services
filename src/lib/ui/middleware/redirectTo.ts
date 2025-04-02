@@ -30,8 +30,6 @@ export function getMiddlewareGET(validRedirects: string[]) {
 		redirectToSessionService.deleteObjectFromSession(req)
 		const redirectTo: string | undefined = req.query.redirectTo
 		if (redirectTo) {
-			console.log(redirectTo)
-			console.log(validRedirects)
 			const match = validRedirects.some(validRedirect => {
 				return redirectTo.startsWith(validRedirect)
 			})

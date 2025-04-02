@@ -1,17 +1,10 @@
 import {Type} from 'class-transformer'
 
-import {Record, RecordState} from '../../models/record'
+import {Record, RecordState} from './record'
 
-export enum ModuleRecordResult {
-	Failed = 'FAILED',
-	Passed = 'PASSED',
-}
+export type ModuleRecordResult = 'FAILED' | 'PASSED'
 
-export enum BookingStatus {
-	REQUESTED = 'REQUESTED',
-	CONFIRMED = 'CONFIRMED',
-	CANCELLED = 'CANCELLED',
-}
+export type BookingStatus = '' | 'REQUESTED' | 'CONFIRMED' | 'CANCELLED'
 
 export class ModuleRecord extends Record {
 	id: number
@@ -27,7 +20,7 @@ export class ModuleRecord extends Record {
 	cost: number
 	duration?: number
 	rated?: boolean
-	bookingStatus?: BookingStatus
+	bookingStatus: BookingStatus
 	@Type(() => Date)
 	createdAt?: Date
 	@Type(() => Date)
@@ -46,7 +39,7 @@ export class ModuleRecord extends Record {
 		updatedAt: Date,
 		moduleTitle: string,
 		moduleType: string,
-		state: RecordState = RecordState.InProgress,
+		state: RecordState = 'IN_PROGRESS',
 		cost: number = 0,
 		optional: boolean,
 		result?: ModuleRecordResult,
@@ -65,7 +58,7 @@ export class ModuleRecord extends Record {
 		this.eventId = eventId
 		this.result = result
 		this.completionDate = completionDate ? new Date(completionDate) : undefined
-		this.bookingStatus = bookingStatus
+		this.bookingStatus = bookingStatus || ''
 		this.moduleType = moduleType
 		this.duration = duration
 		this.eventDate = eventDate ? new Date(eventDate) : undefined
