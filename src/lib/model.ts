@@ -250,7 +250,6 @@ export class Course {
 	getEvent(eventId: string): Event | undefined {
 		for (const module of this.getModules()) {
 			const event = module.getEvent(eventId)
-			console.log(event)
 			if (event !== undefined) {
 				return event
 			}
@@ -648,8 +647,6 @@ export class Event {
 		}
 
 		const status = data.status
-
-		console.log(data)
 
 		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}

@@ -47,9 +47,7 @@ export function constructCourseCallToAction(course: model.Course, modifier?: str
 		let isBooked = false
 		const bookedModule = record.modules && record.modules.find(m => !!m.eventId)
 		if (bookedModule) {
-			console.log(bookedModule)
 			const event = course.getEvent(bookedModule.eventId!)
-			console.log(event)
 			isBooked =
 				(bookedModule.state === 'REGISTERED' || bookedModule.state === 'APPROVED') &&
 				event !== undefined &&

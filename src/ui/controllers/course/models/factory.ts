@@ -28,7 +28,6 @@ export function getModuleCard(course: Course, module: Module, moduleRecord?: Mod
 
 export function getBasicModuleCard(module: Module, course: Course, moduleRecord?: ModuleRecord): BaseModuleCard {
 	const displayState = module.getDisplayState(moduleRecord, course.getRequiredRecurringAudience()) || ''
-	console.log(displayState)
 	return {
 		title: module.title,
 		description: module.description,

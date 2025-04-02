@@ -7,6 +7,7 @@ import * as courseRecordClient from '../../../lib/service/learnerRecordAPI/cours
 import {CourseRecord} from '../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
 import {RecordState} from '../../../lib/service/learnerRecordAPI/models/record'
 import * as template from '../../../lib/ui/template'
+import * as datetime from '../../../lib/datetime'
 
 const logger = getLogger('controllers/learning-record')
 
@@ -17,6 +18,7 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 	)
 	try {
 		const course = req.course
+
 		const module = req.module!
 		const courseRecord = await courseRecordClient.getCourseRecord(course.id, req.user)
 		let moduleRecord = null
@@ -24,39 +26,32 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 		if (courseRecord && courseRecord.modules) {
 			moduleRecord = courseRecord.modules.find(mr => module.id === mr.moduleId)
 		}
-		if (!moduleRecord || moduleRecord.state !== 'COMPLETED') {
+
+		const moduleState = module.getDisplayState(moduleRecord, course.getRequiredRecurringAudience())
+
+		if (moduleState === 'IN_PROGRESS') {
 			res.redirect(`/courses/${course.id}`)
 		} else {
-			let courseCompleted = true
-			let modulesCompleted = 0
-			course.modules.forEach(m => {
-				const r = courseRecord!.modules.find(mr => m.id === mr.moduleId)
-				if (!r || r.state !== 'COMPLETED') {
-					courseCompleted = false
-				} else {
-					//LC-1054: module completion fix in the new learning period
-					const coursePreviousRequiredDate = course.previousRequiredByNew()
-					if (coursePreviousRequiredDate) {
-						const moduleCompletionDate1 = r.completionDate
-						const moduleCompletionDate = moduleCompletionDate1 ? new Date(moduleCompletionDate1.toDateString()) : null
-						if (moduleCompletionDate && moduleCompletionDate > coursePreviousRequiredDate) {
-							modulesCompleted++
-						} else {
-							courseCompleted = false
-						}
-					} else {
-						modulesCompleted++
-					}
-				}
+			const courseModuleDisplayStates: (string | null)[] = course.modules.map(m => {
+				const recordForModule = courseRecord!.modules.find(mr => m.id === mr.moduleId)
+				return m.getDisplayState(recordForModule, course.getRequiredRecurringAudience())
 			})
+
+			const courseCompleted = courseRecord && course.getDisplayState(courseRecord) === RecordState.Completed
+			const numberOfmodulesCompleted = courseModuleDisplayStates.filter(
+				displayState => displayState === 'COMPLETED'
+			).length
 
 			res.send(
 				template.render('learning-record/course-result', req, res, {
-					course,
-					courseCompleted,
-					module,
-					modulesCompleted,
-					record: moduleRecord,
+					highlight: {
+						headingI18n: courseCompleted ? 'courseResult.complete' : 'moduleResult.complete',
+						date: moduleRecord && moduleRecord.completionDate && datetime.formatDate(moduleRecord.completionDate),
+						resourceTitle: courseCompleted ? `${course.title}` : `${module.title} (${course.title})`,
+						completionIndicator: `${numberOfmodulesCompleted} out of ${course.modules.length} modules completed`,
+					},
+					pageBodyName: courseCompleted ? 'LEARNER_RECORD_UPDATED' : 'LINK_TO_COURSE_OVERVIEW',
+					courseId: course.id,
 				})
 			)
 		}
