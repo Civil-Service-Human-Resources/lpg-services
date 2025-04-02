@@ -36,7 +36,7 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 				return m.getDisplayState(recordForModule, course.getRequiredRecurringAudience())
 			})
 
-			const courseCompleted = courseRecord && course.getDisplayState(courseRecord) === RecordState.Completed
+			const courseCompleted = courseRecord && course.getDisplayState(courseRecord) === 'COMPLETED'
 			const numberOfmodulesCompleted = courseModuleDisplayStates.filter(
 				displayState => displayState === 'COMPLETED'
 			).length
