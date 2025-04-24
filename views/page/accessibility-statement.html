@@ -5,7 +5,7 @@
                 <h1 class="heading-xlarge">Accessibility statement</h1>
                 <p>This accessibility statement applies to the https://learn.civilservice.gov.uk website.</p>
 
-                <p>This website is run by Government Business Services in the Cabinet Office. We want this website to be accessible for all users. For example, that means you should be able to:</p>
+                <p>This website is run by the Cabinet Office. We want this website to be accessible for all users. For example, that means you should be able to:</p>
                 <ul class="list-bullet">
                     <li>change colours, contrast levels and fonts</li>
                     <li>zoom in up to 300% without the text spilling off the screen</li>
@@ -18,33 +18,31 @@
                 <p>We’ve also made the website text as simple as possible to understand.</p>
                 <h2 class="heading-medium">Feedback and contact information</h2>
                 <p>If you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille:</p>
-                <ul class="list-bullet">
-                    <li>email <a href="mailto:{contactEmail}">{contactEmail}</a></li>
-                    <li>call 020 3640 7985</li>
-                </ul>
+                <br>
+                <p>email <a th:href="'mailto:'+${contactEmail}" th:text="${contactEmail}"></a></p>
+                <p>call <a th:href="'tel:'+${contactNumber}" th:text="${contactNumber}"></a></p>
                 <br>
                 <p>We’ll consider your request and get back to you within 5 working days.</p>
 
                 <h2 class="heading-medium">Reporting accessibility problems with this website</h2>
                 <p>We’re always looking to improve the accessibility of this website. If you find any problems not listed on this page or think we’re not meeting accessibility requirements:</p>
-                <ul class="list-bullet">
-                    <li>email <a href="mailto:{contactEmail}">{contactEmail}</a></li>
-                    <li>call 020 3640 7985</li>
-                </ul>
+                <br>
+                <p>email <a th:href="'mailto:'+${contactEmail}" th:text="${contactEmail}"></a></p>
+                <p>call <a th:href="'tel:'+${contactNumber}" th:text="${contactNumber}"></a></p>
 
                 <h2 class="heading-medium">Enforcement procedure</h2>
                 <p>If you contact us with a complaint and you’re not happy with our response contact the <a href="https://www.equalityadvisoryservice.com/">Equality Advisory and Support Service (EASS)</a>.</p>
                 <p>The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’).</p>
 
                 <h2 class="heading-medium">Technical information about this website’s accessibility</h2>
-                <p>Government Business Services is committed to making this website accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.</p>
-                
+                <p>The Cabinet Office is committed to making this website accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.</p>
+
                 <h3 class="heading bold-small">Compliance status</h3>
-                <p>We continue to schedule regular accessibility audits on the website which will highlight any non-compliance according to the <a href="https://www.w3.org/TR/WCAG21/">Web Content Accessibility Guidelines version 2.1</a> AA standard. Following these audits, recommendations are factored into the website’s delivery schedule.</p>
+                <p>We continue to schedule regular accessibility audits on the website which will highlight any non-compliance according to the <a href="https://www.w3.org/TR/WCAG22/">Web Content Accessibility Guidelines version 2.2</a> AA standard. Following these audits, recommendations are factored into the website’s delivery schedule.</p>
 
                 <h2 class="heading-medium">Preparation of this accessibility statement</h2>
-                <p>This statement was prepared on 24 February 2021. It was last reviewed on 20 July 2021.</p>
-                <p>Last updated: 28 July 2021</p>
+                <p>This statement was prepared on 24 February 2021. It was last reviewed on 7 April 2025.</p>
+                <p>Last updated: 28 May 2025</p>
 
             </div>
         </div>
