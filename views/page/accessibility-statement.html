@@ -18,17 +18,19 @@
                 <p>We’ve also made the website text as simple as possible to understand.</p>
                 <h2 class="heading-medium">Feedback and contact information</h2>
                 <p>If you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille:</p>
-                <br>
-                <p>email <a th:href="'mailto:'+${contactEmail}" th:text="${contactEmail}"></a></p>
-                <p>call <a th:href="'tel:'+${contactNumber}" th:text="${contactNumber}"></a></p>
+                <ul class="list-bullet">
+                    <li>email <a href="mailto:{contactEmail}">{contactEmail}</a></li>
+                    <li>call 020 3640 7985</li>
+                </ul>
                 <br>
                 <p>We’ll consider your request and get back to you within 5 working days.</p>
 
                 <h2 class="heading-medium">Reporting accessibility problems with this website</h2>
                 <p>We’re always looking to improve the accessibility of this website. If you find any problems not listed on this page or think we’re not meeting accessibility requirements:</p>
-                <br>
-                <p>email <a th:href="'mailto:'+${contactEmail}" th:text="${contactEmail}"></a></p>
-                <p>call <a th:href="'tel:'+${contactNumber}" th:text="${contactNumber}"></a></p>
+                <ul class="list-bullet">
+                    <li>email <a href="mailto:{contactEmail}">{contactEmail}</a></li>
+                    <li>call 020 3640 7985</li>
+                </ul>
 
                 <h2 class="heading-medium">Enforcement procedure</h2>
                 <p>If you contact us with a complaint and you’re not happy with our response contact the <a href="https://www.equalityadvisoryservice.com/">Equality Advisory and Support Service (EASS)</a>.</p>
