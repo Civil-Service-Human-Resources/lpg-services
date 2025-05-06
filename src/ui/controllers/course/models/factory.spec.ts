@@ -1,10 +1,9 @@
 import {expect} from 'chai'
 import * as sinon from 'sinon'
 import * as fileHelpers from '../../../../lib/filehelpers'
-import {Course, CourseStatus, Module, ModuleType, User} from '../../../../lib/model'
-import {CourseRecord} from '../../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from '../../../../lib/service/learnerRecordAPI/models/record'
-import {ModuleRecord} from '../../../../lib/service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {Course, CourseStatus, Event, Module, ModuleType, User} from '../../../../lib/model'
+import {CourseRecord} from '../../../../lib/service/cslService/models/courseRecord'
+import {ModuleRecord} from '../../../../lib/service/cslService/models/moduleRecord'
 import {BlendedCoursePage, SingleModuleCoursePage} from './coursePage'
 import {
 	getBasicModuleCard,
@@ -21,7 +20,7 @@ describe('Course page model tests', () => {
 	let fileHelperStub: sinon.SinonStubbedInstance<typeof fileHelpers>
 
 	const user = new User('user-id', ['LEARNER'], 'access-token', 'user@email.com', 'user-id')
-
+	const event = new Event(new Date(), new Date(), [], 'Bristol', 10, 10, 'Active', 'event-id')
 	const module = new Module('module-id', ModuleType.FILE)
 	module.title = 'Module title'
 	module.description = 'Module description'
@@ -29,6 +28,7 @@ describe('Course page model tests', () => {
 	module.optional = false
 	module.duration = 100
 	module.cost = 1
+	module.events = [event]
 	const course = new Course('course-id')
 	course.modules = []
 	course.title = 'Course title'
@@ -74,6 +74,31 @@ describe('Course page model tests', () => {
 			const mr = {eventId: 'event-id'}
 			const fileCard = getF2FModuleCard(module, course, getBasicModuleCard(module, course), mr as any) as F2FModuleCard
 			expect(fileCard.cancellationLink).eql(`/book/course-id/module-id/event-id/cancel`)
+		})
+		it('Should build a face to face module card that has been booked but the event has been cancelled', () => {
+			const mr = {eventId: 'event-id'}
+			const cancelledEvent = new Event(new Date(), new Date(), [], 'Bristol', 10, 10, 'Cancelled', 'event-id')
+			const cancelledModule = new Module('module-id', ModuleType.FACE_TO_FACE)
+			cancelledModule.title = 'Module title'
+			cancelledModule.description = 'Module description'
+			cancelledModule.associatedLearning = true
+			cancelledModule.optional = false
+			cancelledModule.duration = 100
+			cancelledModule.cost = 1
+			cancelledModule.events = [cancelledEvent]
+			const cancelledCourse = new Course('course-id')
+			cancelledCourse.modules = [cancelledModule]
+			cancelledCourse.title = 'Course title'
+			cancelledCourse.description = 'Course description'
+			cancelledCourse.learningOutcomes = 'Course learning outcomes'
+			cancelledCourse.status = CourseStatus.PUBLISHED
+			const fileCard = getF2FModuleCard(
+				cancelledModule,
+				cancelledCourse,
+				getBasicModuleCard(module, course),
+				mr as any
+			) as F2FModuleCard
+			expect(fileCard.cancellationLink).eql(undefined)
 		})
 	})
 	describe('Course overview page model tests', () => {
@@ -122,7 +147,7 @@ describe('Course page model tests', () => {
 					new Date(),
 					'Face to face',
 					'face-to-face',
-					RecordState.InProgress,
+					'IN_PROGRESS',
 					0,
 					false
 				)
@@ -132,14 +157,7 @@ describe('Course page model tests', () => {
 				const file = new Module('file', ModuleType.FILE)
 				file.optional = false
 				file.associatedLearning = false
-				const courseRecord = new CourseRecord(
-					'course-id',
-					'user-id',
-					RecordState.InProgress,
-					[f2fRecord],
-					'Course Title',
-					false
-				)
+				const courseRecord = new CourseRecord('course-id', 'user-id', 'IN_PROGRESS', [f2fRecord], 'Course Title', false)
 				course.modules = [f2f, linkAssoc, file]
 				const result = getBlendedCoursePage(course, courseRecord)
 				expect(result.title).eql('Course title')

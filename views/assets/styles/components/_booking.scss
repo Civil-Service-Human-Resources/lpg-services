@@ -8,6 +8,10 @@
 			list-style-type: disc;
 			margin-left: 20px;
 		}
+
+		@include m(payment-options-details){
+			margin-bottom: 20px;
+		}
 	}
 
 	@include e(details) {

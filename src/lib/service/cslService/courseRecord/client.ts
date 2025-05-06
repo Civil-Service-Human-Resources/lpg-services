@@ -2,7 +2,7 @@ import {plainToClass} from 'class-transformer'
 import {getLogger} from '../../../logger'
 import * as model from '../../../model'
 import {client} from '../baseConfig'
-import {CourseRecord, CourseRecordResponse} from './models/courseRecord'
+import {CourseRecord, CourseRecordResponse} from '../models/courseRecord'
 
 const logger = getLogger('LearnerRecordAPI/client.ts')
 
@@ -11,9 +11,6 @@ const URL = '/course_records'
 export async function getFullRecord(user: model.User): Promise<CourseRecord[]> {
 	const resp = await client._get<CourseRecordResponse>(
 		{
-			params: {
-				userId: user.id,
-			},
 			url: URL,
 		},
 		user
@@ -28,7 +25,6 @@ export async function getCourseRecords(courseIds: string[], user: model.User): P
 			method: 'GET',
 			params: {
 				courseIds,
-				userId: user.id,
 			},
 			url: URL,
 		},

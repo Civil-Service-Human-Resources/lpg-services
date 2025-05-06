@@ -1,10 +1,10 @@
 import {plainToClass, Type} from 'class-transformer'
-import * as datetime from '../../../../datetime'
+import * as datetime from '../../../datetime'
 
-import {CourseRcd} from '../../../../learnerrecord'
-import {Module} from '../../../../model'
-import {Record, RecordState} from '../../models/record'
-import {ModuleRecord} from '../../moduleRecord/models/moduleRecord'
+import {CourseRcd} from '../../../learnerrecord'
+import {Module} from '../../../model'
+import {ModuleRecord} from './moduleRecord'
+import {Record, RecordState} from './record'
 
 export enum CourseRecordPreference {
 	Liked = 'LIKED',
@@ -31,7 +31,7 @@ export class CourseRecord extends Record implements CourseRcd {
 	constructor(
 		courseId: string,
 		userId: string,
-		state: RecordState = RecordState.Null,
+		state: RecordState = '',
 		modules: ModuleRecord[] = [],
 		courseTitle: string,
 		required: boolean,
@@ -149,5 +149,9 @@ export class CourseRecord extends Record implements CourseRcd {
 
 	private fillRecords = (moduleRecords: ModuleRecord[]) => {
 		this.modules = moduleRecords.map(m => plainToClass(ModuleRecord, m as ModuleRecord))
+	}
+
+	public findEventModuleRecord = (eventId: string) => {
+		return this.modules.find(mr => mr.eventId === eventId)
 	}
 }

@@ -6,6 +6,7 @@ import * as extended from '../../../lib/extended'
 import * as learnerRecord from '../../../lib/learnerrecord'
 import {getLogger} from '../../../lib/logger'
 import {bookEvent, completeEventBooking, skipEventBooking} from '../../../lib/service/cslService/cslServiceClient'
+import {getCourse} from '../../../lib/service/catalog/courseCatalogueClient'
 import {createBookEventDto} from '../../../lib/service/cslService/models/factory/BookEventDtoFactory'
 import * as template from '../../../lib/ui/template'
 
@@ -16,22 +17,6 @@ export enum confirmedMessage {
 	Booked = 'Booked',
 	Cancelled = 'Cancelled',
 	Error = 'Error',
-}
-
-export function recordCheck(record: learnerRecord.CourseRecord | null, ireq: express.Request) {
-	const req = ireq as extended.CourseRequest
-
-	if (!record) {
-		logger.warn(
-			`Attempt to cancel a booking when not registered. user: ${req.user.id}, course: ${req.course.id}, module: ${
-				req.module!.id
-			}, event: ${req.event!.id}`
-		)
-
-		return false
-	} else {
-		return true
-	}
 }
 
 export function saveAccessibilityOptions(ireq: express.Request, res: express.Response) {
@@ -68,13 +53,18 @@ export function saveAccessibilityOptions(ireq: express.Request, res: express.Res
 	})
 }
 
-export async function renderChooseDate(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+export async function renderChooseDate(req: express.Request, res: express.Response) {
+	const course = await getCourse(req.params.bookingCourseId, req.user, true)
+	let module
+	if (course) {
+		module = course.getModule(req.params.bookingModuleId)
+	}
+
+	if (module === undefined || course === null) {
+		return res.sendStatus(404)
+	}
 
 	const tab = req.query.tab
-
-	const course = req.course
-	const module = req.module!
 
 	let selectedEventId: string = req.flash('bookingSelected')[0] || req.session!.selectedEventId || null
 
@@ -93,11 +83,13 @@ export async function renderChooseDate(ireq: express.Request, res: express.Respo
 		req.session!.returnTo = `/book/${course.id}/${module.id}/${selectedEventId}/confirm`
 	}
 
-	const today = new Date()
-
 	const events = (module.events || [])
-		.filter(a => a.startDate > today)
+		.filter(a => a.isBookable())
 		.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+
+	if (events.length === 0) {
+		return res.redirect(`/courses/${course.id}`)
+	}
 
 	for (const event of events) {
 		await learnerRecord

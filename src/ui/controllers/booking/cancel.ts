@@ -2,13 +2,14 @@ import * as express from 'express'
 import {ResourceNotFoundError} from '../../../lib/exception/ResourceNotFoundError'
 import * as extended from '../../../lib/extended'
 import * as learnerRecord from '../../../lib/learnerrecord'
+import * as courseRecordClient from '../../../lib/service/cslService/courseRecord/client'
 import {getLogger} from '../../../lib/logger'
 import {cancelEventBooking} from '../../../lib/service/cslService/cslServiceClient'
 import {CancelBookingDto} from '../../../lib/service/cslService/models/CancelBookingDto'
 import * as template from '../../../lib/ui/template'
 import {SessionFlash} from '../../../lib/utils/SessionUtils'
 
-import {confirmedMessage, recordCheck} from './booking'
+import {confirmedMessage} from './booking'
 
 const logger = getLogger('controllers/booking/cancel')
 
@@ -22,21 +23,15 @@ export async function renderCancelBookingPage(
 	const module = req.module!
 	const event = req.event!
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	const record = await courseRecordClient.getCourseRecord(course.id, req.user)
+	const moduleRecord = record !== undefined ? record.findEventModuleRecord(event.id) : undefined
 
-	if (!recordCheck(record, ireq)) {
+	if (moduleRecord === undefined) {
 		res.sendStatus(400)
 		return
 	}
 
-	course.record = record!
-
-	const moduleRecord = record!.modules.find(rm => rm.moduleId === module.id && rm.eventId === event.id)
-
-	if (!moduleRecord) {
-		res.sendStatus(400)
-		return
-	}
+	course.record = record
 	;(module as any).record = moduleRecord
 
 	const optionType = 'radio'
@@ -70,24 +65,20 @@ export async function renderCancelledBookingPage(ireq: express.Request, res: exp
 	const event = req.event!
 	let error: string = ''
 
-	const record = await learnerRecord.getRecord(req.user, course, module, event)
+	const record = await courseRecordClient.getCourseRecord(course.id, req.user)
+	const moduleRecord = record !== undefined ? record.findEventModuleRecord(event.id) : undefined
 
-	if (!recordCheck(record, ireq)) {
-		error = req.__('errors.registrationNotFound')
-	} else {
-		const moduleRecord = record!.modules.find(rm => rm.moduleId === module.id && rm.eventId === event.id)
-
-		if (moduleRecord && moduleRecord.state !== 'UNREGISTERED') {
+	if (moduleRecord !== undefined) {
+		if (moduleRecord.state !== 'UNREGISTERED') {
 			req.flash('cancelBookingError', req.__('errors.cancelBooking'))
 			req.session!.save(() => {
 				res.redirect(`/book/${course.id}/${module.id}/${event.id}/cancel`)
 			})
 			return
-		} else if (!moduleRecord) {
-			error = req.__('errors.registrationNotFound')
 		}
+	} else {
+		error = req.__('errors.registrationNotFound')
 	}
-
 	const message = error ? confirmedMessage.Error : confirmedMessage.Cancelled
 
 	res.send(

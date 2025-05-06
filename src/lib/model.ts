@@ -6,9 +6,9 @@ import * as datetime from '../lib/datetime'
 import * as learnerRecord from '../lib/learnerrecord'
 import {AreaOfWork, Grade, Interest, Profile} from './registry'
 import {IdentityDetails} from './service/identity/models/identityDetails'
-import {CourseRecord} from './service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from './service/learnerRecordAPI/models/record'
-import {ModuleRecord} from './service/learnerRecordAPI/moduleRecord/models/moduleRecord'
+import {CourseRecord} from './service/cslService/models/courseRecord'
+import {RecordState} from './service/cslService/models/record'
+import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {CacheableObject} from './utils/cacheableObject'
 import {KeyValue} from './utils/dataUtils'
 
@@ -243,6 +243,20 @@ export class Course {
 		return this.modules
 	}
 
+	getModule(moduleId: string) {
+		return this.getModules().find(m => m.id === moduleId)
+	}
+
+	getEvent(eventId: string): Event | undefined {
+		for (const module of this.getModules()) {
+			const event = module.getEvent(eventId)
+			if (event !== undefined) {
+				return event
+			}
+		}
+		return undefined
+	}
+
 	public getModulesRequiredForCompletion() {
 		const optModules: Module[] = []
 		const requiredModules: Module[] = []
@@ -277,11 +291,11 @@ export class Course {
 		}
 
 		if (requiredCompletedCount === requiredModuleIdsForCompletion.length) {
-			return RecordState.Completed
+			return 'COMPLETED'
 		} else if (inProgressCount > 0 || requiredCompletedCount > 0) {
-			return RecordState.InProgress
+			return 'IN_PROGRESS'
 		}
-		return RecordState.Null
+		return ''
 	}
 
 	getAreasOfWork() {
@@ -604,6 +618,9 @@ export class ModuleWithCourse extends Module {
 	courseId?: string
 	course?: Course
 }
+
+export type EventStatus = 'Active' | 'Cancelled'
+
 export class Event {
 	static create(data: any) {
 		// TODO: Matt - this is a temp work around to circumvent new event definition not matching UI
@@ -629,7 +646,7 @@ export class Event {
 			capacity = data.capacity
 		}
 
-		const status = data.status ? data.status : 'Active'
+		const status = data.status
 
 		return new Event(startDate, endDate, dateRanges, location, capacity, availability, status, data.id)
 	}
@@ -643,12 +660,12 @@ export class Event {
 		public location: string,
 		public capacity: number,
 		public availability: number,
-		public status: string,
+		public status: EventStatus,
 		public id: string
 	) {}
 
 	isBookable() {
-		return this.startDate > new Date()
+		return this.startDate > new Date() && this.status === 'Active'
 	}
 }
 

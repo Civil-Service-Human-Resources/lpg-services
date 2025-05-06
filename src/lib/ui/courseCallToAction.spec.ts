@@ -1,7 +1,9 @@
 import {expect} from 'chai'
-import {CourseRecord, ModuleRecord} from '../learnerrecord'
+import {plainToInstance} from 'class-transformer'
 import {Course, Module} from '../model'
 import {createSampleUser} from '../service/catalog/suggestedLearning/suggestedLearningService.spec'
+import {CourseRecord} from '../service/cslService/models/courseRecord'
+import {ModuleRecord} from '../service/cslService/models/moduleRecord'
 import {constructCourseCallToAction, CourseActionType} from './courseCallToAction'
 
 export const testUser = createSampleUser()
@@ -197,13 +199,7 @@ describe('Course Call to Actions', () => {
 export function initCourse(withRecord?: boolean): Course {
 	const c = Course.create(courseSkeletonData)
 	if (withRecord) {
-		c.record = new CourseRecord({
-			courseId: c.id,
-			courseTitle: 'title',
-			modules: [],
-			state: 'IN_PROGRESS',
-			userId: testUser.id,
-		})
+		c.record = new CourseRecord(c.id, testUser.id, 'IN_PROGRESS', [], 'title', false)
 	}
 	return c
 }
@@ -219,11 +215,11 @@ export function initModules(moduleNames: string[]): Module[] {
 type EventRelativeToToday = 'past' | 'future'
 
 function initModuleRecord(rel: EventRelativeToToday): ModuleRecord {
-	return {
+	return plainToInstance(ModuleRecord, {
 		eventId: rel,
 		moduleId: 'F2F',
 		moduleTitle: 'module',
 		moduleType: 'blog',
 		optional: true,
-	}
+	})
 }

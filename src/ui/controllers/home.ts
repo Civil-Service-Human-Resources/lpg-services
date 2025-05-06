@@ -5,12 +5,10 @@ import * as extended from '../../lib/extended'
 import {getLogger} from '../../lib/logger'
 import * as model from '../../lib/model'
 import * as catalog from '../../lib/service/catalog'
-import * as courseRecordClient from '../../lib/service/learnerRecordAPI/courseRecord/client'
+import {CourseRecord} from '../../lib/service/cslService/models/courseRecord'
+import * as courseRecordClient from '../../lib/service/cslService/courseRecord/client'
+import {RecordState} from '../../lib/service/cslService/models/record'
 import * as template from '../../lib/ui/template'
-
-import {CourseRecord} from '../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
-import {RecordState} from '../../lib/service/learnerRecordAPI/models/record'
-import * as eventClient from '../../lib/service/learnerRecordAPI/event/service'
 
 const logger = getLogger('controllers/home')
 
@@ -20,7 +18,7 @@ export const getRequiredLearning = (
 ): model.Course[] => {
 	return requiredCourses.filter(course => {
 		let required = false
-		let courseState = RecordState.Null
+		let courseState: RecordState = ''
 		const courseRecord = courseRecordMap.get(course.id)
 		if (courseRecord) {
 			courseState = course.getDisplayState(courseRecord)
@@ -28,7 +26,7 @@ export const getRequiredLearning = (
 			courseRecordMap.delete(course.id)
 		}
 		course.record = courseRecord
-		if (courseState !== RecordState.Completed) {
+		if (courseState !== 'COMPLETED') {
 			required = true
 		}
 		return required
@@ -41,7 +39,7 @@ export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord
 	courseRecordMap.forEach((record: CourseRecord) => {
 		if (!record.isComplete() && record.isActive()) {
 			if (!record.state && (record.modules || []).length) {
-				record.state = RecordState.InProgress
+				record.state = 'IN_PROGRESS'
 			}
 			if (record.getSelectedDate()) {
 				const bookedModuleRecord = record.modules.find(m => !!m.eventId)
@@ -75,22 +73,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 		)
 		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
 
-		let plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
-
-		const cancelledEventUids = await eventClient.getCancelledEventUidsFromCourseRecord(plannedLearningRecords, user)
-
-		if (cancelledEventUids.length > 0) {
-			plannedLearningRecords = await Promise.all(
-				plannedLearningRecords.map(
-					async courseRecord =>
-						await eventClient.updateStatusForCancelledEventsInCourseRecord(
-							courseRecord,
-							cancelledEventUids,
-							RecordState.Unregistered
-						)
-				)
-			)
-		}
+		const plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
 
 		const plannedLearning = []
 		if (plannedLearningRecords.length > 0) {
@@ -168,18 +151,24 @@ function formatEventDuration(duration: number) {
 }
 
 function filterCourseByEvent(course: model.Course) {
-	return (
-		course.record &&
-		course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId)
-	)
+	const moduleRecords = course.record
+		? course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId)
+		: undefined
+	if (moduleRecords && moduleRecords.length > 0) {
+		const event = course.getEvent(moduleRecords[0].eventId!)
+		if (event && event.status === 'Active') {
+			return moduleRecords[0]
+		}
+	}
+	return undefined
 }
 
 export function isEventBookedForGivenCourse(course: model.Course) {
-	return filterCourseByEvent(course)!.length > 0
+	return filterCourseByEvent(course) !== undefined
 }
 
 export function getModuleForEvent(course: model.Course) {
-	return filterCourseByEvent(course)!.pop()
+	return filterCourseByEvent(course)!
 }
 
 export function index(req: express.Request, res: express.Response) {

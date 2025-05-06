@@ -5,8 +5,8 @@ import {buildParams} from '../../../lib/service/catalog/models/courseSearchParam
 import {CourseSearchResponse} from '../../../lib/service/catalog/models/courseSearchResponse'
 import {getAreasOfWork, getInterests} from '../../../lib/service/civilServantRegistry/csrsService'
 import * as csrsService from '../../../lib/service/civilServantRegistry/csrsService'
-import * as courseRecordClient from '../../../lib/service/learnerRecordAPI/courseRecord/client'
-import {CourseRecord} from '../../../lib/service/learnerRecordAPI/courseRecord/models/courseRecord'
+import * as courseRecordClient from '../../../lib/service/cslService/courseRecord/client'
+import {CourseRecord} from '../../../lib/service/cslService/models/courseRecord'
 import {CourseSearchQuery} from './models/courseSearchQuery'
 import {FilterBox, OrgFilterBox, Pagination, PaginationNumberedPage, SearchPageModel} from './models/searchPageModel'
 
