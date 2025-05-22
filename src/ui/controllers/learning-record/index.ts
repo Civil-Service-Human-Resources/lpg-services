@@ -121,7 +121,7 @@ export async function display(req: express.Request, res: express.Response) {
 	)
 }
 
-function getRequiredLearningStatusMessage(
+export function getRequiredLearningStatusMessage(
 	numberOfCompletedRequiredCourses: number,
 	numberOfTotalRequiredCourses: number
 ): string {
