@@ -114,6 +114,7 @@ export async function display(req: express.Request, res: express.Response) {
 		template.render('learning-record', req, res, {
 			requiredLearningStatusMessage,
 			requiredCoursesLeftToComplete,
+			completedRequiredLearning,
 			completedLearning,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
