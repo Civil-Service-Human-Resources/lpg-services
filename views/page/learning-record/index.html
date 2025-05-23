@@ -15,9 +15,12 @@
                 <h2 class="heading heading-medium heading--red-top lpg-required-learning">
                     Required learning from your organisation
                 </h2>
+                {#if completedRequiredLearning.length}
+                    <LearningRecordTable courses={completedRequiredLearning} />
+                {/if}
                 <p class="no-margin">{requiredLearningStatusMessage}</p>
                 {#if requiredCoursesLeftToComplete > 0}
-                    <p class="no-margin">You have <a href="/">{requiredCoursesLeftToComplete} required courses</a> to complete.</p>
+                    <p class="no-margin">You have <a href="/">{requiredCoursesLeftToComplete} required course{requiredCoursesLeftToComplete > 1 ? "s" : ""}</a> to complete.</p>
                 {/if}
                 
             </div>
