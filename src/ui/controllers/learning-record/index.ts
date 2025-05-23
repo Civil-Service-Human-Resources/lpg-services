@@ -101,13 +101,43 @@ export async function display(req: express.Request, res: express.Response) {
 		}
 	})
 
+	const numberOfCompletedRequiredCourses = completedRequiredLearning.length
+	const numberOfRequiredCourses = requiredLearning.results.length
+	const requiredCoursesLeftToComplete: number = numberOfRequiredCourses - numberOfCompletedRequiredCourses
+
+	const requiredLearningStatusMessage: string = getRequiredLearningStatusMessage(
+		numberOfCompletedRequiredCourses,
+		numberOfRequiredCourses
+	)
+
 	res.send(
 		template.render('learning-record', req, res, {
+			requiredLearningStatusMessage,
+			requiredCoursesLeftToComplete,
 			completedLearning,
-			completedRequiredLearning,
-			requiredLearning,
 			successMessage: req.flash('successMessage')[0],
 			successTitle: req.flash('successTitle')[0],
 		})
 	)
+}
+
+export function getRequiredLearningStatusMessage(
+	numberOfCompletedRequiredCourses: number,
+	numberOfTotalRequiredCourses: number
+): string {
+	let message
+	if (numberOfTotalRequiredCourses > 0) {
+		if (numberOfCompletedRequiredCourses === numberOfTotalRequiredCourses) {
+			message = 'You have completed all of your required learning for this reporting year.'
+		} else {
+			message =
+				numberOfCompletedRequiredCourses === 0
+					? `You haven't completed any of your required courses.`
+					: `You haven't completed all of your required learning for this reporting year.`
+		}
+	} else {
+		message = 'There is no required learning for your department.'
+	}
+
+	return message
 }
