@@ -1,0 +1,5 @@
+.tile__properties,
+.tile__description,
+.tile__actions{
+	@include margin(top, 6);
+}
