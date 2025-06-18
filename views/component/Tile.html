@@ -15,7 +15,7 @@
     {/if}
 	</p>
 	{/if}
-	<ul class="tile__properties">
+	<ul class="tile__properties margin-top-8">
             <li class="tile__property">
                 <span class="tile__key">Type</span>
                 <span class="tile__value">{$i18n(course.getType())}</span>
@@ -32,10 +32,10 @@
 				</span>
             </li>
     </ul>
-	<p>
+	<p class="margin-top-8">
 		{course.shortDescription}
 	</p>
-	<p class="tile__actions">
+	<p class="tile__actions margin-top-8">
 		<a href="/suggestions-for-you/add/{course.id}{home ? '?ref=home' :''}">
 			Add <span class="visually-hidden">{course.title}</span> to learning plan
 		</a>

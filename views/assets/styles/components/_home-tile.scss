@@ -21,10 +21,6 @@
 		border-bottom: 0;
 	}
 
-	p {
-		margin: 4px 0;
-	}
-
 	@include e(actions) {
 		a {
 			display: inline-block;

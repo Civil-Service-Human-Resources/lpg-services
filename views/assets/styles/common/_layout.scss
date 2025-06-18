@@ -83,3 +83,9 @@
 		}
 	}
 }
+
+@for $i from 1 through 20 {
+  .margin-top-#{$i} {
+    margin-top: $i * 3px;
+  }
+}
