@@ -84,8 +84,17 @@
 	}
 }
 
-@for $i from 1 through 20 {
-  .margin-top-#{$i} {
-    margin-top: $i * 3px;
-  }
+$margin-spacing-units: (1: 5px, 2: 10px, 3: 15px, 4: 20px, 5: 25px, 6: 30px, 7: 40px, 8: 50px, 9: 60px);
+$margin-spacing-position: (top: "top", right: "right", bottom: "bottom", left: "left");
+
+@each $unit, $value in $margin-spacing-units {
+	@each $position, $position-value in $margin-spacing-position {
+		.margin-#{$position-value}-#{$unit} {
+			margin-#{$position-value}: $value;
+		}
+	}
+}
+
+@mixin margin($position, $spacing-unit){
+	@extend .margin-#{$position}-#{$spacing-unit};
 }
