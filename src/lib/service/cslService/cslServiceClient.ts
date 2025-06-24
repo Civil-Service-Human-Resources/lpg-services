@@ -131,3 +131,10 @@ export async function skipEventBooking(
 	)
 	return plainToInstance(EventActionResponse, resp)
 }
+
+export async function completeProfile(user: User) {
+	await client._post({
+		url: `/user/profile/complete-profile`
+	},
+		null, user)
+}

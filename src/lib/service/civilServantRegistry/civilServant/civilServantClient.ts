@@ -45,11 +45,12 @@ export async function loginAndFetchProfile(accessToken: string): Promise<Profile
 }
 
 export async function patchCivilServant(user: User, update: PatchCivilServant) {
-	await client._patch(
+	const resp = await client._patch(
 		{
 			url: `${URL}/${user.userId}`,
 		},
 		update.getAsApiParams(),
 		user
 	)
+	console.log(resp)
 }
