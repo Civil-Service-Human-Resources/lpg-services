@@ -4,9 +4,8 @@ import {User} from '../../../../lib/model'
 import {AreaOfWork} from '../../../../lib/registry'
 import {
 	getAreasOfWork,
-	patchCivilServantOtherAreasOfWork,
+	updateCivilServantOtherAreasOfWork,
 } from '../../../../lib/service/civilServantRegistry/csrsService'
-import {completeProfile} from '../../../../lib/service/cslService/cslServiceClient'
 import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {OtherAreasOfWorkPageModel} from '../models/otherAreasOfWorkPageModel'
@@ -55,10 +54,7 @@ export function selectOtherAreasOfWorkMiddleware(behaviour: PageBehaviour) {
 		}
 		if (!_.isEqual(userOtherAreaOfWork.sort(), pageModel.otherAreasOfWork.sort())) {
 			const selectedAreasOfWork = areasOfWork.fetchWithIds(pageModel.otherAreasOfWork)
-			await patchCivilServantOtherAreasOfWork(user, selectedAreasOfWork)
-			if (behaviour.userSetup) {
-				await completeProfile(user)
-			}
+			await updateCivilServantOtherAreasOfWork(user, selectedAreasOfWork, behaviour.userSetup)
 		}
 		return generateRedirect(otherAreasOfWorkPage, req, res)
 	}

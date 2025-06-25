@@ -7,6 +7,7 @@ import {CourseActionResponse} from './models/CourseActionResponse'
 import {EventActionResponse} from './models/EventActionResponse'
 import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
+import {AreasOfWork} from './models/areasOfWork'
 import {UserDto} from './models/UserDto'
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
@@ -132,9 +133,20 @@ export async function skipEventBooking(
 	return plainToInstance(EventActionResponse, resp)
 }
 
-export async function completeProfile(user: User) {
+export async function getAreasOfWork(user: User) {
+	const resp: AreasOfWork = await client._get(
+		{
+			url: `/professions`,
+		},
+		user
+	)
+	return plainToInstance(AreasOfWork, resp).areasOfWork
+}
+
+export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], newProfile: boolean) {
 	await client._post({
-		url: `/user/profile/complete-profile`
+		url: `/user/profile/other-areas-of-work`,
+		params: {newProfile}
 	},
-		null, user)
+		areaOfWorkIds, user)
 }

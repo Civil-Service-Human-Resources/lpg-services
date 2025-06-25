@@ -4,7 +4,6 @@ import {mockReq, mockRes} from 'sinon-express-mock'
 import {AreaOfWork} from '../../../../lib/registry'
 import {AreasOfWork} from '../../../../lib/service/civilServantRegistry/areaOfWork/areasOfWork'
 import * as csrsService from '../../../../lib/service/civilServantRegistry/csrsService'
-import * as cslService from'../../../../lib/service/cslService/cslServiceClient'
 import * as template from '../../../../lib/ui/template'
 import {PageBehaviour} from './common'
 import * as common from './common'
@@ -37,21 +36,18 @@ describe('Other areas of work middleware tests', () => {
 	let patchStub: any
 	let generateRedirectStub: any
 	let renderStub: any
-	let completeProfileStub: any
 	beforeEach(() => {
 		behaviour.userSetup = true
 		sandbox.stub(csrsService, 'getAreasOfWork').resolves(areasOfWork)
-		patchStub = sandbox.stub(csrsService, 'patchCivilServantOtherAreasOfWork').resolves()
+		patchStub = sandbox.stub(csrsService, 'updateCivilServantOtherAreasOfWork').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
 		renderStub = sandbox.stub(template, 'render')
-		completeProfileStub = sandbox.stub(cslService, 'completeProfile').resolves()
 	})
 	afterEach(() => {
 		sandbox.restore()
 	})
 	it('Should update and redirect if there are no errors', async () => {
 		await run(undefined, ['1', '2'])
-		expect(completeProfileStub.calledOnce).to.eq(true)
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)
 	})
@@ -59,7 +55,6 @@ describe('Other areas of work middleware tests', () => {
 		'first time', async () => {
 		behaviour.userSetup = false
 		await run(undefined, ['1', '2'])
-		expect(completeProfileStub.called).to.eq(false)
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)
 	})
