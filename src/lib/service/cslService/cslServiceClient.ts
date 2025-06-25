@@ -144,9 +144,12 @@ export async function getAreasOfWork(user: User) {
 }
 
 export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], newProfile: boolean) {
-	await client._post({
-		url: `/user/profile/other-areas-of-work`,
-		params: {newProfile}
-	},
-		areaOfWorkIds, user)
+	await client._post(
+		{
+			url: `/user/profile/other-areas-of-work`,
+			params: {newProfile},
+		},
+		areaOfWorkIds,
+		user
+	)
 }

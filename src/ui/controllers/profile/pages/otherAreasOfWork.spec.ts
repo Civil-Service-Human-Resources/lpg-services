@@ -51,13 +51,15 @@ describe('Other areas of work middleware tests', () => {
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)
 	})
-	it('Should not call completeProfile if the user is not setting up their profile for the ' +
-		'first time', async () => {
-		behaviour.userSetup = false
-		await run(undefined, ['1', '2'])
-		expect(patchStub.calledOnce).to.eq(true)
-		expect(generateRedirectStub.calledOnce).to.eq(true)
-	})
+	it(
+		'Should not call completeProfile if the user is not setting up their profile for the ' + 'first time',
+		async () => {
+			behaviour.userSetup = false
+			await run(undefined, ['1', '2'])
+			expect(patchStub.calledOnce).to.eq(true)
+			expect(generateRedirectStub.calledOnce).to.eq(true)
+		}
+	)
 	it("Should just redirect if the user's current areas of work are selected", async () => {
 		behaviour.userSetup = false
 		await run([2, 1], ['1', '2'])

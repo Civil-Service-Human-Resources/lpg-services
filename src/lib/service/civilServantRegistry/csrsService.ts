@@ -92,7 +92,11 @@ export async function patchCivilServantProfession(user: User, areaOfWork: AreaOf
 }
 
 export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[], newProfile: boolean) {
-	await cslService.setOtherAreasOfWork(user, areasOfWork.map(aow => aow.getId()), newProfile)
+	await cslService.setOtherAreasOfWork(
+		user,
+		areasOfWork.map(aow => aow.getId()),
+		newProfile
+	)
 }
 
 export async function patchCivilServantGrade(user: User, grade: Grade) {
