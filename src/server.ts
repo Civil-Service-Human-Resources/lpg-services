@@ -242,10 +242,13 @@ Object.values(ProfileEndpoint).forEach((profileEndpoint, i) => {
 		})
 	)
 
-	app.post(endpoint, async (req: express.Request, res: express.Response) => {
-		const middleware = await getPOSTProfileMiddleware(req, profileEndpoint as ProfileEndpoint)
-		await middleware(req, res)
-	})
+	app.post(
+		endpoint,
+		asyncHandler(async (req: express.Request, res: express.Response) => {
+			const middleware = await getPOSTProfileMiddleware(req, profileEndpoint as ProfileEndpoint)
+			await middleware(req, res)
+		})
+	)
 })
 
 app.get('/courses/:courseId', asyncHandler(courseController.loadCourse), asyncHandler(courseController.display))

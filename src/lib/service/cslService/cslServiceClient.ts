@@ -136,7 +136,7 @@ export async function skipEventBooking(
 export async function getAreasOfWork(user: User) {
 	const resp: AreasOfWork = await client._get(
 		{
-			url: `/professions`,
+			url: `areas-of-work`,
 		},
 		user
 	)
@@ -149,7 +149,7 @@ export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], n
 			url: `/user/profile/other-areas-of-work`,
 			params: {newProfile},
 		},
-		areaOfWorkIds,
+		areaOfWorkIds.map(aow => parseInt(aow)),
 		user
 	)
 }

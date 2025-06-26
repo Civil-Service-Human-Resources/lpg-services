@@ -97,6 +97,10 @@ export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork
 		areasOfWork.map(aow => aow.getId()),
 		newProfile
 	)
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.otherAreasOfWork = areasOfWork
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function patchCivilServantGrade(user: User, grade: Grade) {

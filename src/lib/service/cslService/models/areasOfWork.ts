@@ -1,5 +1,7 @@
+import {Type} from 'class-transformer'
 import {AreaOfWork} from '../../../registry'
 
 export class AreasOfWork {
-	constructor(public areasOfWork: AreaOfWork[]) {}
+	@Type(() => AreaOfWork)
+	public areasOfWork: AreaOfWork[]
 }
