@@ -17,19 +17,12 @@
                 </h2>
                 {#if completedRequiredLearning.length}
                     <LearningRecordTable courses={completedRequiredLearning} />
-                    {#if requiredLearning.results.length - completedRequiredLearning.length > 0}
-                        <p class="no-margin">You have completed {completedRequiredLearning.length} of your required learning courses and have <a href="/home">{requiredLearning.results.length - completedRequiredLearning.length} more</a> to do.</p>
-                    {:else}
-                        <p class="no-margin">You have completed all of your required learning.</p>
-                    {/if}
-                {:else}
-                    <p>You haven't completed any required learning courses yet.</p>
-                    {#if requiredLearning.results.length > 0}
-                        <p class="no-margin">You have <a href="/home">{requiredLearning.results.length} course{#if requiredLearning.results.length > 1}s{/if}</a> to complete.</p>
-                    {:else}
-                        <p class="no-margin">You have completed all of your required learning.</p>
-                    {/if}
                 {/if}
+                <p class="no-margin">{requiredLearningStatusMessage}</p>
+                {#if requiredCoursesLeftToComplete > 0}
+                    <p class="no-margin">You have <a href="/">{requiredCoursesLeftToComplete} required course{requiredCoursesLeftToComplete > 1 ? "s" : ""}</a> to complete.</p>
+                {/if}
+                
             </div>
         </div>
         <div class="grid-row">

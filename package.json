@@ -99,7 +99,7 @@
 	"dependencies": {
 		"@types/serve-static": "^1.15.7",
 		"app-root-path": "^2.1.0",
-		"applicationinsights": "^3.4.0",
+		"applicationinsights": "2.9.7",
 		"axios": "^1.7.7",
 		"class-transformer": "^0.5.1",
 		"class-validator": "0.9.1",
