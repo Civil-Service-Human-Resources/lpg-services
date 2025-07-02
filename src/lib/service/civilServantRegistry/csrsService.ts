@@ -2,13 +2,13 @@ import {getLogger} from '../../logger'
 import {OrganisationalUnit, User} from '../../model'
 import {AreaOfWork, Grade, Interest, Profile} from '../../registry'
 import {AnonymousCache} from '../../utils/anonymousCache'
-import {getProfessionsTree} from './areaOfWork/areaOfWorkClient'
 import {AreasOfWork} from './areaOfWork/areasOfWork'
 import * as civilServantClient from './civilServant/civilServantClient'
 import {ProfileCache} from './civilServant/profileCache'
 import * as gradeClient from './grade/gradeClient'
 import {Grades} from './grade/grades'
 import * as interestClient from './interest/interestClient'
+import * as cslService from '../cslService/cslServiceClient'
 import {Interests} from './interest/interests'
 import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
 import {PatchCivilServant} from './models/patchCivilServant'
@@ -91,9 +91,16 @@ export async function patchCivilServantProfession(user: User, areaOfWork: AreaOf
 	await patchCivilServant(user, patch)
 }
 
-export async function patchCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[]) {
-	const patch = new PatchCivilServant(undefined, undefined, undefined, undefined, areasOfWork)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[], newProfile: boolean) {
+	await cslService.setOtherAreasOfWork(
+		user,
+		areasOfWork.map(aow => aow.getId()),
+		newProfile
+	)
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.otherAreasOfWork = areasOfWork
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function patchCivilServantGrade(user: User, grade: Grade) {
@@ -126,7 +133,7 @@ export async function patchCivilServantLineManager(user: User, lineManagerEmail:
 export async function getAreasOfWork(user: User): Promise<AreasOfWork> {
 	let areasOfWork = await areaOfWorkCache.get()
 	if (areasOfWork === undefined) {
-		areasOfWork = AreasOfWork.createFromTree(await getProfessionsTree(user))
+		areasOfWork = AreasOfWork.createFromTree(await cslService.getAreasOfWork(user))
 		await areaOfWorkCache.set(areasOfWork)
 	}
 	return areasOfWork
