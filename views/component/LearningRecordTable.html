@@ -13,7 +13,7 @@
             <td>
                 <a href="/courses/{record.courseId}">{record.courseTitle}</a>
             </td>
-            <td>{$i18n(record.getType())}</td>
+            <td>{#if record.getType() != null}{$i18n(record.getType())}{:else}unknown{/if}</td>
             <td>{record.getDuration() || '-'}</td>
             <td>{record.getCompletionDate() ? $datetime.formatDate(record.getCompletionDate()) : ''}</td>
         </tr>
