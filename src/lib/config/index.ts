@@ -51,7 +51,7 @@ export const AUTHENTICATION = set({
 
 export const ENDPOINT_REDIS = set({
 	LEARNING_RECORD: set({
-		defaultTTL: +(env.LEARNING_RECORD_TTL || '604800'),
+		defaultTTL: +(env.LEARNING_RECORD_TTL || '10800'),
 	}),
 })
 
@@ -115,23 +115,23 @@ export const REDIS = set({
 })
 
 export const ORG_REDIS = set({
-	defaultTTL: +(env.ORG_REDIS_TTL || '604800'),
+	defaultTTL: +(env.ORG_REDIS_TTL || '86400'),
 })
 
 export const PROFILE_REDIS = set({
-	defaultTTL: +(env.PROFILE_REDIS_TTL || '604800'),
+	defaultTTL: +(env.PROFILE_REDIS_TTL || '86400'),
 })
 
 export const GRADE_REDIS = set({
-	defaultTTL: +(env.GRADE_REDIS_TTL || '604800'),
+	defaultTTL: +(env.GRADE_REDIS_TTL || '86400'),
 })
 
 export const AOW_REDIS = set({
-	defaultTTL: +(env.AOW_REDIS_TTL || '604800'),
+	defaultTTL: +(env.AOW_REDIS_TTL || '86400'),
 })
 
 export const INTEREST_REDIS = set({
-	defaultTTL: +(env.INTEREST_REDIS_TTL || '604800'),
+	defaultTTL: +(env.INTEREST_REDIS_TTL || '86400'),
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
