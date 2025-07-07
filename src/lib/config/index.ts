@@ -49,6 +49,12 @@ export const AUTHENTICATION = set({
 	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 
+export const ENDPOINT_REDIS = set({
+	LEARNING_RECORD: set({
+		defaultTTL: +(env.LEARNING_RECORD_TTL || '604800'),
+	}),
+})
+
 export const COOKIE = set({
 	maxAge: Number(env.COOKIE_AGE_IN_MILLISECONDS) || 15768000,
 })

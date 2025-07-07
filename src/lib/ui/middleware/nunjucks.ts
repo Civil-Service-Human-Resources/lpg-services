@@ -12,7 +12,7 @@ const baseLayout = `${viewsRoot}/root/baseLayout.njk`
 const components = `${viewsRoot}/components`
 const partials = `${viewsRoot}/partials`
 
-const nunjucksEndpoints = ['/courses/:courseId']
+const nunjucksEndpoints = ['/courses/:courseId', '/learning-record']
 
 const logger = getLogger(`nunjucks`)
 

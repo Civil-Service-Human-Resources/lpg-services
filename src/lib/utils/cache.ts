@@ -15,6 +15,7 @@ export abstract class Cache<T> {
 
 	async get(id: string | number): Promise<T | undefined> {
 		const key = this.getFormattedKey(id)
+		this.logger.debug(`Fetching object with ID ${key}`)
 		try {
 			const response = await promisify(this.redisClient.get).bind(this.redisClient)(key)
 			if (response === null) {
@@ -43,6 +44,7 @@ export abstract class Cache<T> {
 
 	async delete(id: string | number) {
 		const key = this.getFormattedKey(id)
+		this.logger.debug(`Deleting cache object with ID ${key}`)
 		try {
 			// redisClient.delete does not play nicely with promisify, so just
 			// set expiriy = now
