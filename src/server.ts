@@ -23,6 +23,8 @@ import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import {OrganisationalUnitTypeaheadCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
+import {LearningRecordCache} from './lib/service/cslService/cache/learningRecordCache'
+import * as cslService from './lib/service/cslService/cslServiceClient'
 import * as dynamicBackLink from './lib/ui/middleware/dynamicBackLink'
 import * as nunjucks from './lib/ui/middleware/nunjucks'
 import * as redirectTo from './lib/ui/middleware/redirectTo'
@@ -108,6 +110,9 @@ const gradeCache = new AnonymousCache(redisClient, config.GRADE_REDIS.defaultTTL
 const areaOfWorkCache = new AnonymousCache(redisClient, config.AOW_REDIS.defaultTTL, 'areasOfWork', AreasOfWork)
 const interestCache = new AnonymousCache(redisClient, config.INTEREST_REDIS.defaultTTL, 'Interests', Interests)
 csrsService.setCaches(orgCache, orgTypeaheadCache, csrsProfileCache, gradeCache, areaOfWorkCache, interestCache)
+
+const learningRecordCache = new LearningRecordCache(redisClient, config.ENDPOINT_REDIS.LEARNING_RECORD.defaultTTL)
+cslService.setCaches(learningRecordCache)
 
 app.use(flash())
 

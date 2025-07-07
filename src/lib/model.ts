@@ -436,45 +436,9 @@ export class Course {
 		return dueByDate
 	}
 
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	previousRequiredByNew() {
-		if (this.audience) {
-			return this.audience!.previousRequiredByNew()
-		}
-		return null
-	}
-
-	getCompletionDate() {
-		if (this.isComplete()) {
-			let completionDate: Date | undefined
-			for (const moduleRecord of this.record!.modules) {
-				if (!completionDate) {
-					completionDate = moduleRecord.completionDate
-				} else if (moduleRecord.completionDate && moduleRecord.completionDate > completionDate) {
-					completionDate = moduleRecord.completionDate
-				}
-			}
-			return completionDate
-		}
-		return undefined
-	}
-
 	hasModules() {
 		return (this.modules || []).length > 0
 	}
-}
-
-export class CourseModule {
-	static createFromCourse(course: Course) {
-		const courseModule = new CourseModule()
-		courseModule.course = course
-		courseModule.type = 'course'
-		return courseModule
-	}
-
-	course: Course
-	module: Module
-	type: string
 }
 
 export enum ModuleType {
@@ -614,11 +578,6 @@ export class Module {
 	}
 }
 
-export class ModuleWithCourse extends Module {
-	courseId?: string
-	course?: Course
-}
-
 export type EventStatus = 'Active' | 'Cancelled'
 
 export class Event {
@@ -736,64 +695,6 @@ export class Audience {
 			relevance += 1
 		}
 		return relevance
-	}
-
-	previousRequiredBy(completionDate?: Date) {
-		const [last, next] = this._getCurrentRecurrencePeriod()
-		if (!last || !next) {
-			return null
-		}
-		if (completionDate && completionDate > last) {
-			if (!this.frequency) {
-				return null
-			}
-			return Frequency.decrement(this.frequency, next)
-		}
-		return last
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	previousRequiredByNew() {
-		const [last, next] = this._getCurrentRecurrencePeriodNew()
-		if (!last && !next) {
-			return null
-		}
-		return last
-	}
-
-	_getCurrentRecurrencePeriod() {
-		if (!this.requiredBy || !this.frequency) {
-			return [null, null]
-		}
-		const today = new Date()
-		let nextDate = this.requiredBy
-		while (nextDate < today) {
-			nextDate = Frequency.increment(this.frequency, nextDate)
-		}
-		const lastDate = Frequency.decrement(this.frequency, nextDate)
-		return [lastDate, nextDate]
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	_getCurrentRecurrencePeriodNew() {
-		if (!this.requiredBy) {
-			return [null, null]
-		}
-		const today = new Date(new Date().toDateString())
-		let nextDate = new Date(this.requiredBy.toDateString())
-
-		if (!this.frequency) {
-			if (nextDate < today) {
-				return [nextDate, nextDate]
-			} else {
-				return [null, nextDate]
-			}
-		}
-		while (nextDate < today) {
-			nextDate = Frequency.increment(this.frequency, nextDate)
-		}
-		const lastDate = Frequency.decrement(this.frequency, nextDate)
-		return [lastDate, nextDate]
 	}
 }
 

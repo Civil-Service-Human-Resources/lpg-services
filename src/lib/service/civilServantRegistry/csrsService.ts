@@ -2,6 +2,7 @@ import {getLogger} from '../../logger'
 import {OrganisationalUnit, User} from '../../model'
 import {AreaOfWork, Grade, Interest, Profile} from '../../registry'
 import {AnonymousCache} from '../../utils/anonymousCache'
+import {learningRecordCache} from '../cslService/cslServiceClient'
 import {AreasOfWork} from './areaOfWork/areasOfWork'
 import * as civilServantClient from './civilServant/civilServantClient'
 import {ProfileCache} from './civilServant/profileCache'
@@ -79,6 +80,7 @@ export async function patchCivilServantOrganisationUnit(user: User, organisation
 	profile.organisationalUnit = await getOrganisation(user, organisationUnitId)
 	await updateProfileCache(profile)
 	user.updateWithProfile(profile)
+	await learningRecordCache.delete(user.id)
 }
 
 export async function patchCivilServantName(user: User, name: string) {
