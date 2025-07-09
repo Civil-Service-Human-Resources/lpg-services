@@ -1,5 +1,5 @@
 import {extensionAndSize, fileName} from '../../../../lib/filehelpers'
-import {Course, Module, ModuleType, User} from '../../../../lib/model'
+import {Course, Module, User} from '../../../../lib/model'
 import {getCourseRecord} from '../../../../lib/service/cslService/courseRecord/client'
 import {CourseRecord} from '../../../../lib/service/cslService/models/courseRecord'
 import {ModuleRecord} from '../../../../lib/service/cslService/models/moduleRecord'
@@ -12,11 +12,11 @@ export function getModuleCard(course: Course, module: Module, moduleRecord?: Mod
 	const moduleCard = getBasicModuleCard(module, course, moduleRecord)
 
 	switch (module.type) {
-		case ModuleType.FACE_TO_FACE:
+		case 'face-to-face':
 			return getF2FModuleCard(module, course, moduleCard, moduleRecord)
-		case ModuleType.FILE:
+		case 'file':
 			return getFileModuleCard(module, moduleCard)
-		case ModuleType.ELEARNING:
+		case 'elearning':
 			return {
 				...moduleCard,
 				template: 'elearning',
@@ -108,7 +108,7 @@ export function getBlendedCoursePage(course: Course, courseRecord?: CourseRecord
 		if (card.isMandatory) {
 			mandatoryCount++
 		}
-		if (card.type === ModuleType.FACE_TO_FACE) {
+		if (card.type === 'face-to-face') {
 			faceToFaceModule = card as F2FModuleCard
 		}
 		cards.push(card)
@@ -139,7 +139,7 @@ export function getSingleModuleCoursePage(
 	const moduleRecord = courseRecord ? courseRecord.getModuleRecord(module.id) : undefined
 	const moduleCard = getModuleCard(course, module, moduleRecord)
 	const courseDetails = getCourseDetails(course)
-	if (module.type === ModuleType.FACE_TO_FACE) {
+	if (module.type === 'face-to-face') {
 		courseDetails.location = module.location
 	}
 	return {

@@ -2,7 +2,6 @@ import {expect} from 'chai'
 import * as asyncHandler from 'express-async-handler'
 import * as sinon from 'sinon'
 import * as request from 'supertest'
-import {CourseStatus, ModuleType} from '../../../src/lib/model'
 import * as catalog from '../../../src/lib/service/catalog'
 import * as courseController from '../../../src/ui/controllers/course'
 import {
@@ -59,7 +58,7 @@ describe('Course controller tests', () => {
 			title: 'Test title',
 			description: 'Test description',
 			learningOutcomes: 'Test Learning outcomes',
-			status: CourseStatus.PUBLISHED,
+			status: 'Published',
 		}
 		const details: CourseDetails = {
 			cost: 100,
@@ -100,7 +99,7 @@ describe('Course controller tests', () => {
 				const res = await makeRequest({
 					template: 'noModules',
 					...basicCourseData,
-					status: CourseStatus.ARCHIVED,
+					status: 'Archived',
 				})
 				assertHtml(
 					res.text,
@@ -144,14 +143,14 @@ describe('Course controller tests', () => {
 			it('Should correctly render the elearning course page', async () => {
 				const singleModuleCoursePage: SingleModuleCoursePage = {
 					template: 'elearning',
-					type: ModuleType.ELEARNING,
+					type: 'elearning',
 					...details,
 					...basicCourseData,
 					moduleDetails: {
 						...basicModuleDetails,
 						mustConfirmBooking: false,
 						template: 'elearning',
-						type: ModuleType.ELEARNING,
+						type: 'elearning',
 					},
 				}
 				const res = await makeRequest(singleModuleCoursePage)
@@ -163,14 +162,14 @@ describe('Course controller tests', () => {
 						...basicModuleDetails,
 						mustConfirmBooking: false,
 						template: 'faceToface',
-						type: ModuleType.FACE_TO_FACE,
+						type: 'face-to-face',
 						displayState: 'CONFIRMED',
 						cancellationLink: '/cancel',
 						canBeBooked: false,
 					}
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'faceToFace',
-						type: ModuleType.FACE_TO_FACE,
+						type: 'face-to-face',
 						...details,
 						...basicCourseData,
 						moduleDetails,
@@ -187,13 +186,13 @@ describe('Course controller tests', () => {
 					const moduleDetails: F2FModuleCard = {
 						...basicModuleDetails,
 						template: 'faceToface',
-						type: ModuleType.FACE_TO_FACE,
+						type: 'face-to-face',
 						displayState: 'NULL',
 						canBeBooked: false,
 					}
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'faceToFace',
-						type: ModuleType.FACE_TO_FACE,
+						type: 'face-to-face',
 						...details,
 						...basicCourseData,
 						moduleDetails,
@@ -209,13 +208,13 @@ describe('Course controller tests', () => {
 					const moduleDetails: F2FModuleCard = {
 						...basicModuleDetails,
 						template: 'faceToface',
-						type: ModuleType.FACE_TO_FACE,
+						type: 'face-to-face',
 						displayState: 'NULL',
 						canBeBooked: true,
 					}
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'faceToFace',
-						type: ModuleType.FACE_TO_FACE,
+						type: 'face-to-face',
 						...details,
 						...basicCourseData,
 						moduleDetails,
@@ -230,14 +229,14 @@ describe('Course controller tests', () => {
 					const moduleDetails: FileModuleCard = {
 						...basicModuleDetails,
 						template: 'file',
-						type: ModuleType.FILE,
+						type: 'file',
 						displayState: 'NULL',
 						fileExtAndSize: 'pdf, 1KB',
 						fileName: 'someFile.pdf',
 					}
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'file',
-						type: ModuleType.FILE,
+						type: 'file',
 						...details,
 						...basicCourseData,
 						moduleDetails,
@@ -253,13 +252,13 @@ describe('Course controller tests', () => {
 				it('Should show the module card for the link module', async () => {
 					const singleModuleCoursePage: SingleModuleCoursePage = {
 						template: 'singleModule',
-						type: ModuleType.LINK,
+						type: 'link',
 						...details,
 						...basicCourseData,
 						moduleDetails: {
 							...basicModuleDetails,
 							template: 'singleModule',
-							type: ModuleType.LINK,
+							type: 'link',
 						},
 					}
 					const res = await makeRequest(singleModuleCoursePage)
@@ -279,7 +278,7 @@ describe('Course controller tests', () => {
 				...basicModuleDetails,
 				title: 'Link module',
 				template: 'link',
-				type: ModuleType.LINK,
+				type: 'link',
 				isMandatory: false,
 				launchLink: '/launch',
 				duration: '1 hour',
@@ -289,7 +288,7 @@ describe('Course controller tests', () => {
 				...basicModuleDetails,
 				title: 'Face to Face module',
 				template: 'faceToFace',
-				type: ModuleType.FACE_TO_FACE,
+				type: 'face-to-face',
 				launchLink: '/book',
 				canBeBooked: true,
 				isMandatory: true,
@@ -300,7 +299,7 @@ describe('Course controller tests', () => {
 				...basicModuleDetails,
 				title: 'File module',
 				template: 'file',
-				type: ModuleType.FILE,
+				type: 'file',
 				fileName: 'fileName',
 				fileExtAndSize: 'pdf, 10KB',
 				launchLink: '/launch',
@@ -439,13 +438,13 @@ describe('Course controller tests', () => {
 			it('Should generate the correct data within the course details macro', async () => {
 				const singleModuleCoursePage: SingleModuleCoursePage = {
 					template: 'singleModule',
-					type: ModuleType.LINK,
+					type: 'link',
 					...basicCourseData,
 					...details,
 					moduleDetails: {
 						...basicModuleDetails,
 						template: 'singleModule',
-						type: ModuleType.LINK,
+						type: 'link',
 					},
 				}
 				const res = await makeRequest(singleModuleCoursePage)
