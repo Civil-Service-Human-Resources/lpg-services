@@ -19,7 +19,8 @@ export let requiredLearningCache: RequiredLearningCache
 
 export const setCaches = (
 	learningRecordPageCache: LearningRecordCache,
-	requiredLearningPageCache: RequiredLearningCache) => {
+	requiredLearningPageCache: RequiredLearningCache
+) => {
 	learningRecordCache = learningRecordPageCache
 	requiredLearningCache = requiredLearningPageCache
 }

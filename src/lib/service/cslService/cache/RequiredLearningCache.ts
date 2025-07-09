@@ -13,8 +13,10 @@ export class RequiredLearningCache extends CacheableObjectCache<RequiredLearning
 
 	public async clearForCourse(userId: string, courseId: string) {
 		const requiredLearning = await this.get(userId)
-		if (requiredLearning !== undefined &&
-			requiredLearning.courses.find(course => course.id === courseId) !== undefined) {
+		if (
+			requiredLearning !== undefined &&
+			requiredLearning.courses.find(course => course.id === courseId) !== undefined
+		) {
 			await this.delete(userId)
 		}
 	}
