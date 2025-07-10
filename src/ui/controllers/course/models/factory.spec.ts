@@ -1,7 +1,7 @@
 import {expect} from 'chai'
 import * as sinon from 'sinon'
 import * as fileHelpers from '../../../../lib/filehelpers'
-import {Course, CourseStatus, Event, Module, ModuleType, User} from '../../../../lib/model'
+import {Course, Event, Module, User} from '../../../../lib/model'
 import {CourseRecord} from '../../../../lib/service/cslService/models/courseRecord'
 import {ModuleRecord} from '../../../../lib/service/cslService/models/moduleRecord'
 import {BlendedCoursePage, SingleModuleCoursePage} from './coursePage'
@@ -21,7 +21,7 @@ describe('Course page model tests', () => {
 
 	const user = new User('user-id', ['LEARNER'], 'access-token', 'user@email.com', 'user-id')
 	const event = new Event(new Date(), new Date(), [], 'Bristol', 10, 10, 'Active', 'event-id')
-	const module = new Module('module-id', ModuleType.FILE)
+	const module = new Module('module-id', 'file')
 	module.title = 'Module title'
 	module.description = 'Module description'
 	module.associatedLearning = true
@@ -34,7 +34,7 @@ describe('Course page model tests', () => {
 	course.title = 'Course title'
 	course.description = 'Course description'
 	course.learningOutcomes = 'Course learning outcomes'
-	course.status = CourseStatus.PUBLISHED
+	course.status = 'Published'
 
 	beforeEach(() => {
 		fileHelperStub = sandbox.stub(fileHelpers)
@@ -78,7 +78,7 @@ describe('Course page model tests', () => {
 		it('Should build a face to face module card that has been booked but the event has been cancelled', () => {
 			const mr = {eventId: 'event-id'}
 			const cancelledEvent = new Event(new Date(), new Date(), [], 'Bristol', 10, 10, 'Cancelled', 'event-id')
-			const cancelledModule = new Module('module-id', ModuleType.FACE_TO_FACE)
+			const cancelledModule = new Module('module-id', 'face-to-face')
 			cancelledModule.title = 'Module title'
 			cancelledModule.description = 'Module description'
 			cancelledModule.associatedLearning = true
@@ -91,7 +91,7 @@ describe('Course page model tests', () => {
 			cancelledCourse.title = 'Course title'
 			cancelledCourse.description = 'Course description'
 			cancelledCourse.learningOutcomes = 'Course learning outcomes'
-			cancelledCourse.status = CourseStatus.PUBLISHED
+			cancelledCourse.status = 'Published'
 			const fileCard = getF2FModuleCard(
 				cancelledModule,
 				cancelledCourse,
@@ -109,7 +109,7 @@ describe('Course page model tests', () => {
 				expect(result.title).eql('Course title')
 				expect(result.description).eql('Course description')
 				expect(result.learningOutcomes).eql('Course learning outcomes')
-				expect(result.status).eql(CourseStatus.PUBLISHED)
+				expect(result.status).eql('Published')
 			})
 			it('Should return a single module course page when there is one module', async () => {
 				course.modules = [module]
@@ -117,9 +117,9 @@ describe('Course page model tests', () => {
 				expect(result.title).eql('Course title')
 				expect(result.description).eql('Course description')
 				expect(result.learningOutcomes).eql('Course learning outcomes')
-				expect(result.status).eql(CourseStatus.PUBLISHED)
+				expect(result.status).eql('Published')
 				expect(result.moduleDetails).not.eql(undefined)
-				expect(result.type).eql(ModuleType.FILE)
+				expect(result.type).eql('file')
 			})
 			it('Should return a blended module course page when there is more than one module', async () => {
 				course.modules = [module, module]
@@ -127,7 +127,7 @@ describe('Course page model tests', () => {
 				expect(result.title).eql('Course title')
 				expect(result.description).eql('Course description')
 				expect(result.learningOutcomes).eql('Course learning outcomes')
-				expect(result.status).eql(CourseStatus.PUBLISHED)
+				expect(result.status).eql('Published')
 				expect(result.modules).length(2)
 				expect(result.mandatoryModuleCount).eql(2)
 				expect(result.type).eql('blended')
@@ -136,7 +136,7 @@ describe('Course page model tests', () => {
 		})
 		describe('getBlendedCoursePage tests', () => {
 			it('Should require booking confirmation on associated learning modules', () => {
-				const f2f = new Module('f2f', ModuleType.FACE_TO_FACE)
+				const f2f = new Module('f2f', 'face-to-face')
 				f2f.optional = false
 				const f2fRecord = new ModuleRecord(
 					1,
@@ -151,10 +151,10 @@ describe('Course page model tests', () => {
 					0,
 					false
 				)
-				const linkAssoc = new Module('link', ModuleType.LINK)
+				const linkAssoc = new Module('link', 'link')
 				linkAssoc.optional = true
 				linkAssoc.associatedLearning = true
-				const file = new Module('file', ModuleType.FILE)
+				const file = new Module('file', 'file')
 				file.optional = false
 				file.associatedLearning = false
 				const courseRecord = new CourseRecord('course-id', 'user-id', 'IN_PROGRESS', [f2fRecord], 'Course Title', false)
@@ -163,7 +163,7 @@ describe('Course page model tests', () => {
 				expect(result.title).eql('Course title')
 				expect(result.description).eql('Course description')
 				expect(result.learningOutcomes).eql('Course learning outcomes')
-				expect(result.status).eql(CourseStatus.PUBLISHED)
+				expect(result.status).eql('Published')
 				expect(result.modules).length(3)
 				expect(result.modules[0].isMandatory).eql(true)
 				expect(result.modules[1].mustConfirmBooking).eql(true)
@@ -177,10 +177,10 @@ describe('Course page model tests', () => {
 		})
 		describe('getSingleModuleCoursePage tests', () => {
 			it('Should add the location to the course page when building a face-to-face course page', () => {
-				const f2f = new Module('f2f', ModuleType.FACE_TO_FACE)
+				const f2f = new Module('f2f', 'face-to-face')
 				f2f.location = 'London'
 				const result = getSingleModuleCoursePage(course, f2f)
-				expect(result.type).eql(ModuleType.FACE_TO_FACE)
+				expect(result.type).eql('face-to-face')
 				expect(result.location).eql('London')
 			})
 		})

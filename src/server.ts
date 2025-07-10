@@ -24,6 +24,7 @@ import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
 import {OrganisationalUnitTypeaheadCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 import {LearningRecordCache} from './lib/service/cslService/cache/learningRecordCache'
+import {RequiredLearningCache} from './lib/service/cslService/cache/RequiredLearningCache'
 import * as cslService from './lib/service/cslService/cslServiceClient'
 import * as dynamicBackLink from './lib/ui/middleware/dynamicBackLink'
 import * as nunjucks from './lib/ui/middleware/nunjucks'
@@ -112,7 +113,8 @@ const interestCache = new AnonymousCache(redisClient, config.INTEREST_REDIS.defa
 csrsService.setCaches(orgCache, orgTypeaheadCache, csrsProfileCache, gradeCache, areaOfWorkCache, interestCache)
 
 const learningRecordCache = new LearningRecordCache(redisClient, config.ENDPOINT_REDIS.LEARNING_RECORD.defaultTTL)
-cslService.setCaches(learningRecordCache)
+const requiredLearningCache = new RequiredLearningCache(redisClient, config.ENDPOINT_REDIS.REQUIRED_LEARNING.defaultTTL)
+cslService.setCaches(learningRecordCache, requiredLearningCache)
 
 app.use(flash())
 
@@ -236,7 +238,7 @@ app.get('/profile', profileController.viewProfile)
 app.get('/profile/email', profileController.addEmail)
 app.post('/profile/email', asyncHandler(profileController.updateEmail))
 
-Object.values(ProfileEndpoint).forEach((profileEndpoint, i) => {
+Object.values(ProfileEndpoint).forEach(profileEndpoint => {
 	const endpoint = `/profile/${profileEndpoint.valueOf()}`
 	logger.info(`Registering endpoint ${endpoint}`)
 	app.get(

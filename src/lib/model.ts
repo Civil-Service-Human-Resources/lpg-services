@@ -85,10 +85,9 @@ export class CourseFactory {
 	}
 }
 
-export enum CourseStatus {
-	PUBLISHED = 'Published',
-	ARCHIVED = 'Archived',
-}
+export type CourseStatus = 'Published' | 'Archived'
+
+export type CourseType = ModuleType | 'blended' | 'unknown'
 
 export class Course {
 	static create(data: any, user?: User) {
@@ -221,22 +220,6 @@ export class Course {
 		} else {
 			return null
 		}
-	}
-
-	isArchived() {
-		return this.status ? this.status === 'Archived' : false
-	}
-
-	isComplete() {
-		return this.record ? this.record!.state === 'COMPLETED' : false
-	}
-
-	isStarted() {
-		return this.record ? this.record!.state === 'IN_PROGRESS' : false
-	}
-
-	hasPreference() {
-		return this.record && this.record.preference
 	}
 
 	getModules() {
@@ -398,7 +381,7 @@ export class Course {
 		return null
 	}
 
-	getType() {
+	getType(): CourseType {
 		if (!this.modules.length) {
 			return 'unknown'
 		}
@@ -412,42 +395,12 @@ export class Course {
 		return this.audience ? this.audience.mandatory : false
 	}
 
-	getDueByDateDisplayString() {
-		let resp: string | undefined
-		const dueByDate = this.getDueByDate()
-		if (dueByDate !== null) {
-			resp = moment(dueByDate).utc().format('DD MMM YYYY')
-		}
-		return resp
-	}
-
-	getDueByDate() {
-		let dueByDate: Date | null = null
-		if (this.audience) {
-			const requiredAudience = this.getRequiredRecurringAudience()
-			if (requiredAudience) {
-				dueByDate = requiredAudience.nextRequiredBy
-			} else {
-				if (this.audience.requiredBy) {
-					dueByDate = this.audience.requiredBy
-				}
-			}
-		}
-		return dueByDate
-	}
-
 	hasModules() {
 		return (this.modules || []).length > 0
 	}
 }
 
-export enum ModuleType {
-	ELEARNING = 'elearning',
-	FACE_TO_FACE = 'face-to-face',
-	FILE = 'file',
-	LINK = 'link',
-	VIDEO = 'video',
-}
+export type ModuleType = 'elearning' | 'face-to-face' | 'file' | 'link' | 'video'
 
 export class Module {
 	static create(data: any) {
@@ -493,7 +446,7 @@ export class Module {
 	}
 
 	getDuration() {
-		if (this.type === ModuleType.FACE_TO_FACE) {
+		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
 				const startTimeHours = this.events[0].startDate.getHours()
 				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
@@ -505,7 +458,7 @@ export class Module {
 			}
 		}
 
-		if (this.type === ModuleType.FACE_TO_FACE) {
+		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
 				sortEvents(this.events)
 				const event = this.events[0]
@@ -551,17 +504,13 @@ export class Module {
 		return (this.events || []).filter(e => e.isBookable())
 	}
 
-	isAssociatedLearning() {
-		return this.associatedLearning
-	}
-
 	getDisplayState(
 		moduleRecord: ModuleRecord | undefined | null,
 		audience: RequiredRecurringAudience | undefined | null
 	) {
 		let state: string | null = null
 		if (moduleRecord) {
-			if (this.type !== ModuleType.FACE_TO_FACE) {
+			if (this.type !== 'face-to-face') {
 				const completionDate = moduleRecord.getCompletionDate().getTime()
 				const updatedAt = moduleRecord.getUpdatedAt().getTime()
 				const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()

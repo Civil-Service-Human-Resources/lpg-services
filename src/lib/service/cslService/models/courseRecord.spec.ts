@@ -1,18 +1,18 @@
 import {expect} from 'chai'
 
-import {Module, ModuleType} from '../../../model'
+import {Module} from '../../../model'
 import {CourseRecord} from './courseRecord'
 import {ModuleRecord} from './moduleRecord'
 import {RecordState} from './record'
 
-const requiredModule1 = new Module('required001', ModuleType.LINK)
+const requiredModule1 = new Module('required001', 'link')
 requiredModule1.optional = false
-const requiredModule2 = new Module('required002', ModuleType.LINK)
+const requiredModule2 = new Module('required002', 'link')
 requiredModule2.optional = false
 
-const optModule1 = new Module('optional001', ModuleType.LINK)
+const optModule1 = new Module('optional001', 'link')
 optModule1.optional = true
-const optModule2 = new Module('optional002', ModuleType.LINK)
+const optModule2 = new Module('optional002', 'link')
 optModule2.optional = true
 
 function moduleRecordFromModule(module: Module, state: RecordState) {
