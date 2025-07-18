@@ -84,9 +84,15 @@ export async function patchCivilServantOrganisationUnit(user: User, organisation
 	await requiredLearningCache.delete(user.id)
 }
 
-export async function patchCivilServantName(user: User, name: string) {
-	const patch = new PatchCivilServant(name, undefined, undefined, undefined, undefined)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantName(user: User, fullName: string) {
+	await cslService.setFullName(
+		user,
+		fullName
+	)
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.fullName = fullName
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function patchCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
