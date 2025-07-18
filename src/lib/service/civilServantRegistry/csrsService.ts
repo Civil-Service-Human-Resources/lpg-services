@@ -85,10 +85,7 @@ export async function patchCivilServantOrganisationUnit(user: User, organisation
 }
 
 export async function updateCivilServantName(user: User, fullName: string) {
-	await cslService.setFullName(
-		user,
-		fullName
-	)
+	await cslService.setFullName(user, fullName)
 	const profile = await fetchProfile(user.id, user.accessToken)
 	profile.fullName = fullName
 	await profileCache.setObject(profile)

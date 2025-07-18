@@ -207,7 +207,7 @@ export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], n
 export async function setFullName(user: User, fullName: string) {
 	await client._post(
 		{
-			url: `/user/profile/full-name`
+			url: `/user/profile/full-name`,
 		},
 		fullName,
 		user
