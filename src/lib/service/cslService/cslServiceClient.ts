@@ -208,11 +208,8 @@ export async function setFullName(user: User, fullName: string) {
 	await client._post(
 		{
 			url: `/user/profile/full-name`,
-			headers: {
-				'Content-Type': 'application/json',
-			},
 		},
-		JSON.stringify({fullName}),
+		fullName,
 		user
 	)
 }
