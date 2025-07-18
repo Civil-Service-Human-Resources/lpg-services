@@ -212,7 +212,7 @@ export async function setFullName(user: User, fullName: string) {
 				'Content-Type': 'application/json',
 			},
 		},
-		JSON.stringify({ fullName }),
+		JSON.stringify({fullName}),
 		user
 	)
 }
