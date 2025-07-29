@@ -13,8 +13,8 @@ import {AreasOfWork} from './models/areasOfWork'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
-import {Grade} from "../../registry";
-import {GetGradesResponse} from "../civilServantRegistry/models/getGradesResponse";
+import {Grade} from '../../registry'
+import {GetGradesResponse} from '../civilServantRegistry/models/getGradesResponse'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache

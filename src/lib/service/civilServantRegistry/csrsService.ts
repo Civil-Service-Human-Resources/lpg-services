@@ -112,10 +112,7 @@ export async function updateCivilServantGrade(user: User, grade: Grade) {
 	const patch = new PatchCivilServant(undefined, grade, undefined, undefined, undefined)
 	await patchCivilServant(user, patch)
 
-	await cslService.setGrade(
-		user,
-		grade.id
-	)
+	await cslService.setGrade(user, grade.id)
 	const profile = await fetchProfile(user.id, user.accessToken)
 	profile.grade = grade
 	await profileCache.setObject(profile)
