@@ -153,7 +153,7 @@ export async function getAreasOfWork(user: User): Promise<AreasOfWork> {
 export async function getGrades(user: User): Promise<Grades> {
 	let grades = await gradeCache.get()
 	if (!grades) {
-		grades = await cslService.getGrades(user)
+		grades = await new Grades(await cslService.getGrades(user))
 		await gradeCache.set(grades)
 	}
 	return grades

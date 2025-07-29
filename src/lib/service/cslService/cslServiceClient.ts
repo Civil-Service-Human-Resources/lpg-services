@@ -14,6 +14,7 @@ import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
 import {Grades} from '../civilServantRegistry/grade/grades'
+import {Grade} from '../../registry'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
@@ -218,14 +219,14 @@ export async function setFullName(user: User, fullName: string) {
 	)
 }
 
-export async function getGrades(user: User): Promise<Grades> {
+export async function getGrades(user: User): Promise<Grade[]> {
 	const resp: Grades = await client._get<Grades>(
 		{
 			url: 'grades',
 		},
 		user
 	)
-	return plainToInstance(Grades, resp)
+	return plainToInstance(Grades, resp).list
 }
 
 export async function setGrade(user: User, grade: number) {
