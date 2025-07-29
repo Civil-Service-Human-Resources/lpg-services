@@ -13,6 +13,8 @@ import {AreasOfWork} from './models/areasOfWork'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
+import {Grade} from "../../registry";
+import {GetGradesResponse} from "../civilServantRegistry/models/getGradesResponse";
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
@@ -213,6 +215,26 @@ export async function setFullName(user: User, fullName: string) {
 			},
 		},
 		JSON.stringify({fullName}),
+		user
+	)
+}
+
+export async function getGrades(user: User): Promise<Grade[]> {
+	const resp: GetGradesResponse = await client._get<GetGradesResponse>(
+		{
+			url: 'grades',
+		},
+		user
+	)
+	return plainToInstance(GetGradesResponse, resp).grades
+}
+
+export async function setGrade(user: User, grade: number) {
+	await client._post(
+		{
+			url: `/user/profile/grade`,
+		},
+		grade,
 		user
 	)
 }
