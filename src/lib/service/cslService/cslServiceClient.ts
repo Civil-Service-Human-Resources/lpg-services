@@ -13,8 +13,8 @@ import {AreasOfWork} from './models/areasOfWork'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
-import {Grades} from '../civilServantRegistry/grade/grades'
 import {Grade} from '../../registry'
+import {Grades} from './models/grades'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
@@ -226,7 +226,7 @@ export async function getGrades(user: User): Promise<Grade[]> {
 		},
 		user
 	)
-	return plainToInstance(Grades, resp).list
+	return plainToInstance(Grades, resp).grades
 }
 
 export async function setGrade(user: User, grade: number) {
