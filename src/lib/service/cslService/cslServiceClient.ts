@@ -1,6 +1,7 @@
 import {plainToInstance} from 'class-transformer'
 import {client} from './baseConfig'
 import {User} from '../../model'
+import {LearningPlanCache} from './cache/LearningPlanCache'
 import {LearningRecordCache} from './cache/learningRecordCache'
 import {RequiredLearningCache} from './cache/RequiredLearningCache'
 import {BookEventDto} from './models/BookEventDto'
@@ -10,19 +11,23 @@ import {EventActionResponse} from './models/EventActionResponse'
 import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
 import {AreasOfWork} from './models/areasOfWork'
+import {LearningPlan} from './models/learning/learningPlan/learningPlan'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
+export let learningPlanCache: LearningPlanCache
 
 export const setCaches = (
 	learningRecordPageCache: LearningRecordCache,
-	requiredLearningPageCache: RequiredLearningCache
+	requiredLearningPageCache: RequiredLearningCache,
+	LearningPlanPageCache: LearningPlanCache
 ) => {
 	learningRecordCache = learningRecordPageCache
 	requiredLearningCache = requiredLearningPageCache
+	learningPlanCache = LearningPlanPageCache
 }
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
@@ -35,6 +40,7 @@ export async function launchModule(courseId: string, moduleId: string, user: Use
 		user
 	)
 	await requiredLearningCache.clearForCourse(user.id, courseId)
+	await learningPlanCache.clearForCourse(user.id, courseId)
 	await learningRecordCache.delete(user.id)
 	return plainToInstance(LaunchModuleResponse, resp)
 }
@@ -49,6 +55,7 @@ export async function completeModule(courseId: string, moduleId: string, user: U
 		user
 	)
 	await requiredLearningCache.clearForCourse(user.id, courseId)
+	await learningPlanCache.clearForCourse(user.id, courseId)
 	await learningRecordCache.delete(user.id)
 }
 
@@ -71,6 +78,7 @@ export async function addCourseToLearningPlan(courseId: string, user: User): Pro
 		undefined,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(CourseActionResponse, resp)
 }
 
@@ -99,6 +107,7 @@ export async function bookEvent(
 		bookEventDto,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -116,6 +125,7 @@ export async function cancelEventBooking(
 		dto,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -134,6 +144,7 @@ export async function completeEventBooking(
 		user
 	)
 	await learningRecordCache.delete(user.id)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -150,6 +161,7 @@ export async function skipEventBooking(
 		null,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -181,6 +193,21 @@ export async function getRequiredLearning(user: User): Promise<RequiredLearning>
 		await requiredLearningCache.setObject(requiredLearning)
 	}
 	return requiredLearning
+}
+
+export async function getLearningPlan(user: User): Promise<LearningPlan> {
+	let learningPlan = await learningPlanCache.get(user.id)
+	if (learningPlan === undefined) {
+		const resp = await client._get(
+			{
+				url: `/learning/plan`,
+			},
+			user
+		)
+		learningPlan = plainToInstance(LearningPlan, resp)
+		await learningPlanCache.setObject(learningPlan)
+	}
+	return learningPlan
 }
 
 export async function getAreasOfWork(user: User) {

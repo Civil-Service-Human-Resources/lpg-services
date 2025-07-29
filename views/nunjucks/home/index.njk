@@ -1,0 +1,73 @@
+{% extends baseLayout %}
+{% from components + "/banner/macro.njk" import renderBanners %}
+{% from "./components/requiredLearningCard/macro.njk" import requiredLearningCard %}
+{% from "./components/bookedLearningCard/macro.njk" import bookedLearningCard %}
+{% from "./components/learningPlanCard/macro.njk" import learningPlanCard %}
+
+{% set pageTitle = "Your learning" %}
+
+{% block content %}
+    <div class="container container--main">
+        <div class="grid-row">
+            <div class="column-full">
+                <div class="u--space--y30 u--border--bgrey2">
+                    <div class="grid-row ">
+                        <div class="column-one-half ">
+                            <h1 class="heading heading-large heading--flush">
+                                {{ i18n('home_page_title') }}
+                            </h1>
+                        </div>
+                        <div class="column-one-half ">
+                            <div class="search-box">
+                                <form autocomplete="off" name="searchLearning" method="get" action="/search">
+                                    <div class="form-group search-box__group ">
+                                        <label class="visuallyhidden" for="q">Search all available learning</label>
+                                        <input class="form-control search-box__input" id="q" type="text" name="q" placeholder="Search CSL">
+                                        <button type="submit" class="search-box__submit">Search</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-full">
+                {{ renderBanners(pageModel.banners) }}
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-full">
+                <h2 class="heading-medium heading heading--red-top lpg-required-learning">
+                    {{ i18n('required_section_title') }}
+                </h2>
+                {% if pageModel.requiredLearning.courses.length %}
+                    <div class="resources">
+                        {% for course in pageModel.requiredLearning.courses %}
+                            {{ requiredLearningCard(course) }}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>{{ i18n('required_learning_done') }}</p>
+                {% endif %}
+                <h2 class="heading-medium heading heading--red-top lpg-other-learning">
+                    {{ i18n('other_section_title') }}
+                </h2>
+                {% if pageModel.learningPlan.getCourseIds().length %}
+                    <div class="resources lpg-other-courses">
+                        {% for course in pageModel.learningPlan.bookedCourses %}
+                            {{ bookedLearningCard(course) }}
+                        {% endfor %}
+                        {% for course in pageModel.learningPlan.learningPlanCourses %}
+                            {{ learningPlanCard(course) }}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="govuk-body">There is currently no learning in your plan.</p>
+                    <p class="govuk-body">You can add learning by checking <a href="/suggestions-for-you">Suggestions for you</a> or <a href="/search?q=">searching for a specific course</a>.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

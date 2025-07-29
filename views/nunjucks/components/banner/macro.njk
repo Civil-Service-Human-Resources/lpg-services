@@ -1,0 +1,42 @@
+{% macro banner(params) %}
+    <div class="banner {{ params.classes }}" role="status">
+        {% if params.title %}
+            <span class="banner__heading-large">{{ params.title }}</span>
+        {% endif %}
+        {% if params.message %}
+            <p class="no-margin"><strong>{{ params.message }}</strong></p>
+        {% endif %}
+    </div>
+    {% if params.additionalContent %}
+        {{ params.additionalContent | safe }}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderBanners(params) %}
+    {% if params.notification %}
+        {{ notificationBanner(params.notification) }}
+    {% elif params.action %}
+        {{ warningConfirmationBanner(params.action) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro notificationBanner(params) %}
+    {{ banner({
+        "classes": "banner--confirmation " + params.classes,
+        "title": params.title,
+        "message": params.message
+    }) }}
+{% endmacro %}
+
+{% macro warningConfirmationBanner(params) %}
+    {% set content %}
+        <a class="banner__action" href="{{ params.yesHref }}">{{ params.yesText }}</a>
+        <a class="banner__action" href="{{ params.noHref }}">{{ params.noText }}</a>
+    {% endset %}
+    {{ banner({
+        "classes": "banner--warning " + params.classes,
+        "title": params.title,
+        "message": params.message,
+        "additionalContent": content
+    }) }}
+{% endmacro %}

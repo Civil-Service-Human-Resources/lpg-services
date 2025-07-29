@@ -1,0 +1,105 @@
+{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, ctaLink, cancelLink %}
+{% from components + "/courseCard/description/macro.njk" import courseCardDescription %}
+{% from components + "/courseCard/heading/macro.njk" import courseCardHeading %}
+{% from components + "/courseCard/properties/macro.njk" import courseCardType, courseCardDuration, courseCardCost %}
+{% from "../courseCard/properties/macro.njk" import basicHomepageProperties %}
+
+{% macro bookedLearningCard(params) %}
+    <div class="discite__item u-clearfix discite__item--home">
+        {# Heading #}
+        {{ courseCardHeading({
+            "classes": "discite__main--home",
+            "link": {
+                "newTab": false,
+                "courseId": params.id,
+                "courseTitle": params.title
+            }
+        }) }}
+
+        {# Properties #}
+        {{ basicHomepageProperties({
+            "items": [
+                courseCardType({
+                    "type": params.type
+                }),
+                courseCardDuration({
+                    "duration": params.duration
+                }),
+                courseCardCost({
+                    "cost": params.costInPounds
+                })
+            ]
+        }) }}
+
+        {# Description #}
+        {{ courseCardDescription({
+            "moduleCount": params.moduleCount,
+            "shortDescription": {
+                "classes": "discite__desc--home",
+                "text": params.shortDescription
+            }
+        }) }}
+
+        {# CTA #}
+        {% if params.canBeMovedToLearningRecord %}
+            {% set actions = {
+                "primary": ctaLink({
+                    "href": "/home?move=" + params.id + "/" + params.eventModule.id + "/" + params.eventModule.eventId,
+                    "text": "Move to Learner Record"
+                }),
+                "secondary": ctaLink({
+                    "href": "/home?skip=" + params.id + "/" + params.eventModule.id + "/" + params.eventModule.eventId,
+                    "text": "I did not attend"
+                })
+            } %}
+        {% elif params.type == "blended" %}
+            {% set actions = {
+                "primary": startLink({
+                    "courseId": params.id
+                })
+            } %}
+        {% else %}
+            {% set actions = {
+                "primary": cancelLink({
+                    "courseId": params.id,
+                    "moduleId": params.eventModule.id,
+                    "moduleId": params.eventModule.eventId
+                })
+            } %}
+        {% endif %}
+        {{ courseCardActions({
+            "classes": "discite__action--home",
+            "actions": actions
+        }) }}
+
+        {# event Module #}
+        <div class="discite__item--event">
+            <div class="discite__item--main">
+                <h3 class="heading discite__heading"><a href="/courses/{{ params.id }}" class="govuk-link">{{ params.eventModule.title }}</a></h3>
+                <p class="discite__property-item no-margin-bottom">
+                    <span>Date{% if params.eventModule.dates.length > 0 %}s{% endif %}:</span>
+                </p>
+                <ul>
+                    {% for date in params.eventModule.dates %}
+                        <li class="discite__property-item">
+                            {{ date | formatDate }}
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if params.eventModule.state !== "UNREGISTERED" %}
+                    <a class="discite__property-item" href="/book/{{ params.id }}/{{ params.eventModule.id }}/{{ params.eventModule.eventId }}/cancel">Cancel booking</a>
+                {% endif %}
+            </div>
+            <div class="course-details">
+                <p class="discite__property-item no-margin"><span>Type:</span>
+                    <span class="lpg-course-type">
+                        Face to face
+                    </span>
+                </p>
+            </div>
+            <div class="discite__property-item discite__status--home">
+                <span class="badge badge--discite badge--info">{{ i18n(params.eventModule.state) }}</span>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

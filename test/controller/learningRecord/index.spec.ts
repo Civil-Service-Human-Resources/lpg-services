@@ -71,7 +71,7 @@ describe('Learning record controller tests', () => {
 		describe('Render page tests', () => {
 			it('Should render the page correctly', async () => {
 				learningRecordCacheStub.get.resolves(undefined)
-				setCaches(learningRecordCacheStub as any)
+				setCaches(learningRecordCacheStub as any, {} as any, {} as any)
 				cslServiceClientStub._get.resolves({
 					requiredLearningRecord: {
 						completedCourses: [

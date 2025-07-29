@@ -1,154 +1,94 @@
 import * as express from 'express'
 import * as config from '../../lib/config'
-import * as datetime from '../../lib/datetime'
 import * as extended from '../../lib/extended'
 import {getLogger} from '../../lib/logger'
 import * as model from '../../lib/model'
-import * as catalog from '../../lib/service/catalog'
-import {CourseRecord} from '../../lib/service/cslService/models/courseRecord'
-import * as courseRecordClient from '../../lib/service/cslService/courseRecord/client'
 import * as cslService from '../../lib/service/cslService/cslServiceClient'
+import {LearningPlan} from '../../lib/service/cslService/models/learning/learningPlan/learningPlan'
 import * as template from '../../lib/ui/template'
 
 const logger = getLogger('controllers/home')
 
-export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord>): CourseRecord[] => {
-	const bookedLearning: CourseRecord[] = []
-	const plannedLearning: CourseRecord[] = []
-	courseRecordMap.forEach((record: CourseRecord) => {
-		if (!record.isComplete() && record.isActive()) {
-			if (!record.state && (record.modules || []).length) {
-				record.state = 'IN_PROGRESS'
-			}
-			if (record.getSelectedDate()) {
-				const bookedModuleRecord = record.modules.find(m => !!m.eventId)
-				if (bookedModuleRecord) {
-					record.state = bookedModuleRecord.bookingStatus
+interface NotificationBanner {
+	title: string,
+	message: string,
+}
+
+interface ActionBanner extends NotificationBanner {
+	yesHref: string,
+	yesText: string,
+	noHref: string,
+	noText: string,
+}
+
+async function generateNotiicationBanner(request: express.Request, learningPlan: LearningPlan): NotificationBanner | null {
+	const successTitle = request.flash('successTitle')[0]
+	const successMessage = request.flash('successMessage')[0]
+	const successId = request.flash('successId')[0]
+	let notificationBanner: NotificationBanner | null = null
+	if (successTitle && successMessage) {
+		if (successId) {
+			for (const course of learningPlan.getAllCourses()) {
+				if (course.id === successId) {
+					course.justAdded = true
 				}
-				bookedLearning.push(record)
-			} else {
-				plannedLearning.push(record)
+			}
+			notificationBanner = {
+				title: successTitle,
+				message: successMessage,
 			}
 		}
-	})
+	}
+	return notificationBanner
+}
 
-	bookedLearning.sort((a, b) => {
-		return a.getSelectedDate()!.getDate() - b.getSelectedDate()!.getDate()
-	})
-	return [...bookedLearning, ...plannedLearning]
+async function generateActionBanner(request: express.Request, learningPlan: LearningPlan): Promise<ActionBanner | null> {
+	for (const action of ['skip', 'move', 'delete']) {
+		if (request.query[action]) {
+			const [courseId, moduleId, eventId]: string = request.query[action].split(',')
+			if (courseId !== undefined) {
+				const course = learningPlan.getAllCourses().find(c => c.id === courseId)
+				if (course !== undefined) {
+					const yesHref = ['skip', 'move'].includes(action) ? `/book/${courseId}/${moduleId}/${eventId}/${action}` : `/courses/${courseId}/delete`
+					return {
+						title: request.__('learning_confirm_' + action + '_plan_title', course.title),
+						message: request.__('learning_confirm_' + action + '_plan_message'),
+						yesText: request.__('learning_confirm_' + action + '_yes_option'),
+						yesHref,
+						noText: request.__('learning_confirm_' + action + '_no_option'),
+						noHref: '/'
+					}
+				}
+			}
+		}
+	}
+	return null
 }
 
 export async function home(req: express.Request, res: express.Response, next: express.NextFunction) {
 	logger.debug(`Getting learning record for ${req.user.id}`)
 	try {
 		const user = req.user as model.User
-
-		const [learningRecord, requiredLearning] = await Promise.all([
-			courseRecordClient.getFullRecord(user),
+		const [learningPlan, requiredLearning] = await Promise.all([
+			cslService.getLearningPlan(user),
 			cslService.getRequiredLearning(user),
 		])
-		const courseRecordMap: Map<string, CourseRecord> = new Map(
-			learningRecord.map((cr): [string, CourseRecord] => [cr.courseId, cr])
-		)
-		requiredLearning.courses.forEach(course => {
-			courseRecordMap.delete(course.id)
-		})
-		const plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
-
-		const plannedLearning = []
-		if (plannedLearningRecords.length > 0) {
-			const learningPlanCourseIds = plannedLearningRecords.map(cr => cr.courseId)
-			for (const course of await catalog.list(learningPlanCourseIds, user)) {
-				if (course.hasModules()) {
-					course.record = plannedLearningRecords.find(cr => cr.courseId === course.id)
-					plannedLearning.push(course)
+		const notificationBanner = generateNotiicationBanner(req, learningPlan)
+		const actionBanner = generateActionBanner(req, learningPlan)
+		return res.render('home/index.njk', {
+			pageModel: {
+				requiredLearning,
+				learningPlan,
+				banners: {
+					notificationBanner,
+					actionBanner,
 				}
 			}
-		}
-
-		let removeCourseId
-		let confirmTitle
-		let confirmMessage
-		let eventActionDetails
-		let action = ''
-		let yesOption
-		let noOption
-
-		if (req.query.delete) {
-			// @ts-ignore
-			const courseToDelete = await catalog.get(req.query.delete, user)
-			confirmTitle = req.__('learning_confirm_removal_plan_title', courseToDelete!.title)
-			removeCourseId = courseToDelete!.id
-			confirmMessage = req.__('learning_confirm_removal_plan_message')
-		}
-
-		if (req.query.skip) {
-			action = 'skip'
-		}
-
-		if (req.query.move) {
-			action = 'move'
-		}
-
-		if (req.query.skip || req.query.move) {
-			// @ts-ignore
-			eventActionDetails = req.query[action].split(',')
-			eventActionDetails.push(action)
-			const module = await catalog.get(eventActionDetails[0], user)
-
-			confirmTitle = req.__('learning_confirm_' + action + '_plan_title', module!.title)
-
-			confirmMessage = req.__('learning_confirm_' + action + '_plan_message')
-			yesOption = req.__('learning_confirm_' + action + '_yes_option')
-			noOption = req.__('learning_confirm_' + action + '_no_option')
-		}
-		res.send(
-			template.render('home', req, res, {
-				confirmMessage,
-				confirmTitle,
-				eventActionDetails,
-				formatEventDuration,
-				getModuleForEvent,
-				isEventBookedForGivenCourse,
-				noOption,
-				plannedLearning,
-				removeCourseId,
-				requiredLearning,
-				successId: req.flash('successId')[0],
-				successMessage: req.flash('successMessage')[0],
-				successTitle: req.flash('successTitle')[0],
-				yesOption,
-			})
-		)
+		})
 	} catch (e) {
 		console.error("Error building user's home page", e)
 		next(e)
 	}
-}
-
-function formatEventDuration(duration: number) {
-	return datetime.formatCourseDuration(duration)
-}
-
-function filterCourseByEvent(course: model.Course) {
-	const moduleRecords = course.record
-		? course.record.modules.filter((module: any) => module.moduleType === 'face-to-face' && module.eventId)
-		: undefined
-	if (moduleRecords && moduleRecords.length > 0) {
-		const event = course.getEvent(moduleRecords[0].eventId!)
-		if (event && event.status === 'Active') {
-			return moduleRecords[0]
-		}
-	}
-	return undefined
-}
-
-export function isEventBookedForGivenCourse(course: model.Course) {
-	return filterCourseByEvent(course) !== undefined
-}
-
-export function getModuleForEvent(course: model.Course) {
-	return filterCourseByEvent(course)!
 }
 
 export function index(req: express.Request, res: express.Response) {
