@@ -220,7 +220,7 @@ export async function setGrade(user: User, gradeId: string) {
 		{
 			url: `/user/profile/grade`,
 		},
-		gradeId,
+		JSON.stringify({gradeId}),
 		user
 	)
 }
