@@ -13,7 +13,6 @@ import {AreasOfWork} from './models/areasOfWork'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
-import {Grade} from '../../registry'
 import {Grades} from './models/grades'
 
 export let learningRecordCache: LearningRecordCache
@@ -206,21 +205,8 @@ export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], n
 	)
 }
 
-export async function setFullName(user: User, fullName: string) {
-	await client._post(
-		{
-			url: `/user/profile/full-name`,
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		},
-		JSON.stringify({fullName}),
-		user
-	)
-}
-
-export async function getGrades(user: User): Promise<Grade[]> {
-	const resp: Grades = await client._get<Grades>(
+export async function getGrades(user: User) {
+	const resp: Grades = await client._get(
 		{
 			url: 'grades',
 		},
@@ -235,6 +221,19 @@ export async function setGrade(user: User, grade: number) {
 			url: `/user/profile/grade`,
 		},
 		grade,
+		user
+	)
+}
+
+export async function setFullName(user: User, fullName: string) {
+	await client._post(
+		{
+			url: `/user/profile/full-name`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({fullName}),
 		user
 	)
 }
