@@ -219,6 +219,9 @@ export async function setGrade(user: User, gradeId: string) {
 	await client._post(
 		{
 			url: `/user/profile/grade`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
 		},
 		JSON.stringify({gradeId}),
 		user
