@@ -13,6 +13,7 @@
       <env name="CSL_SERVICE_URL" value="http://localhost:9003/api" />
       <env name="FEEDBACK_URL" value="http://localhost:3001/feedback" />
       <env name="GOOGLE_ANALYTICS_CSP_ORIGINS" value="*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com" />
+      <env name="JWT_KEY" value="jwt_key" />
       <env name="LEARNER_RECORD_URL" value="http://localhost:9000" />
       <env name="LOGGING_LEVEL" value="DEBUG" />
       <env name="LPG_MANAGEMENT_SERVER" value="http://localhost:3005" />
