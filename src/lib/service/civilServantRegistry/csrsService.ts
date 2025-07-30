@@ -109,7 +109,7 @@ export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork
 }
 
 export async function updateCivilServantGrade(user: User, grade: Grade) {
-	await cslService.setGrade(user, grade.id)
+	await cslService.setGrade(user, grade.getId())
 	const profile = await fetchProfile(user.id, user.accessToken)
 	profile.grade = grade
 	await profileCache.setObject(profile)

@@ -215,12 +215,12 @@ export async function getGrades(user: User) {
 	return plainToInstance(Grades, resp).grades
 }
 
-export async function setGrade(user: User, grade: number) {
+export async function setGrade(user: User, gradeId: string) {
 	await client._post(
 		{
 			url: `/user/profile/grade`,
 		},
-		grade,
+		gradeId,
 		user
 	)
 }
