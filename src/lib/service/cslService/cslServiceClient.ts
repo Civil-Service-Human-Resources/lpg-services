@@ -228,6 +228,19 @@ export async function setGrade(user: User, gradeId: string) {
 	)
 }
 
+export async function setProfession(user: User, professionId: string) {
+	await client._post(
+		{
+			url: `/user/profile/profession`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({professionId}),
+		user
+	)
+}
+
 export async function setFullName(user: User, fullName: string) {
 	await client._post(
 		{

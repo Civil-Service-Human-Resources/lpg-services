@@ -91,9 +91,12 @@ export async function updateCivilServantName(user: User, fullName: string) {
 	user.updateWithProfile(profile)
 }
 
-export async function patchCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
-	const patch = new PatchCivilServant(undefined, undefined, undefined, areaOfWork, undefined)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
+	await cslService.setProfession(user, areaOfWork.getId())
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.profession = areaOfWork
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[], newProfile: boolean) {
