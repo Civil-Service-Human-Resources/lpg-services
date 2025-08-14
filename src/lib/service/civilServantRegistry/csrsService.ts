@@ -203,9 +203,12 @@ export async function getOrgHierarchy(
 }
 
 export async function getOrganisationalUnitsForSearch(user: User): Promise<OrganisationalUnit[]> {
-	const resp = await organisationalUnitClient.getOrganisationalUnits({
-		page: 0,
-		size: 20
-	}, user)
+	const resp = await organisationalUnitClient.getOrganisationalUnits(
+		{
+			page: 0,
+			size: 20,
+		},
+		user
+	)
 	return resp.content
 }
