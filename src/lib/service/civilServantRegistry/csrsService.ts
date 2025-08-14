@@ -11,16 +11,13 @@ import {Grades} from './grade/grades'
 import * as interestClient from './interest/interestClient'
 import * as cslService from '../cslService/cslServiceClient'
 import {Interests} from './interest/interests'
-import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
 import {PatchCivilServant} from './models/patchCivilServant'
 import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
-import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 const logger = getLogger('csrsService')
 
 let organisationalUnitCache: OrganisationalUnitCache
-let organisationalUnitTypeaheadCache: OrganisationalUnitTypeaheadCache
 let profileCache: ProfileCache
 let gradeCache: AnonymousCache<Grades>
 let areaOfWorkCache: AnonymousCache<AreasOfWork>
@@ -28,14 +25,12 @@ let interestCache: AnonymousCache<Interests>
 
 export function setCaches(
 	orgCache: OrganisationalUnitCache,
-	orgTypeaheadCache: OrganisationalUnitTypeaheadCache,
 	csrsProfileCache: ProfileCache,
 	csrsGradeCache: AnonymousCache<Grades>,
 	csrsAreaOfWorkCache: AnonymousCache<AreasOfWork>,
 	csrsInterestCache: AnonymousCache<Interests>
 ) {
 	organisationalUnitCache = orgCache
-	organisationalUnitTypeaheadCache = orgTypeaheadCache
 	profileCache = csrsProfileCache
 	gradeCache = csrsGradeCache
 	areaOfWorkCache = csrsAreaOfWorkCache
@@ -183,13 +178,6 @@ export async function getOrganisation(
 	return org
 }
 
-async function refreshTypeahead(user: User): Promise<OrganisationalUnitTypeAhead> {
-	const organisationalUnits = await organisationalUnitClient.getAllOrganisationalUnits(user)
-	const typeahead = OrganisationalUnitTypeAhead.createAndSort(organisationalUnits)
-	await organisationalUnitTypeaheadCache.setTypeahead(typeahead)
-	return typeahead
-}
-
 export async function getOrgHierarchy(
 	organisationId: number,
 	user: User,
@@ -214,10 +202,10 @@ export async function getOrgHierarchy(
 	return hierarchy
 }
 
-export async function getAllOrganisationUnits(user: User): Promise<OrganisationalUnitTypeAhead> {
-	let typeahead = await organisationalUnitTypeaheadCache.getTypeahead()
-	if (typeahead === undefined) {
-		typeahead = await refreshTypeahead(user)
-	}
-	return typeahead
+export async function getOrganisationalUnitsForSearch(user: User): Promise<OrganisationalUnit[]> {
+	const resp = await organisationalUnitClient.getOrganisationalUnits({
+		page: 0,
+		size: 20
+	}, user)
+	return resp.content
 }

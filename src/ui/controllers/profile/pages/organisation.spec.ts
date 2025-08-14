@@ -3,7 +3,6 @@ import * as sinon from 'sinon'
 import {mockReq, mockRes} from 'sinon-express-mock'
 import * as csrsService from '../../../../lib/service/civilServantRegistry/csrsService'
 import * as cslService from '../../../../lib/service/cslService/cslService'
-import {OrganisationalUnitTypeAhead} from '../../../../lib/service/civilServantRegistry/models/organisationalUnitTypeAhead'
 import {FormattedOrganisation} from '../../../../lib/service/cslService/models/csrs/formattedOrganisation'
 import * as template from '../../../../lib/ui/template'
 import {PageBehaviour} from './common'
@@ -43,12 +42,9 @@ describe('Organisation middleware tests', () => {
 
 	const sandbox = sinon.createSandbox()
 	let patchStub: any
-	let organisationTypeaheadStub
 	let generateRedirectStub: any
 	let renderStub: any
 	beforeEach(() => {
-		organisationTypeaheadStub = sandbox.createStubInstance(OrganisationalUnitTypeAhead)
-		organisationTypeaheadStub.getFilteredListForUser.returns(organisationList)
 		sandbox.stub(cslService, 'getOrganisationTypeaheadForUser').resolves(organisationList)
 		patchStub = sandbox.stub(csrsService, 'patchCivilServantOrganisationUnit').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
