@@ -4,7 +4,7 @@
 	"scripts": {
 		"build": "concurrently \"npm run compile\" \"npm run sass\" \"npm run js\"",
 		"compile": "tsc -p ./tsconfig.json",
-		"dev": "nodemon src/server.ts",
+		"dev": "set DEBUG=express:* & nodemon src/server.ts",
 		"lint": "concurrently \"npm run eslint\" \"npm run format\"",
 		"fix-lint": "concurrently \"npm run fix-eslint\" \"npm run fix-format\"",
 		"eslint": "eslint",
