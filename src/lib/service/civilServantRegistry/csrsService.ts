@@ -6,7 +6,6 @@ import {learningRecordCache, requiredLearningCache} from '../cslService/cslServi
 import {AreasOfWork} from './areaOfWork/areasOfWork'
 import * as civilServantClient from './civilServant/civilServantClient'
 import {ProfileCache} from './civilServant/profileCache'
-import * as gradeClient from './grade/gradeClient'
 import {Grades} from './grade/grades'
 import * as interestClient from './interest/interestClient'
 import * as cslService from '../cslService/cslServiceClient'
@@ -87,9 +86,12 @@ export async function updateCivilServantName(user: User, fullName: string) {
 	user.updateWithProfile(profile)
 }
 
-export async function patchCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
-	const patch = new PatchCivilServant(undefined, undefined, undefined, areaOfWork, undefined)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
+	await cslService.setProfession(user, areaOfWork.getId())
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.profession = areaOfWork
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[], newProfile: boolean) {
@@ -104,9 +106,12 @@ export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork
 	user.updateWithProfile(profile)
 }
 
-export async function patchCivilServantGrade(user: User, grade: Grade) {
-	const patch = new PatchCivilServant(undefined, grade, undefined, undefined, undefined)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantGrade(user: User, grade: Grade) {
+	await cslService.setGrade(user, grade.getId())
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.grade = grade
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function patchCivilServantInterests(user: User, interests: Interest[]) {
@@ -142,8 +147,8 @@ export async function getAreasOfWork(user: User): Promise<AreasOfWork> {
 
 export async function getGrades(user: User): Promise<Grades> {
 	let grades = await gradeCache.get()
-	if (!grades) {
-		grades = new Grades(await gradeClient.getGrades(user))
+	if (grades === undefined) {
+		grades = new Grades(await cslService.getGrades(user))
 		await gradeCache.set(grades)
 	}
 	return grades

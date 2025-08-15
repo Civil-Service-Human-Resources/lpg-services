@@ -17,6 +17,7 @@ import {AreasOfWork} from './models/areasOfWork'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
+import {Grades} from './models/grades'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
@@ -207,6 +208,42 @@ export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], n
 			params: {newProfile},
 		},
 		areaOfWorkIds.map(aow => parseInt(aow)),
+		user
+	)
+}
+
+export async function getGrades(user: User) {
+	const resp: Grades = await client._get(
+		{
+			url: 'grades',
+		},
+		user
+	)
+	return plainToInstance(Grades, resp).grades
+}
+
+export async function setGrade(user: User, gradeId: string) {
+	await client._post(
+		{
+			url: `/user/profile/grade`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({gradeId}),
+		user
+	)
+}
+
+export async function setProfession(user: User, professionId: string) {
+	await client._post(
+		{
+			url: `/user/profile/profession`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({professionId}),
 		user
 	)
 }
