@@ -201,6 +201,19 @@ export async function getAreasOfWork(user: User) {
 	return plainToInstance(AreasOfWork, resp).areasOfWork
 }
 
+export async function setOrganisationalUnit(user: User, organisationalUnitId: number) {
+	await client._post(
+		{
+			url: `/user/profile/organisationalUnit`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({organisationalUnitId}),
+		user
+	)
+}
+
 export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], newProfile: boolean) {
 	await client._post(
 		{

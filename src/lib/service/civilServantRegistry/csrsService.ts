@@ -68,10 +68,10 @@ export async function updateProfileCache(profile: Profile) {
 	await profileCache.setObject(profile)
 }
 
-export async function patchCivilServantOrganisationUnit(user: User, organisationUnitId: number) {
-	await civilServantClient.patchCivilServantOrganisation(user, organisationUnitId)
+export async function updateCivilServantOrganisationalUnit(user: User, organisationalUnitId: number) {
+	await cslService.setOrganisationalUnit(user, organisationalUnitId)
 	const profile = await fetchProfile(user.id, user.accessToken)
-	profile.organisationalUnit = await getOrganisation(user, organisationUnitId)
+	profile.organisationalUnit = await getOrganisation(user, organisationalUnitId)
 	await updateProfileCache(profile)
 	user.updateWithProfile(profile)
 	await learningRecordCache.delete(user.id)
