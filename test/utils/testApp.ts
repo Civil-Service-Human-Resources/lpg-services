@@ -41,12 +41,11 @@ app.use((req, res, next) => {
 
 	const flashes = req.header('flashes')
 	if (flashes !== undefined) {
-		for (const reqFlash of flashes.split(",")) {
+		for (const reqFlash of flashes.split(',')) {
 			const flashKV = reqFlash.split(':')
 			req.flash(flashKV[0].toString().trim(), [flashKV[1].trim()])
 		}
 	}
-
 
 	const user = new User('testUid', roles, 'accessToken', 'user@domain.com', '1')
 	user.lineManager = {email: 'lmEmail.com', name: 'lmName'}

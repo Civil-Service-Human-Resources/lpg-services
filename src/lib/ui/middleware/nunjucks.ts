@@ -67,7 +67,7 @@ export const register = (app: Express) => {
 			} else {
 				return '-'
 			}
-	})
+		})
 		.addFilter('i18nList', (list: string[]) => {
 			return list.map(l => i18nConfig.__(l))
 		})
