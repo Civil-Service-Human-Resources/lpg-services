@@ -1,7 +1,7 @@
 import * as express from 'express'
 import {User} from '../../../../lib/model'
 import {AreaOfWork} from '../../../../lib/registry'
-import {getAreasOfWork, patchCivilServantProfession} from '../../../../lib/service/civilServantRegistry/csrsService'
+import {getAreasOfWork, updateCivilServantProfession} from '../../../../lib/service/civilServantRegistry/csrsService'
 import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {AreaOfWorkPageModel} from '../models/areaOfWorkPageModel'
@@ -62,7 +62,7 @@ export function selectAreaOfWorkMiddleware(behaviour: PageBehaviour) {
 			if (areaOfWork.children !== undefined && areaOfWork.children.length > 0) {
 				return renderAreaOfWorkPage(req, res, behaviour.templateName, areaOfWork.children)
 			}
-			await patchCivilServantProfession(user, areaOfWork)
+			await updateCivilServantProfession(user, areaOfWork)
 		}
 		return generateRedirect(areaOfWorkPage, req, res)
 	}

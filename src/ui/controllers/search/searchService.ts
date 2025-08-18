@@ -81,7 +81,7 @@ export function getPagination(params: CourseSearchQuery, searchResults: CourseSe
 }
 
 async function getDepartmentData(user: model.User, selectedDepartmentCodes: string[]): Promise<OrgFilterBox> {
-	const allDepartments = (await csrsService.getAllOrganisationUnits(user)).typeahead
+	const allDepartments = await csrsService.getOrganisationalUnitsForSearch(user)
 	const yourDepartment = user.organisationalUnit!
 	/**
 	 * NOTE: 20221117 - the code below will sort/slice the department list based on ID. This is to
@@ -94,7 +94,6 @@ async function getDepartmentData(user: model.User, selectedDepartmentCodes: stri
 	const otherDepartments = allDepartments
 		.filter(department => department.code !== user.getOrganisationCode())
 		.sort((a, b) => a.id - b.id)
-		.slice(0, 20)
 		.map(o => {
 			return {code: o.code, name: o.name}
 		})

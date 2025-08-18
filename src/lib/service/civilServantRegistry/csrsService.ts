@@ -6,21 +6,17 @@ import {learningRecordCache, requiredLearningCache} from '../cslService/cslServi
 import {AreasOfWork} from './areaOfWork/areasOfWork'
 import * as civilServantClient from './civilServant/civilServantClient'
 import {ProfileCache} from './civilServant/profileCache'
-import * as gradeClient from './grade/gradeClient'
 import {Grades} from './grade/grades'
 import * as interestClient from './interest/interestClient'
 import * as cslService from '../cslService/cslServiceClient'
 import {Interests} from './interest/interests'
-import {OrganisationalUnitTypeAhead} from './models/organisationalUnitTypeAhead'
 import {PatchCivilServant} from './models/patchCivilServant'
 import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
-import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 const logger = getLogger('csrsService')
 
 let organisationalUnitCache: OrganisationalUnitCache
-let organisationalUnitTypeaheadCache: OrganisationalUnitTypeaheadCache
 let profileCache: ProfileCache
 let gradeCache: AnonymousCache<Grades>
 let areaOfWorkCache: AnonymousCache<AreasOfWork>
@@ -28,14 +24,12 @@ let interestCache: AnonymousCache<Interests>
 
 export function setCaches(
 	orgCache: OrganisationalUnitCache,
-	orgTypeaheadCache: OrganisationalUnitTypeaheadCache,
 	csrsProfileCache: ProfileCache,
 	csrsGradeCache: AnonymousCache<Grades>,
 	csrsAreaOfWorkCache: AnonymousCache<AreasOfWork>,
 	csrsInterestCache: AnonymousCache<Interests>
 ) {
 	organisationalUnitCache = orgCache
-	organisationalUnitTypeaheadCache = orgTypeaheadCache
 	profileCache = csrsProfileCache
 	gradeCache = csrsGradeCache
 	areaOfWorkCache = csrsAreaOfWorkCache
@@ -84,14 +78,20 @@ export async function patchCivilServantOrganisationUnit(user: User, organisation
 	await requiredLearningCache.delete(user.id)
 }
 
-export async function patchCivilServantName(user: User, name: string) {
-	const patch = new PatchCivilServant(name, undefined, undefined, undefined, undefined)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantName(user: User, fullName: string) {
+	await cslService.setFullName(user, fullName)
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.fullName = fullName
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
-export async function patchCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
-	const patch = new PatchCivilServant(undefined, undefined, undefined, areaOfWork, undefined)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantProfession(user: User, areaOfWork: AreaOfWork) {
+	await cslService.setProfession(user, areaOfWork.getId())
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.profession = areaOfWork
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[], newProfile: boolean) {
@@ -106,9 +106,12 @@ export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork
 	user.updateWithProfile(profile)
 }
 
-export async function patchCivilServantGrade(user: User, grade: Grade) {
-	const patch = new PatchCivilServant(undefined, grade, undefined, undefined, undefined)
-	await patchCivilServant(user, patch)
+export async function updateCivilServantGrade(user: User, grade: Grade) {
+	await cslService.setGrade(user, grade.getId())
+	const profile = await fetchProfile(user.id, user.accessToken)
+	profile.grade = grade
+	await profileCache.setObject(profile)
+	user.updateWithProfile(profile)
 }
 
 export async function patchCivilServantInterests(user: User, interests: Interest[]) {
@@ -144,8 +147,8 @@ export async function getAreasOfWork(user: User): Promise<AreasOfWork> {
 
 export async function getGrades(user: User): Promise<Grades> {
 	let grades = await gradeCache.get()
-	if (!grades) {
-		grades = new Grades(await gradeClient.getGrades(user))
+	if (grades === undefined) {
+		grades = new Grades(await cslService.getGrades(user))
 		await gradeCache.set(grades)
 	}
 	return grades
@@ -180,13 +183,6 @@ export async function getOrganisation(
 	return org
 }
 
-async function refreshTypeahead(user: User): Promise<OrganisationalUnitTypeAhead> {
-	const organisationalUnits = await organisationalUnitClient.getAllOrganisationalUnits(user)
-	const typeahead = OrganisationalUnitTypeAhead.createAndSort(organisationalUnits)
-	await organisationalUnitTypeaheadCache.setTypeahead(typeahead)
-	return typeahead
-}
-
 export async function getOrgHierarchy(
 	organisationId: number,
 	user: User,
@@ -211,10 +207,13 @@ export async function getOrgHierarchy(
 	return hierarchy
 }
 
-export async function getAllOrganisationUnits(user: User): Promise<OrganisationalUnitTypeAhead> {
-	let typeahead = await organisationalUnitTypeaheadCache.getTypeahead()
-	if (typeahead === undefined) {
-		typeahead = await refreshTypeahead(user)
-	}
-	return typeahead
+export async function getOrganisationalUnitsForSearch(user: User): Promise<OrganisationalUnit[]> {
+	const resp = await organisationalUnitClient.getOrganisationalUnits(
+		{
+			page: 0,
+			size: 20,
+		},
+		user
+	)
+	return resp.content
 }

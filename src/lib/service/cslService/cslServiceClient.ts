@@ -7,6 +7,10 @@ import {RequiredLearningCache} from './cache/RequiredLearningCache'
 import {BookEventDto} from './models/BookEventDto'
 import {CancelBookingDto} from './models/CancelBookingDto'
 import {CourseActionResponse} from './models/CourseActionResponse'
+import {FormattedOrganisationList} from './models/csrs/formattedOrganisationList'
+import {FormattedOrganisationListCache} from './models/csrs/formattedOrganisationListCache'
+import {FormattedOrganisations} from './models/csrs/formattedOrganisations'
+import {GetOrganisationsFormattedParams} from './models/csrs/getOrganisationsFormattedParams'
 import {EventActionResponse} from './models/EventActionResponse'
 import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
@@ -15,19 +19,23 @@ import {LearningPlan} from './models/learning/learningPlan/learningPlan'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
+import {Grades} from './models/grades'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
 export let learningPlanCache: LearningPlanCache
+export let formattedOrganisationListCache: FormattedOrganisationListCache
 
 export const setCaches = (
 	learningRecordPageCache: LearningRecordCache,
 	requiredLearningPageCache: RequiredLearningCache,
-	LearningPlanPageCache: LearningPlanCache
+	LearningPlanPageCache: LearningPlanCache,
+	formattedOrgListCache: FormattedOrganisationListCache
 ) => {
 	learningRecordCache = learningRecordPageCache
 	requiredLearningCache = requiredLearningPageCache
 	learningPlanCache = LearningPlanPageCache
+	formattedOrganisationListCache = formattedOrgListCache
 }
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
@@ -229,4 +237,71 @@ export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], n
 		areaOfWorkIds.map(aow => parseInt(aow)),
 		user
 	)
+}
+
+export async function getGrades(user: User) {
+	const resp: Grades = await client._get(
+		{
+			url: 'grades',
+		},
+		user
+	)
+	return plainToInstance(Grades, resp).grades
+}
+
+export async function setGrade(user: User, gradeId: string) {
+	await client._post(
+		{
+			url: `/user/profile/grade`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({gradeId}),
+		user
+	)
+}
+
+export async function setProfession(user: User, professionId: string) {
+	await client._post(
+		{
+			url: `/user/profile/profession`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({professionId}),
+		user
+	)
+}
+
+export async function setFullName(user: User, fullName: string) {
+	await client._post(
+		{
+			url: `/user/profile/full-name`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({fullName}),
+		user
+	)
+}
+
+export async function getOrganisationsDropdown(user: User, params: GetOrganisationsFormattedParams) {
+	const cacheKey = params.getCacheKey()
+	let typeahead = await formattedOrganisationListCache.get(cacheKey)
+	if (typeahead === undefined) {
+		const resp: FormattedOrganisations = await client._get(
+			{
+				url: '/organisations/formatted_list',
+				params,
+			},
+			user
+		)
+		const formattedOrganisations = plainToInstance(FormattedOrganisations, resp)
+		typeahead = new FormattedOrganisationList(cacheKey, formattedOrganisations.formattedOrganisationalUnitNames)
+		await formattedOrganisationListCache.set(cacheKey, typeahead)
+	}
+	return typeahead.formattedOrganisations
 }

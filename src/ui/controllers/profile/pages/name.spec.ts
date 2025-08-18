@@ -32,7 +32,7 @@ describe('Given name middleware tests', () => {
 	let generateRedirectStub: any
 	let renderStub: any
 	beforeEach(() => {
-		patchStub = sandbox.stub(csrsService, 'patchCivilServantName').resolves()
+		patchStub = sandbox.stub(csrsService, 'updateCivilServantName').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
 		renderStub = sandbox.stub(template, 'render')
 	})

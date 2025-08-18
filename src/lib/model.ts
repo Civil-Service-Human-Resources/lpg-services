@@ -654,16 +654,6 @@ export class RequiredRecurringAudience {
 	) {}
 }
 
-export class Frequency {
-	static increment(frequency: Duration, date: Date) {
-		return new Date(date.getFullYear() + frequency.years(), date.getMonth() + frequency.months(), date.getDate())
-	}
-
-	static decrement(frequency: Duration, date: Date) {
-		return new Date(date.getFullYear() - frequency.years(), date.getMonth() - frequency.months(), date.getDate())
-	}
-}
-
 export class AgencyToken {
 	token: string
 	uid: string
@@ -757,6 +747,7 @@ export function createUser(identity: IdentityDetails, profile: Profile) {
 		profile.otherAreasOfWork,
 		profile.interests,
 		profile.fullName,
+		profile.otherOrganisationalUnits,
 		profile.organisationalUnit,
 		profile.grade,
 		profile.managementLoggedIn,
@@ -779,6 +770,7 @@ export class User implements CSLUser {
 		public otherAreasOfWork?: AreaOfWork[],
 		public interests?: Interest[],
 		public givenName?: string,
+		public otherOrganisationalUnits?: OrganisationalUnit[],
 		public organisationalUnit?: OrganisationalUnit,
 		public grade?: Grade,
 		public managementLoggedIn: boolean = false,
@@ -790,6 +782,7 @@ export class User implements CSLUser {
 
 	updateWithProfile(profile: Profile) {
 		this.organisationalUnit = profile.organisationalUnit
+		this.otherOrganisationalUnits = profile.otherOrganisationalUnits
 		this.givenName = profile.fullName
 		this.grade = profile.grade
 		this.areaOfWork = profile.profession
@@ -864,6 +857,10 @@ export class User implements CSLUser {
 
 	hasLineManager() {
 		return this.lineManager !== undefined
+	}
+
+	getOtherOrganisationIds() {
+		return (this.otherOrganisationalUnits || []).map(o => o.id)
 	}
 }
 

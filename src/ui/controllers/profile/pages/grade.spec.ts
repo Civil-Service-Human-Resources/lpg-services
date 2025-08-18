@@ -36,7 +36,7 @@ describe('Grade middleware tests', () => {
 	let generateRedirectStub: any
 	beforeEach(() => {
 		sandbox.stub(csrsService, 'getGrades').resolves(grades)
-		patchStub = sandbox.stub(csrsService, 'patchCivilServantGrade').resolves()
+		patchStub = sandbox.stub(csrsService, 'updateCivilServantGrade').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
 	})
 	afterEach(() => {

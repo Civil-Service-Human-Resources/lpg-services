@@ -117,6 +117,10 @@ export const REDIS = set({
 	port: +(env.REDIS_PORT || '6379'),
 })
 
+export const FORMATTED_ORG_LIST_REDIS = set({
+	defaultTTL: +(env.FORMATTED_ORG_LIST_REDIS_TTL || '10800'),
+})
+
 export const ORG_REDIS = set({
 	defaultTTL: +(env.ORG_REDIS_TTL || '86400'),
 })

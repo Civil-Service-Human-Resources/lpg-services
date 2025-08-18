@@ -22,10 +22,10 @@ import * as csrsService from './lib/service/civilServantRegistry/csrsService'
 import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
-import {OrganisationalUnitTypeaheadCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitTypeaheadCache'
 import {LearningRecordCache} from './lib/service/cslService/cache/learningRecordCache'
 import {RequiredLearningCache} from './lib/service/cslService/cache/RequiredLearningCache'
 import * as cslService from './lib/service/cslService/cslServiceClient'
+import {FormattedOrganisationListCache} from './lib/service/cslService/models/csrs/formattedOrganisationListCache'
 import * as dynamicBackLink from './lib/ui/middleware/dynamicBackLink'
 import * as nunjucks from './lib/ui/middleware/nunjucks'
 import * as redirectTo from './lib/ui/middleware/redirectTo'
@@ -105,16 +105,19 @@ app.use(
 )
 
 const orgCache = new OrganisationalUnitCache(redisClient, config.ORG_REDIS.defaultTTL)
-const orgTypeaheadCache = new OrganisationalUnitTypeaheadCache(redisClient, config.ORG_REDIS.defaultTTL)
 const csrsProfileCache = new ProfileCache(redisClient, config.PROFILE_REDIS.defaultTTL)
 const gradeCache = new AnonymousCache(redisClient, config.GRADE_REDIS.defaultTTL, 'grades', Grades)
 const areaOfWorkCache = new AnonymousCache(redisClient, config.AOW_REDIS.defaultTTL, 'areasOfWork', AreasOfWork)
 const interestCache = new AnonymousCache(redisClient, config.INTEREST_REDIS.defaultTTL, 'Interests', Interests)
-csrsService.setCaches(orgCache, orgTypeaheadCache, csrsProfileCache, gradeCache, areaOfWorkCache, interestCache)
+csrsService.setCaches(orgCache, csrsProfileCache, gradeCache, areaOfWorkCache, interestCache)
 
+const formattedOrganisationListCache = new FormattedOrganisationListCache(
+	redisClient,
+	config.FORMATTED_ORG_LIST_REDIS.defaultTTL
+)
 const learningRecordCache = new LearningRecordCache(redisClient, config.ENDPOINT_REDIS.LEARNING_RECORD.defaultTTL)
 const requiredLearningCache = new RequiredLearningCache(redisClient, config.ENDPOINT_REDIS.REQUIRED_LEARNING.defaultTTL)
-cslService.setCaches(learningRecordCache, requiredLearningCache)
+cslService.setCaches(learningRecordCache, requiredLearningCache, formattedOrganisationListCache)
 
 app.use(flash())
 
