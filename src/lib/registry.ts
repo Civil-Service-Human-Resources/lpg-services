@@ -61,6 +61,8 @@ export class Profile implements CacheableObject {
 	grade?: Grade
 	@Type(() => OrganisationalUnit)
 	organisationalUnit?: OrganisationalUnit
+	@Type(() => OrganisationalUnit)
+	otherOrganisationalUnits?: OrganisationalUnit[]
 	@Type(() => AreaOfWork)
 	profession?: AreaOfWork
 	@Type(() => AreaOfWork)

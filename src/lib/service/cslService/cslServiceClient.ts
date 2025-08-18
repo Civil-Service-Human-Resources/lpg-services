@@ -6,6 +6,10 @@ import {RequiredLearningCache} from './cache/RequiredLearningCache'
 import {BookEventDto} from './models/BookEventDto'
 import {CancelBookingDto} from './models/CancelBookingDto'
 import {CourseActionResponse} from './models/CourseActionResponse'
+import {FormattedOrganisationList} from './models/csrs/formattedOrganisationList'
+import {FormattedOrganisationListCache} from './models/csrs/formattedOrganisationListCache'
+import {FormattedOrganisations} from './models/csrs/formattedOrganisations'
+import {GetOrganisationsFormattedParams} from './models/csrs/getOrganisationsFormattedParams'
 import {EventActionResponse} from './models/EventActionResponse'
 import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
@@ -17,13 +21,16 @@ import {Grades} from './models/grades'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
+export let formattedOrganisationListCache: FormattedOrganisationListCache
 
 export const setCaches = (
 	learningRecordPageCache: LearningRecordCache,
-	requiredLearningPageCache: RequiredLearningCache
+	requiredLearningPageCache: RequiredLearningCache,
+	formattedOrgListCache: FormattedOrganisationListCache
 ) => {
 	learningRecordCache = learningRecordPageCache
 	requiredLearningCache = requiredLearningPageCache
+	formattedOrganisationListCache = formattedOrgListCache
 }
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
@@ -252,4 +259,22 @@ export async function setFullName(user: User, fullName: string) {
 		JSON.stringify({fullName}),
 		user
 	)
+}
+
+export async function getOrganisationsDropdown(user: User, params: GetOrganisationsFormattedParams) {
+	const cacheKey = params.getCacheKey()
+	let typeahead = await formattedOrganisationListCache.get(cacheKey)
+	if (typeahead === undefined) {
+		const resp: FormattedOrganisations = await client._get(
+			{
+				url: '/organisations/formatted_list',
+				params,
+			},
+			user
+		)
+		const formattedOrganisations = plainToInstance(FormattedOrganisations, resp)
+		typeahead = new FormattedOrganisationList(cacheKey, formattedOrganisations.formattedOrganisationalUnitNames)
+		await formattedOrganisationListCache.set(cacheKey, typeahead)
+	}
+	return typeahead.formattedOrganisations
 }

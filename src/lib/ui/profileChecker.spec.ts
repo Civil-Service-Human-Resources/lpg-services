@@ -24,6 +24,7 @@ const createUser = (
 		otherAreasOfWork,
 		undefined,
 		name,
+		[],
 		organisation,
 		undefined
 	)
