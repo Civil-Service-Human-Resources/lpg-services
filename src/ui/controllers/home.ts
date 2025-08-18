@@ -10,18 +10,21 @@ import * as template from '../../lib/ui/template'
 const logger = getLogger('controllers/home')
 
 interface NotificationBanner {
-	title: string,
-	message: string,
+	title: string
+	message: string
 }
 
 interface ActionBanner extends NotificationBanner {
-	yesHref: string,
-	yesText: string,
-	noHref: string,
-	noText: string,
+	yesHref: string
+	yesText: string
+	noHref: string
+	noText: string
 }
 
-async function generateNotiicationBanner(request: express.Request, learningPlan: LearningPlan): NotificationBanner | null {
+async function generateNotificationBanner(
+	request: express.Request,
+	learningPlan: LearningPlan
+): Promise<NotificationBanner | null> {
 	const successTitle = request.flash('successTitle')[0]
 	const successMessage = request.flash('successMessage')[0]
 	const successId = request.flash('successId')[0]
@@ -42,21 +45,26 @@ async function generateNotiicationBanner(request: express.Request, learningPlan:
 	return notificationBanner
 }
 
-async function generateActionBanner(request: express.Request, learningPlan: LearningPlan): Promise<ActionBanner | null> {
+async function generateActionBanner(
+	request: express.Request,
+	learningPlan: LearningPlan
+): Promise<ActionBanner | null> {
 	for (const action of ['skip', 'move', 'delete']) {
 		if (request.query[action]) {
 			const [courseId, moduleId, eventId]: string = request.query[action].split(',')
 			if (courseId !== undefined) {
 				const course = learningPlan.getAllCourses().find(c => c.id === courseId)
 				if (course !== undefined) {
-					const yesHref = ['skip', 'move'].includes(action) ? `/book/${courseId}/${moduleId}/${eventId}/${action}` : `/courses/${courseId}/delete`
+					const yesHref = ['skip', 'move'].includes(action)
+						? `/book/${courseId}/${moduleId}/${eventId}/${action}`
+						: `/courses/${courseId}/delete`
 					return {
 						title: request.__('learning_confirm_' + action + '_plan_title', course.title),
 						message: request.__('learning_confirm_' + action + '_plan_message'),
 						yesText: request.__('learning_confirm_' + action + '_yes_option'),
 						yesHref,
 						noText: request.__('learning_confirm_' + action + '_no_option'),
-						noHref: '/'
+						noHref: '/',
 					}
 				}
 			}
@@ -73,7 +81,7 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			cslService.getLearningPlan(user),
 			cslService.getRequiredLearning(user),
 		])
-		const notificationBanner = generateNotiicationBanner(req, learningPlan)
+		const notificationBanner = generateNotificationBanner(req, learningPlan)
 		const actionBanner = generateActionBanner(req, learningPlan)
 		return res.render('home/index.njk', {
 			pageModel: {
@@ -82,8 +90,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 				banners: {
 					notificationBanner,
 					actionBanner,
-				}
-			}
+				},
+			},
 		})
 	} catch (e) {
 		console.error("Error building user's home page", e)

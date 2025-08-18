@@ -109,7 +109,7 @@ export const getAssertNotificationBanner = (expTitle: string, expContent: string
 }
 
 export const assertHtml = (html: string | HTML, assertions: HtmlAssertion[]) => {
-	const page = typeof html === "string" ? new JSDOM(html).window.document : html
+	const page = typeof html === 'string' ? new JSDOM(html).window.document : html
 	assertions.forEach(a => assertDoc(page, a))
 }
 
@@ -254,38 +254,38 @@ export interface ModuleCardAssertion {
 
 export interface CourseCardAssertion {
 	expTitle: {
-		text: string,
+		text: string
 		href: string
-	},
+	}
 	properties: {
-		type: string,
-		duration: string,
-		cost?: string,
+		type: string
+		duration: string
+		cost?: string
 		statusBadge?: string
-	},
-	moduleCount: number,
-	expDescription: string,
-	dueBy?: string,
+	}
+	moduleCount: number
+	expDescription: string
+	dueBy?: string
 	cta: {
 		primary: {
-			href: string,
+			href: string
 			text: string
-		},
-		secondary: {
-			text: string,
+		}
+		secondary?: {
+			text: string
 			href?: string
 		}
-	},
+	}
 	eventModule?: {
 		title: {
-			text: string,
+			text: string
 			href: string
-		},
-		status: string,
-		type: string,
-		dates: string[],
+		}
+		status: string
+		type: string
+		dates: string[]
 		cta?: {
-			text: string,
+			text: string
 			href: string
 		}
 	}
@@ -318,53 +318,61 @@ export const getCTAAssertion = (
 
 export const assertCourseCard = (html: HTML, expValue: CourseCardAssertion) => {
 	const assertions: HtmlAssertion[] = [
-		classAssertion(["lpg-course-link"], {
+		classAssertion(['lpg-course-link'], {
 			attributes: {
-				href: expValue.expTitle.href
+				href: expValue.expTitle.href,
 			},
-			content: new TextContentAsserter(expValue.expTitle.text)
+			content: new TextContentAsserter(expValue.expTitle.text),
 		}),
-		classAssertion(["lpg-course-type"], {
-			content: new TextContentAsserter(expValue.properties.type)
+		classAssertion(['lpg-course-type'], {
+			content: new TextContentAsserter(expValue.properties.type),
 		}),
-		classAssertion(["lpg-course-duration"], {
-			content: new TextContentAsserter(expValue.properties.duration)
+		classAssertion(['lpg-course-duration'], {
+			content: new TextContentAsserter(expValue.properties.duration),
 		}),
-		classAssertion(["discite__counter"], {
-			content: new TextContentAsserter(`This course has ${expValue.moduleCount} modules`)
+		classAssertion(['discite__counter'], {
+			content: new TextContentAsserter(`This course has ${expValue.moduleCount} modules`),
 		}),
-		classAssertion(["discite__desc"], {
-			content: new TextContentAsserter(expValue.expDescription)
+		classAssertion(['discite__desc'], {
+			content: new TextContentAsserter(expValue.expDescription),
 		}),
-		classAssertion(["discite__action-link--main"], {
+		classAssertion(['discite__action-link--main'], {
 			content: new TextContentAsserter(expValue.cta.primary.text),
 			attributes: {
-				href: expValue.cta.primary.href
-			}
-		})
+				href: expValue.cta.primary.href,
+			},
+		}),
 	]
 	if (expValue.properties.statusBadge) {
-		assertions.push(classAssertion(["badge", "badge--discite"], {
-			content: new TextContentAsserter(expValue.properties.statusBadge)
-		}))
+		assertions.push(
+			classAssertion(['badge', 'badge--discite'], {
+				content: new TextContentAsserter(expValue.properties.statusBadge),
+			})
+		)
 	}
 	if (expValue.properties.cost) {
-		assertions.push(classAssertion(["lpg-course-cost"], {
-			content: new TextContentAsserter(expValue.properties.cost)
-		}))
+		assertions.push(
+			classAssertion(['lpg-course-cost'], {
+				content: new TextContentAsserter(expValue.properties.cost),
+			})
+		)
 	}
 	if (expValue.dueBy) {
-		assertions.push(classAssertion(["lpg-course-dueBy"], {
-			content: new TextContentAsserter(`Due by: ${expValue.dueBy}`)
-		}))
+		assertions.push(
+			classAssertion(['lpg-course-dueBy'], {
+				content: new TextContentAsserter(`Due by: ${expValue.dueBy}`),
+			})
+		)
 	}
 	if (expValue.cta.secondary) {
-		assertions.push(classAssertion(["discite__action-link--main:nth-of-type(2)"], {
-			content: new TextContentAsserter(expValue.cta.secondary.text),
-			attributes: {
-				href: expValue.cta.secondary.href
-			}
-		}))
+		assertions.push(
+			classAssertion(['discite__action-link--main:nth-of-type(2)'], {
+				content: new TextContentAsserter(expValue.cta.secondary.text),
+				attributes: {
+					href: expValue.cta.secondary.href!,
+				},
+			})
+		)
 	}
 	if (expValue.eventModule) {
 		const eventModuleHtml = html.getElementsByClassName('discite__item--event')[0]
@@ -372,15 +380,15 @@ export const assertCourseCard = (html: HTML, expValue: CourseCardAssertion) => {
 			classAssertion(['govuk-link'], {
 				content: new TextContentAsserter(expValue.eventModule.title.text),
 				attributes: {
-					href: expValue.eventModule.title.href
-				}
+					href: expValue.eventModule.title.href,
+				},
 			}),
-			classAssertion(["lpg-course-type"], {
-				content: new TextContentAsserter(expValue.eventModule.type)
+			classAssertion(['lpg-course-type'], {
+				content: new TextContentAsserter(expValue.eventModule.type),
 			}),
-			classAssertion(["badge", "badge--discite", "badge--info"], {
-				content: new TextContentAsserter(expValue.eventModule.status)
-			})
+			classAssertion(['badge', 'badge--discite', 'badge--info'], {
+				content: new TextContentAsserter(expValue.eventModule.status),
+			}),
 		]
 		for (let i = 0; i < expValue.eventModule.dates.length; i++) {
 			eventModuleAssertions.push({

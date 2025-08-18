@@ -22,6 +22,7 @@ import * as csrsService from './lib/service/civilServantRegistry/csrsService'
 import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
+import {LearningPlanCache} from './lib/service/cslService/cache/LearningPlanCache'
 import {LearningRecordCache} from './lib/service/cslService/cache/learningRecordCache'
 import {RequiredLearningCache} from './lib/service/cslService/cache/RequiredLearningCache'
 import * as cslService from './lib/service/cslService/cslServiceClient'
@@ -117,7 +118,8 @@ const formattedOrganisationListCache = new FormattedOrganisationListCache(
 )
 const learningRecordCache = new LearningRecordCache(redisClient, config.ENDPOINT_REDIS.LEARNING_RECORD.defaultTTL)
 const requiredLearningCache = new RequiredLearningCache(redisClient, config.ENDPOINT_REDIS.REQUIRED_LEARNING.defaultTTL)
-cslService.setCaches(learningRecordCache, requiredLearningCache, formattedOrganisationListCache)
+const learningPlanCache = new LearningPlanCache(redisClient, config.ENDPOINT_REDIS.LEARNING_PLAN.defaultTTL)
+cslService.setCaches(learningRecordCache, requiredLearningCache, learningPlanCache, formattedOrganisationListCache)
 
 app.use(flash())
 

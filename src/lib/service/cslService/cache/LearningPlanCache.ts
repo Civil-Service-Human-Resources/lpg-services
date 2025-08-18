@@ -13,10 +13,7 @@ export class LearningPlanCache extends CacheableObjectCache<LearningPlan> {
 
 	public async clearForCourse(userId: string, courseId: string) {
 		const learningPlan = await this.get(userId)
-		if (
-			learningPlan !== undefined &&
-			learningPlan.getCourseIds().find(course => course.id === courseId) !== undefined
-		) {
+		if (learningPlan !== undefined && learningPlan.getCourseIds().find(id => id === courseId) !== undefined) {
 			await this.delete(userId)
 		}
 	}
