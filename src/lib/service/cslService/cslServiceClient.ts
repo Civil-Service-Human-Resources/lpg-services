@@ -201,15 +201,15 @@ export async function getAreasOfWork(user: User) {
 	return plainToInstance(AreasOfWork, resp).areasOfWork
 }
 
-export async function setOrganisationalUnit(user: User, organisationalUnitId: number) {
+export async function setOrganisationUnit(user: User, organisationUnitId: number) {
 	await client._post(
 		{
-			url: `/user/profile/organisationalUnit`,
+			url: `/user/profile/organisationUnit`,
 			headers: {
 				'Content-Type': 'application/json',
 			},
 		},
-		JSON.stringify({organisationalUnitId}),
+		JSON.stringify({organisationUnitId}),
 		user
 	)
 }
