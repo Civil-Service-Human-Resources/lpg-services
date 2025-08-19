@@ -78,8 +78,8 @@ export async function updateCivilServantOrganisationalUnit(user: User, organisat
 	await requiredLearningCache.delete(user.id)
 }
 
-export async function updateCivilServantName(user: User, fullName: string) {
-	await cslService.setFullName(user, fullName)
+export async function updateCivilServantName(user: User, fullName: string, newProfile: boolean) {
+	await cslService.setFullName(user, fullName, newProfile)
 	const profile = await fetchProfile(user.id, user.accessToken)
 	profile.fullName = fullName
 	await profileCache.setObject(profile)
@@ -94,11 +94,10 @@ export async function updateCivilServantProfession(user: User, areaOfWork: AreaO
 	user.updateWithProfile(profile)
 }
 
-export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[], newProfile: boolean) {
+export async function updateCivilServantOtherAreasOfWork(user: User, areasOfWork: AreaOfWork[]) {
 	await cslService.setOtherAreasOfWork(
 		user,
-		areasOfWork.map(aow => aow.getId()),
-		newProfile
+		areasOfWork.map(aow => aow.getId())
 	)
 	const profile = await fetchProfile(user.id, user.accessToken)
 	profile.otherAreasOfWork = areasOfWork
