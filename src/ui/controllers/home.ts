@@ -36,10 +36,10 @@ async function generateNotificationBanner(
 					course.justAdded = true
 				}
 			}
-			notificationBanner = {
-				title: successTitle,
-				message: successMessage,
-			}
+		}
+		notificationBanner = {
+			title: successTitle,
+			message: successMessage,
 		}
 	}
 	return notificationBanner
