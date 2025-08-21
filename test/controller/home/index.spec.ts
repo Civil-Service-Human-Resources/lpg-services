@@ -191,6 +191,10 @@ describe('Homepage controller tests', () => {
 					expDescription: 'Short description of learning plan 2',
 				},
 			])
+			assertBanner(res.text, {
+				title: 'Learning plan Course 2',
+				message: 'success',
+			})
 		})
 		it('should render booked learning', async () => {
 			stubGetLearningPlan({
