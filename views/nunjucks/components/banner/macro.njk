@@ -6,23 +6,23 @@
         {% if params.message %}
             <p class="no-margin"><strong>{{ params.message }}</strong></p>
         {% endif %}
+        {% if params.additionalContent %}
+            {{ params.additionalContent | safe }}
+        {% endif %}
     </div>
-    {% if params.additionalContent %}
-        {{ params.additionalContent | safe }}
-    {% endif %}
 {% endmacro %}
 
 {% macro renderBanners(params) %}
-    {% if params.notification %}
+    {% if params.notification != null %}
         {{ notificationBanner(params.notification) }}
-    {% elif params.action %}
+    {% elif params.action != null %}
         {{ warningConfirmationBanner(params.action) }}
     {% endif %}
 {% endmacro %}
 
 {% macro notificationBanner(params) %}
     {{ banner({
-        "classes": "banner--confirmation " + params.classes,
+        "classes": "banner--confirmation " + params.classes or "",
         "title": params.title,
         "message": params.message
     }) }}

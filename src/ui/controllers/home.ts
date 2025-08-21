@@ -53,7 +53,14 @@ async function generateActionBanner(
 		if (request.query[action]) {
 			const [courseId, moduleId, eventId]: string = request.query[action].split(',')
 			if (courseId !== undefined) {
-				const course = learningPlan.getAllCourses().find(c => c.id === courseId)
+				let course
+				if (action === 'delete') {
+					course = learningPlan.getAllCourses().find(c => c.id === courseId)
+				} else if (moduleId !== undefined && eventId !== undefined) {
+					course = learningPlan.bookedCourses.find(c => {
+						return c.id === courseId && c.eventModule.id === moduleId && c.eventModule.eventId === eventId
+					})
+				}
 				if (course !== undefined) {
 					const yesHref = ['skip', 'move'].includes(action)
 						? `/book/${courseId}/${moduleId}/${eventId}/${action}`
@@ -81,15 +88,15 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			cslService.getLearningPlan(user),
 			cslService.getRequiredLearning(user),
 		])
-		const notificationBanner = generateNotificationBanner(req, learningPlan)
-		const actionBanner = generateActionBanner(req, learningPlan)
+		const notificationBanner = await generateNotificationBanner(req, learningPlan)
+		const actionBanner = await generateActionBanner(req, learningPlan)
 		return res.render('home/index.njk', {
 			pageModel: {
 				requiredLearning,
 				learningPlan,
 				banners: {
-					notificationBanner,
-					actionBanner,
+					notification: notificationBanner,
+					action: actionBanner,
 				},
 			},
 		})

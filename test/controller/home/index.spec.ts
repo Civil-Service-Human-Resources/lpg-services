@@ -5,7 +5,10 @@ import * as request from 'supertest'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
 import {setCaches} from '../../../src/lib/service/cslService/cslServiceClient'
 import * as index from '../../../src/ui/controllers/home'
-import {assertCourseCards, assertH1, assertHtml, titleAssertion} from '../../utils/htmlUtils'
+import {assertBanner} from '../../utils/htmlAssertions/assertBanner'
+
+import {assertCourseCards} from '../../utils/htmlAssertions/assertCourseCard'
+import {assertH1, assertHtml, titleAssertion} from '../../utils/htmlUtils'
 import {fakeCache} from '../../utils/mocks'
 import {getApp} from '../../utils/testApp'
 
@@ -138,7 +141,6 @@ describe('Homepage controller tests', () => {
 					roles: 'LEARNER',
 					flashes: ['successTitle:Learning plan Course 2', 'successId:learningplan2', 'successMessage:success'],
 				})
-			console.log(res.text)
 			assertCourseCards(res.text, [
 				{
 					cta: {
@@ -260,6 +262,99 @@ describe('Homepage controller tests', () => {
 			expect(res.text).to.contain(
 				'<p class="govuk-body">You can add learning by checking <a href="/suggestions-for-you">Suggestions for you</a> or <a href="/search?q=">searching for a specific course</a>.</p>'
 			)
+		})
+		it('Should prompt the user to confirm when they remove a course from the learning plan', async () => {
+			stubGetLearningPlan({
+				userId: 'userId',
+				learningPlanCourses: [
+					{
+						id: 'learningplan1',
+						title: 'Learning plan Course 1',
+						shortDescription: 'Short description of learning plan 1',
+						type: 'link',
+						duration: 3600,
+						moduleCount: 1,
+						costInPounds: 0,
+						status: 'IN_PROGRESS',
+					},
+				],
+			})
+			const res = await request(app).get('/home?delete=learningplan1').set({roles: 'LEARNER'})
+			assertBanner(res.text, {
+				title: 'Are you sure you want to remove Learning plan Course 1?',
+				message: 'If you remove this course, it will be deleted from your learning plan',
+				actions: [
+					{
+						text: 'Yes, remove course now.',
+						href: '/courses/learningplan1/delete',
+					},
+					{
+						text: 'No, keep it.',
+						href: '/',
+					},
+				],
+			})
+		})
+		describe('Move / Skip banner tests', () => {
+			beforeEach(() => {
+				stubGetLearningPlan({
+					userId: 'userId',
+					bookedCourses: [
+						{
+							id: 'bookedLearning1',
+							title: 'Booked learning Course 1',
+							shortDescription: 'Short description of booked learning 1',
+							type: 'blended',
+							duration: 3600,
+							moduleCount: 2,
+							costInPounds: 0,
+							status: 'IN_PROGRESS',
+							eventModule: {
+								id: 'moduleId',
+								bookedDate: '2025-01-02',
+								eventId: 'eventId',
+								title: 'Module title',
+								dates: ['2025-01-02', '2025-01-03'],
+								state: 'REQUESTED',
+							},
+						},
+					],
+				})
+			})
+			it('Should prompt the user to confirm when they move a face-to-face course to their learning record', async () => {
+				const res = await request(app).get('/home?move=bookedLearning1,moduleId,eventId').set({roles: 'LEARNER'})
+				assertBanner(res.text, {
+					title: 'Are you sure you want to add Booked learning Course 1 to your learning record?',
+					message: 'You should only add it to your learning record if you attended it.',
+					actions: [
+						{
+							text: 'Yes, add it',
+							href: '/book/bookedLearning1/moduleId/eventId/move',
+						},
+						{
+							text: 'No',
+							href: '/',
+						},
+					],
+				})
+			})
+			it('Should prompt the user to confirm when they skip a face-to-face course', async () => {
+				const res = await request(app).get('/home?skip=bookedLearning1,moduleId,eventId').set({roles: 'LEARNER'})
+				assertBanner(res.text, {
+					title: 'Are you sure you want to say you did not attend Booked learning Course 1?',
+					message: 'Are you sure you did not attend? This will remove it from your learning plan',
+					actions: [
+						{
+							text: 'Yes, remove it',
+							href: '/book/bookedLearning1/moduleId/eventId/skip',
+						},
+						{
+							text: 'No, keep it',
+							href: '/',
+						},
+					],
+				})
+			})
 		})
 	})
 })
