@@ -46,7 +46,7 @@ describe('Organisation middleware tests', () => {
 	let renderStub: any
 	beforeEach(() => {
 		sandbox.stub(cslService, 'getOrganisationTypeaheadForUser').resolves(organisationList)
-		patchStub = sandbox.stub(csrsService, 'patchCivilServantOrganisationUnit').resolves()
+		patchStub = sandbox.stub(csrsService, 'updateCivilServantOrganisationalUnit').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
 		renderStub = sandbox.stub(template, 'render')
 	})

@@ -54,7 +54,7 @@ export function selectOtherAreasOfWorkMiddleware(behaviour: PageBehaviour) {
 		}
 		if (!_.isEqual(userOtherAreaOfWork.sort(), pageModel.otherAreasOfWork.sort())) {
 			const selectedAreasOfWork = areasOfWork.fetchWithIds(pageModel.otherAreasOfWork)
-			await updateCivilServantOtherAreasOfWork(user, selectedAreasOfWork, behaviour.userSetup)
+			await updateCivilServantOtherAreasOfWork(user, selectedAreasOfWork)
 		}
 		return generateRedirect(otherAreasOfWorkPage, req, res)
 	}

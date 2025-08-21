@@ -36,7 +36,7 @@ export function confirmNameMiddleware(behaviour: PageBehaviour) {
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
 		if (userGivenName !== pageModel.value) {
-			await updateCivilServantName(user, pageModel.value)
+			await updateCivilServantName(user, pageModel.value, behaviour.userSetup)
 		}
 		return generateRedirect(namePage, req, res)
 	}

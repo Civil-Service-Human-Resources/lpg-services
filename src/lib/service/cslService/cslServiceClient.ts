@@ -201,11 +201,23 @@ export async function getAreasOfWork(user: User) {
 	return plainToInstance(AreasOfWork, resp).areasOfWork
 }
 
-export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[], newProfile: boolean) {
+export async function setOrganisationUnit(user: User, organisationUnitId: number) {
+	await client._post(
+		{
+			url: `/user/profile/organisationUnit`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({organisationUnitId}),
+		user
+	)
+}
+
+export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[]) {
 	await client._post(
 		{
 			url: `/user/profile/other-areas-of-work`,
-			params: {newProfile},
 		},
 		areaOfWorkIds.map(aow => parseInt(aow)),
 		user
@@ -248,10 +260,11 @@ export async function setProfession(user: User, professionId: string) {
 	)
 }
 
-export async function setFullName(user: User, fullName: string) {
+export async function setFullName(user: User, fullName: string, newProfile: boolean) {
 	await client._post(
 		{
 			url: `/user/profile/full-name`,
+			params: {newProfile},
 			headers: {
 				'Content-Type': 'application/json',
 			},
