@@ -6,18 +6,6 @@ import {PatchCivilServant} from '../models/patchCivilServant'
 
 const URL = 'civilServants'
 
-export async function patchCivilServantOrganisation(user: User, organisationalUnitId: number) {
-	await client._patch(
-		{
-			url: `${URL}/me/organisationalUnit`,
-		},
-		{
-			organisationalUnitId,
-		},
-		user
-	)
-}
-
 export async function checkAndUpdateLineManager(user: User, lineManagerEmail: string): Promise<Profile> {
 	const resp = await client._patch<null, Profile>(
 		{

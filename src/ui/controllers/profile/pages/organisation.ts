@@ -1,6 +1,6 @@
 import * as express from 'express'
 import {User} from '../../../../lib/model'
-import {patchCivilServantOrganisationUnit} from '../../../../lib/service/civilServantRegistry/csrsService'
+import {updateCivilServantOrganisationalUnit} from '../../../../lib/service/civilServantRegistry/csrsService'
 import {getOrganisationTypeaheadForUser} from '../../../../lib/service/cslService/cslService'
 import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
@@ -46,7 +46,7 @@ export function selectOrganisationsMiddleware(behaviour: PageBehaviour) {
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
 		if (userOrganisation !== pageModel.organisation) {
-			await patchCivilServantOrganisationUnit(user, pageModel.organisation)
+			await updateCivilServantOrganisationalUnit(user, pageModel.organisation)
 		}
 		return generateRedirect(organisationPage, req, res)
 	}
