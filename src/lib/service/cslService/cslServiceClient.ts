@@ -50,6 +50,7 @@ export async function launchModule(courseId: string, moduleId: string, user: Use
 	await requiredLearningCache.clearForCourse(user.id, courseId)
 	await learningPlanCache.clearForCourse(user.id, courseId)
 	await learningRecordCache.delete(user.id)
+	console.log('Returning')
 	return plainToInstance(LaunchModuleResponse, resp)
 }
 
@@ -75,7 +76,7 @@ export async function removeCourseFromLearningPlan(courseId: string, user: User)
 		undefined,
 		user
 	)
-	await learningPlanCache.clearForCourse(user.id, courseId)
+	await learningPlanCache.removeCourse(user.id, courseId)
 	return plainToInstance(CourseActionResponse, resp)
 }
 
