@@ -1,4 +1,4 @@
-{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, ctaLink, cancelLink %}
+{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, ctaLink, cancelLink, bookLink, removeFromLearningPlanLink %}
 {% from components + "/courseCard/description/macro.njk" import courseCardDescription %}
 {% from components + "/courseCard/heading/macro.njk" import courseCardHeading %}
 {% from components + "/courseCard/properties/macro.njk" import courseCardType, courseCardDuration, courseCardCost %}
@@ -58,14 +58,36 @@
                     "courseId": params.id
                 })
             } %}
+            {% if params.eventModule.state === "UNREGISTERED" %}
+                {% set actions = {
+                    "primary": startLink({
+                        "courseId": params.id
+                    }),
+                    "secondary": removeFromLearningPlanLink({
+                        "courseId": params.id
+                    })
+                } %}
+            {% endif %}
         {% else %}
-            {% set actions = {
-                "primary": cancelLink({
-                    "courseId": params.id,
-                    "moduleId": params.eventModule.id,
-                    "moduleId": params.eventModule.eventId
-                })
-            } %}
+            {% if params.eventModule.state === "UNREGISTERED" %}
+                {% set actions = {
+                    "primary": bookLink({
+                        "courseId": params.id,
+                        "moduleId": params.eventModule.id
+                    }),
+                    "secondary": removeFromLearningPlanLink({
+                        "courseId": params.id
+                    })
+                } %}
+            {% else %}
+                {% set actions = {
+                    "primary": cancelLink({
+                        "courseId": params.id,
+                        "moduleId": params.eventModule.id,
+                        "eventId": params.eventModule.eventId
+                    })
+                } %}
+            {% endif %}
         {% endif %}
         {{ courseCardActions({
             "classes": "discite__action--home",
@@ -77,7 +99,7 @@
             <div class="discite__item--main">
                 <h3 class="heading discite__heading"><a href="/courses/{{ params.id }}" class="govuk-link">{{ params.eventModule.title }}</a></h3>
                 <p class="discite__property-item no-margin-bottom">
-                    <span>Date{% if params.eventModule.dates.length > 0 %}s{% endif %}:</span>
+                    <span>Date{% if params.eventModule.dates.length > 1 %}s{% endif %}:</span>
                 </p>
                 <ul>
                     {% for date in params.eventModule.dates %}

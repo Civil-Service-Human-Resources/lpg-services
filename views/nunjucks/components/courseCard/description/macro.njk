@@ -1,9 +1,11 @@
 {% macro courseCardDescription(params) %}
-    <div class="discite__area">
-        <p class="font-small discite__counter">
-            This course has {{ params.moduleCount}} modules
-        </p>
-    </div>
+    {% if params.moduleCount > 1 %}
+        <div class="discite__area">
+            <p class="font-small discite__counter">
+                This course has {{ params.moduleCount}} modules
+            </p>
+        </div>
+    {% endif %}
     <div class="discite__desc {{ params.shortDescription.classes }}">
         {{ params.shortDescription.text }}
     </div>

@@ -129,7 +129,7 @@ describe('Homepage controller tests', () => {
 						shortDescription: 'Short description of learning plan 2',
 						type: 'face-to-face',
 						duration: 3600,
-						moduleCount: 1,
+						moduleCount: 2,
 						costInPounds: 10,
 						status: 'NULL',
 					},
@@ -187,7 +187,7 @@ describe('Homepage controller tests', () => {
 						text: 'Learning plan Course 2',
 						href: '/courses/learningplan2',
 					},
-					moduleCount: 1,
+					moduleCount: 2,
 					expDescription: 'Short description of learning plan 2',
 				},
 			])

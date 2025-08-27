@@ -59,7 +59,7 @@ export const register = (app: Express) => {
 		.addFilter('fileName', fileName)
 		.addFilter('fileExtensionAndSize', extensionAndSize)
 		.addFilter('formatDate', (dueBy: string) => {
-			return moment(dueBy).utc().format('DD MMM YYYY')
+			return moment(dueBy).format('DD MMM YYYY')
 		})
 		.addFilter('formatDuration', (duration?: number) => {
 			if (duration) {

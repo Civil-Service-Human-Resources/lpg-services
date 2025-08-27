@@ -54,9 +54,6 @@ export const assertCourseCard = (html: HTML, expValue: CourseCardAssertion) => {
 		classAssertion(['lpg-course-duration'], {
 			content: new TextContentAsserter(expValue.properties.duration),
 		}),
-		classAssertion(['discite__counter'], {
-			content: new TextContentAsserter(`This course has ${expValue.moduleCount} modules`),
-		}),
 		classAssertion(['discite__desc'], {
 			content: new TextContentAsserter(expValue.expDescription),
 		}),
@@ -67,6 +64,11 @@ export const assertCourseCard = (html: HTML, expValue: CourseCardAssertion) => {
 			},
 		}),
 	]
+	let expModuleCountContent = null
+	if (expValue.moduleCount > 1) {
+		expModuleCountContent = {content: new TextContentAsserter(`This course has ${expValue.moduleCount} modules`)}
+	}
+	assertions.push(classAssertion(['discite__counter'], expModuleCountContent))
 	if (expValue.properties.statusBadge) {
 		assertions.push(
 			classAssertion(['badge', 'badge--discite'], {
