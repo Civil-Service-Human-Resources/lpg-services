@@ -1,13 +1,5 @@
-import {RecordState} from '../../record'
+import {BasicCourse} from './basicCourse'
 
-export class LearningPlanCourse {
-	public id: string
-	public title: string
-	public shortDescription: string
-	public type: string
-	public duration: number
-	public moduleCount: number
-	public costInPounds: number
-	public status: RecordState
+export class LearningPlanCourse extends BasicCourse {
 	public justAdded: boolean = false
 }

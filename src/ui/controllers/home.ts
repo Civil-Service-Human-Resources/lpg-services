@@ -58,7 +58,7 @@ async function generateActionBanner(
 					course = learningPlan.getAllCourses().find(c => c.id === courseId)
 				} else if (moduleId !== undefined && eventId !== undefined) {
 					course = learningPlan.bookedCourses.find(c => {
-						return c.id === courseId && c.eventModule.id === moduleId && c.eventModule.eventId === eventId
+						return c.id === courseId && c.eventModule.id === moduleId && c.eventModule.eventId === eventId && c.canBeMovedToLearningRecord
 					})
 				}
 				if (course !== undefined) {

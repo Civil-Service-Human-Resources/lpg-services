@@ -1,10 +1,5 @@
-import * as moment from 'moment/moment'
-import {LearningPlanCourse} from '../learningPlan/learningPlanCourse'
+import {BasicCourse} from '../learningPlan/basicCourse'
 
-export class RequiredLearningCourse extends LearningPlanCourse {
+export class RequiredLearningCourse extends BasicCourse {
 	public dueBy: string
-
-	getDueByDateFormatted() {
-		return moment(this.dueBy).utc().format('DD MMM YYYY')
-	}
 }

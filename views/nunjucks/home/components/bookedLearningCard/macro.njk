@@ -44,11 +44,11 @@
         {% if params.canBeMovedToLearningRecord %}
             {% set actions = {
                 "primary": ctaLink({
-                    "href": "/home?move=" + params.id + "/" + params.eventModule.id + "/" + params.eventModule.eventId,
+                    "href": "/home?move=" + params.id + "," + params.eventModule.id + "," + params.eventModule.eventId,
                     "text": "Move to Learner Record"
                 }),
                 "secondary": ctaLink({
-                    "href": "/home?skip=" + params.id + "/" + params.eventModule.id + "/" + params.eventModule.eventId,
+                    "href": "/home?skip=" + params.id + "," + params.eventModule.id + "," + params.eventModule.eventId,
                     "text": "I did not attend"
                 })
             } %}
