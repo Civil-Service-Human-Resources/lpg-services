@@ -3,9 +3,9 @@ import * as extended from '../../../lib/extended'
 import {getLogger} from '../../../lib/logger'
 import * as courseRecordClient from '../../../lib/service/cslService/courseRecord/client'
 import {
-	clearLearningPlanCache,
-	clearLearningRecordCache,
-	clearRequiredLearningCache,
+	learningPlanCache,
+	learningRecordCache,
+	requiredLearningCache,
 	getLearningRecord,
 } from '../../../lib/service/cslService/cslServiceClient'
 import * as template from '../../../lib/ui/template'
@@ -35,9 +35,9 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 			res.redirect(`/courses/${course.id}`)
 		} else {
 			await Promise.all([
-				clearLearningRecordCache(req.user.id),
-				clearLearningPlanCache(req.user.id),
-				clearRequiredLearningCache(req.user.id),
+				learningPlanCache.clearForCourse(req.user.id, course.id),
+				learningRecordCache.delete(req.user.id),
+				requiredLearningCache.clearForCourse(req.user.id, course.id),
 			])
 			const courseModuleDisplayStates: (string | null)[] = course.modules.map(m => {
 				const recordForModule = courseRecord!.modules.find(mr => m.id === mr.moduleId)

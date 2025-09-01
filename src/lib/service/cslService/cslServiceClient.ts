@@ -38,18 +38,6 @@ export const setCaches = (
 	formattedOrganisationListCache = formattedOrgListCache
 }
 
-export async function clearLearningRecordCache(userId: string) {
-	await learningRecordCache.delete(userId)
-}
-
-export async function clearLearningPlanCache(userId: string) {
-	await learningPlanCache.delete(userId)
-}
-
-export async function clearRequiredLearningCache(userId: string) {
-	await requiredLearningCache.delete(userId)
-}
-
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
 	const body: UserDto = await createUserDto(user)
 	const resp = await client._post<UserDto, LaunchModuleResponse>(
