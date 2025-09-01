@@ -4,9 +4,7 @@ import * as sinon from 'sinon'
 import * as request from 'supertest'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
 import {setCaches} from '../../../src/lib/service/cslService/cslServiceClient'
-import {
-	BookedLearningPlanCourse
-} from '../../../src/lib/service/cslService/models/learning/learningPlan/bookedLearningPlanCourse'
+import {BookedLearningPlanCourse} from '../../../src/lib/service/cslService/models/learning/learningPlan/bookedLearningPlanCourse'
 import {LearningPlan} from '../../../src/lib/service/cslService/models/learning/learningPlan/learningPlan'
 import {LearningPlanCourse} from '../../../src/lib/service/cslService/models/learning/learningPlan/learningPlanCourse'
 import {RequiredLearning} from '../../../src/lib/service/cslService/models/learning/requiredLearning/requiredLearning'
@@ -133,7 +131,7 @@ describe('Homepage controller tests', () => {
 						moduleCount: 1,
 						costInPounds: 0,
 						status: 'IN_PROGRESS',
-						justAdded: false
+						justAdded: false,
 					},
 					{
 						id: 'learningplan2',
@@ -144,7 +142,7 @@ describe('Homepage controller tests', () => {
 						moduleCount: 2,
 						costInPounds: 10,
 						status: 'NULL',
-						justAdded: false
+						justAdded: false,
 					},
 				],
 			})
@@ -282,7 +280,7 @@ describe('Homepage controller tests', () => {
 				getId: (): string => 'userId',
 				getAllCourses: (): (BookedLearningPlanCourse | LearningPlanCourse)[] => [],
 				getCourseIds: (): string[] => [],
-				bookedCourses: []
+				bookedCourses: [],
 			})
 			const res = await makeRequest()
 			expect(res.text).to.contain('<p class="govuk-body">There is currently no learning in your plan.</p>')
@@ -307,7 +305,7 @@ describe('Homepage controller tests', () => {
 						moduleCount: 1,
 						costInPounds: 0,
 						status: 'IN_PROGRESS',
-						justAdded: false
+						justAdded: false,
 					},
 				],
 			})

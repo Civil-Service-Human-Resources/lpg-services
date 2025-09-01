@@ -4,7 +4,8 @@ import {getLogger} from '../../../lib/logger'
 import * as courseRecordClient from '../../../lib/service/cslService/courseRecord/client'
 import {
 	clearLearningPlanCache,
-	clearLearningRecordCache, clearRequiredLearningCache,
+	clearLearningRecordCache,
+	clearRequiredLearningCache,
 	getLearningRecord,
 } from '../../../lib/service/cslService/cslServiceClient'
 import * as template from '../../../lib/ui/template'
@@ -33,9 +34,11 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 		if (moduleState === 'IN_PROGRESS') {
 			res.redirect(`/courses/${course.id}`)
 		} else {
-			await Promise.all([clearLearningRecordCache(req.user.id),
-			clearLearningPlanCache(req.user.id),
-			clearRequiredLearningCache(req.user.id)])
+			await Promise.all([
+				clearLearningRecordCache(req.user.id),
+				clearLearningPlanCache(req.user.id),
+				clearRequiredLearningCache(req.user.id),
+			])
 			const courseModuleDisplayStates: (string | null)[] = course.modules.map(m => {
 				const recordForModule = courseRecord!.modules.find(mr => m.id === mr.moduleId)
 				return m.getDisplayState(recordForModule, course.getRequiredRecurringAudience())
