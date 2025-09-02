@@ -39,9 +39,11 @@ export const setCaches = (
 }
 
 export async function clearLearningCachesForCourse(userId: string, courseId: string) {
-	await Promise.all([learningPlanCache.clearForCourse(userId, courseId),
-	requiredLearningCache.clearForCourse(userId, courseId),
-	learningRecordCache.delete(userId)])
+	await Promise.all([
+		learningPlanCache.clearForCourse(userId, courseId),
+		requiredLearningCache.clearForCourse(userId, courseId),
+		learningRecordCache.delete(userId),
+	])
 }
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {

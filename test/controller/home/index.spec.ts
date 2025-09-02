@@ -22,7 +22,6 @@ describe('Homepage controller tests', () => {
 	app.get('/home', asyncHandler(index.home))
 
 	let cslServiceStub: sinon.SinonStubbedInstance<typeof client>
-	// let requiredLearningCache: sinon.SinonStubbedInstance<RequiredLearningCache>
 
 	beforeEach(() => {
 		cslServiceStub = sandbox.stub(client)
