@@ -15,8 +15,8 @@
                         <a href="/courses/{{ course.id }}">{{ course.title }}</a>
                     </td>
                     <td>{% if course.type != null %}{{ i18n(course.type) }}{% else %}unknown{% endif %}</td>
-                    <td>{{ course.duration }}</td>
-                    <td>{{ course.completionDate }}</td>
+                    <td>{{ course.duration | courseDuration }}</td>
+                    <td>{{ course.completionDate | formatDate }}</td>
                 </tr>
             {% endfor %}
         </tbody>
