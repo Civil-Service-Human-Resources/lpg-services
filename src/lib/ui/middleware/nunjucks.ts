@@ -3,6 +3,7 @@ import * as nunjucks from 'nunjucks'
 import * as i18n from 'i18n'
 import * as path from 'path'
 import {IS_DEV, STATIC_DIR, LPG_MANAGEMENT_URL} from '../../config'
+import * as datetime from '../../datetime'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
 import {getLogger} from '../../logger'
 import {toHtml} from '../template'
@@ -48,6 +49,12 @@ export const register = (app: Express) => {
 		.addFilter('fileExtensionAndSize', extensionAndSize)
 		.addFilter('i18nList', (list: string[]) => {
 			return list.map(l => i18nConfig.__(l))
+		})
+		.addFilter('formatDate', (date: string) => {
+			return datetime.formatDate(new Date(date))
+		})
+		.addFilter('courseDuration', (durationString: string) => {
+			return datetime.formatCourseDuration(parseInt(durationString))
 		})
 
 	// Middleware
