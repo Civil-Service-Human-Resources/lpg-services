@@ -83,7 +83,6 @@ describe('Homepage controller tests', () => {
 				],
 			})
 			const res = await makeRequest()
-			console.log(res.text)
 			assertCourseCards(res.text, [
 				{
 					dueBy: '01 Jan 2025',
@@ -434,7 +433,6 @@ describe('Homepage controller tests', () => {
 				})
 				it('Should prompt the user to confirm when they move a face-to-face course to their learning record', async () => {
 					const res = await request(app).get('/home?move=bookedLearning1,moduleId,eventId').set({roles: 'LEARNER'})
-					console.log(res.text)
 					assertBanner(res.text, {
 						title: 'Are you sure you want to add Booked learning Course 1 to your learning record?',
 						message: 'You should only add it to your learning record if you attended it.',

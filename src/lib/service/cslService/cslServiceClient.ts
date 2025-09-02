@@ -38,6 +38,12 @@ export const setCaches = (
 	formattedOrganisationListCache = formattedOrgListCache
 }
 
+export async function clearLearningCachesForCourse(userId: string, courseId: string) {
+	await Promise.all([learningPlanCache.clearForCourse(userId, courseId),
+	requiredLearningCache.clearForCourse(userId, courseId),
+	learningRecordCache.delete(userId)])
+}
+
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
 	const body: UserDto = await createUserDto(user)
 	const resp = await client._post<UserDto, LaunchModuleResponse>(
@@ -50,7 +56,6 @@ export async function launchModule(courseId: string, moduleId: string, user: Use
 	await requiredLearningCache.clearForCourse(user.id, courseId)
 	await learningPlanCache.delete(user.id)
 	await learningRecordCache.delete(user.id)
-	console.log('Returning')
 	return plainToInstance(LaunchModuleResponse, resp)
 }
 

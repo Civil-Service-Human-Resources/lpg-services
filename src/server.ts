@@ -15,7 +15,7 @@ import * as luscaConfig from './lib/config/luscaConfig'
 import * as passport from './lib/config/passport'
 import {configureAPI} from './lib/config/passport-backend'
 import {getLogger} from './lib/logger'
-import {logoutUser} from './lib/service/api/cache/cacheService'
+import {clearLearningCachesForUserAndCourse, logoutUser} from './lib/service/api/cache/cacheService'
 import {AreasOfWork} from './lib/service/civilServantRegistry/areaOfWork/areasOfWork'
 import {ProfileCache} from './lib/service/civilServantRegistry/civilServant/profileCache'
 import * as csrsService from './lib/service/civilServantRegistry/csrsService'
@@ -76,6 +76,7 @@ const backendRouter = express.Router()
 
 configureAPI(AUTHENTICATION.jwtKey, backendRouter)
 backendRouter.post('/caches/user/:uid/logout', asyncHandler(logoutUser))
+backendRouter.post('/caches/user/:uid/clear-learning/:courseId', asyncHandler(clearLearningCachesForUserAndCourse))
 app.use(backendServerPath, backendRouter)
 
 app.disable('x-powered-by')
