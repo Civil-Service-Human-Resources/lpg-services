@@ -7,31 +7,10 @@ import * as model from '../../lib/model'
 import * as catalog from '../../lib/service/catalog'
 import {CourseRecord} from '../../lib/service/cslService/models/courseRecord'
 import * as courseRecordClient from '../../lib/service/cslService/courseRecord/client'
-import {RecordState} from '../../lib/service/cslService/models/record'
+import * as cslService from '../../lib/service/cslService/cslServiceClient'
 import * as template from '../../lib/ui/template'
 
 const logger = getLogger('controllers/home')
-
-export const getRequiredLearning = (
-	requiredCourses: model.Course[],
-	courseRecordMap: Map<string, CourseRecord>
-): model.Course[] => {
-	return requiredCourses.filter(course => {
-		let required = false
-		let courseState: RecordState = ''
-		const courseRecord = courseRecordMap.get(course.id)
-		if (courseRecord) {
-			courseState = course.getDisplayState(courseRecord)
-			courseRecord.state = courseState
-			courseRecordMap.delete(course.id)
-		}
-		course.record = courseRecord
-		if (courseState !== 'COMPLETED') {
-			required = true
-		}
-		return required
-	})
-}
 
 export const getLearningPlanRecords = (courseRecordMap: Map<string, CourseRecord>): CourseRecord[] => {
 	const bookedLearning: CourseRecord[] = []
@@ -64,15 +43,16 @@ export async function home(req: express.Request, res: express.Response, next: ex
 	try {
 		const user = req.user as model.User
 
-		const [learningRecord, requiredLearningResults] = await Promise.all([
+		const [learningRecord, requiredLearning] = await Promise.all([
 			courseRecordClient.getFullRecord(user),
-			catalog.findRequiredLearning(user, res.locals.departmentHierarchyCodes),
+			cslService.getRequiredLearning(user),
 		])
 		const courseRecordMap: Map<string, CourseRecord> = new Map(
 			learningRecord.map((cr): [string, CourseRecord] => [cr.courseId, cr])
 		)
-		const requiredLearning = getRequiredLearning(requiredLearningResults.results, courseRecordMap)
-
+		requiredLearning.courses.forEach(course => {
+			courseRecordMap.delete(course.id)
+		})
 		const plannedLearningRecords: CourseRecord[] = getLearningPlanRecords(courseRecordMap)
 
 		const plannedLearning = []

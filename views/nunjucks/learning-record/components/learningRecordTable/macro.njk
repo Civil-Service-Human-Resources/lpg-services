@@ -1,0 +1,24 @@
+{% macro learningRecordTable(params) %}
+    <table class="u-space-b30">
+        <thead>
+            <tr>
+                <th class="table--fix-first">Course title</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Date completed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in params.courses %}
+                <tr>
+                    <td>
+                        <a href="/courses/{{ course.id }}">{{ course.title }}</a>
+                    </td>
+                    <td>{% if course.type != null %}{{ i18n(course.type) }}{% else %}unknown{% endif %}</td>
+                    <td>{{ course.duration | courseDuration }}</td>
+                    <td>{{ course.completionDate | formatDate }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}

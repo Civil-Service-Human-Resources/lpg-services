@@ -41,7 +41,7 @@ describe('Area of work middleware tests', () => {
 	let renderStub: any
 	beforeEach(() => {
 		sandbox.stub(csrsService, 'getAreasOfWork').resolves(areasOfWork)
-		patchStub = sandbox.stub(csrsService, 'patchCivilServantProfession').resolves()
+		patchStub = sandbox.stub(csrsService, 'updateCivilServantProfession').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
 		renderStub = sandbox.stub(template, 'render')
 	})

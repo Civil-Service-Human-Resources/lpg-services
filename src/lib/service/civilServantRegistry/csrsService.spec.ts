@@ -6,7 +6,6 @@ import {ProfileCache} from './civilServant/profileCache'
 import {AgencyToken, OrganisationalUnit, User} from '../../model'
 import * as csrsService from './csrsService'
 import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
-import {OrganisationalUnitTypeaheadCache} from './organisationalUnit/organisationalUnitTypeaheadCache'
 import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 function getOrg(orgName: string, id: number, parentId?: number) {
@@ -23,7 +22,6 @@ describe('CsrsService tests', () => {
 	const sandbox = sinon.createSandbox()
 	let orgUnitCache: sinon.SinonStubbedInstance<OrganisationalUnitCache>
 	let csrsProfileCache: sinon.SinonStubbedInstance<ProfileCache>
-	let orgTypeaheadCache: sinon.SinonStubbedInstance<OrganisationalUnitTypeaheadCache>
 	let gradeCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
 	let areaOfWorkCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
 	let interestCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
@@ -32,7 +30,6 @@ describe('CsrsService tests', () => {
 
 	beforeEach(() => {
 		orgUnitCache = sandbox.createStubInstance(OrganisationalUnitCache)
-		orgTypeaheadCache = sandbox.createStubInstance(OrganisationalUnitTypeaheadCache)
 		csrsProfileCache = sandbox.createStubInstance(ProfileCache)
 		gradeCache = sandbox.createStubInstance(AnonymousCache)
 		areaOfWorkCache = sandbox.createStubInstance(AnonymousCache)
@@ -41,7 +38,6 @@ describe('CsrsService tests', () => {
 		user = sandbox.createStubInstance(User)
 		csrsService.setCaches(
 			orgUnitCache as any,
-			orgTypeaheadCache as any,
 			csrsProfileCache as any,
 			gradeCache as any,
 			areaOfWorkCache as any,

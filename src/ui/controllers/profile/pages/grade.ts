@@ -1,6 +1,6 @@
 import * as express from 'express'
 import {User} from '../../../../lib/model'
-import {getGrades, patchCivilServantGrade} from '../../../../lib/service/civilServantRegistry/csrsService'
+import {getGrades, updateCivilServantGrade} from '../../../../lib/service/civilServantRegistry/csrsService'
 import * as template from '../../../../lib/ui/template'
 import {keysToOptions} from '../../../model/option'
 import {GradePageModel} from '../models/gradePageModel'
@@ -46,7 +46,7 @@ export function confirmGradeMiddleware(behaviour: PageBehaviour) {
 		}
 		const grade = grades.fetchOne(pageModel.grade)
 		if (grade && userGrade !== grade.id) {
-			await patchCivilServantGrade(user, grade)
+			await updateCivilServantGrade(user, grade)
 		}
 		return generateRedirect(gradePage, req, res)
 	}

@@ -85,10 +85,9 @@ export class CourseFactory {
 	}
 }
 
-export enum CourseStatus {
-	PUBLISHED = 'Published',
-	ARCHIVED = 'Archived',
-}
+export type CourseStatus = 'Published' | 'Archived'
+
+export type CourseType = ModuleType | 'blended' | 'unknown'
 
 export class Course {
 	static create(data: any, user?: User) {
@@ -221,22 +220,6 @@ export class Course {
 		} else {
 			return null
 		}
-	}
-
-	isArchived() {
-		return this.status ? this.status === 'Archived' : false
-	}
-
-	isComplete() {
-		return this.record ? this.record!.state === 'COMPLETED' : false
-	}
-
-	isStarted() {
-		return this.record ? this.record!.state === 'IN_PROGRESS' : false
-	}
-
-	hasPreference() {
-		return this.record && this.record.preference
 	}
 
 	getModules() {
@@ -398,7 +381,7 @@ export class Course {
 		return null
 	}
 
-	getType() {
+	getType(): CourseType {
 		if (!this.modules.length) {
 			return 'unknown'
 		}
@@ -412,78 +395,12 @@ export class Course {
 		return this.audience ? this.audience.mandatory : false
 	}
 
-	getDueByDateDisplayString() {
-		let resp: string | undefined
-		const dueByDate = this.getDueByDate()
-		if (dueByDate !== null) {
-			resp = moment(dueByDate).utc().format('DD MMM YYYY')
-		}
-		return resp
-	}
-
-	getDueByDate() {
-		let dueByDate: Date | null = null
-		if (this.audience) {
-			const requiredAudience = this.getRequiredRecurringAudience()
-			if (requiredAudience) {
-				dueByDate = requiredAudience.nextRequiredBy
-			} else {
-				if (this.audience.requiredBy) {
-					dueByDate = this.audience.requiredBy
-				}
-			}
-		}
-		return dueByDate
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	previousRequiredByNew() {
-		if (this.audience) {
-			return this.audience!.previousRequiredByNew()
-		}
-		return null
-	}
-
-	getCompletionDate() {
-		if (this.isComplete()) {
-			let completionDate: Date | undefined
-			for (const moduleRecord of this.record!.modules) {
-				if (!completionDate) {
-					completionDate = moduleRecord.completionDate
-				} else if (moduleRecord.completionDate && moduleRecord.completionDate > completionDate) {
-					completionDate = moduleRecord.completionDate
-				}
-			}
-			return completionDate
-		}
-		return undefined
-	}
-
 	hasModules() {
 		return (this.modules || []).length > 0
 	}
 }
 
-export class CourseModule {
-	static createFromCourse(course: Course) {
-		const courseModule = new CourseModule()
-		courseModule.course = course
-		courseModule.type = 'course'
-		return courseModule
-	}
-
-	course: Course
-	module: Module
-	type: string
-}
-
-export enum ModuleType {
-	ELEARNING = 'elearning',
-	FACE_TO_FACE = 'face-to-face',
-	FILE = 'file',
-	LINK = 'link',
-	VIDEO = 'video',
-}
+export type ModuleType = 'elearning' | 'face-to-face' | 'file' | 'link' | 'video'
 
 export class Module {
 	static create(data: any) {
@@ -529,7 +446,7 @@ export class Module {
 	}
 
 	getDuration() {
-		if (this.type === ModuleType.FACE_TO_FACE) {
+		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
 				const startTimeHours = this.events[0].startDate.getHours()
 				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
@@ -541,7 +458,7 @@ export class Module {
 			}
 		}
 
-		if (this.type === ModuleType.FACE_TO_FACE) {
+		if (this.type === 'face-to-face') {
 			if (this.events && this.events.length > 0) {
 				sortEvents(this.events)
 				const event = this.events[0]
@@ -587,17 +504,13 @@ export class Module {
 		return (this.events || []).filter(e => e.isBookable())
 	}
 
-	isAssociatedLearning() {
-		return this.associatedLearning
-	}
-
 	getDisplayState(
 		moduleRecord: ModuleRecord | undefined | null,
 		audience: RequiredRecurringAudience | undefined | null
 	) {
 		let state: string | null = null
 		if (moduleRecord) {
-			if (this.type !== ModuleType.FACE_TO_FACE) {
+			if (this.type !== 'face-to-face') {
 				const completionDate = moduleRecord.getCompletionDate().getTime()
 				const updatedAt = moduleRecord.getUpdatedAt().getTime()
 				const previousRequiredBy = audience ? audience.previousRequiredBy.getTime() : new Date(0).getTime()
@@ -612,11 +525,6 @@ export class Module {
 		}
 		return state
 	}
-}
-
-export class ModuleWithCourse extends Module {
-	courseId?: string
-	course?: Course
 }
 
 export type EventStatus = 'Active' | 'Cancelled'
@@ -737,64 +645,6 @@ export class Audience {
 		}
 		return relevance
 	}
-
-	previousRequiredBy(completionDate?: Date) {
-		const [last, next] = this._getCurrentRecurrencePeriod()
-		if (!last || !next) {
-			return null
-		}
-		if (completionDate && completionDate > last) {
-			if (!this.frequency) {
-				return null
-			}
-			return Frequency.decrement(this.frequency, next)
-		}
-		return last
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	previousRequiredByNew() {
-		const [last, next] = this._getCurrentRecurrencePeriodNew()
-		if (!last && !next) {
-			return null
-		}
-		return last
-	}
-
-	_getCurrentRecurrencePeriod() {
-		if (!this.requiredBy || !this.frequency) {
-			return [null, null]
-		}
-		const today = new Date()
-		let nextDate = this.requiredBy
-		while (nextDate < today) {
-			nextDate = Frequency.increment(this.frequency, nextDate)
-		}
-		const lastDate = Frequency.decrement(this.frequency, nextDate)
-		return [lastDate, nextDate]
-	}
-
-	//LC-1054: Rather than updating the above method a new method is Implemented as below
-	_getCurrentRecurrencePeriodNew() {
-		if (!this.requiredBy) {
-			return [null, null]
-		}
-		const today = new Date(new Date().toDateString())
-		let nextDate = new Date(this.requiredBy.toDateString())
-
-		if (!this.frequency) {
-			if (nextDate < today) {
-				return [nextDate, nextDate]
-			} else {
-				return [null, nextDate]
-			}
-		}
-		while (nextDate < today) {
-			nextDate = Frequency.increment(this.frequency, nextDate)
-		}
-		const lastDate = Frequency.decrement(this.frequency, nextDate)
-		return [lastDate, nextDate]
-	}
 }
 
 export class RequiredRecurringAudience {
@@ -802,16 +652,6 @@ export class RequiredRecurringAudience {
 		public previousRequiredBy: Date,
 		public nextRequiredBy: Date
 	) {}
-}
-
-export class Frequency {
-	static increment(frequency: Duration, date: Date) {
-		return new Date(date.getFullYear() + frequency.years(), date.getMonth() + frequency.months(), date.getDate())
-	}
-
-	static decrement(frequency: Duration, date: Date) {
-		return new Date(date.getFullYear() - frequency.years(), date.getMonth() - frequency.months(), date.getDate())
-	}
 }
 
 export class AgencyToken {
@@ -907,6 +747,7 @@ export function createUser(identity: IdentityDetails, profile: Profile) {
 		profile.otherAreasOfWork,
 		profile.interests,
 		profile.fullName,
+		profile.otherOrganisationalUnits,
 		profile.organisationalUnit,
 		profile.grade,
 		profile.managementLoggedIn,
@@ -929,6 +770,7 @@ export class User implements CSLUser {
 		public otherAreasOfWork?: AreaOfWork[],
 		public interests?: Interest[],
 		public givenName?: string,
+		public otherOrganisationalUnits?: OrganisationalUnit[],
 		public organisationalUnit?: OrganisationalUnit,
 		public grade?: Grade,
 		public managementLoggedIn: boolean = false,
@@ -940,6 +782,7 @@ export class User implements CSLUser {
 
 	updateWithProfile(profile: Profile) {
 		this.organisationalUnit = profile.organisationalUnit
+		this.otherOrganisationalUnits = profile.otherOrganisationalUnits
 		this.givenName = profile.fullName
 		this.grade = profile.grade
 		this.areaOfWork = profile.profession
@@ -1014,6 +857,10 @@ export class User implements CSLUser {
 
 	hasLineManager() {
 		return this.lineManager !== undefined
+	}
+
+	getOtherOrganisationIds() {
+		return (this.otherOrganisationalUnits || []).map(o => o.id)
 	}
 }
 

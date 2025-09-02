@@ -37,8 +37,9 @@ describe('Other areas of work middleware tests', () => {
 	let generateRedirectStub: any
 	let renderStub: any
 	beforeEach(() => {
+		behaviour.userSetup = true
 		sandbox.stub(csrsService, 'getAreasOfWork').resolves(areasOfWork)
-		patchStub = sandbox.stub(csrsService, 'patchCivilServantOtherAreasOfWork').resolves()
+		patchStub = sandbox.stub(csrsService, 'updateCivilServantOtherAreasOfWork').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
 		renderStub = sandbox.stub(template, 'render')
 	})
@@ -50,7 +51,17 @@ describe('Other areas of work middleware tests', () => {
 		expect(patchStub.calledOnce).to.eq(true)
 		expect(generateRedirectStub.calledOnce).to.eq(true)
 	})
+	it(
+		'Should not call completeProfile if the user is not setting up their profile for the ' + 'first time',
+		async () => {
+			behaviour.userSetup = false
+			await run(undefined, ['1', '2'])
+			expect(patchStub.calledOnce).to.eq(true)
+			expect(generateRedirectStub.calledOnce).to.eq(true)
+		}
+	)
 	it("Should just redirect if the user's current areas of work are selected", async () => {
+		behaviour.userSetup = false
 		await run([2, 1], ['1', '2'])
 		expect(patchStub.called).to.eq(false)
 		expect(generateRedirectStub.called).to.eq(true)

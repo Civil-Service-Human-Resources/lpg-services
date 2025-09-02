@@ -49,6 +49,15 @@ export const AUTHENTICATION = set({
 	serviceUrl: env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8080',
 })
 
+export const ENDPOINT_REDIS = set({
+	LEARNING_RECORD: set({
+		defaultTTL: +(env.LEARNING_RECORD_TTL || '10800'),
+	}),
+	REQUIRED_LEARNING: set({
+		defaultTTL: +(env.REQUIRED_LEARNING_TTL || '10800'),
+	}),
+})
+
 export const COOKIE = set({
 	maxAge: Number(env.COOKIE_AGE_IN_MILLISECONDS) || 15768000,
 })
@@ -108,24 +117,28 @@ export const REDIS = set({
 	port: +(env.REDIS_PORT || '6379'),
 })
 
+export const FORMATTED_ORG_LIST_REDIS = set({
+	defaultTTL: +(env.FORMATTED_ORG_LIST_REDIS_TTL || '10800'),
+})
+
 export const ORG_REDIS = set({
-	defaultTTL: +(env.ORG_REDIS_TTL || '604800'),
+	defaultTTL: +(env.ORG_REDIS_TTL || '86400'),
 })
 
 export const PROFILE_REDIS = set({
-	defaultTTL: +(env.PROFILE_REDIS_TTL || '604800'),
+	defaultTTL: +(env.PROFILE_REDIS_TTL || '86400'),
 })
 
 export const GRADE_REDIS = set({
-	defaultTTL: +(env.GRADE_REDIS_TTL || '604800'),
+	defaultTTL: +(env.GRADE_REDIS_TTL || '86400'),
 })
 
 export const AOW_REDIS = set({
-	defaultTTL: +(env.AOW_REDIS_TTL || '604800'),
+	defaultTTL: +(env.AOW_REDIS_TTL || '86400'),
 })
 
 export const INTEREST_REDIS = set({
-	defaultTTL: +(env.INTEREST_REDIS_TTL || '604800'),
+	defaultTTL: +(env.INTEREST_REDIS_TTL || '86400'),
 })
 
 export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT

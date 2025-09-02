@@ -31,7 +31,7 @@ export function getRenderProfilePageMiddleware(pageSpec: ProfilePageSpecificatio
 export function getSubmitProfilePageMiddleware(
 	pageSpec: ProfilePageSpecification,
 	req: express.Request
-): (req: express.Request, res: express.Response) => void {
+): (req: express.Request, res: express.Response) => Promise<void | express.Response> {
 	const user: User = req.user
 	const session = profileSessionObjectService.fetchObjectFromSession(req)
 	const behaviour = generateProfilePageBehaviour(pageSpec, user, session)
@@ -48,8 +48,8 @@ export interface ProfilePageSpecification {
 	pageEndpoint: ProfileEndpoint
 	template: string
 	setupDetails: ProfileSetupDetails
-	get(behaviour: PageBehaviour): (req: express.Request, res: express.Response) => void
-	post(behaviour: PageBehaviour): (req: express.Request, res: express.Response) => void
+	get(behaviour: PageBehaviour): (req: express.Request, res: express.Response) => Promise<express.Response>
+	post(behaviour: PageBehaviour): (req: express.Request, res: express.Response) => Promise<void | express.Response>
 }
 
 export interface PageBehaviour {

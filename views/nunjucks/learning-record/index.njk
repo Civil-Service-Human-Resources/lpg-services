@@ -1,0 +1,43 @@
+{% extends baseLayout %}
+{% from "./components/learningRecordTable/macro.njk" import learningRecordTable %}
+
+{% set pageTitle = "Learning record" %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="heading heading-large">Learning record</h1>
+        <p class="govuk-body no-margin">This is a record of the learning you have completed.</p>
+        <p class="govuk-body no-margin">A course will only appear in your learning record once you have completed all the modules that are required.</p>
+        <div class="grid-row">
+            <div class="column-full">
+                <h2 class="heading heading-medium heading--red-top lpg-required-learning">
+                    Required learning from your organisation
+                </h2>
+                {% if learningRecord.requiredLearningRecord.completedCourses.length %}
+                    {{ learningRecordTable({
+                        courses: learningRecord.requiredLearningRecord.completedCourses
+                    }) }}
+                {% endif %}
+                <p class="no-margin">{{ requiredLearningStatusMessage }}</p>
+                {% set requiredCoursesLeftToComplete = learningRecord.requiredLearningRecord.getRemainingCourses() %}
+                {% if requiredCoursesLeftToComplete > 0 %}
+                    <p class="no-margin">You have <a href="/">{{ requiredCoursesLeftToComplete }} required course{{ "s" if requiredCoursesLeftToComplete > 1 else "" }}</a> to complete.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-full">
+                <h2 class="heading heading-medium heading--red-top lpg-other-learning">
+                    Other Learning
+                </h2>
+                {% if learningRecord.otherLearning.length %}
+                    {{ learningRecordTable({
+                        courses: learningRecord.otherLearning
+                    }) }}
+                {% else %}
+                    <p>You haven't completed any other learning courses yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

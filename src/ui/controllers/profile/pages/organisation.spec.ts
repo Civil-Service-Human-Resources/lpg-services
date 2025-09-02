@@ -1,20 +1,16 @@
 import {expect} from 'chai'
 import * as sinon from 'sinon'
 import {mockReq, mockRes} from 'sinon-express-mock'
-import {OrganisationalUnit} from '../../../../lib/model'
 import * as csrsService from '../../../../lib/service/civilServantRegistry/csrsService'
-import {OrganisationalUnitTypeAhead} from '../../../../lib/service/civilServantRegistry/models/organisationalUnitTypeAhead'
+import * as cslService from '../../../../lib/service/cslService/cslService'
+import {FormattedOrganisation} from '../../../../lib/service/cslService/models/csrs/formattedOrganisation'
 import * as template from '../../../../lib/ui/template'
 import {PageBehaviour} from './common'
 import * as common from './common'
 import {selectOrganisationsMiddleware} from './organisation'
 
 describe('Organisation middleware tests', () => {
-	const org1 = new OrganisationalUnit()
-	org1.id = 1
-	const org2 = new OrganisationalUnit()
-	org2.id = 2
-	const organisationList = [org1, org2]
+	const organisationList = [new FormattedOrganisation(1, 'Org 1'), new FormattedOrganisation(2, 'Org 2')]
 	const behaviour: PageBehaviour = {
 		templateName: 'organisation',
 		userSetup: true,
@@ -27,6 +23,15 @@ describe('Organisation middleware tests', () => {
 			},
 			user: {
 				organisationalUnit: userOrganisationId ? {id: userOrganisationId} : undefined,
+				isUnrestrictedOrgUser: () => {
+					return false
+				},
+				getDomain: () => {
+					return 'domain.com'
+				},
+				getOtherOrganisationIds: () => {
+					return []
+				},
 			},
 		})
 		const mockResponse = mockRes()
@@ -37,14 +42,11 @@ describe('Organisation middleware tests', () => {
 
 	const sandbox = sinon.createSandbox()
 	let patchStub: any
-	let organisationTypeaheadStub
 	let generateRedirectStub: any
 	let renderStub: any
 	beforeEach(() => {
-		organisationTypeaheadStub = sandbox.createStubInstance(OrganisationalUnitTypeAhead)
-		organisationTypeaheadStub.getFilteredListForUser.returns(organisationList)
-		sandbox.stub(csrsService, 'getAllOrganisationUnits').resolves(organisationTypeaheadStub)
-		patchStub = sandbox.stub(csrsService, 'patchCivilServantOrganisationUnit').resolves()
+		sandbox.stub(cslService, 'getOrganisationTypeaheadForUser').resolves(organisationList)
+		patchStub = sandbox.stub(csrsService, 'updateCivilServantOrganisationalUnit').resolves()
 		generateRedirectStub = sandbox.stub(common, 'generateRedirect')
 		renderStub = sandbox.stub(template, 'render')
 	})

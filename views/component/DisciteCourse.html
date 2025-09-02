@@ -22,9 +22,7 @@
     {/if}
 
     <div class="discite__area">
-        {#if course.getDueByDateDisplayString()}
-            Due by: {course.getDueByDateDisplayString()}
-        {:elseif course.getAreasOfWork().length}
+        {#if course.getAreasOfWork().length}
             Work area: {course.getAreasOfWork().map(function(aow) { return $i18n('areaOfWork')[aow]}).join(', ')}
         {/if}
     </div>

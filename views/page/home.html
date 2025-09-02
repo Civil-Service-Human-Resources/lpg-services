@@ -34,14 +34,14 @@
                     {$i18n('required_section_title')}
                 </h2>
 
-                {#if requiredLearning.length}
-                <div class="resources">
-                    {#each requiredLearning as course}
-                        <DisciteCourse course={course} modifier="home" />
-                    {/each}
-                </div>
+                {#if requiredLearning.courses.length}
+                    <div class="resources">
+                        {#each requiredLearning.courses as course}
+                            <RequiredLearning course={course} modifier="home" />
+                        {/each}
+                    </div>
                 {:else}
-                <p>{$i18n('required_learning_done')}</p>
+                    <p>{$i18n('required_learning_done')}</p>
                 {/if}
 
                 <h2 class="heading-medium heading heading--red-top lpg-other-learning">
@@ -69,8 +69,8 @@
     import Page from '../component/Page.html'
     import Banner from '../component/Banner.html'
     import Search from '../component/Search.html'
-	import SuggestionsSection from '../component/SuggestionsSection.html'
-	import DisciteCourse from '../component/DisciteCourse.html'
+    import DisciteCourse from '../component/DisciteCourse.html'
+    import RequiredLearning from '../component/RequiredLearning.html'
 
 
 	export default {
@@ -82,7 +82,7 @@
 		components: {
 			Banner,
 			Search,
-			SuggestionsSection,
+      RequiredLearning,
 			DisciteCourse,
 			Page,
 		}

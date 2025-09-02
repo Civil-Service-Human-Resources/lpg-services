@@ -1,13 +1,37 @@
 import {plainToInstance} from 'class-transformer'
 import {client} from './baseConfig'
 import {User} from '../../model'
+import {LearningRecordCache} from './cache/learningRecordCache'
+import {RequiredLearningCache} from './cache/RequiredLearningCache'
 import {BookEventDto} from './models/BookEventDto'
 import {CancelBookingDto} from './models/CancelBookingDto'
 import {CourseActionResponse} from './models/CourseActionResponse'
+import {FormattedOrganisationList} from './models/csrs/formattedOrganisationList'
+import {FormattedOrganisationListCache} from './models/csrs/formattedOrganisationListCache'
+import {FormattedOrganisations} from './models/csrs/formattedOrganisations'
+import {GetOrganisationsFormattedParams} from './models/csrs/getOrganisationsFormattedParams'
 import {EventActionResponse} from './models/EventActionResponse'
 import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
+import {AreasOfWork} from './models/areasOfWork'
+import {LearningRecord} from './models/learning/learningRecord/learningRecord'
+import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
 import {UserDto} from './models/UserDto'
+import {Grades} from './models/grades'
+
+export let learningRecordCache: LearningRecordCache
+export let requiredLearningCache: RequiredLearningCache
+export let formattedOrganisationListCache: FormattedOrganisationListCache
+
+export const setCaches = (
+	learningRecordPageCache: LearningRecordCache,
+	requiredLearningPageCache: RequiredLearningCache,
+	formattedOrgListCache: FormattedOrganisationListCache
+) => {
+	learningRecordCache = learningRecordPageCache
+	requiredLearningCache = requiredLearningPageCache
+	formattedOrganisationListCache = formattedOrgListCache
+}
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
 	const body: UserDto = await createUserDto(user)
@@ -18,6 +42,8 @@ export async function launchModule(courseId: string, moduleId: string, user: Use
 		body,
 		user
 	)
+	await requiredLearningCache.clearForCourse(user.id, courseId)
+	await learningRecordCache.delete(user.id)
 	return plainToInstance(LaunchModuleResponse, resp)
 }
 
@@ -30,6 +56,8 @@ export async function completeModule(courseId: string, moduleId: string, user: U
 		body,
 		user
 	)
+	await requiredLearningCache.clearForCourse(user.id, courseId)
+	await learningRecordCache.delete(user.id)
 }
 
 export async function removeCourseFromLearningPlan(courseId: string, user: User): Promise<CourseActionResponse> {
@@ -113,6 +141,7 @@ export async function completeEventBooking(
 		userDto,
 		user
 	)
+	await learningRecordCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -130,4 +159,135 @@ export async function skipEventBooking(
 		user
 	)
 	return plainToInstance(EventActionResponse, resp)
+}
+
+export async function getLearningRecord(user: User): Promise<LearningRecord> {
+	let learningRecord = await learningRecordCache.get(user.id)
+	if (learningRecord === undefined) {
+		const resp = await client._get(
+			{
+				url: `/learning/record`,
+			},
+			user
+		)
+		learningRecord = plainToInstance(LearningRecord, resp)
+		await learningRecordCache.setObject(learningRecord)
+	}
+	return learningRecord
+}
+
+export async function getRequiredLearning(user: User): Promise<RequiredLearning> {
+	let requiredLearning = await requiredLearningCache.get(user.id)
+	if (requiredLearning === undefined) {
+		const resp = await client._get(
+			{
+				url: `/learning/required`,
+			},
+			user
+		)
+		requiredLearning = plainToInstance(RequiredLearning, resp)
+		await requiredLearningCache.setObject(requiredLearning)
+	}
+	return requiredLearning
+}
+
+export async function getAreasOfWork(user: User) {
+	const resp: AreasOfWork = await client._get(
+		{
+			url: `areas-of-work`,
+		},
+		user
+	)
+	return plainToInstance(AreasOfWork, resp).areasOfWork
+}
+
+export async function setOrganisationUnit(user: User, organisationUnitId: number) {
+	await client._post(
+		{
+			url: `/user/profile/organisationUnit`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({organisationUnitId}),
+		user
+	)
+}
+
+export async function setOtherAreasOfWork(user: User, areaOfWorkIds: string[]) {
+	await client._post(
+		{
+			url: `/user/profile/other-areas-of-work`,
+		},
+		areaOfWorkIds.map(aow => parseInt(aow)),
+		user
+	)
+}
+
+export async function getGrades(user: User) {
+	const resp: Grades = await client._get(
+		{
+			url: 'grades',
+		},
+		user
+	)
+	return plainToInstance(Grades, resp).grades
+}
+
+export async function setGrade(user: User, gradeId: string) {
+	await client._post(
+		{
+			url: `/user/profile/grade`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({gradeId}),
+		user
+	)
+}
+
+export async function setProfession(user: User, professionId: string) {
+	await client._post(
+		{
+			url: `/user/profile/profession`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({professionId}),
+		user
+	)
+}
+
+export async function setFullName(user: User, fullName: string, newProfile: boolean) {
+	await client._post(
+		{
+			url: `/user/profile/full-name`,
+			params: {newProfile},
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		},
+		JSON.stringify({fullName}),
+		user
+	)
+}
+
+export async function getOrganisationsDropdown(user: User, params: GetOrganisationsFormattedParams) {
+	const cacheKey = params.getCacheKey()
+	let typeahead = await formattedOrganisationListCache.get(cacheKey)
+	if (typeahead === undefined) {
+		const resp: FormattedOrganisations = await client._get(
+			{
+				url: '/organisations/formatted_list',
+				params,
+			},
+			user
+		)
+		const formattedOrganisations = plainToInstance(FormattedOrganisations, resp)
+		typeahead = new FormattedOrganisationList(cacheKey, formattedOrganisations.formattedOrganisationalUnitNames)
+		await formattedOrganisationListCache.set(cacheKey, typeahead)
+	}
+	return typeahead.formattedOrganisations
 }

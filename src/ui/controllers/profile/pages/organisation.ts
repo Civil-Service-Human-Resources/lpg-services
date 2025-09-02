@@ -1,11 +1,9 @@
 import * as express from 'express'
 import {User} from '../../../../lib/model'
-import {
-	getAllOrganisationUnits,
-	patchCivilServantOrganisationUnit,
-} from '../../../../lib/service/civilServantRegistry/csrsService'
+import {updateCivilServantOrganisationalUnit} from '../../../../lib/service/civilServantRegistry/csrsService'
+import {getOrganisationTypeaheadForUser} from '../../../../lib/service/cslService/cslService'
 import * as template from '../../../../lib/ui/template'
-import {organisationsToOptions} from '../../../model/option'
+import {keysToOptions} from '../../../model/option'
 import {OrganisationPageModel} from '../models/organisationPageModel'
 import {areaOfWorkPage} from './areaOfWork'
 import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
@@ -25,9 +23,8 @@ export const organisationPage: ProfilePageSpecification = {
 }
 
 async function getPageModel(user: User) {
-	const organisations = await getAllOrganisationUnits(user)
-	const filtered = organisations.getFilteredListForUser(user)
-	const options = organisationsToOptions(filtered)
+	const organisations = await getOrganisationTypeaheadForUser(user)
+	const options = keysToOptions(organisations)
 	return new OrganisationPageModel(options)
 }
 
@@ -44,13 +41,12 @@ export function selectOrganisationsMiddleware(behaviour: PageBehaviour) {
 		const userOrganisation = user.organisationalUnit ? user.organisationalUnit.id : 0
 		const pageModel = await validate(OrganisationPageModel, req.body)
 		if (pageModel.hasErrors()) {
-			const organisations = await getAllOrganisationUnits(user)
-			const filtered = organisations.getFilteredListForUser(user)
-			pageModel.options = organisationsToOptions(filtered)
+			const organisations = await getOrganisationTypeaheadForUser(user)
+			pageModel.options = keysToOptions(organisations)
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
 		if (userOrganisation !== pageModel.organisation) {
-			await patchCivilServantOrganisationUnit(user, pageModel.organisation)
+			await updateCivilServantOrganisationalUnit(user, pageModel.organisation)
 		}
 		return generateRedirect(organisationPage, req, res)
 	}

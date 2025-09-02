@@ -1,6 +1,6 @@
 import * as express from 'express'
 import {User} from '../../../../lib/model'
-import {patchCivilServantName} from '../../../../lib/service/civilServantRegistry/csrsService'
+import {updateCivilServantName} from '../../../../lib/service/civilServantRegistry/csrsService'
 import * as template from '../../../../lib/ui/template'
 import {GivenNamePageModel} from '../models/givenNamePageModel'
 import {generateRedirect, PageBehaviour, ProfileEndpoint, ProfilePageSpecification, validate} from './common'
@@ -36,7 +36,7 @@ export function confirmNameMiddleware(behaviour: PageBehaviour) {
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
 		if (userGivenName !== pageModel.value) {
-			await patchCivilServantName(user, pageModel.value)
+			await updateCivilServantName(user, pageModel.value, behaviour.userSetup)
 		}
 		return generateRedirect(namePage, req, res)
 	}
