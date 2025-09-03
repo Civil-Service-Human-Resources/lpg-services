@@ -13,17 +13,19 @@ import {
 } from '../../../src/ui/controllers/course/models/coursePage'
 import * as coursePageModelFactory from '../../../src/ui/controllers/course/models/factory'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from '../../../src/ui/controllers/course/models/moduleCard'
+import {assertCourseDetails} from '../../utils/htmlAssertions/assertLearningRecordDetails'
 import {
-	assertCourseDetails,
-	assertH1,
-	assertHtml,
 	assertModuleCard,
-	classAssertion,
-	getAssertNotificationBanner,
-	getBackLinkAssertion,
 	getCTAAssertion,
 	getCTALinkButtonAssertion,
 	getLinkCTAAssertion,
+} from '../../utils/htmlAssertions/assertModuleCard'
+import {
+	assertH1,
+	assertHtml,
+	classAssertion,
+	getAssertNotificationBanner,
+	getBackLinkAssertion,
 	idAssertion,
 	TextContainsAsserter,
 	TextContentAsserter,

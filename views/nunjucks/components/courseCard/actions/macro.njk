@@ -1,0 +1,40 @@
+{% macro courseCardActions(params) %}
+    <div class="discite__action {{ params.classes }}">
+        {{ params.actions.primary | safe }}
+        {% if params.actions.secondary %}
+            {{ params.actions.secondary | safe }}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro cancelLink(params) %}
+    {{ ctaLink({
+        "href": "/book/" + params.courseId + "/" + params.moduleId + "/" + params.eventId + "/cancel",
+        "text": i18n('action_CANCEL')
+    }) }}
+{% endmacro %}
+
+{% macro bookLink(params) %}
+    {{ ctaLink({
+        "href": "/book/" + params.courseId + "/" + params.moduleId + "/choose-date",
+        "text": i18n('action_BOOK')
+    }) }}
+{% endmacro %}
+
+{% macro startLink(params) %}
+    {{ ctaLink({
+        "href": "/courses/" + params.courseId + "#modules",
+        "text": i18n('action_NOT_STARTED')
+    }) }}
+{% endmacro %}
+
+{% macro removeFromLearningPlanLink(params) %}
+    {{ ctaLink({
+        "href": "/home?delete=" + params.courseId,
+        "text": "Remove"
+    }) }}
+{% endmacro %}
+
+{% macro ctaLink(params) %}
+    <a class="discite__action-link--main" href="{{ params.href }}">{{ params.text }}</a>
+{% endmacro %}

@@ -2,10 +2,12 @@ import {BookingStatus} from './moduleRecord'
 
 export type RecordState =
 	| ''
+	| 'NULL'
 	| 'COMPLETED'
 	| 'IN_PROGRESS'
 	| 'ARCHIVED'
 	| 'SKIPPED'
+	| 'REQUESTED'
 	| 'UNREGISTERED'
 	| 'REGISTERED'
 	| 'APPROVED'

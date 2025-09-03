@@ -21,25 +21,22 @@ export async function displayModule(ireq: express.Request, res: express.Response
 		case 'link':
 		case 'file':
 			const launchModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
-			res.redirect(launchModuleResponse.launchLink)
-			break
+			return res.redirect(launchModuleResponse.launchLink)
 		case 'face-to-face':
-			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
-			break
+			return res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 		case 'video':
 			const launchVideoModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
 			const videoLink = launchVideoModuleResponse.launchLink
-			res.send(
+			return res.send(
 				template.render(`course/display-video`, req, res, {
 					course,
 					module,
 					video: !videoLink.search('/http(.+)youtube(.*)/i') ? null : await youtube.getBasicInfo(videoLink),
 				})
 			)
-			break
 		default:
 			logger.debug(`Unknown module type: ${module.type}`)
-			res.sendStatus(500)
+			return res.sendStatus(500)
 	}
 }
 

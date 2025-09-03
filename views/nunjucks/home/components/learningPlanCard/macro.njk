@@ -1,0 +1,61 @@
+{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, removeFromLearningPlanLink %}
+{% from components + "/courseCard/description/macro.njk" import courseCardDescription %}
+{% from components + "/courseCard/heading/macro.njk" import courseCardHeading %}
+{% from components + "/courseCard/properties/macro.njk" import courseCardInfoBadge, courseCardType, courseCardDuration, courseCardCost %}
+{% from "../courseCard/properties/macro.njk" import basicHomepageProperties, justAddedBadge %}
+
+{% macro learningPlanCard(params) %}
+    <div class="discite__item u-clearfix discite__item--home">
+        {# Heading #}
+        {{ courseCardHeading({
+            "classes": "discite__main--home",
+            "link": {
+                "newTab": params.type == "link",
+                "courseId": params.id,
+                "courseTitle": params.title
+            }
+        }) }}
+
+        {# Properties #}
+        {% set badge = justAddedBadge() if params.justAdded else courseCardInfoBadge({
+            "classes": "discite__status--home",
+            "state": params.status
+        }) %}
+        {{ basicHomepageProperties({
+            "items": [
+                badge,
+                courseCardType({
+                    "type": params.type
+                }),
+                courseCardDuration({
+                    "duration": params.duration
+                }),
+                courseCardCost({
+                    "cost": params.costInPounds
+                })
+            ]
+        }) }}
+
+        {# Description #}
+        {{ courseCardDescription({
+            "moduleCount": params.moduleCount,
+            "shortDescription": {
+                "classes": "discite__desc--home",
+                "text": params.shortDescription
+            }
+        }) }}
+
+        {# CTA #}
+        {{ courseCardActions({
+            "classes": "discite__action--home",
+            "actions": {
+                "primary": startLink({
+                    "courseId": params.id
+                }),
+                "secondary": removeFromLearningPlanLink({
+                    "courseId": params.id
+                })
+            }
+        }) }}
+    </div>
+{% endmacro %}

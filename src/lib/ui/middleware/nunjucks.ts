@@ -1,8 +1,10 @@
 import {Express, NextFunction, Request, Response} from 'express'
+import * as moment from 'moment'
 import * as nunjucks from 'nunjucks'
 import * as i18n from 'i18n'
 import * as path from 'path'
 import {IS_DEV, STATIC_DIR, LPG_MANAGEMENT_URL} from '../../config'
+import * as datetime from '../../datetime'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
 import {getLogger} from '../../logger'
 import {toHtml} from '../template'
@@ -12,7 +14,7 @@ const baseLayout = `${viewsRoot}/root/baseLayout.njk`
 const components = `${viewsRoot}/components`
 const partials = `${viewsRoot}/partials`
 
-const nunjucksEndpoints = ['/courses/:courseId', '/learning-record']
+const nunjucksEndpoints = ['/courses/:courseId', '/learning-record', '/', '/home']
 
 const logger = getLogger(`nunjucks`)
 
@@ -37,7 +39,17 @@ export const register = (app: Express) => {
 
 	// locale
 	const i18nConfig = registerLocale(app)
-	env.addGlobal('i18n', i18nConfig.__)
+	env.addGlobal('i18n', (text: string) => {
+		if (IS_DEV) {
+			logger.debug(`Looking for i18n text: ${text}`)
+			try {
+				i18nConfig.__(text)
+			} catch {
+				logger.error(`i18n text ${text} was not found`)
+			}
+		}
+		return i18nConfig.__(text)
+	})
 
 	// Custom filters
 	env
@@ -46,6 +58,16 @@ export const register = (app: Express) => {
 		.addFilter('fileExtension', extension)
 		.addFilter('fileName', fileName)
 		.addFilter('fileExtensionAndSize', extensionAndSize)
+		.addFilter('formatDate', (dueBy: string) => {
+			return moment(dueBy).format('DD MMM YYYY')
+		})
+		.addFilter('formatDuration', (duration?: number) => {
+			if (duration) {
+				return datetime.formatCourseDuration(duration)
+			} else {
+				return '-'
+			}
+		})
 		.addFilter('i18nList', (list: string[]) => {
 			return list.map(l => i18nConfig.__(l))
 		})

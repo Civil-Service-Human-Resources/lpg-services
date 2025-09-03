@@ -6,7 +6,8 @@ import {client} from '../../../src/lib/service/cslService/baseConfig'
 import {LearningRecordCache} from '../../../src/lib/service/cslService/cache/learningRecordCache'
 import {setCaches} from '../../../src/lib/service/cslService/cslServiceClient'
 import * as learningRecordIndex from '../../../src/ui/controllers/learning-record/index'
-import {assertTables, TableAssertion, TextContentAsserter} from '../../utils/htmlUtils'
+import {assertTables, TableAssertion} from '../../utils/htmlAssertions/assertTable'
+import {TextContentAsserter} from '../../utils/htmlUtils'
 import {getApp} from '../../utils/testApp'
 
 const getLearningPlanTableAssertion = (
@@ -71,7 +72,7 @@ describe('Learning record controller tests', () => {
 		describe('Render page tests', () => {
 			it('Should render the page correctly', async () => {
 				learningRecordCacheStub.get.resolves(undefined)
-				setCaches(learningRecordCacheStub as any)
+				setCaches(learningRecordCacheStub as any, {} as any, {} as any)
 				cslServiceClientStub._get.resolves({
 					requiredLearningRecord: {
 						completedCourses: [

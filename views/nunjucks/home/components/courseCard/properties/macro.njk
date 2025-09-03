@@ -1,0 +1,21 @@
+{% from components + "/courseCard/properties/macro.njk" import courseCardProperties, courseCardInfoBadge, courseCardType, courseCardDuration, courseCardPropertyStatus %}
+
+{% macro basicHomepageProperties(params) %}
+    {{ courseCardProperties({
+        "classes": "discite__properties--home",
+        "list": {
+            "classes": "discite__property--home",
+            "items": params.items
+        }
+    }) }}
+{% endmacro %}
+
+{% macro justAddedBadge() %}
+    {{ courseCardPropertyStatus({
+        "classes": "discite__status--home",
+        "badge": {
+            "modifier": "success",
+            "status": "justAdded"
+        }
+    }) }}
+{% endmacro %}
