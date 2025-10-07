@@ -61,8 +61,20 @@
                         <p class="govuk-body">You can change the preferences in <a href="/profile">your profile page</a>.</p>
                     </div>
                 </div>
-                {#if successTitle}
-                <Banner type="confirmation" title={successTitle} message={successMessage} />
+                {#if banner || successTitle }
+                    <div class='u-margin-top-20'>
+                        {#if banner}
+                            <div class="banner banner--warning" role="status">
+                                <span class="banner__heading-large">{ banner.title }</span>
+                                <p class="no-margin"><strong>{ banner.message }</strong></p>
+                                <a class="banner__action" href="{ banner.yesHref }">{ banner.yesText }</a>
+                                <a class="banner__action" href="{ banner.noHref }">{ banner.noText }</a>
+                            </div>
+                        {/if}
+                        {#if successTitle}
+                            <Banner type="confirmation" title={successTitle} message={successMessage} />
+                        {/if}
+                    </div>
                 {/if}
             </div>
         </div>

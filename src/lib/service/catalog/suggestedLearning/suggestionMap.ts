@@ -17,4 +17,16 @@ export class SuggestionsMap {
 		}
 		return mappings
 	}
+
+	getAllCourses(): Course[] {
+		const courses: Course[] = []
+		this.map.forEach(record => {
+			courses.push(...Object.values(record).flatMap(recordCourses => recordCourses))
+		})
+		return courses
+	}
+
+	getCourse(id: string) {
+		return this.getAllCourses().find(course => course.id === id)
+	}
 }

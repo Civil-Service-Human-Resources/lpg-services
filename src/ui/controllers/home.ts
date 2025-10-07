@@ -14,7 +14,7 @@ interface NotificationBanner {
 	message: string
 }
 
-interface ActionBanner extends NotificationBanner {
+export interface ActionBanner extends NotificationBanner {
 	yesHref: string
 	yesText: string
 	noHref: string
