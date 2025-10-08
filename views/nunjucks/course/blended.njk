@@ -5,7 +5,7 @@
     <div class="discite" id="modules">
         {% if pageModel.mandatoryModuleCount > 0 %}
             <p>
-                <strong>You must complete {{ "all" if model.modules.length === model.mandatoryModuleCount else model.mandatoryModuleCount }} learning modules to finish this topic.</strong>
+                <strong>You must complete all mandatory learning modules to finish this course.</strong>
             </p>
         {% endif %}
         {% for module in pageModel.modules %}
