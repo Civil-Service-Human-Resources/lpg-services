@@ -1,9 +1,30 @@
+import {Request} from 'express'
 import * as express from 'express'
 import * as model from '../../lib/model'
 import {fetchSuggestedLearning} from '../../lib/service/catalog/suggestedLearning/suggestedLearningService'
 import {Suggestion} from '../../lib/service/catalog/suggestedLearning/suggestion'
+import {SuggestionsMap} from '../../lib/service/catalog/suggestedLearning/suggestionMap'
 import * as cslService from '../../lib/service/cslService/cslServiceClient'
 import * as template from '../../lib/ui/template'
+import {ActionBanner} from './home'
+
+function generateActionBanner(request: Request, suggestionMap: SuggestionsMap): ActionBanner | null {
+	const courseId: string | undefined = request.query.delete
+	if (courseId) {
+		const course = suggestionMap.getCourse(courseId)
+		if (course) {
+			return {
+				title: request.__('suggestions_delete_title', course.title),
+				message: request.__('suggestions_delete_message'),
+				yesText: request.__('suggestions_delete_yes_option'),
+				yesHref: `/suggestions-for-you/remove/${courseId}`,
+				noText: request.__('suggestions_delete_no_option'),
+				noHref: '/suggestions-for-you',
+			}
+		}
+	}
+	return null
+}
 
 export async function addToPlan(req: express.Request, res: express.Response) {
 	const ref = req.query.ref
@@ -44,8 +65,11 @@ export async function suggestionsPage(req: express.Request, res: express.Respons
 	const otherAreasOfWork = map.getMapping(Suggestion.OTHER_AREAS_OF_WORK)
 	const interests = map.getMapping(Suggestion.INTERESTS)
 
+	const banner = generateActionBanner(req, map)
+
 	res.send(
 		template.render('suggested', req, res, {
+			banner,
 			areaOfWork,
 			department,
 			interests,

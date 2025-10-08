@@ -27,7 +27,7 @@
             </li>
 			{/if}
             <li class="tile__property">
-                <span class="tile__key">Cost</span>	
+                <span class="tile__key">Cost</span>
                 <span class="tile__value">&pound;{#if !course.getCost()}Free{:else}{course.getCost() + ' (ex VAT)'}{/if}
 				</span>
             </li>
@@ -39,7 +39,7 @@
 		<a href="/suggestions-for-you/add/{course.id}{home ? '?ref=home' :''}">
 			Add <span class="visually-hidden">{course.title}</span> to learning plan
 		</a>
-		<a href="/suggestions-for-you/remove/{course.id}{home ? '?ref=home' :''}">
+		<a href="/suggestions-for-you?delete={course.id}{home ? '?ref=home' :''}">
 			Remove <span class="visually-hidden">{course.title} from suggested learning list</span>
 		</a>
 	</p>
