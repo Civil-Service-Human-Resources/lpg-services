@@ -85,7 +85,6 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 	if (courseRecord) {
 		course.record = courseRecord
 	}
-
 	let basicCoursePage: BasicCoursePage
 	if (course.modules.length === 0) {
 		basicCoursePage = getNoModuleCoursePage(course)
@@ -96,8 +95,19 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		basicCoursePage = getBlendedCoursePage(course, courseRecord)
 	}
 
-	basicCoursePage.isInLearningPlan = course.record !== undefined && course.record.state !== 'ARCHIVED'
 	basicCoursePage.id = course.id
+	basicCoursePage.isInLearningPlan = false
+	if (course.isRequired()) {
+		basicCoursePage.isInLearningPlan = undefined
+	} else if (!course.record) {
+		basicCoursePage.isInLearningPlan = false
+	} else {
+		if (course.record.isComplete() || course.record.state === 'ARCHIVED') {
+			basicCoursePage.isInLearningPlan = undefined
+		} else {
+			basicCoursePage.isInLearningPlan = true
+		}
+	}
 	return basicCoursePage
 }
 
