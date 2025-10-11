@@ -36,6 +36,9 @@ export async function addToPlan(req: express.Request, res: express.Response) {
 		case 'search':
 			redirectTo = '/'
 			break
+		case 'course':
+			redirectTo = `/courses/${courseId}`
+			break
 	}
 	const resp = await cslService.addCourseToLearningPlan(req.params.courseId, req.user)
 

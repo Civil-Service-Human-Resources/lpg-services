@@ -81,17 +81,24 @@ export function getF2FModuleCard(
 // Course
 
 export async function getCoursePage(user: User, course: Course): Promise<BasicCoursePage> {
-	if (course.modules.length === 0) {
-		return getNoModuleCoursePage(course)
-	} else {
-		const courseRecord = await getCourseRecord(course.id, user)
-		if (course.modules.length === 1) {
-			const module = course.modules[0]
-			return getSingleModuleCoursePage(course, module, courseRecord)
-		} else {
-			return getBlendedCoursePage(course, courseRecord)
-		}
+	const courseRecord = await getCourseRecord(course.id, user)
+	if (courseRecord) {
+		course.record = courseRecord
 	}
+
+	let basicCoursePage: BasicCoursePage
+	if (course.modules.length === 0) {
+		basicCoursePage = getNoModuleCoursePage(course)
+	} else if (course.modules.length === 1) {
+		const module = course.modules[0]
+		basicCoursePage = getSingleModuleCoursePage(course, module, courseRecord)
+	} else {
+		basicCoursePage = getBlendedCoursePage(course, courseRecord)
+	}
+
+	basicCoursePage.isInLearningPlan = course.record !== undefined && course.record.state !== 'ARCHIVED'
+	basicCoursePage.id = course.id
+	return basicCoursePage
 }
 
 export function getBlendedCoursePage(course: Course, courseRecord?: CourseRecord): BlendedCoursePage {

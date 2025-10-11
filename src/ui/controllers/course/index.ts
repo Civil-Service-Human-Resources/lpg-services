@@ -45,6 +45,15 @@ export async function display(ireq: express.Request, res: express.Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 	const pageModel = await getCoursePage(req.user, req.course)
 
+	const successTitle = req.flash('successTitle')[0]
+	const successMessage = req.flash('successMessage')[0]
+	if (successTitle && successMessage) {
+		pageModel.notification = {
+			title: successTitle,
+			message: successMessage,
+		}
+	}
+
 	pageModel.backLink = res.locals.backLink
 	return res.render(`course/${pageModel.template}.njk`, {pageModel})
 }
@@ -91,10 +100,11 @@ export async function loadEvent(ireq: express.Request, res: express.Response, ne
 }
 
 export async function markCourseDeleted(req: express.Request, res: express.Response) {
-	const resp = await removeCourseFromLearningPlan(req.params.courseId, req.user)
+	const courseId = req.params.courseId
+	const resp = await removeCourseFromLearningPlan(courseId, req.user)
 	req.flash('successTitle', req.__('learning_removed_from_plan_title', resp.courseTitle))
 	req.flash('successMessage', req.__('learning_removed_from_plan_message', resp.courseTitle))
 	req.session!.save(() => {
-		res.redirect('/')
+		res.redirect(`/courses/${courseId}`)
 	})
 }

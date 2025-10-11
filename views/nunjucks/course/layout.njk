@@ -2,6 +2,7 @@
 {% from components + "/notificationBanner/macro.njk" import notificationBanner %}
 {% from components + "/backLink/macro.njk" import backLink %}
 {% from "./components/courseDetails/macro.njk" import courseDetails %}
+{% from "./components/courseActions/macro.njk" import courseActions %}
 
 {% set pageTitle = pageModel.title %}
 
@@ -14,6 +15,12 @@
                 {{ backLink("/suggestions-for-you", "Find another course") }}
             {% endif %}
         </p>
+        {% if pageModel.notification %}
+            {{ notificationBanner({
+                title: pageModel.notification.title,
+                description: pageModel.notification.message
+            }) }}
+        {% endif %}
         {% if pageModel.status === "Archived" %}
             {{ notificationBanner({
                 title: i18n('archivedWarning.heading'),
@@ -40,6 +47,10 @@
 
             {% if pageModel.type %}
                 <div class="column-one-third">
+                    {{ courseActions({
+                        courseId: pageModel.id,
+                        isInLearningPlan: pageModel.isInLearningPlan
+                    }) }}
                     {{ courseDetails({
                         type: pageModel.type,
                         duration: pageModel.duration,
