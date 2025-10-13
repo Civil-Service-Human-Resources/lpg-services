@@ -5,6 +5,9 @@ import {CourseRecord} from '../../../../lib/service/cslService/models/courseReco
 import {ModuleRecord} from '../../../../lib/service/cslService/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
+import {getLogger} from '../../../../lib/logger'
+
+const logger = getLogger('course/models/factory')
 
 // Modules
 
@@ -86,13 +89,17 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		course.record = courseRecord
 	}
 	let basicCoursePage: BasicCoursePage
+	let hasFaceToFaceModule = false
 	if (course.modules.length === 0) {
 		basicCoursePage = getNoModuleCoursePage(course)
+		hasFaceToFaceModule = false
 	} else if (course.modules.length === 1) {
 		const module = course.modules[0]
 		basicCoursePage = getSingleModuleCoursePage(course, module, courseRecord)
+		hasFaceToFaceModule = module.type === 'face-to-face'
 	} else {
 		basicCoursePage = getBlendedCoursePage(course, courseRecord)
+		hasFaceToFaceModule = course.modules.some(m => m.type === 'face-to-face')
 	}
 
 	basicCoursePage.id = course.id
@@ -102,7 +109,9 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 	} else if (!course.record) {
 		basicCoursePage.isInLearningPlan = false
 	} else {
-		if (course.record.isComplete() || course.record.state === 'ARCHIVED') {
+		logger.debug(`course.record.state: ${course.record.state}`)
+		logger.debug(`hasFaceToFaceModule: ${hasFaceToFaceModule}`)
+		if (course.record.isComplete() || course.record.state === 'ARCHIVED' || hasFaceToFaceModule) {
 			basicCoursePage.isInLearningPlan = undefined
 		} else {
 			basicCoursePage.isInLearningPlan = true
