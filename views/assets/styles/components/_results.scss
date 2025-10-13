@@ -1,5 +1,9 @@
 .govuk-box-highlight {
 	background-color: $flash-message;
+	h2 {
+		margin-top: 0;
+		text-transform: none;
+	}
 	&.results {
 		padding: 1em;
 		background-color: $flash-message;

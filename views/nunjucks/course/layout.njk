@@ -16,10 +16,10 @@
             {% endif %}
         </p>
         {% if pageModel.notification %}
-            {{ notificationBanner({
-                title: pageModel.notification.title,
-                description: pageModel.notification.message
-            }) }}
+            <div class="govuk-box-highlight">
+                <h2 class="heading-large"> {{ pageModel.notification.title }} </h2>
+                <div><strong> {{ pageModel.notification.message }} </strong></div>
+            </div>
         {% endif %}
         {% if pageModel.status === "Archived" %}
             {{ notificationBanner({

@@ -1,21 +1,12 @@
 {% macro courseActions(params) %}
     {% if params.isInLearningPlan != undefined %}
-        <aside class="lpg-related-items lpg-related-items--course-overview" role="complementary">
-            <table class="table-simple table--top">
-                <caption class="visuallyhidden">Course actions</caption>
-                <tbody>
-                    <tr>
-                        <td>
-                            <h2 class="heading-medium">Actions</h2>
-                            {% if params.isInLearningPlan %}
-                                <a href="/courses/{{ params.courseId }}/delete">Remove from learning plan</a>
-                            {% else %}
-                                <a href="/suggestions-for-you/add/{{ params.courseId }}?ref=course">Add to Learning Plan</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <aside class="lpg-related-items lpg-related-items--course-actions" role="complementary">
+            <h2 class="heading-medium">Actions</h2>
+            {% if params.isInLearningPlan %}
+                <a href="/courses/{{ params.courseId }}/delete">Remove from learning plan</a>
+            {% else %}
+                <a href="/suggestions-for-you/add/{{ params.courseId }}?ref=course">Add to Learning Plan</a>
+            {% endif %}
         </aside>
     {% endif %}
 {% endmacro %}
