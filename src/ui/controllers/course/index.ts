@@ -8,6 +8,11 @@ import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
 import {getCoursePage} from './models/factory'
 
+interface NotificationBanner {
+	title: string
+	message: string
+}
+
 const logger = getLogger('controllers/course')
 
 export async function displayModule(ireq: express.Request, res: express.Response) {
@@ -44,18 +49,27 @@ export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 	const pageModel = await getCoursePage(req.user, req.course)
+	const notificationBanner = await generateNotificationBanner(req)
+	pageModel.backLink = res.locals.backLink
+	return res.render(`course/${pageModel.template}.njk`, {
+		pageModel,
+		banners: {
+			notification: notificationBanner,
+		},
+	})
+}
 
-	const successTitle = req.flash('successTitle')[0]
-	const successMessage = req.flash('successMessage')[0]
+async function generateNotificationBanner(request: express.Request): Promise<NotificationBanner | null> {
+	const successTitle = request.flash('successTitle')[0]
+	const successMessage = request.flash('successMessage')[0]
+	let notificationBanner: NotificationBanner | null = null
 	if (successTitle && successMessage) {
-		pageModel.notification = {
+		notificationBanner = {
 			title: successTitle,
 			message: successMessage,
 		}
 	}
-
-	pageModel.backLink = res.locals.backLink
-	return res.render(`course/${pageModel.template}.njk`, {pageModel})
+	return notificationBanner
 }
 
 export async function loadCourse(ireq: express.Request, res: express.Response, next: express.NextFunction) {

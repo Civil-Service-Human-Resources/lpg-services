@@ -1,4 +1,5 @@
 {% extends baseLayout %}
+{% from components + "/banner/macro.njk" import renderBanners %}
 {% from components + "/notificationBanner/macro.njk" import notificationBanner %}
 {% from components + "/backLink/macro.njk" import backLink %}
 {% from "./components/courseDetails/macro.njk" import courseDetails %}
@@ -15,12 +16,11 @@
                 {{ backLink("/suggestions-for-you", "Find another course") }}
             {% endif %}
         </p>
-        {% if pageModel.notification %}
-            <div class="govuk-box-highlight">
-                <h2 class="heading-large"> {{ pageModel.notification.title }} </h2>
-                <div><strong> {{ pageModel.notification.message }} </strong></div>
+        <div class="grid-row">
+            <div class="column-full">
+                {{ renderBanners(banners) }}
             </div>
-        {% endif %}
+        </div>
         {% if pageModel.status === "Archived" %}
             {{ notificationBanner({
                 title: i18n('archivedWarning.heading'),
