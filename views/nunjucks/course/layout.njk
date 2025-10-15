@@ -16,11 +16,6 @@
                 {{ backLink("/suggestions-for-you", "Find another course") }}
             {% endif %}
         </p>
-        <div class="grid-row">
-            <div class="column-full">
-                {{ renderBanners(banners) }}
-            </div>
-        </div>
         {% if pageModel.status === "Archived" %}
             {{ notificationBanner({
                 title: i18n('archivedWarning.heading'),
@@ -30,6 +25,11 @@
         <h1 id="page-heading" class="heading-xlarge heading heading--page-heading">
             {{ pageModel.title }}
         </h1>
+        <div class="grid-row">
+            <div class="column-full">
+                {{ renderBanners(banners) }}
+            </div>
+        </div>
         <div class="grid-row">
             <div class="column-two-thirds">
                 <h2 id="overview" class="description heading-medium">Overview</h2>
