@@ -8,6 +8,11 @@ import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
 import {getCoursePage} from './models/factory'
 
+interface NotificationBanner {
+	title: string
+	message: string
+}
+
 const logger = getLogger('controllers/course')
 
 export async function displayModule(ireq: express.Request, res: express.Response) {
@@ -44,9 +49,27 @@ export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 	const pageModel = await getCoursePage(req.user, req.course)
-
+	const notificationBanner = await generateNotificationBanner(req)
 	pageModel.backLink = res.locals.backLink
-	return res.render(`course/${pageModel.template}.njk`, {pageModel})
+	return res.render(`course/${pageModel.template}.njk`, {
+		pageModel,
+		banners: {
+			notification: notificationBanner,
+		},
+	})
+}
+
+async function generateNotificationBanner(request: express.Request): Promise<NotificationBanner | null> {
+	const successTitle = request.flash('successTitle')[0]
+	const successMessage = request.flash('successMessage')[0]
+	let notificationBanner: NotificationBanner | null = null
+	if (successTitle && successMessage) {
+		notificationBanner = {
+			title: successTitle,
+			message: successMessage,
+		}
+	}
+	return notificationBanner
 }
 
 export async function loadCourse(ireq: express.Request, res: express.Response, next: express.NextFunction) {
@@ -91,10 +114,11 @@ export async function loadEvent(ireq: express.Request, res: express.Response, ne
 }
 
 export async function markCourseDeleted(req: express.Request, res: express.Response) {
-	const resp = await removeCourseFromLearningPlan(req.params.courseId, req.user)
+	const courseId = req.params.courseId
+	const resp = await removeCourseFromLearningPlan(courseId, req.user)
 	req.flash('successTitle', req.__('learning_removed_from_plan_title', resp.courseTitle))
 	req.flash('successMessage', req.__('learning_removed_from_plan_message', resp.courseTitle))
 	req.session!.save(() => {
-		res.redirect('/')
+		res.redirect(`/courses/${courseId}`)
 	})
 }

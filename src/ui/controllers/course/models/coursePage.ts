@@ -7,6 +7,8 @@ export interface CoursePage {
 	description: string
 	status: CourseStatus
 	learningOutcomes: string
+	isInLearningPlan?: boolean
+	id?: string
 }
 
 export interface CourseDetails {
