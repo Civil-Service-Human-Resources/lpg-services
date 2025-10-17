@@ -8,6 +8,10 @@ import {getLogger} from '../logger'
 import {createUser, User} from '../model'
 import {fetchProfile, removeProfileFromCache, updateProfileCache} from '../service/civilServantRegistry/csrsService'
 import {IdentityDetails} from '../service/identity/models/identityDetails'
+import {LearningPlanCache} from '../service/cslService/cache/LearningPlanCache'
+import {RequiredLearningCache} from '../service/cslService/cache/RequiredLearningCache'
+import {LearningRecordCache} from '../service/cslService/cache/learningRecordCache'
+import {CacheableObjectCache} from '../utils/cacheableObjectCache'
 
 const logger = getLogger('config/passport')
 
@@ -17,7 +21,10 @@ export function configure(
 	authorizationURL: string,
 	tokenURL: string,
 	app: express.Express,
-	callbackURL: string
+	callbackURL: string,
+	learningPlanCache: LearningPlanCache,
+	requiredLearningCache: RequiredLearningCache,
+	learningRecordCache: LearningRecordCache
 ) {
 	app.use(passport.initialize())
 	app.use(passport.session())
@@ -33,6 +40,7 @@ export function configure(
 			try {
 				const token = jwt.decode(accessToken) as any
 				const identityDetails = new IdentityDetails(token.user_name, token.email, token.authorities, accessToken)
+				await clearCaches(identityDetails.uid, [learningPlanCache, requiredLearningCache, learningRecordCache])
 				return cb(null, identityDetails)
 			} catch (e) {
 				logger.warn(`Error retrieving user profile information`, e)
@@ -146,5 +154,11 @@ export async function logout(req: express.Request, res: express.Response) {
 		})
 	} else {
 		res.redirect(config.LPG_UI_SERVER)
+	}
+}
+
+async function clearCaches(uid: string, caches: CacheableObjectCache<any>[]) {
+	for (const cache of caches) {
+		await cache.delete(uid)
 	}
 }
