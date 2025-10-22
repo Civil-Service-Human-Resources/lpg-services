@@ -7,6 +7,7 @@ import {removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslS
 import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
 import {getCoursePage} from './models/factory'
+import {ActionBanner} from '../home'
 
 interface NotificationBanner {
 	title: string
@@ -14,6 +15,38 @@ interface NotificationBanner {
 }
 
 const logger = getLogger('controllers/course')
+
+async function generateNotificationBanner(request: express.Request): Promise<NotificationBanner | null> {
+	const successTitle = request.flash('successTitle')[0]
+	const successMessage = request.flash('successMessage')[0]
+	let notificationBanner: NotificationBanner | null = null
+	if (successTitle && successMessage) {
+		notificationBanner = {
+			title: successTitle,
+			message: successMessage,
+		}
+	}
+	return notificationBanner
+}
+
+async function generateActionBanner(req: extended.CourseRequest): Promise<ActionBanner | null> {
+	const course = req.course
+	const action = 'delete'
+	if (req.query[action]) {
+		const courseId = req.query[action] as string
+		if (course && course.id === courseId) {
+			return {
+				title: req.__('learning_confirm_' + action + '_plan_title', course.title),
+				message: req.__('learning_confirm_' + action + '_plan_message'),
+				yesText: req.__('learning_confirm_' + action + '_yes_option'),
+				yesHref: `/courses/${course.id}/delete`,
+				noText: req.__('learning_confirm_' + action + '_no_option'),
+				noHref: `/courses/${course.id}`,
+			}
+		}
+	}
+	return null
+}
 
 export async function displayModule(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
@@ -50,26 +83,15 @@ export async function display(ireq: express.Request, res: express.Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 	const pageModel = await getCoursePage(req.user, req.course)
 	const notificationBanner = await generateNotificationBanner(req)
+	const actionBanner = await generateActionBanner(req)
 	pageModel.backLink = res.locals.backLink
 	return res.render(`course/${pageModel.template}.njk`, {
 		pageModel,
 		banners: {
 			notification: notificationBanner,
+			action: actionBanner,
 		},
 	})
-}
-
-async function generateNotificationBanner(request: express.Request): Promise<NotificationBanner | null> {
-	const successTitle = request.flash('successTitle')[0]
-	const successMessage = request.flash('successMessage')[0]
-	let notificationBanner: NotificationBanner | null = null
-	if (successTitle && successMessage) {
-		notificationBanner = {
-			title: successTitle,
-			message: successMessage,
-		}
-	}
-	return notificationBanner
 }
 
 export async function loadCourse(ireq: express.Request, res: express.Response, next: express.NextFunction) {
