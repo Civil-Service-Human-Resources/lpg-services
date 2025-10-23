@@ -116,7 +116,6 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 			basicCoursePage.isInLearningPlan = true
 		}
 	}
-
 	return basicCoursePage
 }
 
