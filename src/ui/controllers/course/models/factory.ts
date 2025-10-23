@@ -89,17 +89,13 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		course.record = courseRecord
 	}
 	let basicCoursePage: BasicCoursePage
-	let hasFaceToFaceModule = false
 	if (course.modules.length === 0) {
 		basicCoursePage = getNoModuleCoursePage(course)
-		hasFaceToFaceModule = false
 	} else if (course.modules.length === 1) {
 		const module = course.modules[0]
 		basicCoursePage = getSingleModuleCoursePage(course, module, courseRecord)
-		hasFaceToFaceModule = module.type === 'face-to-face'
 	} else {
 		basicCoursePage = getBlendedCoursePage(course, courseRecord)
-		hasFaceToFaceModule = course.modules.some(m => m.type === 'face-to-face')
 	}
 
 	basicCoursePage.id = course.id
@@ -110,13 +106,17 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		basicCoursePage.isInLearningPlan = false
 	} else {
 		logger.debug(`course.record.state: ${course.record.state}`)
+		const hasFaceToFaceModule = course.record.modules.some(m => m.moduleType === 'face-to-face')
 		logger.debug(`hasFaceToFaceModule: ${hasFaceToFaceModule}`)
-		if (course.record.isComplete() || course.record.state === 'ARCHIVED' || hasFaceToFaceModule) {
+		if (course.record.isComplete() || hasFaceToFaceModule) {
 			basicCoursePage.isInLearningPlan = undefined
+		} else if (course.record.state === 'ARCHIVED') {
+			basicCoursePage.isInLearningPlan = false
 		} else {
 			basicCoursePage.isInLearningPlan = true
 		}
 	}
+
 	return basicCoursePage
 }
 
