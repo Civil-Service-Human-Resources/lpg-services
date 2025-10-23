@@ -30,13 +30,12 @@ async function generateNotificationBanner(request: express.Request): Promise<Not
 }
 
 async function generateActionBanner(req: extended.CourseRequest): Promise<ActionBanner | null> {
-	const course = req.course
-	logger.debug(`generateActionBanner, courseId from course: ${course.id}`)
 	const action = 'delete'
-	logger.debug(`generateActionBanner, req.query['delete']: ${req.query[action]}`)
 	if (req.query[action]) {
 		const courseId = req.query[action] as string
-		logger.debug(`generateActionBanner, courseId from 'delete' action: ${courseId}`)
+		logger.debug(`generateActionBanner, req.query['delete']: ${courseId}`)
+		const course = req.course
+		logger.debug(`generateActionBanner, req.course.id: ${course.id}`)
 		if (course && course.id === courseId) {
 			logger.debug('generateActionBanner, returning action banner')
 			return {
@@ -49,7 +48,6 @@ async function generateActionBanner(req: extended.CourseRequest): Promise<Action
 			}
 		}
 	}
-	logger.debug('generateActionBanner, returning null')
 	return null
 }
 
