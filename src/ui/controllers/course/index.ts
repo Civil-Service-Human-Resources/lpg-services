@@ -7,49 +7,10 @@ import {removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslS
 import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
 import {getCoursePage} from './models/factory'
-import {ActionBanner} from '../home'
-
-interface NotificationBanner {
-	title: string
-	message: string
-}
+import {generateActionBanner, generateNotificationBanner} from '../home'
+import * as cslService from '../../../lib/service/cslService/cslServiceClient'
 
 const logger = getLogger('controllers/course')
-
-async function generateNotificationBanner(request: express.Request): Promise<NotificationBanner | null> {
-	const successTitle = request.flash('successTitle')[0]
-	const successMessage = request.flash('successMessage')[0]
-	let notificationBanner: NotificationBanner | null = null
-	if (successTitle && successMessage) {
-		notificationBanner = {
-			title: successTitle,
-			message: successMessage,
-		}
-	}
-	return notificationBanner
-}
-
-async function generateActionBanner(req: extended.CourseRequest): Promise<ActionBanner | null> {
-	const action = 'delete'
-	if (req.query[action]) {
-		const courseId = req.query[action] as string
-		logger.debug(`generateActionBanner, req.query['delete']: ${courseId}`)
-		const course = req.course
-		logger.debug(`generateActionBanner, req.course.id: ${course.id}`)
-		if (course && course.id === courseId) {
-			logger.debug('generateActionBanner, returning action banner')
-			return {
-				title: req.__('learning_confirm_' + action + '_plan_title', course.title),
-				message: req.__('learning_confirm_' + action + '_plan_message'),
-				yesText: req.__('learning_confirm_' + action + '_yes_option'),
-				yesHref: `/courses/${course.id}/delete`,
-				noText: req.__('learning_confirm_' + action + '_no_option'),
-				noHref: `/courses/${course.id}`,
-			}
-		}
-	}
-	return null
-}
 
 export async function displayModule(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
@@ -85,8 +46,9 @@ export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 	const pageModel = await getCoursePage(req.user, req.course)
-	const notificationBanner = await generateNotificationBanner(req)
-	const actionBanner = await generateActionBanner(req)
+	const learningPlan = await cslService.getLearningPlan(req.user)
+	const notificationBanner = await generateNotificationBanner(req, learningPlan)
+	const actionBanner = await generateActionBanner(req, learningPlan)
 	pageModel.backLink = res.locals.backLink
 	return res.render(`course/${pageModel.template}.njk`, {
 		pageModel,

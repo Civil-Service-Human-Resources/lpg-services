@@ -9,7 +9,7 @@ import * as template from '../../lib/ui/template'
 
 const logger = getLogger('controllers/home')
 
-interface NotificationBanner {
+export interface NotificationBanner {
 	title: string
 	message: string
 }
@@ -21,7 +21,7 @@ export interface ActionBanner extends NotificationBanner {
 	noText: string
 }
 
-async function generateNotificationBanner(
+export async function generateNotificationBanner(
 	request: express.Request,
 	learningPlan: LearningPlan
 ): Promise<NotificationBanner | null> {
@@ -45,7 +45,7 @@ async function generateNotificationBanner(
 	return notificationBanner
 }
 
-async function generateActionBanner(
+export async function generateActionBanner(
 	request: express.Request,
 	learningPlan: LearningPlan
 ): Promise<ActionBanner | null> {
