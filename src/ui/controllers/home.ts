@@ -50,7 +50,7 @@ export async function generateActionBanner(
 	request: express.Request,
 	learningPlan: ICourse[]
 ): Promise<ActionBanner | null> {
-	for (const action of ['skip', 'move', 'delete'] as const) {
+	for (const action of ['skip', 'move', 'delete']) {
 		const actionValue = request.query[action]
 		if (actionValue) {
 			const [courseId, moduleId, eventId]: string = actionValue.split(',')

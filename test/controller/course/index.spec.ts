@@ -49,7 +49,6 @@ describe('Course controller tests', () => {
 	afterEach(() => {
 		sandbox.restore()
 	})
-
 	describe('Render course overview tests', () => {
 		const makeRequest = async (coursePageMock: BasicCoursePage) => {
 			coursePageModelFactoryStub.getCoursePage.resolves(coursePageMock)
