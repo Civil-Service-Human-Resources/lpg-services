@@ -8,7 +8,6 @@ import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
 import {getCoursePage} from './models/factory'
 import {generateActionBanner, generateNotificationBanner} from '../home'
-import * as cslService from '../../../lib/service/cslService/cslServiceClient'
 
 const logger = getLogger('controllers/course')
 
@@ -45,8 +44,9 @@ export async function displayModule(ireq: express.Request, res: express.Response
 export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const pageModel = await getCoursePage(req.user, req.course)
-	const learningPlan = await cslService.getLearningPlan(req.user)
+	const course = req.course
+	const pageModel = await getCoursePage(req.user, course)
+	const learningPlan = [course]
 	const notificationBanner = await generateNotificationBanner(req, learningPlan)
 	const actionBanner = await generateActionBanner(req, learningPlan)
 	pageModel.backLink = res.locals.backLink

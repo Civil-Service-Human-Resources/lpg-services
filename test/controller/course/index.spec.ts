@@ -2,11 +2,6 @@ import {expect} from 'chai'
 import * as asyncHandler from 'express-async-handler'
 import * as sinon from 'sinon'
 import * as request from 'supertest'
-import {client} from '../../../src/lib/service/cslService/baseConfig'
-import {setCaches} from '../../../src/lib/service/cslService/cslServiceClient'
-import {BookedLearningPlanCourse} from '../../../src/lib/service/cslService/models/learning/learningPlan/bookedLearningPlanCourse'
-import {LearningPlan} from '../../../src/lib/service/cslService/models/learning/learningPlan/learningPlan'
-import {LearningPlanCourse} from '../../../src/lib/service/cslService/models/learning/learningPlan/learningPlanCourse'
 import * as catalog from '../../../src/lib/service/catalog'
 import * as courseController from '../../../src/ui/controllers/course'
 import {
@@ -36,7 +31,6 @@ import {
 	TextContentAsserter,
 	titleAssertion,
 } from '../../utils/htmlUtils'
-import {fakeCache} from '../../utils/mocks'
 import {getApp} from '../../utils/testApp'
 
 describe('Course controller tests', () => {
@@ -46,31 +40,15 @@ describe('Course controller tests', () => {
 
 	let catalogStub: sinon.SinonStubbedInstance<typeof catalog>
 	let coursePageModelFactoryStub: sinon.SinonStubbedInstance<typeof coursePageModelFactory>
-	let cslServiceStub: sinon.SinonStubbedInstance<typeof client>
 
 	beforeEach(() => {
 		coursePageModelFactoryStub = sandbox.stub(coursePageModelFactory)
 		catalogStub = sandbox.stub(catalog)
 		catalogStub.get.resolves({})
-		cslServiceStub = sandbox.stub(client)
-		cslServiceStub._get.resolves({})
 	})
 	afterEach(() => {
 		sandbox.restore()
 	})
-
-	const stubGetLearningPlan = (response: LearningPlan) => {
-		cslServiceStub._get
-			.withArgs(
-				{
-					url: '/learning/plan',
-				},
-				sinon.match.any
-			)
-			.resolves(response)
-	}
-
-	setCaches(fakeCache as any, fakeCache as any, fakeCache as any, fakeCache as any)
 
 	describe('Render course overview tests', () => {
 		const makeRequest = async (coursePageMock: BasicCoursePage) => {
@@ -155,68 +133,6 @@ describe('Course controller tests', () => {
 
 		describe('Render no-module course overview tests', () => {
 			it('Should correctly render the no-module course page', async () => {
-				stubGetLearningPlan({
-					userId: 'userId',
-					getId: (): string => 'userId',
-					getAllCourses: (): (BookedLearningPlanCourse | LearningPlanCourse)[] => [],
-					getCourseIds: (): string[] => [],
-					bookedCourses: [],
-					learningPlanCourses: [
-						{
-							id: 'learningplan1',
-							title: 'Learning plan Course 1',
-							shortDescription: 'Short description of learning plan 1',
-							type: 'link',
-							duration: 3600,
-							moduleCount: 1,
-							costInPounds: 0,
-							status: 'IN_PROGRESS',
-							justAdded: false,
-						},
-						{
-							id: 'learningplan2',
-							title: 'Learning plan Course 2',
-							shortDescription: 'Short description of learning plan 2',
-							type: 'face-to-face',
-							duration: 3600,
-							moduleCount: 2,
-							costInPounds: 10,
-							status: 'NULL',
-							justAdded: false,
-						},
-					],
-				})
-				stubGetLearningPlan({
-					userId: 'userId',
-					getId: (): string => 'userId',
-					getAllCourses: (): (BookedLearningPlanCourse | LearningPlanCourse)[] => [],
-					getCourseIds: (): string[] => [],
-					bookedCourses: [],
-					learningPlanCourses: [
-						{
-							id: 'learningplan1',
-							title: 'Learning plan Course 1',
-							shortDescription: 'Short description of learning plan 1',
-							type: 'link',
-							duration: 3600,
-							moduleCount: 1,
-							costInPounds: 0,
-							status: 'IN_PROGRESS',
-							justAdded: false,
-						},
-						{
-							id: 'learningplan2',
-							title: 'Learning plan Course 2',
-							shortDescription: 'Short description of learning plan 2',
-							type: 'face-to-face',
-							duration: 3600,
-							moduleCount: 2,
-							costInPounds: 10,
-							status: 'NULL',
-							justAdded: false,
-						},
-					],
-				})
 				const noModuleCoursePage: BasicCoursePage = {
 					template: 'noModules',
 					...basicCourseData,

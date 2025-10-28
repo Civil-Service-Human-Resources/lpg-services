@@ -1,6 +1,7 @@
 import {RecordState} from '../../record'
+import {ICourse} from '../../../../../model'
 
-export class BasicCourse {
+export class BasicCourse implements ICourse {
 	public id: string
 	public title: string
 	public shortDescription: string
