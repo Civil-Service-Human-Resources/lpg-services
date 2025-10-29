@@ -7,11 +7,7 @@ import {removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslS
 import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
 import {getCoursePage} from './models/factory'
-
-interface NotificationBanner {
-	title: string
-	message: string
-}
+import {generateActionBanner, generateNotificationBanner} from '../home'
 
 const logger = getLogger('controllers/course')
 
@@ -48,28 +44,19 @@ export async function displayModule(ireq: express.Request, res: express.Response
 export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const pageModel = await getCoursePage(req.user, req.course)
-	const notificationBanner = await generateNotificationBanner(req)
+	const course = req.course
+	const pageModel = await getCoursePage(req.user, course)
+	const learningPlan = [course]
+	const notificationBanner = await generateNotificationBanner(req, learningPlan)
+	const actionBanner = await generateActionBanner(req, learningPlan)
 	pageModel.backLink = res.locals.backLink
 	return res.render(`course/${pageModel.template}.njk`, {
 		pageModel,
 		banners: {
 			notification: notificationBanner,
+			action: actionBanner,
 		},
 	})
-}
-
-async function generateNotificationBanner(request: express.Request): Promise<NotificationBanner | null> {
-	const successTitle = request.flash('successTitle')[0]
-	const successMessage = request.flash('successMessage')[0]
-	let notificationBanner: NotificationBanner | null = null
-	if (successTitle && successMessage) {
-		notificationBanner = {
-			title: successTitle,
-			message: successMessage,
-		}
-	}
-	return notificationBanner
 }
 
 export async function loadCourse(ireq: express.Request, res: express.Response, next: express.NextFunction) {

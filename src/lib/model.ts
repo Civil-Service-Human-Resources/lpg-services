@@ -14,6 +14,10 @@ import {KeyValue} from './utils/dataUtils'
 
 import _ = require('lodash')
 
+export interface ICourse {
+	id: string
+}
+
 export interface LineManager {
 	email: string
 	name?: string
@@ -89,7 +93,7 @@ export type CourseStatus = 'Published' | 'Archived'
 
 export type CourseType = ModuleType | 'blended' | 'unknown'
 
-export class Course {
+export class Course implements ICourse {
 	static create(data: any, user?: User) {
 		const course = new Course(data.id)
 		course.description = data.description

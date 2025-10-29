@@ -4,12 +4,13 @@ import * as extended from '../../lib/extended'
 import {getLogger} from '../../lib/logger'
 import * as model from '../../lib/model'
 import * as cslService from '../../lib/service/cslService/cslServiceClient'
-import {LearningPlan} from '../../lib/service/cslService/models/learning/learningPlan/learningPlan'
 import * as template from '../../lib/ui/template'
+import {ICourse} from '../../lib/model'
+import {LearningPlanCourse} from '../../lib/service/cslService/models/learning/learningPlan/learningPlanCourse'
 
 const logger = getLogger('controllers/home')
 
-interface NotificationBanner {
+export interface NotificationBanner {
 	title: string
 	message: string
 }
@@ -21,9 +22,9 @@ export interface ActionBanner extends NotificationBanner {
 	noText: string
 }
 
-async function generateNotificationBanner(
+export async function generateNotificationBanner(
 	request: express.Request,
-	learningPlan: LearningPlan
+	learningPlan: ICourse[]
 ): Promise<NotificationBanner | null> {
 	const successTitle = request.flash('successTitle')[0]
 	const successMessage = request.flash('successMessage')[0]
@@ -31,9 +32,9 @@ async function generateNotificationBanner(
 	let notificationBanner: NotificationBanner | null = null
 	if (successTitle && successMessage) {
 		if (successId) {
-			for (const course of learningPlan.getAllCourses()) {
-				if (course.id === successId) {
-					course.justAdded = true
+			for (const course of learningPlan) {
+				if ('id' in course && 'justAdded' in course && course.id === successId) {
+					;(course as LearningPlanCourse).justAdded = true
 				}
 			}
 		}
@@ -45,19 +46,20 @@ async function generateNotificationBanner(
 	return notificationBanner
 }
 
-async function generateActionBanner(
+export async function generateActionBanner(
 	request: express.Request,
-	learningPlan: LearningPlan
+	learningPlan: ICourse[]
 ): Promise<ActionBanner | null> {
 	for (const action of ['skip', 'move', 'delete']) {
-		if (request.query[action]) {
-			const [courseId, moduleId, eventId]: string = request.query[action].split(',')
-			if (courseId !== undefined) {
-				let course
+		const actionValue = request.query[action]
+		if (actionValue) {
+			const [courseId, moduleId, eventId]: string = actionValue.split(',')
+			if (courseId) {
+				let course: any
 				if (action === 'delete') {
-					course = learningPlan.getAllCourses().find(c => c.id === courseId)
+					course = learningPlan.find((c: any) => 'id' in c && c.id === courseId)
 				} else if (moduleId !== undefined && eventId !== undefined) {
-					course = learningPlan.bookedCourses.find(c => {
+					course = learningPlan.find((c: any) => {
 						return (
 							c.id === courseId &&
 							c.eventModule.id === moduleId &&
@@ -93,8 +95,8 @@ export async function home(req: express.Request, res: express.Response, next: ex
 			cslService.getLearningPlan(user),
 			cslService.getRequiredLearning(user),
 		])
-		const notificationBanner = await generateNotificationBanner(req, learningPlan)
-		const actionBanner = await generateActionBanner(req, learningPlan)
+		const notificationBanner = await generateNotificationBanner(req, learningPlan.getAllCourses())
+		const actionBanner = await generateActionBanner(req, learningPlan.getAllCourses())
 		return res.render('home/index.njk', {
 			pageModel: {
 				requiredLearning,
