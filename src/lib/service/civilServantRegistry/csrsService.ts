@@ -173,7 +173,10 @@ async function getOrganisationsWithDefaultParams(user: User, organisationalUnitI
 	return resp
 }
 
-async function getOrganisationWithDefaultParams(user: User, organisationalUnitId: number): Promise<OrganisationalUnit | undefined> {
+async function getOrganisationWithDefaultParams(
+	user: User,
+	organisationalUnitId: number
+): Promise<OrganisationalUnit | undefined> {
 	const resp = await getOrganisationsWithDefaultParams(user, [organisationalUnitId])
 	return resp.organisationalUnits.find(o => o.id === organisationalUnitId)
 }
@@ -189,7 +192,11 @@ export async function getOrganisation(user: User, organisationalUnitId: number):
 	return org
 }
 
-export async function getOrgHierarchy(organisationalUnitId: number, user: User, hierarchy: OrganisationalUnit[] = []): Promise<OrganisationalUnit[]> {
+export async function getOrgHierarchy(
+	organisationalUnitId: number,
+	user: User,
+	hierarchy: OrganisationalUnit[] = []
+): Promise<OrganisationalUnit[]> {
 	const org = await organisationalUnitCache.get(organisationalUnitId)
 	if (org === undefined) {
 		const resp = await getOrganisationsWithDefaultParams(user, [organisationalUnitId])

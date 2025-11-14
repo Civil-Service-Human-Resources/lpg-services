@@ -326,7 +326,7 @@ export async function getOrganisationalUnits(params: GetOrganisationalUnitParams
 	const res = await client._get<OrganisationalUnits>(
 		{
 			url: '/organisations',
-			params
+			params,
 		},
 		user
 	)

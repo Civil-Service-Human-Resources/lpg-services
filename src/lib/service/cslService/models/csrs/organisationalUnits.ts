@@ -10,9 +10,11 @@ export class OrganisationalUnits {
 	}
 
 	getHierarchy(rootId: number) {
-		const map: Map<number, OrganisationalUnit> = new Map<number, OrganisationalUnit>(this.organisationalUnits.map(o => {
-			return [o.id, o]
-		}))
+		const map: Map<number, OrganisationalUnit> = new Map<number, OrganisationalUnit>(
+			this.organisationalUnits.map(o => {
+				return [o.id, o]
+			})
+		)
 		let currentId: number | undefined = rootId
 		const hierarchy: OrganisationalUnit[] = []
 		while (currentId) {

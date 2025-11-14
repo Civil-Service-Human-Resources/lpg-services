@@ -99,7 +99,9 @@ describe('CsrsService tests', () => {
 			child.parentId = parent.id
 
 			orgUnitCache.get.withArgs(3).resolves(undefined)
-			cslServiceClientStub.getOrganisationalUnits.withArgs(new GetOrganisationalUnitParams([3], true), user).resolves(new OrganisationalUnits([child, parent, grandparent]))
+			cslServiceClientStub.getOrganisationalUnits
+				.withArgs(new GetOrganisationalUnitParams([3], true), user)
+				.resolves(new OrganisationalUnits([child, parent, grandparent]))
 
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
@@ -111,7 +113,8 @@ describe('CsrsService tests', () => {
 			parent.parentId = grandparent.id
 
 			orgUnitCache.get.withArgs(3).resolves(child)
-			cslServiceClientStub.getOrganisationalUnits.withArgs(new GetOrganisationalUnitParams([2], true), user)
+			cslServiceClientStub.getOrganisationalUnits
+				.withArgs(new GetOrganisationalUnitParams([2], true), user)
 				.resolves(new OrganisationalUnits([parent, grandparent]))
 
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)

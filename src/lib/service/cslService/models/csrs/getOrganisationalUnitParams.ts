@@ -1,6 +1,6 @@
 export class GetOrganisationalUnitParams {
 	constructor(
 		public organisationId?: number[],
-		public includeParents?: boolean,
+		public includeParents?: boolean
 	) {}
 }

@@ -21,4 +21,3 @@ export async function getOrganisationalUnits(
 	)
 	return plainToInstance(GetOrganisationsResponse, resp)
 }
-
