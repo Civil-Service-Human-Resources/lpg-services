@@ -175,8 +175,6 @@ async function getOrganisationsWithDefaultParams(user: User, organisationalUnitI
 
 async function getOrganisationWithDefaultParams(user: User, organisationalUnitId: number): Promise<OrganisationalUnit | undefined> {
 	const resp = await getOrganisationsWithDefaultParams(user, [organisationalUnitId])
-	console.log(organisationalUnitId)
-	console.log(resp.organisationalUnits)
 	return resp.organisationalUnits.find(o => o.id === organisationalUnitId)
 }
 
