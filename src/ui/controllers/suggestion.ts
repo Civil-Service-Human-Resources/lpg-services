@@ -60,7 +60,6 @@ export async function removeFromSuggestions(req: express.Request, res: express.R
 
 export async function suggestionsPage(req: express.Request, res: express.Response) {
 	const user = req.user as model.User
-
 	const map = await fetchSuggestedLearning(user, res.locals.departmentHierarchyCodes)
 
 	const department = map.getMapping(Suggestion.DEPARTMENT)

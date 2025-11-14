@@ -7,7 +7,7 @@ import * as learnerRecord from '../../../lib/learnerrecord'
 import {getLogger} from '../../../lib/logger'
 import {bookEvent, completeEventBooking, skipEventBooking} from '../../../lib/service/cslService/cslServiceClient'
 import {getCourse} from '../../../lib/service/catalog/courseCatalogueClient'
-import {createBookEventDto} from '../../../lib/service/cslService/models/factory/BookEventDtoFactory'
+import {BookEventDto} from '../../../lib/service/cslService/models/BookEventDto'
 import * as template from '../../../lib/ui/template'
 
 const logger = getLogger('controllers/booking')
@@ -354,7 +354,7 @@ async function getBookEventDtoFromRequest(req: express.Request, res: express.Res
 		}
 	})
 	const poNumber = session.payment.value.length === 0 ? undefined : session.payment.value
-	return await createBookEventDto(finalAccessibilityRequirements, req.user, poNumber)
+	return new BookEventDto(finalAccessibilityRequirements, poNumber)
 }
 
 export async function tryCompleteBooking(req: express.Request, res: express.Response) {

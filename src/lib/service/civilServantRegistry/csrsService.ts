@@ -1,8 +1,10 @@
+import {ResourceNotFoundError} from '../../exception/ResourceNotFoundError'
 import {getLogger} from '../../logger'
 import {OrganisationalUnit, User} from '../../model'
 import {AreaOfWork, Grade, Interest, Profile} from '../../registry'
 import {AnonymousCache} from '../../utils/anonymousCache'
 import {learningRecordCache, requiredLearningCache} from '../cslService/cslServiceClient'
+import {GetOrganisationalUnitParams} from '../cslService/models/csrs/getOrganisationalUnitParams'
 import {AreasOfWork} from './areaOfWork/areasOfWork'
 import * as civilServantClient from './civilServant/civilServantClient'
 import {ProfileCache} from './civilServant/profileCache'
@@ -162,45 +164,42 @@ export async function getInterests(user: User): Promise<Interests> {
 	return interests
 }
 
-export async function getOrganisation(
-	user: User,
-	organisationalUnitId: number,
-	includeParent: boolean = false
-): Promise<OrganisationalUnit> {
+async function getOrganisationsWithDefaultParams(user: User, organisationalUnitIds: number[]) {
+	const params = new GetOrganisationalUnitParams(organisationalUnitIds, true)
+	const resp = await cslService.getOrganisationalUnits(params, user)
+	for (const organisationalUnit of resp.organisationalUnits) {
+		await organisationalUnitCache.setObject(organisationalUnit)
+	}
+	return resp
+}
+
+async function getOrganisationWithDefaultParams(user: User, organisationalUnitId: number): Promise<OrganisationalUnit | undefined> {
+	const resp = await getOrganisationsWithDefaultParams(user, [organisationalUnitId])
+	console.log(organisationalUnitId)
+	console.log(resp.organisationalUnits)
+	return resp.organisationalUnits.find(o => o.id === organisationalUnitId)
+}
+
+export async function getOrganisation(user: User, organisationalUnitId: number): Promise<OrganisationalUnit> {
 	let org = await organisationalUnitCache.get(organisationalUnitId)
 	if (org === undefined) {
-		org = await organisationalUnitClient.getOrganisationalUnit(
-			organisationalUnitId,
-			{includeParents: includeParent},
-			user
-		)
-		await organisationalUnitCache.setMultiple(org.getHierarchyAsArray())
-	}
-	if (includeParent && org.parentId != null && org.parent == null) {
-		org.parent = await getOrganisation(user, org.parentId)
+		org = await getOrganisationWithDefaultParams(user, organisationalUnitId)
+		if (org === undefined) {
+			throw new ResourceNotFoundError(`Organisation with ID ${organisationalUnitId} not found`)
+		}
 	}
 	return org
 }
 
-export async function getOrgHierarchy(
-	organisationId: number,
-	user: User,
-	hierarchy: OrganisationalUnit[] = []
-): Promise<OrganisationalUnit[]> {
-	const org = await organisationalUnitCache.get(organisationId)
-	if (org == null) {
-		const orgWithAllParents = await organisationalUnitClient.getOrganisationalUnit(
-			organisationId,
-			{includeParents: true},
-			user
-		)
-		const orgArray = orgWithAllParents.getHierarchyAsArray()
-		await organisationalUnitCache.setMultiple(orgArray)
-		hierarchy.push(...orgArray)
+export async function getOrgHierarchy(organisationalUnitId: number, user: User, hierarchy: OrganisationalUnit[] = []): Promise<OrganisationalUnit[]> {
+	const org = await organisationalUnitCache.get(organisationalUnitId)
+	if (org === undefined) {
+		const resp = await getOrganisationsWithDefaultParams(user, [organisationalUnitId])
+		hierarchy.push(...resp.getHierarchy(organisationalUnitId))
 	} else {
 		hierarchy.push(org)
 		if (org.parentId) {
-			return await getOrgHierarchy(org.parentId, user, hierarchy)
+			hierarchy = await getOrgHierarchy(org.parentId, user, hierarchy)
 		}
 	}
 	return hierarchy

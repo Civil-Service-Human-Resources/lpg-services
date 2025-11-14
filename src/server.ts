@@ -278,7 +278,7 @@ app.use(
 	asyncHandler(courseController.displayModule)
 )
 
-app.get('/learning-record', asyncHandler(requiresDepartmentHierarchy), asyncHandler(learningRecordController.display))
+app.get('/learning-record', asyncHandler(learningRecordController.display))
 
 app.get(
 	'/learning-record/:courseId/:moduleId',
@@ -304,7 +304,7 @@ app.post('/skills/questions/:questionIndex', asyncHandler(skillsController.answe
 app.get('/skills/summary/:answerSubmissionId', asyncHandler(skillsController.quizSummary))
 app.get('/skills/quiz-history', asyncHandler(skillsController.quizHistory))
 
-app.get('/home', asyncHandler(requiresDepartmentHierarchy), asyncHandler(homeController.home))
+app.get('/home', asyncHandler(homeController.home))
 
 app.use('/book', bookingRouter.router)
 

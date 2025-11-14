@@ -1,12 +1,14 @@
 import {expect} from 'chai'
 import * as sinon from 'sinon'
 import {AnonymousCache} from '../../utils/anonymousCache'
+import {GetOrganisationalUnitParams} from '../cslService/models/csrs/getOrganisationalUnitParams'
+import {OrganisationalUnits} from '../cslService/models/csrs/organisationalUnits'
 import {ProfileCache} from './civilServant/profileCache'
 
-import {AgencyToken, OrganisationalUnit, User} from '../../model'
+import {OrganisationalUnit, User} from '../../model'
 import * as csrsService from './csrsService'
 import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
-import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
+import * as cslServiceClient from '../cslService/cslServiceClient'
 
 function getOrg(orgName: string, id: number, parentId?: number) {
 	const org = new OrganisationalUnit()
@@ -25,7 +27,7 @@ describe('CsrsService tests', () => {
 	let gradeCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
 	let areaOfWorkCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
 	let interestCache: sinon.SinonStubbedInstance<AnonymousCache<any>>
-	let organisationalUnitClientStub: sinon.SinonStubbedInstance<typeof organisationalUnitClient>
+	let cslServiceClientStub: sinon.SinonStubbedInstance<typeof cslServiceClient>
 	let user: sinon.SinonStubbedInstance<User>
 
 	beforeEach(() => {
@@ -34,7 +36,7 @@ describe('CsrsService tests', () => {
 		gradeCache = sandbox.createStubInstance(AnonymousCache)
 		areaOfWorkCache = sandbox.createStubInstance(AnonymousCache)
 		interestCache = sandbox.createStubInstance(AnonymousCache)
-		organisationalUnitClientStub = sandbox.stub(organisationalUnitClient)
+		cslServiceClientStub = sandbox.stub(cslServiceClient)
 		user = sandbox.createStubInstance(User)
 		csrsService.setCaches(
 			orgUnitCache as any,
@@ -59,73 +61,19 @@ describe('CsrsService tests', () => {
 			expect(result).to.eql(organisationalUnit)
 		})
 
-		it('should get organisationalUnit and parent with cache hit', async () => {
-			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
-			organisationalUnit.id = 1
-			organisationalUnit.parentId = 2
-
-			const parentOrganisationalUnit: OrganisationalUnit = new OrganisationalUnit()
-			parentOrganisationalUnit.id = 2
-
-			orgUnitCache.get.withArgs(1).resolves(organisationalUnit)
-			orgUnitCache.get.withArgs(2).resolves(parentOrganisationalUnit)
-			const result = await csrsService.getOrganisation(user, 1, true)
-
-			expect(result).to.eql(organisationalUnit)
-			expect(result.parent!).to.eql(parentOrganisationalUnit)
-		})
-
-		it('should get organisationalUnit and agency token with cache hit', async () => {
-			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
-			organisationalUnit.id = 1
-
-			const agencyToken = new AgencyToken()
-			agencyToken.uid = 'agencyUID'
-			organisationalUnit.agencyToken = agencyToken
-
-			orgUnitCache.get.withArgs(1).resolves(organisationalUnit)
-			const result = await csrsService.getOrganisation(user, 1, true)
-
-			expect(result.id).to.eql(1)
-			expect(result.agencyToken!.uid).to.eql('agencyUID')
-		})
-
 		it('should get organisationalUnit and set the cache on cache miss', async () => {
 			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
 			organisationalUnit.id = 1
 
-			organisationalUnitClientStub.getOrganisationalUnit
-				.withArgs(1, {includeParents: false})
-				.resolves(organisationalUnit)
+			cslServiceClientStub.getOrganisationalUnits
+				.withArgs(new GetOrganisationalUnitParams([1], true), user)
+				.resolves(new OrganisationalUnits([organisationalUnit]))
 
 			orgUnitCache.get.withArgs(1).resolves(undefined)
 			const result = await csrsService.getOrganisation(user, 1)
 
-			expect(orgUnitCache.setMultiple).to.be.calledOnceWith([organisationalUnit])
+			expect(orgUnitCache.setObject).to.be.calledOnceWith(organisationalUnit)
 			expect(result.id).to.eql(1)
-		})
-
-		it('should get organisationalUnit and set the cache on cache miss, as well as set parents', async () => {
-			const organisationalUnit: OrganisationalUnit = new OrganisationalUnit()
-			organisationalUnit.id = 1
-
-			const parentOrganisationalUnit: OrganisationalUnit = new OrganisationalUnit()
-			parentOrganisationalUnit.id = 2
-
-			organisationalUnit.parentId = 2
-			organisationalUnit.parent = parentOrganisationalUnit
-
-			organisationalUnitClientStub.getOrganisationalUnit
-				.withArgs(1, {includeParents: true})
-				.resolves(organisationalUnit)
-
-			orgUnitCache.get.withArgs(1).resolves(undefined)
-			const result = await csrsService.getOrganisation(user, 1, true)
-
-			expect(orgUnitCache.setMultiple).to.be.calledWith([organisationalUnit, parentOrganisationalUnit])
-			expect(result.id).to.eql(1)
-			expect(result.parent!.id).to.eql(2)
-			expect(result.parent).to.eql(parentOrganisationalUnit)
 		})
 	})
 
@@ -147,11 +95,11 @@ describe('CsrsService tests', () => {
 			const grandparent = getOrg('Grandparent', 1)
 			const child = getOrg('Child', 3, 2)
 			const parent = getOrg('Parent', 2, 1)
-			parent.parent = grandparent
-			child.parent = parent
+			parent.parentId = grandparent.id
+			child.parentId = parent.id
 
 			orgUnitCache.get.withArgs(3).resolves(undefined)
-			organisationalUnitClientStub.getOrganisationalUnit.withArgs(3, {includeParents: true}, user).resolves(child)
+			cslServiceClientStub.getOrganisationalUnits.withArgs(new GetOrganisationalUnitParams([3], true), user).resolves(new OrganisationalUnits([child, parent, grandparent]))
 
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
@@ -160,10 +108,11 @@ describe('CsrsService tests', () => {
 			const grandparent = getOrg('Grandparent', 1)
 			const child = getOrg('Child', 3, 2)
 			const parent = getOrg('Parent', 2, 1)
-			parent.parent = grandparent
+			parent.parentId = grandparent.id
 
 			orgUnitCache.get.withArgs(3).resolves(child)
-			organisationalUnitClientStub.getOrganisationalUnit.withArgs(2, {includeParents: true}, user).resolves(parent)
+			cslServiceClientStub.getOrganisationalUnits.withArgs(new GetOrganisationalUnitParams([2], true), user)
+				.resolves(new OrganisationalUnits([parent, grandparent]))
 
 			const hierarchy = await csrsService.getOrgHierarchy(3, user)
 			expect(hierarchy.map(o => o.name)).to.eql(['Child', 'Parent', 'Grandparent'])
