@@ -198,6 +198,7 @@ export async function getOrgHierarchy(
 	hierarchy: OrganisationalUnit[] = []
 ): Promise<OrganisationalUnit[]> {
 	const org = await organisationalUnitCache.get(organisationalUnitId)
+	console.log(org)
 	if (org === undefined) {
 		const resp = await getOrganisationsWithDefaultParams(user, [organisationalUnitId])
 		hierarchy.push(...resp.getHierarchy(organisationalUnitId))

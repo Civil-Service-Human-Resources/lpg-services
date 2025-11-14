@@ -18,7 +18,7 @@ export class OrganisationalUnits {
 		let currentId: number | undefined = rootId
 		const hierarchy: OrganisationalUnit[] = []
 		while (currentId) {
-			const organisationalUnit = map.get(rootId)
+			const organisationalUnit = map.get(currentId)
 			if (organisationalUnit) {
 				hierarchy.push(organisationalUnit)
 				currentId = organisationalUnit.parentId
