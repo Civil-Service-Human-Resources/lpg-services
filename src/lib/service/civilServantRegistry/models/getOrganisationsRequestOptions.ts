@@ -3,7 +3,3 @@ export interface GetOrganisationsRequestOptions {
 	size: number
 	sort?: string
 }
-
-export interface GetOrganisationRequestOptions {
-	includeParents?: boolean
-}

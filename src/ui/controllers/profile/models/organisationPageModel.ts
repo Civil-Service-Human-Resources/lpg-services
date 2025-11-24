@@ -5,5 +5,9 @@ export class OrganisationPageModel extends OptionsBasePageModel {
 	@IsNotEmpty({
 		message: 'profile.organisation',
 	})
-	public organisation: number
+	public organisation: string
+
+	getIdAsInteger() {
+		return parseInt(this.organisation)
+	}
 }

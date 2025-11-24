@@ -45,8 +45,8 @@ export function selectOrganisationsMiddleware(behaviour: PageBehaviour) {
 			pageModel.options = keysToOptions(organisations)
 			return res.send(template.render(behaviour.templateName, req, res, pageModel))
 		}
-		if (userOrganisation !== pageModel.organisation) {
-			await updateCivilServantOrganisationalUnit(user, pageModel.organisation)
+		if (userOrganisation !== pageModel.getIdAsInteger()) {
+			await updateCivilServantOrganisationalUnit(user, pageModel.getIdAsInteger())
 		}
 		return generateRedirect(organisationPage, req, res)
 	}

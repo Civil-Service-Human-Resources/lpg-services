@@ -10,15 +10,15 @@ import {CourseActionResponse} from './models/CourseActionResponse'
 import {FormattedOrganisationList} from './models/csrs/formattedOrganisationList'
 import {FormattedOrganisationListCache} from './models/csrs/formattedOrganisationListCache'
 import {FormattedOrganisations} from './models/csrs/formattedOrganisations'
+import {GetOrganisationalUnitParams} from './models/csrs/getOrganisationalUnitParams'
 import {GetOrganisationsFormattedParams} from './models/csrs/getOrganisationsFormattedParams'
+import {OrganisationalUnits} from './models/csrs/organisationalUnits'
 import {EventActionResponse} from './models/EventActionResponse'
-import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
 import {AreasOfWork} from './models/areasOfWork'
 import {LearningPlan} from './models/learning/learningPlan/learningPlan'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
-import {UserDto} from './models/UserDto'
 import {Grades} from './models/grades'
 
 export let learningRecordCache: LearningRecordCache
@@ -47,12 +47,10 @@ export async function clearLearningCachesForCourse(userId: string, courseId: str
 }
 
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
-	const body: UserDto = await createUserDto(user)
-	const resp = await client._post<UserDto, LaunchModuleResponse>(
+	const resp = await client._postNoBody<LaunchModuleResponse>(
 		{
 			url: `/courses/${courseId}/modules/${moduleId}/launch`,
 		},
-		body,
 		user
 	)
 	await requiredLearningCache.clearForCourse(user.id, courseId)
@@ -62,12 +60,10 @@ export async function launchModule(courseId: string, moduleId: string, user: Use
 }
 
 export async function completeModule(courseId: string, moduleId: string, user: User): Promise<void> {
-	const body: UserDto = await createUserDto(user)
-	await client._post<UserDto, LaunchModuleResponse>(
+	await client._postNoBody<LaunchModuleResponse>(
 		{
 			url: `/courses/${courseId}/modules/${moduleId}/complete`,
 		},
-		body,
 		user
 	)
 	await requiredLearningCache.clearForCourse(user.id, courseId)
@@ -152,12 +148,10 @@ export async function completeEventBooking(
 	eventId: string,
 	user: User
 ): Promise<EventActionResponse> {
-	const userDto = await createUserDto(user)
-	const resp = await client._post<UserDto, EventActionResponse>(
+	const resp = await client._postNoBody<EventActionResponse>(
 		{
 			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/complete_booking`,
 		},
-		userDto,
 		user
 	)
 	await learningRecordCache.delete(user.id)
@@ -326,4 +320,15 @@ export async function getOrganisationsDropdown(user: User, params: GetOrganisati
 		await formattedOrganisationListCache.set(cacheKey, typeahead)
 	}
 	return typeahead.formattedOrganisations
+}
+
+export async function getOrganisationalUnits(params: GetOrganisationalUnitParams, user: User) {
+	const res = await client._get<OrganisationalUnits>(
+		{
+			url: '/organisations',
+			params,
+		},
+		user
+	)
+	return plainToInstance(OrganisationalUnits, res)
 }
