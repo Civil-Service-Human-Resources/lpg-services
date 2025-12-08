@@ -69,10 +69,6 @@ export class CourseRecord extends Record implements CourseRcd {
 		return this.preference === CourseRecordPreference.Disliked
 	}
 
-	public isActive() {
-		return !this.isArchived() && !this.isSkipped() && !this.isDisliked()
-	}
-
 	public getSelectedDate() {
 		for (const moduleRecord of this.modules) {
 			if (moduleRecord.eventDate) {

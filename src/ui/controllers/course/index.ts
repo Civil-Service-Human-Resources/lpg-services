@@ -7,6 +7,7 @@ import {removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslS
 import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
 import {getCoursePage} from './models/factory'
+import {generateActionBanner, generateNotificationBanner} from '../home'
 
 const logger = getLogger('controllers/course')
 
@@ -21,35 +22,41 @@ export async function displayModule(ireq: express.Request, res: express.Response
 		case 'link':
 		case 'file':
 			const launchModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
-			res.redirect(launchModuleResponse.launchLink)
-			break
+			return res.redirect(launchModuleResponse.launchLink)
 		case 'face-to-face':
-			res.redirect(`/book/${course.id}/${module.id}/choose-date`)
-			break
+			return res.redirect(`/book/${course.id}/${module.id}/choose-date`)
 		case 'video':
 			const launchVideoModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
 			const videoLink = launchVideoModuleResponse.launchLink
-			res.send(
+			return res.send(
 				template.render(`course/display-video`, req, res, {
 					course,
 					module,
 					video: !videoLink.search('/http(.+)youtube(.*)/i') ? null : await youtube.getBasicInfo(videoLink),
 				})
 			)
-			break
 		default:
 			logger.debug(`Unknown module type: ${module.type}`)
-			res.sendStatus(500)
+			return res.sendStatus(500)
 	}
 }
 
 export async function display(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const pageModel = await getCoursePage(req.user, req.course)
-
+	const course = req.course
+	const pageModel = await getCoursePage(req.user, course)
+	const learningPlan = [course]
+	const notificationBanner = await generateNotificationBanner(req, learningPlan)
+	const actionBanner = await generateActionBanner(req, learningPlan)
 	pageModel.backLink = res.locals.backLink
-	return res.render(`course/${pageModel.template}.njk`, {pageModel})
+	return res.render(`course/${pageModel.template}.njk`, {
+		pageModel,
+		banners: {
+			notification: notificationBanner,
+			action: actionBanner,
+		},
+	})
 }
 
 export async function loadCourse(ireq: express.Request, res: express.Response, next: express.NextFunction) {
@@ -94,10 +101,11 @@ export async function loadEvent(ireq: express.Request, res: express.Response, ne
 }
 
 export async function markCourseDeleted(req: express.Request, res: express.Response) {
-	const resp = await removeCourseFromLearningPlan(req.params.courseId, req.user)
+	const courseId = req.params.courseId
+	const resp = await removeCourseFromLearningPlan(courseId, req.user)
 	req.flash('successTitle', req.__('learning_removed_from_plan_title', resp.courseTitle))
 	req.flash('successMessage', req.__('learning_removed_from_plan_message', resp.courseTitle))
 	req.session!.save(() => {
-		res.redirect('/')
+		res.redirect(`/courses/${courseId}`)
 	})
 }

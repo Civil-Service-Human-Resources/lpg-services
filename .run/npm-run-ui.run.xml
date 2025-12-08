@@ -9,10 +9,12 @@
       <env name="CONTACT_EMAIL" value="support@civilservicelearning.uk" />
       <env name="CONTACT_NUMBER" value="020 3640 7985" />
       <env name="COOKIE_AGE_IN_MILLISECONDS" value="15768000" />
+      <env name="COURSE_CATALOGUE_PASS" value="test_course_catalogue_pass" />
       <env name="COURSE_CATALOGUE_URL" value="http://localhost:9001" />
+      <env name="COURSE_CATALOGUE_USER" value="test_course_catalogue_user" />
       <env name="CSL_SERVICE_URL" value="http://localhost:9003/api" />
       <env name="FEEDBACK_URL" value="http://localhost:3001/feedback" />
-      <env name="GOOGLE_ANALYTICS_CSP_ORIGINS" value="*.google-analytics.com,*.analytics.google.com,https://www.googletagmanager.com" />
+      <env name="GOV_NOTIFY_API_KEY" value="test-notify-key" />
       <env name="JWT_KEY" value="jwt_key" />
       <env name="LEARNER_RECORD_URL" value="http://localhost:9000" />
       <env name="LOGGING_LEVEL" value="DEBUG" />
@@ -22,15 +24,16 @@
       <env name="OAUTH_CLIENT_ID" value="oauth-client-id" />
       <env name="OAUTH_CLIENT_SECRET" value="oauth-client-id-secret" />
       <env name="OAUTH_TOKEN_ENDPOINT" value="/oauth2/token" />
-      <env name="ORG_REDIS_TTL" value="604800" />
+      <env name="ORG_REDIS_TTL" value="86400" />
       <env name="REDIS_HOST" value="localhost" />
+      <env name="REDIS_KEY_PREFIX" value="local_csl_frontend_" />
       <env name="REDIS_PASSWORD" value="" />
       <env name="REDIS_PORT" value="6379" />
       <env name="REGISTRY_SERVICE_URL" value="http://localhost:9002" />
       <env name="REQUEST_TIMEOUT" value="60000" />
       <env name="SERVER_TIMEOUT_MS" value="60000" />
       <env name="SESSION_SECRET" value="session_secret" />
-      <env name="STATIC_ASSET_ROOT" value="http://localhost" />
+      <env name="STATIC_ASSET_ROOT" value="http://localhost:3001/" />
       <env name="STATIC_ASSET_TTL" value="300000" />
       <env name="TOKEN_EXPIRY_BUFFER" value="30" />
       <env name="YOUTUBE_API_KEY" value="youtube_api_key" />

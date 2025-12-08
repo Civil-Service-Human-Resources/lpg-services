@@ -15,13 +15,14 @@ import * as luscaConfig from './lib/config/luscaConfig'
 import * as passport from './lib/config/passport'
 import {configureAPI} from './lib/config/passport-backend'
 import {getLogger} from './lib/logger'
-import {logoutUser} from './lib/service/api/cache/cacheService'
+import {clearLearningCachesForUserAndCourse, logoutUser} from './lib/service/api/cache/cacheService'
 import {AreasOfWork} from './lib/service/civilServantRegistry/areaOfWork/areasOfWork'
 import {ProfileCache} from './lib/service/civilServantRegistry/civilServant/profileCache'
 import * as csrsService from './lib/service/civilServantRegistry/csrsService'
 import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
+import {LearningPlanCache} from './lib/service/cslService/cache/LearningPlanCache'
 import {LearningRecordCache} from './lib/service/cslService/cache/learningRecordCache'
 import {RequiredLearningCache} from './lib/service/cslService/cache/RequiredLearningCache'
 import * as cslService from './lib/service/cslService/cslServiceClient'
@@ -75,6 +76,7 @@ const backendRouter = express.Router()
 
 configureAPI(AUTHENTICATION.jwtKey, backendRouter)
 backendRouter.post('/caches/user/:uid/logout', asyncHandler(logoutUser))
+backendRouter.post('/caches/user/:uid/clear-learning/:courseId', asyncHandler(clearLearningCachesForUserAndCourse))
 app.use(backendServerPath, backendRouter)
 
 app.disable('x-powered-by')
@@ -117,7 +119,8 @@ const formattedOrganisationListCache = new FormattedOrganisationListCache(
 )
 const learningRecordCache = new LearningRecordCache(redisClient, config.ENDPOINT_REDIS.LEARNING_RECORD.defaultTTL)
 const requiredLearningCache = new RequiredLearningCache(redisClient, config.ENDPOINT_REDIS.REQUIRED_LEARNING.defaultTTL)
-cslService.setCaches(learningRecordCache, requiredLearningCache, formattedOrganisationListCache)
+const learningPlanCache = new LearningPlanCache(redisClient, config.ENDPOINT_REDIS.LEARNING_PLAN.defaultTTL)
+cslService.setCaches(learningRecordCache, requiredLearningCache, learningPlanCache, formattedOrganisationListCache)
 
 app.use(flash())
 
@@ -192,7 +195,10 @@ passport.configure(
 	`${config.AUTHENTICATION.serviceUrl}${config.AUTHENTICATION.endpoints.authorization}`,
 	`${config.AUTHENTICATION.serviceUrl}${config.AUTHENTICATION.endpoints.token}`,
 	app,
-	`${config.LPG_UI_SERVER}/authenticate`
+	`${config.LPG_UI_SERVER}/authenticate`,
+	learningPlanCache,
+	requiredLearningCache,
+	learningRecordCache
 )
 nunjucks.register(app)
 
@@ -272,7 +278,7 @@ app.use(
 	asyncHandler(courseController.displayModule)
 )
 
-app.get('/learning-record', asyncHandler(requiresDepartmentHierarchy), asyncHandler(learningRecordController.display))
+app.get('/learning-record', asyncHandler(learningRecordController.display))
 
 app.get(
 	'/learning-record/:courseId/:moduleId',
@@ -298,7 +304,7 @@ app.post('/skills/questions/:questionIndex', asyncHandler(skillsController.answe
 app.get('/skills/summary/:answerSubmissionId', asyncHandler(skillsController.quizSummary))
 app.get('/skills/quiz-history', asyncHandler(skillsController.quizHistory))
 
-app.get('/home', asyncHandler(requiresDepartmentHierarchy), asyncHandler(homeController.home))
+app.get('/home', asyncHandler(homeController.home))
 
 app.use('/book', bookingRouter.router)
 

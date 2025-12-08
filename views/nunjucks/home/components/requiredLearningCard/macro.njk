@@ -1,0 +1,57 @@
+{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink %}
+{% from components + "/courseCard/description/macro.njk" import courseCardDescription %}
+{% from components + "/courseCard/properties/macro.njk" import courseCardInfoBadge, courseCardType, courseCardDuration %}
+{% from components + "/courseCard/heading/macro.njk" import courseCardHeading %}
+{% from "../courseCard/properties/macro.njk" import basicHomepageProperties %}
+
+{% macro requiredLearningCard(params) %}
+    <div class="discite__item u-clearfix discite__item--home">
+        {# Heading #}
+        {{ courseCardHeading({
+            "classes": "discite__main--home",
+            "link": {
+                "newTab": params.type == "link",
+                "courseId": params.id,
+                "courseTitle": params.title
+            }
+        }) }}
+
+        {# Properties #}
+        {{ basicHomepageProperties({
+            "items": [
+                courseCardInfoBadge({
+                    "classes": "discite__status--home",
+                    "state": params.status
+                }),
+                courseCardType({
+                    "type": params.type
+                }),
+                courseCardDuration({
+                    "duration": params.duration
+                })
+            ]
+        }) }}
+
+        {# Description #}
+        {{ courseCardDescription({
+            "moduleCount": params.moduleCount,
+            "shortDescription": {
+                "classes": "discite__desc--home",
+                "text": params.shortDescription
+            }
+        }) }}
+        <div class="discite__area lpg-course-dueBy">
+            Due by: {{ params.dueBy | formatDate }}
+        </div>
+
+        {# CTA #}
+        {{ courseCardActions({
+            "classes": "discite__action--home",
+            "actions": {
+                "primary": startLink({
+                    "courseId": params.id
+                })
+            }
+        }) }}
+    </div>
+{% endmacro %}

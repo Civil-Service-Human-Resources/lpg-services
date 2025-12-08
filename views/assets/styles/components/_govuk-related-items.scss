@@ -29,6 +29,19 @@
 		border-bottom: none;
 		border-top: 10px solid $civil-service;
 	}
+
+	@include m(course-actions) {
+		background-color: $light-grey;
+		padding-left: 8px;
+		padding-right: 0;
+		padding-bottom: 12px;
+		border: 1px solid $grey-2;
+		border-top: 10px solid $civil-service;
+		.heading-medium {
+			margin-top: 12px;
+		}
+	}
+
 	@include e(th) {
 		padding-left: 8px;
 	}

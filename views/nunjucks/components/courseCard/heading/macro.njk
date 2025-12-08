@@ -1,0 +1,7 @@
+{% macro courseCardHeading(params) %}
+    <div class="discite__main {{ params.classes }}">
+        <h3 class="heading discite__heading lpg-course-name">
+            <a {% if params.link.newTab %} target="_blank" {% endif %} class="lpg-course-link" href="/courses/{{ params.link.courseId }}">{{ params.link.courseTitle }}</a>
+        </h3>
+    </div>
+{% endmacro %}

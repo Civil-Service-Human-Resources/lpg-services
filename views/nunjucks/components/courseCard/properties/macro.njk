@@ -1,0 +1,77 @@
+{% macro courseCardProperties(params) %}
+    <div class="discite__properties {{ params.classes }} u-clearfix">
+        <ul class="discite__property {{ params.list.classes }}">
+            {% for property in params.list.items %}
+                {{ property | safe }}
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro courseCardProperty(params) %}
+    <li class="discite__property-item">
+        {{ params.content | safe }}
+    </li>
+{% endmacro %}
+
+{# Status badge #}
+
+{% macro courseCardPropertyStatus(params) %}
+    {% set content %}
+        <div class="discite__status {{ params.classes }}">
+            {% if params.badge and params.badge.status !== 'NULL' %}
+                <span class="badge badge--discite badge--{{ params.badge.modifier }}">{{ i18n(params.badge.status) }}</span>
+            {% endif %}
+        </div>
+    {% endset %}
+    {{ courseCardProperty({
+        content: content
+    }) }}
+{% endmacro %}
+
+{% macro courseCardInfoBadge(params) %}
+    {{ courseCardPropertyStatus({
+        "classes": params.classes,
+        "badge": {
+            "modifier": "info",
+            "status": params.state
+        }
+    }) }}
+{% endmacro %}
+
+{# Properties #}
+
+{% macro courseCardPropertySpan(params) %}
+    {% set content %}
+        <span>{{ params.text }}:</span>
+        <span class="lpg-course-{{ params.classModifier }}">{{ params.value }}</span>
+    {% endset %}
+    {{ courseCardProperty({
+        content: content
+    }) }}
+{% endmacro %}
+
+{% macro courseCardCost(params) %}
+    {% set cost = "Free" if params.cost === 0 else "£" + params.cost + " (ex VAT)" %}
+    {{ courseCardPropertySpan({
+        text: "Cost",
+        classModifier: "cost",
+        value: cost
+    }) }}
+{% endmacro %}
+
+{% macro courseCardDuration(params) %}
+    {{ courseCardPropertySpan({
+        text: "Duration",
+        classModifier: "duration",
+        value: params.duration | formatDuration
+    }) }}
+{% endmacro %}
+
+{% macro courseCardType(params) %}
+    {{ courseCardPropertySpan({
+        text: "Type",
+        classModifier: "type",
+        value: i18n(params.type)
+    }) }}
+{% endmacro %}

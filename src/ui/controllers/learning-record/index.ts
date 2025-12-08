@@ -2,7 +2,12 @@ import * as express from 'express'
 import * as extended from '../../../lib/extended'
 import {getLogger} from '../../../lib/logger'
 import * as courseRecordClient from '../../../lib/service/cslService/courseRecord/client'
-import {getLearningRecord} from '../../../lib/service/cslService/cslServiceClient'
+import {
+	learningPlanCache,
+	learningRecordCache,
+	requiredLearningCache,
+	getLearningRecord,
+} from '../../../lib/service/cslService/cslServiceClient'
 import * as template from '../../../lib/ui/template'
 import * as datetime from '../../../lib/datetime'
 
@@ -29,6 +34,11 @@ export async function courseResult(ireq: express.Request, res: express.Response)
 		if (moduleState === 'IN_PROGRESS') {
 			res.redirect(`/courses/${course.id}`)
 		} else {
+			await Promise.all([
+				learningPlanCache.clearForCourse(req.user.id, course.id),
+				learningRecordCache.delete(req.user.id),
+				requiredLearningCache.clearForCourse(req.user.id, course.id),
+			])
 			const courseModuleDisplayStates: (string | null)[] = course.modules.map(m => {
 				const recordForModule = courseRecord!.modules.find(mr => m.id === mr.moduleId)
 				return m.getDisplayState(recordForModule, course.getRequiredRecurringAudience())

@@ -5,6 +5,9 @@ import {CourseRecord} from '../../../../lib/service/cslService/models/courseReco
 import {ModuleRecord} from '../../../../lib/service/cslService/models/moduleRecord'
 import {BasicCoursePage, BlendedCoursePage, CourseDetails, CoursePage, SingleModuleCoursePage} from './coursePage'
 import {BaseModuleCard, F2FModuleCard, FileModuleCard} from './moduleCard'
+import {getLogger} from '../../../../lib/logger'
+
+const logger = getLogger('course/models/factory')
 
 // Modules
 
@@ -81,17 +84,39 @@ export function getF2FModuleCard(
 // Course
 
 export async function getCoursePage(user: User, course: Course): Promise<BasicCoursePage> {
+	const courseRecord = await getCourseRecord(course.id, user)
+	if (courseRecord) {
+		course.record = courseRecord
+	}
+	let basicCoursePage: BasicCoursePage
 	if (course.modules.length === 0) {
-		return getNoModuleCoursePage(course)
+		basicCoursePage = getNoModuleCoursePage(course)
+	} else if (course.modules.length === 1) {
+		const module = course.modules[0]
+		basicCoursePage = getSingleModuleCoursePage(course, module, courseRecord)
 	} else {
-		const courseRecord = await getCourseRecord(course.id, user)
-		if (course.modules.length === 1) {
-			const module = course.modules[0]
-			return getSingleModuleCoursePage(course, module, courseRecord)
+		basicCoursePage = getBlendedCoursePage(course, courseRecord)
+	}
+
+	basicCoursePage.id = course.id
+	basicCoursePage.isInLearningPlan = false
+	if (course.isRequired()) {
+		basicCoursePage.isInLearningPlan = undefined
+	} else if (!course.record) {
+		basicCoursePage.isInLearningPlan = false
+	} else {
+		logger.debug(`course.record.state: ${course.record.state}`)
+		const hasFaceToFaceModule = course.record.modules.some(m => m.moduleType === 'face-to-face')
+		logger.debug(`hasFaceToFaceModule: ${hasFaceToFaceModule}`)
+		if (course.record.isComplete() || hasFaceToFaceModule) {
+			basicCoursePage.isInLearningPlan = undefined
+		} else if (course.record.state === 'ARCHIVED') {
+			basicCoursePage.isInLearningPlan = false
 		} else {
-			return getBlendedCoursePage(course, courseRecord)
+			basicCoursePage.isInLearningPlan = true
 		}
 	}
+	return basicCoursePage
 }
 
 export function getBlendedCoursePage(course: Course, courseRecord?: CourseRecord): BlendedCoursePage {

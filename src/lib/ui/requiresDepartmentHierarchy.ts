@@ -8,7 +8,8 @@ export async function requiresDepartmentHierarchy(req: Request, res: Response, n
 	const user: User = req.user
 	if (user && user.organisationalUnit !== undefined) {
 		try {
-			res.locals.departmentHierarchyCodes = (await getOrgHierarchy(user.organisationalUnit.id, user)).map(o => o.code)
+			const departmentHierarchy = await getOrgHierarchy(user.organisationalUnit.id, user)
+			res.locals.departmentHierarchyCodes = departmentHierarchy.map(o => o.code)
 		} catch (error) {
 			if (error instanceof ResourceNotFoundError) {
 				const profile = await fetchProfile(user.id, user.accessToken)

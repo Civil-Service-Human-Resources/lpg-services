@@ -10,9 +10,12 @@ import {CourseRecord} from './service/cslService/models/courseRecord'
 import {RecordState} from './service/cslService/models/record'
 import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {CacheableObject} from './utils/cacheableObject'
-import {KeyValue} from './utils/dataUtils'
 
 import _ = require('lodash')
+
+export interface ICourse {
+	id: string
+}
 
 export interface LineManager {
 	email: string
@@ -89,7 +92,7 @@ export type CourseStatus = 'Published' | 'Archived'
 
 export type CourseType = ModuleType | 'blended' | 'unknown'
 
-export class Course {
+export class Course implements ICourse {
 	static create(data: any, user?: User) {
 		const course = new Course(data.id)
 		course.description = data.description
@@ -666,61 +669,16 @@ export class Domain {
 	domain: string
 }
 
-export class OrganisationalUnit implements CacheableObject, KeyValue {
+export class OrganisationalUnit implements CacheableObject {
 	id: number
-	code: string
 	name: string
+	code: string
 	abbreviation?: string
-	@Type(() => OrganisationalUnit)
-	parent?: OrganisationalUnit
-	parentId: number
-	@Type(() => AgencyToken)
-	agencyToken: AgencyToken
-	formattedName: string
-	children: OrganisationalUnit[] = []
-	paymentMethods: string[]
-
-	@Type(() => Domain)
-	domains: Domain[] = []
+	parentId?: number
+	parentName?: string
 
 	getId(): string {
 		return this.id.toString()
-	}
-
-	getHierarchyAsArray() {
-		const hierarchy: OrganisationalUnit[] = [this]
-		let currentParent = this.parent
-		while (currentParent) {
-			hierarchy.push(currentParent)
-			currentParent = currentParent.parent
-		}
-		return hierarchy
-	}
-
-	extractAllOrgs() {
-		const orgs: OrganisationalUnit[] = [this]
-		if (this.children) {
-			for (const child of this.children) {
-				orgs.push(...child.extractAllOrgs())
-			}
-		}
-		return orgs
-	}
-
-	doesDomainExistInToken(domain: string) {
-		let exists = false
-		if (this.agencyToken && this.agencyToken.agencyDomains.map(a => a.domain).includes(domain)) {
-			exists = true
-		}
-		return exists
-	}
-
-	doesDomainExist(domain: string): boolean {
-		return this.domains.find(d => d.domain === domain) !== undefined
-	}
-
-	formatNameWithAbbrev(): string {
-		return this.abbreviation && this.abbreviation !== '' ? `${this.name} (${this.abbreviation})` : this.name
 	}
 }
 

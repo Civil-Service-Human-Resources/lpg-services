@@ -9,9 +9,7 @@ export class OrganisationalUnitCache extends CacheableObjectCache<Organisational
 	}
 
 	async set(id: string | number, organisationalUnit: OrganisationalUnit, ttlOverride?: number) {
-		organisationalUnit.parent = undefined
-		organisationalUnit.children = []
-		super.set(id, organisationalUnit, ttlOverride)
+		await super.set(id, organisationalUnit, ttlOverride)
 	}
 
 	protected convert(cacheHit: string): OrganisationalUnit {

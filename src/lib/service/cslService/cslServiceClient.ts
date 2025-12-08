@@ -1,6 +1,7 @@
 import {plainToInstance} from 'class-transformer'
 import {client} from './baseConfig'
 import {User} from '../../model'
+import {LearningPlanCache} from './cache/LearningPlanCache'
 import {LearningRecordCache} from './cache/learningRecordCache'
 import {RequiredLearningCache} from './cache/RequiredLearningCache'
 import {BookEventDto} from './models/BookEventDto'
@@ -9,54 +10,64 @@ import {CourseActionResponse} from './models/CourseActionResponse'
 import {FormattedOrganisationList} from './models/csrs/formattedOrganisationList'
 import {FormattedOrganisationListCache} from './models/csrs/formattedOrganisationListCache'
 import {FormattedOrganisations} from './models/csrs/formattedOrganisations'
+import {GetOrganisationalUnitParams} from './models/csrs/getOrganisationalUnitParams'
 import {GetOrganisationsFormattedParams} from './models/csrs/getOrganisationsFormattedParams'
+import {OrganisationalUnits} from './models/csrs/organisationalUnits'
 import {EventActionResponse} from './models/EventActionResponse'
-import {createUserDto} from './models/factory/UserDtoFactory'
 import {LaunchModuleResponse} from './models/launchModuleResponse'
 import {AreasOfWork} from './models/areasOfWork'
+import {LearningPlan} from './models/learning/learningPlan/learningPlan'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
 import {RequiredLearning} from './models/learning/requiredLearning/requiredLearning'
-import {UserDto} from './models/UserDto'
 import {Grades} from './models/grades'
 
 export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
+export let learningPlanCache: LearningPlanCache
 export let formattedOrganisationListCache: FormattedOrganisationListCache
 
 export const setCaches = (
 	learningRecordPageCache: LearningRecordCache,
 	requiredLearningPageCache: RequiredLearningCache,
+	LearningPlanPageCache: LearningPlanCache,
 	formattedOrgListCache: FormattedOrganisationListCache
 ) => {
 	learningRecordCache = learningRecordPageCache
 	requiredLearningCache = requiredLearningPageCache
+	learningPlanCache = LearningPlanPageCache
 	formattedOrganisationListCache = formattedOrgListCache
 }
 
+export async function clearLearningCachesForCourse(userId: string, courseId: string) {
+	await Promise.all([
+		learningPlanCache.clearForCourse(userId, courseId),
+		requiredLearningCache.clearForCourse(userId, courseId),
+		learningRecordCache.delete(userId),
+	])
+}
+
 export async function launchModule(courseId: string, moduleId: string, user: User): Promise<LaunchModuleResponse> {
-	const body: UserDto = await createUserDto(user)
-	const resp = await client._post<UserDto, LaunchModuleResponse>(
+	const resp = await client._postNoBody<LaunchModuleResponse>(
 		{
 			url: `/courses/${courseId}/modules/${moduleId}/launch`,
 		},
-		body,
 		user
 	)
 	await requiredLearningCache.clearForCourse(user.id, courseId)
+	await learningPlanCache.delete(user.id)
 	await learningRecordCache.delete(user.id)
 	return plainToInstance(LaunchModuleResponse, resp)
 }
 
 export async function completeModule(courseId: string, moduleId: string, user: User): Promise<void> {
-	const body: UserDto = await createUserDto(user)
-	await client._post<UserDto, LaunchModuleResponse>(
+	await client._postNoBody<LaunchModuleResponse>(
 		{
 			url: `/courses/${courseId}/modules/${moduleId}/complete`,
 		},
-		body,
 		user
 	)
 	await requiredLearningCache.clearForCourse(user.id, courseId)
+	await learningPlanCache.delete(user.id)
 	await learningRecordCache.delete(user.id)
 }
 
@@ -68,6 +79,7 @@ export async function removeCourseFromLearningPlan(courseId: string, user: User)
 		undefined,
 		user
 	)
+	await learningPlanCache.removeCourse(user.id, courseId)
 	return plainToInstance(CourseActionResponse, resp)
 }
 
@@ -79,6 +91,7 @@ export async function addCourseToLearningPlan(courseId: string, user: User): Pro
 		undefined,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(CourseActionResponse, resp)
 }
 
@@ -107,6 +120,7 @@ export async function bookEvent(
 		bookEventDto,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -124,6 +138,7 @@ export async function cancelEventBooking(
 		dto,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -133,15 +148,14 @@ export async function completeEventBooking(
 	eventId: string,
 	user: User
 ): Promise<EventActionResponse> {
-	const userDto = await createUserDto(user)
-	const resp = await client._post<UserDto, EventActionResponse>(
+	const resp = await client._postNoBody<EventActionResponse>(
 		{
 			url: `/courses/${courseId}/modules/${moduleId}/events/${eventId}/complete_booking`,
 		},
-		userDto,
 		user
 	)
 	await learningRecordCache.delete(user.id)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -158,6 +172,7 @@ export async function skipEventBooking(
 		null,
 		user
 	)
+	await learningPlanCache.delete(user.id)
 	return plainToInstance(EventActionResponse, resp)
 }
 
@@ -189,6 +204,21 @@ export async function getRequiredLearning(user: User): Promise<RequiredLearning>
 		await requiredLearningCache.setObject(requiredLearning)
 	}
 	return requiredLearning
+}
+
+export async function getLearningPlan(user: User): Promise<LearningPlan> {
+	let learningPlan = await learningPlanCache.get(user.id)
+	if (learningPlan === undefined) {
+		const resp = await client._get(
+			{
+				url: `/learning/plan`,
+			},
+			user
+		)
+		learningPlan = plainToInstance(LearningPlan, resp)
+		await learningPlanCache.setObject(learningPlan)
+	}
+	return learningPlan
 }
 
 export async function getAreasOfWork(user: User) {
@@ -290,4 +320,15 @@ export async function getOrganisationsDropdown(user: User, params: GetOrganisati
 		await formattedOrganisationListCache.set(cacheKey, typeahead)
 	}
 	return typeahead.formattedOrganisations
+}
+
+export async function getOrganisationalUnits(params: GetOrganisationalUnitParams, user: User) {
+	const res = await client._get<OrganisationalUnits>(
+		{
+			url: '/organisations',
+			params,
+		},
+		user
+	)
+	return plainToInstance(OrganisationalUnits, res)
 }
