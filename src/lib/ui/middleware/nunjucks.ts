@@ -71,6 +71,12 @@ export const register = (app: Express) => {
 		.addFilter('i18nList', (list: string[]) => {
 			return list.map(l => i18nConfig.__(l))
 		})
+		.addFilter('formatDate', (date: string) => {
+			return datetime.formatDate(new Date(date))
+		})
+		.addFilter('courseDuration', (durationString: string) => {
+			return datetime.formatCourseDuration(parseInt(durationString))
+		})
 
 	// Middleware
 	nunjucksEndpoints.forEach(endpoint => {
