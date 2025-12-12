@@ -57,6 +57,7 @@ describe('Course page model tests', () => {
 			expect(result.cost).eql(1)
 			expect(result.displayState).eql('')
 			expect(result.template).eql('singleModule')
+			expect(result.displayMandatoryStatus).eql(true)
 		})
 		it('Should build a file module card', () => {
 			const fileCard = getFileModuleCard(module, getBasicModuleCard(module, course)) as FileModuleCard
@@ -182,6 +183,10 @@ describe('Course page model tests', () => {
 				const result = getSingleModuleCoursePage(course, f2f)
 				expect(result.type).eql('face-to-face')
 				expect(result.location).eql('London')
+			})
+			it('Should hide the mandatory status for a single module course', () => {
+				const result = getSingleModuleCoursePage(course, module)
+				expect(result.moduleDetails.displayMandatoryStatus).eql(false)
 			})
 		})
 	})

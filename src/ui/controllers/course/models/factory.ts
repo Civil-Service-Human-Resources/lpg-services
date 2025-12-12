@@ -43,6 +43,7 @@ export function getBasicModuleCard(module: Module, course: Course, moduleRecord?
 		mustConfirmBooking: false,
 		template: 'singleModule',
 		displayState,
+		displayMandatoryStatus: true,
 	}
 }
 
@@ -163,6 +164,7 @@ export function getSingleModuleCoursePage(
 	const coursePage: CoursePage = getBasicCoursePage(course)
 	const moduleRecord = courseRecord ? courseRecord.getModuleRecord(module.id) : undefined
 	const moduleCard = getModuleCard(course, module, moduleRecord)
+	moduleCard.displayMandatoryStatus = false
 	const courseDetails = getCourseDetails(course)
 	if (module.type === 'face-to-face') {
 		courseDetails.location = module.location
