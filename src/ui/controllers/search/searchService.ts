@@ -7,6 +7,7 @@ import {getAreasOfWork, getInterests} from '../../../lib/service/civilServantReg
 import * as csrsService from '../../../lib/service/civilServantRegistry/csrsService'
 import * as courseRecordClient from '../../../lib/service/cslService/courseRecord/client'
 import {CourseRecord} from '../../../lib/service/cslService/models/courseRecord'
+import {RecordState} from '../../../lib/service/cslService/models/record'
 import {CourseSearchQuery} from './models/courseSearchQuery'
 import {SearchFilter, Pagination, PaginationNumberedPage, SearchPageModel, SearchCourse} from './models/searchPageModel'
 
@@ -56,8 +57,12 @@ export function getFormattedCourses(results: Course[], courseRecords: Map<string
 	return results.map(c => {
 		const record = courseRecords.get(c.id)
 		let inLearningPlan = c.isRequired()
-		if (record && record.state && record.state !== 'ARCHIVED') {
-			inLearningPlan = !!record || c.isRequired()
+		let state: RecordState = ''
+		if (record && record.state) {
+			state = record.state
+			if (record.state !== 'ARCHIVED') {
+				inLearningPlan = !!record || c.isRequired()
+			}
 		}
 		return {
 			costInPounds: c.getCost() || 0,
@@ -67,7 +72,7 @@ export function getFormattedCourses(results: Course[], courseRecords: Map<string
 			shortDescription: c.shortDescription,
 			type: c.getType(),
 			title: c.title,
-			status: '',
+			status: state,
 			inLearningPlan,
 		}
 	})

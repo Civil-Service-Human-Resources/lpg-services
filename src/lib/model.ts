@@ -2,7 +2,6 @@ import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
 import * as datetime from '../lib/datetime'
-import * as learnerRecord from '../lib/learnerrecord'
 import {AreaOfWork, Grade, Interest, Profile} from './registry'
 import {IdentityDetails} from './service/identity/models/identityDetails'
 import {CourseRecord} from './service/cslService/models/courseRecord'
@@ -105,7 +104,7 @@ export class Course implements ICourse {
 	audiences: Audience[]
 	audience?: Audience
 
-	record?: learnerRecord.CourseRcd
+	record?: CourseRecord
 
 	constructor(id: string) {
 		this.id = id

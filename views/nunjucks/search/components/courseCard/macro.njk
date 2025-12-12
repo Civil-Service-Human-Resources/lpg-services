@@ -1,6 +1,6 @@
 {% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, removeFromLearningPlanLink, addToLearningPlanLink %}
 {% from components + "/courseCard/description/macro.njk" import courseCardDescription %}
-{% from components + "/courseCard/properties/macro.njk" import courseCardType, courseCardDuration, courseCardCost, courseCardProperties %}
+{% from components + "/courseCard/properties/macro.njk" import courseCardInfoBadge, courseCardType, courseCardDuration, courseCardCost, courseCardProperties %}
 {% from components + "/courseCard/heading/macro.njk" import courseCardHeading %}
 
 {% macro searchCard(params) %}
@@ -16,11 +16,20 @@
         }) }}
 
         {# Properties #}
+        {% set badge %}
+            {% if params.status !== 'COMPLETED' and params.status !== 'ARCHIVED' %}
+                {{ courseCardInfoBadge({
+                    "classes": "discite__status--search",
+                    "state": params.status
+                }) }}
+            {% endif %}
+        {% endset %}
         {{ courseCardProperties({
             "classes": "discite__properties--search",
             "list": {
                 "classes": "discite__property--search",
                 "items": [
+                    badge,
                     courseCardType({
                         "type": params.type
                     }),
