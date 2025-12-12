@@ -29,5 +29,4 @@ export class Record {
 	isCompleted() {
 		return this.state === 'COMPLETED'
 	}
-
 }
