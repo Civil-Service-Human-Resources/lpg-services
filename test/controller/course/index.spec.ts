@@ -78,6 +78,7 @@ describe('Course controller tests', () => {
 			launchLink: `/courses/courseID/moduleID`,
 			duration: '1 minute',
 			cost: 1,
+			displayMandatoryStatus: true,
 		}
 		describe('base layout tests', () => {
 			const noModuleCoursePage: BasicCoursePage = {
