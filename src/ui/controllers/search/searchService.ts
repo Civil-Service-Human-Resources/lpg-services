@@ -11,8 +11,6 @@ import {RecordState} from '../../../lib/service/cslService/models/record'
 import {CourseSearchQuery} from './models/courseSearchQuery'
 import {SearchFilter, Pagination, PaginationNumberedPage, SearchPageModel, SearchCourse} from './models/searchPageModel'
 
-import * as i18n from '../../../../locale/en.json'
-
 export async function searchForCourses(params: CourseSearchQuery, user: User, departmentHierarchyCodes: string[]) {
 	const searchQuery = buildParams(params)
 	const searchResults = await courseSearch(searchQuery, user, departmentHierarchyCodes)
@@ -38,7 +36,12 @@ export async function searchForCourses(params: CourseSearchQuery, user: User, de
 		...departmentFilters,
 		...areaOfWorkFilters,
 		...interestFilters,
-		selectedLearningTypes: Object.entries(i18n.courseTypes).map(value => {
+		selectedLearningTypes: Object.entries({
+			'face-to-face': 'Face to face',
+			link: 'Link',
+			elearning: 'Online',
+			video: 'Video',
+		}).map(value => {
 			return {
 				label: value[1],
 				value: value[0],
