@@ -1,26 +1,13 @@
-import {Course} from '../../../../lib/model'
-import {costType, typesType} from '../../../../lib/service/catalog/models/courseSearchParams'
+import {BasicCourse} from '../../../../lib/service/cslService/models/learning/learningPlan/basicCourse'
 
-export interface FilterBox {
-	other: string[]
-	selected: string[]
-	yours: string[]
-}
-
-export interface OrgPartial {
-	code: string
-	name: string
-}
-
-export interface OrgFilterBox {
-	other: OrgPartial[]
-	selected: string[]
-	yours: OrgPartial
+export class SearchCourse extends BasicCourse {
+	public inLearningPlan: boolean
 }
 
 export interface PaginationNumberedPage {
-	number: number
+	number?: number
 	link?: string
+	ellipses?: boolean
 }
 
 export interface Pagination {
@@ -29,18 +16,32 @@ export interface Pagination {
 	total: number
 	prevLink?: string
 	nextLink?: string
-	numberedPages?: PaginationNumberedPage[]
+	numberedPages: PaginationNumberedPage[]
+}
+
+export interface SearchFilter {
+	id: string
+	value: string
+	label: string
+	checked: boolean
+}
+
+export interface Filters {
+	selectedLearningTypes: SearchFilter[]
+	showFree: boolean
+	userDepartment: SearchFilter
+	otherDepartments: SearchFilter[]
+	userAreasOfWork: SearchFilter[]
+	otherAreasOfWork: SearchFilter[]
+	userInterests: SearchFilter[]
+	otherInterests: SearchFilter[]
 }
 
 export class SearchPageModel {
 	constructor(
-		public areasOfWork: FilterBox,
-		public departments: OrgFilterBox,
-		public interests: FilterBox,
-		public courseTypes: typesType[],
+		public filters: Filters,
 		public query: string,
-		public searchResults: Course[],
-		public pagination: Pagination,
-		public cost?: costType
+		public searchResults: SearchCourse[],
+		public pagination: Pagination
 	) {}
 }

@@ -304,6 +304,10 @@ export async function setFullName(user: User, fullName: string, newProfile: bool
 	)
 }
 
+export async function getAllOrganisationsDropdown(user: User) {
+	return await getOrganisationsDropdown(user, new GetOrganisationsFormattedParams())
+}
+
 export async function getOrganisationsDropdown(user: User, params: GetOrganisationsFormattedParams) {
 	const cacheKey = params.getCacheKey()
 	let typeahead = await formattedOrganisationListCache.get(cacheKey)

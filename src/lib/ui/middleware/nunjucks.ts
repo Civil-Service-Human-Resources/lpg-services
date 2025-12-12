@@ -14,7 +14,7 @@ const baseLayout = `${viewsRoot}/root/baseLayout.njk`
 const components = `${viewsRoot}/components`
 const partials = `${viewsRoot}/partials`
 
-const nunjucksEndpoints = ['/courses/:courseId', '/learning-record', '/', '/home']
+const nunjucksEndpoints = ['/courses/:courseId', '/learning-record', '/', '/home', '/search']
 
 const logger = getLogger(`nunjucks`)
 
@@ -79,8 +79,9 @@ export const register = (app: Express) => {
 		})
 
 	// Middleware
+	const nunjucksMiddleware = middleware()
 	nunjucksEndpoints.forEach(endpoint => {
-		app.get(endpoint, middleware())
+		app.get(endpoint, nunjucksMiddleware)
 	})
 
 	if (IS_DEV) {

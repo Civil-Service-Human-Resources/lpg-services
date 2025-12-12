@@ -36,5 +36,57 @@ describe('searchService tests', () => {
 			assert.equal(res.end, 20)
 			assert.equal(res.total, 30)
 		})
+		it('Should render 7 pages with ellipses before the current page', () => {
+			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
+			searchResults.totalResults = 80
+			searchResults.size = 10
+			searchResults.page = 5
+			const res = getPagination(params, searchResults)
+			assert.equal(res.nextLink, '/search?q=query&p=7')
+			assert.equal(res.prevLink, '/search?q=query&p=5')
+			assert.equal(res.numberedPages?.length, 6)
+			assert.equal(res.numberedPages[0].link, '/search?q=query&p=1')
+			assert.equal(res.numberedPages[1].ellipses, true)
+			assert.equal(res.numberedPages[2].link, '/search?q=query&p=5')
+			assert.equal(res.start, 51)
+			assert.equal(res.end, 60)
+			assert.equal(res.total, 80)
+		})
+		it('Should render 7 pages with ellipses after the current page', () => {
+			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
+			searchResults.totalResults = 80
+			searchResults.size = 10
+			searchResults.page = 2
+			const res = getPagination(params, searchResults)
+			assert.equal(res.nextLink, '/search?q=query&p=4')
+			assert.equal(res.prevLink, '/search?q=query&p=2')
+			assert.equal(res.numberedPages?.length, 6)
+			assert.equal(res.numberedPages[3].link, '/search?q=query&p=4')
+			assert.equal(res.numberedPages[4].ellipses, true)
+			assert.equal(res.numberedPages[5].link, '/search?q=query&p=8')
+			assert.equal(res.start, 21)
+			assert.equal(res.end, 30)
+			assert.equal(res.total, 80)
+		})
+		it('Should render 7 pages with ellipses before and after the current page', () => {
+			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
+			searchResults.totalResults = 80
+			searchResults.size = 10
+			searchResults.page = 4
+			const res = getPagination(params, searchResults)
+			assert.equal(res.nextLink, '/search?q=query&p=6')
+			assert.equal(res.prevLink, '/search?q=query&p=4')
+			assert.equal(res.numberedPages?.length, 7)
+			assert.equal(res.numberedPages[0].link, '/search?q=query&p=1')
+			assert.equal(res.numberedPages[1].ellipses, true)
+			assert.equal(res.numberedPages[2].link, '/search?q=query&p=4')
+			assert.equal(res.numberedPages[3].link, undefined)
+			assert.equal(res.numberedPages[4].link, '/search?q=query&p=6')
+			assert.equal(res.numberedPages[5].ellipses, true)
+			assert.equal(res.numberedPages[6].link, '/search?q=query&p=8')
+			assert.equal(res.start, 41)
+			assert.equal(res.end, 50)
+			assert.equal(res.total, 80)
+		})
 	})
 })

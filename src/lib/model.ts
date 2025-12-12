@@ -1,4 +1,3 @@
-import {Type} from 'class-transformer'
 import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
@@ -93,99 +92,6 @@ export type CourseStatus = 'Published' | 'Archived'
 export type CourseType = ModuleType | 'blended' | 'unknown'
 
 export class Course implements ICourse {
-	static create(data: any, user?: User) {
-		const course = new Course(data.id)
-		course.description = data.description
-		course.learningOutcomes = data.learningOutcomes
-		course.shortDescription = data.shortDescription
-		course.title = data.title
-		course.status = data.status
-
-		course.modules = (data.modules || []).map(Module.create)
-
-		const audiences = (data.audiences || []).map(Audience.create)
-		course.audiences = audiences
-
-		if (user) {
-			let matchedAudience = null
-			let matchedRelevance = -1
-			let audienceWithRelevanceThree = null
-			let audienceWithRelevanceTwo = null
-			let audienceWithRelevanceOne = null
-			let minRequiredByAudienceWithRelevanceThree = null
-			let minRequiredByAudienceWithRelevanceTwo = null
-			let minRequiredByAudienceWithRelevanceOne = null
-			for (const audience of audiences) {
-				//Get the relevance of each audience
-				const relevance = audience.getRelevance(user!, [])
-				//If the relevance of the audience is same or more then the previous audience
-				//then keep processing the further audiences in the course to get the highest relevance audience
-				if (relevance >= matchedRelevance) {
-					matchedAudience = audience
-					matchedRelevance = relevance
-					//audience with relevance 3 will have the required by date
-					//and the audience with relevance 2 and 1 can also have the required by date
-					//and if multiple audiences are found within the relevance 3 or 2 or 1
-					//then the audience which has earliest due date within the same relevance need to be selected
-					//to keep it in sync with the backend code which fetches the mandatory course for homepage
-					if (relevance === 3) {
-						if (minRequiredByAudienceWithRelevanceThree == null) {
-							minRequiredByAudienceWithRelevanceThree = audience
-						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevanceThree.requiredBy) {
-							minRequiredByAudienceWithRelevanceThree = audience
-						}
-						audienceWithRelevanceThree = minRequiredByAudienceWithRelevanceThree
-					}
-					if (relevance === 2) {
-						if (minRequiredByAudienceWithRelevanceTwo == null) {
-							minRequiredByAudienceWithRelevanceTwo = audience
-						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevanceTwo.requiredBy) {
-							minRequiredByAudienceWithRelevanceTwo = audience
-						}
-						audienceWithRelevanceTwo = minRequiredByAudienceWithRelevanceTwo
-					}
-					if (relevance === 1) {
-						if (minRequiredByAudienceWithRelevanceOne == null) {
-							minRequiredByAudienceWithRelevanceOne = audience
-						}
-						if (audience.requiredBy < minRequiredByAudienceWithRelevanceOne.requiredBy) {
-							minRequiredByAudienceWithRelevanceOne = audience
-						}
-						audienceWithRelevanceOne = minRequiredByAudienceWithRelevanceOne
-					}
-				}
-			}
-
-			//if the audiences with relevance 1, 2 and 3 are found
-			//then matchedAudience will be of the highest priority of relevance
-			//i.e. relevance 3 then 2 then 1
-			if (audienceWithRelevanceOne) {
-				matchedAudience = audienceWithRelevanceOne
-			}
-			if (audienceWithRelevanceTwo) {
-				matchedAudience = audienceWithRelevanceTwo
-			}
-			if (audienceWithRelevanceThree) {
-				matchedAudience = audienceWithRelevanceThree
-			}
-
-			course.audience = matchedAudience
-
-			if (course.audience) {
-				course.audience.mandatory = false
-				course.audience.departments.forEach(a => {
-					if (a === user.getOrganisationCode() && course.audience!.type === 'REQUIRED_LEARNING') {
-						course.audience!.mandatory = true
-					}
-				})
-			}
-		}
-
-		return course
-	}
-
 	id: string
 	title: string
 	shortDescription: string
@@ -231,16 +137,6 @@ export class Course implements ICourse {
 
 	getModule(moduleId: string) {
 		return this.getModules().find(m => m.id === moduleId)
-	}
-
-	getEvent(eventId: string): Event | undefined {
-		for (const module of this.getModules()) {
-			const event = module.getEvent(eventId)
-			if (event !== undefined) {
-				return event
-			}
-		}
-		return undefined
 	}
 
 	public getModulesRequiredForCompletion() {
@@ -293,7 +189,7 @@ export class Course implements ICourse {
 		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : undefined
 	}
 
-	getDuration() {
+	getDurationSeconds() {
 		const durationArray = this.modules.map(m => m.duration)
 
 		this.modules.forEach((module, i) => {
@@ -332,56 +228,19 @@ export class Course implements ICourse {
 		for (let i = 0; i < durationArray.length; i++) {
 			totalDuration += durationArray[i]
 		}
+		return totalDuration
+	}
 
-		if (durationArray.length > 0) {
-			return datetime.formatCourseDuration(Number(totalDuration))
+	getDuration() {
+		const getDurationSeconds = this.getDurationSeconds()
+		if (getDurationSeconds > 0) {
+			return datetime.formatCourseDuration(Number(getDurationSeconds))
 		}
 		return '0 minutes'
 	}
 
 	getGrades() {
 		return this.audience ? this.audience.grades : []
-	}
-
-	canBeBooked() {
-		return this.modules.filter(m => m.canBeBooked()).length > 0
-	}
-
-	getSelectedDate() {
-		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
-			if (bookedModuleRecord) {
-				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
-				if (bookedModule) {
-					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
-					if (event) {
-						return event.startDate
-					}
-				}
-			}
-		}
-		return null
-	}
-
-	getDateRanges() {
-		if (this.record) {
-			const bookedModuleRecord = this.record.modules.find(m => !!m.eventId && m.state !== 'SKIPPED')
-			if (bookedModuleRecord) {
-				const bookedModule = this.modules.find(m => m.id === bookedModuleRecord.moduleId)
-				if (bookedModule) {
-					const event = bookedModule.getEvent(bookedModuleRecord.eventId!)
-					if (event) {
-						return event.dateRanges.sort(function compare(a, b) {
-							const dateA = new Date(_.get(a, 'date', ''))
-							const dateB = new Date(_.get(b, 'date', ''))
-							// @ts-ignore
-							return dateA - dateB
-						})
-					}
-				}
-			}
-		}
-		return null
 	}
 
 	getType(): CourseType {
@@ -396,10 +255,6 @@ export class Course implements ICourse {
 
 	isRequired() {
 		return this.audience ? this.audience.mandatory : false
-	}
-
-	hasModules() {
-		return (this.modules || []).length > 0
 	}
 }
 
@@ -657,18 +512,6 @@ export class RequiredRecurringAudience {
 	) {}
 }
 
-export class AgencyToken {
-	token: string
-	uid: string
-	@Type(() => Domain)
-	agencyDomains: Domain[]
-}
-
-export class Domain {
-	id: string
-	domain: string
-}
-
 export class OrganisationalUnit implements CacheableObject {
 	id: number
 	name: string
@@ -795,14 +638,6 @@ export class User implements CSLUser {
 
 	getOrganisationCode() {
 		return this.organisationalUnit ? this.organisationalUnit.code : undefined
-	}
-
-	getAreaOfWorkId() {
-		return this.areaOfWork ? this.areaOfWork.id : undefined
-	}
-
-	getAreaOfWorkName() {
-		return this.areaOfWork ? this.areaOfWork.name : undefined
 	}
 
 	getAllAreasOfWork() {

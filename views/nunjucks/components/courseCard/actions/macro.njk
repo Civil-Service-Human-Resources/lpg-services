@@ -35,6 +35,13 @@
     }) }}
 {% endmacro %}
 
+{% macro addToLearningPlanLink(params) %}
+    {{ ctaLink({
+        "href": "/suggestions-for-you/add/" + params.courseId + "?ref=search",
+        "text": "Add to learning plan"
+    }) }}
+{% endmacro %}
+
 {% macro ctaLink(params) %}
     <a class="discite__action-link--main" href="{{ params.href }}">{{ params.text }}</a>
 {% endmacro %}

@@ -12,6 +12,7 @@
 		"outDir": "./dist",
 		"preserveConstEnums": true,
 		"pretty": true,
+		"resolveJsonModule": true,
 		"sourceMap": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,

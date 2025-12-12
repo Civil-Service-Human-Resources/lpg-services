@@ -1,0 +1,66 @@
+{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, removeFromLearningPlanLink, addToLearningPlanLink %}
+{% from components + "/courseCard/description/macro.njk" import courseCardDescription %}
+{% from components + "/courseCard/properties/macro.njk" import courseCardType, courseCardDuration, courseCardCost, courseCardProperties %}
+{% from components + "/courseCard/heading/macro.njk" import courseCardHeading %}
+
+{% macro searchCard(params) %}
+    <div class="discite__item u-clearfix discite__item--search">
+        {# Heading #}
+        {{ courseCardHeading({
+            "classes": "discite__main--search",
+            "link": {
+                "newTab": params.type == "link",
+                "courseId": params.id,
+                "courseTitle": params.title
+            }
+        }) }}
+
+        {# Properties #}
+        {{ courseCardProperties({
+            "classes": "discite__properties--search",
+            "list": {
+                "classes": "discite__property--search",
+                "items": [
+                    courseCardType({
+                        "type": params.type
+                    }),
+                    courseCardDuration({
+                        "duration": params.duration
+                    }),
+                    courseCardCost({
+                        "cost": params.costInPounds
+                    })
+                ]
+            }
+        }) }}
+
+        {# Description #}
+        {{ courseCardDescription({
+            "moduleCount": params.moduleCount,
+            "shortDescription": {
+                "classes": "discite__desc--search",
+                "text": params.shortDescription
+            }
+        }) }}
+
+        {# CTA #}
+        {% set secondary %}
+            {% if params.inLearningPlan %}
+                <span>Already in your learning plan</span>
+            {% else %}
+                {{ addToLearningPlanLink({
+                    "courseId": params.id
+                }) }}
+            {% endif %}
+        {% endset %}
+        {{ courseCardActions({
+            "classes": "discite__action--search",
+            "actions": {
+                "primary": startLink({
+                    "courseId": params.id
+                }),
+                "secondary": secondary
+            }
+        }) }}
+    </div>
+{% endmacro %}
