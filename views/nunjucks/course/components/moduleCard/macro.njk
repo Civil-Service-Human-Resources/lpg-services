@@ -4,12 +4,10 @@
         {% if params.description %}
             <p class="discite__description">{{ params.description }}</p>
         {% endif %}
-        {% if params.displayMandatoryStatus %}
-            {% if params.isMandatory %}
-                <p class="discite__description bold-small">This module is mandatory</p>
-            {% else %}
-                <p class="discite__optional bold-small">This module is optional</p>
-            {% endif %}
+        {% if params.isMandatory and params.displayMandatoryStatus %}
+            <p class="discite__description bold-small">This module is mandatory</p>
+        {% else %}
+            <p class="discite__optional bold-small">This module is optional</p>
         {% endif %}
     </div>
 {% endmacro %}
