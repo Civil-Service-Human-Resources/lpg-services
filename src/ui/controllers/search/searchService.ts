@@ -1,5 +1,6 @@
+import {Request} from 'express'
 import * as model from '../../../lib/model'
-import {Course, User} from '../../../lib/model'
+import {Course} from '../../../lib/model'
 import {courseSearch} from '../../../lib/service/catalog/courseCatalogueClient'
 import {buildParams, typesType} from '../../../lib/service/catalog/models/courseSearchParams'
 import {CourseSearchResponse} from '../../../lib/service/catalog/models/courseSearchResponse'
@@ -11,7 +12,8 @@ import {RecordState} from '../../../lib/service/cslService/models/record'
 import {CourseSearchQuery} from './models/courseSearchQuery'
 import {SearchFilter, Pagination, PaginationNumberedPage, SearchPageModel, SearchCourse} from './models/searchPageModel'
 
-export async function searchForCourses(params: CourseSearchQuery, user: User, departmentHierarchyCodes: string[]) {
+export async function searchForCourses(params: CourseSearchQuery, req: Request, departmentHierarchyCodes: string[]) {
+	const user = req.user
 	const searchQuery = buildParams(params)
 	const searchResults = await courseSearch(searchQuery, user, departmentHierarchyCodes)
 	const courseRecords: Map<string, CourseRecord> = new Map(
@@ -36,12 +38,7 @@ export async function searchForCourses(params: CourseSearchQuery, user: User, de
 		...departmentFilters,
 		...areaOfWorkFilters,
 		...interestFilters,
-		selectedLearningTypes: Object.entries({
-			'face-to-face': 'Face to face',
-			link: 'Link',
-			elearning: 'Online',
-			video: 'Video',
-		}).map(value => {
+		selectedLearningTypes: Object.entries(req.__('courseTypes')).map(value => {
 			return {
 				label: value[1],
 				value: value[0],

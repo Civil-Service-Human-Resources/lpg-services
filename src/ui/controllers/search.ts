@@ -6,8 +6,7 @@ import {searchForCourses} from './search/searchService'
 
 export async function search(ireq: express.Request, res: express.Response) {
 	const req = ireq as extended.CourseRequest
-	const user = req.user
 	const params = plainToInstance(CourseSearchQuery, req.query)
-	const pageModel = await searchForCourses(params, user, res.locals.departmentHierarchyCodes)
+	const pageModel = await searchForCourses(params, req, res.locals.departmentHierarchyCodes)
 	res.render('search/index.njk', {pageModel})
 }
