@@ -89,9 +89,10 @@ export function getPagination(params: CourseSearchQuery, searchResults: CourseSe
 	let prevLink: string | undefined
 	let nextLink: string | undefined
 	const numberedPages: PaginationNumberedPage[] = []
+	let fePage = 1
+	const pages = Math.ceil(searchResults.totalResults / searchResults.size)
 	if (searchResults.totalResults > 0) {
-		const fePage = searchResults.page + 1
-		const pages = Math.ceil(searchResults.totalResults / searchResults.size)
+		fePage = searchResults.page + 1
 		if (fePage > 1) {
 			prevLink = params.getAsUrlParams(fePage - 1)
 		}
@@ -123,6 +124,8 @@ export function getPagination(params: CourseSearchQuery, searchResults: CourseSe
 		nextLink,
 		prevLink,
 		numberedPages,
+		currentPage: fePage,
+		totalPages: pages,
 		start: searchResults.page * searchResults.size + 1,
 		end: searchResults.page * searchResults.size + searchResults.results.length,
 		total: searchResults.totalResults,

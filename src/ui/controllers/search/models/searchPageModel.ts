@@ -14,6 +14,8 @@ export interface Pagination {
 	start: number
 	end: number
 	total: number
+	currentPage: number
+	totalPages: number
 	prevLink?: string
 	nextLink?: string
 	numberedPages: PaginationNumberedPage[]

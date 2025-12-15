@@ -65,6 +65,8 @@ describe('searchService tests', () => {
 			assert.equal(res.start, 1)
 			assert.equal(res.end, 10)
 			assert.equal(res.total, 10)
+			assert.equal(res.currentPage, 1)
+			assert.equal(res.totalPages, 1)
 		})
 		it('Should render 3 pages with prev/next links', () => {
 			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
@@ -78,6 +80,8 @@ describe('searchService tests', () => {
 			assert.equal(res.start, 11)
 			assert.equal(res.end, 20)
 			assert.equal(res.total, 30)
+			assert.equal(res.currentPage, 2)
+			assert.equal(res.totalPages, 3)
 		})
 		it('Should render 7 pages with ellipses before the current page', () => {
 			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
@@ -94,6 +98,8 @@ describe('searchService tests', () => {
 			assert.equal(res.start, 51)
 			assert.equal(res.end, 60)
 			assert.equal(res.total, 80)
+			assert.equal(res.currentPage, 6)
+			assert.equal(res.totalPages, 8)
 		})
 		it('Should render 7 pages with ellipses after the current page', () => {
 			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
@@ -110,6 +116,8 @@ describe('searchService tests', () => {
 			assert.equal(res.start, 21)
 			assert.equal(res.end, 30)
 			assert.equal(res.total, 80)
+			assert.equal(res.currentPage, 3)
+			assert.equal(res.totalPages, 8)
 		})
 		it('Should render 7 pages with ellipses before and after the current page', () => {
 			searchResults.results = range(0, 10).map(i => new Course(i.toString()))
@@ -130,6 +138,8 @@ describe('searchService tests', () => {
 			assert.equal(res.start, 41)
 			assert.equal(res.end, 50)
 			assert.equal(res.total, 80)
+			assert.equal(res.currentPage, 5)
+			assert.equal(res.totalPages, 8)
 		})
 	})
 })

@@ -3,7 +3,7 @@
 {% from "./components/filters/macro.njk" import searchFilters %}
 {% from "./components/courseCard/macro.njk" import searchCard %}
 
-{% set pageTitle = "Search" %}
+{% set pageTitle = "Search (page " + pageModel.pagination.currentPage + " of " + pageModel.pagination.totalPages + ")" %}
 
 {% block content %}
     <div class="container container--main">
