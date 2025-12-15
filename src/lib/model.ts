@@ -2,6 +2,7 @@ import * as moment from 'moment'
 import {Duration} from 'moment'
 import 'reflect-metadata'
 import * as datetime from '../lib/datetime'
+import {SearchFilterable, SearchLabel} from '../ui/controllers/search/models/searchPageModel'
 import {AreaOfWork, Grade, Interest, Profile} from './registry'
 import {IdentityDetails} from './service/identity/models/identityDetails'
 import {CourseRecord} from './service/cslService/models/courseRecord'
@@ -511,7 +512,7 @@ export class RequiredRecurringAudience {
 	) {}
 }
 
-export class OrganisationalUnit implements CacheableObject {
+export class OrganisationalUnit implements CacheableObject, SearchFilterable {
 	id: number
 	name: string
 	code: string
@@ -521,6 +522,17 @@ export class OrganisationalUnit implements CacheableObject {
 
 	getId(): string {
 		return this.id.toString()
+	}
+
+	getAsSearchFilter(): SearchLabel {
+		return {
+			id: this.code,
+			value: this.code,
+			label: this.name,
+		}
+	}
+	getValue(): string {
+		return this.code
 	}
 }
 

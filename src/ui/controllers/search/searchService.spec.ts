@@ -3,9 +3,52 @@ import {Course} from '../../../lib/model'
 import {assert} from 'chai'
 import {CourseSearchResponse} from '../../../lib/service/catalog/models/courseSearchResponse'
 import {CourseSearchQuery} from './models/courseSearchQuery'
-import {getPagination} from './searchService'
+import {SearchFilterable, SearchLabel} from './models/searchPageModel'
+import {getPagination, processFilters} from './searchService'
 
 describe('searchService tests', () => {
+	describe('processFilters', () => {
+		class BasicSearchFilter implements SearchFilterable {
+			constructor(private name: string) {}
+			getAsSearchFilter(): SearchLabel {
+				return {
+					value: this.name,
+					label: this.name,
+					id: this.name,
+				}
+			}
+
+			getValue(): string {
+				return this.name
+			}
+		}
+		it('should create a list of search filters', () => {
+			const selectedValues = ['value1', 'value2', 'value3']
+			const profileFilters: SearchFilterable[] = [new BasicSearchFilter('value1'), new BasicSearchFilter('value4')]
+			const allValues: SearchFilterable[] = [
+				new BasicSearchFilter('value1'),
+				new BasicSearchFilter('value2'),
+				new BasicSearchFilter('value3'),
+				new BasicSearchFilter('value4'),
+				new BasicSearchFilter('value5'),
+			]
+			const result = processFilters(selectedValues, profileFilters, allValues)
+			assert.equal(result.userSelection.length, 2)
+			assert.equal(result.otherSelection.length, 3)
+
+			assert.equal(result.userSelection[0].value, 'value1')
+			assert.equal(result.userSelection[0].checked, true)
+			assert.equal(result.userSelection[1].value, 'value4')
+			assert.equal(result.userSelection[1].checked, false)
+
+			assert.equal(result.otherSelection[0].value, 'value2')
+			assert.equal(result.otherSelection[0].checked, true)
+			assert.equal(result.otherSelection[1].value, 'value3')
+			assert.equal(result.otherSelection[1].checked, true)
+			assert.equal(result.otherSelection[2].value, 'value5')
+			assert.equal(result.otherSelection[2].checked, false)
+		})
+	})
 	describe('getPagination tests', () => {
 		const params = new CourseSearchQuery()
 		params.q = 'query'

@@ -10,7 +10,14 @@ import * as courseRecordClient from '../../../lib/service/cslService/courseRecor
 import {CourseRecord} from '../../../lib/service/cslService/models/courseRecord'
 import {RecordState} from '../../../lib/service/cslService/models/record'
 import {CourseSearchQuery} from './models/courseSearchQuery'
-import {SearchFilter, Pagination, PaginationNumberedPage, SearchPageModel, SearchCourse} from './models/searchPageModel'
+import {
+	SearchFilter,
+	Pagination,
+	PaginationNumberedPage,
+	SearchPageModel,
+	SearchCourse,
+	SearchFilterable,
+} from './models/searchPageModel'
 
 export async function searchForCourses(params: CourseSearchQuery, req: Request, departmentHierarchyCodes: string[]) {
 	const user = req.user
@@ -122,94 +129,61 @@ export function getPagination(params: CourseSearchQuery, searchResults: CourseSe
 	}
 }
 
+interface FilterResult {
+	userSelection: SearchFilter[]
+	otherSelection: SearchFilter[]
+}
+
+export function processFilters(
+	selectedValues: string[],
+	profileFilters: SearchFilterable[],
+	allValues: SearchFilterable[]
+): FilterResult {
+	const profileValues = profileFilters.map(v => v.getValue()).filter(v => v !== "I don't know")
+	const result: FilterResult = {
+		userSelection: [],
+		otherSelection: [],
+	}
+	allValues.forEach(value => {
+		const filter: SearchFilter = {
+			...value.getAsSearchFilter(),
+			checked: selectedValues.includes(value.getValue()),
+		}
+		if (profileValues.includes(value.getValue())) {
+			result.userSelection.push(filter)
+		} else {
+			result.otherSelection.push(filter)
+		}
+	})
+	return result
+}
+
 async function getDepartmentFilters(
 	user: model.User,
 	selectedDepartmentCodes: string[]
-): Promise<{otherDepartments: SearchFilter[]; userDepartment: SearchFilter}> {
-	const userOrganisationalUnit = user.organisationalUnit!
-	const userDepartment: SearchFilter = {
-		value: userOrganisationalUnit.code,
-		id: userOrganisationalUnit.code,
-		checked: selectedDepartmentCodes.includes(userOrganisationalUnit.code),
-		label: userOrganisationalUnit.name,
-	}
-	const organisationalUnits = await csrsService.getOrganisationalUnitsForSearch(user)
-	const otherDepartments: SearchFilter[] = organisationalUnits
-		.filter(o => o.code !== userOrganisationalUnit.code)
-		.map(o => {
-			const checked = selectedDepartmentCodes.includes(o.code)
-			return {
-				checked,
-				id: o.code,
-				label: o.getNameNoAbbrev(),
-				value: o.code,
-			}
-		})
-	return {userDepartment, otherDepartments}
+): Promise<{otherOrganisationalUnits: SearchFilter[]; userOrganisationalUnits: SearchFilter[]}> {
+	const result = processFilters(
+		selectedDepartmentCodes,
+		[user.organisationalUnit!],
+		await csrsService.getOrganisationalUnitsForSearch(user)
+	)
+	return {userOrganisationalUnits: result.userSelection, otherOrganisationalUnits: result.otherSelection}
 }
 
 async function getAreaOfWorkFilters(
 	user: model.User,
 	selectedAreasOfWork: string[]
 ): Promise<{otherAreasOfWork: SearchFilter[]; userAreasOfWork: SearchFilter[]}> {
-	const profileAreasOfWork = user.getAllAreasOfWork().map(aow => aow.name)
-	const userAreasOfWork: SearchFilter[] = profileAreasOfWork
-		.filter(aow => aow !== "I don't know")
-		.map(aow => {
-			const checked = selectedAreasOfWork.includes(aow)
-			return {
-				checked,
-				id: aow,
-				value: aow,
-				label: aow,
-			}
-		})
-	const otherAreasOfWork = (await getAreasOfWork(user)).topLevelList
-		.map(aow => aow.name)
-		.filter(aow => aow !== "I don't know" && !profileAreasOfWork.includes(aow))
-		.map(aow => {
-			const checked = selectedAreasOfWork.includes(aow)
-			return {
-				checked,
-				id: aow,
-				value: aow,
-				label: aow,
-			}
-		})
-	return {otherAreasOfWork, userAreasOfWork}
+	const allAreasOfWork = (await getAreasOfWork(user)).topLevelList
+	const result = processFilters(selectedAreasOfWork, user.getAllAreasOfWork(), allAreasOfWork)
+	return {otherAreasOfWork: result.otherSelection, userAreasOfWork: result.userSelection}
 }
 
 async function getInterestsFilters(
 	user: model.User,
 	selectedInterests: string[]
-): Promise<{
-	otherInterests: SearchFilter[]
-	userInterests: SearchFilter[]
-}> {
-	const profileInterests = (user.interests || []).map(i => i.name)
-	const userInterests: SearchFilter[] = profileInterests.map(interest => {
-		const checked = selectedInterests.includes(interest)
-		return {
-			checked,
-			id: interest,
-			value: interest,
-			label: interest,
-		}
-	})
-	const otherInterests = (await getInterests(user)).list
-		.map(interest => interest.name)
-		.filter(i => !profileInterests.includes(i))
-		.map(interest => {
-			const checked = selectedInterests.includes(interest)
-			return {
-				checked,
-				id: interest,
-				value: interest,
-				label: interest,
-			}
-		})
-	return {
-		otherInterests,
-		userInterests,
-	}
+): Promise<{otherInterests: SearchFilter[]; userInterests: SearchFilter[]}> {
+	const allInterests = (await getInterests(user)).list
+	const result = processFilters(selectedInterests, user.interests || [], allInterests)
+	return {otherInterests: result.otherSelection, userInterests: result.userSelection}
 }

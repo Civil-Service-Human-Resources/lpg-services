@@ -19,18 +19,26 @@ export interface Pagination {
 	numberedPages: PaginationNumberedPage[]
 }
 
-export interface SearchFilter {
+export interface SearchFilter extends SearchLabel {
+	checked: boolean
+}
+
+export interface SearchLabel {
 	id: string
 	value: string
 	label: string
-	checked: boolean
+}
+
+export interface SearchFilterable {
+	getAsSearchFilter(): SearchLabel
+	getValue(): string
 }
 
 export interface Filters {
 	selectedLearningTypes: SearchFilter[]
 	showFree: boolean
-	userDepartment: SearchFilter
-	otherDepartments: SearchFilter[]
+	otherOrganisationalUnits: SearchFilter[]
+	userOrganisationalUnits: SearchFilter[]
 	userAreasOfWork: SearchFilter[]
 	otherAreasOfWork: SearchFilter[]
 	userInterests: SearchFilter[]
