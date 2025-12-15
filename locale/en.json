@@ -421,5 +421,6 @@
 	"Contract and Supplier Management": "Contract and Supplier Management",
 	"Human resources": "Human resources",
 	"Communication": "Communication",
-	"NULL": "NULL"
+	"NULL": "NULL",
+	"ARCHIVED": "ARCHIVED"
 }

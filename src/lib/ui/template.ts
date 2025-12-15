@@ -1,8 +1,6 @@
 import {STATIC_DIR} from '../config'
 import * as config from '../config'
 
-import {constructCourseCallToAction} from './courseCallToAction'
-
 import * as datetime from '../datetime'
 import * as fileHelpers from '../filehelpers'
 
@@ -71,7 +69,6 @@ function getHelpers(): {} {
 	const req = getCurrentRequest()
 	return {
 		config,
-		constructCourseCallToAction,
 		datetime,
 		fileHelpers,
 		getFirstKey,

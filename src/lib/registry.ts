@@ -1,4 +1,5 @@
 import {Type} from 'class-transformer'
+import {SearchFilterable, SearchLabel} from '../ui/controllers/search/models/searchPageModel'
 import {LineManager, OrganisationalUnit} from './model'
 import {PatchCivilServant} from './service/civilServantRegistry/models/patchCivilServant'
 import {CacheableObject} from './utils/cacheableObject'
@@ -16,7 +17,7 @@ export class Grade implements KeyValue {
 	}
 }
 
-export class AreaOfWork implements KeyValue {
+export class AreaOfWork implements KeyValue, SearchFilterable {
 	@Type(() => AreaOfWork)
 	public children: AreaOfWork[]
 
@@ -24,6 +25,17 @@ export class AreaOfWork implements KeyValue {
 		public id: number,
 		public name: string
 	) {}
+
+	getAsSearchFilter(): SearchLabel {
+		return {
+			id: this.name,
+			value: this.name,
+			label: this.name,
+		}
+	}
+	getValue(): string {
+		return this.name
+	}
 
 	getFlat(): AreaOfWork[] {
 		const areasOfWork: AreaOfWork[] = [this]
@@ -40,11 +52,22 @@ export class AreaOfWork implements KeyValue {
 	}
 }
 
-export class Interest implements KeyValue {
+export class Interest implements KeyValue, SearchFilterable {
 	constructor(
 		public name: string,
 		public id: number
 	) {}
+
+	getAsSearchFilter(): SearchLabel {
+		return {
+			id: this.name,
+			value: this.name,
+			label: this.name,
+		}
+	}
+	getValue(): string {
+		return this.name
+	}
 
 	getId(): string {
 		return this.id.toString()

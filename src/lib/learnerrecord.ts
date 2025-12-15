@@ -3,7 +3,6 @@ import * as https from 'https'
 import * as axiosLogger from './axiosLogger'
 import * as config from './config'
 import {getLogger} from './logger'
-import {ModuleRecord} from './service/cslService/models/moduleRecord'
 
 const logger = getLogger('learner-record')
 
@@ -40,20 +39,4 @@ export async function getCancellationReasons(user: any): Promise<any> {
 			Authorization: `Bearer ${user.accessToken}`,
 		},
 	})
-}
-
-export interface CourseRcd {
-	courseId: string
-	courseTitle: string
-	userId: string
-	modules: ModuleRecord[]
-	preference?: string
-	state?: string | undefined
-	lastUpdated?: Date
-
-	isComplete(): boolean
-	getSelectedDate(): Date | undefined
-	getType(): string | null
-	getDuration(): string | null
-	getCompletionDate(): Date | undefined
 }

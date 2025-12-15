@@ -109,7 +109,7 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		logger.debug(`course.record.state: ${course.record.state}`)
 		const hasFaceToFaceModule = course.record.modules.some(m => m.moduleType === 'face-to-face')
 		logger.debug(`hasFaceToFaceModule: ${hasFaceToFaceModule}`)
-		if (course.record.isComplete() || hasFaceToFaceModule) {
+		if (course.record.isCompleted() || hasFaceToFaceModule) {
 			basicCoursePage.isInLearningPlan = undefined
 		} else if (course.record.state === 'ARCHIVED') {
 			basicCoursePage.isInLearningPlan = false
