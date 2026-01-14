@@ -127,7 +127,11 @@ export const assertDoc = (doc: HTML, assertion: HtmlAssertion, exp?: Chai.Expect
 		const attr = expected.attributes || {}
 		Object.keys(attr).forEach(key => {
 			const expVal = attr[key]
-			exp(elem.getAttribute(key)).eql(
+			let attributeValue = elem.getAttribute(key)
+			if (elem.tagName === 'FORM' && key === 'href') {
+				attributeValue = elem.getAttribute('action')
+			}
+			exp(attributeValue).eql(
 				expVal,
 				`Expected HTML attribute '${key}' to equal '${expVal}' (tag: '${elem.outerHTML}')`
 			)
