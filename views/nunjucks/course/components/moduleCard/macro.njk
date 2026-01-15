@@ -41,9 +41,12 @@
 {% endmacro %}
 
 {% macro moduleCardCtaLink(url, action, moduleTitle, newTab = false) %}
-    <form class="discite__action-link--main" action="{{ url }}" method="POST" {% if newTab %}target="_blank"{% endif %} data-module="prevent-double-click">
+    <form class="discite__action-link--main" method="POST" action="{{ url }}" novalidate>
         <input type="hidden" name="_csrf" value="{{ _csrf }}" />
-        <button type="submit">{{ i18n(action) }} <span class='visually-hidden'> module {{ moduleTitle }}</span></button>
+        <button type="submit" class="discite__action-link--main discite__action-link--button"
+            data-module="discite-prevent-double-click" {% if newTab %}formtarget="_blank" formrel="noopener"{% endif %}>
+            {{ i18n(action) }} <span class="visually-hidden"> module {{ moduleTitle }}</span>
+        </button>
     </form>
 {% endmacro %}
 
