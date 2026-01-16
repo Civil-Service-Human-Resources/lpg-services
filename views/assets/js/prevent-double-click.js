@@ -1,19 +1,11 @@
 ;(function (Modules) {
 	'use strict'
 
-	function DiscitePreventDoubleClick(module) {
-		this.module = module
-	}
+	function DiscitePreventDoubleClick() {}
 
-	DiscitePreventDoubleClick.prototype.init = function () {
-		var button = this.module
-
-		console.log(
-			'DiscitePreventDoubleClick initialised for module:',
-			button.dataset.url,
-			'newTab:',
-			button.dataset.newTab
-		)
+	DiscitePreventDoubleClick.prototype.start = function ($element) {
+		var button = $element[0]
+		this.module = button
 
 		button.addEventListener('click', function () {
 			if (button.dataset.clicked === 'true') {
