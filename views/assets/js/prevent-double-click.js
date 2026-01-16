@@ -4,11 +4,12 @@
 	function DiscitePreventDoubleClick() {}
 
 	DiscitePreventDoubleClick.prototype.start = function ($element) {
-		var button = $element[0]
-		this.module = button
+		let button = $element[0]
 
-		button.addEventListener('click', function () {
+		button.addEventListener('click', function (e) {
 			if (button.dataset.clicked === 'true') {
+				e.preventDefault()
+				e.stopPropagation()
 				return
 			}
 
