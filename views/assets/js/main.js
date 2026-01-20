@@ -7,7 +7,7 @@ require('./typeahead')
 require('./prevent-double-click')
 
 document.addEventListener('DOMContentLoaded', function () {
-	let modules = document.querySelectorAll('[data-module]')
+	let modules = Array.prototype.slice.call(document.querySelectorAll('[data-module]'))
 
 	modules.forEach(function (element) {
 		let moduleName = element

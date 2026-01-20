@@ -1,12 +1,16 @@
 ;(function (Modules) {
 	'use strict'
 
+	if (!Modules) {
+		return
+	}
+
 	function DiscitePreventDoubleClick() {
 		this.debounceFormSubmitTimer = null
 	}
 
 	DiscitePreventDoubleClick.prototype.start = function ($module) {
-		this.$module = $module instanceof Node ? $module : $module[0]
+		this.$module = $module && $module.length && $module[0] ? $module[0] : $module
 
 		if (!this.$module) {
 			return
@@ -16,7 +20,7 @@
 	}
 
 	DiscitePreventDoubleClick.prototype.init = function () {
-		var timeoutAttr = this.$module.getAttribute('data-timeout')
+		let timeoutAttr = this.$module.getAttribute('data-timeout')
 		this.preventionTimeout = timeoutAttr ? parseInt(timeoutAttr, 10) : 2000
 		this.$module.addEventListener('click', this.handleClick.bind(this))
 	}
@@ -36,10 +40,12 @@
 	}
 
 	DiscitePreventDoubleClick.prototype.reset = function () {
-		this.$module.setAttribute('data-clicked', 'false')
-		this.$module.removeAttribute('aria-disabled')
-		this.$module.classList.remove('is-disabled')
+		if (this.$module) {
+			this.$module.setAttribute('data-clicked', 'false')
+			this.$module.removeAttribute('aria-disabled')
+			this.$module.classList.remove('is-disabled')
+		}
 	}
 
 	Modules.DiscitePreventDoubleClick = DiscitePreventDoubleClick
-})(window.GOVUK.Modules)
+})(window.GOVUK && window.GOVUK.Modules)
