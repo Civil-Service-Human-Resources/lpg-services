@@ -3,7 +3,7 @@ import * as moment from 'moment'
 import * as nunjucks from 'nunjucks'
 import * as i18n from 'i18n'
 import * as path from 'path'
-import {IS_DEV, STATIC_DIR, LPG_MANAGEMENT_URL} from '../../config'
+import {IS_DEV, STATIC_DIR, LPG_MANAGEMENT_URL, DOUBLE_CLICK_PREVENTION_TIMEOUT_MS} from '../../config'
 import * as datetime from '../../datetime'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
 import {getLogger} from '../../logger'
@@ -26,11 +26,12 @@ export const register = (app: Express) => {
 	})
 
 	// global vars
-	const globals: {[key: string]: string} = {
+	const globals: {[key: string]: any} = {
 		baseLayout,
 		components,
 		partials,
 		lpgManagementUrl: LPG_MANAGEMENT_URL,
+		doubleClickPreventionTimeout: DOUBLE_CLICK_PREVENTION_TIMEOUT_MS,
 	}
 	logger.debug(`Registering nunjucks globals: ${JSON.stringify(globals)}`)
 	Object.keys(globals).forEach(key => {
