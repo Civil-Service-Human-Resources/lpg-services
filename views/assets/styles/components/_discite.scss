@@ -141,7 +141,7 @@ $module: 'discite';
 				}
 
 				&:focus {
-					outline: 3px solid rgba(0,0,0,0);
+					outline: 3px solid rgba(0,0,0,0) !important;
 					background-color: $focus;
 					box-shadow: 0 -2px $focus,0 4px #0b0c0c;
 					text-decoration: none;
