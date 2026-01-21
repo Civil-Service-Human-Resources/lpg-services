@@ -114,7 +114,7 @@ $module: 'discite';
 		}
 	}
 
-	@include e(action-link) {
+	@include e(link-button) {
 		// div.discite__action-link (also used for the form)
 		display: inline-block;
 

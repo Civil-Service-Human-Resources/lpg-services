@@ -41,7 +41,7 @@
 {% endmacro %}
 
 {% macro moduleCardCtaLink(url, action, moduleTitle, newTab = false) %}
-    <form class="discite__action-link--main" method="POST" action="{{ url }}" novalidate>
+    <form class="discite__link-button--main" method="POST" action="{{ url }}" novalidate>
         <input type="hidden" name="_csrf" value="{{ _csrf }}" />
         <button type="submit" class="discite__action-link--main discite__action-link--button"
             data-module="discite-prevent-double-click" data-timeout="{{ doubleClickPreventionTimeout }}"
