@@ -89,7 +89,7 @@ export const getCTAAssertion = (
 	expModuleTitle: string
 ): HtmlAssertion => {
 	return {
-		querySelector: '.discite__action-link--main',
+		querySelector: '.discite__link-button--main',
 		expected: {
 			content: new MultipleContentAsserter([
 				new TextContainsAsserter(expModuleActionText),
