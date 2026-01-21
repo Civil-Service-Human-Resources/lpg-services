@@ -44,7 +44,8 @@
     <form class="discite__action-link--main" method="POST" action="{{ url }}" novalidate>
         <input type="hidden" name="_csrf" value="{{ _csrf }}" />
         <button type="submit" class="discite__action-link--main discite__action-link--button"
-            data-module="discite-prevent-double-click" {% if newTab %}formtarget="_blank" formrel="noopener"{% endif %}>
+            data-module="discite-prevent-double-click" data-timeout="{{ doubleClickPreventionTimeout }}"
+            {% if newTab %}formtarget="_blank" formrel="noopener"{% endif %}>
             {{ i18n(action) }} <span class="visually-hidden"> module {{ moduleTitle }}</span>
         </button>
     </form>

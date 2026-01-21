@@ -21,7 +21,8 @@
 
 	DiscitePreventDoubleClick.prototype.init = function () {
 		let timeoutAttr = this.$module.getAttribute('data-timeout')
-		this.preventionTimeout = timeoutAttr ? parseInt(timeoutAttr, 10) : 2000
+		// Default to 5 seconds (5000ms) if not specified
+		this.preventionTimeout = timeoutAttr ? parseInt(timeoutAttr, 10) : 5000
 		this.$module.addEventListener('click', this.handleClick.bind(this))
 	}
 
