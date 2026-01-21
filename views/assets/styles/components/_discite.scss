@@ -119,7 +119,7 @@ $module: 'discite';
 		display: inline-block;
 
 		@include m(main) {
-			margin-right: 8px;
+			display: inline;
 
 			// Reset button styles to look like a link
 			button {
@@ -134,15 +134,16 @@ $module: 'discite';
 				cursor: pointer;
 				-webkit-appearance: none;
 				user-select: none;
+				margin-right: 8px;
 
 				&:hover {
 					color: $link-hover-colour;
 				}
 
 				&:focus {
-					outline: 3px solid $focus-colour;
-					background-color: $focus-colour;
-					box-shadow: 0 -2px $focus-colour, 0 4px $text-colour;
+					outline: 3px solid rgba(0,0,0,0);
+					background-color: $focus;
+					box-shadow: 0 -2px $focus,0 4px #0b0c0c;
 					text-decoration: none;
 					color: $text-colour;
 				}
