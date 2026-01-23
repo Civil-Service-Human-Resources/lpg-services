@@ -1,5 +1,6 @@
 import {plainToInstance} from 'class-transformer'
 import {client} from './baseConfig'
+import {HOMEPAGE_COMPLETE_REQUIRED_COURSES, HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES} from '../../config'
 import {User} from '../../model'
 import {LearningPlanCache} from './cache/LearningPlanCache'
 import {LearningRecordCache} from './cache/learningRecordCache'
@@ -197,6 +198,9 @@ export async function getRequiredLearning(user: User): Promise<RequiredLearning>
 		const resp = await client._get(
 			{
 				url: `/learning/required`,
+				params: {
+					HOMEPAGE_COMPLETE_REQUIRED_COURSES,
+				},
 			},
 			user
 		)
@@ -212,6 +216,9 @@ export async function getLearningPlan(user: User): Promise<LearningPlan> {
 		const resp = await client._get(
 			{
 				url: `/learning/plan`,
+				params: {
+					HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES,
+				},
 			},
 			user
 		)
