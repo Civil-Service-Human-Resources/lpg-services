@@ -114,6 +114,45 @@ $module: 'discite';
 		}
 	}
 
+	@include e(link-button) {
+		// div.discite__action-link (also used for the form)
+		display: inline-block;
+
+		@include m(main) {
+			display: inline;
+
+			// Reset button styles to look like a link
+			button {
+				background-color: transparent;
+				border: none;
+				padding: 0;
+				color: $link-colour;
+				text-decoration: underline;
+				font-family: inherit;
+				font-size: inherit;
+				font-weight: inherit;
+				cursor: pointer;
+				-webkit-appearance: none;
+				user-select: none;
+				margin-right: 8px;
+
+				&:hover {
+					color: $link-hover-colour;
+				}
+
+				&:focus {
+					outline: 3px solid rgba(0,0,0,0) !important;
+					background-color: $focus;
+					box-shadow: 0 -2px $focus,0 4px #0b0c0c;
+					text-decoration: none;
+				}
+
+				&.is-disabled {
+				}
+			}
+		}
+    }
+
 	@include e(status) {
 		// div.discite__status usually a badge saying in progress|overdue|completed etc
 		@extend %disciteRowDiv;

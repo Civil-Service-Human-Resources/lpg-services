@@ -1,5 +1,6 @@
 import {plainToClass, plainToInstance} from 'class-transformer'
-import {Course, User} from '../../model'
+import * as model from '../../model'
+import {User} from '../../model'
 import {client} from './config'
 import {CourseSearchParams} from './models/courseSearchParams'
 import {CourseSearchResponse} from './models/courseSearchResponse'
@@ -20,24 +21,13 @@ export async function getCourse(id: string, user: User, includeAvailability: boo
 			},
 			user
 		)
-		return Course.create(resp)
+		return model.CourseFactory.create(resp, user)
 	} catch (e) {
 		if (e.response && e.response.status === 404) {
 			return null
 		}
 		throw new Error(`Error getting course - ${e}`)
 	}
-}
-
-export async function getCoursesWithIds(ids: string[], user: User) {
-	const resp = await client._post<string[], Course[]>(
-		{
-			url: `${COURSES_URL}/getIds`,
-		},
-		ids,
-		user
-	)
-	return resp.map(c => Course.create(c, user))
 }
 
 export async function getCoursesV2(getCoursesParams: GetCoursesParams, user: User) {
@@ -51,7 +41,11 @@ export async function getCoursesV2(getCoursesParams: GetCoursesParams, user: Use
 	return plainToClass(GetCoursesResponse, resp)
 }
 
-export async function courseSearch(params: CourseSearchParams, user: User): Promise<CourseSearchResponse> {
+export async function courseSearch(
+	params: CourseSearchParams,
+	user: User,
+	departmentHierarchyCodes: string[]
+): Promise<CourseSearchResponse> {
 	const resp = await client._get<GetCoursesResponse>(
 		{
 			params,
@@ -60,8 +54,10 @@ export async function courseSearch(params: CourseSearchParams, user: User): Prom
 		user
 	)
 	const responseData = plainToInstance(CourseSearchResponse, resp)
-	responseData.results = responseData.results.map(c => {
-		return Course.create(c, user)
-	})
+	responseData.results = await Promise.all(
+		responseData.results.map(c => {
+			return model.CourseFactory.create(c, user, departmentHierarchyCodes)
+		})
+	)
 	return responseData
 }

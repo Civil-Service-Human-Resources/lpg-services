@@ -4,6 +4,7 @@ import {OrganisationalUnit, User} from '../../model'
 import {AreaOfWork, Grade, Interest, Profile} from '../../registry'
 import {AnonymousCache} from '../../utils/anonymousCache'
 import {learningRecordCache, requiredLearningCache} from '../cslService/cslServiceClient'
+import {FormattedOrganisation} from '../cslService/models/csrs/formattedOrganisation'
 import {GetOrganisationalUnitParams} from '../cslService/models/csrs/getOrganisationalUnitParams'
 import {AreasOfWork} from './areaOfWork/areasOfWork'
 import * as civilServantClient from './civilServant/civilServantClient'
@@ -14,7 +15,6 @@ import * as cslService from '../cslService/cslServiceClient'
 import {Interests} from './interest/interests'
 import {PatchCivilServant} from './models/patchCivilServant'
 import {OrganisationalUnitCache} from './organisationalUnit/organisationalUnitCache'
-import * as organisationalUnitClient from './organisationalUnit/organisationUnitClient'
 
 const logger = getLogger('csrsService')
 
@@ -211,13 +211,7 @@ export async function getOrgHierarchy(
 	return hierarchy
 }
 
-export async function getOrganisationalUnitsForSearch(user: User): Promise<OrganisationalUnit[]> {
-	const resp = await organisationalUnitClient.getOrganisationalUnits(
-		{
-			page: 0,
-			size: 20,
-		},
-		user
-	)
-	return resp.content
+export async function getOrganisationalUnitsForSearch(user: User): Promise<FormattedOrganisation[]> {
+	const orgs = await cslService.getAllOrganisationsDropdown(user)
+	return orgs.sort((a, b) => a.id - b.id).slice(0, 20)
 }

@@ -12,6 +12,7 @@ export interface BaseModuleCard {
 	mustConfirmBooking: boolean
 	displayState?: string
 	cost?: number
+	displayMandatoryStatus?: boolean
 }
 
 export interface F2FModuleCard extends BaseModuleCard {

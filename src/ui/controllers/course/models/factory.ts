@@ -43,6 +43,7 @@ export function getBasicModuleCard(module: Module, course: Course, moduleRecord?
 		mustConfirmBooking: false,
 		template: 'singleModule',
 		displayState,
+		displayMandatoryStatus: true,
 	}
 }
 
@@ -108,7 +109,7 @@ export async function getCoursePage(user: User, course: Course): Promise<BasicCo
 		logger.debug(`course.record.state: ${course.record.state}`)
 		const hasFaceToFaceModule = course.record.modules.some(m => m.moduleType === 'face-to-face')
 		logger.debug(`hasFaceToFaceModule: ${hasFaceToFaceModule}`)
-		if (course.record.isComplete() || hasFaceToFaceModule) {
+		if (course.record.isCompleted() || hasFaceToFaceModule) {
 			basicCoursePage.isInLearningPlan = undefined
 		} else if (course.record.state === 'ARCHIVED') {
 			basicCoursePage.isInLearningPlan = false
@@ -163,6 +164,7 @@ export function getSingleModuleCoursePage(
 	const coursePage: CoursePage = getBasicCoursePage(course)
 	const moduleRecord = courseRecord ? courseRecord.getModuleRecord(module.id) : undefined
 	const moduleCard = getModuleCard(course, module, moduleRecord)
+	moduleCard.displayMandatoryStatus = false
 	const courseDetails = getCourseDetails(course)
 	if (module.type === 'face-to-face') {
 		courseDetails.location = module.location

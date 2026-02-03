@@ -287,7 +287,7 @@ app.get(
 	asyncHandler(learningRecordController.courseResult)
 )
 
-app.get('/search', asyncHandler(searchController.search))
+app.get('/search', asyncHandler(requiresDepartmentHierarchy), asyncHandler(searchController.search))
 app.get(
 	'/suggestions-for-you',
 	asyncHandler(requiresDepartmentHierarchy),

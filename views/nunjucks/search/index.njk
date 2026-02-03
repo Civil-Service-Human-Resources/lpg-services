@@ -1,0 +1,150 @@
+{% extends baseLayout %}
+{% from components + "/search/macro.njk" import searchHeader %}
+{% from "./components/filters/macro.njk" import searchFilters %}
+{% from "./components/courseCard/macro.njk" import searchCard %}
+
+{% set pageTitle = "Search (page " + pageModel.pagination.currentPage + " of " + pageModel.pagination.totalPages + ")" %}
+
+{% block content %}
+    <div class="container container--main">
+        <div class="grid-row ">
+            <div class="column-full no-border">
+                {% set header %}
+                    <h1 class="heading heading-large heading--flush">
+                        Search Results
+                    </h1>
+                {% endset %}
+                {{ searchHeader({
+                    "headerHtml": header,
+                    "searchBox": {
+                        query: pageModel.query
+                    }
+                }) }}
+            </div>
+        </div>
+        <div class="grid-row">
+            <div class="column-one-third">
+
+                {{ searchFilters({
+                    "query": pageModel.query,
+                    "filters": [
+                        {
+                            "id": "learning-type",
+                            "name": "courseType",
+                            "heading": "Learning type",
+                            "items": pageModel.filters.selectedLearningTypes
+                        },
+                        {
+                            "id": "cost",
+                            "name": "cost",
+                            "heading": "Cost",
+                            "items": [
+                                {
+                                    "id": "cost",
+                                    "value": "free",
+                                    "label": "Show only free",
+                                    "checked": pageModel.filters.showFree
+                                }
+                            ]
+                        },
+                        {
+                            "id": "your-department",
+                            "name": "department",
+                            "heading": "Your department",
+                            "items": [
+                                pageModel.filters.userDepartment
+                            ]
+                        },
+                        {
+                            "id": "other-departments",
+                            "name": "department",
+                            "heading": "Other departments",
+                            "items": pageModel.filters.otherDepartments
+                        },
+                        {
+                            "id": "your-areas-of-work",
+                            "name": "areaOfWork",
+                            "heading": "Your areas of work",
+                            "items": pageModel.filters.userAreasOfWork
+                        },
+                        {
+                            "id": "other-areas-of-work",
+                            "name": "areaOfWork",
+                            "heading": "Other areas of work",
+                            "items": pageModel.filters.otherAreasOfWork
+                        },
+                        {
+                            "id": "your-interests",
+                            "name": "interest",
+                            "heading": "Your interests",
+                            "items": pageModel.filters.userInterests
+                        },
+                        {
+                            "id": "other-interests",
+                            "name": "interest",
+                            "heading": "Other interests",
+                            "items": pageModel.filters.otherInterests
+                        }
+                    ]
+                }) }}
+
+            </div>
+            <div class="column-two-thirds">
+                <div class="resources">
+                    {% if pageModel.searchResults.length > 0 %}
+                        <p class="lede search-lede" role="status">
+                            {{ pageModel.pagination.total }} results found
+                        </p>
+                        {% for result in pageModel.searchResults %}
+                            {{ searchCard(result) }}
+                        {% endfor %}
+                    {% else %}
+                        <p class="zero-result lede"><strong>0</strong> results found</p>
+                        <h2 class="heading-medium">Please try:</h2>
+                        <ul class="no-results">
+                            <li>searching again using different words</li>
+                            <li>removing your filters</li>
+                        </ul>
+                        <h2 class="heading-medium">You can:</h2>
+                        <ul class="no-results">
+                            <li>view <a href="/suggestions-for-you">suggestions for you</a></li>
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% set pagination = pageModel.pagination %}
+        {% if pagination.total > 0 %}
+            <div class="grid-row">
+                <div class="column-one-third">
+                    <div class="pager__summary">Showing {{ pagination.start }} – {{ pagination.end }} of {{ pagination.total }} items</div>
+                </div>
+                <div class="column-two-thirds">
+                    <div class="pager__controls">
+                        {% if pagination.prevLink %}
+                            <a class="pager__prev" href="{{ pagination.prevLink }}">Previous<span class="visuallyhidden"> page</span></a>
+                        {% endif %}
+                        {% if pagination.numberedPages.length > 0 %}
+                            <ul class="pager__list">
+                                {% for numberedPage in pagination.numberedPages %}
+                                    <li>
+                                        {% if numberedPage.link %}
+                                            <a aria-label="Page {{ numberedPage.number }}" href="{{ numberedPage.link }}">{{ numberedPage.number }}</a>
+                                        {% elseif numberedPage.ellipses %}
+                                            ...
+                                        {% else %}
+                                            <span aria-label="Page {{ numberedPage.number }}">{{ numberedPage.number }}</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if pagination.nextLink %}
+                            <a class="pager__next" href="{{ pagination.nextLink }}">Next<span class="visuallyhidden"> page</span></a>
+                        {% endif %}
+                </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

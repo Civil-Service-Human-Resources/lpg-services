@@ -4,7 +4,6 @@ import * as axiosLogger from '../../../lib/axiosLogger'
 import * as config from '../../../lib/config'
 import * as model from '../../../lib/model'
 import {getLogger} from '../../logger'
-import * as courseCatalogueClient from './courseCatalogueClient'
 
 const logger = getLogger('catalog')
 
@@ -34,8 +33,4 @@ export async function get(id: string, user: model.User, departmentHierarchyCodes
 		}
 		throw new Error(`Error getting course - ${e}`)
 	}
-}
-
-export async function list(ids: string[], user: model.User) {
-	return await courseCatalogueClient.getCoursesWithIds(ids, user)
 }

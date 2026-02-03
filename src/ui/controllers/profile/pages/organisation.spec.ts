@@ -10,7 +10,10 @@ import * as common from './common'
 import {selectOrganisationsMiddleware} from './organisation'
 
 describe('Organisation middleware tests', () => {
-	const organisationList = [new FormattedOrganisation(1, 'Org 1'), new FormattedOrganisation(2, 'Org 2')]
+	const organisationList = [
+		new FormattedOrganisation(1, 'Org 1', 'Org1'),
+		new FormattedOrganisation(2, 'Org 2', 'Org2'),
+	]
 	const behaviour: PageBehaviour = {
 		templateName: 'organisation',
 		userSetup: true,

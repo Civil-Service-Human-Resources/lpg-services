@@ -1,0 +1,38 @@
+{% macro searchFilter(params) %}
+    <div class="lpg-related-items form-group govuk-related-items--search leftSearchBox filter-toggle">
+        <fieldset>
+            <legend>
+                <h2 class="govuk-related-items__heading">
+                    <button class="filter-headings" type="button" aria-controls="accordion-{{ params.id }}" aria-expanded="true" aria-label="{{ params.heading }}" tabindex="0">{{ params.heading }}</button>
+                </h2>
+            </legend>
+            <div id="accordion-{{ params.id }}">
+                {% for item in params.items %}
+                    <div class="multiple-choice">
+                        <input type="checkbox" value="{{ item.value }}" name="{{ params.name }}" id="{{ item.id }}"  {% if item.checked %}checked="checked"{% endif %} >
+                        <label for="{{ item.id }}">{{ item.label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+    </div>
+{% endmacro %}
+
+{% macro searchFilters(params) %}
+    <aside role="complementary">
+        <input type="checkbox" id="hide-filter" class="hide-filters"/>
+        <label class="filter-label" for="hide-filter">search filters</label>
+        <form class="filter-form" autocomplete="off" name="searchLearning" method="get" action="/search">
+            <input type="hidden" id="query" name="q" value="{{ params.query }}" />
+            <button type="submit" class="button">Apply search filters</button>
+            <a class="clear-filters" href="/search?q={{ params.query }}">Clear all filters</a>
+
+            {% for filter in params.filters %}
+                {{ searchFilter(filter) }}
+            {% endfor %}
+
+            <button type="submit" class="button">Apply search filters</button>
+            <a class="clear-filters" href="/search?q={{ params.query }}">Clear all filters</a>
+        </form>
+    </aside>
+{% endmacro %}
