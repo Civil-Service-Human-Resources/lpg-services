@@ -3,6 +3,7 @@ import * as asyncHandler from 'express-async-handler'
 import * as sinon from 'sinon'
 import * as request from 'supertest'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
+import {HOMEPAGE_COMPLETE_REQUIRED_COURSES, HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES} from '../../../src/lib/config'
 import {setCaches} from '../../../src/lib/service/cslService/cslServiceClient'
 import {BookedLearningPlanCourse} from '../../../src/lib/service/cslService/models/learning/learningPlan/bookedLearningPlanCourse'
 import {LearningPlan} from '../../../src/lib/service/cslService/models/learning/learningPlan/learningPlan'
@@ -36,6 +37,9 @@ describe('Homepage controller tests', () => {
 			.withArgs(
 				{
 					url: '/learning/plan',
+					params: {
+						HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES,
+					},
 				},
 				sinon.match.any
 			)
@@ -47,6 +51,9 @@ describe('Homepage controller tests', () => {
 			.withArgs(
 				{
 					url: '/learning/required',
+					params: {
+						HOMEPAGE_COMPLETE_REQUIRED_COURSES,
+					},
 				},
 				sinon.match.any
 			)
