@@ -15,8 +15,8 @@
       <env name="CSL_SERVICE_URL" value="http://localhost:9003/api" />
       <env name="FEEDBACK_URL" value="http://localhost:3001/feedback" />
       <env name="GOV_NOTIFY_API_KEY" value="test-notify-key" />
-      <env name="HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES" value="true" />
-      <env name="HOMEPAGE_COMPLETE_REQUIRED_COURSES" value="true" />
+      <env name="HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES" value="false" />
+      <env name="HOMEPAGE_COMPLETE_REQUIRED_COURSES" value="false" />
       <env name="JWT_KEY" value="jwt_key" />
       <env name="LEARNER_RECORD_URL" value="http://localhost:9000" />
       <env name="LEARNING_PLAN_TTL" value="1" />
