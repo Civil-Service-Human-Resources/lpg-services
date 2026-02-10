@@ -15,8 +15,12 @@
       <env name="CSL_SERVICE_URL" value="http://localhost:9003/api" />
       <env name="FEEDBACK_URL" value="http://localhost:3001/feedback" />
       <env name="GOV_NOTIFY_API_KEY" value="test-notify-key" />
+      <env name="HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES" value="false" />
+      <env name="HOMEPAGE_COMPLETE_REQUIRED_COURSES" value="false" />
       <env name="JWT_KEY" value="jwt_key" />
       <env name="LEARNER_RECORD_URL" value="http://localhost:9000" />
+      <env name="LEARNING_PLAN_TTL" value="1" />
+      <env name="LEARNING_RECORD_TTL" value="1" />
       <env name="LOGGING_LEVEL" value="DEBUG" />
       <env name="LPG_MANAGEMENT_SERVER" value="http://localhost:3005" />
       <env name="LPG_UI_SERVER" value="http://localhost:3001" />
@@ -25,12 +29,14 @@
       <env name="OAUTH_CLIENT_SECRET" value="oauth-client-id-secret" />
       <env name="OAUTH_TOKEN_ENDPOINT" value="/oauth2/token" />
       <env name="ORG_REDIS_TTL" value="86400" />
+      <env name="PROFILE_REDIS_TTL" value="1" />
       <env name="REDIS_HOST" value="localhost" />
       <env name="REDIS_KEY_PREFIX" value="local_csl_frontend_" />
       <env name="REDIS_PASSWORD" value="" />
       <env name="REDIS_PORT" value="6379" />
       <env name="REGISTRY_SERVICE_URL" value="http://localhost:9002" />
       <env name="REQUEST_TIMEOUT" value="60000" />
+      <env name="REQUIRED_LEARNING_TTL" value="1" />
       <env name="SERVER_TIMEOUT_MS" value="60000" />
       <env name="SESSION_SECRET" value="session_secret" />
       <env name="STATIC_ASSET_ROOT" value="http://localhost:3001/" />
