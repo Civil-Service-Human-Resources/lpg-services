@@ -25,19 +25,15 @@
         <h1 id="page-heading" class="heading-xlarge heading heading--page-heading">
             {{ pageModel.title }}
         </h1>
-        {% if pageModel.type == "face-to-face" %}
-            {% if not pageModel.moduleDetails.cancellationLink %}
-                {% if not pageModel.moduleDetails.canBeBooked %}
-                    <div class="grid-row">
-                        <div class="column-two-thirds">
-                            {{ notificationBanner({
-                                description: i18n('components.notification_banner.course_not_bookable')
-                            }) }}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endif %}
-        {% endif %}
+       {% if (pageModel.type === "face-to-face") and (not pageModel.moduleDetails.cancellationLink) and (not pageModel.moduleDetails.canBeBooked) %}
+           <div class="grid-row">
+               <div class="column-two-thirds">
+                   {{ notificationBanner({
+                       description: i18n('components.notification_banner.course_not_bookable')
+                   }) }}
+               </div>
+           </div>
+       {% endif %}
         <div class="grid-row">
             <div class="column-full">
                 {{ renderBanners(banners) }}
