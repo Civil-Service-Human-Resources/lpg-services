@@ -25,6 +25,17 @@
         <h1 id="page-heading" class="heading-xlarge heading heading--page-heading">
             {{ pageModel.title }}
         </h1>
+        {% if not pageModel.moduleDetails.cancellationLink %}
+            {% if not pageModel.moduleDetails.canBeBooked %}
+                <div class="grid-row">
+                    <div class="column-two-thirds">
+                        {{ notificationBanner({
+                            description: i18n('components.notification_banner.course_not_bookable')
+                        }) }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
         <div class="grid-row">
             <div class="column-full">
                 {{ renderBanners(banners) }}
@@ -32,6 +43,7 @@
         </div>
         <div class="grid-row">
             <div class="column-two-thirds">
+
                 <h2 id="overview" class="description heading-medium">Overview</h2>
                 <div>{{ pageModel.description | toHtml | safe }}</div>
 
