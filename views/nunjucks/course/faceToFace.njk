@@ -4,11 +4,11 @@
     {% if pageModel.moduleDetails.cancellationLink %}
         <p>You are already booked on this course. <a href="{{ pageModel.moduleDetails.cancellationLink }}">Do you wish to cancel your booking?</a></p>
     {% else %}
-        {% if not signedInUser.hasLineManager() %}
+        {% if not pageModel.moduleDetails.canBeBooked %}
+        {% elseif not signedInUser.hasLineManager() %}
             <p class='govuk-body'>
                 <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this course</span>
             </p>
-        {% elseif not pageModel.moduleDetails.canBeBooked %}
         {% else %}
             <div class="notice push-bottom">
                 <i class="icon icon-important">
