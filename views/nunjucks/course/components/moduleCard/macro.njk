@@ -57,10 +57,10 @@
     {% else %}
         <div class="discite__action discite__action--module">
             {% if params.type === "face-to-face" %}
-                {% if not signedInUser.lineManager %}
-                    <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this module</span>
-                {% elseif not params.canBeBooked %}
+                {% if not params.canBeBooked %}
                     <span>{{ i18n('components.notification_banner.course_not_bookable') }}</span>
+                {% elseif not signedInUser.lineManager %}
+                    <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this module</span>
                 {% else %}
                     {{ moduleCardCtaLink(params.launchLink, "action_BOOK", params.title) }}
                 {% endif %}
