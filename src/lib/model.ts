@@ -240,7 +240,22 @@ export class Course implements ICourse {
 	}
 
 	getGrades() {
-		return this.audience ? this.audience.grades : []
+		if (!this.audience || !this.audience.grades) {
+			return []
+		}
+		return this.audience.grades
+			.map(value => ({
+				original: value,
+				lower: value.toLowerCase(),
+			}))
+			.sort((a, b) => {
+				const lowerCompare = a.lower.localeCompare(b.lower)
+				if (lowerCompare !== 0) {
+					return lowerCompare
+				}
+				return a.original.localeCompare(b.original)
+			})
+			.map(item => item.original)
 	}
 
 	getType(): CourseType {

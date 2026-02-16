@@ -1,6 +1,7 @@
 import {assert} from 'chai'
+import {expect} from 'chai'
 import * as sinon from 'sinon'
-import {Course, Module, RequiredRecurringAudience} from './model'
+import {Course, Module, RequiredRecurringAudience, Audience} from './model'
 import {CourseRecord} from './service/cslService/models/courseRecord'
 import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {RecordState} from './service/cslService/models/record'
@@ -186,6 +187,55 @@ describe('displayState tests', () => {
 		it('should set the state to NULL when a module has no record associated ', () => {
 			const result = module1.getDisplayState(null, null)
 			assert.equal(result, null)
+		})
+	})
+
+	describe('Course.getGrades() tests', () => {
+		function createCourseWithGrades(grades?: string[]) {
+			const course = new Course('testId')
+			course.audiences = []
+			if (grades !== undefined) {
+				course.audience = Audience.create({
+					grades,
+				})
+			}
+			return course
+		}
+
+		it('should return empty array when audience is undefined', () => {
+			const course = createCourseWithGrades(undefined)
+			expect(course.getGrades()).to.eql([])
+		})
+
+		it('should return empty array when audience.grades is undefined', () => {
+			const course = new Course('testId')
+			course.audiences = []
+			course.audience = Audience.create({})
+			expect(course.getGrades()).to.eql([])
+		})
+
+		it('should return empty array when grades array is empty', () => {
+			const course = createCourseWithGrades([])
+			expect(course.getGrades()).to.eql([])
+		})
+
+		it('should return grades sorted alphabetically (case insensitive)', () => {
+			const course = createCourseWithGrades(['Grade 7', 'administrative Assistant', 'Executive Officer'])
+			const result = course.getGrades()
+			expect(result).to.eql(['administrative Assistant', 'Executive Officer', 'Grade 7'])
+		})
+
+		it('should sort case-insensitively but preserve original case when lowercase equal', () => {
+			const course = createCourseWithGrades(['grade 7', 'Grade 7', 'GRADE 7'])
+			const result = course.getGrades()
+			expect(result).to.eql(['grade 7', 'Grade 7', 'GRADE 7'])
+		})
+
+		it('should not mutate the original grades array', () => {
+			const grades = ['Grade 7,', 'Administrative Assistant', 'Executive Officer']
+			const course = createCourseWithGrades(grades)
+			const original = [...course.audience!.grades]
+			expect(course.audience!.grades).to.eql(original)
 		})
 	})
 })
