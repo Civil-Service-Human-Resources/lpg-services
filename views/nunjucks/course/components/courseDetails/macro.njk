@@ -35,7 +35,7 @@
                 {% if details.grades.length > 0 %}
                     {{ detailsRow({
                         heading: i18n("Level"),
-                        detail: details.grades | i18nList | join(", ")
+                        detail: gradesMarkup(details.grades)
                     }) }}
                 {% endif %}
                 {% if details.cost %}
@@ -47,4 +47,11 @@
             </tbody>
         </table>
     </aside>
+{% endmacro %}
+
+{% macro gradesMarkup(grades) %}
+    {% set translated = grades | i18nList %}
+    {% for grade in translated %}
+        {{ grade }}{% if not loop.last %},<br>{% endif %}
+    {% endfor %}
 {% endmacro %}
