@@ -39,7 +39,7 @@ export const assertCourseDetails = (html: string, expValues: CourseDetailsAssert
 		assertions.push(getDetailsRowAssertion('Location', expValues.expLocation))
 	}
 	if (expValues.expGrades) {
-		assertions.push(getDetailsRowAssertion('Level', expValues.expGrades.join(',<br>')))
+		assertions.push(getDetailsRowAssertion('Level', expValues.expGrades.join(',')))
 	}
 	if (expValues.expCost) {
 		assertions.push(getDetailsRowAssertion('Cost', expValues.expCost))

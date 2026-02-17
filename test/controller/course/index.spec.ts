@@ -454,7 +454,7 @@ describe('Course controller tests', () => {
 				assertCourseDetails(res.text, {
 					expCost: '£100 (ex VAT)',
 					expDuration: '1 hour',
-					expGrades: ['Grade 7,\n    \n        Grade 6'],
+					expGrades: ['Grade 7,\n        \n            Grade 6.'],
 					expLocation: 'London',
 					expAreasOfWork: ['Analysis', 'Policy'],
 					expType: 'Link',
