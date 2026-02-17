@@ -243,16 +243,28 @@ export class Course implements ICourse {
 		if (!this.audience || !this.audience.grades) {
 			return []
 		}
+
+		const priorityOrder = ['AA', 'AO', 'EO', 'HEO', 'SEO', 'G7', 'G6', 'PB1', 'PB2', 'PB3', 'PS']
+		const priorityMap = new Map(priorityOrder.map((value, index) => [value.toLowerCase(), index]))
+
 		return this.audience.grades
 			.map(value => ({
 				original: value,
 				lower: value.toLowerCase(),
+				priority: priorityMap.has(value.toLowerCase())
+					? priorityMap.get(value.toLowerCase())!
+					: Number.MAX_SAFE_INTEGER,
 			}))
 			.sort((a, b) => {
+				if (a.priority !== b.priority) {
+					return a.priority - b.priority
+				}
+
 				const lowerCompare = a.lower.localeCompare(b.lower)
 				if (lowerCompare !== 0) {
 					return lowerCompare
 				}
+
 				return a.original.localeCompare(b.original)
 			})
 			.map(item => item.original)

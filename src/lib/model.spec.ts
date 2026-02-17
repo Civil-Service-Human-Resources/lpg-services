@@ -194,11 +194,13 @@ describe('displayState tests', () => {
 		function createCourseWithGrades(grades?: string[]) {
 			const course = new Course('testId')
 			course.audiences = []
+
 			if (grades !== undefined) {
 				course.audience = Audience.create({
 					grades,
 				})
 			}
+
 			return course
 		}
 
@@ -219,22 +221,46 @@ describe('displayState tests', () => {
 			expect(course.getGrades()).to.eql([])
 		})
 
-		it('should return grades sorted alphabetically (case insensitive)', () => {
-			const course = createCourseWithGrades(['Grade 7', 'administrative Assistant', 'Executive Officer'])
+		it('should return grades sorted alphabetically (case insensitive) when no priority values exist', () => {
+			const course = createCourseWithGrades(['G7', 'aa', 'EO'])
+
 			const result = course.getGrades()
-			expect(result).to.eql(['administrative Assistant', 'Executive Officer', 'Grade 7'])
+
+			expect(result).to.eql(['aa', 'EO', 'G7'])
 		})
 
 		it('should sort case-insensitively but preserve original case when lowercase equal', () => {
-			const course = createCourseWithGrades(['grade 7', 'Grade 7', 'GRADE 7'])
+			const course = createCourseWithGrades(['g7', 'G7', 'Gr7'])
+
 			const result = course.getGrades()
-			expect(result).to.eql(['grade 7', 'Grade 7', 'GRADE 7'])
+
+			expect(result).to.eql(['g7', 'G7', 'Gr7'])
+		})
+
+		it('should sort according to custom priority order when priority values exist', () => {
+			const course = createCourseWithGrades(['PB2', 'AA', 'G6', 'AO', 'PB1'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['AA', 'AO', 'G6', 'PB1', 'PB2'])
+		})
+
+		it('should place priority values before non-priority values', () => {
+			const course = createCourseWithGrades(['Permanent Secretary', 'PB2', 'Executive Officer', 'AA'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['AA', 'PB2', 'Executive Officer', 'Permanent Secretary'])
 		})
 
 		it('should not mutate the original grades array', () => {
-			const grades = ['Grade 7,', 'Administrative Assistant', 'Executive Officer']
+			const grades = ['PB2', 'AA', 'G6']
 			const course = createCourseWithGrades(grades)
+
 			const original = [...course.audience!.grades]
+
+			course.getGrades()
+
 			expect(course.audience!.grades).to.eql(original)
 		})
 	})
