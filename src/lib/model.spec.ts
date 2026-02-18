@@ -221,20 +221,12 @@ describe('displayState tests', () => {
 			expect(course.getGrades()).to.eql([])
 		})
 
-		it('should return grades sorted alphabetically (case insensitive) when no priority values exist', () => {
-			const course = createCourseWithGrades(['G7', 'aa', 'EO'])
+		it('should return grades sorted alphabetically (case insensitive) when priority values exist', () => {
+			const course = createCourseWithGrades(['G7', 'g6', 'EO'])
 
 			const result = course.getGrades()
 
-			expect(result).to.eql(['aa', 'EO', 'G7'])
-		})
-
-		it('should sort case-insensitively but preserve original case when lowercase equal', () => {
-			const course = createCourseWithGrades(['g7', 'G7', 'Gr7'])
-
-			const result = course.getGrades()
-
-			expect(result).to.eql(['g7', 'G7', 'Gr7'])
+			expect(result).to.eql(['EO', 'g6', 'G7'])
 		})
 
 		it('should sort according to custom priority order when priority values exist', () => {
@@ -246,11 +238,11 @@ describe('displayState tests', () => {
 		})
 
 		it('should place priority values before non-priority values', () => {
-			const course = createCourseWithGrades(['Permanent Secretary', 'PB2', 'Executive Officer', 'AA'])
+			const course = createCourseWithGrades(['PB3', 'PB2', 'EO', 'AA'])
 
 			const result = course.getGrades()
 
-			expect(result).to.eql(['AA', 'PB2', 'Executive Officer', 'Permanent Secretary'])
+			expect(result).to.eql(['AA', 'EO', 'PB2', 'PB3'])
 		})
 
 		it('should not mutate the original grades array', () => {

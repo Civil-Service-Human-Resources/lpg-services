@@ -9,6 +9,7 @@ import {CourseRecord} from './service/cslService/models/courseRecord'
 import {RecordState} from './service/cslService/models/record'
 import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {CacheableObject} from './utils/cacheableObject'
+import * as config from '../lib/config'
 
 import _ = require('lodash')
 
@@ -244,8 +245,7 @@ export class Course implements ICourse {
 			return []
 		}
 
-		const priorityOrder = ['AA', 'AO', 'EO', 'HEO', 'SEO', 'G7', 'G6', 'PB1', 'PB2', 'PB3', 'PS']
-		const priorityMap = new Map(priorityOrder.map((value, index) => [value.toLowerCase(), index]))
+		const priorityMap = new Map(config.GRADE_PRIORITY_ORDER.map((value, index) => [value.toLowerCase(), index]))
 
 		return this.audience.grades
 			.map(value => ({
