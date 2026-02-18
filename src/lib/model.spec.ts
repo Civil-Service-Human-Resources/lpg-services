@@ -1,6 +1,7 @@
 import {assert} from 'chai'
 import {expect} from 'chai'
 import * as sinon from 'sinon'
+import * as config from '../../src/lib/config'
 import {Course, Module, RequiredRecurringAudience, Audience} from './model'
 import {CourseRecord} from './service/cslService/models/courseRecord'
 import {ModuleRecord} from './service/cslService/models/moduleRecord'
@@ -191,6 +192,10 @@ describe('displayState tests', () => {
 	})
 
 	describe('Course.getGrades() tests', () => {
+		before(() => {
+			;(config as any).GRADE_PRIORITY_ORDER = ['AA', 'AO', 'EO', 'HEO', 'SEO', 'G7', 'G6', 'PB1', 'PB2', 'PB3', 'PS']
+		})
+
 		function createCourseWithGrades(grades?: string[]) {
 			const course = new Course('testId')
 			course.audiences = []
@@ -221,32 +226,24 @@ describe('displayState tests', () => {
 			expect(course.getGrades()).to.eql([])
 		})
 
-		it('should return grades sorted alphabetically (case insensitive) when priority values exist', () => {
-			const course = createCourseWithGrades(['G7', 'g6', 'EO'])
+		it('should sort according to custom priority order (case insensitive) when priority values exist', () => {
+			const course = createCourseWithGrades(['PB2', 'G7', 'AA', 'g6', 'AO', 'PB1'])
 
 			const result = course.getGrades()
 
-			expect(result).to.eql(['EO', 'g6', 'G7'])
-		})
-
-		it('should sort according to custom priority order when priority values exist', () => {
-			const course = createCourseWithGrades(['PB2', 'AA', 'G6', 'AO', 'PB1'])
-
-			const result = course.getGrades()
-
-			expect(result).to.eql(['AA', 'AO', 'G6', 'PB1', 'PB2'])
+			expect(result).to.eql(['AA', 'AO', 'G7', 'g6', 'PB1', 'PB2'])
 		})
 
 		it('should place priority values before non-priority values', () => {
-			const course = createCourseWithGrades(['PB3', 'PB2', 'EO', 'AA'])
+			const course = createCourseWithGrades(['PB3', 'PB2', 'AA', 'EO', 'ABC'])
 
 			const result = course.getGrades()
 
-			expect(result).to.eql(['AA', 'EO', 'PB2', 'PB3'])
+			expect(result).to.eql(['AA', 'EO', 'PB2', 'PB3', 'ABC'])
 		})
 
 		it('should not mutate the original grades array', () => {
-			const grades = ['PB2', 'AA', 'G6']
+			const grades = ['PB2', 'AA', 'G6', 'ABC']
 			const course = createCourseWithGrades(grades)
 
 			const original = [...course.audience!.grades]
