@@ -235,15 +235,15 @@ describe('displayState tests', () => {
 		})
 
 		it('should place priority values before non-priority values', () => {
-			const course = createCourseWithGrades(['PB3', 'PB2', 'AA', 'EO', 'ABC'])
+			const course = createCourseWithGrades(['XYZ', 'ABC', 'PB3', 'PB2', 'AA', 'EO'])
 
 			const result = course.getGrades()
 
-			expect(result).to.eql(['AA', 'EO', 'PB2', 'PB3', 'ABC'])
+			expect(result).to.eql(['AA', 'EO', 'PB2', 'PB3', 'ABC', 'XYZ'])
 		})
 
 		it('should not mutate the original grades array', () => {
-			const grades = ['PB2', 'AA', 'G6', 'ABC']
+			const grades = ['ABC', 'PB2', 'AA', 'G6']
 			const course = createCourseWithGrades(grades)
 
 			const original = [...course.audience!.grades]
