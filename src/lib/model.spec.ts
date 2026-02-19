@@ -252,5 +252,15 @@ describe('displayState tests', () => {
 
 			expect(course.audience!.grades).to.eql(original)
 		})
+
+		it('should sort ascending alphabetically if custom priority order is not defined', () => {
+			;(config as any).GRADE_PRIORITY_ORDER = []
+
+			const course = createCourseWithGrades(['PB2', 'G7', 'AA', 'g6', 'AO', 'PB1'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['AA', 'AO', 'g6', 'G7', 'PB1', 'PB2'])
+		})
 	})
 })
