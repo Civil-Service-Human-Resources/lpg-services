@@ -9,6 +9,7 @@ import {CourseRecord} from './service/cslService/models/courseRecord'
 import {RecordState} from './service/cslService/models/record'
 import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {CacheableObject} from './utils/cacheableObject'
+import * as config from '../lib/config'
 
 import _ = require('lodash')
 
@@ -240,7 +241,37 @@ export class Course implements ICourse {
 	}
 
 	getGrades() {
-		return this.audience ? this.audience.grades : []
+		if (!this.audience || !this.audience.grades) {
+			return []
+		}
+
+		if (!config.GRADE_PRIORITY_ORDER_ENABLED) {
+			return this.audience.grades
+		}
+
+		const priorityMap = new Map(config.GRADE_PRIORITY_ORDER.map((value, index) => [value.toLowerCase(), index]))
+
+		return this.audience.grades
+			.map(value => ({
+				original: value,
+				lower: value.toLowerCase(),
+				priority: priorityMap.has(value.toLowerCase())
+					? priorityMap.get(value.toLowerCase())!
+					: Number.MAX_SAFE_INTEGER,
+			}))
+			.sort((a, b) => {
+				if (a.priority !== b.priority) {
+					return a.priority - b.priority
+				}
+
+				const lowerCompare = a.lower.localeCompare(b.lower)
+				if (lowerCompare !== 0) {
+					return lowerCompare
+				}
+
+				return a.original.localeCompare(b.original)
+			})
+			.map(item => item.original)
 	}
 
 	getType(): CourseType {

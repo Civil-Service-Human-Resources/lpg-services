@@ -1,6 +1,8 @@
 import {assert} from 'chai'
+import {expect} from 'chai'
 import * as sinon from 'sinon'
-import {Course, Module, RequiredRecurringAudience} from './model'
+import * as config from '../../src/lib/config'
+import {Course, Module, RequiredRecurringAudience, Audience} from './model'
 import {CourseRecord} from './service/cslService/models/courseRecord'
 import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {RecordState} from './service/cslService/models/record'
@@ -186,6 +188,91 @@ describe('displayState tests', () => {
 		it('should set the state to NULL when a module has no record associated ', () => {
 			const result = module1.getDisplayState(null, null)
 			assert.equal(result, null)
+		})
+	})
+
+	describe('Course.getGrades() tests', () => {
+		before(() => {
+			;(config as any).GRADE_PRIORITY_ORDER_ENABLED = true
+			;(config as any).GRADE_PRIORITY_ORDER = ['AA', 'AO', 'EO', 'HEO', 'SEO', 'G7', 'G6', 'PB1', 'PB2', 'PB3', 'PS']
+		})
+
+		function createCourseWithGrades(grades?: string[]) {
+			const course = new Course('testId')
+			course.audiences = []
+
+			if (grades !== undefined) {
+				course.audience = Audience.create({
+					grades,
+				})
+			}
+
+			return course
+		}
+
+		it('should return empty array when audience is undefined', () => {
+			const course = createCourseWithGrades(undefined)
+			expect(course.getGrades()).to.eql([])
+		})
+
+		it('should return empty array when audience.grades is undefined', () => {
+			const course = new Course('testId')
+			course.audiences = []
+			course.audience = Audience.create({})
+			expect(course.getGrades()).to.eql([])
+		})
+
+		it('should return empty array when grades array is empty', () => {
+			const course = createCourseWithGrades([])
+			expect(course.getGrades()).to.eql([])
+		})
+
+		it('should sort according to custom priority order (case insensitive) when priority values exist', () => {
+			const course = createCourseWithGrades(['PB2', 'G7', 'AA', 'g6', 'AO', 'PB1'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['AA', 'AO', 'G7', 'g6', 'PB1', 'PB2'])
+		})
+
+		it('should place priority values before non-priority values', () => {
+			const course = createCourseWithGrades(['XYZ', 'ABC', 'PB3', 'PB2', 'AA', 'EO'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['AA', 'EO', 'PB2', 'PB3', 'ABC', 'XYZ'])
+		})
+
+		it('should not mutate the original grades array', () => {
+			const grades = ['ABC', 'PB2', 'AA', 'G6']
+			const course = createCourseWithGrades(grades)
+
+			const original = [...course.audience!.grades]
+
+			course.getGrades()
+
+			expect(course.audience!.grades).to.eql(original)
+		})
+
+		it('should sort ascending alphabetically if custom priority order is not defined', () => {
+			;(config as any).GRADE_PRIORITY_ORDER = []
+
+			const course = createCourseWithGrades(['XYZ', 'ABC', 'PB2', 'G7', 'HEO', 'g6', 'AO', 'PB1'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['ABC', 'AO', 'g6', 'G7', 'HEO', 'PB1', 'PB2', 'XYZ'])
+		})
+
+		it('should not sort or use the custom priority order if grade priority order is not enabled', () => {
+			;(config as any).GRADE_PRIORITY_ORDER_ENABLED = false
+			;(config as any).GRADE_PRIORITY_ORDER = ['AA', 'AO', 'EO', 'HEO', 'SEO', 'G7', 'G6', 'PB1', 'PB2', 'PB3', 'PS']
+
+			const course = createCourseWithGrades(['XYZ', 'ABC', 'PB2', 'G7', 'HEO', 'g6', 'AO', 'PB1'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['XYZ', 'ABC', 'PB2', 'G7', 'HEO', 'g6', 'AO', 'PB1'])
 		})
 	})
 })

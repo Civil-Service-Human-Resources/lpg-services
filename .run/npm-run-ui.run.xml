@@ -14,6 +14,8 @@
       <env name="COURSE_CATALOGUE_USER" value="test_course_catalogue_user" />
       <env name="CSL_SERVICE_URL" value="http://localhost:9003/api" />
       <env name="FEEDBACK_URL" value="http://localhost:3001/feedback" />
+      <env name="GRADE_PRIORITY_ORDER_ENABLED" value="false" />
+      <env name="GRADE_PRIORITY_ORDER" value="AA,AO,EO,HEO,SEO,G7,G6,PB1,PB2,PB3,PS" />
       <env name="GOV_NOTIFY_API_KEY" value="test-notify-key" />
       <env name="HOMEPAGE_COMPLETE_LEARNING_PLAN_COURSES" value="false" />
       <env name="HOMEPAGE_COMPLETE_REQUIRED_COURSES" value="false" />
