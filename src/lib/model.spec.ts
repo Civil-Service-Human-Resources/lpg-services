@@ -256,11 +256,11 @@ describe('displayState tests', () => {
 		it('should sort ascending alphabetically if custom priority order is not defined', () => {
 			;(config as any).GRADE_PRIORITY_ORDER = []
 
-			const course = createCourseWithGrades(['PB2', 'G7', 'AA', 'g6', 'AO', 'PB1'])
+			const course = createCourseWithGrades(['XYZ', 'ABC', 'PB2', 'G7', 'HEO', 'g6', 'AO', 'PB1'])
 
 			const result = course.getGrades()
 
-			expect(result).to.eql(['AA', 'AO', 'g6', 'G7', 'PB1', 'PB2'])
+			expect(result).to.eql(['ABC', 'AO', 'g6', 'G7', 'HEO', 'PB1', 'PB2', 'XYZ'])
 		})
 	})
 })
