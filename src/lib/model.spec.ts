@@ -193,6 +193,7 @@ describe('displayState tests', () => {
 
 	describe('Course.getGrades() tests', () => {
 		before(() => {
+			;(config as any).GRADE_PRIORITY_ORDER_ENABLED = true
 			;(config as any).GRADE_PRIORITY_ORDER = ['AA', 'AO', 'EO', 'HEO', 'SEO', 'G7', 'G6', 'PB1', 'PB2', 'PB3', 'PS']
 		})
 
@@ -261,6 +262,17 @@ describe('displayState tests', () => {
 			const result = course.getGrades()
 
 			expect(result).to.eql(['ABC', 'AO', 'g6', 'G7', 'HEO', 'PB1', 'PB2', 'XYZ'])
+		})
+
+		it('should not sort or use the custom priority order if grade priority order is not enabled', () => {
+			;(config as any).GRADE_PRIORITY_ORDER_ENABLED = false
+			;(config as any).GRADE_PRIORITY_ORDER = ['AA', 'AO', 'EO', 'HEO', 'SEO', 'G7', 'G6', 'PB1', 'PB2', 'PB3', 'PS']
+
+			const course = createCourseWithGrades(['XYZ', 'ABC', 'PB2', 'G7', 'HEO', 'g6', 'AO', 'PB1'])
+
+			const result = course.getGrades()
+
+			expect(result).to.eql(['XYZ', 'ABC', 'PB2', 'G7', 'HEO', 'g6', 'AO', 'PB1'])
 		})
 	})
 })

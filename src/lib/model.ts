@@ -245,6 +245,10 @@ export class Course implements ICourse {
 			return []
 		}
 
+		if (!config.GRADE_PRIORITY_ORDER_ENABLED) {
+			return this.audience.grades
+		}
+
 		const priorityMap = new Map(config.GRADE_PRIORITY_ORDER.map((value, index) => [value.toLowerCase(), index]))
 
 		return this.audience.grades
