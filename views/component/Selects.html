@@ -1,5 +1,15 @@
 {#if optionType === 'typeahead'}
-    <TypeAhead {options} {inputName} {script} {label} {value} />
+    <div class="form-group">
+        {#if label}
+            <label class="form-label" for="{inputName}">{label}</label>
+        {/if}
+        <select class="form-control" id="{inputName}" name="{inputName}">
+            <option value=""></option>
+            {#each options as option}
+                <option value="{option.value}" selected="{value === option.value ? 'selected' : ''}">{option.text}</option>
+            {/each}
+        </select>
+    </div>
 {:elseif optionType === 'checkbox'}
     <Checkboxes {options} {inputName} {script} {value} {lede} />
 {:elseif optionType === 'radio'}
@@ -7,7 +17,6 @@
 {/if}
 
 <script>
-	import TypeAhead from './TypeAhead.html'
 	import Checkboxes from './Checkboxes.html'
 	import NewRadios from './NewRadios.html'
 
@@ -18,7 +27,6 @@
 		},
 
 		components: {
-		    TypeAhead,
 		    Checkboxes,
 		    NewRadios
 		}

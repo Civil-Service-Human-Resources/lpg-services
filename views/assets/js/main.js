@@ -3,7 +3,6 @@ require('./govuk_frontend_toolkit/govuk/modules')
 require('./govuk_frontend_toolkit/govuk/govuk-template')
 require('./accordion')
 require('./cookies')
-require('./typeahead')
 require('./prevent-double-click')
 
 const accessibleAutocomplete = require('accessible-autocomplete')
@@ -31,7 +30,16 @@ document.addEventListener('DOMContentLoaded', function () {
 		accessibleAutocomplete.enhanceSelectElement({
 			selectElement: organisationSelect,
 			showAllValues: true,
-			defaultValue: organisationSelect.options[organisationSelect.options.selectedIndex].innerHTML || ''
+			defaultValue: organisationSelect.options[organisationSelect.options.selectedIndex].innerHTML || '',
+		})
+	}
+
+	const cancelReasonSelect = document.querySelector('#cancel-reason')
+	if (cancelReasonSelect) {
+		accessibleAutocomplete.enhanceSelectElement({
+			selectElement: cancelReasonSelect,
+			showAllValues: true,
+			defaultValue: cancelReasonSelect.options[cancelReasonSelect.options.selectedIndex].innerHTML || '',
 		})
 	}
 })
