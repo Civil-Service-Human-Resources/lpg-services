@@ -2,23 +2,23 @@
    <ul id="proposition-links">
         {#if $signedInUser} {#if $signedInUser.hasCompleteProfile()}
             {#if $req.originalUrl.includes("/home")}
-                <li class="active"><a href="/home">Home</a></li>
+                <li class="active"><a href="/home" aria-current="page">Home</a></li>
             {:else}
                 <li><a href="/home">Home</a></li>
             {/if}
             {#if $req.originalUrl.includes("/suggestions-for-you")}
-                <li class="active"><a href="/suggestions-for-you">{$i18n('suggestions_page_title')}</a></li>
+                <li class="active"><a href="/suggestions-for-you" aria-current="page">{$i18n('suggestions_page_title')}</a></li>
             {:else}
                 <li><a href="/suggestions-for-you">{$i18n('suggestions_page_title')}</a></li>
             {/if}
             {#if $req.originalUrl.includes("/learning-record")}
-                <li class="active"><a href="/learning-record">Learning record</a></li>
+                <li class="active"><a href="/learning-record" aria-current="page">Learning record</a></li>
             {:else}
                 <li><a href="/learning-record">Learning record</a></li>
             {/if}
         {/if}
        {#if $req.originalUrl.includes("/profile")}
-       <li class="active"><a href="/profile">Profile</a></li>
+       <li class="active"><a href="/profile" aria-current="page">Profile</a></li>
        {:else}
        <li><a href="/profile">Profile</a></li>
        {/if}
