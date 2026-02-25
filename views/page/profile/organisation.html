@@ -15,7 +15,13 @@
                 {/if}
                 <form autocomplete="off" method="post" action="/profile/organisation">
                     <div class="form-group">
-                        <TypeAhead {options} inputName="organisation" label="Organisation" {value} />
+                        <label class="form-label" for="organisation">Organisation</label>
+                        <select class="form-control" id="organisation" name="organisation">
+                            <option value=""></option>
+                            {#each options as option}
+                                <option value="{option.value}" {#if value === option.value}selected{/if}>{option.text}</option>
+                            {/each}
+                        </select>
                     </div>
                     <input type="hidden" name="_csrf" value="{_csrf}">
                     <button type="submit" class="button">Continue</button>
@@ -28,8 +34,7 @@
 </PageNoNav>
 <script>
 	import PageNoNav from '../../component/PageNoNav.html'
-    import TypeAhead from '../../component/TypeAhead.html'
-    import Error from '../../component/Error.html'
+	import Error from '../../component/Error.html'
 
 	export default {
 		data() {
@@ -39,7 +44,6 @@
 
 		components: {
             PageNoNav,
-            TypeAhead,
             Error
 		}
 	}

@@ -6,6 +6,8 @@ require('./cookies')
 require('./typeahead')
 require('./prevent-double-click')
 
+const accessibleAutocomplete = require('accessible-autocomplete')
+
 document.addEventListener('DOMContentLoaded', function () {
 	let modules = Array.prototype.slice.call(document.querySelectorAll('[data-module]'))
 
@@ -23,4 +25,13 @@ document.addEventListener('DOMContentLoaded', function () {
 			module.start(element)
 		}
 	})
+
+	const organisationSelect = document.querySelector('#organisation')
+	if (organisationSelect) {
+		accessibleAutocomplete.enhanceSelectElement({
+			selectElement: organisationSelect,
+			showAllValues: true,
+			defaultValue: organisationSelect.options[organisationSelect.options.selectedIndex].innerHTML || ''
+		})
+	}
 })
