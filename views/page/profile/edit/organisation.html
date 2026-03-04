@@ -15,11 +15,12 @@
                 {/if}
                 <form autocomplete="off" method="post" action="/profile/organisation">
                     <div class="form-group">
-                        <label class="form-label" for="organisation">{$i18n('profile_department_label')}</label>
-                        <select class="form-control" id="organisation" name="organisation">
+                        <label for="organisation">{$i18n('profile_department_label')}</label>
+                        <p class="govuk-body hint no-margin">{$i18n('register_organisation_label_hint')}</p>
+                        <select class="form-control" id="organisation" name="organisation" aria-labelledby="organisation">
                             <option value=""></option>
                             {#each options as option}
-                                <option value="{option.value}" selected="{value === option.value ? 'selected' : ''}">{option.text}</option>
+                                <option label="{option}" value="{option.id}" selected="{value === option.id ? 'selected' : ''}">{option.name}</option>
                             {/each}
                         </select>
                     </div>
