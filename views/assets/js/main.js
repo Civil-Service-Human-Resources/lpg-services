@@ -28,18 +28,22 @@ document.addEventListener('DOMContentLoaded', function () {
 	const organisationSelect = document.querySelector('#organisation')
 	if (organisationSelect) {
 		accessibleAutocomplete.enhanceSelectElement({
+			autoselect: false,
+			defaultValue: '',
+			minLength: 1,
 			selectElement: organisationSelect,
 			showAllValues: true,
-			defaultValue: organisationSelect.options[organisationSelect.options.selectedIndex].innerHTML || '',
 		})
 	}
 
 	const cancelReasonSelect = document.querySelector('#cancel-reason')
 	if (cancelReasonSelect) {
 		accessibleAutocomplete.enhanceSelectElement({
+			autoselect: false,
+			defaultValue: '',
+			minLength: 1,
 			selectElement: cancelReasonSelect,
 			showAllValues: true,
-			defaultValue: cancelReasonSelect.options[cancelReasonSelect.options.selectedIndex].innerHTML || '',
 		})
 	}
 })
