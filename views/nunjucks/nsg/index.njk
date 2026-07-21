@@ -25,7 +25,7 @@
 {% endmacro %}
 
 {% block content %}
-    <div class='home-container'>
+    <div class='category-card__container'>
         <div class='title-card'>
             <h1 class='title-card__heading title-card__heading--medium'>Welcome to the National School of Government and Public Services.</h1>
             <div class='title-card__content'>
@@ -33,6 +33,9 @@
                 <p class='govuk-body'>Click on the link to view the subjects.</p>
             </div>
         </div>
+        {% for category in homepage.categories %}
+            {{ categoryCard(category) }}
+        {% endfor %}
         {% for row in rows %}
             <div class='category-card__row'>
                 {% for category in row %}

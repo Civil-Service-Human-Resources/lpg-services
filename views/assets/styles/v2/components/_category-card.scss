@@ -10,6 +10,8 @@
     grid-column: span 1;
     grid-template-columns: 100%;
   }
+.category-card__container {
+  display: flex;
 }
 
 .category-card {
