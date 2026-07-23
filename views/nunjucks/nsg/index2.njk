@@ -1,9 +1,6 @@
 {% extends "./baseLayout.njk" %}
 
-{% block pageTitle %}
-    National School of Government and Public Services
-{% endblock %}
-
+{% set pageTitle = "Your learning" %}
 {% set navbarTab = "home" %}
 
 {% macro categoryCard(params) %}
@@ -24,6 +21,10 @@
     </div>
 {% endmacro %}
 
+{% block header %}
+    NSG header
+{% endblock %}
+
 {% block content %}
     <div class='home-container'>
         <div class='title-card'>
@@ -33,13 +34,23 @@
                 <p class='govuk-body'>Click on the link to view the subjects.</p>
             </div>
         </div>
+{#        <div class='category-card__row category-card__row--top'>#}
+{#            {% for category in topRow %}#}
+{#                {{ categoryCard({#}
+{#                    title: category.title,#}
+{#                    description: category.description,#}
+{#                    fullUrl: category.fullUrl,#}
+{#                    classes: "category-card--two-cards" if topRow.length === 2 else ''#}
+{#                }) }}#}
+{#            {% endfor %}#}
+{#        </div>#}
         {% for row in rows %}
             <div class='category-card__row'>
                 {% for category in row %}
                     {{ categoryCard({
                         title: category.title,
                         description: category.description,
-                        fullUrl: category.url,
+                        fullUrl: category.fullUrl,
                         classes: "category-card--two-cards" if rows[0].length === 2 else ''
                     }) }}
                 {% endfor %}
@@ -52,5 +63,6 @@
     <div class='icon-banner__container'>
         <div class="icon-banner"></div>
     </div>
+    NSG footer
     {{ super() }}
 {% endblock %}
