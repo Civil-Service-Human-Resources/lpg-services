@@ -33,7 +33,7 @@
                 <p class='govuk-body'>Click on the link to view the subjects.</p>
             </div>
         </div>
-        {% for category in homepage.categories %}
+        {% for category in topRow %}
             {{ categoryCard(category) }}
         {% endfor %}
         {% for row in rows %}
