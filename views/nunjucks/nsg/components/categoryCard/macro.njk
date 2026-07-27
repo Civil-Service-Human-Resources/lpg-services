@@ -1,0 +1,17 @@
+{% macro categoryCard(params) %}
+    <div class='category-card {{ params.classes }}'>
+        <div class='category-card__header-block'>
+            <h2 class='category-card__heading category-card__heading--small'>{{ params.title }}</h2>
+        </div>
+        <div class='category-card__content'>
+            <div class='category-card__content-block'>
+                <p class='govuk-body'>
+                    {{ params.description }}
+                </p>
+            </div>
+            <div class='category-card__action-block'>
+                <a class='govuk-link' href='{{ params.fullUrl }}'>View subjects</a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

@@ -1,56 +1,40 @@
-{% extends "./baseLayout.njk" %}
-
+{% from "./components/categoryCard/macro.njk" import categoryCard %}
 {% from "breadcrumbs/macro.njk" import govukBreadcrumbs %}
 
-{% set pageTitle = "Your learning" %}
+{% extends "./baseLayout.njk" %}
+
+{% set pageTitle = page.title %}
+
 {% set navbarTab = "home" %}
 
-{% macro categoryCard(params) %}
-    <div class='category-card {{ params.classes }}'>
-        <div class='category-card__header-block'>
-            <h2 class='category-card__heading category-card__heading--small'>{{ params.title }}</h2>
-        </div>
-        <div class='category-card__content'>
-            <div class='category-card__content-block'>
-                <p class='govuk-body'>
-                    {{ params.description }}
-                </p>
-            </div>
-            <div class='category-card__action-block'>
-                <a class='govuk-link' href='{{ params.fullUrl }}'>View subjects</a>
-            </div>
-        </div>
-    </div>
-{% endmacro %}
-
 {% block content %}
+    {% set breadcrumbs = page.parents %}
+    {% set breadcrumbs = (breadcrumbs.unshift({"href": "/nsg-homepage", "text": "Home"}), breadcrumbs) %}
+    {% set breadcrumbs = (breadcrumbs.push({"text": page.title}), breadcrumbs) %}
     {{ govukBreadcrumbs({
-        items: parents
+        items: breadcrumbs,
+        collapseOnMobile: true
     }) }}
     <h1 class='govuk-heading-l'>
-        {{ title }}
+        {{ page.title }}
     </h1>
-    <p class='govuk-body'>
-        {{ description }}
+    <p class='govuk-body category__description'>
+        {{ page.description }}
     </p>
-    {% for row in rows %}
-        <div class='category-card__flex-row'>
-            {% for category in row %}
-                {{ categoryCard({
-                    title: category.title,
-                    description: category.description,
-                    fullUrl: category.url,
-                    classes: "category-card--two-cards" if rows[0].length === 2 else ''
-                }) }}
-            {% endfor %}
-        </div>
-    {% endfor %}
+    <div class='category-card__container'>
+        {% for category in page.categories %}
+            {{ categoryCard({
+                title: category.title,
+                description: category.description,
+                fullUrl: category.url
+            }) }}
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block footer %}
     <div class='icon-banner__container'>
         <div class="icon-banner"></div>
     </div>
-    NSG footer
     {{ super() }}
 {% endblock %}

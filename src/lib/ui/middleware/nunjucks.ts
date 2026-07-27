@@ -33,7 +33,7 @@ const nunjucksEndpoints = [
 	'/home',
 	'/search',
 	'/course-catalogue*',
-	'/nsg-homepage',
+	'/nsg-homepage*',
 ]
 
 const logger = getLogger(`nunjucks`)

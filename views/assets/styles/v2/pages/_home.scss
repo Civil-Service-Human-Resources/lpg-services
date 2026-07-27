@@ -3,6 +3,30 @@
 
 .nsg-body {
   background-color: $nsg-mid-green;
+
+  p {
+    color: govuk-colour('white');
+  }
+
+  h1, .govuk-breadcrumbs__list-item {
+    color: $nsg-light-green;
+  }
+
+  .govuk-breadcrumbs__list-item {
+    .govuk-breadcrumbs__link {
+        color: $nsg-light-green;
+      &:visited {
+        color: $nsg-light-green;
+      }
+      &:focus {
+        color: govuk-colour("black");
+      }
+    }
+
+    &:before {
+      border-color: $nsg-light-green;
+    }
+  }
 }
 
 .nsg-homepage-main {
@@ -13,6 +37,10 @@
 
 .nsg-homepage-wide-container {
   @include govuk-width-container(1200px);
+}
+
+.nsg-footer {
+  border-color: $nsg-dark-green;
 }
 
 .home-container {

@@ -1,10 +1,10 @@
 import {Type} from 'class-transformer'
-import {Link} from '../../../../../utils/ui/link'
+import {CategoryParent} from './categoryParent'
 import {Category} from './category'
 
 export class CategoryPage {
-	@Type(() => Link)
-	parents: Link[]
+	@Type(() => CategoryParent)
+	parents: CategoryParent[]
 	@Type(() => Category)
 	categories: Category[]
 	title: string
