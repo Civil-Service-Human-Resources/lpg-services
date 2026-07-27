@@ -1,0 +1,56 @@
+{% extends "./baseLayout.njk" %}
+
+{% from "breadcrumbs/macro.njk" import govukBreadcrumbs %}
+
+{% set pageTitle = "Your learning" %}
+{% set navbarTab = "home" %}
+
+{% macro categoryCard(params) %}
+    <div class='category-card {{ params.classes }}'>
+        <div class='category-card__header-block'>
+            <h2 class='category-card__heading category-card__heading--small'>{{ params.title }}</h2>
+        </div>
+        <div class='category-card__content'>
+            <div class='category-card__content-block'>
+                <p class='govuk-body'>
+                    {{ params.description }}
+                </p>
+            </div>
+            <div class='category-card__action-block'>
+                <a class='govuk-link' href='{{ params.fullUrl }}'>View subjects</a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% block content %}
+    {{ govukBreadcrumbs({
+        items: parents
+    }) }}
+    <h1 class='govuk-heading-l'>
+        {{ title }}
+    </h1>
+    <p class='govuk-body'>
+        {{ description }}
+    </p>
+    {% for row in rows %}
+        <div class='category-card__flex-row'>
+            {% for category in row %}
+                {{ categoryCard({
+                    title: category.title,
+                    description: category.description,
+                    fullUrl: category.url,
+                    classes: "category-card--two-cards" if rows[0].length === 2 else ''
+                }) }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block footer %}
+    <div class='icon-banner__container'>
+        <div class="icon-banner"></div>
+    </div>
+    NSG footer
+    {{ super() }}
+{% endblock %}

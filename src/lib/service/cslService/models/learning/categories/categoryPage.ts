@@ -4,7 +4,9 @@ import {Category} from './category'
 
 export class CategoryPage {
 	@Type(() => Link)
-	parents: Link
+	parents: Link[]
 	@Type(() => Category)
 	categories: Category[]
+	title: string
+	description: string
 }

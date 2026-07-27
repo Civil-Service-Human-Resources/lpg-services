@@ -1,9 +1,6 @@
 {% extends "./baseLayout.njk" %}
 
-{% block pageTitle %}
-    National School of Government and Public Services
-{% endblock %}
-
+{% set pageTitle = "Your learning" %}
 {% set navbarTab = "home" %}
 
 {% macro categoryCard(params) %}
@@ -25,7 +22,7 @@
 {% endmacro %}
 
 {% block content %}
-    <div class='category-card__container'>
+    <div class='home-container'>
         <div class='title-card'>
             <h1 class='title-card__heading title-card__heading--medium'>Welcome to the National School of Government and Public Services.</h1>
             <div class='title-card__content'>
@@ -33,9 +30,6 @@
                 <p class='govuk-body'>Click on the link to view the subjects.</p>
             </div>
         </div>
-        {% for category in topRow %}
-            {{ categoryCard(category) }}
-        {% endfor %}
         {% for row in rows %}
             <div class='category-card__row'>
                 {% for category in row %}
