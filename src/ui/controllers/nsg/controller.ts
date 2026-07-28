@@ -16,11 +16,10 @@ router.all('*', (req: express.Request, res: express.Response, next: express.Next
 })
 
 router.get('/nsg-homepage', asyncHandler(index))
-router.get('/nsg-homepage/:url', asyncHandler(categoryPage))
+router.get('/nsg-homepage/categories/:url', asyncHandler(categoryPage))
 
 export async function index(req: express.Request, res: express.Response) {
 	const homepage = await getCategoryHomepage(req.user)
-	homepage.categories.push(new Category("Test category", "Description", "URL"))
 	const cardsPerRow = (homepage.categories.length % 2 === 0) ? 2 : 3
 	const rows: Category[][] = []
 	for (let i = 0; i < homepage.categories.length; i += cardsPerRow) {
