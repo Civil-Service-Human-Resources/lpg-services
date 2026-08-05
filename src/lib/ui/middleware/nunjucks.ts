@@ -114,7 +114,6 @@ export const register = (app: Express) => {
 
 	if (IS_DEV) {
 		env.on('load', (name, source, loader) => {
-
 			logger.debug(`Loading template file ${name}`)
 		})
 	}

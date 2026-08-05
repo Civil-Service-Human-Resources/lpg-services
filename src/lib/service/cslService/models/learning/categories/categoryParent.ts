@@ -5,7 +5,7 @@ export class CategoryParent {
 	text: string
 	link: string
 
-	@Expose({name: "href"})
+	@Expose({name: 'href'})
 	@Transform(({obj}) => {
 		return `${NSG_ROUTER_BASE}/categories/${obj.link}`
 	})

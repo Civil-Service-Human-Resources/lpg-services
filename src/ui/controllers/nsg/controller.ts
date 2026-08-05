@@ -5,14 +5,13 @@ import {getCategoryHomepage, getCategoryPage} from '../../../lib/service/cslServ
 import {Category} from '../../../lib/service/cslService/models/learning/categories/category'
 import * as asyncHandler from 'express-async-handler'
 
-
 export const router: express.Router = Router()
 
 router.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-		if (!(req.user as User).hasRole('LEARNING_TAG_MANAGER')) {
-			return res.redirect('/')
-		}
-		next()
+	if (!(req.user as User).hasRole('LEARNING_TAG_MANAGER')) {
+		return res.redirect('/')
+	}
+	next()
 })
 
 router.get('/', asyncHandler(index))
@@ -20,7 +19,7 @@ router.get('/categories/:url', asyncHandler(categoryPage))
 
 export async function index(req: express.Request, res: express.Response) {
 	const homepage = await getCategoryHomepage(req.user)
-	const cardsPerRow = (homepage.categories.length % 2 === 0) ? 2 : 3
+	const cardsPerRow = homepage.categories.length % 2 === 0 ? 2 : 3
 	const rows: Category[][] = []
 	for (let i = 0; i < homepage.categories.length; i += cardsPerRow) {
 		const chunk = homepage.categories.slice(i, i + cardsPerRow)

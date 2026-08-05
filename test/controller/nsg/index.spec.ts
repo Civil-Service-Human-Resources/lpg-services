@@ -73,7 +73,6 @@ describe('Homepage controller tests', () => {
 				expUrl: '/nsg-homepage/categories/category-2',
 			},
 		])
-
 	})
 
 	it('should render the subcategories for a tier 1', async () => {
@@ -103,7 +102,7 @@ describe('Homepage controller tests', () => {
 			},
 			{
 				expHref: '/nsg-homepage/categories/category-1',
-				expText: 'Category 1'
+				expText: 'Category 1',
 			},
 		])
 		assertCategories(res, [
@@ -111,7 +110,7 @@ describe('Homepage controller tests', () => {
 				expTitle: 'Sub Subcategory 1',
 				expDescription: 'this is sub-subcategory 1',
 				expUrl: '/nsg-homepage/categories/sub-subcategory-1',
-			}
+			},
 		])
 	})
 })
