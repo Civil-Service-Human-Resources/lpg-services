@@ -1,11 +1,11 @@
-import * as CONFIG from '../../../../../config/index'
 import {Transform} from 'class-transformer'
+import {NSG_ROUTER_BASE} from '../../../../../config'
 
 export class Category {
 	public title: string
 	public description: string
 	@Transform(({value}) => {
-		return `${CONFIG.LPG_UI_SERVER}/nsg-homepage/categories/${value}`
+		return `${NSG_ROUTER_BASE}/categories/${value}`
 	})
 	public url: string
 }

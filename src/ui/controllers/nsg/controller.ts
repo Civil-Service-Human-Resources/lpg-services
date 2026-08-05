@@ -6,17 +6,17 @@ import {Category} from '../../../lib/service/cslService/models/learning/categori
 import * as asyncHandler from 'express-async-handler'
 
 
-export const router = Router()
+export const router: express.Router = Router()
 
-router.all('*', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
 		if (!(req.user as User).hasRole('LEARNING_TAG_MANAGER')) {
 			return res.redirect('/')
 		}
 		next()
 })
 
-router.get('/nsg-homepage', asyncHandler(index))
-router.get('/nsg-homepage/categories/:url', asyncHandler(categoryPage))
+router.get('/', asyncHandler(index))
+router.get('/categories/:url', asyncHandler(categoryPage))
 
 export async function index(req: express.Request, res: express.Response) {
 	const homepage = await getCategoryHomepage(req.user)

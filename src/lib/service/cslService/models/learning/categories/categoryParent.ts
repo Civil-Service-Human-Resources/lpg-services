@@ -1,5 +1,5 @@
 import {Expose, Transform} from 'class-transformer'
-import * as CONFIG from '../../../../../config'
+import {NSG_ROUTER_BASE} from '../../../../../config'
 
 export class CategoryParent {
 	text: string
@@ -7,7 +7,7 @@ export class CategoryParent {
 
 	@Expose({name: "href"})
 	@Transform(({obj}) => {
-		return `${CONFIG.LPG_UI_SERVER}/nsg-homepage/categories/${obj.link}`
+		return `${NSG_ROUTER_BASE}/categories/${obj.link}`
 	})
 	href: string
 }

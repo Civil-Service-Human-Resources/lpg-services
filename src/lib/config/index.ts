@@ -182,3 +182,4 @@ export const GRADE_PRIORITY_ORDER = env.GRADE_PRIORITY_ORDER.split(',') || 'AA,A
 
 export const NSG_FLAG = env.NSG_FLAG !== undefined ? env.NSG_FLAG === 'true' : false
 export const NSG_URL = env.NSG_ORGANISATION_URL || '/'
+export const NSG_ROUTER_BASE = '/nsg-homepage'

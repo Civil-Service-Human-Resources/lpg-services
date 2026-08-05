@@ -8,7 +8,7 @@ import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
-import {AUTHENTICATION, BACKEND_SERVER_PATH, NSG_FLAG, STATIC_DIR} from './lib/config'
+import {AUTHENTICATION, BACKEND_SERVER_PATH, NSG_FLAG, NSG_ROUTER_BASE, STATIC_DIR} from './lib/config'
 import * as config from './lib/config'
 import * as corsConfig from './lib/config/corsConfig'
 import * as luscaConfig from './lib/config/luscaConfig'
@@ -312,7 +312,7 @@ app.get('/home', asyncHandler(homeController.home))
 app.use('/book', bookingRouter.router)
 
 if (!NSG_FLAG) {
-	app.use(nsgController.router)
+	app.use(NSG_ROUTER_BASE, nsgController.router)
 }
 
 redirectTo.registerPOST(app)
