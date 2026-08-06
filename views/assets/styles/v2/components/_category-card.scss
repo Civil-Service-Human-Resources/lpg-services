@@ -23,6 +23,9 @@
   .govuk-body {
     color: govuk-colour("black");
   }
+  .govuk-link {
+
+  }
 }
 
 .category-card--three-cards {
@@ -67,4 +70,8 @@
 
 .category-card__action-block {
   padding: 0 1.5rem 1rem 1.5rem;
+}
+
+.category-card__action-link {
+  @extend .govuk-link;
 }

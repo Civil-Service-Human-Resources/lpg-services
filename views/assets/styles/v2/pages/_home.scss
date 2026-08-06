@@ -12,6 +12,16 @@
     color: $nsg-light-green;
   }
 
+  .govuk-link {
+    color: $nsg-light-green;
+    &:visited {
+      color: $nsg-light-green;
+    }
+    &:focus {
+      color: govuk-colour("black");
+    }
+  }
+
   .govuk-breadcrumbs__list-item {
     .govuk-breadcrumbs__link {
         color: $nsg-light-green;
