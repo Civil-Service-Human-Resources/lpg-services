@@ -19,8 +19,6 @@ router.get('/', asyncHandler(index))
 router.get('/categories/:url', asyncHandler(categoryPage))
 
 router.use(async (error: any, request: Request, response: Response, next: NextFunction) => {
-	console.log('NOT FOUND')
-	console.log(error)
 	if (error instanceof ResourceNotFoundError) {
 		return response.render('nsg/notFound.njk')
 	}
