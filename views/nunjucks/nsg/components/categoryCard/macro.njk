@@ -11,7 +11,7 @@
             </div>
             <div class='category-card__action-block'>
                 {% if params.categories.length > 0 and params.courseCount === 0 and params.linkCount === 0 %}
-                    <h3 class='category-card__heading category-card__heading--small'>Subjects</h3>
+                    <h3 class='category-card__heading category-card__heading--small'>Topics</h3>
                     <ul class='category-card__action-link-list'>
                         {% for subCategory in params.categories %}
                             <li>
@@ -20,7 +20,7 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <a class='category-card__action-link' href='{{ params.fullUrl }}'>View subjects</a>
+                    <a class='category-card__action-link' href='{{ params.fullUrl }}'>View topics</a>
                 {% endif %}
             </div>
         </div>

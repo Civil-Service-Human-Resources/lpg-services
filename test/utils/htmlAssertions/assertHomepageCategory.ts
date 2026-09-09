@@ -9,7 +9,7 @@ export interface CategoryAssertion {
 
 export function assertCategory(cardElement: HTMLElement, expValue: CategoryAssertion) {
 	const card = within(cardElement)
-	const link = card.getByRole('link', {name: 'View subjects'})
+	const link = card.getByRole('link', {name: 'View topics'})
 	expect(link.getAttribute('href')).to.eql(expValue.expUrl)
 	card.getByRole('heading', {name: expValue.expTitle})
 	card.getByText(expValue.expDescription)
