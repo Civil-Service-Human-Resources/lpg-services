@@ -7,7 +7,7 @@ export class CategoryLink {
 
 	@Expose({name: 'href'})
 	@Transform(({obj}) => {
-		return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/categories/${obj.link}`
+		return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/topics/${obj.link}`
 	})
 	href: string
 }
