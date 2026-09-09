@@ -25,16 +25,6 @@
                     classes: "category-card--first" if loop.index0 === 0 else ''
                 }) }}
             {% endfor %}
-{#            <div class='category-card__row'>#}
-{#                {% for category in row %}#}
-{#                    {{ categoryCard({#}
-{#                        title: category.title,#}
-{#                        description: category.description,#}
-{#                        fullUrl: category.url,#}
-{#                        classes: "category-card--two-cards" if rows[0].length === 2 else 'category-card--three-cards'#}
-{#                    }) }}#}
-{#                {% endfor %}#}
-{#            </div>#}
         {% endfor %}
     </div>
 {% endblock %}
