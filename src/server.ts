@@ -134,25 +134,8 @@ app.use(compression({threshold: 0}))
 app.locals.staticAssetDomain = ''
 app.locals.staticAssetRoot = ''
 
-app.locals.feedbackDomain = ''
-app.locals.feedbackRoot = ''
-
-if (config.FEEDBACK_URL) {
-	try {
-		const feedbackURL = new URL(config.FEEDBACK_URL)
-
-		app.locals.feedbackDomain = feedbackURL.hostname
-		app.locals.feedbackRoot = config.FEEDBACK_URL
-
-		if (feedbackURL.protocol !== 'https:') {
-			logger.warn(`Feedback url is not being served over ssl (feedback route: ${app.locals.feedbackRoot})`)
-		}
-	} catch (error) {
-		logger.error(
-			`The configured FEEDBACK_URL value ("${config.FEEDBACK_URL}") is not a valid URL. Feedback will not be available.\nFull error:\n${error}`
-		)
-	}
-}
+app.locals.feedbackRoot = config.FEEDBACK_URL
+app.locals.nsgFeedbackRoot = config.NSG_FEEDBACK_URL
 
 if (config.STATIC_ASSET_ROOT) {
 	try {
