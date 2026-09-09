@@ -20,8 +20,6 @@ export class CoursePaginationQuery implements SearchParams {
 			urlParts.push(`p=${page}`)
 		}
 		const urlContentType = this.contentType === undefined ? '' : `/${this.contentType}`
-		return (
-			`${NSG_FLAG ? '/home' : '/nsg-homepage'}/topics/${this.categoryUrl}${urlContentType}?` + urlParts.join('&')
-		)
+		return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/topics/${this.categoryUrl}${urlContentType}?` + urlParts.join('&')
 	}
 }
