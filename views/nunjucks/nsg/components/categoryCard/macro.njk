@@ -10,7 +10,7 @@
                 </p>
             </div>
             <div class='category-card__action-block'>
-                {% if params.categories.length > 0 %}
+                {% if params.categories.length > 0 and params.courseCount === 0 and params.linkCount === 0 %}
                     <h3 class='category-card__heading category-card__heading--small'>Subjects</h3>
                     <ul class='category-card__action-link-list'>
                         {% for subCategory in params.categories %}
