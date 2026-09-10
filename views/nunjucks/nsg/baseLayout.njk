@@ -23,7 +23,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/main.v2.css">
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script> {{ googleAnalyticsCode | safe }}
 {% endblock %}
 {% block govukSkipLink %}
     {{ govukSkipLink({
