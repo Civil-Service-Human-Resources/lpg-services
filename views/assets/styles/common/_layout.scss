@@ -16,6 +16,10 @@
 		}
 	}
 
+	@include m(spacing) {
+		padding-top: $gutter * 3;
+	}
+
 	outline: none;
 }
 

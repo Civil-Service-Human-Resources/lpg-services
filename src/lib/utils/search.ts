@@ -15,7 +15,15 @@ export interface PaginationNumberedPage {
 	ellipses?: boolean
 }
 
-export interface Pagination {
+// TODO: Migrate the above to this interface
+export interface GovUkPaginationNumberedPage {
+	number?: number
+	href?: string
+	current?: boolean
+	ellipses?: boolean
+}
+
+export interface PaginationBase<T> {
 	start: number
 	end: number
 	total: number
@@ -23,7 +31,29 @@ export interface Pagination {
 	totalPages: number
 	prevLink?: string
 	nextLink?: string
+	numberedPages: T[]
+}
+
+export type Pagination = PaginationBase<PaginationNumberedPage>
+
+export type GovukPagination = PaginationBase<GovUkPaginationNumberedPage>
+
+export const transformNumberedPagesToGovuk = (
 	numberedPages: PaginationNumberedPage[]
+): GovUkPaginationNumberedPage[] => {
+	return numberedPages.map(np => {
+		return {number: np.number, current: np.link === undefined, href: np.link, ellipses: np.ellipses}
+	})
+}
+
+export function getPaginationWithoutResults(
+	params: SearchParams,
+	totalResults: number,
+	size: number,
+	page: number,
+	results: any[]
+) {
+	return getPagination(params, {totalResults, size, page, results})
 }
 
 export function getPagination(params: SearchParams, searchResults: Response<any>): Pagination {

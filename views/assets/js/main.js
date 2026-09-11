@@ -7,6 +7,8 @@ require('./search-filter-toggle')
 require('./cookies')
 require('./typeahead')
 require('./prevent-double-click')
+require('./nav-search')
+require('./nav-expander')
 const {createAll, ServiceNavigation} = require('govuk-frontend')
 
 document.addEventListener('DOMContentLoaded', function () {

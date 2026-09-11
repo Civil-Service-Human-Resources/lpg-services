@@ -1,0 +1,18 @@
+{% macro learningCard(params) %}
+    <div class='category-card__column category-card__column--half'>
+        <div class='learning-card'>
+            <div class='learning-card__header'>
+                <h3 class='learning-card__heading {{ params.headingClasses }}'>{{ params.title }}</h3>
+                {% if params.status !== undefined and params.status !== 'NULL' %}
+                    <span class='badge badge--info'>{{ i18n(params.status) }}</span>
+                {% endif %}
+            </div>
+            <div class='learning-card__content'>
+                <div class='learning-card__content_section'>{{ params.description }}</div>
+                <div class="learning-card__actions">
+                    <a class='learning-card__action' {% if params.action.newTab %}target="_blank" rel="noreferrer noopener"{% endif %} href="{{ params.action.href }}">{{ params.action.text }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

@@ -283,7 +283,6 @@ describe('Homepage controller tests', () => {
 			})
 			const res = await makeRequest()
 			within(res).getByText('There is currently no learning in your plan.')
-			console.log(res.outerHTML)
 			expect(within(res).getByRole('link', {name: 'the course catalogue'}).getAttribute('href')).to.eql(
 				'/course-catalogue'
 			)

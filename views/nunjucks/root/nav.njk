@@ -2,27 +2,7 @@
 
 <div class="content nav-container with-proposition">
     <div class="nav-content-container">
-        <a href="#proposition-links" class="js-header-toggle menu"><span class="visually-hidden" id="visiblyHidden">Select to expand</span> Menu <span aria-hidden='true' class='menu__icon'>▼</span></a>
-        <nav id="proposition-menu">
-            <ul id="proposition-links">
-                {% if signedInUser.hasCompleteProfile() %}
-                    {% set tabs = [
-                        {"active": navbarTab == "home", "href": "/home", "text": "Home"},
-                        {"active": navbarTab == "course-catalogue", "href": "/course-catalogue", "text": i18n('course_catalogue_page_title')},
-                        {"active": navbarTab == "learning-record", "href": "/learning-record", "text": "Learning record"},
-                        {"active": navbarTab == "profile", "href": "/profile", "text": "Profile"}
-                    ] %}
-                    {% if signedInUser.isAdmin() %}
-                        {% set tabs = (tabs.push({"href": lpgManagementUrl + "/content-management", "text": "Admin"}), tabs) %}
-                    {% endif %}
-                    {% if signedInUser.isReporter() %}
-                        {% set tabs = (tabs.push({"href": lpgManagementUrl + "/reporting", "text": "Reporting"}), tabs) %}
-                    {% endif %}
-                    {% set tabs = (tabs.push({"href": "/sign-out", "text": "Sign out"}), tabs) %}
-                    {{ navbar({"links": tabs}) }}
-                {% endif %}
-            </ul>
-        </nav>
+        {% include "./navBar.njk" %}
         {% include "./navbarSearch.njk" %}
     </div>
 </div>

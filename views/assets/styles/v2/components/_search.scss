@@ -1,0 +1,41 @@
+@use "node_modules/govuk-frontend/dist/govuk/index" as *;
+
+.search-box__icon {
+  color: white;
+  height: 20px;
+  pointer-events: none;
+  width: 21px;
+}
+
+.search-box__submit {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 61px;
+  border: 0;
+  background-size: 64%;
+  padding: 15px;
+  cursor: pointer;
+  background: none;
+  box-shadow: none;
+  color: #fff;
+  font-weight: 700;
+
+  &:after {
+    content: "";
+    height: 3px;
+    left: 10px;
+    position: absolute;
+    right: 10px;
+    bottom: 1px;
+    top: auto;
+    color: white;
+    background: none;
+  }
+  &:hover {
+    &:after {
+      background: white;
+    }
+  }
+
+}

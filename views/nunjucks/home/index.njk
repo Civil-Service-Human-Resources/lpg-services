@@ -6,7 +6,12 @@
 {% from "./components/learningPlanCard/macro.njk" import learningPlanCard %}
 
 {% set pageTitle = "Your learning" %}
-{% set navbarTab = "home" %}
+
+{% if NSG_FLAG === true %}
+    {% set navbarTab = "your-learning" %}
+{% else %}
+    {% set navbarTab = "home" %}
+{% endif %}
 
 {% block content %}
     <div class="container container--main">

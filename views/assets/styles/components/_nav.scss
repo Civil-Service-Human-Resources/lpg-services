@@ -1,0 +1,154 @@
+@mixin highlight {
+  &:before {
+    content: "";
+    width: 5px;
+    left: -15px;
+    position: absolute;
+    right: auto;
+    bottom: 0;
+    top: 0;
+    color: $nav-active-link-underline-color;
+    background: $nav-active-link-underline-color;
+
+    @media (min-width: 640px) {
+      left: -30px;
+    }
+
+    @include media(desktop) {
+      height: 5px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: auto;
+      width: auto;
+    }
+  }
+}
+
+@mixin focus {
+  outline: none;
+  text-decoration: none;
+  color: $font-color !important;
+}
+
+
+.nav {
+  margin-top: 10px;
+  &.hidden {
+    display: none;
+  }
+  @include media(desktop) {
+    margin: 0;
+    display: unset;
+    &.hidden {
+      display: unset;
+    }
+  }
+}
+
+.nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+
+  @include media(desktop) {
+    flex-direction: row;
+  }
+}
+
+// Use of !important below is unfortunately necessary as there are global styles for <a> tags which will override
+// the nav-item classes in some instances (in Nav.html svelte files)
+
+
+.nav-list-item {
+  margin-bottom: 10px;
+  position: relative;
+  margin-right: 15px;
+
+  @include media(desktop) {
+    margin-bottom: 0;
+    padding: 20px 0 20px 0;
+  }
+
+  &.active {
+    @include highlight;
+    .nav-item {
+      color: $nav-active-link-color !important;
+      &:focus {
+        @include focus;
+      }
+    }
+  }
+
+  &:hover {
+    @include highlight;
+    .nav-item {
+      color: $nav-active-link-color !important;
+      &:focus {
+        @include focus;
+      }
+    }
+  }
+
+}
+
+.nav-item {
+  color: $nav-link-color !important;
+  text-decoration: none;
+  font-weight: 700;
+
+  &:visited {
+    color: $nav-link-color;
+  }
+
+  &:focus {
+    @include focus;
+  }
+}
+
+.nav-mobile-toggle {
+  display: flex;
+  justify-content: end;
+}
+
+.nav-mobile-toggle-button {
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  margin: 10px 0 0 0;
+  padding: 0;
+  border: 0;
+  color: $nav-mobile-menu-link-color;
+  background: none;
+  word-break: break-all;
+  cursor: pointer;
+
+  &:focus {
+    background-color: #fd0;
+    outline: 3px solid rgba(0,0,0,0);
+    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
+    color: $black;
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  &:after {
+    content: '\25BC';
+    display: inline-block;
+    font-size: 12px;
+    margin-left: 5px;
+  }
+  &.active {
+    &:after {
+      content: '\25B2';
+    }
+  }
+
+  @include media(desktop) {
+    display: none;
+  }
+}

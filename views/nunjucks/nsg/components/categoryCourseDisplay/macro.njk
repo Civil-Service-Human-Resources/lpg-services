@@ -1,0 +1,36 @@
+{% from "../learningCard/macro.njk" import learningCard %}
+{% from "../contentDisplay/macro.njk" import contentDisplay %}
+
+{% macro courseLearningCard(params) %}
+    {{ learningCard({
+        title: params.title,
+        status: params.status,
+        description: params.shortDescription,
+        action: {
+            href: '/courses/' + params.id,
+            text: 'View course details'
+        }
+    }) }}
+{% endmacro %}
+
+{% macro categoryCourseDisplay(params) %}
+
+    {% set content %}
+        {% for row in params.rows %}
+            <div class='category-card__row'>
+                {{ courseLearningCard(row[0]) }}
+                {% if row[1] === undefined %}
+                    <div class='category-card__column category-card__column--half'></div>
+                {% else %}
+                    {{ courseLearningCard(row[1]) }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endset %}
+
+    {{ contentDisplay({
+        heading: "Courses",
+        content: content
+    }) }}
+
+{% endmacro %}

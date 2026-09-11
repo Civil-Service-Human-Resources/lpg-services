@@ -1,0 +1,44 @@
+{% from "../categoryCourseDisplay/macro.njk" import courseLearningCard %}
+{% from "../categoryLinkDisplay/macro.njk" import linkLearningCard %}
+{% from "../contentDisplay/macro.njk" import tabbedContentDisplay %}
+
+{% macro categoryContentTabs(params) %}
+
+    {% set content %}
+        {% for row in params.rows %}
+            <div class='category-card__row'>
+                {% if params.display === 'courses' %}
+                    {{ courseLearningCard(row[0]) }}
+                {% else  %}
+                    {{ linkLearningCard(row[0]) }}
+                {% endif %}
+                {% if row[1] === undefined %}
+                    <div class='category-card__column category-card__column--half'></div>
+                {% else %}
+                    {% if params.display === 'courses' %}
+                        {{ courseLearningCard(row[1]) }}
+                    {% else  %}
+                        {{ linkLearningCard(row[1]) }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endset %}
+
+    {{ tabbedContentDisplay({
+        tabs: [
+            {
+                active: params.display === 'courses',
+                href: params.baseUrl + '/courses',
+                text: 'Courses (' + params.courseCount + ")"
+            },
+            {
+                active: params.display === 'links',
+                href: params.baseUrl + '/links',
+                text: 'Links (' + params.linkCount + ")"
+            }
+        ],
+        content: content
+    }) }}
+
+{% endmacro %}

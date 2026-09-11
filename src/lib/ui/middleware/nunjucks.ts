@@ -10,6 +10,10 @@ import {
 	DOUBLE_CLICK_PREVENTION_TIMEOUT_MS,
 	NSG_FLAG,
 	NSG_URL,
+	FEEDBACK_URL,
+	NSG_FEEDBACK_URL,
+	GOOGLE_ANALYTICS_ID,
+	GOOGLE_ANALYTICS_CODE,
 } from '../../config'
 import * as datetime from '../../datetime'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
@@ -30,10 +34,11 @@ const nunjucksEndpoints = [
 	'/courses/:courseId',
 	'/learning-record',
 	'/',
-	'/home',
+	'/home*',
 	'/search',
 	'/course-catalogue*',
-	'/nsg-homepage',
+	'/nsg-homepage*',
+	'/your-learning',
 ]
 
 const logger = getLogger(`nunjucks`)
@@ -52,6 +57,10 @@ export const register = (app: Express) => {
 		partials,
 		lpgManagementUrl: LPG_MANAGEMENT_URL,
 		doubleClickPreventionTimeout: DOUBLE_CLICK_PREVENTION_TIMEOUT_MS,
+		feedbackRoot: FEEDBACK_URL,
+		nsgFeedbackRoot: NSG_FEEDBACK_URL,
+		googleAnalyticsId: GOOGLE_ANALYTICS_ID,
+		googleAnalyticsCode: GOOGLE_ANALYTICS_CODE,
 	}
 	logger.debug(`Registering nunjucks globals: ${JSON.stringify(globals)}`)
 	Object.keys(globals).forEach(key => {
@@ -66,7 +75,8 @@ export const register = (app: Express) => {
 			try {
 				i18nConfig.__(text)
 			} catch {
-				logger.error(`i18n text ${text} was not found`)
+				logger.error(`ERROR: i18n text ${text} was not found`)
+				return 'UNDEFINED'
 			}
 		}
 		return i18nConfig.__(text)
@@ -74,6 +84,8 @@ export const register = (app: Express) => {
 
 	env.addGlobal('NSG_FLAG', NSG_FLAG)
 	env.addGlobal('NSG_URL', NSG_URL)
+	env.addGlobal('NSG_ROUTER_BASE', NSG_FLAG ? '/home' : '/nsg-homepage')
+	env.addGlobal('YOUR_LEARNING_URL', NSG_FLAG ? '/your-learning' : '/home')
 
 	env.addGlobal('AtoZ', () => {
 		return 'abcdefghijklmnopqrstuvwxyz'.split('')

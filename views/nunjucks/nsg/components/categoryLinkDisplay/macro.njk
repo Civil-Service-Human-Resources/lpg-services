@@ -1,0 +1,36 @@
+{% from "../learningCard/macro.njk" import learningCard %}
+{% from "../contentDisplay/macro.njk" import contentDisplay %}
+
+{% macro linkLearningCard(params) %}
+    {{ learningCard({
+        title: params.title,
+        description: params.description,
+        action: {
+            href: params.url,
+            text: "Go to " + params.title + " (Opens in a new tab)",
+            newTab: true
+        }
+    }) }}
+{% endmacro %}
+
+{% macro categoryLinkDisplay(params) %}
+    {% set content %}
+        {% for row in params.rows %}
+            <div class='category-card__row'>
+                {{ linkLearningCard(row[0]) }}
+                {% if row[1] === undefined %}
+                    <div class='category-card__column category-card__column--half'></div>
+                {% else %}
+                    {{ linkLearningCard(row[1]) }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endset %}
+
+    {{ contentDisplay({
+        heading: "Links",
+        content: content
+    }) }}
+
+{% endmacro %}
+

@@ -95,7 +95,9 @@ describe('Learning record controller tests', () => {
 					]),
 				]
 				assertTables(res.text, assertions)
-				expect(res.text).to.contain('<p class="no-margin">You have <a href="/">2 required courses</a> to complete.</p>')
+				expect(res.text).to.contain(
+					'<p class="no-margin">You have <a href="/home">2 required courses</a> to complete.</p>'
+				)
 			})
 		})
 	})

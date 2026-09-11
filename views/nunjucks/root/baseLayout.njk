@@ -19,6 +19,7 @@
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script> {{ googleAnalyticsCode | safe }}
     </head>
     <body>
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
         {% include "./skipLink.njk" %}
         {% include "./cookieMessage.njk" %}
         {% if NSG_FLAG === true %}

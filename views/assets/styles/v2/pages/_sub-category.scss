@@ -1,0 +1,39 @@
+@use '../common/variables' as *;
+@use "node_modules/govuk-frontend/dist/govuk/index" as *;
+
+.category-card__container {
+  display: grid;
+  gap: $homepage-gap;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  @include govuk-responsive-margin(6, "bottom");
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 100%;
+  }
+}
+
+.category__description {
+  @include govuk-responsive-margin(7, "bottom");
+}
+
+.category__pagination {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .govuk-body {
+    margin-bottom: 0;
+  }
+  .govuk-pagination {
+    margin-bottom: 0;
+  }
+  .govuk-pagination__icon {
+    color: $nsg-dark-green;
+  }
+  .govuk-pagination__item--current {
+    background-color: $nsg-dark-green;
+  }
+  .govuk-pagination__item:hover, .govuk-pagination__next:hover, .govuk-pagination__prev:hover {
+    background-color: $nsg-dark-green;
+  }
+}

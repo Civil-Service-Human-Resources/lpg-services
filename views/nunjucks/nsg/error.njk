@@ -1,0 +1,15 @@
+{% from "./components/categoryCard/macro.njk" import categoryCard %}
+{% extends "./baseLayout.njk" %}
+
+{% set mainClasses = "nsg-homepage-main" %}
+
+{% set pageTitle = "Error" %}
+
+{% block content %}
+    <h1 class='govuk-heading-l'>
+        Sorry, there is a problem with this service
+    </h1>
+    <p class='govuk-body'>
+        We're looking into it. Please <a class='govuk-link' href='/sign-out'>sign out</a> and try again.
+    </p>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% macro contentDisplay(params) %}
+    <div class='category-card category-card--courses {{ params.classes }}'>
+        <div class='category-card__header-block'>
+            <h2 class='category-card__heading category-card__heading--small'>{{ params.heading }}</h2>
+        </div>
+        <div class='category-card__content'>
+            {{ params.content | safe }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro tabbedContentDisplay(params) %}
+    <div class='category-card category-card--courses {{ params.classes }}'>
+        <div class='category-card__header-block category-card__header-block--tabs'>
+            <div class='category-card__header-tabs'>
+                {% for tab in params.tabs %}
+                    <div class='category-card__header-tab {% if tab.active %} category-card__header-tab--active {% endif %}'>
+                        <h2 class='category-card__header-tab__heading'>
+                            <a href='{{ tab.href }}'>{{ tab.text }}</a>
+                        </h2>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class='category-card__content'>
+            {{ params.content | safe }}
+        </div>
+    </div>
+{% endmacro %}
