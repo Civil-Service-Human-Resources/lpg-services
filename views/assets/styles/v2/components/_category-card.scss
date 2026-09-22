@@ -109,6 +109,11 @@
   @extend .govuk-link;
 }
 
+.category-card__action-link--main {
+  display: inline-block;
+  @include govuk-responsive-margin(3, "bottom");
+}
+
 .category-card__action-link-list {
   margin-bottom: 0;
   @include govuk-responsive-padding(5, "left");

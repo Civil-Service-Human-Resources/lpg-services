@@ -25,14 +25,15 @@
     <p class='govuk-body category__description'>
         {{ page.description }}
     </p>
-    {% if page.categories.length > 0 %}
+    {% if page.categories.length > 0 and page.rows.length === 0 %}
         <div class='category-card__container'>
             {% for category in page.categories %}
                 {{ categoryCard({
                     title: category.title,
                     description: category.description,
                     fullUrl: category.url,
-                    categories: category.categories
+                    categories: category.categories,
+                    hasDirectContent: category.getHasDirectContent() if category.getHasDirectContent else category.hasDirectContent
                 }) }}
             {% endfor %}
         </div>

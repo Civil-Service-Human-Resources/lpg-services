@@ -1,4 +1,5 @@
 import {within} from '@testing-library/dom'
+import {expect} from 'chai'
 import {Express} from 'express'
 import {CategoryHomepage} from '../../../src/lib/service/cslService/models/learning/categories/categoryHomepage'
 import {CategoryPage} from '../../../src/lib/service/cslService/models/learning/categories/categoryPage'
@@ -132,6 +133,101 @@ describe('Homepage controller tests', () => {
 				expUrl: `/nsg-homepage/categories/sub-subcategory-1`,
 			},
 		])
+	})
+
+	it('should render subcategory card with "View [Category Name] courses and links" when subcategory has sub-tags and direct courses/links', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.categories = [
+			{
+				title: 'Sub Subcategory 1',
+				description: 'this is sub-subcategory 1',
+				url: 'sub-subcategory-1',
+				categories: [
+					{
+						text: 'Tier 3 Subcategory',
+						link: 'tier-3-subcategory',
+						href: '/nsg-homepage/categories/tier-3-subcategory',
+					},
+				],
+				courseCount: 5,
+				linkCount: 0,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
+		card.getByRole('heading', {name: 'Sub Subcategory 1'})
+		const link = card.getByRole('link', {name: 'View Sub Subcategory 1 courses and links'})
+		link.getAttribute('href')
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/categories/sub-subcategory-1')
+		card.getByRole('heading', {name: 'Subjects'})
+		card.getByRole('link', {name: 'Tier 3 Subcategory'})
+	})
+
+	it('should hide category link and only show sub-tags when subcategory has sub-tags but no direct courses/links', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.categories = [
+			{
+				title: 'Personal Effectiveness',
+				description: 'this is personal effectiveness',
+				url: 'personal-effectiveness',
+				categories: [
+					{
+						text: 'Tier 3 Subcategory',
+						link: 'tier-3-subcategory',
+						href: '/nsg-homepage/categories/tier-3-subcategory',
+					},
+				],
+				courseCount: 0,
+				linkCount: 0,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
+		card.getByRole('heading', {name: 'Personal Effectiveness'})
+		expect(card.queryByRole('link', {name: 'View Personal Effectiveness courses and links'})).to.eql(null)
+		expect(card.queryByRole('link', {name: 'View subjects'})).to.eql(null)
+		card.getByRole('heading', {name: 'Subjects'})
+		card.getByRole('link', {name: 'Tier 3 Subcategory'})
+	})
+
+	it('should hide sub-topic tiles and only show courses/links when topic has sub-topics and courses/links', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.courseCount = 1
+		categoryPage.courses = {
+			page: 0,
+			size: 20,
+			totalResults: 1,
+			results: [
+				{
+					title: 'Course 1',
+					status: 'IN_PROGRESS',
+					id: '1',
+					costInPounds: 0,
+					duration: 1,
+					moduleCount: 1,
+					type: 'blended',
+					shortDescription: 'Course 1',
+				},
+			],
+		}
+		categoryPage.categories = [
+			{
+				title: 'Sub Subcategory 1',
+				description: 'this is sub-subcategory 1',
+				url: 'sub-subcategory-1',
+				categories: [],
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+		expect(res.getElementsByClassName('category-card__container').length).to.eql(0)
+		within(res).getByRole('heading', {name: 'Courses'})
+		within(res).getByRole('heading', {name: 'Course 1'})
 	})
 
 	describe('content', () => {

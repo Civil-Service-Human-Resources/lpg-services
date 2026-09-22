@@ -11,6 +11,9 @@
             </div>
             <div class='category-card__action-block'>
                 {% if params.categories.length > 0 %}
+                    {% if params.hasDirectContent or (params.courseCount > 0 or params.linkCount > 0) or (params.totalCourses > 0 or params.totalLinks > 0) or (params.totalContent > 0) %}
+                        <a class='category-card__action-link category-card__action-link--main' href='{{ params.fullUrl }}'>View {{ params.title }} courses and links</a>
+                    {% endif %}
                     <h3 class='category-card__heading category-card__heading--small'>Subjects</h3>
                     <ul class='category-card__action-link-list'>
                         {% for subCategory in params.categories %}
