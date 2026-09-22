@@ -5,11 +5,14 @@ import {CategoryLink} from './categoryLink'
 export class Category {
 	public title: string
 	public description: string
-	@Transform(({value}) => {
-		return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/categories/${value}`
-	}, {
-		groups: ['api']
-	})
+	@Transform(
+		({value}) => {
+			return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/categories/${value}`
+		},
+		{
+			groups: ['api'],
+		}
+	)
 	public url: string
 	@Type(() => CategoryLink)
 	public categories: CategoryLink[]
