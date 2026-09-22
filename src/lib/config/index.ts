@@ -81,6 +81,9 @@ export const ENDPOINT_REDIS = set({
 	LEARNING_PLAN: set({
 		defaultTTL: +(env.LEARNING_PLAN_TTL || '10800'),
 	}),
+	LEARNING_CATEGORY: set({
+		defaultTTL: +(env.LEARNING_CATEGORY_TTL || '10800'),
+	}),
 })
 
 export const COOKIE = set({
