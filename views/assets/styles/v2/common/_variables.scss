@@ -1,3 +1,5 @@
+@use "node_modules/govuk-frontend/dist/govuk/index" as *;
+
 /* tools */
 $site-wide-width: 1200px;
 
@@ -5,6 +7,7 @@ $site-wide-width: 1200px;
 $footer-link: #454a4c;
 $footer-link-hover: #171819;
 $footer-text: $footer-link;
+$border: #{$govuk-border-colour};
 
 /* Badge colours */
 $badge-mellow-red: #df3034;
@@ -37,4 +40,6 @@ $moj-header-organisation-name-width: 180px;
 $moj-header-service-name-text-size: 20px;
 $moj-header-service-name-border-left: 3px solid white;
 $moj-header-service-name-padding-left: 10px;
-$moj-header-service-name-margin-top: 30px;
+$moj-header-service-name-margin-top: 50px;
+
+$homepage-gap: govuk-spacing(3);

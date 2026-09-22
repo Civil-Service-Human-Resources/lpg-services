@@ -61,14 +61,25 @@
 </div>
 <div class="content nav-container with-proposition">
     <div class="nav-content-container">
-        <a href="#proposition-links" class="js-header-toggle menu"><span class="visually-hidden" id="visiblyHidden">Select to expand</span> Menu <span aria-hidden='true' class='menu__icon'>▼</span></a>
         <Nav/>
-        <NavbarSearch/>
+        {#if $config.NSG_FLAG}
+            <NavbarSearchToggle/>
+        {:else}
+            <NavbarSearch/>
+        {/if}
     </div>
 </div>
+{#if $config.NSG_FLAG}
+    <div id='nav-search-panel' class='nav-search-container'>
+        <div class="nav-search-content-container">
+            <NavbarSearch/>
+        </div>
+    </div>
+{/if}
 <script>
 	import Nav from './Nav.html';
     import NavbarSearch from './NavbarSearch.html';
+  import NavbarSearchToggle from './NavbarSearchToggle.html';
 
 	export default {
 		data() {
@@ -77,7 +88,8 @@
 		},
 		components: {
 			Nav,
-            NavbarSearch,
+        NavbarSearch,
+        NavbarSearchToggle
 		}
 	};
 </script>

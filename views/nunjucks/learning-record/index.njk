@@ -22,7 +22,7 @@
                 <p class="no-margin">{{ requiredLearningStatusMessage }}</p>
                 {% set requiredCoursesLeftToComplete = learningRecord.requiredLearningRecord.getRemainingCourses() %}
                 {% if requiredCoursesLeftToComplete > 0 %}
-                    <p class="no-margin">You have <a href="/">{{ requiredCoursesLeftToComplete }} required course{{ "s" if requiredCoursesLeftToComplete > 1 else "" }}</a> to complete.</p>
+                    <p class="no-margin">You have <a href="{{ YOUR_LEARNING_URL }}">{{ requiredCoursesLeftToComplete }} required course{{ "s" if requiredCoursesLeftToComplete > 1 else "" }}</a> to complete.</p>
                 {% endif %}
             </div>
         </div>

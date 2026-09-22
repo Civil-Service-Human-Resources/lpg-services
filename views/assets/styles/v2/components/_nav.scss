@@ -49,7 +49,7 @@
 
 .search-form-container {
 
-  @include govuk-media-query($from: desktop, $until: 1050px) {
+  @include govuk-media-query($from: desktop, $until: 1200px) {
     margin-top: 15px;
     margin-bottom: 15px;
   }

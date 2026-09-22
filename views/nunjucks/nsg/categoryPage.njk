@@ -1,0 +1,77 @@
+{% from "./components/categoryCard/macro.njk" import categoryCard %}
+{% from "./components/categoryCourseDisplay/macro.njk" import categoryCourseDisplay %}
+{% from "./components/categoryLinkDisplay/macro.njk" import categoryLinkDisplay %}
+{% from "./components/categoryTabbedDisplay/macro.njk" import categoryContentTabs %}
+{% from "breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% from "pagination/macro.njk" import govukPagination %}
+
+{% extends "./baseLayout.njk" %}
+
+{% set pageTitle = page.title %}
+
+{% set navbarTab = "home" %}
+
+{% block content %}
+    {% set breadcrumbs = page.parents %}
+    {% set breadcrumbs = (breadcrumbs.unshift({"href": NSG_ROUTER_BASE, "text": "Home"}), breadcrumbs) %}
+    {% set breadcrumbs = (breadcrumbs.push({"text": page.title}), breadcrumbs) %}
+    {{ govukBreadcrumbs({
+        items: breadcrumbs,
+        collapseOnMobile: true
+    }) }}
+    <h1 class='govuk-heading-l'>
+        {{ page.title }}
+    </h1>
+    <p class='govuk-body category__description'>
+        {{ page.description }}
+    </p>
+    {% if page.categories.length > 0 %}
+        <div class='category-card__container'>
+            {% for category in page.categories %}
+                {{ categoryCard({
+                    title: category.title,
+                    description: category.description,
+                    fullUrl: category.url,
+                    categories: category.categories,
+                    courseCount: category.courseCount,
+                    linkCount: category.linkCount
+                }) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if page.rows.length > 0 %}
+        {% if page.courseCount > 0 and page.linkCount > 0 %}
+            {{ categoryContentTabs({
+                rows: page.rows,
+                display: page.getDisplay(),
+                courseCount: page.courseCount,
+                linkCount: page.linkCount,
+                baseUrl: NSG_ROUTER_BASE + "/topics/" + url
+            }) }}
+        {% elif page.getDisplay() === 'courses' %}
+            {{ categoryCourseDisplay({
+                rows: page.rows
+            }) }}
+        {% elif page.getDisplay() === 'links' %}
+            {{ categoryLinkDisplay({
+                rows: page.rows
+            }) }}
+        {% endif %}
+    {% endif %}
+    {% if page.rows.length > 0 %}
+        <div class='category__pagination'>
+            <p class='govuk-body'>Showing {{ pagination.start }} – {{ pagination.end }} of {{ pagination.total }} items</p>
+            {{ govukPagination({
+                previous: {
+                    href: pagination.prevLink
+                },
+                next: {
+                    href: pagination.nextLink
+                },
+                items: pagination.numberedPages
+            }) }}
+        </div>
+    {% endif %}
+
+{% endblock %}

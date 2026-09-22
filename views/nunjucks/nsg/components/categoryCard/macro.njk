@@ -1,0 +1,28 @@
+{% macro categoryCard(params) %}
+    <div class='category-card {{ params.classes }}'>
+        <div class='category-card__header-block'>
+            <h2 class='category-card__heading category-card__heading--small'>{{ params.title }}</h2>
+        </div>
+        <div class='category-card__content'>
+            <div class='category-card__content-block'>
+                <p class='govuk-body'>
+                    {{ params.description }}
+                </p>
+            </div>
+            <div class='category-card__action-block'>
+                {% if params.categories.length > 0 and params.courseCount === 0 and params.linkCount === 0 %}
+                    <h3 class='category-card__heading category-card__heading--small'>Topics</h3>
+                    <ul class='category-card__action-link-list'>
+                        {% for subCategory in params.categories %}
+                            <li>
+                                <a class='category-card__action-link' href='{{ subCategory.href }}'>{{ subCategory.text }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <a class='category-card__action-link' href='{{ params.fullUrl }}'>View topics</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}

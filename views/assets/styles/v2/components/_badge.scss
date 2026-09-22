@@ -2,10 +2,10 @@
 @use "node_modules/govuk-frontend/dist/govuk/index" as *;
 
 .badge {
+  @include govuk-font($size: 16);
   display: inline-block;
   font-weight: 700;
   line-height: 1;
-  margin: -5px 0;
   min-width: 10px;
   padding: 5px 8px;
   text-align: center;
@@ -72,5 +72,6 @@
     font-family: "nta", Arial, sans-serif;
     letter-spacing: 1px;
     font-size: 0.9rem;
+    margin: -5px 0;
   }
 }

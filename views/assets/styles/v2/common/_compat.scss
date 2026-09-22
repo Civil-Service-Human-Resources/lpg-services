@@ -12,3 +12,11 @@
     @content;
   }
 }
+
+.heading-small {
+  @extend .govuk-heading-s;
+}
+
+@mixin core-16 {
+  @include govuk-font-size(16);
+}

@@ -1,20 +1,29 @@
 {% extends "template.njk" %}
 
 {% from components + "/mojHeader/macro.njk" import mojHeader %}
+{% from "footer/macro.njk" import govukFooter %}
 {% from "skip-link/macro.njk" import govukSkipLink %}
 {% from "phase-banner/macro.njk" import govukPhaseBanner %}
 {% from "service-navigation/macro.njk" import govukServiceNavigation %}
 {% from "input/macro.njk" import govukInput %}
 
 {% set bodyClasses = "nsg-body" %}
-{% set mainClasses = "nsg-homepage-main" %}
 {% set containerClasses = "nsg-homepage-wide-container" %}
 {% set headerContainerClasses = "moj-header__container--wide" %}
 {% set phaseBannerClasses = "phase-banner--wide" %}
 {% set navContainerClasses = "nav-content-container--wide" %}
 
+{% block pageTitle %}
+    {{ pageTitle }} - Civil Service Learning
+{% endblock %}
+
+{% block headIcons %}
+    <link rel="shortcut icon" href="{{ staticAssetRoot }}/img/favicon.ico" type="image/x-icon" />
+{% endblock %}
+
 {% block head %}
     <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/main.v2.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script> {{ googleAnalyticsCode | safe }}
 {% endblock %}
 {% block govukSkipLink %}
     {{ govukSkipLink({
@@ -39,7 +48,7 @@
             tag: {
                 text: "Alpha"
             },
-            html: 'Your <a class="govuk-link" href="{{ feedbackRoot }}" target="_blank" rel="noopener noreferrer" title="The Civil Service Learning feedback survey will open in another window">feedback</a> will help us to improve.',
+            html: 'Your <a class="govuk-link" href="' + nsgFeedbackRoot + '" target="_blank" rel="noopener noreferrer" title="The Civil Service Learning feedback survey will open in another window">feedback</a> will help us to improve.',
             classes: 'phase-banner--nsg',
             tag: {
                 classes: 'govuk-tag--badge',
@@ -58,11 +67,16 @@
     {% endset %}
     {% if signedInUser.hasCompleteProfile() %}
         {% set tabs = [
-            {"active": navbarTab == "home", "href": "/home", "text": "Home"},
-            {"active": navbarTab == "course-catalogue", "href": "/course-catalogue", "text": i18n('course_catalogue_page_title')},
-            {"active": navbarTab == "learning-record", "href": "/learning-record", "text": "Learning record"},
-            {"active": navbarTab == "profile", "href": "/profile", "text": "Profile"}
+            {"active": navbarTab == "home", "href": "/home", "text": "Home"}
         ] %}
+
+        {% if NSG_FLAG === true %}
+            {% set tabs = (tabs.push({"active": navbarTab == "your-learning", "href": "/your-learning", "text": i18n('home_page_title')}), tabs) %}
+        {% endif %}
+
+        {% set tabs = (tabs.push({"active": navbarTab == "course-catalogue", "href": "/course-catalogue", "text": i18n('course_catalogue_page_title')}), tabs) %}
+        {% set tabs = (tabs.push({"active": navbarTab == "learning-record", "href": "/learning-record", "text": "Learning record"}), tabs) %}
+        {% set tabs = (tabs.push({"active": navbarTab == "profile", "href": "/profile", "text": "Profile"}), tabs) %}
         {% if signedInUser.isAdmin() %}
             {% set tabs = (tabs.push({"href": lpgManagementUrl + "/content-management", "text": "Admin"}), tabs) %}
         {% endif %}
@@ -91,6 +105,9 @@
 
 {% block footer %}
     <script src="{{ staticAssetRoot }}/js/main-bundle.min.js"></script>
+    <div class='icon-banner__container'>
+        <div class="icon-banner"></div>
+    </div>
     {{ govukFooter({
         containerClasses: "nsg-homepage-wide-container",
         classes: "nsg-footer",

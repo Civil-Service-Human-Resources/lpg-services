@@ -1,13 +1,22 @@
 $space: 5px;
 $space-class-values: (5, 10, 15, 30, 45);
 
+/* NSG */
+$nsg-dark-green: #002d24;
+$nsg-dark-green-tint-1: #004634;
+$nsg-mid-green: #006b4d;
+$nsg-mid-green-tint-1: #086f52;
+$nsg-mid-green-tint-2: #247f65;
+$nsg-mid-green-tint-3: #258860;
+$nsg-light-green: #afffa6;
+
 /* Global footer */
-$civil-service: #002D24;
+$civil-service: $nsg-dark-green;
 
 $proposition-border: #2e3133;
 // Based on GOV.UK brand blue but slightly lighter so it hits contrast on the
 // black header bar when used as copy colour.
-$cs-red: #032d23;
+$cs-red: $nsg-dark-green;
 $font-color: #0b0c0c;
 $footer-background: $grey-3;
 $footer-border-top: #a1acb2;
@@ -30,7 +39,7 @@ $hint: #6f777b;
 $border: #bfc1c3;
 $alt-header-color: #9b9b9b;
 
-$moj-header-background: #002D24;
+$moj-header-background: $nsg-dark-green;
 $moj-header-padding-bottom: 15px;
 $moj-header-logo-border-left: 3px solid white;
 $moj-header-logo-padding-left: 10px;
@@ -40,11 +49,11 @@ $moj-header-organisation-name-width: 180px;
 $moj-header-service-name-text-size: 20px;
 $moj-header-service-name-border-left: 3px solid white;
 $moj-header-service-name-padding-left: 10px;
-$moj-header-service-name-margin-top: 30px;
+$moj-header-service-name-margin-top: 50px;
 
-$phase-banner-background: #004634;
+$phase-banner-background: $nsg-dark-green-tint-1;
 $phase-banner-text-color: #fff;
-$phase-banner-link-color: #AFFFA6;
+$phase-banner-link-color: $nsg-light-green;
 
 $nav-background-color: #002D24;
 $nav-link-color: #fff;

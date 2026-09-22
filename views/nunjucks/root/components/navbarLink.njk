@@ -5,5 +5,5 @@
 {% endmacro %}
 
 {% macro navbarLink(params) %}
-    <li {% if params.active %}class="active"{% endif %}><a href="{{ params.href }}" {% if params.active %}aria-current="page"{% endif %}>{{ params.text }}</a></li>
+    <li class='nav-list-item {% if params.active %}active{% endif %}'><a class='nav-item' href="{{ params.href }}" {% if params.active %}aria-current="page"{% endif %}>{{ params.text }}</a></li>
 {% endmacro %}

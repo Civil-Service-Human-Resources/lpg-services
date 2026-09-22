@@ -1,0 +1,204 @@
+@use "../common/variables" as *;
+@use "node_modules/govuk-frontend/dist/govuk/index" as *;
+
+.category-card {
+  background-color: govuk-colour('white');
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  .govuk-body {
+    color: govuk-colour("black");
+  }
+}
+
+.category-card--courses {
+  .govuk-grid-column-one-half {
+    border-bottom: 1px solid $border;
+  }
+}
+
+.category-card--first {
+  grid-column-start: 2;
+  @media (max-width: 1100px) {
+    grid-column: span 1;
+  }
+}
+
+.category-card__heading {
+  margin: 0;
+}
+
+.category-card__content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.category-card__header-block {
+  padding: 1rem 1.5rem 1rem 1.5rem;
+  background-color: $nsg-dark-green;
+  .category-card__heading {
+    color: $nsg-light-green;
+  }
+}
+
+.category-card__header-block--tabs {
+  padding: 0;
+  background-color: $nsg-mid-green;
+}
+
+.category-card__header-tabs {
+  display: flex;
+}
+
+.category-card__header-tab {
+  background-color: $nsg-dark-green;
+  @include govuk-responsive-padding(2, "top");
+  @include govuk-responsive-padding(2, "bottom");
+  @include govuk-responsive-padding(4, "left");
+  @include govuk-responsive-padding(4, "right");
+  @include govuk-responsive-margin(2, "all");
+  .category-card__header-tab__heading > a {
+    @include govuk-link-common;
+    color: govuk-colour('white');
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+    &:visited {
+      color: govuk-colour('white');
+    }
+    &:focus {
+      color: govuk-colour('black');
+    }
+  }
+}
+
+.category-card__header-tab--active {
+  background-color: govuk-colour('white');
+  @include govuk-responsive-padding(4, "top");
+  margin: 0;
+  .category-card__header-tab__heading > a {
+    &:visited {
+      color: govuk-colour('black');
+    }
+    color: govuk-colour('black');
+  }
+}
+
+.category-card__header-tab__heading {
+  @extend .govuk-heading-s;
+  margin-bottom: 0;
+}
+
+.category-card__heading--small {
+  @extend .govuk-heading-s;
+}
+
+.category-card__content-block {
+  padding: 1rem 1.5rem 1rem 1.5rem;
+}
+
+.category-card__action-block {
+  padding: 0 1.5rem 1rem 1.5rem;
+}
+
+.category-card__action-link {
+  @extend .govuk-link;
+}
+
+.category-card__action-link-list {
+  margin-bottom: 0;
+  @include govuk-responsive-padding(5, "left");
+}
+
+.category-card__column {
+  @include govuk-responsive-padding(4, "top");
+  @include govuk-responsive-padding(4, "bottom");
+  @include govuk-responsive-padding(5, "left");
+  @include govuk-responsive-padding(5, "right");
+  border-bottom: 1px solid $border;
+  @include govuk-media-query($from: desktop) {
+    border-left: 1px solid $border;
+    &:first-child {
+      border-left: 0;
+    }
+    &:only-child {
+      border-right: 1px solid $border;
+    }
+  }
+}
+
+.category-card__column--half {
+  max-width: 100%;
+  width: 100%;
+  @include govuk-media-query($from: desktop) {
+    max-width: 50%;
+    width: 50%;
+  }
+}
+
+.category-card__row {
+  display: flex;
+  flex-wrap: wrap;
+  @include govuk-media-query($from: desktop) {
+    flex-wrap: nowrap;
+  }
+
+  &:last-child {
+    .category-card__column {
+      @include govuk-media-query($from: desktop) {
+        @include govuk-responsive-padding(5, "bottom");
+      }
+      border-bottom: 0;
+    }
+  }
+}
+
+.category-card--courses {
+  @include govuk-responsive-margin(7, "bottom");
+
+  .learning-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .learning-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    @include govuk-responsive-margin(2, "bottom");
+
+    .badge {
+      @include govuk-responsive-margin(2, "left");
+      min-width: unset;
+    }
+  }
+
+  .learning-card__heading {
+    @extend .govuk-heading-s;
+    margin: 0;
+  }
+
+  .learning-card__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+  }
+
+  .learning-card__content_section {
+    @extend .govuk-body;
+    @include govuk-responsive-margin(2, "bottom")
+  }
+
+  .learning-card__actions {
+    justify-self: flex-end;
+  }
+
+  .learning-card__action {
+    @extend .govuk-link;
+  }
+}

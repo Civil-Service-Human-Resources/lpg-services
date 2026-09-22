@@ -1,30 +1,30 @@
+{% from "./components/categoryCard/macro.njk" import categoryCard %}
 {% extends "./baseLayout.njk" %}
 
-{% block pageTitle %}
-    National School of Government and Public Services
-{% endblock %}
+{% set mainClasses = "nsg-homepage-main" %}
 
+{% set pageTitle = "National School of Government and Public Services" %}
 {% set navbarTab = "home" %}
 
 {% block content %}
-    <div class='govuk-grid-row'>
-        <div class='govuk-grid-column-one-third'>
-            <div class='title-card'>
+    <div class='home-container {% if cardsPerRow === 2 %} home-container--two-cols {% endif %}'>
+        <div class='title-card'>
+            <div class='title-card__body'>
                 <h1 class='title-card__heading title-card__heading--medium'>Welcome to the National School of Government and Public Services.</h1>
                 <div class='title-card__content'>
                     <p class='govuk-body'>The National School provides world-class learning and development for civil servants, supporting public sector excellence and preparing our people for the future.</p>
                 </div>
             </div>
         </div>
-        <div class='column-two-thirds'>
-
-        </div>
+        {% for row in rows %}
+            {% for category in row %}
+                {{ categoryCard({
+                    title: category.title,
+                    description: category.description,
+                    fullUrl: category.url,
+                    classes: "category-card--first" if loop.index0 === 0 else ''
+                }) }}
+            {% endfor %}
+        {% endfor %}
     </div>
-{% endblock %}
-
-{% block footer %}
-    <div class='icon-banner__container'>
-        <div class="icon-banner"></div>
-    </div>
-    {{ super() }}
 {% endblock %}
