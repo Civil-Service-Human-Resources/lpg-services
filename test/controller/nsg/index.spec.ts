@@ -1,5 +1,8 @@
 import {within} from '@testing-library/dom'
+import {expect} from 'chai'
 import {Express} from 'express'
+import {LearningCategoryCache} from '../../../src/lib/service/cslService/cache/learningCategoryCache'
+import {setCaches} from '../../../src/lib/service/cslService/cslServiceClient'
 import {CategoryHomepage} from '../../../src/lib/service/cslService/models/learning/categories/categoryHomepage'
 import {CategoryPage} from '../../../src/lib/service/cslService/models/learning/categories/categoryPage'
 import {CategoryLink} from '../../../src/lib/service/cslService/models/learning/categories/categoryLink'
@@ -18,8 +21,11 @@ describe('Homepage controller tests', () => {
 	app.use('/nsg-homepage', index.router)
 
 	let cslServiceStub: sinon.SinonStubbedInstance<typeof client>
+	let learningCategoryCacheStub: sinon.SinonStubbedInstance<LearningCategoryCache>
 
 	beforeEach(() => {
+		learningCategoryCacheStub = sandbox.stub(new LearningCategoryCache({} as any, 0))
+		setCaches({} as any, {} as any, {} as any, {} as any, learningCategoryCacheStub as any)
 		cslServiceStub = sandbox.stub(client)
 		cslServiceStub._get.resolves({})
 	})
@@ -213,6 +219,39 @@ describe('Homepage controller tests', () => {
 			within(res).getByText('Showing 1 – 20 of 23 items')
 			within(res).getByRole('link', {name: 'Page 2'})
 			within(res).getByRole('link', {name: 'Next page'})
+		})
+	})
+	describe('Cache', () => {
+		it('should fetch category pages from the cache and not the API', async () => {
+			const categoryPage = genericCategoryPage()
+			learningCategoryCacheStub.get.resolves(categoryPage)
+			await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+			expect(cslServiceStub._get.called).to.eq(false)
+		})
+		it('should not cache category pages that have courses within them', async () => {
+			const categoryPage = genericCategoryPage()
+			categoryPage.courseCount = 23
+			categoryPage.courses = {
+				page: 0,
+				size: 20,
+				totalResults: 23,
+				results: Array.from({length: 20}, (_, i) => i).map(i => {
+					return {
+						title: `Course ${i}`,
+						status: 'IN_PROGRESS',
+						id: `${i}`,
+						costInPounds: 0,
+						duration: 1,
+						moduleCount: 1,
+						type: 'blended',
+						shortDescription: `Course ${i}`,
+					}
+				}),
+			}
+			categoryPage.linkCount = 0
+			cslServiceStub._get.resolves(categoryPage)
+			await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+			expect(learningCategoryCacheStub.setObject.called).to.eq(false)
 		})
 	})
 })

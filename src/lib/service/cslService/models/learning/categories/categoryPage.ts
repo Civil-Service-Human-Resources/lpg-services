@@ -1,4 +1,5 @@
 import {Expose, Transform, Type} from 'class-transformer'
+import {CacheableObject} from '../../../../../utils/cacheableObject'
 import {BasicCourse} from '../learningPlan/basicCourse'
 import {BasicCourseResponse} from '../learningPlan/basicCourseResponse'
 import {CategoryLink} from './categoryLink'
@@ -6,15 +7,13 @@ import {Category} from './category'
 import {Hyperlink} from './hyperlink'
 import {HyperlinkResponse} from './hyperlinkResponse'
 
-export class CategoryPage {
+export class CategoryPage implements CacheableObject {
 	@Type(() => CategoryLink)
-	@Transform(({value}) => {
-		return (value as CategoryLink[]).reverse()
-	})
 	parents: CategoryLink[]
 	@Type(() => Category)
 	categories: Category[]
 	title: string
+	url: string
 	description: string
 	courseCount: number
 	@Type(() => BasicCourseResponse)
@@ -43,5 +42,15 @@ export class CategoryPage {
 
 	getDisplay() {
 		return this.courses.results.length > 0 ? 'courses' : 'links'
+	}
+
+	hasContent() {
+		return this.linkCount > 0 || this.courseCount > 0
+	}
+
+	getId(): string {
+		const contentResponse = this.courses.results.length > 0 ? this.courses : this.links
+		const display = this.getDisplay()
+		return `${this.url}:${display}:${contentResponse.page}`
 	}
 }

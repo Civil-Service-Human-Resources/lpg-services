@@ -7,6 +7,8 @@ export class Category {
 	public description: string
 	@Transform(({value}) => {
 		return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/categories/${value}`
+	}, {
+		groups: ['api']
 	})
 	public url: string
 	@Type(() => CategoryLink)
