@@ -51,3 +51,9 @@ export class SimpleCache {
 		}
 	}
 }
+
+export let simpleCache: SimpleCache
+
+export const setSimpleCache = (simpleRedisCache: SimpleCache) => {
+	simpleCache = simpleRedisCache
+}

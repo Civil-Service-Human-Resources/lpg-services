@@ -7,6 +7,7 @@ import {CategoryHomepage} from '../../../src/lib/service/cslService/models/learn
 import {CategoryPage} from '../../../src/lib/service/cslService/models/learning/categories/categoryPage'
 import {CategoryLink} from '../../../src/lib/service/cslService/models/learning/categories/categoryLink'
 import {Response} from '../../../src/lib/utils/search'
+import {setSimpleCache, SimpleCache} from '../../../src/lib/utils/simpleCache'
 import * as index from '../../../src/ui/controllers/nsg/controller'
 import * as sinon from 'sinon'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
@@ -22,10 +23,13 @@ describe('Homepage controller tests', () => {
 
 	let cslServiceStub: sinon.SinonStubbedInstance<typeof client>
 	let learningCategoryCacheStub: sinon.SinonStubbedInstance<LearningCategoryCache>
+	let simpleCacheStub: sinon.SinonStubbedInstance<SimpleCache>
 
 	beforeEach(() => {
+		simpleCacheStub = sandbox.stub(new SimpleCache({} as any, 0))
 		learningCategoryCacheStub = sandbox.stub(new LearningCategoryCache({} as any, 0))
 		setCaches({} as any, {} as any, {} as any, {} as any, learningCategoryCacheStub as any)
+		setSimpleCache(simpleCacheStub as any)
 		cslServiceStub = sandbox.stub(client)
 		cslServiceStub._get.resolves({})
 	})
