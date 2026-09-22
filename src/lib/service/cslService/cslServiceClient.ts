@@ -417,7 +417,7 @@ export async function getCategoryHomepage(user: User) {
 }
 
 export async function getCategoryPage(user: User, url: string, page: number, contentType?: string) {
-	let categoryPage = await categoryPageCache.get(`${url}:${contentType === undefined ? '' : contentType + ":"}${page}`)
+	let categoryPage = await categoryPageCache.get(`${url}:${contentType === undefined ? '' : contentType + ':'}${page}`)
 	if (categoryPage === undefined) {
 		const res = await client._get(
 			{
@@ -429,7 +429,7 @@ export async function getCategoryPage(user: User, url: string, page: number, con
 			user
 		)
 		categoryPage = plainToInstance(CategoryPage, res, {
-			groups: ['api']
+			groups: ['api'],
 		})
 		if (categoryPage.courses.results.length === 0) {
 			await categoryPageCache.setObject(categoryPage)

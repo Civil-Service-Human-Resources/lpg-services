@@ -10,5 +10,4 @@ export class LearningCategoryCache extends CacheableObjectCache<CategoryPage> {
 	protected getBaseKey(): string {
 		return 'categoryPage'
 	}
-
 }
