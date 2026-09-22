@@ -1,5 +1,5 @@
 import {plainToInstance} from 'class-transformer'
-import {simpleCache} from '../../../server'
+import {simpleCache} from '../../utils/simpleCache'
 import {client} from './baseConfig'
 import {
 	HOMEPAGE_COMPLETE_REQUIRED_COURSES,
