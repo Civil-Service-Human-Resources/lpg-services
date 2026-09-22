@@ -1,4 +1,5 @@
 import {plainToInstance} from 'class-transformer'
+import {simpleCache} from '../../../server'
 import {client} from './baseConfig'
 import {
 	HOMEPAGE_COMPLETE_REQUIRED_COURSES,
@@ -405,15 +406,20 @@ export async function getOrganisationalUnits(params: GetOrganisationalUnitParams
 }
 
 export async function getCategoryHomepage(user: User) {
-	const res = await client._get(
-		{
-			url: '/learning/categories',
-		},
-		user
-	)
-	return plainToInstance(CategoryHomepage, res, {
-		groups: ['api'],
-	})
+	let homepage = await simpleCache.getWithId('categoryPage:homepage', CategoryHomepage)
+	if (homepage === undefined) {
+		const res = await client._get(
+			{
+				url: '/learning/categories',
+			},
+			user
+		)
+		homepage = plainToInstance(CategoryHomepage, res, {
+			groups: ['api'],
+		})
+		await simpleCache.setWithId('categoryPage:homepage', homepage)
+	}
+	return homepage
 }
 
 export async function getCategoryPage(user: User, url: string, page: number, contentType?: string) {
