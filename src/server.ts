@@ -39,6 +39,7 @@ import {requiresDepartmentHierarchy} from './lib/ui/requiresDepartmentHierarchy'
 import * as template from './lib/ui/template'
 import {AnonymousCache} from './lib/utils/anonymousCache'
 import {redisClient} from './lib/utils/redis'
+import {SimpleCache} from './lib/utils/simpleCache'
 import * as bookingRouter from './ui/controllers/booking/routes'
 import * as courseController from './ui/controllers/course'
 import * as errorController from './ui/controllers/errorHandler'
@@ -114,6 +115,8 @@ const gradeCache = new AnonymousCache(redisClient, config.GRADE_REDIS.defaultTTL
 const areaOfWorkCache = new AnonymousCache(redisClient, config.AOW_REDIS.defaultTTL, 'areasOfWork', AreasOfWork)
 const interestCache = new AnonymousCache(redisClient, config.INTEREST_REDIS.defaultTTL, 'Interests', Interests)
 csrsService.setCaches(orgCache, csrsProfileCache, gradeCache, areaOfWorkCache, interestCache)
+
+export const simpleCache = new SimpleCache(redisClient, config.REDIS.defaultTTL)
 
 const formattedOrganisationListCache = new FormattedOrganisationListCache(
 	redisClient,
