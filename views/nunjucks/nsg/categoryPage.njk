@@ -32,7 +32,9 @@
                     title: category.title,
                     description: category.description,
                     fullUrl: category.url,
-                    categories: category.categories
+                    categories: category.categories,
+                    courseCount: category.courseCount,
+                    linkCount: category.linkCount
                 }) }}
             {% endfor %}
         </div>
@@ -45,7 +47,7 @@
                 display: page.getDisplay(),
                 courseCount: page.courseCount,
                 linkCount: page.linkCount,
-                baseUrl: NSG_ROUTER_BASE + "/categories/" + url
+                baseUrl: NSG_ROUTER_BASE + "/topics/" + url
             }) }}
         {% elif page.getDisplay() === 'courses' %}
             {{ categoryCourseDisplay({

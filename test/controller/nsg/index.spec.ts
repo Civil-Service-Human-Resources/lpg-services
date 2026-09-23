@@ -98,12 +98,12 @@ describe('Homepage controller tests', () => {
 			{
 				expTitle: 'Category 1',
 				expDescription: 'this is category 1',
-				expUrl: `/nsg-homepage/categories/category-1`,
+				expUrl: `/nsg-homepage/topics/category-1`,
 			},
 			{
 				expTitle: 'Category 2',
 				expDescription: 'this is category 2',
-				expUrl: `/nsg-homepage/categories/category-2`,
+				expUrl: `/nsg-homepage/topics/category-2`,
 			},
 		])
 	})
@@ -112,7 +112,7 @@ describe('Homepage controller tests', () => {
 		const categoryPage = genericCategoryPage()
 		cslServiceStub._get.resolves(categoryPage)
 
-		const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 		within(res).getByRole('heading', {name: 'Subcategory 1'})
 		within(res).getByText('This is Subcategory 1')
 		assertBreadcrumbs(res, [
@@ -121,7 +121,7 @@ describe('Homepage controller tests', () => {
 				expText: 'Home',
 			},
 			{
-				expHref: `/nsg-homepage/categories/category-1`,
+				expHref: `/nsg-homepage/topics/category-1`,
 				expText: 'Category 1',
 			},
 		])
@@ -129,7 +129,7 @@ describe('Homepage controller tests', () => {
 			{
 				expTitle: 'Sub Subcategory 1',
 				expDescription: 'this is sub-subcategory 1',
-				expUrl: `/nsg-homepage/categories/sub-subcategory-1`,
+				expUrl: `/nsg-homepage/topics/sub-subcategory-1`,
 			},
 		])
 	})
@@ -157,7 +157,7 @@ describe('Homepage controller tests', () => {
 			}
 			categoryPage.linkCount = 0
 			cslServiceStub._get.resolves(categoryPage)
-			const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+			const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 			within(res).getByRole('heading', {name: 'Courses'})
 			within(res).getByRole('heading', {name: 'Course 1'})
 			within(res).getByText('Showing 1 – 20 of 23 items')
@@ -181,7 +181,7 @@ describe('Homepage controller tests', () => {
 				}),
 			}
 			cslServiceStub._get.resolves(categoryPage)
-			const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+			const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 			within(res).getByRole('heading', {name: 'Links'})
 			within(res).getByRole('heading', {name: 'Link 1'})
 			within(res).getByText('Showing 1 – 20 of 23 items')
@@ -206,7 +206,7 @@ describe('Homepage controller tests', () => {
 			}
 			categoryPage.courseCount = 3
 			cslServiceStub._get.resolves(categoryPage)
-			const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1/links`)
+			const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1/links`)
 			within(res).getByRole('heading', {name: 'Links (23)'})
 			within(res).getByRole('heading', {name: 'Courses (3)'})
 			within(res).getByRole('heading', {name: 'Link 1'})

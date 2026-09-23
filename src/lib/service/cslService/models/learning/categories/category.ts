@@ -6,7 +6,7 @@ export class Category {
 	public title: string
 	public description: string
 	@Transform(({value}) => {
-		return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/categories/${value}`
+		return `${NSG_FLAG ? '/home' : '/nsg-homepage'}/topics/${value}`
 	})
 	public url: string
 	@Type(() => CategoryLink)
