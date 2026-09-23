@@ -29,7 +29,7 @@ describe('Category Card Macro tests', () => {
 		expect(rendered).to.include('Data')
 	})
 
-	it('should render the "View subjects" anchor when no direct courses or links exist', () => {
+	it('should render the "View topics" anchor when no direct courses or links exist', () => {
 		const template = `
             {% from "nsg/components/categoryCard/macro.njk" import categoryCard %}
             {{ categoryCard({
@@ -43,6 +43,6 @@ describe('Category Card Macro tests', () => {
 		const rendered = nunjucks.renderString(template, {})
 
 		expect(rendered).to.not.include('View Finance courses and links')
-		expect(rendered).to.include('View subjects')
+		expect(rendered).to.include('View topics')
 	})
 })

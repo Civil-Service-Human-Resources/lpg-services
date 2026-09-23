@@ -20,7 +20,8 @@ export class Category {
 	public categories: CategoryLink[]
 
 	public hasCoursesOrLinks(): boolean {
-		return (this.courseCount !== undefined && this.courseCount > 0) ||
-			(this.linkCount !== undefined && this.linkCount > 0)
+		return (
+			(this.courseCount !== undefined && this.courseCount > 0) || (this.linkCount !== undefined && this.linkCount > 0)
+		)
 	}
 }
