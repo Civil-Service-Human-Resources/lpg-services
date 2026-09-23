@@ -229,7 +229,7 @@ describe('Homepage controller tests', () => {
 		it('should fetch category pages from the cache and not the API', async () => {
 			const categoryPage = genericCategoryPage()
 			learningCategoryCacheStub.get.resolves(categoryPage)
-			await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+			await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 			expect(cslServiceStub._get.called).to.eq(false)
 		})
 		it('should not cache category pages that have courses within them', async () => {
@@ -254,7 +254,7 @@ describe('Homepage controller tests', () => {
 			}
 			categoryPage.linkCount = 0
 			cslServiceStub._get.resolves(categoryPage)
-			await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+			await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 			expect(learningCategoryCacheStub.setObject.called).to.eq(false)
 		})
 	})
