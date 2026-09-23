@@ -23,9 +23,9 @@ router.use((req: express.Request, res: express.Response, next: express.NextFunct
 })
 
 router.get('/', asyncHandler(index))
-router.get('/categories/:url', asyncHandler(categoryPage()))
-router.get('/categories/:url/courses', asyncHandler(categoryPage('courses')))
-router.get('/categories/:url/links', asyncHandler(categoryPage('links')))
+router.get('/topics/:url', asyncHandler(categoryPage()))
+router.get('/topics/:url/courses', asyncHandler(categoryPage('courses')))
+router.get('/topics/:url/links', asyncHandler(categoryPage('links')))
 
 export async function index(req: express.Request, res: express.Response) {
 	const homepage = await getCategoryHomepage(req.user)

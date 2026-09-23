@@ -11,6 +11,9 @@ import {
 	NSG_FLAG,
 	NSG_URL,
 	FEEDBACK_URL,
+	NSG_FEEDBACK_URL,
+	GOOGLE_ANALYTICS_ID,
+	GOOGLE_ANALYTICS_CODE,
 } from '../../config'
 import * as datetime from '../../datetime'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
@@ -55,6 +58,9 @@ export const register = (app: Express) => {
 		lpgManagementUrl: LPG_MANAGEMENT_URL,
 		doubleClickPreventionTimeout: DOUBLE_CLICK_PREVENTION_TIMEOUT_MS,
 		feedbackRoot: FEEDBACK_URL,
+		nsgFeedbackRoot: NSG_FEEDBACK_URL,
+		googleAnalyticsId: GOOGLE_ANALYTICS_ID,
+		googleAnalyticsCode: GOOGLE_ANALYTICS_CODE,
 	}
 	logger.debug(`Registering nunjucks globals: ${JSON.stringify(globals)}`)
 	Object.keys(globals).forEach(key => {

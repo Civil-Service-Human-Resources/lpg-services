@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 import * as path from 'path'
 import 'reflect-metadata'
+import {URL} from 'url'
 import {getDayJs} from '../utils/datetime'
 
 export const durationRegex = new RegExp(
@@ -23,6 +24,22 @@ if (IS_DEV) {
 	dotenv.config({
 		path: path.resolve(__dirname + '/../../../.env'),
 	})
+}
+
+const getDomain = (key: string, defaultValue: string): string => {
+	const domainConfig = process.env[key] || defaultValue
+	try {
+		const feedbackURL = new URL(domainConfig)
+		if (feedbackURL.protocol !== 'https:') {
+			console.warn(`${key} is not being served over ssl (feedback route: ${feedbackURL})`)
+		}
+		return feedbackURL.toString()
+	} catch (error) {
+		console.error(
+			`The configured ${key} value ("${domainConfig}") is not a valid URL. Feedback will not be available.\nFull error:\n${error}`
+		)
+		return ''
+	}
 }
 
 function getEnv(obj: any, attr: string) {
@@ -63,6 +80,9 @@ export const ENDPOINT_REDIS = set({
 	}),
 	LEARNING_PLAN: set({
 		defaultTTL: +(env.LEARNING_PLAN_TTL || '10800'),
+	}),
+	LEARNING_CATEGORY: set({
+		defaultTTL: +(env.LEARNING_CATEGORY_TTL || '10800'),
 	}),
 })
 
@@ -123,6 +143,7 @@ export const REDIS = set({
 	keyPrefix: env.REDIS_KEY_PREFIX || 'csl_frontend_',
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
+	defaultTTL: +(env.REDIS_TTL || '10800'),
 })
 
 export const FORMATTED_ORG_LIST_REDIS = set({
@@ -154,7 +175,8 @@ export const STATIC_ASSET_TTL = env.STATIC_ASSET_TTL
 
 export const TOKEN_EXPIRY_BUFFER = Number(env.TOKEN_EXPIRY_BUFFER) || 30
 
-export const FEEDBACK_URL = env.FEEDBACK_URL || 'ChangeMe'
+export const FEEDBACK_URL = getDomain('FEEDBACK_URL', 'changeMe')
+export const NSG_FEEDBACK_URL = getDomain('NSG_FEEDBACK_URL', FEEDBACK_URL)
 
 export const DOUBLE_CLICK_PREVENTION_TIMEOUT_MS = Number(env.DOUBLE_CLICK_PREVENTION_TIMEOUT_MS) || 5000
 
