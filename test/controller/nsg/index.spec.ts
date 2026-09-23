@@ -155,7 +155,7 @@ describe('Homepage controller tests', () => {
 					{
 						text: 'Tier 3 Subcategory',
 						link: 'tier-3-subcategory',
-						href: '/nsg-homepage/categories/tier-3-subcategory',
+						href: '/nsg-homepage/topics/tier-3-subcategory',
 					},
 				],
 				courseCount: 5,
@@ -164,13 +164,13 @@ describe('Homepage controller tests', () => {
 		]
 		cslServiceStub._get.resolves(categoryPage)
 
-		const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
 		card.getByRole('heading', {name: 'Sub Subcategory 1'})
 		const link = card.getByRole('link', {name: 'View Sub Subcategory 1 courses and links'})
 		link.getAttribute('href')
-		expect(link.getAttribute('href')).to.eql('/nsg-homepage/categories/sub-subcategory-1')
-		card.getByRole('heading', {name: 'Subjects'})
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1')
+		card.getByRole('heading', {name: 'Topics'})
 		card.getByRole('link', {name: 'Tier 3 Subcategory'})
 	})
 
@@ -185,7 +185,7 @@ describe('Homepage controller tests', () => {
 					{
 						text: 'Tier 3 Subcategory',
 						link: 'tier-3-subcategory',
-						href: '/nsg-homepage/categories/tier-3-subcategory',
+						href: '/nsg-homepage/topics/tier-3-subcategory',
 					},
 				],
 				courseCount: 0,
@@ -194,12 +194,12 @@ describe('Homepage controller tests', () => {
 		]
 		cslServiceStub._get.resolves(categoryPage)
 
-		const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
 		card.getByRole('heading', {name: 'Personal Effectiveness'})
 		expect(card.queryByRole('link', {name: 'View Personal Effectiveness courses and links'})).to.eql(null)
-		expect(card.queryByRole('link', {name: 'View subjects'})).to.eql(null)
-		card.getByRole('heading', {name: 'Subjects'})
+		expect(card.queryByRole('link', {name: 'View topics'})).to.eql(null)
+		card.getByRole('heading', {name: 'Topics'})
 		card.getByRole('link', {name: 'Tier 3 Subcategory'})
 	})
 
@@ -233,7 +233,7 @@ describe('Homepage controller tests', () => {
 		]
 		cslServiceStub._get.resolves(categoryPage)
 
-		const res = await makeRequest(app, `/nsg-homepage/categories/subcategory-1`)
+		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 		expect(res.getElementsByClassName('category-card__container').length).to.eql(0)
 		within(res).getByRole('heading', {name: 'Courses'})
 		within(res).getByRole('heading', {name: 'Course 1'})
