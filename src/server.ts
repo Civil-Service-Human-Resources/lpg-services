@@ -22,6 +22,7 @@ import * as csrsService from './lib/service/civilServantRegistry/csrsService'
 import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
+import {LearningCategoryCache} from './lib/service/cslService/cache/learningCategoryCache'
 import {LearningPlanCache} from './lib/service/cslService/cache/LearningPlanCache'
 import {LearningRecordCache} from './lib/service/cslService/cache/learningRecordCache'
 import {RequiredLearningCache} from './lib/service/cslService/cache/RequiredLearningCache'
@@ -38,6 +39,7 @@ import {requiresDepartmentHierarchy} from './lib/ui/requiresDepartmentHierarchy'
 import * as template from './lib/ui/template'
 import {AnonymousCache} from './lib/utils/anonymousCache'
 import {redisClient} from './lib/utils/redis'
+import {setSimpleCache, SimpleCache} from './lib/utils/simpleCache'
 import * as bookingRouter from './ui/controllers/booking/routes'
 import * as courseController from './ui/controllers/course'
 import * as errorController from './ui/controllers/errorHandler'
@@ -121,7 +123,16 @@ const formattedOrganisationListCache = new FormattedOrganisationListCache(
 const learningRecordCache = new LearningRecordCache(redisClient, config.ENDPOINT_REDIS.LEARNING_RECORD.defaultTTL)
 const requiredLearningCache = new RequiredLearningCache(redisClient, config.ENDPOINT_REDIS.REQUIRED_LEARNING.defaultTTL)
 const learningPlanCache = new LearningPlanCache(redisClient, config.ENDPOINT_REDIS.LEARNING_PLAN.defaultTTL)
-cslService.setCaches(learningRecordCache, requiredLearningCache, learningPlanCache, formattedOrganisationListCache)
+const categoryPageCache = new LearningCategoryCache(redisClient, config.ENDPOINT_REDIS.LEARNING_CATEGORY.defaultTTL)
+cslService.setCaches(
+	learningRecordCache,
+	requiredLearningCache,
+	learningPlanCache,
+	formattedOrganisationListCache,
+	categoryPageCache
+)
+
+setSimpleCache(new SimpleCache(redisClient, config.REDIS.defaultTTL))
 
 app.use(flash())
 

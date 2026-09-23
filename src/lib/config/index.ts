@@ -81,6 +81,9 @@ export const ENDPOINT_REDIS = set({
 	LEARNING_PLAN: set({
 		defaultTTL: +(env.LEARNING_PLAN_TTL || '10800'),
 	}),
+	LEARNING_CATEGORY: set({
+		defaultTTL: +(env.LEARNING_CATEGORY_TTL || '10800'),
+	}),
 })
 
 export const COOKIE = set({
@@ -140,6 +143,7 @@ export const REDIS = set({
 	keyPrefix: env.REDIS_KEY_PREFIX || 'csl_frontend_',
 	password: env.REDIS_PASSWORD || '',
 	port: +(env.REDIS_PORT || '6379'),
+	defaultTTL: +(env.REDIS_TTL || '10800'),
 })
 
 export const FORMATTED_ORG_LIST_REDIS = set({
