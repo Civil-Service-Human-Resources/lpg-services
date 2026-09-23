@@ -14,6 +14,13 @@ export class Category {
 		}
 	)
 	public url: string
+	public courseCount?: number
+	public linkCount?: number
 	@Type(() => CategoryLink)
 	public categories: CategoryLink[]
+
+	public hasCoursesOrLinks(): boolean {
+		return (this.courseCount !== undefined && this.courseCount > 0) ||
+			(this.linkCount !== undefined && this.linkCount > 0)
+	}
 }

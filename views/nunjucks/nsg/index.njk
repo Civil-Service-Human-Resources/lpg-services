@@ -22,6 +22,9 @@
                     title: category.title,
                     description: category.description,
                     fullUrl: category.url,
+                    categories: category.categories,
+                    courseCount: category.courseCount,
+                    linkCount: category.linkCount,
                     classes: "category-card--first" if loop.index0 === 0 else ''
                 }) }}
             {% endfor %}

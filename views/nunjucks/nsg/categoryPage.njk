@@ -25,20 +25,6 @@
     <p class='govuk-body category__description'>
         {{ page.description }}
     </p>
-    {% if page.categories.length > 0 %}
-        <div class='category-card__container'>
-            {% for category in page.categories %}
-                {{ categoryCard({
-                    title: category.title,
-                    description: category.description,
-                    fullUrl: category.url,
-                    categories: category.categories,
-                    courseCount: category.courseCount,
-                    linkCount: category.linkCount
-                }) }}
-            {% endfor %}
-        </div>
-    {% endif %}
 
     {% if page.rows.length > 0 %}
         {% if page.courseCount > 0 and page.linkCount > 0 %}
@@ -58,6 +44,19 @@
                 rows: page.rows
             }) }}
         {% endif %}
+    {% elif page.categories.length > 0 %}
+        <div class='category-card__container'>
+            {% for category in page.categories %}
+                {{ categoryCard({
+                    title: category.title,
+                    description: category.description,
+                    fullUrl: category.url,
+                    categories: category.categories,
+                    courseCount: category.courseCount,
+                    linkCount: category.linkCount
+                }) }}
+            {% endfor %}
+        </div>
     {% endif %}
     {% if page.rows.length > 0 %}
         <div class='category__pagination'>

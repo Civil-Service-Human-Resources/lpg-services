@@ -10,7 +10,10 @@
                 </p>
             </div>
             <div class='category-card__action-block'>
-                {% if params.categories.length > 0 and params.courseCount === 0 and params.linkCount === 0 %}
+                {% if params.categories.length > 0 %}
+                    {% if params.courseCount > 0 or params.linkCount > 0 %}
+                        <a class='category-card__action-link' href='{{ params.fullUrl or params.url }}'>View {{ params.title }} courses and links</a>
+                    {% endif %}
                     <h3 class='category-card__heading category-card__heading--small'>Topics</h3>
                     <ul class='category-card__action-link-list'>
                         {% for subCategory in params.categories %}
@@ -20,7 +23,7 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <a class='category-card__action-link' href='{{ params.fullUrl }}'>View topics</a>
+                    <a class='category-card__action-link' href='{{ params.fullUrl or params.url }}'>View topics</a>
                 {% endif %}
             </div>
         </div>
