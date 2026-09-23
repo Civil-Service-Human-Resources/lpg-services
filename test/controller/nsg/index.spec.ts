@@ -64,6 +64,9 @@ describe('Homepage controller tests', () => {
 				description: 'this is sub-subcategory 1',
 				url: 'sub-subcategory-1',
 				categories: [],
+				getHasDirectContent: (): boolean => {
+					throw new Error('Function not implemented.')
+				},
 			},
 		]
 		categoryPage.courses = getEmptyContentResponse()
@@ -93,12 +96,18 @@ describe('Homepage controller tests', () => {
 				description: 'this is category 1',
 				url: 'category-1',
 				categories: [],
+				getHasDirectContent: (): boolean => {
+					throw new Error('Function not implemented.')
+				},
 			},
 			{
 				title: 'Category 2',
 				description: 'this is category 2',
 				url: 'category-2',
 				categories: [],
+				getHasDirectContent: (): boolean => {
+					throw new Error('Function not implemented.')
+				},
 			},
 		]
 		cslServiceStub._get.resolves(homepageObject)
