@@ -17,6 +17,10 @@
   @include govuk-responsive-margin(7, "bottom");
 }
 
+.category__action-link {
+  @include govuk-responsive-margin(4, "bottom");
+}
+
 .category__pagination {
   display: flex;
   justify-content: space-between;

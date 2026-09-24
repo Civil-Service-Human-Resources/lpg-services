@@ -52,8 +52,11 @@ export class CategoryPage implements CacheableObject {
 		return !this.parents || this.parents.length === 0
 	}
 
-	shouldShowCategoryCards(): boolean {
+	shouldShowCategoryCards(contentType?: string): boolean {
 		if (!this.categories || this.categories.length === 0) {
+			return false
+		}
+		if (contentType) {
 			return false
 		}
 		if (this.isTier1()) {

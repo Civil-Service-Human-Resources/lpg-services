@@ -46,6 +46,6 @@ function categoryPage(contentType?: contentTypes) {
 		const pagination: Pagination = getPagination(query, page.getContentResponse())
 		pagination.numberedPages = transformNumberedPagesToGovuk(pagination.numberedPages)
 		res.locals.url = url
-		return res.render('nsg/categoryPage.njk', {page, pagination})
+		return res.render('nsg/categoryPage.njk', {page, pagination, contentType})
 	}
 }

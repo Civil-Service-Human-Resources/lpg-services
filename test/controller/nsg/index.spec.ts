@@ -262,6 +262,8 @@ describe('Homepage controller tests', () => {
 				expText: 'Home',
 			},
 		])
+		const directLink = within(res).getByRole('link', {name: 'View Universal Skills courses and links'})
+		expect(directLink.getAttribute('href')).to.eql('/nsg-homepage/topics/universal-skills/courses')
 		expect(res.getElementsByClassName('category-card__container').length).to.eql(1)
 		expect(res.getElementsByClassName('category-card').length).to.eql(2)
 
@@ -285,6 +287,101 @@ describe('Homepage controller tests', () => {
 		expect(within(res).queryByRole('heading', {name: 'Courses (7)'})).to.eql(null)
 		expect(within(res).queryByRole('heading', {name: 'Links (28)'})).to.eql(null)
 		expect(within(res).queryByRole('heading', {name: 'Course 1'})).to.eql(null)
+	})
+
+	it('should hide "View [Category Name] courses and links" above main category cards if tier 1 has no direct courses and links', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.title = 'Universal Skills'
+		categoryPage.description = 'The building blocks for all civil servants'
+		categoryPage.parents = []
+		categoryPage.courseCount = 0
+		categoryPage.linkCount = 0
+		categoryPage.courses = {
+			page: 0,
+			size: 20,
+			totalResults: 0,
+			results: [],
+		}
+		categoryPage.links = {
+			page: 0,
+			size: 20,
+			totalResults: 0,
+			results: [],
+		}
+		categoryPage.categories = [
+			{
+				title: 'Working in Government',
+				description: 'This section provides a comprehensive foundation...',
+				url: 'working-in-government',
+				categories: [],
+				courseCount: 0,
+				linkCount: 0,
+				hasDirectContent: false,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/universal-skills`)
+		within(res).getByRole('heading', {name: 'Universal Skills'})
+		expect(within(res).queryByRole('link', {name: 'View Universal Skills courses and links'})).to.eql(null)
+		expect(res.getElementsByClassName('category-card__container').length).to.eql(1)
+	})
+
+	it('should render courses view when navigating to tier 1 /courses route', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.title = 'Universal Skills'
+		categoryPage.description = 'The building blocks for all civil servants'
+		categoryPage.parents = []
+		categoryPage.courseCount = 7
+		categoryPage.courses = {
+			page: 0,
+			size: 20,
+			totalResults: 7,
+			results: [
+				{
+					title: 'Course 1',
+					status: 'IN_PROGRESS',
+					id: '1',
+					costInPounds: 0,
+					duration: 1,
+					moduleCount: 1,
+					type: 'blended',
+					shortDescription: 'Course 1',
+				},
+			],
+		}
+		categoryPage.linkCount = 28
+		categoryPage.links = {
+			page: 0,
+			size: 20,
+			totalResults: 28,
+			results: [
+				{
+					title: 'Link 1',
+					id: '1',
+					url: 'https://example.com',
+					description: 'Link 1 description',
+				},
+			],
+		}
+		categoryPage.categories = [
+			{
+				title: 'Working in Government',
+				description: 'This section provides a comprehensive foundation...',
+				url: 'working-in-government',
+				categories: [],
+				courseCount: 0,
+				linkCount: 0,
+				hasDirectContent: false,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/universal-skills/courses`)
+		within(res).getByRole('heading', {name: 'Courses (7)'})
+		within(res).getByRole('heading', {name: 'Links (28)'})
+		within(res).getByRole('heading', {name: 'Course 1'})
+		expect(res.getElementsByClassName('category-card__container').length).to.eql(0)
 	})
 
 	it('should render subcategory card with "View [Category Name] courses and links" when subcategory has sub-tags and direct courses/links', async () => {

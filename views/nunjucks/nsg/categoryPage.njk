@@ -13,7 +13,7 @@
 
 {% block content %}
     {% set isTier1 = not page.parents or page.parents.length === 0 %}
-    {% set showCategoryCards = page.categories.length > 0 and (isTier1 or page.rows.length === 0) %}
+    {% set showCategoryCards = not contentType and page.categories.length > 0 and (isTier1 or page.rows.length === 0) %}
     {% set breadcrumbs = [] %}
     {% set breadcrumbs = (breadcrumbs.push({"href": NSG_ROUTER_BASE, "text": "Home"}), breadcrumbs) %}
     {% if page.parents %}
@@ -33,6 +33,11 @@
         {{ page.description }}
     </p>
     {% if showCategoryCards %}
+        {% if isTier1 and (page.hasContent() if page.hasContent else (page.courseCount > 0 or page.linkCount > 0)) %}
+            <p class='govuk-body category__action-link'>
+                <a class='govuk-link' href='{{ NSG_ROUTER_BASE }}/topics/{{ url }}/{{ 'courses' if page.courseCount > 0 else 'links' }}'>View {{ page.title }} courses and links</a>
+            </p>
+        {% endif %}
         <div class='category-card__container'>
             {% for category in page.categories %}
                 {{ categoryCard({
