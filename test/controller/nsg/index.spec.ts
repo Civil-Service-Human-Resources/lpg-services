@@ -161,6 +161,7 @@ describe('Homepage controller tests', () => {
 
 	it('should render the subcategories for a tier 1', async () => {
 		const categoryPage = genericCategoryPage()
+		categoryPage.parents = []
 		cslServiceStub._get.resolves(categoryPage)
 
 		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
@@ -171,10 +172,6 @@ describe('Homepage controller tests', () => {
 				expHref: '/nsg-homepage',
 				expText: 'Home',
 			},
-			{
-				expHref: `/nsg-homepage/topics/category-1`,
-				expText: 'Category 1',
-			},
 		])
 		assertCategories(res, [
 			{
@@ -183,6 +180,111 @@ describe('Homepage controller tests', () => {
 				expUrl: `/nsg-homepage/topics/sub-subcategory-1`,
 			},
 		])
+	})
+
+	it('should render subcategories for a tier 1 page even if tier 1 has direct courses and links', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.title = 'Universal Skills'
+		categoryPage.description = 'The building blocks for all civil servants'
+		categoryPage.parents = []
+		categoryPage.courseCount = 7
+		categoryPage.courses = {
+			page: 0,
+			size: 20,
+			totalResults: 7,
+			results: [
+				{
+					title: 'Course 1',
+					status: 'IN_PROGRESS',
+					id: '1',
+					costInPounds: 0,
+					duration: 1,
+					moduleCount: 1,
+					type: 'blended',
+					shortDescription: 'Course 1',
+				},
+			],
+		}
+		categoryPage.linkCount = 28
+		categoryPage.links = {
+			page: 0,
+			size: 20,
+			totalResults: 28,
+			results: [
+				{
+					title: 'Link 1',
+					id: '1',
+					url: 'https://example.com',
+					description: 'Link 1 description',
+				},
+			],
+		}
+		categoryPage.categories = [
+			{
+				title: 'Working in Government',
+				description: 'This section provides a comprehensive foundation...',
+				url: 'working-in-government',
+				categories: [
+					{
+						text: 'Understanding Parliament',
+						link: 'understanding-parliament',
+						href: '/nsg-homepage/topics/understanding-parliament',
+					},
+				],
+				courseCount: 3,
+				linkCount: 2,
+				hasDirectContent: true,
+			} as any,
+			{
+				title: 'Personal Effectiveness',
+				description: 'Focuses on developing essential behaviors...',
+				url: 'personal-effectiveness',
+				categories: [
+					{
+						text: 'Productivity and Organisation',
+						link: 'productivity-and-organisation',
+						href: '/nsg-homepage/topics/productivity-and-organisation',
+					},
+				],
+				courseCount: 0,
+				linkCount: 0,
+				hasDirectContent: false,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/universal-skills`)
+		within(res).getByRole('heading', {name: 'Universal Skills'})
+		within(res).getByText('The building blocks for all civil servants')
+		assertBreadcrumbs(res, [
+			{
+				expHref: '/nsg-homepage',
+				expText: 'Home',
+			},
+		])
+		expect(res.getElementsByClassName('category-card__container').length).to.eql(1)
+		expect(res.getElementsByClassName('category-card').length).to.eql(2)
+
+		// First card: Working in Government (has direct content)
+		const card1 = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
+		card1.getByRole('heading', {name: 'Working in Government'})
+		const link1 = card1.getByRole('link', {name: 'View Working in Government courses and links'})
+		expect(link1.getAttribute('href')).to.eql('/nsg-homepage/topics/working-in-government')
+		card1.getByRole('heading', {name: 'Topics'})
+		card1.getByRole('link', {name: 'Understanding Parliament'})
+
+		// Second card: Personal Effectiveness (no direct content)
+		const card2 = within(res.getElementsByClassName('category-card')[1] as HTMLElement)
+		card2.getByRole('heading', {name: 'Personal Effectiveness'})
+		expect(card2.queryByRole('link', {name: 'View Personal Effectiveness courses and links'})).to.eql(null)
+		expect(card2.queryByRole('link', {name: 'View topics'})).to.eql(null)
+		card2.getByRole('heading', {name: 'Topics'})
+		card2.getByRole('link', {name: 'Productivity and Organisation'})
+
+		// Should not render course or link headings/tabs on T1 page
+		expect(within(res).queryByRole('heading', {name: 'Courses (7)'})).to.eql(null)
+		expect(within(res).queryByRole('heading', {name: 'Links (28)'})).to.eql(null)
+		expect(within(res).queryByRole('heading', {name: 'Course 1'})).to.eql(null)
 	})
 
 	it('should render subcategory card with "View [Category Name] courses and links" when subcategory has sub-tags and direct courses/links', async () => {

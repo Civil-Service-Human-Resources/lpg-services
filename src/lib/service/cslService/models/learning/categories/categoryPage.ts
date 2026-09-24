@@ -48,6 +48,20 @@ export class CategoryPage implements CacheableObject {
 		return this.linkCount > 0 || this.courseCount > 0
 	}
 
+	isTier1(): boolean {
+		return !this.parents || this.parents.length === 0
+	}
+
+	shouldShowCategoryCards(): boolean {
+		if (!this.categories || this.categories.length === 0) {
+			return false
+		}
+		if (this.isTier1()) {
+			return true
+		}
+		return this.rows.length === 0
+	}
+
 	getId(): string {
 		const contentResponse = this.courses.results.length > 0 ? this.courses : this.links
 		const display = this.getDisplay()
