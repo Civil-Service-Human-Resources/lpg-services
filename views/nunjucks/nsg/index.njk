@@ -22,8 +22,6 @@
                     title: category.title,
                     description: category.description,
                     fullUrl: category.url,
-                    categories: category.categories,
-                    hasDirectContent: category.getHasDirectContent() if category.getHasDirectContent else category.hasDirectContent,
                     classes: "category-card--first" if loop.index0 === 0 else ''
                 }) }}
             {% endfor %}

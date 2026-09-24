@@ -127,6 +127,38 @@ describe('Homepage controller tests', () => {
 		])
 	})
 
+	it('should render "View topics" links on homepage even if tier 1 categories have subcategories and content', async () => {
+		const homepageObject = new CategoryHomepage()
+		homepageObject.categories = [
+			{
+				title: 'Universal Skills',
+				description: 'These are universal skills',
+				url: 'universal-skills',
+				categories: [
+					{
+						text: 'Working in Government',
+						link: 'working-in-government',
+						href: '/nsg-homepage/topics/working-in-government',
+					},
+				],
+				courseCount: 3,
+				linkCount: 2,
+				hasDirectContent: true,
+			} as any,
+		]
+		cslServiceStub._get.resolves(homepageObject)
+
+		const res = await makeRequest(app, '/nsg-homepage')
+		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
+		card.getByRole('heading', {name: 'Universal Skills'})
+		card.getByText('These are universal skills')
+		const link = card.getByRole('link', {name: 'View topics'})
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/universal-skills')
+		expect(card.queryByRole('link', {name: 'View Universal Skills courses and links'})).to.eql(null)
+		expect(card.queryByRole('heading', {name: 'Topics'})).to.eql(null)
+		expect(card.queryByRole('link', {name: 'Working in Government'})).to.eql(null)
+	})
+
 	it('should render the subcategories for a tier 1', async () => {
 		const categoryPage = genericCategoryPage()
 		cslServiceStub._get.resolves(categoryPage)
