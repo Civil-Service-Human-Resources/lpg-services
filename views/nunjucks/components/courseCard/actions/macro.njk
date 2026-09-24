@@ -14,24 +14,20 @@
     }) }}
 {% endmacro %}
 
-{% macro bookLink(params) %}
-    {{ ctaLink({
-        "href": "/book/" + params.courseId + "/" + params.moduleId + "/choose-date",
-        "text": i18n('action_BOOK')
-    }) }}
-{% endmacro %}
-
 {% macro startLink(params) %}
+    {% set html %}
+        View<span class="visually-hidden"> {{ params.courseTitle }}</span> course details
+    {% endset %}
     {{ ctaLink({
-        "href": "/courses/" + params.courseId + "#modules",
-        "text": i18n('action_NOT_STARTED')
+        "href": "/courses/" + params.courseId,
+        "html": html
     }) }}
 {% endmacro %}
 
 {% macro removeFromLearningPlanLink(params) %}
     {{ ctaLink({
         "href": "/home?delete=" + params.courseId,
-        "text": "Remove"
+        "text": "Remove from learning plan"
     }) }}
 {% endmacro %}
 

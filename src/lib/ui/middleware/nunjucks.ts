@@ -69,11 +69,11 @@ export const register = (app: Express) => {
 
 	// locale
 	const i18nConfig = registerLocale(app)
-	env.addGlobal('i18n', (text: string) => {
+	env.addGlobal('i18n', (text: string, ...params: string[]) => {
 		if (IS_DEV) {
 			logger.debug(`Looking for i18n text: ${text}`)
 			try {
-				i18nConfig.__(text)
+				i18nConfig.__(text, ...params)
 			} catch {
 				logger.error(`ERROR: i18n text ${text} was not found`)
 				return 'UNDEFINED'

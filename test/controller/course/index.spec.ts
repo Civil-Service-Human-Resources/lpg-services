@@ -251,7 +251,7 @@ describe('Course controller tests', () => {
 						{
 							cta: {
 								type: 'button',
-								text: 'Start module Module title',
+								text: 'Go to Module title (opens in a new tab)',
 								href: '/courses/courseID/moduleID',
 							},
 							expDescription: 'Module description',
@@ -293,6 +293,16 @@ describe('Course controller tests', () => {
 				fileExtAndSize: 'pdf, 10KB',
 				launchLink: '/launch',
 				isMandatory: true,
+				duration: '2 hours',
+				cost: 0,
+			}
+			const videoModule: BaseModuleCard = {
+				...basicModuleDetails,
+				title: 'Video module',
+				template: 'video',
+				type: 'video',
+				isMandatory: false,
+				launchLink: '/launch',
 				duration: '2 hours',
 				cost: 0,
 			}
@@ -340,7 +350,7 @@ describe('Course controller tests', () => {
 							expOptional: false,
 							cta: {
 								type: 'button',
-								text: 'Book module Face to Face module',
+								text: 'Book Face to Face module',
 								href: '/book',
 							},
 							details: {
@@ -377,7 +387,7 @@ describe('Course controller tests', () => {
 						expOptional: false,
 						cta: {
 							type: 'button',
-							text: 'Download document module File module',
+							text: 'Download File module file',
 							href: '/launch',
 						},
 						details: {
@@ -385,6 +395,41 @@ describe('Course controller tests', () => {
 							expDuration: '2 hours',
 							expType: 'file',
 							expCost: null,
+						},
+					},
+				])
+			})
+			it('Should show the video link for a video module', async () => {
+				const blendedCourse: BlendedCoursePage = {
+					...basicCourseData,
+					...details,
+					template: 'blended',
+					type: 'blended',
+					mandatoryModuleCount: 1,
+					modules: [
+						{
+							...videoModule,
+						},
+						{
+							...videoModule,
+						},
+					],
+				}
+				const res = await makeRequest(blendedCourse)
+				assertModuleCards(res, [
+					{
+						expTitle: 'Video module',
+						expDescription: 'Module description',
+						expOptional: false,
+						cta: {
+							type: 'button',
+							text: 'Go to Video module video',
+							href: '/launch',
+						},
+						details: {
+							expState: null,
+							expDuration: '2 hours',
+							expType: 'Video',
 						},
 					},
 				])

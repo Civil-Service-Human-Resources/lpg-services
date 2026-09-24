@@ -52,7 +52,7 @@ describe('Course catalogue controller tests', () => {
 			cta: {
 				primary: {
 					href: '/courses/a1',
-					text: 'Start A course 1',
+					text: 'View A course 1 course details',
 				},
 				secondary: {
 					text: 'Already in your learning plan',
@@ -74,7 +74,7 @@ describe('Course catalogue controller tests', () => {
 			cta: {
 				primary: {
 					href: '/courses/a2',
-					text: 'Start A course 2',
+					text: 'View A course 2 course details',
 				},
 				secondary: {
 					href: '/course-catalogue/add/a2',

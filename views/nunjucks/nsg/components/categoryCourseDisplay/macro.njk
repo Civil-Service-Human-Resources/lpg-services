@@ -8,7 +8,7 @@
         description: params.shortDescription,
         action: {
             href: '/courses/' + params.id,
-            text: 'View course details'
+            text: i18n('action_VIEW_COURSE_DETAILS', params.title)
         }
     }) }}
 {% endmacro %}
