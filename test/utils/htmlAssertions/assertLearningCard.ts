@@ -57,7 +57,6 @@ export const assertLearningCard = (cardElement: HTMLElement, expValue: CourseCar
 		card.getByText(expectedModuleText)
 	}
 
-	// const primaryCta = card.getByText(expValue.cta.primary.text)
 	const primaryCta = card.getByRole('link', {name: expValue.cta.primary.text})
 	expect(primaryCta.getAttribute('href')).to.eql(expValue.cta.primary.href)
 
