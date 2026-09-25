@@ -1,6 +1,6 @@
-import * as esbuild from 'esbuild'
-import * as sass from 'sass'
-import * as fs from 'node:fs'
+const esbuild = require('esbuild')
+const sass = require('sass')
+const fs = require('node:fs')
 
 const manifest = {}
 const _id = Math.random().toString(36).substring(2, 6)
