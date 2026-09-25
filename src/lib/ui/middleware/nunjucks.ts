@@ -3,6 +3,7 @@ import * as moment from 'moment'
 import * as nunjucks from 'nunjucks'
 import * as i18n from 'i18n'
 import * as path from 'path'
+import * as config from '../../config'
 import {
 	IS_DEV,
 	STATIC_DIR,
@@ -14,6 +15,7 @@ import {
 	NSG_FEEDBACK_URL,
 	GOOGLE_ANALYTICS_ID,
 	GOOGLE_ANALYTICS_CODE,
+	ASSET_MANIFEST,
 } from '../../config'
 import * as datetime from '../../datetime'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
@@ -80,6 +82,11 @@ export const register = (app: Express) => {
 			}
 		}
 		return i18nConfig.__(text)
+	})
+
+	env.addGlobal('asset', (filename: string) => {
+		filename = ASSET_MANIFEST.getAsset(filename)
+		return [config.STATIC_ASSET_ROOT, config.STATIC_ASSETS_DIR_NAME, filename].join('/')
 	})
 
 	env.addGlobal('NSG_FLAG', NSG_FLAG)
