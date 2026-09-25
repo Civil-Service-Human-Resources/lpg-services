@@ -65,7 +65,7 @@ describe('Homepage controller tests', () => {
 				url: 'sub-subcategory-1',
 				categories: [],
 				getHasDirectContent: (): boolean => {
-					throw new Error('Function not implemented.')
+					return false
 				},
 			},
 		]
@@ -97,7 +97,7 @@ describe('Homepage controller tests', () => {
 				url: 'category-1',
 				categories: [],
 				getHasDirectContent: (): boolean => {
-					throw new Error('Function not implemented.')
+					return false
 				},
 			},
 			{
@@ -106,7 +106,7 @@ describe('Homepage controller tests', () => {
 				url: 'category-2',
 				categories: [],
 				getHasDirectContent: (): boolean => {
-					throw new Error('Function not implemented.')
+					return false
 				},
 			},
 		]
@@ -173,13 +173,10 @@ describe('Homepage controller tests', () => {
 				expText: 'Home',
 			},
 		])
-		assertCategories(res, [
-			{
-				expTitle: 'Sub Subcategory 1',
-				expDescription: 'this is sub-subcategory 1',
-				expUrl: `/nsg-homepage/topics/sub-subcategory-1`,
-			},
-		])
+		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
+		card.getByRole('heading', {name: 'Sub Subcategory 1'})
+		card.getByText('this is sub-subcategory 1')
+		expect(card.queryByRole('link', {name: 'View topics'})).to.eql(null)
 	})
 
 	it('should render subcategories for a tier 1 page even if tier 1 has direct courses and links', async () => {
@@ -271,7 +268,7 @@ describe('Homepage controller tests', () => {
 		const card1 = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
 		card1.getByRole('heading', {name: 'Working in Government'})
 		const link1 = card1.getByRole('link', {name: 'View Working in Government courses and links'})
-		expect(link1.getAttribute('href')).to.eql('/nsg-homepage/topics/working-in-government')
+		expect(link1.getAttribute('href')).to.eql('/nsg-homepage/topics/working-in-government/courses')
 		card1.getByRole('heading', {name: 'Topics'})
 		card1.getByRole('link', {name: 'Understanding Parliament'})
 
@@ -382,6 +379,17 @@ describe('Homepage controller tests', () => {
 		within(res).getByRole('heading', {name: 'Links (28)'})
 		within(res).getByRole('heading', {name: 'Course 1'})
 		expect(res.getElementsByClassName('category-card__container').length).to.eql(0)
+		assertBreadcrumbs(res, [
+			{
+				expHref: '/nsg-homepage',
+				expText: 'Home',
+			},
+			{
+				expHref: '/nsg-homepage/topics/universal-skills',
+				expText: 'Universal Skills',
+			},
+		])
+		within(within(res).getByLabelText('Breadcrumb')).getByText('Courses and Links assigned to Universal Skills')
 	})
 
 	it('should render subcategory card with "View [Category Name] courses and links" when subcategory has sub-tags and direct courses/links', async () => {
@@ -408,8 +416,7 @@ describe('Homepage controller tests', () => {
 		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
 		card.getByRole('heading', {name: 'Sub Subcategory 1'})
 		const link = card.getByRole('link', {name: 'View Sub Subcategory 1 courses and links'})
-		link.getAttribute('href')
-		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1')
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1/courses')
 		card.getByRole('heading', {name: 'Topics'})
 		card.getByRole('link', {name: 'Tier 3 Subcategory'})
 	})
@@ -443,7 +450,7 @@ describe('Homepage controller tests', () => {
 		card.getByRole('link', {name: 'Tier 3 Subcategory'})
 	})
 
-	it('should hide sub-topic tiles and only show courses/links when topic has sub-topics and courses/links', async () => {
+	it('should render sub-topic tiles and details page for subcategory when topic has sub-topics and courses/links', async () => {
 		const categoryPage = genericCategoryPage()
 		categoryPage.courseCount = 1
 		categoryPage.courses = {
@@ -469,19 +476,180 @@ describe('Homepage controller tests', () => {
 				description: 'this is sub-subcategory 1',
 				url: 'sub-subcategory-1',
 				categories: [],
+				getHasDirectContent: () => false,
 			} as any,
 		]
 		cslServiceStub._get.resolves(categoryPage)
 
 		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
-		expect(res.getElementsByClassName('category-card__container').length).to.eql(0)
-		within(res).getByRole('heading', {name: 'Courses'})
-		within(res).getByRole('heading', {name: 'Course 1'})
+		expect(res.getElementsByClassName('category-card__container').length).to.eql(1)
+		within(res).getByRole('heading', {name: 'Sub Subcategory 1'})
+		within(res).getByRole('link', {name: 'View Subcategory 1 courses and links'})
+	})
+
+	it('should render breadcrumbs with hyperlink on T1 title and correct text on T1 courses page (Issue Point 3)', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.title = 'Universal Skills'
+		categoryPage.description = 'All civil servants'
+		categoryPage.parents = []
+		categoryPage.courseCount = 5
+		categoryPage.courses = {
+			page: 0,
+			size: 20,
+			totalResults: 5,
+			results: [
+				{
+					title: 'Course 1',
+					status: 'IN_PROGRESS',
+					id: '1',
+					costInPounds: 0,
+					duration: 1,
+					moduleCount: 1,
+					type: 'blended',
+					shortDescription: 'Course 1',
+				},
+			],
+		}
+		categoryPage.categories = []
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/universal-skills/courses`)
+		assertBreadcrumbs(res, [
+			{
+				expHref: '/nsg-homepage',
+				expText: 'Home',
+			},
+			{
+				expHref: '/nsg-homepage/topics/universal-skills',
+				expText: 'Universal Skills',
+			},
+		])
+		within(within(res).getByLabelText('Breadcrumb')).getByText('Courses and Links assigned to Universal Skills')
+	})
+
+	it('should render breadcrumbs with parent links and correct text on Main-category (T2) courses page (Issue Point 4)', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.title = 'Working in Government'
+		categoryPage.description = 'Working in government skills'
+		const parent = new CategoryLink()
+		parent.link = 'universal-skills'
+		parent.text = 'Universal Skills'
+		parent.href = '/nsg-homepage/topics/universal-skills'
+		categoryPage.parents = [parent]
+		categoryPage.courseCount = 4
+		categoryPage.courses = {
+			page: 0,
+			size: 20,
+			totalResults: 4,
+			results: [
+				{
+					title: 'Course 1',
+					status: 'IN_PROGRESS',
+					id: '1',
+					costInPounds: 0,
+					duration: 1,
+					moduleCount: 1,
+					type: 'blended',
+					shortDescription: 'Course 1',
+				},
+			],
+		}
+		categoryPage.categories = [
+			{
+				title: 'Understanding Parliament',
+				description: 'Parliament description',
+				url: 'understanding-parliament',
+				categories: [],
+				getHasDirectContent: () => false,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/working-in-government/courses`)
+		assertBreadcrumbs(res, [
+			{
+				expHref: '/nsg-homepage',
+				expText: 'Home',
+			},
+			{
+				expHref: '/nsg-homepage/topics/universal-skills',
+				expText: 'Universal Skills',
+			},
+			{
+				expHref: '/nsg-homepage/topics/working-in-government',
+				expText: 'Working in Government',
+			},
+		])
+		within(within(res).getByLabelText('Breadcrumb')).getByText('Courses and Links assigned to Working in Government')
+	})
+
+	it('should render Sub-category (T3) details page with child category cards when T3 has child categories (Issue Point 5)', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.title = 'Understanding Parliament'
+		categoryPage.description = 'Learn about Parliament'
+		const parent1 = new CategoryLink()
+		parent1.link = 'universal-skills'
+		parent1.text = 'Universal Skills'
+		parent1.href = '/nsg-homepage/topics/universal-skills'
+		const parent2 = new CategoryLink()
+		parent2.link = 'working-in-government'
+		parent2.text = 'Working in Government'
+		parent2.href = '/nsg-homepage/topics/working-in-government'
+		categoryPage.parents = [parent1, parent2]
+		categoryPage.courseCount = 2
+		categoryPage.courses = {
+			page: 0,
+			size: 20,
+			totalResults: 2,
+			results: [
+				{
+					title: 'Course 1',
+					status: 'IN_PROGRESS',
+					id: '1',
+					costInPounds: 0,
+					duration: 1,
+					moduleCount: 1,
+					type: 'blended',
+					shortDescription: 'Course 1',
+				},
+			],
+		}
+		categoryPage.categories = [
+			{
+				title: 'House of Commons',
+				description: 'Commons description',
+				url: 'house-of-commons',
+				categories: [],
+				getHasDirectContent: () => false,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/understanding-parliament`)
+		within(res).getByRole('heading', {name: 'Understanding Parliament'})
+		within(res).getByRole('link', {name: 'View Understanding Parliament courses and links'})
+		expect(res.getElementsByClassName('category-card__container').length).to.eql(1)
+		within(res).getByRole('heading', {name: 'House of Commons'})
+		assertBreadcrumbs(res, [
+			{
+				expHref: '/nsg-homepage',
+				expText: 'Home',
+			},
+			{
+				expHref: '/nsg-homepage/topics/universal-skills',
+				expText: 'Universal Skills',
+			},
+			{
+				expHref: '/nsg-homepage/topics/working-in-government',
+				expText: 'Working in Government',
+			},
+		])
 	})
 
 	describe('content', () => {
 		it('should render courses within a category page', async () => {
 			const categoryPage = genericCategoryPage()
+			categoryPage.categories = []
 			categoryPage.courseCount = 23
 			categoryPage.courses = {
 				page: 0,
@@ -512,6 +680,7 @@ describe('Homepage controller tests', () => {
 
 		it('should render links within a category page', async () => {
 			const categoryPage = genericCategoryPage()
+			categoryPage.categories = []
 			categoryPage.linkCount = 23
 			categoryPage.links = {
 				page: 0,
@@ -536,6 +705,7 @@ describe('Homepage controller tests', () => {
 
 		it('should render links and courses in tabs within a category page (link view)', async () => {
 			const categoryPage = genericCategoryPage()
+			categoryPage.categories = []
 			categoryPage.linkCount = 23
 			categoryPage.links = {
 				page: 0,
@@ -569,6 +739,7 @@ describe('Homepage controller tests', () => {
 		})
 		it('should not cache category pages that have courses within them', async () => {
 			const categoryPage = genericCategoryPage()
+			categoryPage.categories = []
 			categoryPage.courseCount = 23
 			categoryPage.courses = {
 				page: 0,

@@ -59,10 +59,7 @@ export class CategoryPage implements CacheableObject {
 		if (contentType) {
 			return false
 		}
-		if (this.isTier1()) {
-			return true
-		}
-		return this.rows.length === 0
+		return true
 	}
 
 	getId(): string {

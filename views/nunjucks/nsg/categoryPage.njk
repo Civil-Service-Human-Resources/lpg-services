@@ -13,7 +13,7 @@
 
 {% block content %}
     {% set isTier1 = not page.parents or page.parents.length === 0 %}
-    {% set showCategoryCards = not contentType and page.categories.length > 0 and (isTier1 or page.rows.length === 0) %}
+    {% set showCategoryCards = not contentType and page.categories.length > 0 %}
     {% set breadcrumbs = [] %}
     {% set breadcrumbs = (breadcrumbs.push({"href": NSG_ROUTER_BASE, "text": "Home"}), breadcrumbs) %}
     {% if page.parents %}
@@ -21,7 +21,14 @@
             {% set breadcrumbs = (breadcrumbs.push(parent), breadcrumbs) %}
         {% endfor %}
     {% endif %}
-    {% set breadcrumbs = (breadcrumbs.push({"text": page.title}), breadcrumbs) %}
+    {% if showCategoryCards %}
+        {% set breadcrumbs = (breadcrumbs.push({"text": page.title}), breadcrumbs) %}
+    {% else %}
+        {% if isTier1 or (page.categories and page.categories.length > 0) %}
+            {% set breadcrumbs = (breadcrumbs.push({"href": NSG_ROUTER_BASE + "/topics/" + url, "text": page.title}), breadcrumbs) %}
+        {% endif %}
+        {% set breadcrumbs = (breadcrumbs.push({"text": "Courses and Links assigned to " + page.title}), breadcrumbs) %}
+    {% endif %}
     {{ govukBreadcrumbs({
         items: breadcrumbs,
         collapseOnMobile: true
@@ -33,7 +40,7 @@
         {{ page.description }}
     </p>
     {% if showCategoryCards %}
-        {% if isTier1 and (page.hasContent() if page.hasContent else (page.courseCount > 0 or page.linkCount > 0)) %}
+        {% if page.hasContent() if page.hasContent else (page.courseCount > 0 or page.linkCount > 0) %}
             <p class='govuk-body category__action-link'>
                 <a class='category-card__action-link category-card__action-link--main' href='{{ NSG_ROUTER_BASE }}/topics/{{ url }}/{{ 'courses' if page.courseCount > 0 else 'links' }}'>View {{ page.title }} courses and links</a>
             </p>

@@ -64,7 +64,7 @@ describe('categoryCard macro tests', () => {
 			})
 
 			expect(rendered).to.include('View Digital courses and links')
-			expect(rendered).to.include("href='/topics/digital'")
+			expect(rendered).to.include("href='/topics/digital/courses'")
 		})
 
 		it('should render "View {title} courses and links" anchor when courseCount > 0', () => {
@@ -145,7 +145,24 @@ describe('categoryCard macro tests', () => {
 	})
 
 	describe('when no sub-categories exist', () => {
-		it('should render "View topics" anchor linking to fullUrl', () => {
+		it('should render "View topics" anchor linking to fullUrl when showViewTopics is true', () => {
+			const rendered = renderCategoryCard({
+				title: 'Finance',
+				fullUrl: '/topics/finance',
+				description: 'Finance overview',
+				showViewTopics: true,
+				courseCount: 0,
+				linkCount: 0,
+				categories: [],
+			})
+
+			expect(rendered).to.include('View topics')
+			expect(rendered).to.include("href='/topics/finance'")
+			expect(rendered).to.not.include('View Finance courses and links')
+			expect(rendered).to.not.include('Topics')
+		})
+
+		it('should not render "View topics" anchor when showViewTopics is false/omitted', () => {
 			const rendered = renderCategoryCard({
 				title: 'Finance',
 				fullUrl: '/topics/finance',
@@ -155,8 +172,7 @@ describe('categoryCard macro tests', () => {
 				categories: [],
 			})
 
-			expect(rendered).to.include('View topics')
-			expect(rendered).to.include("href='/topics/finance'")
+			expect(rendered).to.not.include('View topics')
 			expect(rendered).to.not.include('View Finance courses and links')
 			expect(rendered).to.not.include('Topics')
 		})
