@@ -35,7 +35,7 @@
     {% if showCategoryCards %}
         {% if isTier1 and (page.hasContent() if page.hasContent else (page.courseCount > 0 or page.linkCount > 0)) %}
             <p class='govuk-body category__action-link'>
-                <a class='govuk-link' href='{{ NSG_ROUTER_BASE }}/topics/{{ url }}/{{ 'courses' if page.courseCount > 0 else 'links' }}'>View {{ page.title }} courses and links</a>
+                <a class='category-card__action-link category-card__action-link--main' href='{{ NSG_ROUTER_BASE }}/topics/{{ url }}/{{ 'courses' if page.courseCount > 0 else 'links' }}'>View {{ page.title }} courses and links</a>
             </p>
         {% endif %}
         <div class='category-card__container'>
