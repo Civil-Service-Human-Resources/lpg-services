@@ -1,4 +1,4 @@
-{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, ctaLink, cancelLink, bookLink, removeFromLearningPlanLink %}
+{% from components + "/courseCard/actions/macro.njk" import courseCardActions, startLink, ctaLink, cancelLink, removeFromLearningPlanLink %}
 {% from components + "/courseCard/description/macro.njk" import courseCardDescription %}
 {% from components + "/courseCard/heading/macro.njk" import courseCardHeading %}
 {% from components + "/courseCard/properties/macro.njk" import courseCardType, courseCardDuration, courseCardCost %}
@@ -71,9 +71,8 @@
         {% else %}
             {% if params.eventModule.state === "UNREGISTERED" %}
                 {% set actions = {
-                    "primary": bookLink({
-                        "courseId": params.id,
-                        "moduleId": params.eventModule.id
+                    "primary": startLink({
+                        "courseId": params.id
                     }),
                     "secondary": removeFromLearningPlanLink({
                         "courseId": params.id

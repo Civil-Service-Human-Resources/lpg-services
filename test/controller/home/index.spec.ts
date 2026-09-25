@@ -59,7 +59,7 @@ describe('Homepage controller tests', () => {
 			.resolves(response)
 	}
 
-	setCaches(fakeCache as any, fakeCache as any, fakeCache as any, fakeCache as any)
+	setCaches(fakeCache as any, fakeCache as any, fakeCache as any, fakeCache as any, fakeCache as any)
 
 	const makeRequest = async () => {
 		return await getDOM(app, '/home', undefined, {title: 'Your learning'})
@@ -90,8 +90,8 @@ describe('Homepage controller tests', () => {
 					dueBy: '01 Jan 2025',
 					cta: {
 						primary: {
-							href: '/courses/required1#modules',
-							text: 'Start',
+							href: '/courses/required1',
+							text: 'View Required Course 1 course details',
 						},
 					},
 					properties: {
@@ -155,12 +155,12 @@ describe('Homepage controller tests', () => {
 				{
 					cta: {
 						primary: {
-							href: '/courses/learningplan1#modules',
-							text: 'Start',
+							href: '/courses/learningplan1',
+							text: 'View Learning plan Course 1 course details',
 						},
 						secondary: {
 							href: '/home?delete=learningplan1',
-							text: 'Remove',
+							text: 'Remove from learning plan',
 						},
 					},
 					properties: {
@@ -179,12 +179,12 @@ describe('Homepage controller tests', () => {
 				{
 					cta: {
 						primary: {
-							href: '/courses/learningplan2#modules',
-							text: 'Start',
+							href: '/courses/learningplan2',
+							text: 'View Learning plan Course 2 course details',
 						},
 						secondary: {
 							href: '/home?delete=learningplan2',
-							text: 'Remove',
+							text: 'Remove from learning plan',
 						},
 					},
 					properties: {
@@ -241,8 +241,8 @@ describe('Homepage controller tests', () => {
 				{
 					cta: {
 						primary: {
-							href: '/courses/bookedLearning1#modules',
-							text: 'Start',
+							href: '/courses/bookedLearning1',
+							text: 'View course details',
 						},
 					},
 					properties: {

@@ -241,8 +241,6 @@
 	"action_video_COMPLETED": "Restart",
 	"action_REGISTERED": "Requested",
 	"NOT_STARTED": "NOT_STARTED",
-	"action_BOOK": "Book",
-	"action_DOWNLOAD": "Download document",
 	"action_CANCEL": "Cancel",
 	"learning_added_to_plan_title": "%s",
 	"learning_added_to_plan_message": "This has been added to your learning plan",

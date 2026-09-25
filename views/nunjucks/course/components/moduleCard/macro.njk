@@ -40,15 +40,17 @@
     </div>
 {% endmacro %}
 
-{% macro moduleCardCtaLink(url, action, moduleTitle, newTab = false) %}
-    <form class="discite__link-button--main" method="POST" action="{{ url }}" novalidate>
+{% macro moduleCardCtaLink(params) %}
+    <form class="discite__link-button--main" method="POST" action="{{ params.url }}" rel='noopener' novalidate>
         <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+        {{ params.ctaButton | safe }}
         <button type="submit" class="discite__link-button--main discite__action-link--button"
-            data-module="discite-prevent-double-click" data-timeout="{{ doubleClickPreventionTimeout }}"
-            {% if newTab %}formtarget="_blank" formrel="noopener"{% endif %}>
-            {{ i18n(action) }} <span class="visually-hidden"> module {{ moduleTitle }}</span>
+                data-module="discite-prevent-double-click" data-timeout="{{ doubleClickPreventionTimeout }}"
+                {% if params.newTab %}formtarget="_blank"{% endif %}>
+            {{ params.buttonHtml | safe }}
         </button>
     </form>
+    {{ params.extraText }}
 {% endmacro %}
 
 {% macro moduleCardCta(params) %}
@@ -56,19 +58,24 @@
         <p style="display: inline-block">Available on confirmation of a booking</p>
     {% else %}
         <div class="discite__action discite__action--module">
-            {% if params.type === "face-to-face" %}
-                {% if not signedInUser.lineManager %}
-                    <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this module</span>
-                {% elseif not params.canBeBooked %}
-                    <span>{{ i18n('components.notification_banner.course_not_bookable') }}</span>
-                {% else %}
-                    {{ moduleCardCtaLink(params.launchLink, "action_BOOK", params.title) }}
-                {% endif %}
-            {% elseif params.type === "file" %}
-                {{ moduleCardCtaLink(params.launchLink, "action_DOWNLOAD", params.title) }}
-                {{ params.fileExtAndSize }}
+            {% if not signedInUser.lineManager and params.type === "face-to-face" %}
+                <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this module</span>
+            {% elseif not params.canBeBooked and params.type === "face-to-face" %}
+                <span>{{ i18n('components.notification_banner.course_not_bookable') }}</span>
             {% else %}
-                {{ moduleCardCtaLink(params.launchLink, "action_NOT_STARTED", params.title, params.type === "link") }}
+                {% set typeMap = {
+                    "face-to-face": {buttonHtml: 'Book <span class="visually-hidden">' + params.title + '</span>'},
+                    "file": {buttonHtml: 'Download <span class="visually-hidden">' + params.title + '</span> file', extraText: params.fileExtAndSize},
+                    "video": {buttonHtml: 'Go to <span class="visually-hidden">'+  params.title + '</span> video'},
+                    "link": {buttonHtml: 'Go to ' + params.title + ' (opens in a new tab)', newTab: true},
+                    "elearning": {buttonHtml: 'Start <span class="visually-hidden">' + params.title + '</span>'}
+                } %}
+                {{ moduleCardCtaLink({
+                    url: params.launchLink,
+                    buttonHtml: typeMap[params.type].buttonHtml,
+                    newTab: typeMap[params.type].newTab,
+                    extraText: typeMap[params.type].extraText
+                }) }}
             {% endif %}
         </div>
     {% endif %}
