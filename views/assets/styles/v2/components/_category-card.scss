@@ -116,6 +116,14 @@
 .category-card__action-link-list {
   margin-bottom: 0;
   @include govuk-responsive-padding(5, "left");
+
+  li {
+    @include govuk-responsive-margin(2, "bottom");
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .category-card__column {

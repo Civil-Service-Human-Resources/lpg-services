@@ -13,7 +13,7 @@
 
 {% block content %}
     {% set isTier1 = not page.parents or page.parents.length === 0 %}
-    {% set showCategoryCards = not contentType and page.categories.length > 0 %}
+    {% set isCoursesOrLinks = contentType === 'courses' or contentType === 'links' %}
     {% set breadcrumbs = [] %}
     {% set breadcrumbs = (breadcrumbs.push({"href": NSG_ROUTER_BASE, "text": "Home"}), breadcrumbs) %}
     {% if page.parents %}
@@ -21,13 +21,11 @@
             {% set breadcrumbs = (breadcrumbs.push(parent), breadcrumbs) %}
         {% endfor %}
     {% endif %}
-    {% if showCategoryCards %}
-        {% set breadcrumbs = (breadcrumbs.push({"text": page.title}), breadcrumbs) %}
-    {% else %}
-        {% if isTier1 or (page.categories and page.categories.length > 0) %}
-            {% set breadcrumbs = (breadcrumbs.push({"href": NSG_ROUTER_BASE + "/topics/" + url, "text": page.title}), breadcrumbs) %}
-        {% endif %}
+    {% if isCoursesOrLinks %}
+        {% set breadcrumbs = (breadcrumbs.push({"href": NSG_ROUTER_BASE + "/topics/" + url, "text": page.title}), breadcrumbs) %}
         {% set breadcrumbs = (breadcrumbs.push({"text": "Courses and Links assigned to " + page.title}), breadcrumbs) %}
+    {% else %}
+        {% set breadcrumbs = (breadcrumbs.push({"text": page.title}), breadcrumbs) %}
     {% endif %}
     {{ govukBreadcrumbs({
         items: breadcrumbs,
@@ -39,25 +37,27 @@
     <p class='govuk-body category__description'>
         {{ page.description }}
     </p>
-    {% if showCategoryCards %}
+    {% if not isCoursesOrLinks %}
         {% if page.hasContent() if page.hasContent else (page.courseCount > 0 or page.linkCount > 0) %}
-            <p class='govuk-body category__action-link'>
+            <div class='category__action-link'>
                 <a class='category-card__action-link category-card__action-link--main' href='{{ NSG_ROUTER_BASE }}/topics/{{ url }}/{{ 'courses' if page.courseCount > 0 else 'links' }}'>View {{ page.title }} courses and links</a>
-            </p>
+            </div>
         {% endif %}
-        <div class='category-card__container'>
-            {% for category in page.categories %}
-                {{ categoryCard({
-                    title: category.title,
-                    description: category.description,
-                    fullUrl: category.url,
-                    categories: category.categories,
-                    courseCount: category.courseCount,
-                    linkCount: category.linkCount,
-                    hasDirectContent: category.getHasDirectContent() if category.getHasDirectContent else category.hasDirectContent
-                }) }}
-            {% endfor %}
-        </div>
+        {% if page.categories and page.categories.length > 0 %}
+            <div class='category-card__container'>
+                {% for category in page.categories %}
+                    {{ categoryCard({
+                        title: category.title,
+                        description: category.description,
+                        fullUrl: category.url,
+                        categories: category.categories,
+                        courseCount: category.courseCount,
+                        linkCount: category.linkCount,
+                        hasDirectContent: category.getHasDirectContent() if category.getHasDirectContent else category.hasDirectContent
+                    }) }}
+                {% endfor %}
+            </div>
+        {% endif %}
     {% elif page.rows.length > 0 %}
         {% if page.courseCount > 0 and page.linkCount > 0 %}
             {{ categoryContentTabs({
