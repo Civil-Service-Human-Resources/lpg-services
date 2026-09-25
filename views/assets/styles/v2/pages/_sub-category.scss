@@ -19,6 +19,16 @@
 
 .category__action-link {
   @include govuk-responsive-margin(4, "bottom");
+
+  a, .govuk-link {
+    color: $nsg-light-green;
+    &:visited {
+      color: $nsg-light-green;
+    }
+    &:focus {
+      color: govuk-colour("black");
+    }
+  }
 }
 
 .category__pagination {
