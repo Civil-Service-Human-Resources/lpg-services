@@ -1,6 +1,6 @@
 import * as config from '../../lib/config/index'
 
-export function setCspPolicy(staticAssetDomain: string) {
+export function setCspPolicy() {
 	const gaCsp = config.GOOGLE_ANALYTICS_CSP_ORIGINS.replace(/\,/gi, ' ')
 
 	let contentCdn
@@ -11,8 +11,8 @@ export function setCspPolicy(staticAssetDomain: string) {
 	}
 
 	let staticCdn: string
-	if (staticAssetDomain) {
-		staticCdn = `${staticAssetDomain}`
+	if (config.STATIC_ASSET_DOMAIN) {
+		staticCdn = `${config.STATIC_ASSET_DOMAIN}`
 	} else {
 		staticCdn = ''
 	}

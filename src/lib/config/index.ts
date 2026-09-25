@@ -4,6 +4,8 @@ import 'reflect-metadata'
 import {URL} from 'url'
 import {getDayJs} from '../utils/datetime'
 
+const env: Record<string, string> = new Proxy({}, {get: getEnv})
+
 export const durationRegex = new RegExp(
 	'^P(?!$)(\\d+(?:\\.\\d+)?Y)?(\\d+(?:\\.\\d+)?M)?(\\d+(?:\\.\\d+)?W)?(\\d+(?:\\.\\d+)?D)?(T(?=\\d)(\\d+(?:\\.\\d+)?H)?(\\d+(?:\\.\\d+)?M)?(\\d+(?:\\.\\d+)?S)?)?$'
 )
@@ -15,21 +17,58 @@ export const PRODUCTION_ENV = ENV === 'production'
 export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
+export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
+export let STATIC_ASSET_DOMAIN: string | undefined
+export const STATIC_ASSET_TTL = env.STATIC_ASSET_TTL
+
 export const STATIC_DIR = path.join(`${__dirname}/../../../views`)
-export const STATIC_ASSETS_DIR = path.join(`${STATIC_DIR}/assets`)
-export const STATIC_ASSETS_MANIFEST: Record<string, any|undefined> = {
-	JSON: undefined,
-	ID: undefined
+export const STATIC_ASSETS_DIR_NAME = 'assets'
+export const STATIC_ASSETS_DIR = path.join(`${STATIC_DIR}/${STATIC_ASSETS_DIR_NAME}`)
+
+class AssetManifest {
+	constructor(private manifest: Map<string, string>) {}
+
+	getAsset(filename: string) {
+		const parts = filename.split('/')
+		const assetName = parts.pop()
+		if (assetName) {
+			const manifestName = this.manifest.get(assetName) || assetName
+			parts.push(manifestName)
+			filename = parts.join('/')
+		}
+		return filename
+	}
 }
 
 const manifestFile = `${STATIC_ASSETS_DIR}/manifest.json`
+const manifestMap = new Map<string, string>()
 try {
 	console.log(`Loading manifest ${manifestFile}`)
-	STATIC_ASSETS_MANIFEST.JSON = require(manifestFile)
-	if (STATIC_ASSETS_MANIFEST.JSON) STATIC_ASSETS_MANIFEST.ID = STATIC_ASSETS_MANIFEST.JSON.id
-	console.log(STATIC_ASSETS_MANIFEST.JSON)
+	const manifestJson: {[k: string]: string} = require(manifestFile) || {}
+	Object.entries(manifestJson).forEach(value => {
+		manifestMap.set(value[0], value[1])
+		manifestMap.set(value[1], value[0])
+	})
 } catch (e) {
 	console.error(`Error reading ${manifestFile} ${e}. Defaulting to local assets`)
+}
+
+export const ASSET_MANIFEST = new AssetManifest(manifestMap)
+
+if (STATIC_ASSET_ROOT) {
+	try {
+		const staticAssetUrl = new URL(STATIC_ASSET_ROOT)
+
+		STATIC_ASSET_DOMAIN = staticAssetUrl.hostname
+
+		if (staticAssetUrl.protocol !== 'https:') {
+			console.warn(`Static assets are not being served over ssl (static asset route: ${STATIC_ASSET_ROOT})`)
+		}
+	} catch (error) {
+		console.error(
+			`The configured STATIC_ASSET_ROOT value ("${STATIC_ASSET_ROOT}") is not a valid URL, static content will default to being severed from the application server.\nFull error:\n${error}`
+		)
+	}
 }
 
 export const IS_DEV = ENV === 'development'
@@ -68,8 +107,6 @@ function set<T>(defaultValue: T, envValues: Record<string, T> = {}): T {
 	}
 	return val
 }
-
-const env: Record<string, string> = new Proxy({}, {get: getEnv})
 
 export const AUTHENTICATION = set({
 	clientId: env.OAUTH_CLIENT_ID || '9fbd4ae2-2db3-44c7-9544-88e80255b56e',
@@ -184,9 +221,6 @@ export const AOW_REDIS = set({
 export const INTEREST_REDIS = set({
 	defaultTTL: +(env.INTEREST_REDIS_TTL || '86400'),
 })
-
-export const STATIC_ASSET_ROOT = env.STATIC_ASSET_ROOT
-export const STATIC_ASSET_TTL = env.STATIC_ASSET_TTL
 
 export const TOKEN_EXPIRY_BUFFER = Number(env.TOKEN_EXPIRY_BUFFER) || 30
 

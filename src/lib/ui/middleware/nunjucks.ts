@@ -15,6 +15,7 @@ import {
 	NSG_FEEDBACK_URL,
 	GOOGLE_ANALYTICS_ID,
 	GOOGLE_ANALYTICS_CODE,
+	ASSET_MANIFEST,
 } from '../../config'
 import * as datetime from '../../datetime'
 import {appropriateFileSize, extension, extensionAndSize, fileName} from '../../filehelpers'
@@ -83,21 +84,10 @@ export const register = (app: Express) => {
 		return i18nConfig.__(text)
 	})
 
-	if (config.STATIC_ASSETS_MANIFEST.JSON !== undefined && config.STATIC_ASSETS_MANIFEST.ID !== undefined) {
-		env.addGlobal('asset', (filename: string) => {
-			const ext = path.extname(filename)
-			const name = filename.slice(0, -ext.length)
-			return `${config.STATIC_ASSETS_DIR}/${name}.${config.STATIC_ASSETS_MANIFEST.ID}${ext}`
-		})
-		console.log(config.STATIC_ASSETS_DIR)
-		app.use(config.STATIC_ASSETS_DIR, (req, res, next) => {
-			console.log(req)
-			if (req.url.includes(config.STATIC_ASSETS_MANIFEST.ID)) {
-				req.url = req.url.replace(config.STATIC_ASSETS_MANIFEST.ID, '.')
-			}
-			next()
-		})
-	}
+	env.addGlobal('asset', (filename: string) => {
+		filename = ASSET_MANIFEST.getAsset(filename)
+		return [config.STATIC_ASSET_ROOT, config.STATIC_ASSETS_DIR_NAME, filename].join('/')
+	})
 
 	env.addGlobal('NSG_FLAG', NSG_FLAG)
 	env.addGlobal('NSG_URL', NSG_URL)

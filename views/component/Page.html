@@ -3,17 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" href="{($req.app.locals.staticAssetRoot)}/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="{$asset('img/favicon.ico')}" type="image/x-icon" />
     <meta name="theme-color" content="#0b0c0c" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:image" content="{($req.app.locals.staticAssetRoot)}/img/opengraph-image.png">
+    <meta property="og:image" content="{$asset('img/opengraph-image.png')}">
     <title>{title} &ndash; {$i18n('proposition_name')}</title>
     {#if $config.NSG_FLAG}
-        <link rel="stylesheet" href="{($req.app.locals.staticAssetRoot)}/styles/main-nsg.css">
+        <link rel="stylesheet" href="{$asset('styles/main-nsg.css')}">
     {:else}
-	    <link rel="stylesheet" href="{($req.app.locals.staticAssetRoot)}/styles/main.css">
+	    <link rel="stylesheet" href="{$asset('styles/main.css')}">
     {/if}
-	<link rel="stylesheet" href="{($req.app.locals.staticAssetRoot)}/styles/video-js.min.css">
+	<link rel="stylesheet" href="{$asset('styles/video-js.min.css')}">
     <script async src="https://www.googletagmanager.com/gtag/js?id={($config.GOOGLE_ANALYTICS_ID)}"></script> {@html $config.GOOGLE_ANALYTICS_CODE}
 </head>
 <body>
@@ -29,7 +29,7 @@
         <slot> </slot>
     </Layout>
     <script>document.body.className = document.body.className.replace('', 'js-enabled');</script>
-    <script src="{($req.app.locals.staticAssetRoot)}/js/main-bundle.min.js"></script>
+    <script src="{$asset('/js/main-bundle.min.js')}"></script>
 </body>
 </html>
 

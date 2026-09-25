@@ -25,6 +25,7 @@ COPY views/assets/js/video.min.js ./views/assets/js/video.min.js
 COPY views/assets/js/main-bundle.min.js ./views/assets/js/main-bundle.min.js
 COPY views/assets/fonts ./views/assets/fonts
 COPY views/assets/img ./views/assets/img
+COPY views/assets/manifest.json ./views/assets/manifest.json
 
 EXPOSE 3001
 
