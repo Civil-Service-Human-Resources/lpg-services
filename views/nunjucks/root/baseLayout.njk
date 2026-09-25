@@ -10,9 +10,9 @@
         <title>{{ pageTitle }} - {{ i18n('proposition_name') }}</title>
         
         {% if NSG_FLAG === true %}
-            <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/main-nsg.css">
+            <link rel="stylesheet" href="{{ staticAssetRoot }}/{{ asset('styles/main-nsg.css') }}">
         {% else %}
-            <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/main.css">
+            <link rel="stylesheet" href="{{ staticAssetRoot }}/{{ asset('styles/main.css') }}">
         {% endif %}
 
         <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/video-js.min.css">
@@ -37,6 +37,6 @@
         {% include "./footer.njk" %}
         <div class="container container--main bottom-main"></div>
         <script>document.body.className = document.body.className.replace('', 'js-enabled');</script>
-        <script src="{{ staticAssetRoot }}/js/main-bundle.min.js"></script>
+        <script src="{{ staticAssetRoot }}/js/{{ asset('main.min.js') }}"></script>
     </body>
 </html>

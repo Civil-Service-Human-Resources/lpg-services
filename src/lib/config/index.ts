@@ -16,6 +16,21 @@ export const PROFILE = process.env.ENV_PROFILE || 'local'
 export const VER = process.env.npm_package_version
 
 export const STATIC_DIR = path.join(`${__dirname}/../../../views`)
+export const STATIC_ASSETS_DIR = path.join(`${STATIC_DIR}/assets`)
+export const STATIC_ASSETS_MANIFEST: Record<string, any|undefined> = {
+	JSON: undefined,
+	ID: undefined
+}
+
+const manifestFile = `${STATIC_ASSETS_DIR}/manifest.json`
+try {
+	console.log(`Loading manifest ${manifestFile}`)
+	STATIC_ASSETS_MANIFEST.JSON = require(manifestFile)
+	if (STATIC_ASSETS_MANIFEST.JSON) STATIC_ASSETS_MANIFEST.ID = STATIC_ASSETS_MANIFEST.JSON.id
+	console.log(STATIC_ASSETS_MANIFEST.JSON)
+} catch (e) {
+	console.error(`Error reading ${manifestFile} ${e}. Defaulting to local assets`)
+}
 
 export const IS_DEV = ENV === 'development'
 

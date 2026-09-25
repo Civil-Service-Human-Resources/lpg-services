@@ -3,6 +3,7 @@ import * as moment from 'moment'
 import * as nunjucks from 'nunjucks'
 import * as i18n from 'i18n'
 import * as path from 'path'
+import * as config from '../../config'
 import {
 	IS_DEV,
 	STATIC_DIR,
@@ -81,6 +82,22 @@ export const register = (app: Express) => {
 		}
 		return i18nConfig.__(text)
 	})
+
+	if (config.STATIC_ASSETS_MANIFEST.JSON !== undefined && config.STATIC_ASSETS_MANIFEST.ID !== undefined) {
+		env.addGlobal('asset', (filename: string) => {
+			const ext = path.extname(filename)
+			const name = filename.slice(0, -ext.length)
+			return `${config.STATIC_ASSETS_DIR}/${name}.${config.STATIC_ASSETS_MANIFEST.ID}${ext}`
+		})
+		console.log(config.STATIC_ASSETS_DIR)
+		app.use(config.STATIC_ASSETS_DIR, (req, res, next) => {
+			console.log(req)
+			if (req.url.includes(config.STATIC_ASSETS_MANIFEST.ID)) {
+				req.url = req.url.replace(config.STATIC_ASSETS_MANIFEST.ID, '.')
+			}
+			next()
+		})
+	}
 
 	env.addGlobal('NSG_FLAG', NSG_FLAG)
 	env.addGlobal('NSG_URL', NSG_URL)

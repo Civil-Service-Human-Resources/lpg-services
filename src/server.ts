@@ -8,7 +8,7 @@ import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
-import {AUTHENTICATION, BACKEND_SERVER_PATH, NSG_FLAG, STATIC_DIR} from './lib/config'
+import {AUTHENTICATION, BACKEND_SERVER_PATH, NSG_FLAG} from './lib/config'
 import * as config from './lib/config'
 import * as corsConfig from './lib/config/corsConfig'
 import * as luscaConfig from './lib/config/luscaConfig'
@@ -165,9 +165,8 @@ if (config.STATIC_ASSET_ROOT) {
 	}
 }
 
-const staticAssetPath = `${STATIC_DIR}/assets`
-logger.debug(`Registering static assets at ${staticAssetPath}`)
-app.use(serveStatic(staticAssetPath, {maxAge: config.STATIC_ASSET_TTL, etag: false, acceptRanges: false}))
+logger.debug(`Registering static assets at ${config.STATIC_ASSETS_DIR}`)
+app.use(serveStatic(config.STATIC_ASSETS_DIR, {maxAge: config.STATIC_ASSET_TTL, etag: false, acceptRanges: false}))
 
 const luscaPolicy = luscaConfig.setCspPolicy(app.locals.staticAssetDomain)
 
