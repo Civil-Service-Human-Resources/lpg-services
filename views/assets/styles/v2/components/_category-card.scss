@@ -118,7 +118,7 @@
   @include govuk-responsive-padding(5, "left");
 
   li {
-    @include govuk-responsive-margin(2, "bottom");
+    @include govuk-responsive-margin(1, "bottom");
 
     &:last-child {
       margin-bottom: 0;
