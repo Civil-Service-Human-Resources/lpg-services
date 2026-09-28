@@ -19,6 +19,7 @@
 		"skipLibCheck": true
 	},
 	"include": ["src/**/*"],
+	"exclude": ["./generate-assets.js"],
 	"references": [
 		{
 			"path": "./tsconfig.test.json"
