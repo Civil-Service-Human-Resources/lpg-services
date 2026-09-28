@@ -18,8 +18,6 @@ const searchBox = document.getElementById(searchBoxId)
 
 const requiredElems = [navSearchToggle, navSearchToggleOpen, navSearchToggleClose, navSearchPanel, searchBox]
 if (!requiredElems.includes(null)) {
-
-
 	/*
 	Setup
 	 */
@@ -55,7 +53,7 @@ if (!requiredElems.includes(null)) {
 
 	navSearchToggle.addEventListener('click', () => {
 		if (navSearchPanelElem.hidden) {
-		activate()
+			activate()
 		} else {
 			deactivate()
 		}
