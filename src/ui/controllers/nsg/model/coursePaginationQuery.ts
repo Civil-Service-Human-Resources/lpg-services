@@ -1,17 +1,24 @@
 import {Transform} from 'class-transformer'
+import * as striptags from 'striptags'
 import {NSG_FLAG} from '../../../../lib/config'
 import {SearchParams} from '../../../../lib/utils/search'
 import {contentTypes} from '../controller'
 
 export class CoursePaginationQuery implements SearchParams {
 	@Transform(({value}) => {
-		value = value - 1
-		return +value
+		if (value === undefined || value === null || value === '') {
+			return 0
+		}
+		const num = +value
+		return isNaN(num) || num <= 0 ? 0 : num - 1
 	})
 	p: number = 0
 
 	contentType?: contentTypes
 
+	@Transform(({value}) => {
+		return typeof value === 'string' ? striptags(value) : value
+	})
 	categoryUrl: string
 
 	getAsUrlParams(page?: number) {

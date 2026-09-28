@@ -1,6 +1,7 @@
 import {plainToInstance} from 'class-transformer'
 import {Router} from 'express'
 import * as express from 'express'
+import * as striptags from 'striptags'
 import {NSG_FLAG} from '../../../lib/config'
 import {User} from '../../../lib/model'
 import {getCategoryHomepage, getCategoryPage} from '../../../lib/service/cslService/cslServiceClient'
@@ -40,8 +41,12 @@ export async function index(req: express.Request, res: express.Response) {
 
 function categoryPage(contentType?: contentTypes) {
 	return async (req: express.Request, res: express.Response) => {
-		const url = req.params.url
-		const query = plainToInstance(CoursePaginationQuery, {...req.query, categoryUrl: url, contentType})
+		const url = req.params.url ? striptags(req.params.url) : ''
+		const query = plainToInstance(CoursePaginationQuery, {
+			p: req.query.p,
+			categoryUrl: url,
+			contentType,
+		})
 		const page = await getCategoryPage(req.user, url, query.p, contentType)
 		const pagination: Pagination = getPagination(query, page.getContentResponse())
 		pagination.numberedPages = transformNumberedPagesToGovuk(pagination.numberedPages)
