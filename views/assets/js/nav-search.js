@@ -18,6 +18,8 @@ const searchBox = document.getElementById(searchBoxId)
 
 const requiredElems = [navSearchToggle, navSearchToggleOpen, navSearchToggleClose, navSearchPanel, searchBox]
 if (!requiredElems.includes(null)) {
+
+
 	/*
 	Setup
 	 */
@@ -26,32 +28,36 @@ if (!requiredElems.includes(null)) {
 	const navSearchToggleCloseElem = new BaseElement(navSearchToggleClose)
 	const navSearchPanelElem = new BaseElement(navSearchPanel)
 
-	navSearchToggleElem.show()
-	navSearchPanelElem.collapse()
-
-	if (searchBox.value) {
+	const activate = () => {
 		navSearchToggleElem.activate()
+		navSearchToggleElem.elem.setAttribute('aria-label', 'Hide search menu')
 		navSearchToggleOpenElem.hide()
 		navSearchToggleCloseElem.show()
 		navSearchPanelElem.expand()
-	} else {
+	}
+
+	const deactivate = () => {
 		navSearchToggleElem.deactivate()
+		navSearchToggleElem.elem.setAttribute('aria-label', 'Show search menu')
 		navSearchToggleOpenElem.show()
 		navSearchToggleCloseElem.hide()
 		navSearchPanelElem.collapse()
 	}
 
+	navSearchToggleElem.show()
+	navSearchPanelElem.collapse()
+
+	if (searchBox.value) {
+		activate()
+	} else {
+		deactivate()
+	}
+
 	navSearchToggle.addEventListener('click', () => {
 		if (navSearchPanelElem.hidden) {
-			navSearchToggleElem.activate()
-			navSearchToggleOpenElem.hide()
-			navSearchToggleCloseElem.show()
-			navSearchPanelElem.expand()
+		activate()
 		} else {
-			navSearchToggleElem.deactivate()
-			navSearchToggleOpenElem.show()
-			navSearchToggleCloseElem.hide()
-			navSearchPanelElem.collapse()
+			deactivate()
 		}
 	})
 }
