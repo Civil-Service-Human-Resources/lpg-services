@@ -30,7 +30,26 @@ describe('categoryCard macro tests', () => {
 
 		expect(rendered).to.include('category-card--first')
 		expect(rendered).to.include('Leadership')
+		expect(rendered).to.include("href='/topics/leadership'")
 		expect(rendered).to.include('Develop leadership skills')
+	})
+
+	it('should render heading as hyperlink to fullUrl when fullUrl is provided', () => {
+		const rendered = renderCategoryCard({
+			title: 'Leadership',
+			fullUrl: '/topics/leadership',
+		})
+
+		expect(rendered).to.include("<a href='/topics/leadership'>Leadership</a>")
+	})
+
+	it('should render heading text without hyperlink when fullUrl is not provided', () => {
+		const rendered = renderCategoryCard({
+			title: 'Leadership',
+		})
+
+		expect(rendered).to.not.include('<a href=')
+		expect(rendered).to.include('Leadership')
 	})
 
 	describe('when sub-categories exist', () => {

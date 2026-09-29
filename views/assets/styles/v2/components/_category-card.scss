@@ -40,6 +40,20 @@
   background-color: $nsg-dark-green;
   .category-card__heading {
     color: $nsg-light-green;
+    a {
+      @include govuk-link-common;
+      color: $nsg-light-green;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+      &:visited {
+        color: $nsg-light-green;
+      }
+      &:focus {
+        color: govuk-colour('black');
+      }
+    }
   }
 }
 
