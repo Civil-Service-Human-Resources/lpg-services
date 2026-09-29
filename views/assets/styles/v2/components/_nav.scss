@@ -77,3 +77,136 @@
     }
   }
 }
+
+.search-toggle__icon {
+  color: white;
+  height: 20px;
+  pointer-events: none;
+  width: 21px;
+  padding-top: 5px;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.search-toggle__close {
+  display: block;
+  font-size: 37px;
+  font-weight: normal;
+  line-height: 0.6;
+  pointer-events: none;
+  text-align: center;
+  padding-top: 5px;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.search-toggle__button {
+  margin-left: auto;
+  display: none;
+  position: relative;
+  overflow: hidden;
+  width: 61px;
+  height: 61px;
+  border: 0;
+  background-size: 64%;
+  padding: 9px;
+  cursor: pointer;
+  background: none;
+  box-shadow: none;
+  color: #fff;
+  font-weight: 700;
+
+  &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: 0;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(0,0,0,0) !important;
+    background: #fd0;
+    color: #0b0c0c;
+    box-shadow: 0 0 0 #0b0c0c;
+    .search-toggle__close, .search-toggle__icon {
+      color: govuk-colour("black");
+    }
+
+    &:after {
+      background: govuk-colour("black");
+    }
+
+    &.active {
+      color: govuk-colour("black");
+      &:after {
+        background: govuk-colour("black");
+      }
+    }
+
+    &:hover {
+      &:after {
+        background: govuk-colour("black");
+      }
+    }
+  }
+
+  @include media(desktop) {
+    display: block;
+  }
+
+  &:after {
+    content: "";
+    height: 5px;
+    left: 10px;
+    position: absolute;
+    right: 10px;
+    bottom: 1px;
+    top: auto;
+    color: white;
+    background: none;
+  }
+  &:hover {
+    &:after {
+      background: $nav-link-color;
+    }
+  }
+
+  &.active {
+    color: $nav-link-color;
+    &:after {
+      background: $nav-link-color;
+    }
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.nav-search-container {
+  max-width: 100%;
+  padding: 15px 0;
+  border: 0;
+  background-color: $nav-background-color;
+
+  .nav-search-content-container {
+    @include govuk-width-container(1200px);
+    input.search-box__input{
+      width: 100%;
+
+      @include media(desktop) {
+        width: 540px;
+      }
+    }
+  }
+
+  @include media(desktop) {
+    &.hidden {
+      display: none;
+    }
+  }
+
+}
