@@ -11,7 +11,6 @@ import {setSimpleCache, SimpleCache} from '../../../src/lib/utils/simpleCache'
 import * as index from '../../../src/ui/controllers/nsg/controller'
 import * as sinon from 'sinon'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
-import {assertBreadcrumbs} from '../../utils/htmlAssertions/assertBreadcrumbs'
 import {assertCategories} from '../../utils/htmlAssertions/assertHomepageCategory'
 import {getApp} from '../../utils/testApp'
 import {getDOM} from '../helpers'
@@ -118,30 +117,30 @@ describe('Homepage controller tests', () => {
 		])
 	})
 
-	it('should render the subcategories for a tier 1', async () => {
+	it('should render courses and links link when subcategory has child categories and courses/links', async () => {
 		const categoryPage = genericCategoryPage()
+		categoryPage.categories = [
+			{
+				title: 'Sub Subcategory 1',
+				description: 'this is sub-subcategory 1',
+				url: 'sub-subcategory-1',
+				courseCount: 5,
+				linkCount: 2,
+				categories: [
+					{
+						href: '/nsg-homepage/topics/topic-1',
+						text: 'Topic 1',
+					},
+				],
+			} as any,
+		]
 		cslServiceStub._get.resolves(categoryPage)
 
 		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
-		within(res).getByRole('heading', {name: 'Subcategory 1'})
-		within(res).getByText('This is Subcategory 1')
-		assertBreadcrumbs(res, [
-			{
-				expHref: '/nsg-homepage',
-				expText: 'Home',
-			},
-			{
-				expHref: `/nsg-homepage/topics/category-1`,
-				expText: 'Category 1',
-			},
-		])
-		assertCategories(res, [
-			{
-				expTitle: 'Sub Subcategory 1',
-				expDescription: 'this is sub-subcategory 1',
-				expUrl: `/nsg-homepage/topics/sub-subcategory-1`,
-			},
-		])
+		const link = within(res).getByRole('link', {name: 'View Sub Subcategory 1 courses and links'})
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1')
+		within(res).getByRole('heading', {name: 'Topics'})
+		within(res).getByRole('link', {name: 'Topic 1'})
 	})
 
 	describe('content', () => {
