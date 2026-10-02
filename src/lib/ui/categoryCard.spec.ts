@@ -73,7 +73,20 @@ describe('categoryCard macro tests', () => {
 			expect(rendered).to.not.include('View topics')
 		})
 
-		it('should render "View {title} courses and links" anchor when courseCount > 0', () => {
+		it('should render "View {title} courses and links" anchor when courseCount > 0 and linkCount > 0', () => {
+			const rendered = renderCategoryCard({
+				title: 'Digital',
+				fullUrl: '/topics/digital',
+				courseCount: 2,
+				linkCount: 3,
+				categories: subCategories,
+			})
+
+			expect(rendered).to.include('View Digital courses and links')
+			expect(rendered).to.include("href='/topics/digital#courses'")
+		})
+
+		it('should render "View {title} courses" anchor when courseCount > 0 and linkCount is 0', () => {
 			const rendered = renderCategoryCard({
 				title: 'Digital',
 				fullUrl: '/topics/digital',
@@ -82,11 +95,12 @@ describe('categoryCard macro tests', () => {
 				categories: subCategories,
 			})
 
-			expect(rendered).to.include('View Digital courses and links')
-			expect(rendered).to.include("href='/topics/digital'")
+			expect(rendered).to.include('View Digital courses')
+			expect(rendered).to.not.include('View Digital courses and links')
+			expect(rendered).to.include("href='/topics/digital#courses'")
 		})
 
-		it('should render "View {title} courses and links" anchor when linkCount > 0', () => {
+		it('should render "View {title} links" anchor when linkCount > 0 and courseCount is 0', () => {
 			const rendered = renderCategoryCard({
 				title: 'Digital',
 				fullUrl: '/topics/digital',
@@ -95,11 +109,12 @@ describe('categoryCard macro tests', () => {
 				categories: subCategories,
 			})
 
-			expect(rendered).to.include('View Digital courses and links')
-			expect(rendered).to.include("href='/topics/digital'")
+			expect(rendered).to.include('View Digital links')
+			expect(rendered).to.not.include('View Digital courses and links')
+			expect(rendered).to.include("href='/topics/digital#courses'")
 		})
 
-		it('should not render "View {title} courses and links" when no direct courses or links exist', () => {
+		it('should not render courses/links anchor when no direct courses or links exist', () => {
 			const rendered = renderCategoryCard({
 				title: 'Digital',
 				fullUrl: '/topics/digital',
@@ -108,6 +123,8 @@ describe('categoryCard macro tests', () => {
 				categories: subCategories,
 			})
 
+			expect(rendered).to.not.include('View Digital courses')
+			expect(rendered).to.not.include('View Digital links')
 			expect(rendered).to.not.include('View Digital courses and links')
 			expect(rendered).to.not.include('View topics')
 			expect(rendered).to.include('Topics')

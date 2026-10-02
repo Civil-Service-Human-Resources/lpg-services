@@ -228,7 +228,7 @@ describe('Homepage controller tests', () => {
 		const card1 = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
 		card1.getByRole('heading', {name: 'Working in Government'})
 		const link1 = card1.getByRole('link', {name: 'View Working in Government courses and links'})
-		expect(link1.getAttribute('href')).to.eql('/nsg-homepage/topics/working-in-government')
+		expect(link1.getAttribute('href')).to.eql('/nsg-homepage/topics/working-in-government#courses')
 		card1.getByRole('heading', {name: 'Topics'})
 		card1.getByRole('link', {name: 'Understanding Parliament'})
 
@@ -348,7 +348,7 @@ describe('Homepage controller tests', () => {
 		within(within(res).getByLabelText('Breadcrumb')).getByText('Universal Skills')
 	})
 
-	it('should render subcategory card with "View [Category Name] courses and links" when subcategory has sub-tags and direct courses/links', async () => {
+	it('should render subcategory card with "View [Category Name] courses" when subcategory has sub-tags and direct courses only', async () => {
 		const categoryPage = genericCategoryPage()
 		categoryPage.categories = [
 			{
@@ -371,8 +371,37 @@ describe('Homepage controller tests', () => {
 		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
 		card.getByRole('heading', {name: 'Sub Subcategory 1'})
-		const link = card.getByRole('link', {name: 'View Sub Subcategory 1 courses and links'})
-		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1')
+		const link = card.getByRole('link', {name: 'View Sub Subcategory 1 courses'})
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1#courses')
+		card.getByRole('heading', {name: 'Topics'})
+		card.getByRole('link', {name: 'Tier 3 Subcategory'})
+	})
+
+	it('should render subcategory card with "View [Category Name] links" when subcategory has sub-tags and direct links only', async () => {
+		const categoryPage = genericCategoryPage()
+		categoryPage.categories = [
+			{
+				title: 'Sub Subcategory 1',
+				description: 'this is sub-subcategory 1',
+				url: 'sub-subcategory-1',
+				categories: [
+					{
+						text: 'Tier 3 Subcategory',
+						link: 'tier-3-subcategory',
+						href: '/nsg-homepage/topics/tier-3-subcategory',
+					},
+				],
+				courseCount: 0,
+				linkCount: 3,
+			} as any,
+		]
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
+		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
+		card.getByRole('heading', {name: 'Sub Subcategory 1'})
+		const link = card.getByRole('link', {name: 'View Sub Subcategory 1 links'})
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1#courses')
 		card.getByRole('heading', {name: 'Topics'})
 		card.getByRole('link', {name: 'Tier 3 Subcategory'})
 	})
@@ -703,7 +732,7 @@ describe('Homepage controller tests', () => {
 
 		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
 		const link = within(res).getByRole('link', {name: 'View Sub Subcategory 1 courses and links'})
-		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1')
+		expect(link.getAttribute('href')).to.eql('/nsg-homepage/topics/sub-subcategory-1#courses')
 		within(res).getByRole('heading', {name: 'Topics'})
 		within(res).getByRole('link', {name: 'Topic 1'})
 	})

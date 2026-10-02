@@ -1,5 +1,5 @@
 {% macro contentDisplay(params) %}
-    <div class='category-card category-card--courses {{ params.classes }}'>
+    <div id='courses' class='category-card category-card--courses {{ params.classes }}'>
         <div class='category-card__header-block'>
             <h2 class='category-card__heading category-card__heading--small'>{{ params.heading }}</h2>
         </div>
@@ -10,7 +10,7 @@
 {% endmacro %}
 
 {% macro tabbedContentDisplay(params) %}
-    <div class='category-card category-card--courses {{ params.classes }}'>
+    <div id='courses' class='category-card category-card--courses {{ params.classes }}'>
         <div class='category-card__header-block category-card__header-block--tabs'>
             <div class='category-card__header-tabs'>
                 {% for tab in params.tabs %}
