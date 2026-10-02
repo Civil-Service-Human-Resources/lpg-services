@@ -16,7 +16,7 @@
                 {% for tab in params.tabs %}
                     <div class='category-card__header-tab {% if tab.active %} category-card__header-tab--active {% endif %}'>
                         <h2 class='category-card__header-tab__heading'>
-                            <a href='{{ tab.href }}'>{{ tab.text }}</a>
+                            <a href='{{ tab.href }}#courses'>{{ tab.text }}</a>
                         </h2>
                     </div>
                 {% endfor %}
