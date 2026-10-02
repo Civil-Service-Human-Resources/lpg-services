@@ -11,6 +11,7 @@ import {setSimpleCache, SimpleCache} from '../../../src/lib/utils/simpleCache'
 import * as index from '../../../src/ui/controllers/nsg/controller'
 import * as sinon from 'sinon'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
+import {assertBreadcrumbs} from '../../utils/htmlAssertions/assertBreadcrumbs'
 import {assertCategories} from '../../utils/htmlAssertions/assertHomepageCategory'
 import {getApp} from '../../utils/testApp'
 import {getDOM} from '../helpers'
@@ -115,6 +116,27 @@ describe('Homepage controller tests', () => {
 				expUrl: `/nsg-homepage/topics/category-2`,
 			},
 		])
+	})
+
+	it('should render the subcategories for a tier 1', async () => {
+		const categoryPage = genericCategoryPage()
+		cslServiceStub._get.resolves(categoryPage)
+
+		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
+		within(res).getByRole('heading', {name: 'Subcategory 1'})
+		within(res).getByText('This is Subcategory 1')
+		assertBreadcrumbs(res, [
+			{
+				expHref: '/nsg-homepage',
+				expText: 'Home',
+			},
+			{
+				expHref: `/nsg-homepage/topics/category-1`,
+				expText: 'Category 1',
+			},
+		])
+		within(res).getByRole('heading', {name: 'Sub Subcategory 1'})
+		within(res).getByText('this is sub-subcategory 1')
 	})
 
 	it('should render courses and links link when subcategory has child categories and courses/links', async () => {
