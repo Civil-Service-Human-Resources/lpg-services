@@ -120,7 +120,6 @@ describe('Homepage controller tests', () => {
 
 	it('should render the subcategories for a tier 1', async () => {
 		const categoryPage = genericCategoryPage()
-		categoryPage.parents = []
 		cslServiceStub._get.resolves(categoryPage)
 
 		const res = await makeRequest(app, `/nsg-homepage/topics/subcategory-1`)
@@ -130,6 +129,10 @@ describe('Homepage controller tests', () => {
 			{
 				expHref: '/nsg-homepage',
 				expText: 'Home',
+			},
+			{
+				expHref: `/nsg-homepage/topics/category-1`,
+				expText: 'Category 1',
 			},
 		])
 		const card = within(res.getElementsByClassName('category-card')[0] as HTMLElement)
