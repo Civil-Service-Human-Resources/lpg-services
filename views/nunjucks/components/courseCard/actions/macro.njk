@@ -25,9 +25,12 @@
 {% endmacro %}
 
 {% macro removeFromLearningPlanLink(params) %}
+    {% set html %}
+        Remove<span class="visually-hidden"> {{ params.courseTitle }}</span> from learning plan
+    {% endset %}
     {{ ctaLink({
         "href": "/home?delete=" + params.courseId,
-        "text": "Remove from learning plan"
+        "html": html
     }) }}
 {% endmacro %}
 
