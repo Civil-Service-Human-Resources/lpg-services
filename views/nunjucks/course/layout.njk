@@ -25,15 +25,8 @@
         <h1 id="page-heading" class="heading-xlarge heading heading--page-heading">
             {{ pageModel.title }}
         </h1>
-       {% if (pageModel.type === "face-to-face") and (signedInUser.hasLineManager()) and (not pageModel.moduleDetails.cancellationLink) and (not pageModel.moduleDetails.canBeBooked) and (pageModel.status === 'Published') %}
-           <div class="grid-row">
-               <div class="column-two-thirds">
-                   {{ notificationBanner({
-                       description: i18n('components.notification_banner.course_not_bookable')
-                   }) }}
-               </div>
-           </div>
-       {% endif %}
+        {% block headingBanner %}
+        {% endblock %}
         <div class="grid-row">
             <div class="column-full">
                 {{ renderBanners(banners) }}
@@ -50,7 +43,8 @@
                 {% endif %}
 
                 {% if pageModel.status !== "Archived" %}
-                    {% block courseContent %}{% endblock %}
+                    {% block courseContent %}
+                    {% endblock %}
                 {% endif %}
             </div>
 
@@ -61,11 +55,12 @@
                         isInLearningPlan: pageModel.isInLearningPlan
                     }) }}
                     {{ courseDetails({
+                        learningTags: pageModel.learningTags,
                         type: pageModel.type,
                         duration: pageModel.duration,
                         areasOfWork: pageModel.areasOfWork,
                         grades: pageModel.grades,
-                        cost: pageModel.cost,
+                        costInPounds: pageModel.costInPounds,
                         location: pageModel.location
                     }) }}
                 </div>

@@ -14,6 +14,15 @@
     </div>
 {% endmacro %}
 
+{% macro blendedModuleCardTitle(params) %}
+    {{ moduleCardTitle({
+        title: params.title,
+        description: params.description,
+        displayMandatoryStatus: true,
+        isMandatory: isMandatory
+    }) }}
+{% endmacro %}
+
 {% macro moduleCardDetails(params) %}
     <div class="discite__properties u-clearfix">
         <ul class="discite__property">
@@ -24,18 +33,19 @@
             {% if params.duration %}
                 <li class="discite__property-item">
                     <span>Duration:</span>
-                    <span class="lpg-course-duration">{{ params.duration }}</span>
+                    <span class="lpg-course-duration">{{ params.duration | formatDuration }}</span>
                 </li>
             {% endif %}
             {% if params.type !== 'file' %}
+                {% set cost = "Free" if params.costInPounds === 0 else "£" + params.costInPounds %}
                 <li class="discite__property-item">
                     <span>Cost:</span>
-                    <span class="lpg-course-cost">&pound;{{ params.cost or 'Free' }}</span>
+                    <span class="lpg-course-cost">{{ cost }}</span>
                 </li>
             {% endif %}
         </ul>
-        {% if params.displayState %}
-            <div class="discite__status"><span class="badge badge--info ">{{ i18n(params.displayState) }}</span></div>
+        {% if params.state !== 'NULL' %}
+            <div class="discite__status"><span class="badge badge--info ">{{ i18n(params.state) }}</span></div>
         {% endif %}
     </div>
 {% endmacro %}
@@ -83,7 +93,7 @@
 
 {% macro moduleCard(module) %}
     <div class="discite__item u-clearfix discite__item--module">
-        {{ moduleCardTitle(module) }}
+        {{ blendedModuleCardTitle(module) }}
         {{ moduleCardDetails(module) }}
         {{ moduleCardCta(module) }}
     </div>

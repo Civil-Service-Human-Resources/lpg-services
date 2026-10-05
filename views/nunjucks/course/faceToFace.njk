@@ -1,14 +1,24 @@
-{% extends "./layout.njk" %}
+{% block headingBanner %}
+    {% if signedInUser.hasLineManager() and not moduleDetails.canBeCancelled and not moduleDetails.canBeBooked %}
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                {{ notificationBanner({
+                    description: i18n('components.notification_banner.course_not_bookable')
+                }) }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
 {% block courseContent %}
-    {% if pageModel.moduleDetails.cancellationLink %}
-        <p>You are already booked on this course. <a href="{{ pageModel.moduleDetails.cancellationLink }}">Do you wish to cancel your booking?</a></p>
+    {% if moduleDetails.canBeCancelled %}
+        <p>You are already booked on this course. <a href="/book/{{ pageModel.id }}/{{ moduleDetails.id }}/{{ moduleDetails.bookedEventId }}/cancel">Do you wish to cancel your booking?</a></p>
     {% else %}
         {% if not signedInUser.hasLineManager() %}
             <p class='govuk-body'>
                 <span>You must <a class="discite__action-link" href='/profile/line-manager?redirectTo={{ originalUrl }}'>add a line manager</a> to book this course</span>
             </p>
-        {% elseif pageModel.moduleDetails.canBeBooked %}
+        {% elseif moduleDetails.canBeBooked %}
             <div class="notice push-bottom">
                 <i class="icon icon-important">
                     <span class="visually-hidden">Warning</span>
@@ -19,7 +29,7 @@
                 </strong>
             </div>
             {% include partials + "/howToGetPO.html" %}
-            <a class="button" href="{{ pageModel.moduleDetails.launchLink }}">View availability</a>
+            <a class="button" href="/courses/{{ pageModel.id }}/{{ moduleDetails.id }}/choose-date">View availability</a>
         {% endif %}
     {% endif %}
 {% endblock %}

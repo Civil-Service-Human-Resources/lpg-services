@@ -29,7 +29,7 @@
         Remove<span class="visually-hidden"> {{ params.courseTitle }}</span> from learning plan
     {% endset %}
     {{ ctaLink({
-        "href": "/home?delete=" + params.courseId,
+        "href": YOUR_LEARNING_URL + "?delete=" + params.courseId,
         "html": html
     }) }}
 {% endmacro %}

@@ -1,0 +1,19 @@
+{% extends "./layout.njk" %}
+
+{% block courseContent %}
+    {% if pageModel.modules.length === 0 %}
+        {% include "./noModules.njk" %}
+    {% elseif pageModel.modules.length === 1 %}
+        {% set moduleDetails = pageModel.modules[0] %}
+        {% set templateMap = {
+            "elearning": "./elearning.njk",
+            "face-to-face": "./faceToFace.njk",
+            "file": "./file.njk",
+            "link": "./singleModule.njk",
+            "video": "./singleModule.njk"
+        } %}
+        {% include templateMap[pageModel.type] %}
+    {% else %}
+        {% include "./blended.njk" %}
+    {% endif %}
+{% endblock %}

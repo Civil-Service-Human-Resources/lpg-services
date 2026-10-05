@@ -28,6 +28,7 @@ import {LaunchModuleResponse} from './models/launchModuleResponse'
 import {AreasOfWork} from './models/areasOfWork'
 import {CategoryHomepage} from './models/learning/categories/categoryHomepage'
 import {CategoryPage} from './models/learning/categories/categoryPage'
+import {CourseOverview} from './models/learning/courseOverview/courseOverview'
 import {BasicCourseResponse} from './models/learning/learningPlan/basicCourseResponse'
 import {LearningPlan} from './models/learning/learningPlan/learningPlan'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
@@ -442,4 +443,14 @@ export async function getCategoryPage(user: User, url: string, page: number, con
 		}
 	}
 	return categoryPage
+}
+
+export async function getCourseOverview(user: User, courseId: string) {
+	const res = await client._get(
+		{
+			url: `/courses/${courseId}/overview`
+		},
+		user
+	)
+	return plainToInstance(CourseOverview, res)
 }

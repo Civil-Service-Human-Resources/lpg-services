@@ -1,5 +1,3 @@
-{% extends "./layout.njk" %}
-
 {% block courseContent %}
-    <a class="button" href="{{ pageModel.moduleDetails.launchLink }}">Start this learning</a>
+    <a class="button" href="/courses/{{ pageModel.id }}/{{ moduleDetails.id }}">Start this learning</a>
 {% endblock %}

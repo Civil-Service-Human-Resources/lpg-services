@@ -3,10 +3,9 @@ import * as extended from '../../../lib/extended'
 import {getLogger} from '../../../lib/logger'
 import * as catalog from '../../../lib/service/catalog'
 import * as cslServiceClient from '../../../lib/service/cslService/cslServiceClient'
-import {removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslServiceClient'
+import {getCourseOverview, removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslServiceClient'
 import * as template from '../../../lib/ui/template'
 import * as youtube from '../../../lib/youtube'
-import {getCoursePage} from './models/factory'
 import {generateActionBanner, generateNotificationBanner} from '../home'
 
 const logger = getLogger('controllers/course')
@@ -41,17 +40,17 @@ export async function displayModule(ireq: express.Request, res: express.Response
 	}
 }
 
-export async function display(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const course = req.course
-	const pageModel = await getCoursePage(req.user, course)
-	const learningPlan = [course]
+	const pageModel = await getCourseOverview(req.user, req.params.courseId)
+	const learningPlan = [pageModel]
 	const notificationBanner = await generateNotificationBanner(req, learningPlan)
 	const actionBanner = await generateActionBanner(req, learningPlan)
-	pageModel.backLink = res.locals.backLink
-	return res.render(`course/${pageModel.template}.njk`, {
-		pageModel,
+	return res.render(`course/index.njk`, {
+		pageModel:{
+			...pageModel,
+			backLink: res.locals.backLink,
+		},
 		banners: {
 			notification: notificationBanner,
 			action: actionBanner,

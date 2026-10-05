@@ -2,17 +2,14 @@ import {within} from '@testing-library/dom'
 import {expect} from 'chai'
 import * as asyncHandler from 'express-async-handler'
 import * as sinon from 'sinon'
-import * as catalog from '../../../src/lib/service/catalog'
-import * as courseController from '../../../src/ui/controllers/course'
+import {CourseStatus, CourseType, ModuleType} from '../../../src/lib/model'
+import {client} from '../../../src/lib/service/cslService/baseConfig'
 import {
-	BasicCoursePage,
-	BlendedCoursePage,
-	CourseDetails,
-	CoursePage,
-	SingleModuleCoursePage,
-} from '../../../src/ui/controllers/course/models/coursePage'
-import * as coursePageModelFactory from '../../../src/ui/controllers/course/models/factory'
-import {BaseModuleCard, F2FModuleCard, FileModuleCard} from '../../../src/ui/controllers/course/models/moduleCard'
+	CourseOverview,
+	LearningPlanStatus,
+} from '../../../src/lib/service/cslService/models/learning/courseOverview/courseOverview'
+import {RecordState} from '../../../src/lib/service/cslService/models/record'
+import * as courseController from '../../../src/ui/controllers/course'
 import {assertCourseDetails} from '../../utils/htmlAssertions/assertLearningRecordDetails'
 import {assertModuleCards} from '../../utils/htmlAssertions/assertModuleCard'
 import {assertBackLink, assertButton, assertNotificationBanner} from '../../utils/htmlUtils'
@@ -22,55 +19,74 @@ import {getDOM} from '../helpers'
 describe('Course controller tests', () => {
 	const sandbox = sinon.createSandbox()
 	const app = getApp()
-	app.get('/courses/:courseId', asyncHandler(courseController.loadCourse), asyncHandler(courseController.display))
+	app.get('/courses/:courseId', asyncHandler(courseController.display))
 
-	let catalogStub: sinon.SinonStubbedInstance<typeof catalog>
-	let coursePageModelFactoryStub: sinon.SinonStubbedInstance<typeof coursePageModelFactory>
+	let cslServiceClientStub: sinon.SinonStubbedInstance<typeof client>
 
 	beforeEach(() => {
-		coursePageModelFactoryStub = sandbox.stub(coursePageModelFactory)
-		catalogStub = sandbox.stub(catalog)
-		catalogStub.get.resolves({})
+		cslServiceClientStub = sandbox.stub(client)
 	})
 	afterEach(() => {
 		sandbox.restore()
 	})
+
+	const makeRequest = async (courseOverview: CourseOverview) => {
+		cslServiceClientStub._get.withArgs({
+			url: '/courses/courseId/overview'
+		}).resolves(courseOverview)
+		return await getDOM(app, '/courses/courseId')
+	}
 	describe('Render course overview tests', () => {
-		const makeRequest = async (coursePageMock: BasicCoursePage) => {
-			coursePageModelFactoryStub.getCoursePage.resolves(coursePageMock)
-			return await getDOM(app, '/courses/courseId')
-		}
-		const basicCourseData: CoursePage = {
+		const basicCourseData = {
+			id: 'courseID',
 			title: 'Test title',
 			description: 'Test description',
 			learningOutcomes: 'Test Learning outcomes',
-			status: 'Published',
-		}
-		const details: CourseDetails = {
-			cost: 100,
-			duration: '1 hour',
+			isInLearningPlan: 'NOT_IN_LEARNING_PLAN' as LearningPlanStatus,
+			status: 'PUBLISHED' as CourseStatus,
+			costInPounds: 100,
+			duration: 3600,
 			grades: ['G7', 'G6'],
 			areasOfWork: ['Analysis', 'Policy'],
-			location: 'London',
+			learningTags: [{id: 1, name: 'Learning Tag 1', urlSlug: 'learning-tag-1'}],
+			moduleDetails: undefined
 		}
 		const basicModuleDetails = {
+			id: 'moduleID',
+			state: 'NULL' as RecordState,
 			title: 'Module title',
 			description: 'Module description',
 			associatedLearning: false,
-			isMandatory: false,
+			mandatory: false,
 			mustConfirmBooking: false,
-			launchLink: `/courses/courseID/moduleID`,
-			duration: '1 minute',
-			cost: 1,
-			displayMandatoryStatus: true,
+			duration: 7200,
+			costInPounds: 100,
+		}
+		const basicF2FModuleDetails = {
+			...basicModuleDetails,
+			type: 'face-to-face' as ModuleType,
+			bookedEventId: 'eventId',
+			canBeBooked: false,
+			canBeCancelled: false,
+		}
+		const basicFileModuleDetails = {
+			...basicModuleDetails,
+			type: 'file' as ModuleType,
+			filename: 'file',
+			extension: 'txt',
+			sizeInKb: '1000',
+		}
+		const getNoModulesCourse = () => {
+			return {
+				...basicCourseData,
+				modules: [],
+				mandatoryModuleCount: 0,
+				type: 'unknown' as CourseType,
+			}
 		}
 		describe('base layout tests', () => {
-			const noModuleCoursePage: BasicCoursePage = {
-				template: 'noModules',
-				...basicCourseData,
-			}
 			it('Should render the base course overview layout', async () => {
-				const res = await makeRequest(noModuleCoursePage)
+				const res = await makeRequest(getNoModulesCourse())
 				const withinRes = within(res)
 				withinRes.getByRole('heading', {name: 'Test title'})
 				withinRes.getByText('Test description')
@@ -78,16 +94,14 @@ describe('Course controller tests', () => {
 			})
 			it('Should exclude the learning outcomes header when there are no learning outcomes', async () => {
 				const res = await makeRequest({
-					template: 'noModules',
-					...basicCourseData,
+					...getNoModulesCourse(),
 					learningOutcomes: '',
 				})
 				expect(res.querySelector('#learning-outcomes')).to.eql(null)
 			})
 			it('Should Show the notification banner when the course is archived', async () => {
 				const res = await makeRequest({
-					template: 'noModules',
-					...basicCourseData,
+					...getNoModulesCourse(),
 					status: 'Archived',
 				})
 				assertNotificationBanner(
@@ -97,15 +111,13 @@ describe('Course controller tests', () => {
 				)
 			})
 			it('Should show "Find another course" as a default backlink', async () => {
-				const res = await makeRequest(noModuleCoursePage)
+				const res = await makeRequest(getNoModulesCourse())
 				assertBackLink(res, '/course-catalogue', 'Find another course')
 			})
 			it('Should show "Back" as a backlink when a custom backlink is provided', async () => {
 				const searchUrl = '/search?q=XYZ'
-				coursePageModelFactoryStub.getCoursePage.resolves({
-					template: 'noModules',
-					...basicCourseData,
-					backLink: searchUrl,
+				await makeRequest({
+					...getNoModulesCourse()
 				})
 
 				const res = await getDOM(app, '/courses/courseId', {roles: 'LEARNER', locals: `backLink:${searchUrl}`})
@@ -115,136 +127,117 @@ describe('Course controller tests', () => {
 
 		describe('Render no-module course overview tests', () => {
 			it('Should correctly render the no-module course page', async () => {
-				const noModuleCoursePage: BasicCoursePage = {
-					template: 'noModules',
-					...basicCourseData,
-				}
-				const res = await makeRequest(noModuleCoursePage)
+				const res = await makeRequest(getNoModulesCourse())
 				within(res).getByText('Unfortunately there are no modules currently available for this course')
 			})
 		})
 
 		describe('Render single module course overview tests', () => {
 			it('Should correctly render the elearning course page', async () => {
-				const singleModuleCoursePage: SingleModuleCoursePage = {
-					template: 'elearning',
-					type: 'elearning',
-					...details,
-					...basicCourseData,
-					moduleDetails: {
-						...basicModuleDetails,
-						mustConfirmBooking: false,
-						template: 'elearning',
-						type: 'elearning',
-					},
+				const singleModuleCoursePage = {
+					...getNoModulesCourse(),
+					type: 'elearning' as CourseType,
+					modules: [{...basicModuleDetails, type: 'elearning' as ModuleType}],
 				}
 				const res = await makeRequest(singleModuleCoursePage)
 				assertButton(res, 'Start this learning', `/courses/courseID/moduleID`)
 			})
 			describe('Face-to-face single module course page tests', () => {
 				it('Should show the cancel link when the user is booked', async () => {
-					const moduleDetails: F2FModuleCard = {
-						...basicModuleDetails,
-						mustConfirmBooking: false,
-						template: 'faceToface',
-						type: 'face-to-face',
-						displayState: 'CONFIRMED',
-						cancellationLink: '/cancel',
-						canBeBooked: false,
-					}
-					const singleModuleCoursePage: SingleModuleCoursePage = {
-						template: 'faceToFace',
-						type: 'face-to-face',
-						...details,
-						...basicCourseData,
-						moduleDetails,
+					const singleModuleCoursePage = {
+						...getNoModulesCourse(),
+						type: 'face-to-face' as CourseType,
+						modules: [
+							{
+								...basicF2FModuleDetails,
+								state: 'CONFIRMED' as RecordState,
+								canBeCancelled: true,
+								canBeBooked: false,
+								mustConfirmBooking: false,
+								bookedEventId: 'eventID',
+							},
+						],
 					}
 					const res = await makeRequest(singleModuleCoursePage)
-					expect(res.outerHTML).contains('You are already booked on this course')
-					expect(res.outerHTML).contains('/cancel')
-					expect(res.outerHTML).contains('Do you wish to cancel your booking?')
-					expect(res.outerHTML).not.contains('View availability')
+					const resWithin = within(res)
+					expect(
+						resWithin.getByRole('link', {name: 'Do you wish to cancel your booking?'}).getAttribute('href')
+					).to.eql('/book/courseID/moduleID/eventID/cancel')
 					assertNotificationBanner(res, null, null)
 				})
 
 				it('Should show a notification banner if the course cannot be booked', async () => {
-					const moduleDetails: F2FModuleCard = {
-						...basicModuleDetails,
-						template: 'faceToface',
-						type: 'face-to-face',
-						displayState: 'NULL',
-						canBeBooked: false,
-					}
-					const singleModuleCoursePage: SingleModuleCoursePage = {
-						template: 'faceToFace',
-						type: 'face-to-face',
-						...details,
-						...basicCourseData,
-						moduleDetails,
+					const singleModuleCoursePage = {
+						...getNoModulesCourse(),
+						type: 'face-to-face' as CourseType,
+						modules: [
+							{
+								...basicF2FModuleDetails,
+								state: 'NULL' as RecordState,
+								canBeCancelled: false,
+								canBeBooked: false,
+								mustConfirmBooking: false,
+								bookedEventId: 'eventID',
+							},
+						],
 					}
 					const res = await makeRequest(singleModuleCoursePage)
 					assertNotificationBanner(res, 'Important', 'Unfortunately there are no bookable sessions at this time.')
 				})
 
 				it('Should show the launch link if the course can be booked', async () => {
-					const moduleDetails: F2FModuleCard = {
-						...basicModuleDetails,
-						template: 'faceToface',
-						type: 'face-to-face',
-						displayState: 'NULL',
-						canBeBooked: true,
-					}
-					const singleModuleCoursePage: SingleModuleCoursePage = {
-						template: 'faceToFace',
-						type: 'face-to-face',
-						...details,
-						...basicCourseData,
-						moduleDetails,
+					const singleModuleCoursePage = {
+						...getNoModulesCourse(),
+						type: 'face-to-face' as CourseType,
+						modules: [
+							{
+								...basicF2FModuleDetails,
+								state: 'NULL' as RecordState,
+								canBeCancelled: false,
+								canBeBooked: true,
+								mustConfirmBooking: false,
+								bookedEventId: 'eventID',
+							},
+						],
 					}
 					const res = await makeRequest(singleModuleCoursePage)
-					assertButton(res, 'View availability', `/courses/courseID/moduleID`)
+					assertButton(res, 'View availability', `/courses/courseID/moduleID/choose-date`)
 				})
 			})
 
 			describe('File single module course page tests', () => {
 				it('Should show the download link for the file', async () => {
-					const moduleDetails: FileModuleCard = {
-						...basicModuleDetails,
-						template: 'file',
-						type: 'file',
-						displayState: 'NULL',
-						fileExtAndSize: 'pdf, 1KB',
-						fileName: 'someFile.pdf',
-					}
-					const singleModuleCoursePage: SingleModuleCoursePage = {
-						template: 'file',
-						type: 'file',
-						...details,
-						...basicCourseData,
-						moduleDetails,
+					const singleModuleCoursePage = {
+						...getNoModulesCourse(),
+						type: 'file' as CourseType,
+						modules: [
+							{
+								...basicFileModuleDetails,
+								state: 'NULL' as RecordState,
+							},
+						],
 					}
 					const res = await makeRequest(singleModuleCoursePage)
 					const withinRes = within(res)
 					withinRes.getByRole('heading', {name: 'Download document'})
-					expect(withinRes.getByRole('link', {name: 'someFile.pdf'}).getAttribute('href')).to.eql(
-						'/courses/courseID/moduleID'
-					)
-					withinRes.getByText('(pdf, 1KB)')
+					expect(withinRes.getByRole('link', {name: 'file'}).getAttribute('href')).to.eql('/courses/courseID/moduleID')
+					withinRes.getByText('(txt, 1000 KB)')
 				})
 			})
 
 			describe('Link single module course page tests', () => {
 				it('Should show the module card for the link module', async () => {
-					const singleModuleCoursePage: SingleModuleCoursePage = {
-						template: 'singleModule',
-						type: 'link',
-						...details,
-						...basicCourseData,
-						moduleDetails: {
-							...basicModuleDetails,
-							template: 'singleModule',
-							type: 'link',
-						},
+					const singleModuleCoursePage = {
+						...getNoModulesCourse(),
+						type: 'link' as CourseType,
+						modules: [
+							{
+								...basicModuleDetails,
+								state: 'NULL' as RecordState,
+								type: 'link' as ModuleType,
+								mandatory: false,
+							},
+						],
 					}
 					const res = await makeRequest(singleModuleCoursePage)
 					assertModuleCards(res, [
@@ -255,7 +248,7 @@ describe('Course controller tests', () => {
 								href: '/courses/courseID/moduleID',
 							},
 							expDescription: 'Module description',
-							expOptional: true,
+							expOptional: false,
 							expTitle: 'Module title',
 						},
 					])
@@ -263,67 +256,52 @@ describe('Course controller tests', () => {
 			})
 		})
 		describe('Render blended course overview tests', () => {
-			const linkModule: BaseModuleCard = {
-				...basicModuleDetails,
+			const linkModule = {
+			...basicModuleDetails,
 				title: 'Link module',
-				template: 'link',
-				type: 'link',
-				isMandatory: false,
-				launchLink: '/launch',
-				duration: '1 hour',
-				cost: 0,
+				state: 'NULL' as RecordState,
+				type: 'link' as ModuleType,
+				mandatory: false,
 			}
-			const f2fModule: F2FModuleCard = {
-				...basicModuleDetails,
+
+			const f2fModule = {
+				...basicF2FModuleDetails,
 				title: 'Face to Face module',
-				template: 'faceToFace',
-				type: 'face-to-face',
-				launchLink: '/book',
+				state: 'NULL' as RecordState,
 				canBeBooked: true,
-				isMandatory: true,
-				duration: '2 hours',
-				cost: 100,
+				mandatory: true,
 			}
-			const fileModule: FileModuleCard = {
-				...basicModuleDetails,
+			const fileModule = {
+			...basicFileModuleDetails,
+				state: 'NULL' as RecordState,
+				mandatory: true,
 				title: 'File module',
-				template: 'file',
-				type: 'file',
-				fileName: 'fileName',
-				fileExtAndSize: 'pdf, 10KB',
-				launchLink: '/launch',
-				isMandatory: true,
-				duration: '2 hours',
-				cost: 0,
 			}
-			const videoModule: BaseModuleCard = {
-				...basicModuleDetails,
+			const videoModule = {
+			...basicModuleDetails,
+				type: 'video' as ModuleType,
 				title: 'Video module',
-				template: 'video',
-				type: 'video',
-				isMandatory: false,
-				launchLink: '/launch',
-				duration: '2 hours',
-				cost: 0,
+				state: 'NULL' as RecordState,
+				mandatory: false,
 			}
 			it(
 				'Should disallow any action against an associated learning module if a face-to-face module is yet to be' +
 					' confirmed',
 				async () => {
-					const blendedCourse: BlendedCoursePage = {
+					const blendedCourse = {
 						...basicCourseData,
-						...details,
 						template: 'blended',
-						type: 'blended',
+						type: 'blended' as CourseType,
 						mandatoryModuleCount: 1,
 						modules: [
 							{
 								...linkModule,
 								mustConfirmBooking: true,
+								costInPounds: 0,
 							},
 							{
 								...f2fModule,
-								displayState: 'REQUESTED',
+								state: 'REQUESTED' as RecordState
 							},
 						],
 					}
@@ -339,7 +317,7 @@ describe('Course controller tests', () => {
 							},
 							details: {
 								expState: null,
-								expDuration: '1 hour',
+								expDuration: '2 hours',
 								expType: 'Link',
 								expCost: 'Free',
 							},
@@ -357,22 +335,20 @@ describe('Course controller tests', () => {
 								expState: 'Requested',
 								expDuration: '2 hours',
 								expType: 'Face to face',
-								expCost: '100',
+								expCost: '£100',
 							},
 						},
 					])
 				}
 			)
 			it('Should show the download link for a file module', async () => {
-				const blendedCourse: BlendedCoursePage = {
+				const blendedCourse = {
 					...basicCourseData,
-					...details,
-					template: 'blended',
-					type: 'blended',
+					type: 'blended' as CourseType,
 					mandatoryModuleCount: 1,
 					modules: [
 						{
-							...fileModule,
+							...fileModule
 						},
 						{
 							...linkModule,
@@ -400,15 +376,13 @@ describe('Course controller tests', () => {
 				])
 			})
 			it('Should show the video link for a video module', async () => {
-				const blendedCourse: BlendedCoursePage = {
+				const blendedCourse = {
 					...basicCourseData,
-					...details,
-					template: 'blended',
-					type: 'blended',
+					type: 'blended' as CourseType,
 					mandatoryModuleCount: 1,
 					modules: [
 						{
-							...videoModule,
+							...videoModule
 						},
 						{
 							...videoModule,
@@ -437,13 +411,11 @@ describe('Course controller tests', () => {
 			it('Should show a message if a face-to-face module cannot be booked', async () => {
 				const f2f = {
 					...f2fModule,
-					canBeBooked: false,
+					canBeBooked: false
 				}
-				const blendedCourse: BlendedCoursePage = {
+				const blendedCourse = {
 					...basicCourseData,
-					...details,
-					template: 'blended',
-					type: 'blended',
+					type: 'blended' as CourseType,
 					mandatoryModuleCount: 1,
 					modules: [
 						f2f,
@@ -466,7 +438,7 @@ describe('Course controller tests', () => {
 							expState: null,
 							expDuration: '2 hours',
 							expType: 'Face to face',
-							expCost: '100',
+							expCost: '£100',
 						},
 					},
 				])
@@ -474,23 +446,21 @@ describe('Course controller tests', () => {
 		})
 		describe('Render courseDetails tests', () => {
 			it('Should generate the correct data within the course details macro', async () => {
-				const singleModuleCoursePage: SingleModuleCoursePage = {
-					template: 'singleModule',
-					type: 'link',
+				const singleModuleCoursePage = {
+					mandatoryModuleCount: 1,
+					type: 'link' as CourseType,
 					...basicCourseData,
-					...details,
-					moduleDetails: {
+					costInPounds: 100,
+					modules: [{
 						...basicModuleDetails,
-						template: 'singleModule',
-						type: 'link',
-					},
+						type: 'link' as ModuleType,
+					}],
 				}
 				const res = await makeRequest(singleModuleCoursePage)
 				assertCourseDetails(res, {
 					expCost: '£100 (ex VAT)',
 					expDuration: '1 hour',
-					expGrades: ['Grade 7,', 'Grade 6.'],
-					expLocation: 'London',
+					expGrades: ['Grade 7', 'Grade 6'],
 					expAreasOfWork: ['Analysis', 'Policy'],
 					expType: 'Link',
 				})

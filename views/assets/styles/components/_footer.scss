@@ -109,9 +109,9 @@
             height: 17px;
             overflow:hidden;
             text-indent: -999em;
-            background: url("/img/open-government-licence.png") 0 0 no-repeat;
+            background: url("/assets/img/open-government-licence.png") 0 0 no-repeat;
             @include device-pixel-ratio() {
-              background-image: url("/img/open-government-licence_2x.png");
+              background-image: url("/assets/img/open-government-licence_2x.png");
               background-size: 41px 17px;
             }
           }
@@ -149,7 +149,7 @@
       a {
         display: block;
 
-        background-image: url("/img/govuk-crest.png");
+        background-image: url("/assets/img/govuk-crest.png");
         background-repeat: no-repeat;
         background-position: 50% 0%;
 
@@ -158,12 +158,12 @@
         }
 
         @include device-pixel-ratio() {
-          background-image: url("/img/govuk-crest-2x.png");
+          background-image: url("/assets/img/govuk-crest-2x.png");
           background-size: 125px 102px;
         }
 
         @include ie(6) {
-          background-image: url("/img/govuk-crest-ie.png");
+          background-image: url("/assets/img/govuk-crest-ie.png");
         }
 
         text-align: center;
