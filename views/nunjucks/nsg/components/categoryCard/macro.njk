@@ -14,9 +14,9 @@
                     <a class='category-card__action-link' href='{{ params.fullUrl }}'>View topics</a>
                 {% else %}
                     {% if params.courseCount > 0 or params.linkCount > 0 %}
-                    <div class='govuk-!-margin-bottom-3'>
-                        <a class='category-card__action-link' href='{{ params.fullUrl }}#courses'>View {{ params.title }} {% if params.courseCount > 0 and params.linkCount > 0 %}courses and links{% elif params.courseCount > 0 %}courses{% else %}links{% endif %}</a>
-                    </div>
+                        <div class='govuk-!-margin-bottom-3'>
+                            <a class='category-card__action-link' href='{{ params.fullUrl }}#courses'>View {{ params.title }} {% if params.courseCount > 0 and params.linkCount > 0 %}courses and links{% elif params.courseCount > 0 %}courses{% else %}links{% endif %}</a>
+                        </div>
                     {% endif %}
                     {% if params.categories.length > 0 %}
                         <h3 class='category-card__heading category-card__heading--small'>Topics</h3>
