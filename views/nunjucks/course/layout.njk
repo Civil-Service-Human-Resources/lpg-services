@@ -16,7 +16,7 @@
                 {{ backLink("/course-catalogue", "Find another course") }}
             {% endif %}
         </p>
-        {% if pageModel.status === "Archived" %}
+        {% if pageModel.status === "ARCHIVED" %}
             {{ notificationBanner({
                 title: i18n('archivedWarning.heading'),
                 description: i18n('archivedWarning.description')
@@ -42,7 +42,7 @@
                     <div>{{ pageModel.learningOutcomes | toHtml | safe }}</div>
                 {% endif %}
 
-                {% if pageModel.status !== "Archived" %}
+                {% if pageModel.status !== "ARCHIVED" %}
                     {% block courseContent %}
                     {% endblock %}
                 {% endif %}

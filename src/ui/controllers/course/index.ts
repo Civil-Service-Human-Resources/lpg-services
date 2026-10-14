@@ -1,4 +1,5 @@
 import * as express from 'express'
+import {NSG_FLAG} from '../../../lib/config'
 import {ClientError} from '../../../lib/exception/ClientError'
 import * as extended from '../../../lib/extended'
 import {getLogger} from '../../../lib/logger'
@@ -112,9 +113,10 @@ export async function loadEvent(ireq: express.Request, res: express.Response, ne
 export async function markCourseDeleted(req: express.Request, res: express.Response) {
 	const courseId = req.params.courseId
 	const resp = await removeCourseFromLearningPlan(courseId, req.user)
+	const redirect = req.query.ref === 'home' ? (NSG_FLAG ? '/your-learning' : '/home') : `/courses/${courseId}`
 	req.flash('successTitle', req.__('learning_removed_from_plan_title', resp.courseTitle))
 	req.flash('successMessage', req.__('learning_removed_from_plan_message', resp.courseTitle))
 	req.session!.save(() => {
-		res.redirect(`/courses/${courseId}`)
+		res.redirect(redirect)
 	})
 }

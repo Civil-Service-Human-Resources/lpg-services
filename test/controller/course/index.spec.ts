@@ -104,7 +104,7 @@ describe('Course controller tests', () => {
 			it('Should Show the notification banner when the course is archived', async () => {
 				const res = await makeRequest({
 					...getNoModulesCourse(),
-					status: 'Archived',
+					status: 'ARCHIVED',
 				})
 				assertNotificationBanner(
 					res,
