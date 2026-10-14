@@ -248,13 +248,7 @@ app.get('/courses/:courseId', asyncHandler(courseController.display))
 
 app.use('/courses/:courseId/delete', asyncHandler(courseController.markCourseDeleted))
 
-app.use(
-	'/courses/:courseId/:moduleId',
-	asyncHandler(requiresDepartmentHierarchy),
-	asyncHandler(courseController.loadCourse),
-	asyncHandler(courseController.loadModule),
-	asyncHandler(courseController.displayModule)
-)
+app.use('/courses/:courseId/:moduleId', asyncHandler(courseController.displayModule))
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
 

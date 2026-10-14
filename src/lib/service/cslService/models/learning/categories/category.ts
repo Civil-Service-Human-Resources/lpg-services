@@ -9,7 +9,7 @@ export const transformNsgUrl = (params: TransformFnParams) => {
 export class Category {
 	public title: string
 	public description: string
-	@Transform(transformNsgUrl, { groups: ['api'],})
+	@Transform(transformNsgUrl, {groups: ['api']})
 	public url: string
 	@Type(() => CategoryLink)
 	public categories: CategoryLink[]

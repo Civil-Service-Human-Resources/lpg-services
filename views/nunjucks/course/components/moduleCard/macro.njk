@@ -51,7 +51,7 @@
 {% endmacro %}
 
 {% macro moduleCardCtaLink(params) %}
-    <form class="discite__link-button--main" method="POST" action="{{ params.url }}" rel='noopener' novalidate>
+    <form class="discite__link-button--main" method="POST" action="{{ params.launchLink }}" rel='noopener' novalidate>
         <input type="hidden" name="_csrf" value="{{ _csrf }}" />
         {{ params.ctaButton | safe }}
         <button type="submit" class="discite__link-button--main discite__action-link--button"
@@ -73,19 +73,16 @@
             {% elseif not params.canBeBooked and params.type === "face-to-face" %}
                 <span>{{ i18n('components.notification_banner.course_not_bookable') }}</span>
             {% else %}
+                {% set launchLink = "/courses/" + params.courseId + "/" + params.id %}
                 {% set typeMap = {
-                    "face-to-face": {buttonHtml: 'Book <span class="visually-hidden">' + params.title + '</span>'},
-                    "file": {buttonHtml: 'Download <span class="visually-hidden">' + params.title + '</span> file', extraText: params.fileExtAndSize},
-                    "video": {buttonHtml: 'Go to <span class="visually-hidden">'+  params.title + '</span> video'},
-                    "link": {buttonHtml: 'Go to ' + params.title + ' (opens in a new tab)', newTab: true},
-                    "elearning": {buttonHtml: 'Start <span class="visually-hidden">' + params.title + '</span>'}
+                    "face-to-face": {buttonHtml: 'Book <span class="visually-hidden">' + params.title + '</span>', launchLink: "/book/" + params.courseId + "/" + params.id + "/choose-date"},
+                    "file": {buttonHtml: 'Download <span class="visually-hidden">' + params.title + '</span> file', launchLink: launchLink , extraText: params.fileExtAndSize},
+                    "video": {buttonHtml: 'Go to <span class="visually-hidden">'+  params.title + '</span> video', launchLink: launchLink },
+                    "link": {buttonHtml: 'Go to ' + params.title + ' (opens in a new tab)', newTab: true, launchLink: launchLink },
+                    "elearning": {buttonHtml: 'Start <span class="visually-hidden">' + params.title + '</span>', launchLink: launchLink }
                 } %}
-                {{ moduleCardCtaLink({
-                    url: params.launchLink,
-                    buttonHtml: typeMap[params.type].buttonHtml,
-                    newTab: typeMap[params.type].newTab,
-                    extraText: typeMap[params.type].extraText
-                }) }}
+                {% set params = typeMap[params.type] %}
+                {{ moduleCardCtaLink(params) }}
             {% endif %}
         </div>
     {% endif %}

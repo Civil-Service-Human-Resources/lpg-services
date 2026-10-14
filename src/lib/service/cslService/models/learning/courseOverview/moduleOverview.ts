@@ -1,7 +1,10 @@
+import {Expose} from 'class-transformer'
 import {ModuleType} from '../../../../../model'
 import {RecordState} from '../../record'
 
 export class ModuleOverview {
+	@Expose()
+	public courseId: string
 	public id: string
 	public title: string
 	public description: string

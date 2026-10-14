@@ -31,9 +31,11 @@ describe('Course controller tests', () => {
 	})
 
 	const makeRequest = async (courseOverview: CourseOverview) => {
-		cslServiceClientStub._get.withArgs({
-			url: '/courses/courseId/overview'
-		}).resolves(courseOverview)
+		cslServiceClientStub._get
+			.withArgs({
+				url: '/courses/courseId/overview',
+			})
+			.resolves(courseOverview)
 		return await getDOM(app, '/courses/courseId')
 	}
 	describe('Render course overview tests', () => {
@@ -49,7 +51,7 @@ describe('Course controller tests', () => {
 			grades: ['G7', 'G6'],
 			areasOfWork: ['Analysis', 'Policy'],
 			learningTags: [{id: 1, name: 'Learning Tag 1', urlSlug: 'learning-tag-1'}],
-			moduleDetails: undefined
+			moduleDetails: undefined,
 		}
 		const basicModuleDetails = {
 			id: 'moduleID',
@@ -117,7 +119,7 @@ describe('Course controller tests', () => {
 			it('Should show "Back" as a backlink when a custom backlink is provided', async () => {
 				const searchUrl = '/search?q=XYZ'
 				await makeRequest({
-					...getNoModulesCourse()
+					...getNoModulesCourse(),
 				})
 
 				const res = await getDOM(app, '/courses/courseId', {roles: 'LEARNER', locals: `backLink:${searchUrl}`})
@@ -257,7 +259,7 @@ describe('Course controller tests', () => {
 		})
 		describe('Render blended course overview tests', () => {
 			const linkModule = {
-			...basicModuleDetails,
+				...basicModuleDetails,
 				title: 'Link module',
 				state: 'NULL' as RecordState,
 				type: 'link' as ModuleType,
@@ -272,13 +274,13 @@ describe('Course controller tests', () => {
 				mandatory: true,
 			}
 			const fileModule = {
-			...basicFileModuleDetails,
+				...basicFileModuleDetails,
 				state: 'NULL' as RecordState,
 				mandatory: true,
 				title: 'File module',
 			}
 			const videoModule = {
-			...basicModuleDetails,
+				...basicModuleDetails,
 				type: 'video' as ModuleType,
 				title: 'Video module',
 				state: 'NULL' as RecordState,
@@ -301,7 +303,7 @@ describe('Course controller tests', () => {
 							},
 							{
 								...f2fModule,
-								state: 'REQUESTED' as RecordState
+								state: 'REQUESTED' as RecordState,
 							},
 						],
 					}
@@ -348,7 +350,7 @@ describe('Course controller tests', () => {
 					mandatoryModuleCount: 1,
 					modules: [
 						{
-							...fileModule
+							...fileModule,
 						},
 						{
 							...linkModule,
@@ -382,7 +384,7 @@ describe('Course controller tests', () => {
 					mandatoryModuleCount: 1,
 					modules: [
 						{
-							...videoModule
+							...videoModule,
 						},
 						{
 							...videoModule,
@@ -411,7 +413,7 @@ describe('Course controller tests', () => {
 			it('Should show a message if a face-to-face module cannot be booked', async () => {
 				const f2f = {
 					...f2fModule,
-					canBeBooked: false
+					canBeBooked: false,
 				}
 				const blendedCourse = {
 					...basicCourseData,
@@ -451,10 +453,12 @@ describe('Course controller tests', () => {
 					type: 'link' as CourseType,
 					...basicCourseData,
 					costInPounds: 100,
-					modules: [{
-						...basicModuleDetails,
-						type: 'link' as ModuleType,
-					}],
+					modules: [
+						{
+							...basicModuleDetails,
+							type: 'link' as ModuleType,
+						},
+					],
 				}
 				const res = await makeRequest(singleModuleCoursePage)
 				assertCourseDetails(res, {

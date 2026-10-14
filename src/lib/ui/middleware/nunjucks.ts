@@ -33,7 +33,7 @@ const components = `${viewsRoot}/components`
 const partials = `${viewsRoot}/partials`
 
 const nunjucksEndpoints = [
-	'/courses/:courseId',
+	'/courses/:courseId*',
 	'/learning-record',
 	'/',
 	'/home*',
@@ -129,6 +129,7 @@ export const register = (app: Express) => {
 	const nunjucksMiddleware = middleware()
 	nunjucksEndpoints.forEach(endpoint => {
 		app.get(endpoint, nunjucksMiddleware)
+		app.post(endpoint, nunjucksMiddleware)
 	})
 
 	if (IS_DEV) {

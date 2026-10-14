@@ -49,6 +49,10 @@ export class CourseOverview {
 	public grades: string[]
 	public areasOfWork: string[]
 	public costInPounds: number
+	@Transform(({value, obj}) => {
+		;(value as ModuleOverview[]).forEach(m => (m.courseId = obj.id))
+		return value
+	})
 	@Type(() => ModuleOverview, {
 		discriminator: {
 			property: 'type',

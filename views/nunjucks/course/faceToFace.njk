@@ -1,3 +1,5 @@
+{% extends "./singleModuleLayout.njk" %}
+
 {% block headingBanner %}
     {% if signedInUser.hasLineManager() and not moduleDetails.canBeCancelled and not moduleDetails.canBeBooked %}
         <div class="grid-row">

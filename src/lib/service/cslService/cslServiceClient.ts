@@ -448,7 +448,7 @@ export async function getCategoryPage(user: User, url: string, page: number, con
 export async function getCourseOverview(user: User, courseId: string) {
 	const res = await client._get(
 		{
-			url: `/courses/${courseId}/overview`
+			url: `/courses/${courseId}/overview`,
 		},
 		user
 	)

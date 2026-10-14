@@ -39,4 +39,3 @@ describe('reprioritiseGrades tests', () => {
 		expect(result).to.eql(['XYZ', 'ABC', 'PB2', 'G7', 'HEO', 'g6', 'AO', 'PB1'])
 	})
 })
-
