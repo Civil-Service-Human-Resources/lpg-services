@@ -9,7 +9,6 @@ import {CourseRecord} from './service/cslService/models/courseRecord'
 import {RecordState} from './service/cslService/models/record'
 import {ModuleRecord} from './service/cslService/models/moduleRecord'
 import {CacheableObject} from './utils/cacheableObject'
-import * as config from '../lib/config'
 
 import _ = require('lodash')
 
@@ -182,10 +181,6 @@ export class Course implements ICourse {
 		return ''
 	}
 
-	getAreasOfWork() {
-		return this.audience ? this.audience.areasOfWork : []
-	}
-
 	getCost() {
 		const costArray = this.modules.map(module => module.cost || 0)
 		return costArray.length ? costArray.reduce((p, c) => p + c, 0) : undefined
@@ -239,40 +234,6 @@ export class Course implements ICourse {
 			return datetime.formatCourseDuration(Number(getDurationSeconds))
 		}
 		return '0 minutes'
-	}
-
-	getGrades() {
-		if (!this.audience || !this.audience.grades) {
-			return []
-		}
-
-		if (!config.GRADE_PRIORITY_ORDER_ENABLED) {
-			return this.audience.grades
-		}
-
-		const priorityMap = new Map(config.GRADE_PRIORITY_ORDER.map((value, index) => [value.toLowerCase(), index]))
-
-		return this.audience.grades
-			.map(value => ({
-				original: value,
-				lower: value.toLowerCase(),
-				priority: priorityMap.has(value.toLowerCase())
-					? priorityMap.get(value.toLowerCase())!
-					: Number.MAX_SAFE_INTEGER,
-			}))
-			.sort((a, b) => {
-				if (a.priority !== b.priority) {
-					return a.priority - b.priority
-				}
-
-				const lowerCompare = a.lower.localeCompare(b.lower)
-				if (lowerCompare !== 0) {
-					return lowerCompare
-				}
-
-				return a.original.localeCompare(b.original)
-			})
-			.map(item => item.original)
 	}
 
 	getType(): CourseType {
@@ -333,65 +294,6 @@ export class Module {
 	constructor(id: string, type: ModuleType) {
 		this.id = id
 		this.type = type
-	}
-
-	getDuration() {
-		if (this.type === 'face-to-face') {
-			if (this.events && this.events.length > 0) {
-				const startTimeHours = this.events[0].startDate.getHours()
-				const startTimeHoursInMinutes = startTimeHours * 60 + this.events[0].startDate.getMinutes()
-				const endTimeHours = this.events[0].endDate.getHours()
-				const endTimeHoursInMinutes = endTimeHours * 60 + this.events[0].endDate.getMinutes()
-				const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
-				const durationInSeconds = durationInMinutes * 60
-				this.duration = durationInSeconds
-			}
-		}
-
-		if (this.type === 'face-to-face') {
-			if (this.events && this.events.length > 0) {
-				sortEvents(this.events)
-				const event = this.events[0]
-				let durationInSeconds = 0
-
-				event.dateRanges.forEach(dateRange => {
-					const tempStartDate = new Date()
-					const startTimeInHours = _.get(dateRange, 'startTime', 0).split(':')[0]
-					const startTimeInMinutes = _.get(dateRange, 'startTime', 0).split(':')[1]
-					const startTimeInSeconds = _.get(dateRange, 'startTime', 0).split(':')[2]
-					tempStartDate.setHours(startTimeInHours, startTimeInMinutes, startTimeInSeconds)
-					const startTimeHoursInMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes()
-
-					const tempEndDate = new Date()
-					const endTimeInHours = _.get(dateRange, 'endTime', 0).split(':')[0]
-					const endTimeInMinutes = _.get(dateRange, 'endTime', 0).split(':')[1]
-					const endTimeInSeconds = _.get(dateRange, 'endTime', 0).split(':')[2]
-					tempEndDate.setHours(endTimeInHours, endTimeInMinutes, endTimeInSeconds)
-					const endTimeHoursInMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes()
-
-					const durationInMinutes = endTimeHoursInMinutes - startTimeHoursInMinutes
-					durationInSeconds += durationInMinutes * 60
-				})
-				this.duration = durationInSeconds
-			}
-		}
-
-		if (!this.duration) {
-			return '0 minutes'
-		}
-		return datetime.formatCourseDuration(this.duration)
-	}
-
-	getEvent(eventId: string) {
-		return this.events.find(event => event.id === eventId)
-	}
-
-	canBeBooked() {
-		return this.getBookableEvents().length > 0
-	}
-
-	getBookableEvents(): Event[] {
-		return (this.events || []).filter(e => e.isBookable())
 	}
 
 	getDisplayState(

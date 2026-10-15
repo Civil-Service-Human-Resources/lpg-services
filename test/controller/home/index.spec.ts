@@ -318,7 +318,7 @@ describe('Homepage controller tests', () => {
 				actions: [
 					{
 						text: 'Yes, remove course now.',
-						href: '/courses/learningplan1/delete',
+						href: '/courses/learningplan1/delete?ref=home',
 					},
 					{
 						text: 'No, keep it.',

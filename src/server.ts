@@ -181,8 +181,6 @@ passport.configure(
 )
 nunjucks.register(app)
 
-app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
-
 app.get('/', homeController.index)
 app.get('/sign-out', asyncHandler(passport.logout))
 
@@ -246,21 +244,17 @@ Object.values(ProfileEndpoint).forEach(profileEndpoint => {
 	)
 })
 
-app.get('/courses/:courseId', asyncHandler(courseController.loadCourse), asyncHandler(courseController.display))
+app.get('/courses/:courseId', asyncHandler(courseController.display))
 
 app.use('/courses/:courseId/delete', asyncHandler(courseController.markCourseDeleted))
 
-app.use(
-	'/courses/:courseId/:moduleId',
-	asyncHandler(courseController.loadCourse),
-	asyncHandler(courseController.loadModule),
-	asyncHandler(courseController.displayModule)
-)
+app.use('/courses/:courseId/:moduleId', asyncHandler(courseController.displayModule))
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
 
 app.get(
 	'/learning-record/:courseId/:moduleId',
+	asyncHandler(requiresDepartmentHierarchy),
 	asyncHandler(courseController.loadCourse),
 	asyncHandler(courseController.loadModule),
 	asyncHandler(learningRecordController.courseResult)

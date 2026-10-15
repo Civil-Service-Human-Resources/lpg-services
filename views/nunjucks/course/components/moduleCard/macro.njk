@@ -14,6 +14,15 @@
     </div>
 {% endmacro %}
 
+{% macro blendedModuleCardTitle(params) %}
+    {{ moduleCardTitle({
+        title: params.title,
+        description: params.description,
+        displayMandatoryStatus: true,
+        isMandatory: isMandatory
+    }) }}
+{% endmacro %}
+
 {% macro moduleCardDetails(params) %}
     <div class="discite__properties u-clearfix">
         <ul class="discite__property">
@@ -24,24 +33,25 @@
             {% if params.duration %}
                 <li class="discite__property-item">
                     <span>Duration:</span>
-                    <span class="lpg-course-duration">{{ params.duration }}</span>
+                    <span class="lpg-course-duration">{{ params.duration | formatDuration }}</span>
                 </li>
             {% endif %}
             {% if params.type !== 'file' %}
+                {% set cost = "Free" if params.costInPounds === 0 else "£" + params.costInPounds %}
                 <li class="discite__property-item">
                     <span>Cost:</span>
-                    <span class="lpg-course-cost">&pound;{{ params.cost or 'Free' }}</span>
+                    <span class="lpg-course-cost">{{ cost }}</span>
                 </li>
             {% endif %}
         </ul>
-        {% if params.displayState %}
-            <div class="discite__status"><span class="badge badge--info ">{{ i18n(params.displayState) }}</span></div>
+        {% if params.state !== 'NULL' %}
+            <div class="discite__status"><span class="badge badge--info ">{{ i18n(params.state) }}</span></div>
         {% endif %}
     </div>
 {% endmacro %}
 
 {% macro moduleCardCtaLink(params) %}
-    <form class="discite__link-button--main" method="POST" action="{{ params.url }}" rel='noopener' novalidate>
+    <form class="discite__link-button--main" method="POST" action="{{ params.launchLink }}" rel='noopener' novalidate>
         <input type="hidden" name="_csrf" value="{{ _csrf }}" />
         {{ params.ctaButton | safe }}
         <button type="submit" class="discite__link-button--main discite__action-link--button"
@@ -63,19 +73,16 @@
             {% elseif not params.canBeBooked and params.type === "face-to-face" %}
                 <span>{{ i18n('components.notification_banner.course_not_bookable') }}</span>
             {% else %}
+                {% set launchLink = "/courses/" + params.courseId + "/" + params.id %}
                 {% set typeMap = {
-                    "face-to-face": {buttonHtml: 'Book <span class="visually-hidden">' + params.title + '</span>'},
-                    "file": {buttonHtml: 'Download <span class="visually-hidden">' + params.title + '</span> file', extraText: params.fileExtAndSize},
-                    "video": {buttonHtml: 'Go to <span class="visually-hidden">'+  params.title + '</span> video'},
-                    "link": {buttonHtml: 'Go to ' + params.title + ' (opens in a new tab)', newTab: true},
-                    "elearning": {buttonHtml: 'Start <span class="visually-hidden">' + params.title + '</span>'}
+                    "face-to-face": {buttonHtml: 'Book <span class="visually-hidden">' + params.title + '</span>', launchLink: "/book/" + params.courseId + "/" + params.id + "/choose-date"},
+                    "file": {buttonHtml: 'Download <span class="visually-hidden">' + params.title + '</span> file', launchLink: launchLink , extraText: params.fileExtAndSize},
+                    "video": {buttonHtml: 'Go to <span class="visually-hidden">'+  params.title + '</span> video', launchLink: launchLink },
+                    "link": {buttonHtml: 'Go to ' + params.title + ' (opens in a new tab)', newTab: true, launchLink: launchLink },
+                    "elearning": {buttonHtml: 'Start <span class="visually-hidden">' + params.title + '</span>', launchLink: launchLink }
                 } %}
-                {{ moduleCardCtaLink({
-                    url: params.launchLink,
-                    buttonHtml: typeMap[params.type].buttonHtml,
-                    newTab: typeMap[params.type].newTab,
-                    extraText: typeMap[params.type].extraText
-                }) }}
+                {% set params = typeMap[params.type] %}
+                {{ moduleCardCtaLink(params) }}
             {% endif %}
         </div>
     {% endif %}
@@ -83,7 +90,7 @@
 
 {% macro moduleCard(module) %}
     <div class="discite__item u-clearfix discite__item--module">
-        {{ moduleCardTitle(module) }}
+        {{ blendedModuleCardTitle(module) }}
         {{ moduleCardDetails(module) }}
         {{ moduleCardCta(module) }}
     </div>

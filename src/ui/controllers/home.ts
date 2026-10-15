@@ -71,7 +71,7 @@ export async function generateActionBanner(
 				if (course !== undefined) {
 					const yesHref = ['skip', 'move'].includes(action)
 						? `/book/${courseId}/${moduleId}/${eventId}/${action}`
-						: `/courses/${courseId}/delete`
+						: `/courses/${courseId}/delete?ref=home`
 					return {
 						title: request.__('learning_confirm_' + action + '_plan_title', course.title),
 						message: request.__('learning_confirm_' + action + '_plan_message'),
