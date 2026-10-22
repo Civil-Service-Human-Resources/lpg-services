@@ -30,7 +30,7 @@
 
 {% macro removeFromLearningPlanLink(params) %}
     {{ ctaLink({
-        "href": "/home?delete=" + params.courseId,
+        "href": YOUR_LEARNING_URL + "?delete=" + params.courseId,
         "text": "Remove"
     }) }}
 {% endmacro %}
