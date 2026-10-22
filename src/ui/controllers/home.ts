@@ -1,4 +1,5 @@
 import * as express from 'express'
+import {NSG_FLAG} from '../../lib/config'
 import * as config from '../../lib/config'
 import * as extended from '../../lib/extended'
 import {getLogger} from '../../lib/logger'
@@ -78,7 +79,7 @@ export async function generateActionBanner(
 						yesText: request.__('learning_confirm_' + action + '_yes_option'),
 						yesHref,
 						noText: request.__('learning_confirm_' + action + '_no_option'),
-						noHref: '/',
+						noHref: NSG_FLAG ? '/your-learning' : '/home',
 					}
 				}
 			}
