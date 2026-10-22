@@ -322,7 +322,7 @@ describe('Homepage controller tests', () => {
 					},
 					{
 						text: 'No, keep it.',
-						href: '/',
+						href: '/home',
 					},
 				],
 			})
@@ -446,7 +446,7 @@ describe('Homepage controller tests', () => {
 							},
 							{
 								text: 'No',
-								href: '/',
+								href: '/home',
 							},
 						],
 					})
@@ -463,7 +463,7 @@ describe('Homepage controller tests', () => {
 							},
 							{
 								text: 'No, keep it',
-								href: '/',
+								href: '/home',
 							},
 						],
 					})
