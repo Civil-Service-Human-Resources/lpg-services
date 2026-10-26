@@ -25,7 +25,7 @@ pool:
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '20.18'
+      versionSpec: '22.23.4'
     displayName: 'Install Node.js'
 
   - task: Npm@1
