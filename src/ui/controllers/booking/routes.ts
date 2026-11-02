@@ -1,4 +1,5 @@
 import {NextFunction, Request, Response} from 'express'
+import {requiresDepartmentHierarchy} from '../../../lib/ui/requiresDepartmentHierarchy'
 import * as courseController from '../course'
 
 import * as express from 'express'
@@ -7,7 +8,7 @@ import * as bookingController from './booking'
 import * as cancelBookingController from './cancel'
 
 export const router: express.Router = express.Router()
-
+router.param('courseId', asyncHandler(requiresDepartmentHierarchy))
 router.param('courseId', asyncHandler(courseController.loadCourse))
 router.param('moduleId', asyncHandler(courseController.loadModule))
 router.param('eventId', asyncHandler(courseController.loadEvent))

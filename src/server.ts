@@ -8,7 +8,7 @@ import * as cors from 'cors'
 import * as express from 'express'
 import * as asyncHandler from 'express-async-handler'
 import * as session from 'express-session'
-import {AUTHENTICATION, BACKEND_SERVER_PATH, NSG_FLAG, STATIC_DIR} from './lib/config'
+import {ASSET_MANIFEST, AUTHENTICATION, BACKEND_SERVER_PATH, NSG_FLAG} from './lib/config'
 import * as config from './lib/config'
 import * as corsConfig from './lib/config/corsConfig'
 import * as luscaConfig from './lib/config/luscaConfig'
@@ -22,6 +22,7 @@ import * as csrsService from './lib/service/civilServantRegistry/csrsService'
 import {Grades} from './lib/service/civilServantRegistry/grade/grades'
 import {Interests} from './lib/service/civilServantRegistry/interest/interests'
 import {OrganisationalUnitCache} from './lib/service/civilServantRegistry/organisationalUnit/organisationalUnitCache'
+import {LearningCategoryCache} from './lib/service/cslService/cache/learningCategoryCache'
 import {LearningPlanCache} from './lib/service/cslService/cache/LearningPlanCache'
 import {LearningRecordCache} from './lib/service/cslService/cache/learningRecordCache'
 import {RequiredLearningCache} from './lib/service/cslService/cache/RequiredLearningCache'
@@ -32,12 +33,11 @@ import * as nunjucks from './lib/ui/middleware/nunjucks'
 import * as redirectTo from './lib/ui/middleware/redirectTo'
 import * as profileChecker from './lib/ui/profileChecker'
 import * as lusca from 'lusca'
-import * as serveStatic from 'serve-static'
-import {URL} from 'url'
 import {requiresDepartmentHierarchy} from './lib/ui/requiresDepartmentHierarchy'
 import * as template from './lib/ui/template'
 import {AnonymousCache} from './lib/utils/anonymousCache'
 import {redisClient} from './lib/utils/redis'
+import {setSimpleCache, SimpleCache} from './lib/utils/simpleCache'
 import * as bookingRouter from './ui/controllers/booking/routes'
 import * as courseController from './ui/controllers/course'
 import * as errorController from './ui/controllers/errorHandler'
@@ -121,7 +121,16 @@ const formattedOrganisationListCache = new FormattedOrganisationListCache(
 const learningRecordCache = new LearningRecordCache(redisClient, config.ENDPOINT_REDIS.LEARNING_RECORD.defaultTTL)
 const requiredLearningCache = new RequiredLearningCache(redisClient, config.ENDPOINT_REDIS.REQUIRED_LEARNING.defaultTTL)
 const learningPlanCache = new LearningPlanCache(redisClient, config.ENDPOINT_REDIS.LEARNING_PLAN.defaultTTL)
-cslService.setCaches(learningRecordCache, requiredLearningCache, learningPlanCache, formattedOrganisationListCache)
+const categoryPageCache = new LearningCategoryCache(redisClient, config.ENDPOINT_REDIS.LEARNING_CATEGORY.defaultTTL)
+cslService.setCaches(
+	learningRecordCache,
+	requiredLearningCache,
+	learningPlanCache,
+	formattedOrganisationListCache,
+	categoryPageCache
+)
+
+setSimpleCache(new SimpleCache(redisClient, config.REDIS.defaultTTL))
 
 app.use(flash())
 
@@ -131,34 +140,20 @@ app.use(bodyParser.text())
 
 app.use(compression({threshold: 0}))
 
-app.locals.staticAssetDomain = ''
-app.locals.staticAssetRoot = ''
-
 app.locals.feedbackRoot = config.FEEDBACK_URL
 app.locals.nsgFeedbackRoot = config.NSG_FEEDBACK_URL
 
-if (config.STATIC_ASSET_ROOT) {
-	try {
-		const staticAssetUrl = new URL(config.STATIC_ASSET_ROOT)
+logger.debug(`Registering static assets at ${config.STATIC_ASSETS_DIR} onto endpoint /${config.STATIC_ASSETS_DIR_NAME}`)
+app.use(`/${config.STATIC_ASSETS_DIR_NAME}`, (req, res, next) => {
+	req.url = ASSET_MANIFEST.getAsset(req.url)
+	next()
+})
+app.use(
+	`/${config.STATIC_ASSETS_DIR_NAME}`,
+	express.static(config.STATIC_ASSETS_DIR, {maxAge: config.STATIC_ASSET_TTL, etag: false, acceptRanges: false})
+)
 
-		app.locals.staticAssetDomain = staticAssetUrl.hostname
-		app.locals.staticAssetRoot = config.STATIC_ASSET_ROOT
-
-		if (staticAssetUrl.protocol !== 'https:') {
-			logger.warn(`Static assets are not being served over ssl (static asset route: ${app.locals.staticAssetRoot})`)
-		}
-	} catch (error) {
-		logger.error(
-			`The configured STATIC_ASSET_ROOT value ("${config.STATIC_ASSET_ROOT}") is not a valid URL, static content will default to being severed from the application server.\nFull error:\n${error}`
-		)
-	}
-}
-
-const staticAssetPath = `${STATIC_DIR}/assets`
-logger.debug(`Registering static assets at ${staticAssetPath}`)
-app.use(serveStatic(staticAssetPath, {maxAge: config.STATIC_ASSET_TTL, etag: false, acceptRanges: false}))
-
-const luscaPolicy = luscaConfig.setCspPolicy(app.locals.staticAssetDomain)
+const luscaPolicy = luscaConfig.setCspPolicy()
 
 app.use(
 	lusca({
@@ -185,8 +180,6 @@ passport.configure(
 	learningRecordCache
 )
 nunjucks.register(app)
-
-app.param('courseId', asyncHandler(requiresDepartmentHierarchy))
 
 app.get('/', homeController.index)
 app.get('/sign-out', asyncHandler(passport.logout))
@@ -251,21 +244,17 @@ Object.values(ProfileEndpoint).forEach(profileEndpoint => {
 	)
 })
 
-app.get('/courses/:courseId', asyncHandler(courseController.loadCourse), asyncHandler(courseController.display))
+app.get('/courses/:courseId', asyncHandler(courseController.display))
 
 app.use('/courses/:courseId/delete', asyncHandler(courseController.markCourseDeleted))
 
-app.use(
-	'/courses/:courseId/:moduleId',
-	asyncHandler(courseController.loadCourse),
-	asyncHandler(courseController.loadModule),
-	asyncHandler(courseController.displayModule)
-)
+app.use('/courses/:courseId/:moduleId', asyncHandler(courseController.displayModule))
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
 
 app.get(
 	'/learning-record/:courseId/:moduleId',
+	asyncHandler(requiresDepartmentHierarchy),
 	asyncHandler(courseController.loadCourse),
 	asyncHandler(courseController.loadModule),
 	asyncHandler(learningRecordController.courseResult)

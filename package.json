@@ -2,7 +2,8 @@
 	"name": "lib",
 	"version": "0.0.1",
 	"scripts": {
-		"build": "concurrently \"npm run compile\" \"npm run sass\" \"npm run js\"",
+		"assets": "node generate-assets.js",
+		"build": "concurrently \"npm run compile\" \"npm run assets\"",
 		"compile": "tsc -p ./tsconfig.json",
 		"dev": "nodemon src/server.ts",
 		"lint": "concurrently \"npm run eslint\" \"npm run format\"",
@@ -12,7 +13,7 @@
 		"format": "prettier --check \"**/*.+(js|ts|json)\"",
 		"fix-format": "prettier --write \"**/*.+(js|ts|json)\"",
 		"nuke": "rm -rf dist node_modules",
-		"js": "esbuild views/assets/js/main.js --bundle --minify --sourcemap --outfile=views/assets/js/main-bundle.min.js",
+		"js": "esbuild views/assets/js/main.js --bundle --minify --sourcemap --outfile=views/assets/js/main.min.js",
 		"watch-js": "npm run js -- --watch",
 		"precommit": "npm run build && npm run test && npm run fix-lint",
 		"sass": "sass --load-path . views/assets/styles:views/assets/styles --style compressed",
