@@ -1,12 +1,9 @@
 import {NextFunction, Request, Response} from 'express'
-import {NSG_FLAG} from '../../lib/config'
 import {ResourceNotFoundError} from '../../lib/exception/ResourceNotFoundError'
 import {getLogger} from '../../lib/logger'
-import * as template from '../../lib/ui/template'
 import {appInsights, appInsightsStarted} from '../../server'
 
 const logger = getLogger('controllers/home')
-const nonProductionEnvironments = ['dev', 'test']
 
 export async function handleError(error: any, request: Request, response: Response, next: NextFunction) {
 	try {
@@ -23,24 +20,10 @@ export async function handleError(error: any, request: Request, response: Respon
 		}
 		response.status(500)
 
-		const isNonProduction: boolean = !!(
-			process.env.ENV_PROFILE && nonProductionEnvironments.includes(process.env.ENV_PROFILE)
-		)
-
-		if (NSG_FLAG) {
-			if (error instanceof ResourceNotFoundError) {
-				return response.render('nsg/notFound.njk')
-			}
-			return response.render('nsg/error.njk')
-		} else {
-			response.send(
-				template.render('error', request, response, {
-					error: error.stack,
-					errorTime: new Date().toISOString(),
-					isNonProd: isNonProduction,
-				})
-			)
+		if (error instanceof ResourceNotFoundError) {
+			return response.render('notFound.njk')
 		}
+		return response.render('error.njk')
 	} catch (e) {
 		console.error('Error handling error', error, e)
 		next(e)

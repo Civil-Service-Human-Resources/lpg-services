@@ -1,0 +1,18 @@
+{% extends baseLayout %}
+
+{% set pageTitle = "Error" %}
+
+{% block content %}
+    <div class="container container--main">
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <h1 class='heading-large'>
+                    Sorry, there is a problem with this service
+                </h1>
+                <p class='govuk-body'>
+                    We're looking into it. Please <a class='govuk-link' href='/sign-out'>sign out</a> and try again.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

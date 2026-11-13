@@ -17,3 +17,4 @@ modules.json
 *.css
 *.css.map
 *.js.map
+views/assets/manifest.json

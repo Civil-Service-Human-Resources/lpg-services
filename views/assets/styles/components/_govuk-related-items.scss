@@ -46,6 +46,7 @@
 		padding-left: 8px;
 	}
 	@include e(td) {
-		padding-right: 8px;
+		//Required important to override the govuk frontend global <table> styles...
+		padding-right: 8px !important;
 	}
 }
