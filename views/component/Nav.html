@@ -5,7 +5,7 @@
    <ul class='nav-list'>
         {#if $signedInUser} {#if $signedInUser.hasCompleteProfile()}
             {#if $req.originalUrl.includes("/home")}
-                <li class="active nav-list-item"><a clas='nav-item' href="/home" aria-current="page">Home</a></li>
+                <li class="active nav-list-item"><a class='nav-item' href="/home" aria-current="page">Home</a></li>
             {:else}
                 <li class='nav-list-item'><a class='nav-item' href="/home">Home</a></li>
             {/if}
@@ -13,12 +13,12 @@
                 <li class='nav-list-item'><a class='nav-item' href="/your-learning">{$i18n('home_page_title')}</a></li>
              {/if}
             {#if $req.originalUrl.includes("/course-catalogue")}
-                <li class="active nav-list-item"><a clas='nav-item' href="/course-catalogue" aria-current="page">{$i18n('course_catalogue_page_title')}</a></li>
+                <li class="active nav-list-item"><a class='nav-item' href="/course-catalogue" aria-current="page">{$i18n('course_catalogue_page_title')}</a></li>
             {:else}
                 <li class='nav-list-item'><a class='nav-item' href="/course-catalogue">{$i18n('course_catalogue_page_title')}</a></li>
             {/if}
             {#if $req.originalUrl.includes("/learning-record")}
-                <li class="active nav-list-item"><a clas='nav-item' href="/learning-record" aria-current="page">Learning record</a></li>
+                <li class="active nav-list-item"><a class='nav-item' href="/learning-record" aria-current="page">Learning record</a></li>
             {:else}
                 <li class='nav-list-item'><a class='nav-item' href="/learning-record">Learning record</a></li>
             {/if}
@@ -26,7 +26,7 @@
        {#if $req.originalUrl.includes("/profile")}
        <li class="active nav-list-item"><a class='nav-item' href="/profile" aria-current="page">Profile</a></li>
        {:else}
-       <li class='nav-list-item'><a clas='nav-item' href="/profile">Profile</a></li>
+       <li class='nav-list-item'><a class='nav-item' href="/profile">Profile</a></li>
        {/if}
        {#if $signedInUser.isAdmin()}
           <li class='nav-list-item'>
