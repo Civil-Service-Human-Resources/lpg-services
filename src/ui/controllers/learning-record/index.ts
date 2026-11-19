@@ -1,3 +1,4 @@
+import dayjs = require('dayjs')
 import * as express from 'express'
 import * as extended from '../../../lib/extended'
 import {getLogger} from '../../../lib/logger'
@@ -7,6 +8,7 @@ import {
 	learningRecordCache,
 	requiredLearningCache,
 	getLearningRecord,
+	downloadLearningRecordReport,
 } from '../../../lib/service/cslService/cslServiceClient'
 import * as template from '../../../lib/ui/template'
 import * as datetime from '../../../lib/datetime'
@@ -80,6 +82,27 @@ export async function display(req: express.Request, res: express.Response) {
 		requiredLearningStatusMessage,
 		learningRecord,
 	})
+}
+
+export async function downloadReport(req: express.Request, res: express.Response) {
+	logger.debug(`Downloading learning record for ${req.user.id}`)
+	try {
+		const response = await downloadLearningRecordReport(req.user)
+		const fallbackFilename = `learning-record_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.zip`
+		const contentDisposition =
+			response.headers && response.headers['content-disposition']
+				? response.headers['content-disposition']
+				: `attachment; filename="${fallbackFilename}"`
+		const contentType =
+			response.headers && response.headers['content-type'] ? response.headers['content-type'] : 'application/zip'
+
+		res.setHeader('Content-Type', contentType)
+		res.setHeader('Content-Disposition', contentDisposition)
+		response.data.pipe(res)
+	} catch (e) {
+		logger.error('Error downloading learning record', e)
+		res.sendStatus(500)
+	}
 }
 
 export function getRequiredLearningStatusMessage(

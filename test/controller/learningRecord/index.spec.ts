@@ -1,6 +1,7 @@
 import {expect} from 'chai'
 import * as asyncHandler from 'express-async-handler'
 import * as sinon from 'sinon'
+import {Readable} from 'stream'
 import * as request from 'supertest'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
 import {LearningRecordCache} from '../../../src/lib/service/cslService/cache/learningRecordCache'
@@ -22,6 +23,7 @@ describe('Learning record controller tests', () => {
 	const sandbox = sinon.createSandbox()
 	const app = getApp()
 	app.get('/learning-record', asyncHandler(learningRecordIndex.display))
+	app.get('/learning-record/download', asyncHandler(learningRecordIndex.downloadReport))
 
 	let cslServiceClientStub: sinon.SinonStubbedInstance<typeof client>
 	let learningRecordCacheStub: sinon.SinonStubbedInstance<LearningRecordCache>
@@ -98,6 +100,72 @@ describe('Learning record controller tests', () => {
 				expect(res.text).to.contain(
 					'<p class="no-margin">You have <a href="/home">2 required courses</a> to complete.</p>'
 				)
+				expect(res.text).to.contain('<a class="button" href="/learning-record/download">Download learning record</a>')
+			})
+		})
+
+		describe('Download report tests', () => {
+			it('Should download the report zip successfully using Content-Disposition header from upstream service', async () => {
+				const mockStream = new Readable({
+					read() {
+						this.push('mock zip file content')
+						this.push(null)
+					},
+				})
+				cslServiceClientStub.makeRequestResponse.resolves({
+					data: mockStream,
+					headers: {
+						'content-disposition': 'attachment; filename="learner_record_2026-11-18_14-43-26.zip"',
+						'content-type': 'application/zip',
+					},
+					status: 200,
+					statusText: 'OK',
+					config: {},
+				} as any)
+
+				const res = await request(app).get('/learning-record/download').set({roles: 'LEARNER'})
+				expect(res.status).eql(200)
+				expect(res.headers['content-type']).to.include('application/zip')
+				expect(res.headers['content-disposition']).to.eql(
+					'attachment; filename="learner_record_2026-11-18_14-43-26.zip"'
+				)
+				expect(res.text).to.eql('mock zip file content')
+				expect(cslServiceClientStub.makeRequestResponse.calledOnce).to.eql(true)
+				expect(cslServiceClientStub.makeRequestResponse.firstCall.args[0]).to.deep.eql({
+					method: 'GET',
+					responseType: 'stream',
+					url: '/learning/record/download',
+				})
+			})
+
+			it('Should fallback to default filename with timestamp when Content-Disposition is not present', async () => {
+				sandbox.useFakeTimers(new Date('2026-11-18 16:00:00'))
+				const mockStream = new Readable({
+					read() {
+						this.push('mock zip file content')
+						this.push(null)
+					},
+				})
+				cslServiceClientStub.makeRequestResponse.resolves({
+					data: mockStream,
+					headers: {},
+					status: 200,
+					statusText: 'OK',
+					config: {},
+				} as any)
+
+				const res = await request(app).get('/learning-record/download').set({roles: 'LEARNER'})
+				expect(res.status).eql(200)
+				expect(res.headers['content-disposition']).to.eql(
+					'attachment; filename="learning-record_2026-11-18_16-00-00.zip"'
+				)
+			})
+
+			it('Should return 500 status when download fails', async () => {
+				cslServiceClientStub.makeRequestResponse.rejects(new Error('Network error'))
+
+				const res = await request(app).get('/learning-record/download').set({roles: 'LEARNER'})
+				expect(res.status).eql(500)
 			})
 		})
 	})
