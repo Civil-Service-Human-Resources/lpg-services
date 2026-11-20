@@ -100,7 +100,9 @@ describe('Learning record controller tests', () => {
 				expect(res.text).to.contain(
 					'<p class="no-margin">You have <a href="/home">2 required courses</a> to complete.</p>'
 				)
-				expect(res.text).to.contain('<a class="button" href="/learning-record/download">Download learning record</a>')
+				expect(res.text).to.contain(
+					'<div class="button-container"><a class="button" href="/learning-record/download" aria-label="Download learning record">Download learning record</a></div>'
+				)
 			})
 		})
 
