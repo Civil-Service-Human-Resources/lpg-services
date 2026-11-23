@@ -10,6 +10,14 @@
         <table class="table-simple table--top">
             <caption class="visuallyhidden">Details about the course</caption>
             <tbody>
+                {% if details.learningTags.length > 0 %}
+                    {{ detailsRow({
+                        heading: "Topics",
+                        detail: learningTagDetails({
+                            tags: details.learningTags
+                        })
+                    }) }}
+                {% endif %}
                 {{ detailsRow({
                     heading: "Course type",
                     detail: i18n(details.type)
@@ -17,7 +25,7 @@
                 {% if details.duration %}
                     {{ detailsRow({
                         heading: i18n("Duration"),
-                        detail: details.duration
+                        detail: details.duration | formatDuration
                     }) }}
                 {% endif %}
                 {% if details.areasOfWork.length > 0 %}
@@ -38,10 +46,11 @@
                         detail: gradesList(details.grades)
                     }) }}
                 {% endif %}
-                {% if details.cost %}
+                {% if details.costInPounds %}
+                    {% set cost = "Free" if details.costInPounds === 0 else "£" + details.costInPounds + " (ex VAT)" %}
                     {{ detailsRow({
                         heading: i18n("Cost"),
-                        detail: "£" + details.cost + " (ex VAT)"
+                        detail: cost
                     }) }}
                 {% endif %}
             </tbody>
@@ -49,11 +58,35 @@
     </aside>
 {% endmacro %}
 
+{% macro learningTagDetails(params) %}
+    {% set list = [] %}
+    {% for tag in params.tags %}
+        {% set list = (list.push({"text": tag.name, "href": tag.urlSlug}), list) %}
+    {% endfor %}
+    {{ detailsList({
+        list: list
+    }) }}
+{% endmacro %}
+
+{% macro detailsList(params) %}
+    <ul class="course-grades-list">
+        {% for item in params.list %}
+            <li>
+                {% if item.href %}
+                    <a href='{{ item.href }}'>{{ item.text }}</a>
+                {% else %}
+                    {{ item.text }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 {% macro gradesList(grades) %}
     {% set translated = grades | i18nList %}
     <ul class="course-grades-list">
         {% for grade in translated %}
-            <li>{{ grade }}{% if loop.last and translated | length > 1 %}.{% elseif not loop.last %},{% endif %}</li>
+            <li>{{ grade }}</li>
         {% endfor %}
     </ul>
 {% endmacro %}

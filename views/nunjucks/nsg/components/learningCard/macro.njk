@@ -10,7 +10,13 @@
             <div class='learning-card__content'>
                 <div class='learning-card__content_section'>{{ params.description }}</div>
                 <div class="learning-card__actions">
-                    <a class='learning-card__action' {% if params.action.newTab %}target="_blank" rel="noreferrer noopener"{% endif %} href="{{ params.action.href }}">{{ params.action.text }}</a>
+                    <a class='learning-card__action' {% if params.action.newTab %}target="_blank" rel="noreferrer noopener"{% endif %} href="{{ params.action.href }}">
+                        {% if params.action.text %}
+                            {{ params.action.text }}
+                        {% elseif params.action.html %}
+                            {{ params.action.html | safe }}
+                        {% endif %}
+                    </a>
                 </div>
             </div>
         </div>

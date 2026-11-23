@@ -5,7 +5,6 @@ export interface CourseDetailsAssertion {
 	expType: string
 	expDuration: string | null
 	expAreasOfWork: string[] | null
-	expLocation: string | null
 	expGrades: string[] | null
 	expCost: string | null
 }
@@ -38,10 +37,6 @@ export const assertCourseDetails = (html: HTMLElement, expValues: CourseDetailsA
 
 	if (expValues.expAreasOfWork) {
 		assertTableRow(tableElement, 'Key area', expValues.expAreasOfWork.join(', '))
-	}
-
-	if (expValues.expLocation) {
-		assertTableRow(tableElement, 'Location', expValues.expLocation)
 	}
 
 	if (expValues.expGrades) {

@@ -1,4 +1,5 @@
 import {plainToInstance} from 'class-transformer'
+import {simpleCache} from '../../utils/simpleCache'
 import {client} from './baseConfig'
 import {
 	HOMEPAGE_COMPLETE_REQUIRED_COURSES,
@@ -9,6 +10,7 @@ import {
 	POPULAR_COURSES_MAX_COURSES,
 } from '../../config'
 import {User} from '../../model'
+import {LearningCategoryCache} from './cache/learningCategoryCache'
 import {LearningPlanCache} from './cache/LearningPlanCache'
 import {LearningRecordCache} from './cache/learningRecordCache'
 import {RequiredLearningCache} from './cache/RequiredLearningCache'
@@ -26,6 +28,7 @@ import {LaunchModuleResponse} from './models/launchModuleResponse'
 import {AreasOfWork} from './models/areasOfWork'
 import {CategoryHomepage} from './models/learning/categories/categoryHomepage'
 import {CategoryPage} from './models/learning/categories/categoryPage'
+import {CourseOverview} from './models/learning/courseOverview/courseOverview'
 import {BasicCourseResponse} from './models/learning/learningPlan/basicCourseResponse'
 import {LearningPlan} from './models/learning/learningPlan/learningPlan'
 import {LearningRecord} from './models/learning/learningRecord/learningRecord'
@@ -37,17 +40,20 @@ export let learningRecordCache: LearningRecordCache
 export let requiredLearningCache: RequiredLearningCache
 export let learningPlanCache: LearningPlanCache
 export let formattedOrganisationListCache: FormattedOrganisationListCache
+export let categoryPageCache: LearningCategoryCache
 
 export const setCaches = (
 	learningRecordPageCache: LearningRecordCache,
 	requiredLearningPageCache: RequiredLearningCache,
 	LearningPlanPageCache: LearningPlanCache,
-	formattedOrgListCache: FormattedOrganisationListCache
+	formattedOrgListCache: FormattedOrganisationListCache,
+	categoryCache: LearningCategoryCache
 ) => {
 	learningRecordCache = learningRecordPageCache
 	requiredLearningCache = requiredLearningPageCache
 	learningPlanCache = LearningPlanPageCache
 	formattedOrganisationListCache = formattedOrgListCache
+	categoryPageCache = categoryCache
 }
 
 export async function clearLearningCachesForCourse(userId: string, courseId: string) {
@@ -401,24 +407,50 @@ export async function getOrganisationalUnits(params: GetOrganisationalUnitParams
 }
 
 export async function getCategoryHomepage(user: User) {
-	const res = await client._get(
-		{
-			url: '/learning/categories',
-		},
-		user
-	)
-	return plainToInstance(CategoryHomepage, res)
+	let homepage = await simpleCache.getWithId('categoryPage:homepage', CategoryHomepage)
+	if (homepage === undefined) {
+		const res = await client._get(
+			{
+				url: '/learning/categories',
+			},
+			user
+		)
+		homepage = plainToInstance(CategoryHomepage, res, {
+			groups: ['api'],
+		})
+		await simpleCache.setWithId('categoryPage:homepage', homepage)
+	}
+	return homepage
 }
 
 export async function getCategoryPage(user: User, url: string, page: number, contentType?: string) {
+	let categoryPage = await categoryPageCache.get(`${url}:${contentType === undefined ? '' : contentType + ':'}${page}`)
+	if (categoryPage === undefined) {
+		const res = await client._get(
+			{
+				url: `/learning/categories/${url}` + (contentType === undefined ? '' : `/${contentType}`),
+				params: {
+					page,
+				},
+			},
+			user
+		)
+		categoryPage = plainToInstance(CategoryPage, res, {
+			groups: ['api'],
+		})
+		if (categoryPage.courses.results.length === 0) {
+			await categoryPageCache.setObject(categoryPage)
+		}
+	}
+	return categoryPage
+}
+
+export async function getCourseOverview(user: User, courseId: string) {
 	const res = await client._get(
 		{
-			url: `/learning/categories/${url}` + (contentType === undefined ? '' : `/${contentType}`),
-			params: {
-				page,
-			},
+			url: `/courses/${courseId}/overview`,
 		},
 		user
 	)
-	return plainToInstance(CategoryPage, res)
+	return plainToInstance(CourseOverview, res)
 }

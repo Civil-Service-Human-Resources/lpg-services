@@ -8,7 +8,7 @@
         description: params.shortDescription,
         action: {
             href: '/courses/' + params.id,
-            text: 'View course details'
+            html: 'View <span class="govuk-visually-hidden">' + params.title + '</span> course details'
         }
     }) }}
 {% endmacro %}

@@ -1,8 +1,8 @@
 {% macro courseActions(params) %}
-    {% if params.isInLearningPlan != undefined %}
+    {% if params.isInLearningPlan != 'CANNOT_BE_ADDED_TO_LEARNING_PLAN' %}
         <aside class="lpg-related-items lpg-related-items--course-actions">
             <h2 class="heading-medium">Actions</h2>
-            {% if params.isInLearningPlan %}
+            {% if params.isInLearningPlan == 'IS_IN_LEARNING_PLAN' %}
                 <a href="/courses/{{ params.courseId }}?delete={{ params.courseId }}">Remove from Learning Plan</a>
             {% else %}
                 <a href="/course-catalogue/add/{{ params.courseId }}?ref=course">Add to Learning Plan</a>

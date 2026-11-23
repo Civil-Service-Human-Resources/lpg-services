@@ -31,6 +31,7 @@ export abstract class Cache<T> {
 	async set(id: string | number, object: T, ttlOverride?: number) {
 		const key = this.getFormattedKey(id)
 		try {
+			this.logger.debug(`Setting object with ID ${key}`)
 			await promisify(this.redisClient.setex).bind(this.redisClient)(
 				key,
 				ttlOverride ? ttlOverride : this.defaultTTL,

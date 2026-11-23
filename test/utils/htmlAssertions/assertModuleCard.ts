@@ -45,7 +45,7 @@ export const assertModuleCard = (elem: HTMLElement, expValue: ModuleCardAssertio
 
 		if (details.expCost !== undefined) {
 			if (details.expCost !== null) {
-				card.getByText(`£${details.expCost}`)
+				card.getByText(`${details.expCost}`)
 			} else {
 				expect(elem.querySelector('span.lpg-course-cost')).to.eql(null)
 			}

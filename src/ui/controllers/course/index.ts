@@ -1,57 +1,68 @@
 import * as express from 'express'
+import {NSG_FLAG} from '../../../lib/config'
+import {ClientError} from '../../../lib/exception/ClientError'
 import * as extended from '../../../lib/extended'
 import {getLogger} from '../../../lib/logger'
 import * as catalog from '../../../lib/service/catalog'
 import * as cslServiceClient from '../../../lib/service/cslService/cslServiceClient'
-import {removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslServiceClient'
-import * as template from '../../../lib/ui/template'
+import {getCourseOverview, removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslServiceClient'
 import * as youtube from '../../../lib/youtube'
-import {getCoursePage} from './models/factory'
 import {generateActionBanner, generateNotificationBanner} from '../home'
 
 const logger = getLogger('controllers/course')
 
-export async function displayModule(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
-
-	const course = req.course
-	const module = req.module!
-
-	switch (module.type) {
-		case 'elearning':
-		case 'link':
-		case 'file':
-			const launchModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
-			return res.redirect(launchModuleResponse.launchLink)
-		case 'face-to-face':
-			return res.redirect(`/book/${course.id}/${module.id}/choose-date`)
-		case 'video':
-			const launchVideoModuleResponse = await cslServiceClient.launchModule(course.id, module.id, req.user)
-			const videoLink = launchVideoModuleResponse.launchLink
-			return res.send(
-				template.render(`course/display-video`, req, res, {
-					course,
-					module,
-					video: !videoLink.search('/http(.+)youtube(.*)/i') ? null : await youtube.getBasicInfo(videoLink),
-				})
-			)
-		default:
-			logger.debug(`Unknown module type: ${module.type}`)
-			return res.sendStatus(500)
+export async function displayModule(req: express.Request, res: express.Response) {
+	try {
+		const launchModuleResponse = await cslServiceClient.launchModule(req.params.courseId, req.params.moduleId, req.user)
+		switch (launchModuleResponse.moduleType) {
+			case 'elearning':
+			case 'link':
+			case 'file':
+				return res.redirect(launchModuleResponse.launchLink)
+			case 'video':
+				res.locals.courseId = req.params.courseId
+				res.locals.moduleId = req.params.moduleId
+				if (launchModuleResponse.launchLink.match(/http(.+)youtube(.*)/) != null) {
+					const video = await youtube.getBasicInfo(launchModuleResponse.launchLink)
+					if (video === undefined) logger.warn(`Youtube video with URL ${launchModuleResponse.launchLink} not found`)
+					return res.render('course/module/youtube-video.njk', {...launchModuleResponse, video})
+				} else {
+					return res.render('course/module/video.njk', launchModuleResponse)
+				}
+			default:
+				logger.debug(`Can't launch a module of type ${launchModuleResponse.moduleType}`)
+				return res.sendStatus(500)
+		}
+	} catch (e) {
+		if (e instanceof ClientError) {
+			logger.info(`Attempted to launch an archived course`)
+			return res.redirect(`/courses/${req.params.courseId}`)
+		} else {
+			throw e
+		}
 	}
 }
 
-export async function display(ireq: express.Request, res: express.Response) {
-	const req = ireq as extended.CourseRequest
+export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
-	const course = req.course
-	const pageModel = await getCoursePage(req.user, course)
-	const learningPlan = [course]
+	const pageModel = await getCourseOverview(req.user, req.params.courseId)
+	const learningPlan = [pageModel]
 	const notificationBanner = await generateNotificationBanner(req, learningPlan)
 	const actionBanner = await generateActionBanner(req, learningPlan)
-	pageModel.backLink = res.locals.backLink
-	return res.render(`course/${pageModel.template}.njk`, {
-		pageModel,
+	const pageTemplate = {
+		elearning: 'elearning',
+		file: 'file',
+		video: 'singleModule',
+		link: 'singleModule',
+		blended: 'blended',
+		'face-to-face': 'faceToFace',
+		unknown: 'noModules',
+	}[pageModel.type]
+	return res.render(`course/${pageTemplate}.njk`, {
+		pageModel: {
+			...pageModel,
+			backLink: res.locals.backLink,
+		},
 		banners: {
 			notification: notificationBanner,
 			action: actionBanner,
@@ -82,7 +93,6 @@ export async function loadModule(ireq: express.Request, res: express.Response, n
 			return next()
 		}
 	}
-	console.log('404!')
 	res.sendStatus(404)
 }
 
@@ -103,9 +113,10 @@ export async function loadEvent(ireq: express.Request, res: express.Response, ne
 export async function markCourseDeleted(req: express.Request, res: express.Response) {
 	const courseId = req.params.courseId
 	const resp = await removeCourseFromLearningPlan(courseId, req.user)
+	const redirect = req.query.ref === 'home' ? (NSG_FLAG ? '/your-learning' : '/home') : `/courses/${courseId}`
 	req.flash('successTitle', req.__('learning_removed_from_plan_title', resp.courseTitle))
 	req.flash('successMessage', req.__('learning_removed_from_plan_message', resp.courseTitle))
 	req.session!.save(() => {
-		res.redirect(`/courses/${courseId}`)
+		res.redirect(redirect)
 	})
 }

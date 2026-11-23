@@ -29,7 +29,7 @@
 
 {% macro start(params) %}
     {% set html %}
-        Start <span class="visually-hidden">{{ params.courseTitle }}</span>
+        View<span class="visually-hidden"> {{ params.courseTitle }}</span> course details
     {% endset %}
     {{ learningCardActionLink({
         "link": "/courses/" + params.courseId,

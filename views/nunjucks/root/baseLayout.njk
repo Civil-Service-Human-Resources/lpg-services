@@ -3,19 +3,19 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="shortcut icon" href="{{ staticAssetRoot }}/img/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{ asset('img/favicon.ico') }}" type="image/x-icon" />
         <meta name="theme-color" content="#0b0c0c" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta property="og:image" content="{{ staticAssetRoot }}/img/opengraph-image.png">
+        <meta property="og:image" content="{{ asset('img/opengraph-image.png') }}">
         <title>{{ pageTitle }} - {{ i18n('proposition_name') }}</title>
         
         {% if NSG_FLAG === true %}
-            <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/main-nsg.css">
+            <link rel="stylesheet" href="{{ asset('styles/main-nsg.css') }}">
         {% else %}
-            <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/main.css">
+            <link rel="stylesheet" href="{{ asset('styles/main.css') }}">
         {% endif %}
 
-        <link rel="stylesheet" href="{{ staticAssetRoot }}/styles/video-js.min.css">
+        <link rel="stylesheet" href="{{ asset('styles/video-js.min.css') }}">
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"></script> {{ googleAnalyticsCode | safe }}
     </head>
     <body>
@@ -37,6 +37,6 @@
         {% include "./footer.njk" %}
         <div class="container container--main bottom-main"></div>
         <script>document.body.className = document.body.className.replace('', 'js-enabled');</script>
-        <script src="{{ staticAssetRoot }}/js/main-bundle.min.js"></script>
+        <script src="{{ asset('js/main.min.js') }}"></script>
     </body>
 </html>

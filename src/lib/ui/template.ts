@@ -1,8 +1,7 @@
-import {STATIC_DIR} from '../config'
+import {ASSET_MANIFEST, STATIC_DIR} from '../config'
 import * as config from '../config'
 
 import * as datetime from '../datetime'
-import * as fileHelpers from '../filehelpers'
 
 import * as express from 'express'
 import * as fs from 'fs'
@@ -33,6 +32,11 @@ export function isDirectory(filePath: string) {
 	} catch {
 		return false
 	}
+}
+
+export function asset(filename: string) {
+	filename = ASSET_MANIFEST.getAsset(filename)
+	return [config.STATIC_ASSET_ROOT, config.STATIC_ASSETS_DIR_NAME, filename].join('/')
 }
 
 export function toHtml(text: string) {
@@ -70,11 +74,8 @@ function getHelpers(): {} {
 	return {
 		config,
 		datetime,
-		fileHelpers,
-		getFirstKey,
-		getKeys,
+		asset,
 		i18n: req.__ ? req.__.bind(req) : null,
-		isEmpty,
 		req,
 		signedInUser: req.user,
 		toHtml,
@@ -120,16 +121,4 @@ export function render(page: string, req: express.Request, res: express.Response
 	}
 
 	return renderedComponent
-}
-
-export function isEmpty(object: any) {
-	return getKeys(object).length === 0
-}
-
-export function getFirstKey(object: any) {
-	return getKeys(object).pop()
-}
-
-export function getKeys(object: any) {
-	return Object.keys(object)
 }
