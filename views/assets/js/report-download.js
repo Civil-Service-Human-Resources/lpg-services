@@ -37,7 +37,28 @@ if (successMsg !== undefined && errorMsg !== undefined) {
 						}),
 						headers: {'Content-type': 'application/json; charset=UTF-8'},
 					})
-					success = resp.ok
+					if (resp.ok) {
+						const blob = await resp.blob()
+						const url = window.URL.createObjectURL(blob)
+						const a = document.createElement('a')
+						a.href = url
+
+						const disposition = resp.headers.get('content-disposition')
+						let filename = 'learning-record.zip'
+						if (disposition && disposition.includes('filename=')) {
+							const matches = disposition.match(/filename="?([^"]+)"?/)
+							if (matches && matches[1]) {
+								filename = matches[1]
+							}
+						}
+
+						a.download = filename
+						document.body.appendChild(a)
+						a.click()
+						a.remove()
+						window.URL.revokeObjectURL(url)
+						success = true
+					}
 				} catch (e) {
 					console.log('Error submitting report request')
 				}
