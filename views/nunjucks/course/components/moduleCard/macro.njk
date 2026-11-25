@@ -5,7 +5,7 @@
             <p class="discite__description">{{ params.description }}</p>
         {% endif %}
         {% if params.displayMandatoryStatus %}
-            {% if params.isMandatory %}
+            {% if params.mandatory %}
                 <p class="discite__description bold-small">This module is mandatory</p>
             {% else %}
                 <p class="discite__optional bold-small">This module is optional</p>
@@ -19,7 +19,7 @@
         title: params.title,
         description: params.description,
         displayMandatoryStatus: true,
-        isMandatory: isMandatory
+        mandatory: params.mandatory
     }) }}
 {% endmacro %}
 
