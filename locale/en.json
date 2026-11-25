@@ -435,5 +435,11 @@
 	"Intelligence analysis": "Intelligence analysis",
 	"Medical": "Medical",
 	"Planning": "Planning",
-	"Veterinary": "Veterinary"
+	"Veterinary": "Veterinary",
+	"reporting": {
+		"report_download": {
+			"success_message": "Your download request is successfull. A zip file containing the CSV file is downloaded.",
+			"error_message": "There was an error processing the download request. If the problem persists, please contact the helpdesk."
+		}
+	}
 }

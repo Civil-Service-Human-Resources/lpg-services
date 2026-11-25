@@ -9,6 +9,7 @@ require('./typeahead')
 require('./prevent-double-click')
 require('./nav-search')
 require('./nav-expander')
+require('./report-download')
 const {createAll, ServiceNavigation} = require('govuk-frontend')
 
 document.addEventListener('DOMContentLoaded', function () {
