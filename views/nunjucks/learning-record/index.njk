@@ -13,7 +13,7 @@
                     {{ i18n('reporting.report_download.success_message') }}
                 </p>
             {% else %}
-                <form class="download-report__form" action="{{ params.downloadUrl }}" method="GET">
+                <form class="download-report__form" action="{{ params.downloadUrl }}" method="POST">
                     <input type="hidden" name="_csrf" value="{{ _csrf }}"/>
                     {{ govukButton({
                         text: "Download learning record",

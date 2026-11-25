@@ -251,8 +251,8 @@ app.use('/courses/:courseId/delete', asyncHandler(courseController.markCourseDel
 app.use('/courses/:courseId/:moduleId', asyncHandler(courseController.displayModule))
 
 app.get('/learning-record', asyncHandler(learningRecordController.display))
-app.get('/learning-record/download', asyncHandler(learningRecordController.downloadReport))
-app.get('/learning-record/download/js', asyncHandler(learningRecordController.downloadReport))
+app.post('/learning-record/download', asyncHandler(learningRecordController.downloadReport))
+app.post('/learning-record/download/js', asyncHandler(learningRecordController.downloadReport))
 
 app.get(
 	'/learning-record/:courseId/:moduleId',
