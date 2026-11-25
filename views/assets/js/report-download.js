@@ -4,15 +4,23 @@ const successMsg = jsonLocale.success_message
 const errorMsg = jsonLocale.error_message
 
 const generateResultParagraph = success => {
-	const resultParagraph = document.createElement('p')
-	resultParagraph.classList = 'govuk-body'
 	if (success) {
-		resultParagraph.innerText = successMsg
+		const bannerDiv = document.createElement('div')
+		bannerDiv.className = 'banner banner--confirmation profile-banner'
+		bannerDiv.setAttribute('role', 'status')
+		const p = document.createElement('p')
+		p.className = 'no-margin'
+		const strong = document.createElement('strong')
+		strong.innerText = successMsg
+		p.appendChild(strong)
+		bannerDiv.appendChild(p)
+		return bannerDiv
 	} else {
+		const resultParagraph = document.createElement('p')
+		resultParagraph.className = 'error-message'
 		resultParagraph.innerText = errorMsg
-		resultParagraph.classList.add('govuk-error-message')
+		return resultParagraph
 	}
-	return resultParagraph
 }
 
 const elems = document.getElementsByClassName('download-report')

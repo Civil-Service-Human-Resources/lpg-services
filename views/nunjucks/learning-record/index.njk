@@ -1,5 +1,6 @@
 {% extends baseLayout %}
 {% from "button/macro.njk" import govukButton %}
+{% from components + "/banner/macro.njk" import banner %}
 {% from "./components/learningRecordTable/macro.njk" import learningRecordTable %}
 
 {% set pageTitle = "Learning record" %}
@@ -9,16 +10,17 @@
     <div class="download-report">
         <div class="download-report__panel">
             {% if params.hasRequestedReport %}
-                <p class="govuk-body">
-                    {{ i18n('reporting.report_download.success_message') }}
-                </p>
+                {{ banner({
+                    classes: "banner--confirmation profile-banner",
+                    message: i18n('reporting.report_download.success_message')
+                }) }}
             {% else %}
                 <form class="download-report__form" action="{{ params.downloadUrl }}" method="POST">
                     <input type="hidden" name="_csrf" value="{{ _csrf }}"/>
                     {{ govukButton({
                         text: "Download learning record",
                         preventDoubleClick: true,
-                        classes: "download-report__button",
+                        classes: "button download-report__button",
                         attributes: {
                             "data-submiturl": params.downloadUrl + "/js"
                         }
