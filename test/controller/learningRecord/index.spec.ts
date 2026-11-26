@@ -24,6 +24,8 @@ describe('Learning record controller tests', () => {
 	const app = getApp()
 	app.get('/learning-record', asyncHandler(learningRecordIndex.display))
 	app.get('/learning-record/download', asyncHandler(learningRecordIndex.downloadReport))
+	app.post('/learning-record/download', asyncHandler(learningRecordIndex.downloadReport))
+	app.post('/learning-record/download/js', asyncHandler(learningRecordIndex.downloadReport))
 
 	let cslServiceClientStub: sinon.SinonStubbedInstance<typeof client>
 	let learningRecordCacheStub: sinon.SinonStubbedInstance<LearningRecordCache>
@@ -171,6 +173,47 @@ describe('Learning record controller tests', () => {
 
 				const res = await request(app).get('/learning-record/download').set({roles: 'LEARNER'})
 				expect(res.status).eql(500)
+			})
+
+			it('Should return 500 status when download fails on /learning-record/download/js', async () => {
+				cslServiceClientStub.makeRequestResponse.rejects(new Error('Network error'))
+
+				const res = await request(app).post('/learning-record/download/js').set({roles: 'LEARNER'})
+				expect(res.status).eql(500)
+			})
+
+			it('Should pass error to next when download fails on non-js endpoint', async () => {
+				const error = new Error('Network error')
+				cslServiceClientStub.makeRequestResponse.rejects(error)
+				const req = {
+					path: '/learning-record/download',
+					user: {id: 'user123'},
+				} as any
+				const res = {
+					sendStatus: sinon.stub(),
+				} as any
+				const next = sinon.stub()
+
+				await learningRecordIndex.downloadReport(req, res, next)
+				expect(next.calledOnceWith(error)).to.eql(true)
+				expect(res.sendStatus.called).to.eql(false)
+			})
+
+			it('Should call res.sendStatus(500) when download fails on /js endpoint', async () => {
+				const error = new Error('Network error')
+				cslServiceClientStub.makeRequestResponse.rejects(error)
+				const req = {
+					path: '/learning-record/download/js',
+					user: {id: 'user123'},
+				} as any
+				const res = {
+					sendStatus: sinon.stub(),
+				} as any
+				const next = sinon.stub()
+
+				await learningRecordIndex.downloadReport(req, res, next)
+				expect(res.sendStatus.calledOnceWith(500)).to.eql(true)
+				expect(next.called).to.eql(false)
 			})
 		})
 	})

@@ -84,7 +84,7 @@ export async function display(req: express.Request, res: express.Response) {
 	})
 }
 
-export async function downloadReport(req: express.Request, res: express.Response) {
+export async function downloadReport(req: express.Request, res: express.Response, next?: express.NextFunction) {
 	logger.debug(`Downloading learning record for ${req.user.id}`)
 	try {
 		const response = await downloadLearningRecordReport(req.user)
@@ -101,7 +101,13 @@ export async function downloadReport(req: express.Request, res: express.Response
 		response.data.pipe(res)
 	} catch (e) {
 		logger.error('Error downloading learning record', e)
-		res.sendStatus(500)
+		if (req.path.endsWith('/js')) {
+			return res.sendStatus(500)
+		}
+		if (next) {
+			return next(e)
+		}
+		throw e
 	}
 }
 
