@@ -19,6 +19,8 @@ export async function displayModule(req: express.Request, res: express.Response)
 			case 'link':
 			case 'file':
 				return res.redirect(launchModuleResponse.launchLink)
+			case 'face-to-face':
+				return res.redirect(`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`)
 			case 'video':
 				res.locals.courseId = req.params.courseId
 				res.locals.moduleId = req.params.moduleId
