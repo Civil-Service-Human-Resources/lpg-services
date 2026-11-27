@@ -1,3 +1,4 @@
+import {AxiosResponse} from 'axios'
 import {plainToInstance} from 'class-transformer'
 import {simpleCache} from '../../utils/simpleCache'
 import {client} from './baseConfig'
@@ -196,6 +197,17 @@ export async function getLearningRecord(user: User): Promise<LearningRecord> {
 		await learningRecordCache.setObject(learningRecord)
 	}
 	return learningRecord
+}
+
+export async function downloadLearningRecordReport(user: User): Promise<AxiosResponse> {
+	return await client.makeRequestResponse<any>(
+		{
+			method: 'GET',
+			responseType: 'stream',
+			url: '/learning/record/download',
+		},
+		user
+	)
 }
 
 export async function getRequiredLearning(user: User): Promise<RequiredLearning> {

@@ -1,6 +1,7 @@
 import {expect} from 'chai'
 import * as asyncHandler from 'express-async-handler'
 import * as sinon from 'sinon'
+import {Readable} from 'stream'
 import * as request from 'supertest'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
 import {LearningRecordCache} from '../../../src/lib/service/cslService/cache/learningRecordCache'
@@ -22,6 +23,9 @@ describe('Learning record controller tests', () => {
 	const sandbox = sinon.createSandbox()
 	const app = getApp()
 	app.get('/learning-record', asyncHandler(learningRecordIndex.display))
+	app.get('/learning-record/download', asyncHandler(learningRecordIndex.downloadReport))
+	app.post('/learning-record/download', asyncHandler(learningRecordIndex.downloadReport))
+	app.post('/learning-record/download/js', asyncHandler(learningRecordIndex.downloadReport))
 
 	let cslServiceClientStub: sinon.SinonStubbedInstance<typeof client>
 	let learningRecordCacheStub: sinon.SinonStubbedInstance<LearningRecordCache>
@@ -98,6 +102,118 @@ describe('Learning record controller tests', () => {
 				expect(res.text).to.contain(
 					'<p class="no-margin">You have <a href="/home">2 required courses</a> to complete.</p>'
 				)
+				expect(res.text).to.contain('<div class="download-report">')
+				expect(res.text).to.contain(
+					'<form class="download-report__form" action="/learning-record/download" method="POST">'
+				)
+				expect(res.text).to.contain('data-submiturl="/learning-record/download/js"')
+				expect(res.text).to.contain('Download learning record')
+			})
+		})
+
+		describe('Download report tests', () => {
+			it('Should download the report zip successfully using Content-Disposition header from upstream service', async () => {
+				const mockStream = new Readable({
+					read() {
+						this.push('mock zip file content')
+						this.push(null)
+					},
+				})
+				cslServiceClientStub.makeRequestResponse.resolves({
+					data: mockStream,
+					headers: {
+						'content-disposition': 'attachment; filename="learner_record_2026-11-18_14-43-26.zip"',
+						'content-type': 'application/zip',
+					},
+					status: 200,
+					statusText: 'OK',
+					config: {},
+				} as any)
+
+				const res = await request(app).get('/learning-record/download').set({roles: 'LEARNER'})
+				expect(res.status).eql(200)
+				expect(res.headers['content-type']).to.include('application/zip')
+				expect(res.headers['content-disposition']).to.eql(
+					'attachment; filename="learner_record_2026-11-18_14-43-26.zip"'
+				)
+				expect(res.text).to.eql('mock zip file content')
+				expect(cslServiceClientStub.makeRequestResponse.calledOnce).to.eql(true)
+				expect(cslServiceClientStub.makeRequestResponse.firstCall.args[0]).to.deep.eql({
+					method: 'GET',
+					responseType: 'stream',
+					url: '/learning/record/download',
+				})
+			})
+
+			it('Should fallback to default filename with timestamp when Content-Disposition is not present', async () => {
+				sandbox.useFakeTimers(new Date('2026-11-18 16:00:00'))
+				const mockStream = new Readable({
+					read() {
+						this.push('mock zip file content')
+						this.push(null)
+					},
+				})
+				cslServiceClientStub.makeRequestResponse.resolves({
+					data: mockStream,
+					headers: {},
+					status: 200,
+					statusText: 'OK',
+					config: {},
+				} as any)
+
+				const res = await request(app).get('/learning-record/download').set({roles: 'LEARNER'})
+				expect(res.status).eql(200)
+				expect(res.headers['content-disposition']).to.eql(
+					'attachment; filename="learning-record_2026-11-18_16-00-00.zip"'
+				)
+			})
+
+			it('Should return 500 status when download fails', async () => {
+				cslServiceClientStub.makeRequestResponse.rejects(new Error('Network error'))
+
+				const res = await request(app).get('/learning-record/download').set({roles: 'LEARNER'})
+				expect(res.status).eql(500)
+			})
+
+			it('Should return 500 status when download fails on /learning-record/download/js', async () => {
+				cslServiceClientStub.makeRequestResponse.rejects(new Error('Network error'))
+
+				const res = await request(app).post('/learning-record/download/js').set({roles: 'LEARNER'})
+				expect(res.status).eql(500)
+			})
+
+			it('Should pass error to next when download fails on non-js endpoint', async () => {
+				const error = new Error('Network error')
+				cslServiceClientStub.makeRequestResponse.rejects(error)
+				const req = {
+					path: '/learning-record/download',
+					user: {id: 'user123'},
+				} as any
+				const res = {
+					sendStatus: sinon.stub(),
+				} as any
+				const next = sinon.stub()
+
+				await learningRecordIndex.downloadReport(req, res, next)
+				expect(next.calledOnceWith(error)).to.eql(true)
+				expect(res.sendStatus.called).to.eql(false)
+			})
+
+			it('Should call res.sendStatus(500) when download fails on /js endpoint', async () => {
+				const error = new Error('Network error')
+				cslServiceClientStub.makeRequestResponse.rejects(error)
+				const req = {
+					path: '/learning-record/download/js',
+					user: {id: 'user123'},
+				} as any
+				const res = {
+					sendStatus: sinon.stub(),
+				} as any
+				const next = sinon.stub()
+
+				await learningRecordIndex.downloadReport(req, res, next)
+				expect(res.sendStatus.calledOnceWith(500)).to.eql(true)
+				expect(next.called).to.eql(false)
 			})
 		})
 	})

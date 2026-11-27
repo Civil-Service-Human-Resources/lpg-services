@@ -29,7 +29,11 @@ export class HttpClient {
 
 		http.interceptors.response.use((response: AxiosResponse): AxiosResponse<any> => {
 			let logMsg = `Response from ${response.config.method} request to ${response.config.url}: ${response.status}`
-			if (response.data) {
+			if (
+				response.data &&
+				response.config.responseType !== 'stream' &&
+				response.config.responseType !== 'arraybuffer'
+			) {
 				logMsg += ` Data: ${JSON.stringify(response.data)}`
 			}
 			if (response.config.params) {
@@ -43,7 +47,7 @@ export class HttpClient {
 
 	constructor(readonly http: AxiosInstance) {}
 
-	async makeRawRequest<T>(req: AxiosRequestConfig, accessToken: string): Promise<T> {
+	async makeRawRequestResponse<T>(req: AxiosRequestConfig, accessToken: string): Promise<AxiosResponse<T>> {
 		const fullUrl = `${this.http.defaults.baseURL}/${req.url}`
 		let logMsg = `${req.method} request to ${fullUrl}`
 		if (req.data) {
@@ -64,14 +68,17 @@ export class HttpClient {
 			req.paramsSerializer = (params: any) => {
 				return qs.stringify(params, {arrayFormat: 'repeat'})
 			}
-			const res = await this.http.request<T>(req)
-			return res.data
+			return await this.http.request<T>(req)
 		} catch (e) {
 			let str = `${req.method} request to ${fullUrl} failed`
 			let respCode: number = 0
 			if (e.response) {
 				respCode = e.response.status
-				const data = JSON.stringify(e.response.data)
+				const data =
+					e.response.config &&
+					(e.response.config.responseType === 'stream' || e.response.config.responseType === 'arraybuffer')
+						? '[Binary/Stream Data]'
+						: JSON.stringify(e.response.data)
 				str = `${str} with a status ${e.response.status}. data: ${data}`
 			} else {
 				str = `${str} with exception ${e}`
@@ -87,8 +94,17 @@ export class HttpClient {
 		}
 	}
 
+	async makeRawRequest<T>(req: AxiosRequestConfig, accessToken: string): Promise<T> {
+		const res = await this.makeRawRequestResponse<T>(req, accessToken)
+		return res.data
+	}
+
 	async makeRequest<T>(req: AxiosRequestConfig, user: model.User): Promise<T> {
 		return await this.makeRawRequest<T>(req, user.accessToken)
+	}
+
+	async makeRequestResponse<T>(req: AxiosRequestConfig, user: model.User): Promise<AxiosResponse<T>> {
+		return await this.makeRawRequestResponse<T>(req, user.accessToken)
 	}
 
 	async _patch<Request, Response>(req: AxiosRequestConfig, data: Request, user: model.User) {

@@ -1,14 +1,45 @@
 {% extends baseLayout %}
+{% from "button/macro.njk" import govukButton %}
+{% from components + "/banner/macro.njk" import banner %}
 {% from "./components/learningRecordTable/macro.njk" import learningRecordTable %}
 
 {% set pageTitle = "Learning record" %}
 {% set navbarTab = "learning-record" %}
+
+{% macro downloadSourceData(params) %}
+    <div class="download-report">
+        <div class="download-report__panel">
+            {% if params.hasRequestedReport %}
+                {{ banner({
+                    classes: "banner--confirmation profile-banner",
+                    message: i18n('reporting.report_download.success_message')
+                }) }}
+            {% else %}
+                <form class="download-report__form" action="{{ params.downloadUrl }}" method="POST">
+                    <input type="hidden" name="_csrf" value="{{ _csrf }}"/>
+                    {{ govukButton({
+                        text: "Download learning record",
+                        preventDoubleClick: true,
+                        classes: "button download-report__button",
+                        attributes: {
+                            "data-submiturl": params.downloadUrl + "/js"
+                        }
+                    }) }}
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
 
 {% block content %}
     <div class="container">
         <h1 class="heading heading-large">Learning record</h1>
         <p class="govuk-body no-margin">This is a record of the learning you have completed.</p>
         <p class="govuk-body no-margin">A course will only appear in your learning record once you have completed all the modules that are required.</p>
+        {{ downloadSourceData({
+            downloadUrl: "/learning-record/download",
+            hasRequestedReport: hasRequestedReport
+        }) }}
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading heading-medium heading--red-top lpg-required-learning">
