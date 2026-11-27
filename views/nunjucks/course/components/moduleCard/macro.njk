@@ -51,7 +51,7 @@
 {% endmacro %}
 
 {% macro moduleCardCtaLink(params) %}
-    <form class="discite__link-button--main" method="POST" action="{{ params.launchLink }}" rel='noopener' novalidate>
+    <form class="discite__link-button--main" method="{{ params.formMethod if params.formMethod else "POST" }}" action="{{ params.launchLink }}" rel='noopener' novalidate>
         <input type="hidden" name="_csrf" value="{{ _csrf }}" />
         {{ params.ctaButton | safe }}
         <button type="submit" class="discite__link-button--main discite__action-link--button"
@@ -75,7 +75,7 @@
             {% else %}
                 {% set launchLink = "/courses/" + params.courseId + "/" + params.id %}
                 {% set typeMap = {
-                    "face-to-face": {buttonHtml: 'Book <span class="visually-hidden">' + params.title + '</span>', launchLink: "/book/" + params.courseId + "/" + params.id + "/choose-date"},
+                    "face-to-face": {formMethod: "GET", buttonHtml: 'Book <span class="visually-hidden">' + params.title + '</span>', launchLink: "/book/" + params.courseId + "/" + params.id + "/choose-date"},
                     "file": {buttonHtml: 'Download <span class="visually-hidden">' + params.title + '</span> file', launchLink: launchLink , extraText: params.fileExtAndSize},
                     "video": {buttonHtml: 'Go to <span class="visually-hidden">'+  params.title + '</span> video', launchLink: launchLink },
                     "link": {buttonHtml: 'Go to ' + params.title + ' (opens in a new tab)', newTab: true, launchLink: launchLink },
