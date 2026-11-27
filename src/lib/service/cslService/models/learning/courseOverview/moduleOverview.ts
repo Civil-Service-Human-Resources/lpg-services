@@ -24,7 +24,7 @@ export class FileModuleOverview extends ModuleOverview {
 }
 
 export class F2FModuleOverview extends ModuleOverview {
-	public bookedEventId: string | null
+	public eventId: string | null
 	public canBeBooked: boolean
 	public canBeCancelled: boolean
 }
