@@ -4,6 +4,7 @@ import * as asyncHandler from 'express-async-handler'
 import * as sinon from 'sinon'
 import {CourseStatus, CourseType, ModuleType} from '../../../src/lib/model'
 import {client} from '../../../src/lib/service/cslService/baseConfig'
+import * as cslServiceClient from '../../../src/lib/service/cslService/cslServiceClient'
 import {
 	CourseOverview,
 	LearningPlanStatus,
@@ -145,6 +146,34 @@ describe('Course controller tests', () => {
 				assertButton(res, 'Start this learning', `/courses/courseID/moduleID`)
 			})
 			describe('Face-to-face single module course page tests', () => {
+				it('Should use the matching learning plan booking when the overview has no event ID', async () => {
+					sandbox.stub(cslServiceClient, 'getLearningPlan').resolves({
+						bookedCourses: [
+							{id: 'otherCourse', eventModule: {id: 'moduleID', eventId: 'wrongEvent'}},
+							{id: 'courseID', eventModule: {id: 'otherModule', eventId: 'wrongEvent'}},
+							{id: 'courseID', eventModule: {id: 'moduleID', eventId: 'eventID'}},
+						],
+					} as any)
+					const res = await makeRequest({
+						...getNoModulesCourse(),
+						type: 'face-to-face' as CourseType,
+						modules: [{...basicF2FModuleDetails, canBeCancelled: true, bookedEventId: null}],
+					})
+					expect(
+						within(res).getByRole('link', {name: 'Do you wish to cancel your booking?'}).getAttribute('href')
+					).to.eql('/book/courseID/moduleID/eventID/cancel')
+				})
+
+				it('Should not render a broken cancel link when no matching booking exists', async () => {
+					sandbox.stub(cslServiceClient, 'getLearningPlan').resolves({bookedCourses: []} as any)
+					const res = await makeRequest({
+						...getNoModulesCourse(),
+						type: 'face-to-face' as CourseType,
+						modules: [{...basicF2FModuleDetails, canBeCancelled: true, bookedEventId: null}],
+					})
+					expect(within(res).queryByRole('link', {name: 'Do you wish to cancel your booking?'})).to.eql(null)
+				})
+
 				it('Should show the cancel link when the user is booked', async () => {
 					const singleModuleCoursePage = {
 						...getNoModulesCourse(),

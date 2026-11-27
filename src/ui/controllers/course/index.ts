@@ -6,6 +6,7 @@ import {getLogger} from '../../../lib/logger'
 import * as catalog from '../../../lib/service/catalog'
 import * as cslServiceClient from '../../../lib/service/cslService/cslServiceClient'
 import {getCourseOverview, removeCourseFromLearningPlan} from '../../../lib/service/cslService/cslServiceClient'
+import {F2FModuleOverview} from '../../../lib/service/cslService/models/learning/courseOverview/moduleOverview'
 import * as youtube from '../../../lib/youtube'
 import {generateActionBanner, generateNotificationBanner} from '../home'
 
@@ -19,6 +20,8 @@ export async function displayModule(req: express.Request, res: express.Response)
 			case 'link':
 			case 'file':
 				return res.redirect(launchModuleResponse.launchLink)
+			case 'face-to-face':
+				return res.redirect(`/book/${req.params.courseId}/${req.params.moduleId}/choose-date`)
 			case 'video':
 				res.locals.courseId = req.params.courseId
 				res.locals.moduleId = req.params.moduleId
@@ -46,6 +49,19 @@ export async function displayModule(req: express.Request, res: express.Response)
 export async function display(req: express.Request, res: express.Response) {
 	logger.debug(`Displaying course, courseId: ${req.params.courseId}`)
 	const pageModel = await getCourseOverview(req.user, req.params.courseId)
+	if (pageModel.type === 'face-to-face') {
+		const module = pageModel.modules[0] as F2FModuleOverview | undefined
+		if (module && module.canBeCancelled && !module.bookedEventId) {
+			const plan = await cslServiceClient.getLearningPlan(req.user)
+			const booking = plan.bookedCourses.find(
+				course =>
+					course.id === pageModel.id &&
+					course.eventModule?.id === module.id &&
+					course.eventModule.state !== 'UNREGISTERED'
+			)
+			module.bookedEventId = booking?.eventModule.eventId || null
+		}
+	}
 	const learningPlan = [pageModel]
 	const notificationBanner = await generateNotificationBanner(req, learningPlan)
 	const actionBanner = await generateActionBanner(req, learningPlan)

@@ -14,7 +14,7 @@
 
 {% block courseContent %}
     {% if moduleDetails.canBeCancelled %}
-        <p>You are already booked on this course. <a href="/book/{{ pageModel.id }}/{{ moduleDetails.id }}/{{ moduleDetails.bookedEventId }}/cancel">Do you wish to cancel your booking?</a></p>
+        <p>You are already booked on this course. {% if moduleDetails.bookedEventId %}<a href="/book/{{ pageModel.id }}/{{ moduleDetails.id }}/{{ moduleDetails.bookedEventId }}/cancel">Do you wish to cancel your booking?</a>{% endif %}</p>
     {% else %}
         {% if not signedInUser.hasLineManager() %}
             <p class='govuk-body'>
