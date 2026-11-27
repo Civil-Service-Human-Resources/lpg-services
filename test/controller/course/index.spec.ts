@@ -67,7 +67,7 @@ describe('Course controller tests', () => {
 		const basicF2FModuleDetails = {
 			...basicModuleDetails,
 			type: 'face-to-face' as ModuleType,
-			bookedEventId: 'eventId',
+			eventId: 'eventId',
 			canBeBooked: false,
 			canBeCancelled: false,
 		}
@@ -156,7 +156,7 @@ describe('Course controller tests', () => {
 								canBeCancelled: true,
 								canBeBooked: false,
 								mustConfirmBooking: false,
-								bookedEventId: 'eventID',
+								eventId: 'eventID',
 							},
 						],
 					}
@@ -179,7 +179,7 @@ describe('Course controller tests', () => {
 								canBeCancelled: false,
 								canBeBooked: false,
 								mustConfirmBooking: false,
-								bookedEventId: 'eventID',
+								eventId: 'eventID',
 							},
 						],
 					}
@@ -198,12 +198,12 @@ describe('Course controller tests', () => {
 								canBeCancelled: false,
 								canBeBooked: true,
 								mustConfirmBooking: false,
-								bookedEventId: 'eventID',
+								eventId: 'eventID',
 							},
 						],
 					}
 					const res = await makeRequest(singleModuleCoursePage)
-					assertButton(res, 'View availability', `/courses/courseID/moduleID/choose-date`)
+					assertButton(res, 'View availability', `/book/courseID/moduleID/choose-date`)
 				})
 			})
 
