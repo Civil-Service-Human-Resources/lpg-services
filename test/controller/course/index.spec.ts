@@ -203,7 +203,7 @@ describe('Course controller tests', () => {
 						],
 					}
 					const res = await makeRequest(singleModuleCoursePage)
-					assertButton(res, 'View availability', `/courses/courseID/moduleID/choose-date`)
+					assertButton(res, 'View availability', `/book/courseID/moduleID/choose-date`)
 				})
 			})
 
